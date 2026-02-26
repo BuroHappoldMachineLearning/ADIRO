@@ -1,6 +1,5 @@
 # AEC Drawing Ontology
 
-OWL ontology derived from the first page of `250523_Ontology_schema_rev02.pdf` (Rev3, 06.04.23).
 
 ## Why OWL restrictions for contains
 
