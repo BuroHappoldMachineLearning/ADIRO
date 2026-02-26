@@ -49,6 +49,116 @@ def generate_documentation(ttl_file: Path, output_dir: Path) -> bool:
         return False
 
 
+def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
+    """
+    Generate an index.html file that lists all generated documentation.
+    
+    Args:
+        ttl_files: List of TTL files that were processed
+        output_dir: Directory where HTML files are located
+    """
+    index_file = output_dir / "index.html"
+    
+    html_content = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADIRO Ontology Documentation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #007acc;
+            padding-bottom: 0.5rem;
+        }
+        .intro {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .ontology-list {
+            list-style: none;
+            padding: 0;
+        }
+        .ontology-list li {
+            background-color: white;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .ontology-list li:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .ontology-list a {
+            text-decoration: none;
+            color: #007acc;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+        .ontology-list a:hover {
+            text-decoration: underline;
+        }
+        .file-name {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>ADIRO Ontology Documentation</h1>
+    
+    <div class="intro">
+        <p>This site contains automatically generated HTML documentation for all ontology files in the ADIRO repository.</p>
+        <p>Documentation is generated using <a href="https://github.com/RDFLib/pyLODE" target="_blank">pyLODE</a> and updated automatically when changes are pushed to the repository.</p>
+    </div>
+    
+    <h2>Available Ontologies</h2>
+    <ul class="ontology-list">
+"""
+    
+    for ttl_file in ttl_files:
+        html_filename = f"{ttl_file.stem}.html"
+        html_content += f"""        <li>
+            <a href="{html_filename}">{ttl_file.stem.replace('_', ' ').title()}</a>
+            <div class="file-name">Source: {ttl_file.name}</div>
+        </li>
+"""
+    
+    html_content += """    </ul>
+    
+    <footer>
+        <p>Generated automatically by <a href="https://github.com/RDFLib/pyLODE" target="_blank">pyLODE</a></p>
+    </footer>
+</body>
+</html>
+"""
+    
+    index_file.write_text(html_content, encoding='utf-8')
+    print(f"  ✓ Generated index: {index_file}")
+
+
 def main():
     """Main function to generate documentation for all TTL files."""
     # Get repository root (parent of scripts directory)
@@ -76,6 +186,10 @@ def main():
     for ttl_file in ttl_files:
         if generate_documentation(ttl_file, output_dir):
             success_count += 1
+    
+    # Generate index.html
+    print("-" * 60)
+    generate_index(ttl_files, output_dir)
     
     print("-" * 60)
     print(f"Documentation generation complete: {success_count}/{len(ttl_files)} files processed successfully.")
