@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADIRO Ontology Documentation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #007acc;
+            padding-bottom: 0.5rem;
+        }
+        .intro {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .ontology-list {
+            list-style: none;
+            padding: 0;
+        }
+        .ontology-list li {
+            background-color: white;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .ontology-list li:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .ontology-list a {
+            text-decoration: none;
+            color: #007acc;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+        .ontology-list a:hover {
+            text-decoration: underline;
+        }
+        .file-name {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>ADIRO Ontology Documentation</h1>
+    
+    <div class="intro">
+        <p>This site contains automatically generated HTML documentation for all ontology files in the ADIRO repository.</p>
+        <p>Documentation is generated using <a href="https://github.com/RDFLib/pyLODE" target="_blank">pyLODE</a> and updated automatically when changes are pushed to the repository.</p>
+    </div>
+    
+    <h2>Available Ontologies</h2>
+    <ul class="ontology-list">
+        <li>
+            <a href="aec_drawing_ontology.html">Aec Drawing Ontology</a>
+            <div class="file-name">Source: aec_drawing_ontology.ttl</div>
+        </li>
+        <li>
+            <a href="aec_drawing_ontology_v01.html">Aec Drawing Ontology V01</a>
+            <div class="file-name">Source: aec_drawing_ontology_v01.ttl</div>
+        </li>
+    </ul>
+    
+    <footer>
+        <p>Generated automatically by <a href="https://github.com/RDFLib/pyLODE" target="_blank">pyLODE</a></p>
+    </footer>
+</body>
+</html>
