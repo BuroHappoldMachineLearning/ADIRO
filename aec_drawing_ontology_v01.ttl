@@ -5,6 +5,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix dano: <https://w3id.org/dano>.
+# Created/edited with https://alelom.github.io/OntoCanvas/ version 0.1.0
 
 #################################################################
 #    Ontology
@@ -18,7 +19,9 @@
     owl:imports <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ;
     owl:imports <http://www.w3.org/XML/1998/namespace#> ;
     owl:imports <http://www.w3.org/2001/XMLSchema#> ;
-    owl:imports <http://www.w3.org/2000/01/rdf-schema#> .
+    owl:imports <http://www.w3.org/2000/01/rdf-schema#> ;
+    rdfs:comment "Created/edited with https://alelom.github.io/OntoCanvas/ version 0.1.0" .
+
 
 #################################################################
 #    Annotation properties
@@ -654,7 +657,7 @@
     rdfs:subClassOf :FacadeSecondaryStructure.
 
 :RainscreenSystem rdf:type owl:Class;
-    rdfs:label "Rainscreen system";
+    rdfs:label "Rainscreen";
     :labellableRoot "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeSystem.
 

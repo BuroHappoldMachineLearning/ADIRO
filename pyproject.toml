@@ -1,0 +1,12 @@
+[project]
+name = "aec-drawing-ontology"
+version = "0.1.0"
+description = "AEC Drawing Ontology with automated documentation generation"
+requires-python = ">=3.10"
+dependencies = [
+    "pylode>=3.2.3",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

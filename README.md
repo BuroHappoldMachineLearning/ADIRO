@@ -54,3 +54,33 @@ Then open `Visualizer/visualizer.html` in a browser. The visualizer supports:
 - **Edge type**: Filter by relationship type (e.g. subClassOf)
 - **Node color by**: Color nodes by labellable status (green=labellable, red=non-labellable) or default
 - **Reset / Fit**: Reset zoom or fit graph to screen
+
+## Documentation
+
+HTML documentation for all ontology files is automatically generated using [pyLODE](https://github.com/RDFLib/pyLODE).
+
+### Automated Generation
+
+Documentation is automatically generated and deployed to GitHub Pages whenever:
+- Changes are pushed to the `main` or `master` branch
+- The workflow is manually triggered from the GitHub Actions tab
+
+The documentation is available at the repository's GitHub Pages URL (typically `https://<username>.github.io/<repository-name>/`).
+
+### Manual Generation
+
+To generate documentation locally:
+
+```bash
+# Install dependencies
+uv sync
+
+# Generate documentation for all TTL files in the root directory
+uv run python scripts/generate_docs.py
+```
+
+The generated HTML files will be placed in the `docs/` directory. Each `.ttl` file in the repository root will have a corresponding `.html` file generated.
+
+### Adding New Ontologies
+
+Simply add a new `.ttl` file to the repository root. The next time the documentation workflow runs (automatically on push or manually), it will discover and document the new ontology file automatically.
