@@ -1,4 +1,8 @@
-# AEC Drawing Ontology
+# AEC Drawing Ontologies
+
+Set of ontologies representing information in AEC drawings
+
+https://burohappoldmachinelearning.github.io/ADIRO/
 
 
 ## Why OWL restrictions for contains
