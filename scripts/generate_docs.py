@@ -102,6 +102,15 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
+        .ontology-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .ontology-link-container {
+            flex: 1;
+        }
         .ontology-list a {
             text-decoration: none;
             color: #007acc;
@@ -115,6 +124,34 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
             color: #666;
             font-size: 0.9rem;
             margin-top: 0.5rem;
+        }
+        .ontocanvas-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #007acc;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.2s, transform 0.2s;
+            white-space: nowrap;
+        }
+        .ontocanvas-button:hover {
+            background-color: #005a9e;
+            transform: translateY(-1px);
+            text-decoration: none;
+            color: white;
+        }
+        .ontocanvas-button:active {
+            transform: translateY(0);
+        }
+        .ontocanvas-icon {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
         }
         footer {
             margin-top: 3rem;
@@ -141,8 +178,16 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     for ttl_file in ttl_files:
         html_filename = f"{ttl_file.stem}.html"
         html_content += f"""        <li>
-            <a href="{html_filename}">{ttl_file.stem.replace('_', ' ').title()}</a>
-            <div class="file-name">Source: {ttl_file.name}</div>
+            <div class="ontology-item">
+                <div class="ontology-link-container">
+                    <a href="{html_filename}">{ttl_file.stem.replace('_', ' ').title()}</a>
+                    <div class="file-name">Source: {ttl_file.name}</div>
+                </div>
+                <a href="#" class="ontocanvas-button" data-ontology="{html_filename}" target="_blank">
+                    <img src="https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png" alt="OntoCanvas" class="ontocanvas-icon">
+                    Open in OntoCanvas
+                </a>
+            </div>
         </li>
 """
     
@@ -151,6 +196,21 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     <footer>
         <p>Generated automatically by <a href="https://github.com/RDFLib/pyLODE" target="_blank">pyLODE</a></p>
     </footer>
+    
+    <script>
+        // Set up OntoCanvas button links
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.ontocanvas-button');
+            buttons.forEach(function(button) {
+                const ontologyFile = button.getAttribute('data-ontology');
+                // Construct full URL to the ontology HTML file
+                const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
+                const ontologyUrl = baseUrl + '/' + ontologyFile;
+                const ontocanvasUrl = 'https://alelom.github.io/OntoCanvas/?onto=' + encodeURIComponent(ontologyUrl);
+                button.setAttribute('href', ontocanvasUrl);
+            });
+        });
+    </script>
 </body>
 </html>
 """
