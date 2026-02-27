@@ -7,6 +7,7 @@ to generate HTML documentation for each one.
 """
 
 import sys
+import shutil
 from pathlib import Path
 from pylode.profiles.ontpub import OntPub
 
@@ -42,6 +43,12 @@ def generate_documentation(ttl_file: Path, output_dir: Path) -> bool:
         od.make_html(destination=str(output_file))
         
         print(f"  ✓ Generated: {output_file}")
+        
+        # Copy the TTL file to the docs directory
+        ttl_output = output_dir / ttl_file.name
+        shutil.copy2(ttl_file, ttl_output)
+        print(f"  ✓ Copied TTL: {ttl_output}")
+        
         return True
         
     except Exception as e:
