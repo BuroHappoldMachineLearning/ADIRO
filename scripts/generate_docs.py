@@ -127,6 +127,9 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
         .ontology-list a:hover {
             text-decoration: underline;
         }
+        .ontology-list a.ontocanvas-button {
+            color: white !important;
+        }
         .file-name {
             color: #666;
             font-size: 0.9rem;
