@@ -2,9 +2,9 @@
 name = "aec-drawing-ontology"
 version = "0.1.0"
 description = "AEC Drawing Ontology with automated documentation generation"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.14"
 dependencies = [
-    "pylode>=3.2.3",
+    "pylode==3.2.3",
 ]
 
 [build-system]
