@@ -110,12 +110,12 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
         .github-button {
             display: inline-flex;
             align-items: center;
-            padding: 0.5rem 1rem;
+            padding: 0.35rem 0.75rem;
             background-color: #24292f;
             color: white;
             text-decoration: none;
             border-radius: 6px;
-            font-size: 0.9rem;
+            font-size: 0.82rem;
             font-weight: 500;
             transition: background-color 0.2s, transform 0.2s;
             white-space: nowrap;
@@ -213,8 +213,8 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     <h1>ADIRO Ontology Documentation</h1>
     
     <div class="intro">
-        <p>This site contains HTML documentation for all ontology files in the ADIRO repository.</p>
         <a href="https://github.com/BuroHappoldMachineLearning/ADIRO" class="github-button" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        <p>This site contains HTML documentation for all ontology files in the ADIRO repository.</p>
     </div>
     
     <h2>Available Ontologies</h2>
