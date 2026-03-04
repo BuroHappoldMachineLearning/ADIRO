@@ -82,7 +82,7 @@ uv sync
 uv run python scripts/generate_docs.py
 ```
 
-The generated HTML files will be placed in the `docs/` directory. Each `.ttl` file in the repository root will have a corresponding `.html` file generated.
+The generated files will be placed in the `docs/` directory. Each `.ttl` file in the repository root will have a corresponding `.html` file generated, and any `*.display.json` files in the repository root will also be copied to `docs/` for public access via GitHub Pages.
 
 ### Adding New Ontologies
 

@@ -18,6 +18,12 @@ def find_ttl_files(root_dir: Path) -> list[Path]:
     return sorted(ttl_files)
 
 
+def find_display_json_files(root_dir: Path) -> list[Path]:
+    """Find all .display.json files in the root directory."""
+    display_json_files = list(root_dir.glob("*.display.json"))
+    return sorted(display_json_files)
+
+
 def generate_documentation(ttl_file: Path, output_dir: Path) -> bool:
     """
     Generate HTML documentation for a TTL file using pyLODE.
@@ -92,6 +98,36 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
             border-radius: 8px;
             margin-bottom: 2rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .intro-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+        }
+        .github-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: #24292f;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.2s, transform 0.2s;
+            white-space: nowrap;
+        }
+        .github-button:hover {
+            background-color: #1b1f24;
+            transform: translateY(-1px);
+            text-decoration: none;
+            color: white;
+        }
+        .github-button:active {
+            transform: translateY(0);
         }
         .ontology-list {
             list-style: none;
@@ -177,6 +213,10 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     <h1>ADIRO Ontology Documentation</h1>
     
     <div class="intro">
+        <div class="intro-header">
+            <h2>Overview</h2>
+            <a href="https://github.com/BuroHappoldMachineLearning/ADIRO" class="github-button" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        </div>
         <p>This site contains automatically generated HTML documentation for all ontology files in the ADIRO repository.</p>
         <p>Documentation is generated using <a href="https://github.com/RDFLib/pyLODE" target="_blank">pyLODE</a> and updated automatically when changes are pushed to the repository.</p>
     </div>
@@ -214,7 +254,7 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
             buttons.forEach(function(button) {
                 const ontologyFile = button.getAttribute('data-ontology');
                 // Construct full URL to the ontology HTML file
-                const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
+                const baseUrl = window.location.origin + window.location.pathname.replace(/\\/[^\\/]*$/, '');
                 const ontologyUrl = baseUrl + '/' + ontologyFile;
                 const ontocanvasUrl = 'https://alelom.github.io/OntoCanvas/?onto=' + encodeURIComponent(ontologyUrl);
                 button.setAttribute('href', ontocanvasUrl);
@@ -239,6 +279,7 @@ def main():
     
     # Find all TTL files in root
     ttl_files = find_ttl_files(repo_root)
+    display_json_files = find_display_json_files(repo_root)
     
     if not ttl_files:
         print("No TTL files found in repository root.")
@@ -247,6 +288,10 @@ def main():
     print(f"Found {len(ttl_files)} TTL file(s):")
     for ttl_file in ttl_files:
         print(f"  - {ttl_file.name}")
+
+    print(f"Found {len(display_json_files)} display JSON file(s):")
+    for display_json_file in display_json_files:
+        print(f"  - {display_json_file.name}")
     
     print(f"\nGenerating documentation to: {output_dir}")
     print("-" * 60)
@@ -260,6 +305,12 @@ def main():
     # Generate index.html
     print("-" * 60)
     generate_index(ttl_files, output_dir)
+
+    # Copy all .display.json files to docs directory for GitHub Pages publishing
+    for display_json_file in display_json_files:
+        display_json_output = output_dir / display_json_file.name
+        shutil.copy2(display_json_file, display_json_output)
+        print(f"  ✓ Copied display JSON: {display_json_output}")
     
     print("-" * 60)
     print(f"Documentation generation complete: {success_count}/{len(ttl_files)} files processed successfully.")
