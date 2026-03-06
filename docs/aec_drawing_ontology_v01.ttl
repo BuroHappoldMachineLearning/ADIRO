@@ -5,14 +5,14 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix dano: <https://w3id.org/dano>.
-# Created/edited with https://alelom.github.io/OntoCanvas/ version 0.1.0
+# Created/edited with https://alelom.github.io/OntoCanvas/ version 1.0.4
 
 #################################################################
 #    Ontology
 #################################################################
 
 :Ontology rdf:type owl:Ontology;
-    rdfs:comment "Ontology for AEC drawing elements - facade, structural, and drawing metadata. Based on schema rev02 (06.04.23).";
+    rdfs:comment "Ontology for AEC drawing elements - facade, structural, and drawing metadata. Based on schema rev02 (06.04.23).", "Created/edited with https://alelom.github.io/OntoCanvas/ version 0.1.0";
     rdfs:label "AEC Drawing Ontology";
     owl:imports <https://w3id.org/dano>, <http://www.w3.org/2002/07/owl#>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#>, <http://www.w3.org/XML/1998/namespace#>, <http://www.w3.org/2001/XMLSchema#>, <http://www.w3.org/2000/01/rdf-schema#> ;
     owl:imports <http://www.w3.org/2002/07/owl#> ;
@@ -20,7 +20,7 @@
     owl:imports <http://www.w3.org/XML/1998/namespace#> ;
     owl:imports <http://www.w3.org/2001/XMLSchema#> ;
     owl:imports <http://www.w3.org/2000/01/rdf-schema#> ;
-    rdfs:comment "Created/edited with https://alelom.github.io/OntoCanvas/ version 0.1.0" .
+    rdfs:comment "Created/edited with https://alelom.github.io/OntoCanvas/ version 1.0.4" .
 
 
 #################################################################
@@ -49,8 +49,8 @@
 :has rdf:type owl:ObjectProperty;
     rdfs:comment "Subject is characterised by a property.";
     rdfs:label "hasProperty";
-    rdfs:range owl:Thing;
-    rdfs:domain owl:Thing.
+    rdfs:range owl:Thing, :Orientation;
+    rdfs:domain owl:Thing, :Detail.
 
 #################################################################
 #    Data Properties
@@ -250,7 +250,7 @@
     rdfs:comment "Detail drawing";
     rdfs:label "Detail";
     :labellableRoot "true"^^xsd:boolean;
-    rdfs:subClassOf :DrawingType, [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:someValuesFrom :Orientation ].
+    rdfs:subClassOf :DrawingType, [ rdf:type owl:Restriction ; owl:onProperty :has ; owl:onClass :Orientation ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ].
 
 :DetailLocation rdf:type owl:Class;
     rdfs:label "Detail location";
@@ -438,6 +438,7 @@
 
 :Horizontal rdf:type owl:Class;
     rdfs:label "Horizontal";
+    :labellableRoot "true"^^xsd:boolean;
     rdfs:subClassOf :Orientation.
 
 :Image rdf:type owl:Class;

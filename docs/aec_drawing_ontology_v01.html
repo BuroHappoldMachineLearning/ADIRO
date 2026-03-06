@@ -293,6 +293,9 @@ td {
       },
       {
         "@value": "Created/edited with https://alelom.github.io/OntoCanvas/ version 0.1.0"
+      },
+      {
+        "@value": "Created/edited with https://alelom.github.io/OntoCanvas/ version 1.0.4"
       }
     ],
     "https://schema.org/name": [
@@ -332,6 +335,7 @@ td {
               <ul>
                 <li><p>Ontology for AEC drawing elements - facade, structural, and drawing metadata. Based on schema rev02 (06.04.23).</p></li>
                 <li><p>Created/edited with https://alelom.github.io/OntoCanvas/ version 0.1.0</p></li>
+                <li><p>Created/edited with https://alelom.github.io/OntoCanvas/ version 1.0.4</p></li>
               </ul>
             </dd>
           </div>
@@ -1410,23 +1414,29 @@ td {
             </tr>
             <tr>
               <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#has">hasProperty</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
                 <a class="hover_property" href="https://w3id.org/profile/ontdoc/restriction" title="Convenience property for things that subclass owl:Restriction. Defined in Ontology Documentation Profile">Restriction</a>
               </th>
               <td>
                 <span>
                   <span>
                     <span>
-                      <a href="#contains">contains</a>
+                      <a href="#has">hasProperty</a>
                       <sup class="sup-op" title="OWL Object Property">op</sup>
                     </span>
                     <span>
-                      <span class="cardinality">some</span>
-                      <span>
-                        <span>
-                          <a href="#Orientation">Detail Orientation</a>
-                          <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                        </span>
-                      </span>
+                      <span class="cardinality">exactly</span>
+                      <span>1</span>
                     </span><br>
                   </span>
                 </span>
@@ -3892,6 +3902,17 @@ td {
             </tr>
             <tr>
               <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#has">hasProperty</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
                 <a class="hover_property" href="https://w3id.org/profile/ontdoc/superClassOf" title="Inverse of RDFS' subClassOf. Defined in Ontology Documentation Profile">Super Class Of</a>
               </th>
               <td>
@@ -6214,10 +6235,20 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
               </th>
               <td>
-                <span>
-                  <a href="#Thing">Thing</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#Thing">Thing</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#Detail">Detail</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                </ul>
               </td>
             </tr>
             <tr>
@@ -6225,10 +6256,20 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <span>
-                  <a href="#Thing">Thing</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#Thing">Thing</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#Orientation">Detail Orientation</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                </ul>
               </td>
             </tr>
           </table>
