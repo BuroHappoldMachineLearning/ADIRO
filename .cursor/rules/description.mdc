@@ -1,0 +1,32 @@
+---
+alwaysApply: true
+---
+
+This repo contains the definition of a bundle of several related ontologies called ADIRO. The ontologies are in TTL format.
+
+The initial work started by writing a big monolith ontology called aec_drawing_ontology_v01.ttl. We then divided it into:
+
+1. Parent/Core ontology
+Minimal shared primitives and cross-module contracts:
+
+:contains, :has
+:exampleImage, :labellableRoot
+Possibly very generic classes like :DrawingElement
+
+2. Drawing metadata ontology
+Sheet/layout/document structure:
+
+:DrawingSheet, :Layout, :Metadata
+:Titleblock, :Legend, :RevisionTable, :Note, :TextualNote
+:DrawingType + :Plan, :Section, :Elevation, :Detail
+:referstodrawingid
+
+3. Common symbols ontology (cross-discipline layout content)
+New concepts like dimensions, callouts, grids, levels, etc. (mostly reusable non-domain symbols).
+
+4. Domain-common symbols ontologies
+Shared within some domains (e.g., facade+structural).
+
+5. Domain ontologies (discipline-specific)
+Facade engineering only (for drawings related to the engineering design of the facades of buildings, the only domain our monolith covered) and other domain-specific ones that we will write in the future, like MEP engineering, structural_engineering, etc.
+Example existing facade concepts: :FacadeComponent, :FacadeSystem, :DGU (Double Glazing Unit).

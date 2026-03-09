@@ -12,4 +12,13 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = []
+only-include = [
+    "scripts",
+    "docs",
+    "img",
+    "*.ttl",
+    "*.json",
+    "*.display.json",
+    "README.md",
+    "LICENSE",
+]

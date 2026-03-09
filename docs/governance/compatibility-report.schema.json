@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/compatibility-report.schema.json",
+  "title": "Ontology Compatibility Report",
+  "type": "object",
+  "required": [
+    "policyVersion",
+    "generatedAt",
+    "oldVersion",
+    "newVersion",
+    "mode",
+    "summary",
+    "findings",
+    "decision"
+  ],
+  "properties": {
+    "policyVersion": { "type": "string" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "oldVersion": { "type": "string" },
+    "newVersion": { "type": "string" },
+    "mode": {
+      "type": "string",
+      "enum": ["off", "warn", "enforce"]
+    },
+    "summary": {
+      "type": "object",
+      "required": ["totalFindings", "bySeverity", "breakingCount", "potentiallyBreakingCount", "nonBreakingCount"],
+      "properties": {
+        "totalFindings": { "type": "integer", "minimum": 0 },
+        "breakingCount": { "type": "integer", "minimum": 0 },
+        "potentiallyBreakingCount": { "type": "integer", "minimum": 0 },
+        "nonBreakingCount": { "type": "integer", "minimum": 0 },
+        "bySeverity": {
+          "type": "object",
+          "required": ["breaking", "potentially-breaking", "non-breaking"],
+          "properties": {
+            "breaking": { "type": "integer", "minimum": 0 },
+            "potentially-breaking": { "type": "integer", "minimum": 0 },
+            "non-breaking": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "changeType",
+          "severity",
+          "termKind",
+          "impact",
+          "autoFixAvailable",
+          "manualInterventionRequired"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "changeType": {
+            "type": "string",
+            "enum": [
+              "TERM_ADDED",
+              "TERM_REMOVED",
+              "TERM_RENAMED",
+              "NAMESPACE_MOVED",
+              "TYPE_CHANGED",
+              "DOMAIN_CHANGED",
+              "RANGE_CHANGED",
+              "SUPERCLASS_CHANGED",
+              "SUPERPROPERTY_CHANGED",
+              "RESTRICTION_ADDED",
+              "RESTRICTION_REMOVED",
+              "RESTRICTION_TIGHTENED",
+              "RESTRICTION_LOOSENED",
+              "ANNOTATION_CHANGED"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["breaking", "potentially-breaking", "non-breaking"]
+          },
+          "termKind": {
+            "type": "string",
+            "enum": ["class", "objectProperty", "datatypeProperty", "annotationProperty", "individual", "unknown"]
+          },
+          "oldTerm": {
+            "type": ["object", "null"],
+            "properties": {
+              "iri": { "type": "string", "format": "uri" },
+              "label": { "type": "string" },
+              "namespace": { "type": "string", "format": "uri" }
+            },
+            "additionalProperties": false
+          },
+          "newTerm": {
+            "type": ["object", "null"],
+            "properties": {
+              "iri": { "type": "string", "format": "uri" },
+              "label": { "type": "string" },
+              "namespace": { "type": "string", "format": "uri" }
+            },
+            "additionalProperties": false
+          },
+          "impact": { "type": "string" },
+          "details": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "autoFixAvailable": { "type": "boolean" },
+          "manualInterventionRequired": { "type": "boolean" },
+          "suggestedActions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["actionType", "description"],
+              "properties": {
+                "actionType": {
+                  "type": "string",
+                  "enum": [
+                    "ADD_EQUIVALENT_CLASS",
+                    "ADD_EQUIVALENT_PROPERTY",
+                    "ADD_SUBCLASS_MAPPING",
+                    "ADD_SUBPROPERTY_MAPPING",
+                    "MARK_DEPRECATED",
+                    "ADD_MIGRATION_COMMENT",
+                    "REQUIRES_MANUAL_REVIEW"
+                  ]
+                },
+                "description": { "type": "string" },
+                "triplesPreview": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "decision": {
+      "type": "object",
+      "required": ["status", "blocked", "requiresUserConfirmation", "compatibilityGenerationSuggested"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["pass", "warn", "blocked"]
+        },
+        "blocked": { "type": "boolean" },
+        "requiresUserConfirmation": { "type": "boolean" },
+        "compatibilityGenerationSuggested": { "type": "boolean" },
+        "reasons": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "artifacts": {
+      "type": "object",
+      "properties": {
+        "compatOntologyPath": { "type": ["string", "null"] },
+        "machineReportPath": { "type": ["string", "null"] },
+        "humanReportPath": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
