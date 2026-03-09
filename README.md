@@ -87,3 +87,41 @@ The generated files will be placed in the `docs/` directory. Each `.ttl` file in
 ### Adding New Ontologies
 
 Simply add a new `.ttl` file to the repository root. The next time the documentation workflow runs (automatically on push or manually), it will discover and document the new ontology file automatically.
+
+## Versioning
+
+The ontologies use versioned IRIs (e.g., `http://example.org/aec-drawing/v01/core#`) but the filenames do not include version numbers (e.g., `aec_core.ttl` rather than `aec_core_v01.ttl`).
+
+### Version Backups
+
+When a new version is released (via a tagged release in GitHub), the previous version of all ontology files is automatically backed up to the `versions/` folder. The backup structure is:
+
+```
+versions/
+  v01/
+    aec_core.ttl
+    aec_drawing_metadata.ttl
+    aec_common_symbols.ttl
+    aec_domain_common.ttl
+    aec_facade_domain.ttl
+  v02/
+    ...
+```
+
+This backup process is handled automatically by GitHub Actions when a new release tag is created. The version folders preserve the complete state of all ontology files at each release point, allowing for:
+
+- Historical reference and comparison
+- Rollback capabilities if needed
+- Clear versioning documentation
+
+### Creating a New Version
+
+To create a new version:
+
+1. Make your changes to the ontology files
+2. Update the version number in the ontology IRI (e.g., `v01` → `v02`)
+3. Create a new release tag in GitHub (e.g., `v02.0.0`)
+4. The GitHub Actions workflow will automatically:
+   - Backup the current files to `versions/v<previous_version>/`
+   - Update documentation
+   - Deploy to GitHub Pages

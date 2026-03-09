@@ -1,0 +1,265 @@
+@prefix : <http://example.org/aec-drawing/v01/domain-common#> .
+@prefix core: <http://example.org/aec-drawing/v01/core#> .
+@prefix metadata: <http://example.org/aec-drawing/v01/drawing-metadata#> .
+@prefix common: <http://example.org/aec-drawing/v01/common-symbols#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://example.org/aec-drawing/v01/domain-common> rdf:type owl:Ontology ;
+    rdfs:label "AEC Domain Common Ontology" ;
+    rdfs:comment "Shared domain abstractions reused across multiple domain ontologies (e.g., facade+structural)." ;
+    owl:imports <http://example.org/aec-drawing/v01/core>,
+                <http://example.org/aec-drawing/v01/drawing-metadata>,
+                <http://example.org/aec-drawing/v01/common-symbols> .
+
+#################################################################
+#    Property Classes
+#################################################################
+
+:MaterialProperties rdf:type owl:Class ;
+    rdfs:comment "General property category" ;
+    rdfs:label "Material properties" ;
+    core:labellableRoot "false"^^xsd:boolean .
+
+:Material rdf:type owl:Class ;
+    rdfs:label "Material" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :MaterialProperties .
+
+:FunctionalProperties rdf:type owl:Class ;
+    rdfs:comment "General property category" ;
+    rdfs:label "Functional properties" ;
+    core:labellableRoot "false"^^xsd:boolean .
+
+:Function rdf:type owl:Class ;
+    rdfs:label "Function" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :FunctionalProperties .
+
+:GeometricProperties rdf:type owl:Class ;
+    rdfs:comment "General property category" ;
+    rdfs:label "Geometric properties" ;
+    core:labellableRoot "false"^^xsd:boolean .
+
+:SectionProperties rdf:type owl:Class ;
+    rdfs:comment "General property category" ;
+    rdfs:label "Section properties" ;
+    core:labellableRoot "false"^^xsd:boolean .
+
+:StructuralProperties rdf:type owl:Class ;
+    rdfs:comment "General property category" ;
+    rdfs:label "Structural properties" ;
+    core:labellableRoot "false"^^xsd:boolean .
+
+#################################################################
+#    Material Subclasses
+#################################################################
+
+:Aluminium rdf:type owl:Class ;
+    rdfs:label "Aluminium" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Material .
+
+:Concrete rdf:type owl:Class ;
+    rdfs:label "Concrete" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Material .
+
+:Glass rdf:type owl:Class ;
+    rdfs:label "Glass" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Material .
+
+:Metal rdf:type owl:Class ;
+    rdfs:label "Metal" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Material .
+
+:Timber rdf:type owl:Class ;
+    rdfs:label "Timber" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Material .
+
+:Polycarbonate rdf:type owl:Class ;
+    rdfs:label "Polycarbonate" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Material .
+
+:Precast rdf:type owl:Class ;
+    rdfs:label "Precast" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Material .
+
+:Clay rdf:type owl:Class ;
+    rdfs:label "Clay" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Material .
+
+#################################################################
+#    Facing Material
+#################################################################
+
+:FacingMaterial rdf:type owl:Class ;
+    rdfs:comment "Can be standalone label - material used for facing" ;
+    rdfs:label "Facing material" ;
+    core:labellableRoot "false"^^xsd:boolean .
+
+:Brick rdf:type owl:Class ;
+    rdfs:label "Brick" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :FacingMaterial .
+
+:Stone rdf:type owl:Class ;
+    rdfs:label "Stone" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :FacingMaterial .
+
+:Terracotta rdf:type owl:Class ;
+    rdfs:label "Terracotta" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :FacingMaterial .
+
+#################################################################
+#    Section/Shape Properties
+#################################################################
+
+:SectionShape rdf:type owl:Class ;
+    rdfs:label "Section shape" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :SectionProperties .
+
+:GenericShapeProperty rdf:type owl:Class ;
+    rdfs:label "Generic shape property" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :SectionProperties .
+
+:Symmetry rdf:type owl:Class ;
+    rdfs:label "Symmetry" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :SectionProperties .
+
+:CHS rdf:type owl:Class ;
+    rdfs:label "CHS" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :SectionShape .
+
+:ISection rdf:type owl:Class ;
+    rdfs:label "I-section" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :SectionShape .
+
+:RHS rdf:type owl:Class ;
+    rdfs:label "RHS" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :SectionShape .
+
+:SectionChannel rdf:type owl:Class ;
+    rdfs:label "Channel (section)" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :SectionShape .
+
+:TopHat rdf:type owl:Class ;
+    rdfs:label "Top hat" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :SectionShape .
+
+:Circular rdf:type owl:Class ;
+    rdfs:label "Circular" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :GenericShapeProperty .
+
+:Rectangular rdf:type owl:Class ;
+    rdfs:label "Rectangular" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :GenericShapeProperty .
+
+:Square rdf:type owl:Class ;
+    rdfs:label "Square" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :GenericShapeProperty .
+
+:Asymmetrical rdf:type owl:Class ;
+    rdfs:label "Asymmetrical" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Symmetry .
+
+:Symmetrical rdf:type owl:Class ;
+    rdfs:label "Symmetrical" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Symmetry .
+
+#################################################################
+#    Structural Properties
+#################################################################
+
+:DeadLoad rdf:type owl:Class ;
+    rdfs:label "Dead load" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :StructuralProperties .
+
+:Restraint rdf:type owl:Class ;
+    rdfs:label "Restraint" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :StructuralProperties .
+
+#################################################################
+#    Structural Components
+#################################################################
+
+:StructuralComponent rdf:type owl:Class ;
+    rdfs:comment "Structural component - part of support type" ;
+    rdfs:label "Structural component" ;
+    core:labellableRoot "false"^^xsd:boolean .
+
+:LinearStructuralComponent rdf:type owl:Class ;
+    rdfs:label "Linear structural component" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :StructuralComponent .
+
+:PanelStructuralComponent rdf:type owl:Class ;
+    rdfs:label "Panel structural component" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :StructuralComponent .
+
+:StructuralMember rdf:type owl:Class ;
+    rdfs:label "Structural member" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :LinearStructuralComponent .
+
+:Beam rdf:type owl:Class ;
+    rdfs:label "Beam" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :StructuralMember .
+
+:Column rdf:type owl:Class ;
+    rdfs:label "Column" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :StructuralMember .
+
+:ChordBracing rdf:type owl:Class ;
+    rdfs:label "Chord/bracing" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :StructuralMember .
+
+:Cable rdf:type owl:Class ;
+    rdfs:label "Cable" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :LinearStructuralComponent .
+
+:Slab rdf:type owl:Class ;
+    rdfs:label "Slab" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :PanelStructuralComponent .
+
+:Wall rdf:type owl:Class ;
+    rdfs:label "Wall" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :PanelStructuralComponent .
+
+:Upstand rdf:type owl:Class ;
+    rdfs:label "Upstand" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :PanelStructuralComponent .

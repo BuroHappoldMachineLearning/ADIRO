@@ -1,0 +1,183 @@
+@prefix : <http://example.org/aec-drawing-ontology#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix xml: <http://www.w3.org/XML/1998/namespace#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix common: <http://example.org/aec-drawing/v01/common-symbols>.
+@prefix core: <http://example.org/aec-drawing/v01/core>.
+# Created/edited with https://alelom.github.io/OntoCanvas/ version 1.6.0
+
+<http://example.org/aec-drawing/v01/core#has> rdfs:range :DetailLocation;
+    rdfs:domain :Detail.
+:Detail rdfs:subClassOf [ rdf:type owl:Restriction ; owl:onProperty <http://example.org/aec-drawing/v01/core#has> ; owl:onClass :DetailLocation ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ].
+
+#################################################################
+#    Ontology
+#################################################################
+
+<http://example.org/aec-drawing/v01/drawing-metadata> rdf:type owl:Ontology;
+    rdfs:label "AEC Drawing Metadata Ontology";
+    rdfs:comment "Sheet/layout/document structure for AEC drawings.";
+    owl:imports <http://example.org/aec-drawing/v01/core>, <http://example.org/aec-drawing/v01/common-symbols> ;
+    owl:imports <http://example.org/aec-drawing/v01> ;
+    owl:imports <http://example.org/aec-drawing/v01/common-symbols> ;
+    owl:imports <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ;
+    owl:imports <http://www.w3.org/2000/01/rdf-schema#> ;
+    owl:imports <http://www.w3.org/2001/XMLSchema#> ;
+    owl:imports <http://www.w3.org/2002/07/owl#> ;
+    owl:imports <http://www.w3.org/XML/1998/namespace#> ;
+    rdfs:comment "Created/edited with https://alelom.github.io/OntoCanvas/ version 1.6.0" .
+
+
+#################################################################
+#    Data Properties
+#################################################################
+
+<http://example.org/aec-drawing/v01/drawing-metadata#refersToDrawingId> rdf:type owl:DatatypeProperty;
+    rdfs:label "refersToDrawingId";
+    rdfs:comment "References another Drawing by using a drawing identifier, like a drawing number.";
+    rdfs:range xsd:string;
+    rdfs:domain <http://example.org/aec-drawing/v01/drawing-metadata#TextualNote>.
+
+#################################################################
+#    Classes
+#################################################################
+
+<http://example.org/aec-drawing/v01/drawing-metadata#TextualNote> rdf:type owl:Class;
+    rdfs:label "Text";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "true"^^xsd:boolean;
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#Note>.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Metadata> rdf:type owl:Class;
+    rdfs:label "Metadata";
+    rdfs:comment "Can be standalone label - drawing metadata";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "false"^^xsd:boolean;
+    rdfs:subClassOf owl:Thing.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#DrawingSheet> rdf:type owl:Class;
+    rdfs:label "Drawing sheet";
+    rdfs:comment "Top-level container for a drawing. Contains Layout(s).";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "false"^^xsd:boolean;
+    rdfs:subClassOf [ rdf:type owl:Restriction ; owl:onProperty <http://example.org/aec-drawing/v01/core#contains> ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass <http://example.org/aec-drawing/v01/drawing-metadata#Note> ], [ rdf:type owl:Restriction ; owl:onProperty <http://example.org/aec-drawing/v01/core#contains> ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass <http://example.org/aec-drawing/v01/drawing-metadata#RevisionTable> ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ], [ rdf:type owl:Restriction ; owl:onProperty <http://example.org/aec-drawing/v01/core#contains> ; owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass <http://example.org/aec-drawing/v01/drawing-metadata#Layout> ], [ rdf:type owl:Restriction ; owl:onProperty <http://example.org/aec-drawing/v01/core#has> ; owl:onClass <http://example.org/aec-drawing/v01/drawing-metadata#DrawingOrientation> ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ].
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Note> rdf:type owl:Class;
+    rdfs:label "Note";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "true"^^xsd:boolean;
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#Metadata>.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#RevisionTable> rdf:type owl:Class;
+    rdfs:label "Revision table";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "true"^^xsd:boolean;
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#Metadata>.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Layout> rdf:type owl:Class;
+    rdfs:label "Layout";
+    rdfs:comment "Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content.";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "true"^^xsd:boolean;
+    rdfs:subClassOf [ rdf:type owl:Restriction ; owl:onProperty <http://example.org/aec-drawing/v01/core#contains> ; owl:minQualifiedCardinality "0"^^xsd:integer ; owl:onClass <http://example.org/aec-drawing/v01/common-symbols#DrawingElement> ], [ rdf:type owl:Restriction ; owl:onProperty <http://example.org/aec-drawing/v01/core#has> ; owl:onClass <http://example.org/aec-drawing/v01/drawing-metadata#DrawingType> ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ].
+
+<http://example.org/aec-drawing/v01/drawing-metadata#DrawingOrientation> rdf:type owl:Class;
+    rdfs:label "DrawingOrientation";
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#Portrait>, <http://example.org/aec-drawing/v01/drawing-metadata#Landscape>.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#DrawingType> rdf:type owl:Class;
+    rdfs:label "Drawing type";
+    rdfs:comment "Type of drawing view";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "false"^^xsd:boolean;
+    rdfs:subClassOf owl:Thing.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Titleblock> rdf:type owl:Class;
+    rdfs:label "Titleblock";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "true"^^xsd:boolean;
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#Metadata>.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Legend> rdf:type owl:Class;
+    rdfs:label "Legend";
+    rdfs:comment "A legend containing mapping information between symbols and a text signifier.";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "true"^^xsd:boolean;
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#Metadata>.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Image> rdf:type owl:Class;
+    rdfs:label "Image";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "true"^^xsd:boolean;
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#Note>.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Plan> rdf:type owl:Class;
+    rdfs:label "Plan";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "true"^^xsd:boolean;
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#DrawingType>.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Section> rdf:type owl:Class;
+    rdfs:label "Vertical Section";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "true"^^xsd:boolean;
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#DrawingType>.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Elevation> rdf:type owl:Class;
+    rdfs:label "Elevation";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "true"^^xsd:boolean;
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#DrawingType>.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Detail> rdf:type owl:Class;
+    rdfs:label "Detail";
+    rdfs:comment "Detail drawing";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "true"^^xsd:boolean;
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#DrawingType>, [ rdf:type owl:Restriction ; owl:onProperty <http://example.org/aec-drawing/v01/core#has> ; owl:onClass <http://example.org/aec-drawing/v01/drawing-metadata#Orientation> ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ].
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Orientation> rdf:type owl:Class;
+    rdfs:label "Detail Orientation";
+    rdfs:comment "Can be standalone label - drawing orientation";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "false"^^xsd:boolean;
+    rdfs:subClassOf owl:Thing.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Perspective> rdf:type owl:Class;
+    rdfs:label "Perspective";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "true"^^xsd:boolean;
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#DrawingType>.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#DetailLocation> rdf:type owl:Class;
+    rdfs:label "Detail location";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "false"^^xsd:boolean.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Base> rdf:type owl:Class;
+    rdfs:label "Base";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "false"^^xsd:boolean;
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#DetailLocation>.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Corner> rdf:type owl:Class;
+    rdfs:label "Corner";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "false"^^xsd:boolean;
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#DetailLocation>.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Head> rdf:type owl:Class;
+    rdfs:label "Head";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "false"^^xsd:boolean;
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#DetailLocation>.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#SlabEdge> rdf:type owl:Class;
+    rdfs:label "Slab edge";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "false"^^xsd:boolean;
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#DetailLocation>.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Typical> rdf:type owl:Class;
+    rdfs:label "Typical";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "false"^^xsd:boolean;
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#DetailLocation>.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Horizontal> rdf:type owl:Class;
+    rdfs:label "Horizontal";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "true"^^xsd:boolean;
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#Orientation>.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Vertical> rdf:type owl:Class;
+    rdfs:label "Vertical";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "true"^^xsd:boolean;
+    rdfs:subClassOf <http://example.org/aec-drawing/v01/drawing-metadata#Orientation>.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Portrait> rdf:type owl:Class;
+    rdfs:label "Portrait";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "true"^^xsd:boolean.
+
+<http://example.org/aec-drawing/v01/drawing-metadata#Landscape> rdf:type owl:Class;
+    rdfs:label "Landscape";
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "true"^^xsd:boolean.
