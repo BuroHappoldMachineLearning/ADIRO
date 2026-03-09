@@ -293,6 +293,9 @@ td {
       },
       {
         "@value": "Created/edited with https://alelom.github.io/OntoCanvas/ version 0.1.0"
+      },
+      {
+        "@value": "Created/edited with https://alelom.github.io/OntoCanvas/ version 1.0.4"
       }
     ],
     "https://schema.org/name": [
@@ -332,6 +335,7 @@ td {
               <ul>
                 <li><p>Ontology for AEC drawing elements - facade, structural, and drawing metadata. Based on schema rev02 (06.04.23).</p></li>
                 <li><p>Created/edited with https://alelom.github.io/OntoCanvas/ version 0.1.0</p></li>
+                <li><p>Created/edited with https://alelom.github.io/OntoCanvas/ version 1.0.4</p></li>
               </ul>
             </dd>
           </div>
@@ -1410,23 +1414,29 @@ td {
             </tr>
             <tr>
               <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#has">hasProperty</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
                 <a class="hover_property" href="https://w3id.org/profile/ontdoc/restriction" title="Convenience property for things that subclass owl:Restriction. Defined in Ontology Documentation Profile">Restriction</a>
               </th>
               <td>
                 <span>
                   <span>
                     <span>
-                      <a href="#contains">contains</a>
+                      <a href="#has">hasProperty</a>
                       <sup class="sup-op" title="OWL Object Property">op</sup>
                     </span>
                     <span>
-                      <span class="cardinality">some</span>
-                      <span>
-                        <span>
-                          <a href="#Orientation">Detail Orientation</a>
-                          <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                        </span>
-                      </span>
+                      <span class="cardinality">exactly</span>
+                      <span>1</span>
                     </span><br>
                   </span>
                 </span>
@@ -1494,7 +1504,7 @@ td {
             <tr>
               <th>IRI</th>
               <td>
-                <code>http://example.org/aec-drawing-ontology#dgu</code>
+                <code>http://example.org/aec-drawing-ontology#DGU</code>
               </td>
             </tr>
             <tr>
@@ -1599,7 +1609,7 @@ td {
             <tr>
               <th>IRI</th>
               <td>
-                <code>http://example.org/aec-drawing-ontology#drawingorientation</code>
+                <code>http://example.org/aec-drawing-ontology#DrawingOrientation</code>
               </td>
             </tr>
             <tr>
@@ -1610,13 +1620,13 @@ td {
                 <ul>
                   <li>
                     <span>
-                      <a href="#portrait">Portrait</a>
+                      <a href="#Portrait">Portrait</a>
                       <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                     </span>
                   </li>
                   <li>
                     <span>
-                      <a href="#landscape">Landscape</a>
+                      <a href="#Landscape">Landscape</a>
                       <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                     </span>
                   </li>
@@ -3128,7 +3138,7 @@ td {
             </tr>
           </table>
         </div>
-        <div class="property entity" id="landscape">
+        <div class="property entity" id="Landscape">
           <h3>Landscape
             <sup class="sup-c" title="OWL/RDFS Class">c</sup>
           </h3>
@@ -3136,7 +3146,7 @@ td {
             <tr>
               <th>IRI</th>
               <td>
-                <code>http://example.org/aec-drawing-ontology#landscape</code>
+                <code>http://example.org/aec-drawing-ontology#Landscape</code>
               </td>
             </tr>
             <tr>
@@ -3892,6 +3902,17 @@ td {
             </tr>
             <tr>
               <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#has">hasProperty</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
                 <a class="hover_property" href="https://w3id.org/profile/ontdoc/superClassOf" title="Inverse of RDFS' subClassOf. Defined in Ontology Documentation Profile">Super Class Of</a>
               </th>
               <td>
@@ -4264,7 +4285,7 @@ td {
             </tr>
           </table>
         </div>
-        <div class="property entity" id="portrait">
+        <div class="property entity" id="Portrait">
           <h3>Portrait
             <sup class="sup-c" title="OWL/RDFS Class">c</sup>
           </h3>
@@ -4272,7 +4293,7 @@ td {
             <tr>
               <th>IRI</th>
               <td>
-                <code>http://example.org/aec-drawing-ontology#portrait</code>
+                <code>http://example.org/aec-drawing-ontology#Portrait</code>
               </td>
             </tr>
             <tr>
@@ -5545,7 +5566,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#referstodrawingid">refersToDrawingId</a>
+                  <a href="#refersToDrawingId">refersToDrawingId</a>
                   <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
                 </span>
               </td>
@@ -6214,10 +6235,20 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
               </th>
               <td>
-                <span>
-                  <a href="#Thing">Thing</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#Thing">Thing</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#Detail">Detail</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                </ul>
               </td>
             </tr>
             <tr>
@@ -6225,10 +6256,20 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <span>
-                  <a href="#Thing">Thing</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#Thing">Thing</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#Orientation">Detail Orientation</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                </ul>
               </td>
             </tr>
           </table>
@@ -6236,7 +6277,7 @@ td {
       </div>
       <div class="section" id="datatypeproperties">
         <h2>Datatype Properties</h2>
-        <div class="property entity" id="referstodrawingid">
+        <div class="property entity" id="refersToDrawingId">
           <h3>refersToDrawingId
             <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
           </h3>
@@ -6244,7 +6285,7 @@ td {
             <tr>
               <th>IRI</th>
               <td>
-                <code>http://example.org/aec-drawing-ontology#referstodrawingid</code>
+                <code>http://example.org/aec-drawing-ontology#refersToDrawingId</code>
               </td>
             </tr>
             <tr>
@@ -6652,7 +6693,7 @@ td {
               <a href="#Laminated">Laminated</a>
             </li>
             <li>
-              <a href="#landscape">Landscape</a>
+              <a href="#Landscape">Landscape</a>
             </li>
             <li>
               <a href="#Layout">Layout</a>
@@ -6742,7 +6783,7 @@ td {
               <a href="#Polycarbonate">Polycarbonate</a>
             </li>
             <li>
-              <a href="#portrait">Portrait</a>
+              <a href="#Portrait">Portrait</a>
             </li>
             <li>
               <a href="#Precast">Precast</a>
@@ -6963,7 +7004,7 @@ td {
           </h4>
           <ul class="second">
             <li>
-              <a href="#referstodrawingid">refersToDrawingId</a>
+              <a href="#refersToDrawingId">refersToDrawingId</a>
             </li>
           </ul>
         </li>
