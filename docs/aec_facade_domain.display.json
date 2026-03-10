@@ -82,24 +82,24 @@
       "y": 727
     },
     "Louvre": {
-      "x": 2773,
-      "y": 727
+      "x": 2444,
+      "y": 743
     },
     "Sealant": {
-      "x": 2982,
-      "y": 727
+      "x": 2904,
+      "y": 735
     },
     "WindowSystem": {
-      "x": 3191,
-      "y": 788
+      "x": 1580,
+      "y": 716
     },
     "BackingWall": {
       "x": 3470,
       "y": 727
     },
     "Board": {
-      "x": 3735,
-      "y": 727
+      "x": 3609,
+      "y": 824
     },
     "FacadeCladding": {
       "x": 4368,
@@ -198,8 +198,8 @@
       "y": 1218
     },
     "Silicone": {
-      "x": 2963,
-      "y": 938
+      "x": 2900,
+      "y": 915
     },
     "DGU": {
       "x": 3918,
@@ -414,8 +414,8 @@
       "y": -1072
     },
     "https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common#GeometricProperties": {
-      "x": 15473,
-      "y": -654
+      "x": 15468,
+      "y": -541
     },
     "https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common#Function": {
       "x": 17859,
@@ -470,10 +470,10 @@
     "textProps": {}
   },
   "viewState": {
-    "scale": 0.07181532461783353,
+    "scale": 0.1861453170047553,
     "position": {
-      "x": 9738.40380859375,
-      "y": 561.5000000000001
+      "x": 9712.380896207536,
+      "y": -75.83740902720048
     }
   },
   "displayExternalReferences": true,
