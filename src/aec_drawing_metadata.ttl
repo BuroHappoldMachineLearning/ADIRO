@@ -1,35 +1,30 @@
 @prefix : <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#>.
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
-@prefix xml: <http://www.w3.org/XML/1998/namespace#>.
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 # Created/edited with https://alelom.github.io/OntoCanvas/ version 1.8.2
 
 #################################################################
 #    Ontology
 #################################################################
 
-<https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata> rdf:type owl:Ontology;
-    rdfs:label "AEC Drawing Metadata Ontology";
-    rdfs:comment "Sheet/layout/document structure for AEC drawings.";
-    owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata/1.0.0>;
-    owl:versionInfo "1.0.0";
-    owl:imports <http://www.w3.org/2002/07/owl#>;
-    owl:imports <http://example.org/aec-drawing-ontology#> ;
-    owl:imports <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ;
-    owl:imports <http://www.w3.org/2000/01/rdf-schema#> ;
-    owl:imports <http://www.w3.org/2001/XMLSchema#> ;
-    owl:imports <http://www.w3.org/XML/1998/namespace#> ;
+<https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata> rdf:type owl:Ontology ;
+    rdfs:label "AEC Drawing Metadata Ontology" ;
+    rdfs:comment "Sheet/layout/document structure for AEC drawings." ;
+    owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata/1.0.0> ;
+    owl:versionInfo "1.0.0" ;
+    owl:imports <http://www.w3.org/2002/07/owl#> .
 
 
 #################################################################
 #    Annotation properties
 #################################################################
 
-:exampleImage rdf:type owl:AnnotationProperty;
-    rdfs:label "example image"@en;
-    rdfs:comment "Links a class or concept to an example image illustrating it."@en.
+:exampleImage rdf:type owl:AnnotationProperty ;
+    rdfs:label "example image"@en ;
+    rdfs:comment "Links a class or concept to an example image illustrating it."@en .
 
 :labellableRoot rdf:type owl:AnnotationProperty;
     rdfs:label "Labellable root";
