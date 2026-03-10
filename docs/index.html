@@ -92,10 +92,26 @@
         .ontology-list a.ontocanvas-button {
             color: white !important;
         }
+        .ontology-description {
+            color: #555;
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
         .file-name {
             color: #666;
             font-size: 0.9rem;
             margin-top: 0.5rem;
+        }
+        .file-name a {
+            color: #007acc;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: normal;
+        }
+        .file-name a:hover {
+            text-decoration: underline;
         }
         .ontocanvas-button {
             display: inline-flex;
@@ -148,20 +164,9 @@
         <li>
             <div class="ontology-item">
                 <div class="ontology-link-container">
-                    <a href="aec_common_symbols.html">Aec Common Symbols</a>
-                    <div class="file-name">Source: aec_common_symbols.ttl</div>
-                </div>
-                <a href="#" class="ontocanvas-button" data-ontology="aec_common_symbols.html" target="_blank">
-                    <img src="https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png" alt="OntoCanvas" class="ontocanvas-icon">
-                    Open in OntoCanvas
-                </a>
-            </div>
-        </li>
-        <li>
-            <div class="ontology-item">
-                <div class="ontology-link-container">
                     <a href="aec_core.html">Aec Core</a>
-                    <div class="file-name">Source: aec_core.ttl</div>
+                    <div class="ontology-description">Minimal shared primitives and cross-module contracts. Dependencies: none.</div>
+                    <div class="file-name">Source: <a href="aec_core.ttl">aec_core.ttl</a></div>
                 </div>
                 <a href="#" class="ontocanvas-button" data-ontology="aec_core.html" target="_blank">
                     <img src="https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png" alt="OntoCanvas" class="ontocanvas-icon">
@@ -172,20 +177,9 @@
         <li>
             <div class="ontology-item">
                 <div class="ontology-link-container">
-                    <a href="aec_domain_common.html">Aec Domain Common</a>
-                    <div class="file-name">Source: aec_domain_common.ttl</div>
-                </div>
-                <a href="#" class="ontocanvas-button" data-ontology="aec_domain_common.html" target="_blank">
-                    <img src="https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png" alt="OntoCanvas" class="ontocanvas-icon">
-                    Open in OntoCanvas
-                </a>
-            </div>
-        </li>
-        <li>
-            <div class="ontology-item">
-                <div class="ontology-link-container">
                     <a href="aec_drawing_metadata.html">Aec Drawing Metadata</a>
-                    <div class="file-name">Source: aec_drawing_metadata.ttl</div>
+                    <div class="ontology-description">Sheet/layout/document structure for AEC drawings. Dependencies: aec-core.</div>
+                    <div class="file-name">Source: <a href="aec_drawing_metadata.ttl">aec_drawing_metadata.ttl</a></div>
                 </div>
                 <a href="#" class="ontocanvas-button" data-ontology="aec_drawing_metadata.html" target="_blank">
                     <img src="https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png" alt="OntoCanvas" class="ontocanvas-icon">
@@ -196,10 +190,24 @@
         <li>
             <div class="ontology-item">
                 <div class="ontology-link-container">
-                    <a href="aec_drawing_ontology.html">Aec Drawing Ontology</a>
-                    <div class="file-name">Source: aec_drawing_ontology.ttl</div>
+                    <a href="aec_common_symbols.html">Aec Common Symbols</a>
+                    <div class="ontology-description">Cross-discipline layout content. Generic classes like DrawingElement, which any symbols will be. Concepts like dimensions, callouts, grids, levels, etc. (mostly reusable non-domain symbols). Dependencies: aec-core, aec-drawing-metadata.</div>
+                    <div class="file-name">Source: <a href="aec_common_symbols.ttl">aec_common_symbols.ttl</a></div>
                 </div>
-                <a href="#" class="ontocanvas-button" data-ontology="aec_drawing_ontology.html" target="_blank">
+                <a href="#" class="ontocanvas-button" data-ontology="aec_common_symbols.html" target="_blank">
+                    <img src="https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png" alt="OntoCanvas" class="ontocanvas-icon">
+                    Open in OntoCanvas
+                </a>
+            </div>
+        </li>
+        <li>
+            <div class="ontology-item">
+                <div class="ontology-link-container">
+                    <a href="aec_domain_common.html">Aec Domain Common</a>
+                    <div class="ontology-description">Shared domain abstractions reused across multiple domain ontologies (e.g., facade+structural). Dependencies: aec-core, aec-drawing-metadata, aec-common-symbols.</div>
+                    <div class="file-name">Source: <a href="aec_domain_common.ttl">aec_domain_common.ttl</a></div>
+                </div>
+                <a href="#" class="ontocanvas-button" data-ontology="aec_domain_common.html" target="_blank">
                     <img src="https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png" alt="OntoCanvas" class="ontocanvas-icon">
                     Open in OntoCanvas
                 </a>
@@ -209,9 +217,23 @@
             <div class="ontology-item">
                 <div class="ontology-link-container">
                     <a href="aec_facade_domain.html">Aec Facade Domain</a>
-                    <div class="file-name">Source: aec_facade_domain.ttl</div>
+                    <div class="ontology-description">Facade-specific concepts and symbols for facade engineering drawings. Dependencies: aec-core, aec-drawing-metadata, aec-common-symbols, aec-domain-common.</div>
+                    <div class="file-name">Source: <a href="aec_facade_domain.ttl">aec_facade_domain.ttl</a></div>
                 </div>
                 <a href="#" class="ontocanvas-button" data-ontology="aec_facade_domain.html" target="_blank">
+                    <img src="https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png" alt="OntoCanvas" class="ontocanvas-icon">
+                    Open in OntoCanvas
+                </a>
+            </div>
+        </li>
+        <li>
+            <div class="ontology-item">
+                <div class="ontology-link-container">
+                    <a href="aec_drawing_ontology.html">Aec Drawing Ontology</a>
+                    <div class="ontology-description">Ontology for AEC drawing elements - facade, structural, and drawing metadata. Based on schema rev02 (06.04.23).</div>
+                    <div class="file-name">Source: <a href="aec_drawing_ontology.ttl">aec_drawing_ontology.ttl</a></div>
+                </div>
+                <a href="#" class="ontocanvas-button" data-ontology="aec_drawing_ontology.html" target="_blank">
                     <img src="https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png" alt="OntoCanvas" class="ontocanvas-icon">
                     Open in OntoCanvas
                 </a>

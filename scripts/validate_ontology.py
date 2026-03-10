@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 from rdflib import Graph
 from rdflib.namespace import RDF, RDFS, OWL
+from rdflib.term import BNode
 from collections import defaultdict, deque
 
 
@@ -27,7 +28,13 @@ def find_circular_references(graph):
     all_classes = set()
     
     for s, p, o in graph.triples((None, RDFS.subClassOf, None)):
-        if isinstance(o, tuple):  # Skip blank node restrictions
+        # Skip blank nodes (BNode objects) - these are typically restrictions
+        if isinstance(o, BNode):
+            continue
+        # Only track direct class-to-class subclass relationships
+        # Skip owl:Thing as it's the root
+        if o == OWL.Thing:
+            all_classes.add(s)
             continue
         subclass_map[s].add(o)
         all_classes.add(s)
@@ -53,7 +60,7 @@ def find_circular_references(graph):
         rec_stack.add(node)
         
         for subclass in subclass_map.get(node, []):
-            if isinstance(subclass, tuple):  # Skip blank node restrictions
+            if isinstance(subclass, BNode):
                 continue
             dfs(subclass, path + [node])
         
@@ -110,11 +117,11 @@ def main():
         print("No files specified. Validating all .ttl files in src/ directory...")
         src_dir = repo_root / "src"
         if src_dir.exists():
-            ttl_files = list(src_dir.glob("aec_*.ttl"))
+            ttl_files = list(src_dir.glob("*.ttl"))
         else:
             ttl_files = []
         if not ttl_files:
-            print("No ontology files found (aec_*.ttl) in src/ directory.", file=sys.stderr)
+            print("No ontology files found (*.ttl) in src/ directory.", file=sys.stderr)
             print("Usage: python validate_ontology.py <ttl_file> [<ttl_file> ...]")
             sys.exit(1)
     else:

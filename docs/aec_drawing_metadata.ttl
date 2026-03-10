@@ -9,7 +9,7 @@
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata> rdf:type owl:Ontology ;
     rdfs:label "AEC Drawing Metadata Ontology" ;
-    rdfs:comment "Sheet/layout/document structure for AEC drawings." ;
+    rdfs:comment "Sheet/layout/document structure for AEC drawings. Dependencies: aec-core." ;
     owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata/1.0.0> ;
     owl:versionInfo "1.0.0" ;
     owl:imports <https://burohappoldmachinelearning.github.io/ADIRO/aec-core>,

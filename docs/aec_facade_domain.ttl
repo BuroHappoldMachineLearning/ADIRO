@@ -15,7 +15,7 @@
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain> rdf:type owl:Ontology ;
     rdfs:label "AEC Facade Domain Ontology" ;
-    rdfs:comment "Facade-specific concepts and symbols for facade engineering drawings." ;
+    rdfs:comment "Facade-specific concepts and symbols for facade engineering drawings. Dependencies: aec-core, aec-drawing-metadata, aec-common-symbols, aec-domain-common." ;
     owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain/1.0.0> ;
     owl:versionInfo "1.0.0" ;
     owl:imports <https://burohappoldmachinelearning.github.io/ADIRO/aec-core>,

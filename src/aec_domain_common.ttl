@@ -10,7 +10,7 @@
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common> rdf:type owl:Ontology ;
     rdfs:label "AEC Domain Common Ontology" ;
-    rdfs:comment "Shared domain abstractions reused across multiple domain ontologies (e.g., facade+structural)." ;
+    rdfs:comment "Shared domain abstractions reused across multiple domain ontologies (e.g., facade+structural). Dependencies: aec-core, aec-drawing-metadata, aec-common-symbols." ;
     owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common/1.0.0> ;
     owl:versionInfo "1.0.0" ;
     owl:imports <https://burohappoldmachinelearning.github.io/ADIRO/aec-core>,

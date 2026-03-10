@@ -10,6 +10,8 @@ import sys
 import shutil
 from pathlib import Path
 from pylode.profiles.ontpub import OntPub
+from rdflib import Graph
+from rdflib.namespace import RDF, RDFS, OWL
 
 
 def find_ttl_files(root_dir: Path) -> list[Path]:
@@ -19,6 +21,42 @@ def find_ttl_files(root_dir: Path) -> list[Path]:
         return []
     ttl_files = list(src_dir.glob("*.ttl"))
     return sorted(ttl_files)
+
+
+def sort_by_dependency(ttl_files: list[Path]) -> list[Path]:
+    """
+    Sort ontology files by their dependency hierarchy.
+    
+    Order:
+    1. Core (no ADIRO imports)
+    2. Drawing Metadata (imports Core)
+    3. Common Symbols (imports Core + Drawing Metadata)
+    4. Domain-common (imports Core + Drawing Metadata + Common Symbols)
+    5. Facade Domain (imports Core + Drawing Metadata + Common Symbols + Domain-common)
+    6. Drawing Ontology (monolith, last)
+    
+    Args:
+        ttl_files: List of TTL file paths
+        
+    Returns:
+        List of TTL files sorted by dependency order
+    """
+    # Define dependency order (lower number = fewer dependencies)
+    dependency_order = {
+        'aec_core': 1,
+        'aec_drawing_metadata': 2,
+        'aec_common_symbols': 3,
+        'aec_domain_common': 4,
+        'aec_facade_domain': 5,
+        'aec_drawing_ontology': 6,  # Monolith, put last
+    }
+    
+    def get_order(file_path: Path) -> int:
+        """Get the dependency order for a file."""
+        stem = file_path.stem
+        return dependency_order.get(stem, 999)  # Unknown files go to end
+    
+    return sorted(ttl_files, key=get_order)
 
 
 def find_display_json_files(root_dir: Path) -> list[Path]:
@@ -54,18 +92,54 @@ def generate_documentation(ttl_file: Path, output_dir: Path) -> bool:
         od = OntPub(ontology=str(ttl_file))
         od.make_html(destination=str(output_file))
         
-        print(f"  ✓ Generated: {output_file}")
+        print(f"  [OK] Generated: {output_file}")
         
         # Copy the TTL file to the docs directory
         ttl_output = output_dir / ttl_file.name
         shutil.copy2(ttl_file, ttl_output)
-        print(f"  ✓ Copied TTL: {ttl_output}")
+        print(f"  [OK] Copied TTL: {ttl_output}")
         
         return True
         
     except Exception as e:
-        print(f"  ✗ Error processing {ttl_file.name}: {e}", file=sys.stderr)
+        print(f"  [ERROR] Error processing {ttl_file.name}: {e}", file=sys.stderr)
         return False
+
+
+def extract_ontology_comment(ttl_file: Path) -> str:
+    """
+    Extract the rdfs:comment from the ontology declaration in a TTL file.
+    
+    Args:
+        ttl_file: Path to the TTL file
+        
+    Returns:
+        The comment string, or empty string if not found
+    """
+    try:
+        graph = Graph()
+        graph.parse(str(ttl_file), format="turtle")
+        
+        # Find the ontology declaration
+        ontologies = list(graph.subjects(RDF.type, OWL.Ontology))
+        if not ontologies:
+            return ""
+        
+        ontology = ontologies[0]
+        
+        # Get the rdfs:comment
+        comments = list(graph.objects(ontology, RDFS.comment))
+        if comments:
+            # Return the first comment, converting to string
+            comment = str(comments[0])
+            # Remove language tags if present (e.g., "text"@en -> "text")
+            if '@' in comment:
+                comment = comment.split('@')[0]
+            return comment.strip('"')
+        
+        return ""
+    except Exception:
+        return ""
 
 
 def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
@@ -172,10 +246,26 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
         .ontology-list a.ontocanvas-button {
             color: white !important;
         }
+        .ontology-description {
+            color: #555;
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
         .file-name {
             color: #666;
             font-size: 0.9rem;
             margin-top: 0.5rem;
+        }
+        .file-name a {
+            color: #007acc;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: normal;
+        }
+        .file-name a:hover {
+            text-decoration: underline;
         }
         .ontocanvas-button {
             display: inline-flex;
@@ -229,11 +319,20 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     
     for ttl_file in ttl_files:
         html_filename = f"{ttl_file.stem}.html"
+        ttl_filename = ttl_file.name
+        comment = extract_ontology_comment(ttl_file)
+        
+        # Build the description HTML
+        description_html = ""
+        if comment:
+            description_html = f'                    <div class="ontology-description">{comment}</div>'
+        
         html_content += f"""        <li>
             <div class="ontology-item">
                 <div class="ontology-link-container">
                     <a href="{html_filename}">{ttl_file.stem.replace('_', ' ').title()}</a>
-                    <div class="file-name">Source: {ttl_file.name}</div>
+{description_html}
+                    <div class="file-name">Source: <a href="{ttl_filename}">{ttl_filename}</a></div>
                 </div>
                 <a href="#" class="ontocanvas-button" data-ontology="{html_filename}" target="_blank">
                     <img src="https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png" alt="OntoCanvas" class="ontocanvas-icon">
@@ -268,7 +367,7 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
 """
     
     index_file.write_text(html_content, encoding='utf-8')
-    print(f"  ✓ Generated index: {index_file}")
+    print(f"  [OK] Generated index: {index_file}")
 
 
 def main():
@@ -281,6 +380,8 @@ def main():
     
     # Find all TTL files in root
     ttl_files = find_ttl_files(repo_root)
+    # Sort by dependency order
+    ttl_files = sort_by_dependency(ttl_files)
     display_json_files = find_display_json_files(repo_root)
     
     if not ttl_files:
@@ -312,7 +413,7 @@ def main():
     for display_json_file in display_json_files:
         display_json_output = output_dir / display_json_file.name
         shutil.copy2(display_json_file, display_json_output)
-        print(f"  ✓ Copied display JSON: {display_json_output}")
+        print(f"  [OK] Copied display JSON: {display_json_output}")
     
     print("-" * 60)
     print(f"Documentation generation complete: {success_count}/{len(ttl_files)} files processed successfully.")

@@ -9,7 +9,7 @@
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols> rdf:type owl:Ontology ;
     rdfs:label "AEC Common Symbols Ontology" ;
-    rdfs:comment "Cross-discipline layout content. Generic classes like DrawingElement, which any symbols will be. Concepts like dimensions, callouts, grids, levels, etc. (mostly reusable non-domain symbols)." ;
+    rdfs:comment "Cross-discipline layout content. Generic classes like DrawingElement, which any symbols will be. Concepts like dimensions, callouts, grids, levels, etc. (mostly reusable non-domain symbols). Dependencies: aec-core, aec-drawing-metadata." ;
     owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols/1.0.0> ;
     owl:versionInfo "1.0.0" ;
     owl:imports <https://burohappoldmachinelearning.github.io/ADIRO/aec-core>,

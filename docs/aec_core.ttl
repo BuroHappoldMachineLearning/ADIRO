@@ -7,7 +7,7 @@
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-core> rdf:type owl:Ontology ;
     rdfs:label "AEC Drawing Core Ontology" ;
-    rdfs:comment "Minimal shared primitives and cross-module contracts." ;
+    rdfs:comment "Minimal shared primitives and cross-module contracts. Dependencies: none." ;
     owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec-core/1.0.0> ;
     owl:versionInfo "1.0.0" ;
     owl:imports <http://www.w3.org/2002/07/owl#>,
