@@ -7,7 +7,7 @@ The monolithic ontology `aec_drawing_ontology.ttl` has been successfully modular
 ## Module Structure
 
 ### 1. Core Ontology (`aec_core.ttl`)
-**Namespace**: `http://example.org/aec-drawing/v01/core#`
+**Namespace**: `https://burohappoldmachinelearning.github.io/ADIRO/aec-core#`
 
 **Contents**:
 - Annotation properties: `:exampleImage`, `:labellableRoot`
@@ -16,7 +16,7 @@ The monolithic ontology `aec_drawing_ontology.ttl` has been successfully modular
 **Imports**: None (foundation layer)
 
 ### 2. Drawing Metadata Ontology (`aec_drawing_metadata.ttl`)
-**Namespace**: `http://example.org/aec-drawing/v01/drawing-metadata#`
+**Namespace**: `https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#`
 
 **Contents**:
 - Sheet/layout/document structure: `:DrawingSheet`, `:Layout`, `:Metadata`
@@ -29,7 +29,7 @@ The monolithic ontology `aec_drawing_ontology.ttl` has been successfully modular
 **Imports**: Core, Common Symbols
 
 ### 3. Common Symbols Ontology (`aec_common_symbols.ttl`)
-**Namespace**: `http://example.org/aec-drawing/v01/common-symbols#`
+**Namespace**: `https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols#`
 
 **Contents**:
 - Generic drawing element: `:DrawingElement`
@@ -38,7 +38,7 @@ The monolithic ontology `aec_drawing_ontology.ttl` has been successfully modular
 **Imports**: Core, Drawing Metadata
 
 ### 4. Domain-common Ontology (`aec_domain_common.ttl`)
-**Namespace**: `http://example.org/aec-drawing/v01/domain-common#`
+**Namespace**: `https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common#`
 
 **Contents**:
 - Property classes: `:MaterialProperties`, `:Material`, `:FunctionalProperties`, `:Function`, `:GeometricProperties`, `:SectionProperties`, `:StructuralProperties`
@@ -51,7 +51,7 @@ The monolithic ontology `aec_drawing_ontology.ttl` has been successfully modular
 **Imports**: Core, Drawing Metadata, Common Symbols
 
 ### 5. Facade Domain Ontology (`aec_facade_domain.ttl`)
-**Namespace**: `http://example.org/aec-drawing/v01/facade-domain#`
+**Namespace**: `https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#`
 
 **Contents**:
 - Facade drawing elements: `:FacadeComponent`, `:FacadeSystem`

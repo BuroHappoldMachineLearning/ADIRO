@@ -90,25 +90,33 @@ Simply add a new `.ttl` file to the repository root. The next time the documenta
 
 ## Versioning
 
-The ontologies use versioned IRIs (e.g., `http://example.org/aec-drawing/v01/core#`) but the filenames do not include version numbers (e.g., `aec_core.ttl` rather than `aec_core_v01.ttl`).
+The ontologies use OWL 2 versioning best practices with unversioned and versioned IRIs:
+
+- **Unversioned ontology IRI**: `https://burohappoldmachinelearning.github.io/ADIRO/aec-core` (always resolves to current version)
+- **Versioned ontology IRI**: `https://burohappoldmachinelearning.github.io/ADIRO/aec-core/1.0.0` (specific version)
+- **Namespace prefix**: `https://burohappoldmachinelearning.github.io/ADIRO/aec-core#` (unversioned, always current)
+
+Each ontology declares both an unversioned IRI and a versioned IRI using `owl:versionIRI` and `owl:versionInfo`. The filenames do not include version numbers (e.g., `aec_core.ttl` rather than `aec_core_v01.ttl`).
 
 ### Version Backups
 
-When a new version is released (via a tagged release in GitHub), the previous version of all ontology files is automatically backed up to the `versions/` folder. The backup structure is:
+**Note**: The automatic version backup workflow described below is not yet implemented. Manual backup to `versions/` folders should be performed when creating new releases.
+
+When a new version is released (via a tagged release in GitHub), the previous version of all ontology files should be backed up to the `versions/` folder. The backup structure would be:
 
 ```
 versions/
-  v01/
+  1.0.0/
     aec_core.ttl
     aec_drawing_metadata.ttl
     aec_common_symbols.ttl
     aec_domain_common.ttl
     aec_facade_domain.ttl
-  v02/
+  1.1.0/
     ...
 ```
 
-This backup process is handled automatically by GitHub Actions when a new release tag is created. The version folders preserve the complete state of all ontology files at each release point, allowing for:
+This backup process should preserve the complete state of all ontology files at each release point, allowing for:
 
 - Historical reference and comparison
 - Rollback capabilities if needed
@@ -118,10 +126,10 @@ This backup process is handled automatically by GitHub Actions when a new releas
 
 To create a new version:
 
-1. Make your changes to the ontology files
-2. Update the version number in the ontology IRI (e.g., `v01` → `v02`)
-3. Create a new release tag in GitHub (e.g., `v02.0.0`)
-4. The GitHub Actions workflow will automatically:
-   - Backup the current files to `versions/v<previous_version>/`
+1. Make your changes to the ontology files in `src/`
+2. Update the version number in the ontology IRI (e.g., `1.0.0` → `1.1.0`) and update `owl:versionIRI` and `owl:versionInfo`
+3. Manually backup current files to `versions/<previous_version>/`
+4. Create a new release tag in GitHub (e.g., `v1.1.0`)
+5. The GitHub Actions workflow will automatically:
    - Update documentation
    - Deploy to GitHub Pages

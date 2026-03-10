@@ -25,15 +25,7 @@
 
 
 #################################################################
-#    Annotation properties
-#################################################################
-
-<https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#exampleImage> rdf:type owl:AnnotationProperty;
-    rdfs:label "example image"@en;
-    rdfs:comment "Links a class or concept to an example image illustrating it."@en.
-
-#################################################################
-#    Classes
+#    Facade Drawing Elements
 #################################################################
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeComponent> rdf:type owl:Class;
@@ -294,12 +286,11 @@
     <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Sealant>.
 
-<https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#DGU> rdf:type owl:Class;
-    rdfs:label "DGU";
-    rdfs:comment "Double Glazing Unit";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
-    rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeCladding>;
-    :labellableRoot "true"^^xsd:boolean.
+<https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#DGU> rdf:type owl:Class ;
+    rdfs:label "DGU" ;
+    rdfs:comment "Double Glazing Unit" ;
+    core:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeCladding> .
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Masonry> rdf:type owl:Class;
     rdfs:label "Masonry";
