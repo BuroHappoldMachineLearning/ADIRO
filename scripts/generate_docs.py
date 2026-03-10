@@ -352,7 +352,7 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     </style>
 </head>
 <body>
-    <h1>ADIRO Ontology Documentation</h1>
+    <h1>ADIRO Ontologies Documentation</h1>
     
     <div class="intro">
         <p>ADIRO is a set of ontologies for AEC (Architecture, Engineering, and Construction) drawing representation, designed to support machine learning tasks, graph database storage, and information extraction workflows.</p>
