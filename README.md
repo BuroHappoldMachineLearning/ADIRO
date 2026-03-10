@@ -100,9 +100,9 @@ Each ontology declares both an unversioned IRI and a versioned IRI using `owl:ve
 
 ### Version Backups
 
-**Note**: The automatic version backup workflow described below is not yet implemented. Manual backup to `versions/` folders should be performed when creating new releases.
+When a new version is released (via a tagged release in GitHub), the current version of all ontology files is automatically backed up to the `versions/` folder. The backup process is triggered automatically by GitHub Actions when a release tag is created or published.
 
-When a new version is released (via a tagged release in GitHub), the previous version of all ontology files should be backed up to the `versions/` folder. The backup structure would be:
+The backup structure is:
 
 ```
 versions/
@@ -116,7 +116,7 @@ versions/
     ...
 ```
 
-This backup process should preserve the complete state of all ontology files at each release point, allowing for:
+This backup process preserves the complete state of all ontology files at each release point, allowing for:
 
 - Historical reference and comparison
 - Rollback capabilities if needed
@@ -127,9 +127,14 @@ This backup process should preserve the complete state of all ontology files at 
 To create a new version:
 
 1. Make your changes to the ontology files in `src/`
-2. Update the version number in the ontology IRI (e.g., `1.0.0` → `1.1.0`) and update `owl:versionIRI` and `owl:versionInfo`
-3. Manually backup current files to `versions/<previous_version>/`
-4. Create a new release tag in GitHub (e.g., `v1.1.0`)
-5. The GitHub Actions workflow will automatically:
-   - Update documentation
+2. Update the version number in the ontology IRI (e.g., `1.0.0` → `1.1.0`) and update `owl:versionIRI` and `owl:versionInfo` in all ontology files
+3. Commit and push your changes to `main` or `master`
+4. The `deploy-docs` workflow will automatically:
+   - Validate all ontology files
+   - Generate documentation
    - Deploy to GitHub Pages
+5. Create a new release in GitHub with a tag matching the version (e.g., `v1.1.0` or `1.1.0`)
+6. The `backup-version` workflow will automatically:
+   - Extract the version from the release tag
+   - Copy all `.ttl` files from `src/` to `versions/<version>/`
+   - Commit and push the backup to the repository
