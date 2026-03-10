@@ -1,0 +1,481 @@
+{
+  "version": 1,
+  "nodePositions": {
+    "FacadeComponent": {
+      "x": 4214,
+      "y": 0
+    },
+    "FacadeSystem": {
+      "x": 10184,
+      "y": -5
+    },
+    "LinearComponent": {
+      "x": 1623,
+      "y": 420
+    },
+    "PanelComponent": {
+      "x": 4983,
+      "y": 420
+    },
+    "PointComponent": {
+      "x": 7642,
+      "y": 420
+    },
+    "CavityWallSystem": {
+      "x": 9479,
+      "y": 420
+    },
+    "CurtainWallSystem": {
+      "x": 10097,
+      "y": 420
+    },
+    "PrecastSystem": {
+      "x": 10627,
+      "y": 420
+    },
+    "RainscreenSystem": {
+      "x": 10960,
+      "y": 342
+    },
+    "SemiUnitisedCurtainWall": {
+      "x": 9889,
+      "y": 727
+    },
+    "StickCurtainWall": {
+      "x": 10168,
+      "y": 727
+    },
+    "UnitisedCurtainWall": {
+      "x": 10377,
+      "y": 727
+    },
+    "GRC": {
+      "x": 10559,
+      "y": 727
+    },
+    "UMPC": {
+      "x": 10685,
+      "y": 727
+    },
+    "Capping": {
+      "x": 107,
+      "y": 727
+    },
+    "CWFrameMember": {
+      "x": 386,
+      "y": 788
+    },
+    "FacadeSecondaryStructure": {
+      "x": 734,
+      "y": 849
+    },
+    "Fin": {
+      "x": 967,
+      "y": 727
+    },
+    "Firestop": {
+      "x": 1148,
+      "y": 727
+    },
+    "Gasket": {
+      "x": 1973,
+      "y": 727
+    },
+    "Louvre": {
+      "x": 2773,
+      "y": 727
+    },
+    "Sealant": {
+      "x": 2982,
+      "y": 727
+    },
+    "WindowSystem": {
+      "x": 3191,
+      "y": 788
+    },
+    "BackingWall": {
+      "x": 3470,
+      "y": 727
+    },
+    "Board": {
+      "x": 3735,
+      "y": 727
+    },
+    "FacadeCladding": {
+      "x": 4368,
+      "y": 788
+    },
+    "Insulation": {
+      "x": 5359,
+      "y": 727
+    },
+    "Membrane": {
+      "x": 6150,
+      "y": 727
+    },
+    "RoofCladding": {
+      "x": 6644,
+      "y": 788
+    },
+    "Bracket": {
+      "x": 7201,
+      "y": 727
+    },
+    "Fixing": {
+      "x": 7824,
+      "y": 727
+    },
+    "LocalisedPenetration": {
+      "x": 8265,
+      "y": 788
+    },
+    "Mullion": {
+      "x": 301,
+      "y": 1059
+    },
+    "Transom": {
+      "x": 473,
+      "y": 1059
+    },
+    "Rail": {
+      "x": 613,
+      "y": 1181
+    },
+    "ShelfAngle": {
+      "x": 795,
+      "y": 1181
+    },
+    "CavityBarrier": {
+      "x": 1431,
+      "y": 982
+    },
+    "Channel": {
+      "x": 1678,
+      "y": 938
+    },
+    "Flipper": {
+      "x": 1849,
+      "y": 938
+    },
+    "HollowGasketShape": {
+      "x": 2072,
+      "y": 982
+    },
+    "Reflvet": {
+      "x": 2294,
+      "y": 938
+    },
+    "SolidGasketShape": {
+      "x": 2517,
+      "y": 982
+    },
+    "OGasket": {
+      "x": 1996,
+      "y": 1218
+    },
+    "PGasket": {
+      "x": 2123,
+      "y": 1218
+    },
+    "PushIn": {
+      "x": 2409,
+      "y": 1218
+    },
+    "SlideIn": {
+      "x": 2530,
+      "y": 1218
+    },
+    "Wedge": {
+      "x": 2639,
+      "y": 1218
+    },
+    "ClosedState": {
+      "x": 1356,
+      "y": 1218
+    },
+    "OpenState": {
+      "x": 1520,
+      "y": 1218
+    },
+    "Silicone": {
+      "x": 2963,
+      "y": 938
+    },
+    "DGU": {
+      "x": 3918,
+      "y": 1059
+    },
+    "Masonry": {
+      "x": 4048,
+      "y": 1059
+    },
+    "PrecastConcrete": {
+      "x": 4230,
+      "y": 1104
+    },
+    "ProfiledMetal": {
+      "x": 4421,
+      "y": 1104
+    },
+    "SmallPanels": {
+      "x": 4654,
+      "y": 1059
+    },
+    "TGU": {
+      "x": 4835,
+      "y": 1059
+    },
+    "Cementboard": {
+      "x": 3473,
+      "y": 938
+    },
+    "Plasterboard": {
+      "x": 3736,
+      "y": 938
+    },
+    "MineralWool": {
+      "x": 5017,
+      "y": 938
+    },
+    "OtherInsulation": {
+      "x": 5270,
+      "y": 982
+    },
+    "VCL": {
+      "x": 5513,
+      "y": 1027
+    },
+    "WoodFibre": {
+      "x": 5756,
+      "y": 938
+    },
+    "BreatherMembrane": {
+      "x": 5968,
+      "y": 938
+    },
+    "EPDM": {
+      "x": 6118,
+      "y": 938
+    },
+    "WaterproofingMembrane": {
+      "x": 6320,
+      "y": 938
+    },
+    "Blockwork": {
+      "x": 6573,
+      "y": 1059
+    },
+    "TimberCassette": {
+      "x": 6775,
+      "y": 1104
+    },
+    "SFS": {
+      "x": 3302,
+      "y": 938
+    },
+    "DeadLoadBracket": {
+      "x": 6977,
+      "y": 938
+    },
+    "HelpingHandBracket": {
+      "x": 7220,
+      "y": 938
+    },
+    "PrecastRestraintBracket": {
+      "x": 7463,
+      "y": 982
+    },
+    "CastInChannel": {
+      "x": 7655,
+      "y": 982
+    },
+    "Screw": {
+      "x": 7805,
+      "y": 938
+    },
+    "WeldedBolt": {
+      "x": 7997,
+      "y": 938
+    },
+    "CWFrameMemberProperties": {
+      "x": 12273,
+      "y": 0
+    },
+    "GlazingProperties": {
+      "x": 13959,
+      "y": 0
+    },
+    "FacadeShape": {
+      "x": 15458,
+      "y": 0
+    },
+    "FrameType": {
+      "x": 11696,
+      "y": 436
+    },
+    "GlazingRetention": {
+      "x": 12441,
+      "y": 515
+    },
+    "CWSystem": {
+      "x": 13017,
+      "y": 436
+    },
+    "AddOn": {
+      "x": 11418,
+      "y": 665
+    },
+    "Extruded": {
+      "x": 11641,
+      "y": 665
+    },
+    "Fabricated": {
+      "x": 11920,
+      "y": 665
+    },
+    "Capped": {
+      "x": 12176,
+      "y": 822
+    },
+    "SSG": {
+      "x": 12441,
+      "y": 1004
+    },
+    "Toggle": {
+      "x": 12706,
+      "y": 822
+    },
+    "DoubleLaminated": {
+      "x": 13584,
+      "y": 420
+    },
+    "Laminated": {
+      "x": 13941,
+      "y": 342
+    },
+    "Monolithic": {
+      "x": 14316,
+      "y": 342
+    },
+    "Stick": {
+      "x": 12893,
+      "y": 665
+    },
+    "Unitised": {
+      "x": 13102,
+      "y": 665
+    },
+    "Curved": {
+      "x": 14733,
+      "y": 247
+    },
+    "Faceted": {
+      "x": 14997,
+      "y": 247
+    },
+    "Planar": {
+      "x": 15260,
+      "y": 247
+    },
+    "SerratedSawtooth": {
+      "x": 15703,
+      "y": 247
+    },
+    "ZigZag": {
+      "x": 16164,
+      "y": 247
+    },
+    "Aesthetic": {
+      "x": 16673,
+      "y": 0
+    },
+    "Airtightness": {
+      "x": 17190,
+      "y": 0
+    },
+    "FireCompartmentation": {
+      "x": 17872,
+      "y": 0
+    },
+    "Thermal": {
+      "x": 18462,
+      "y": 0
+    },
+    "Vision": {
+      "x": 18797,
+      "y": 0
+    },
+    "Waterproofing": {
+      "x": 19257,
+      "y": 0
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols#DrawingElement": {
+      "x": 7295,
+      "y": -1072
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common#GeometricProperties": {
+      "x": 15473,
+      "y": -654
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common#Function": {
+      "x": 17859,
+      "y": -641
+    }
+  },
+  "edgeStyleConfig": {
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#contains": {
+      "show": true,
+      "showLabel": true,
+      "color": "#8000ff",
+      "lineType": "solid"
+    },
+    "subClassOf": {
+      "show": true,
+      "showLabel": false,
+      "color": "#000000",
+      "lineType": "solid"
+    }
+  },
+  "wrapChars": 12,
+  "minFontSize": 20,
+  "maxFontSize": 70,
+  "relationshipFontSize": 18,
+  "dataPropertyFontSize": 12,
+  "layoutMode": "hierarchical03",
+  "searchQuery": "",
+  "includeNeighbors": true,
+  "annotationStyleConfig": {
+    "booleanProps": {
+      "labellableRoot": {
+        "whenTrue": {
+          "fillColor": "#2ecc71",
+          "borderColor": "#000000",
+          "borderLineType": "solid",
+          "show": true
+        },
+        "whenFalse": {
+          "fillColor": "#b8b8b8",
+          "borderColor": "#000000",
+          "borderLineType": "dashed",
+          "show": true
+        },
+        "whenUndefined": {
+          "fillColor": "#95a5a6",
+          "borderColor": "#000000",
+          "borderLineType": "dashed",
+          "show": true
+        }
+      }
+    },
+    "textProps": {}
+  },
+  "viewState": {
+    "scale": 0.07181532461783353,
+    "position": {
+      "x": 9738.40380859375,
+      "y": 561.5000000000001
+    }
+  },
+  "displayExternalReferences": true,
+  "externalNodeLayout": "auto"
+}
