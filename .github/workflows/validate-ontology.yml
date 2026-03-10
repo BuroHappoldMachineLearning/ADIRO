@@ -1,15 +1,22 @@
 name: Validate Ontology
 
 on:
-  push:
-    branches:
-      - '**'  # Run on all branches
   pull_request:
     branches:
       - '**'  # Run on PRs to any branch
+  push:
+    branches:
+      - '**'  # Run on all branches
 
 permissions:
   contents: read
+
+# Use concurrency to prevent duplicate runs when both push and pull_request fire
+# For PRs, use the head branch ref so push and pull_request share the same group
+# For direct pushes, use the branch ref
+concurrency:
+  group: validate-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: true
 
 jobs:
   validate:
