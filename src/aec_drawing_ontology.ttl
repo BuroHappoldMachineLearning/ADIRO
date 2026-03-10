@@ -14,7 +14,7 @@
 :Ontology rdf:type owl:Ontology;
     rdfs:comment "SUPERSEDED - KEPT FOR REFERENCE Ontology for AEC drawing elements - facade, structural, and drawing metadata. Based on schema rev02 (06.04.23).", "Created/edited with https://alelom.github.io/OntoCanvas/ version 0.1.0";
     rdfs:label "AEC Drawing Ontology";
-    owl:imports <https://w3id.org/dano>, <http://www.w3.org/2002/07/owl#>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#>, <http://www.w3.org/XML/1998/namespace#>, <http://www.w3.org/2001/XMLSchema#>, <http://www.w3.org/2000/01/rdf-schema#> ;
+    owl:imports <https://w3id.org/dano>;
     owl:imports <http://www.w3.org/2002/07/owl#> ;
     owl:imports <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ;
     owl:imports <http://www.w3.org/XML/1998/namespace#> ;
