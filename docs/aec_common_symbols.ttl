@@ -1,0 +1,25 @@
+@prefix : <https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols#> .
+@prefix core: <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#> .
+@prefix metadata: <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols> rdf:type owl:Ontology ;
+    rdfs:label "AEC Common Symbols Ontology" ;
+    rdfs:comment "Cross-discipline layout content. Generic classes like DrawingElement, which any symbols will be. Concepts like dimensions, callouts, grids, levels, etc. (mostly reusable non-domain symbols)." ;
+    owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols/1.0.0> ;
+    owl:versionInfo "1.0.0" ;
+    owl:imports <https://burohappoldmachinelearning.github.io/ADIRO/aec-core>,
+                <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata> .
+
+#################################################################
+#    Classes
+#################################################################
+
+:DrawingElement rdf:type owl:Class ;
+    rdfs:comment "Element depicted on a drawing. Contained by Layout. Can be a Facade system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc." ;
+    rdfs:label "Drawing element" ;
+    core:labellableRoot "false"^^xsd:boolean .
