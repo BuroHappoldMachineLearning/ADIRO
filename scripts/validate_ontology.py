@@ -102,15 +102,32 @@ def validate_ontology(ttl_file: Path) -> tuple[bool, list[str]]:
 
 def main():
     """Main function to validate ontology files."""
+    repo_root = Path(__file__).parent.parent
+    ttl_files = []
+    
     if len(sys.argv) < 2:
-        print("Usage: python validate_ontology.py <ttl_file> [<ttl_file> ...]")
-        sys.exit(1)
+        # If no files specified, validate all .ttl files in the src directory
+        print("No files specified. Validating all .ttl files in src/ directory...")
+        src_dir = repo_root / "src"
+        if src_dir.exists():
+            ttl_files = list(src_dir.glob("aec_*.ttl"))
+        else:
+            ttl_files = []
+        if not ttl_files:
+            print("No ontology files found (aec_*.ttl) in src/ directory.", file=sys.stderr)
+            print("Usage: python validate_ontology.py <ttl_file> [<ttl_file> ...]")
+            sys.exit(1)
+    else:
+        # Validate specified files
+        for ttl_path_str in sys.argv[1:]:
+            ttl_file = Path(ttl_path_str)
+            if not ttl_file.is_absolute():
+                ttl_file = repo_root / ttl_file
+            ttl_files.append(ttl_file)
     
     all_valid = True
     
-    for ttl_path_str in sys.argv[1:]:
-        ttl_file = Path(ttl_path_str)
-        
+    for ttl_file in ttl_files:
         if not ttl_file.exists():
             print(f"Error: File not found: {ttl_file}", file=sys.stderr)
             all_valid = False

@@ -1,0 +1,59 @@
+name: Backup Ontology Version
+
+on:
+  release:
+    types: [published, created]  # Trigger when a release is created or published
+
+permissions:
+  contents: write
+
+jobs:
+  backup-version:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extract version from tag
+        id: version
+        run: |
+          # Remove 'v' prefix if present (e.g., v1.0.0 -> 1.0.0)
+          VERSION="${GITHUB_REF#refs/tags/}"
+          VERSION="${VERSION#v}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Backing up version: $VERSION"
+      
+      - name: Create version directory
+        run: |
+          mkdir -p "versions/${{ steps.version.outputs.version }}"
+      
+      - name: Copy ontology files to version directory
+        run: |
+          # Copy all .ttl files from src/ to versions/<version>/
+          cp src/*.ttl "versions/${{ steps.version.outputs.version }}/"
+          echo "Copied ontology files to versions/${{ steps.version.outputs.version }}/"
+          ls -la "versions/${{ steps.version.outputs.version }}/"
+      
+      - name: Setup Git user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Commit and push version backup
+        run: |
+          git add "versions/${{ steps.version.outputs.version }}/"
+          if git diff --staged --quiet; then
+            echo "No changes to commit (files may already exist)"
+          else
+            git commit -m "chore: Backup ontology version ${{ steps.version.outputs.version }} [skip actions]"
+            git push
+          fi
+      
+      - name: Summary
+        run: |
+          echo "✅ Version ${{ steps.version.outputs.version }} backed up successfully"
+          echo "Files are available in: versions/${{ steps.version.outputs.version }}/"

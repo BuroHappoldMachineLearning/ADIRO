@@ -4,4 +4,16 @@ alwaysApply: true
 
 Always parse ontology files for correctness after authoring/modifying them. Write any required python script with tests in order to author/modify/test the ontologies, in the /scripts folder.
 
-For scripts, use `uv` to handle dependencies. 
+For scripts, use `uv` to handle dependencies.
+
+**CRITICAL: After ANY modification to a `.ttl` ontology file, you MUST validate it immediately using:**
+```bash
+uv run python scripts/validate_ontology.py src/<modified_file.ttl>
+```
+
+Or validate all ontology files in the src/ directory:
+```bash
+uv run python scripts/validate_ontology.py
+```
+
+**Never skip validation** - syntax errors like missing periods, incomplete statements, or malformed RDF will cause parsing failures that must be caught immediately. 
