@@ -196,7 +196,7 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADIRO Ontology Documentation</title>
+    <title>ADIRO Ontologies Documentation</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -355,8 +355,9 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     <h1>ADIRO Ontology Documentation</h1>
     
     <div class="intro">
+        <p>ADIRO is a set of ontologies for AEC (Architecture, Engineering, and Construction) drawing representation, designed to support machine learning tasks, graph database storage, and information extraction workflows.</p>
+        <p>This site contains HTML documentation for all ontology files in the ADIRO repository. Scroll down to explore the available ontologies below.</p>
         <a href="https://github.com/BuroHappoldMachineLearning/ADIRO" class="github-button" target="_blank" rel="noopener noreferrer">View on GitHub</a>
-        <p>This site contains HTML documentation for all ontology files in the ADIRO repository.</p>
     </div>
     
     <h2>Available Ontologies</h2>
