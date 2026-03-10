@@ -10,36 +10,36 @@
       "y": 230
     },
     "Metadata": {
-      "x": 432,
-      "y": -96
+      "x": 451,
+      "y": 0
     },
     "DrawingSheet": {
-      "x": 1490,
-      "y": -503
+      "x": 1486,
+      "y": -488
     },
     "RevisionTable": {
       "x": 283,
       "y": 291
     },
     "Layout": {
-      "x": 1489,
-      "y": 0
+      "x": 1483,
+      "y": -25
     },
     "DrawingOrientation": {
-      "x": 3750,
-      "y": -273
+      "x": 5435,
+      "y": -253
     },
     "DrawingType": {
-      "x": 2247,
-      "y": 0
+      "x": 2200,
+      "y": -16
     },
     "Portrait": {
-      "x": 3217,
-      "y": 0
+      "x": 5142,
+      "y": -19
     },
     "Landscape": {
-      "x": 4274,
-      "y": 0
+      "x": 5732,
+      "y": -22
     },
     "Titleblock": {
       "x": 562,
@@ -66,48 +66,52 @@
       "y": 230
     },
     "Detail": {
-      "x": 2420,
-      "y": 230
+      "x": 2825,
+      "y": 192
     },
     "Orientation": {
-      "x": 2465,
-      "y": 492
+      "x": 2897,
+      "y": 428
     },
     "Perspective": {
-      "x": 2686,
-      "y": 230
+      "x": 2468,
+      "y": 234
     },
     "DetailLocation": {
-      "x": 6897,
-      "y": 0
+      "x": 3849,
+      "y": 369
     },
     "Base": {
-      "x": 6484,
-      "y": 324
+      "x": 3440,
+      "y": 630
     },
     "Corner": {
-      "x": 6652,
-      "y": 324
+      "x": 3608,
+      "y": 630
     },
     "Head": {
-      "x": 6819,
-      "y": 324
+      "x": 3775,
+      "y": 630
     },
     "SlabEdge": {
-      "x": 7029,
-      "y": 324
+      "x": 3984,
+      "y": 630
     },
     "Typical": {
-      "x": 7280,
-      "y": 324
+      "x": 4236,
+      "y": 630
     },
     "Horizontal": {
-      "x": 2163,
-      "y": 769
+      "x": 2696,
+      "y": 626
     },
     "Vertical": {
-      "x": 2640,
-      "y": 774
+      "x": 3087,
+      "y": 626
+    },
+    "http://www.w3.org/2002/07/owl#Thing": {
+      "x": 1507,
+      "y": -1220
     },
     "__dataprop__TextualNote__refersToDrawingId": {
       "x": 35,
@@ -115,6 +119,30 @@
     }
   },
   "edgeStyleConfig": {
+    "contains": {
+      "show": true,
+      "showLabel": true,
+      "color": "#8026d9",
+      "lineType": "solid"
+    },
+    "has": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d92626",
+      "lineType": "solid"
+    },
+    "http://example.org/aec-drawing-ontology#has": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d92626",
+      "lineType": "solid"
+    },
+    "subClassOf": {
+      "show": true,
+      "showLabel": false,
+      "color": "#000000",
+      "lineType": "solid"
+    },
     "https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#contains": {
       "show": true,
       "showLabel": true,
@@ -125,12 +153,6 @@
       "show": true,
       "showLabel": true,
       "color": "#d92626",
-      "lineType": "solid"
-    },
-    "subClassOf": {
-      "show": true,
-      "showLabel": false,
-      "color": "#000000",
       "lineType": "solid"
     }
   },
@@ -165,13 +187,17 @@
         }
       }
     },
-    "textProps": {}
+    "textProps": {
+      "exampleImage": {
+        "rules": []
+      }
+    }
   },
   "viewState": {
-    "scale": 0.18988052792011786,
+    "scale": 0.23496164554357343,
     "position": {
-      "x": 5052.753405430319,
-      "y": 210.39698966707726
+      "x": 2947.785888671875,
+      "y": -301.24999999999994
     }
   },
   "displayExternalReferences": true,
