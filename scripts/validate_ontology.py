@@ -106,11 +106,15 @@ def main():
     ttl_files = []
     
     if len(sys.argv) < 2:
-        # If no files specified, validate all .ttl files in the repository root
-        print("No files specified. Validating all .ttl files in repository root...")
-        ttl_files = list(repo_root.glob("aec_*.ttl"))
+        # If no files specified, validate all .ttl files in the src directory
+        print("No files specified. Validating all .ttl files in src/ directory...")
+        src_dir = repo_root / "src"
+        if src_dir.exists():
+            ttl_files = list(src_dir.glob("aec_*.ttl"))
+        else:
+            ttl_files = []
         if not ttl_files:
-            print("No ontology files found (aec_*.ttl) in repository root.", file=sys.stderr)
+            print("No ontology files found (aec_*.ttl) in src/ directory.", file=sys.stderr)
             print("Usage: python validate_ontology.py <ttl_file> [<ttl_file> ...]")
             sys.exit(1)
     else:

@@ -13,14 +13,20 @@ from pylode.profiles.ontpub import OntPub
 
 
 def find_ttl_files(root_dir: Path) -> list[Path]:
-    """Find all .ttl files in the root directory."""
-    ttl_files = list(root_dir.glob("*.ttl"))
+    """Find all .ttl files in the src directory."""
+    src_dir = root_dir / "src"
+    if not src_dir.exists():
+        return []
+    ttl_files = list(src_dir.glob("*.ttl"))
     return sorted(ttl_files)
 
 
 def find_display_json_files(root_dir: Path) -> list[Path]:
-    """Find all .display.json files in the root directory."""
-    display_json_files = list(root_dir.glob("*.display.json"))
+    """Find all .display.json files in the src directory."""
+    src_dir = root_dir / "src"
+    if not src_dir.exists():
+        return []
+    display_json_files = list(src_dir.glob("*.display.json"))
     return sorted(display_json_files)
 
 

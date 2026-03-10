@@ -1,19 +1,21 @@
-@prefix : <http://example.org/aec-drawing/v01/domain-common#> .
-@prefix core: <http://example.org/aec-drawing/v01/core#> .
-@prefix metadata: <http://example.org/aec-drawing/v01/drawing-metadata#> .
-@prefix common: <http://example.org/aec-drawing/v01/common-symbols#> .
+@prefix : <https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common#> .
+@prefix core: <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#> .
+@prefix metadata: <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#> .
+@prefix common: <https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-<http://example.org/aec-drawing/v01/domain-common> rdf:type owl:Ontology ;
+<https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common> rdf:type owl:Ontology ;
     rdfs:label "AEC Domain Common Ontology" ;
     rdfs:comment "Shared domain abstractions reused across multiple domain ontologies (e.g., facade+structural)." ;
-    owl:imports <http://example.org/aec-drawing/v01/core>,
-                <http://example.org/aec-drawing/v01/drawing-metadata>,
-                <http://example.org/aec-drawing/v01/common-symbols> .
+    owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common/1.0.0> ;
+    owl:versionInfo "1.0.0" ;
+    owl:imports <https://burohappoldmachinelearning.github.io/ADIRO/aec-core>,
+                <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata>,
+                <https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols> .
 
 #################################################################
 #    Property Classes
