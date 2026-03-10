@@ -20,5 +20,4 @@
 :DrawingElement rdf:type owl:Class ;
     rdfs:comment "Element depicted on a drawing. Contained by Layout. Can be a Facade system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc." ;
     rdfs:label "Drawing element" ;
-    core:labellableRoot "false"^^xsd:boolean ;
-    rdfs:subClassOf owl:Thing .
+    core:labellableRoot "false"^^xsd:boolean .

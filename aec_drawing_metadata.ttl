@@ -52,8 +52,7 @@
 <http://example.org/aec-drawing/v01/drawing-metadata#Metadata> rdf:type owl:Class;
     rdfs:label "Metadata";
     rdfs:comment "Can be standalone label - drawing metadata";
-    <http://example.org/aec-drawing/v01/core#labellableRoot> "false"^^xsd:boolean;
-    rdfs:subClassOf owl:Thing.
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "false"^^xsd:boolean.
 
 <http://example.org/aec-drawing/v01/drawing-metadata#DrawingSheet> rdf:type owl:Class;
     rdfs:label "Drawing sheet";
@@ -84,8 +83,7 @@
 <http://example.org/aec-drawing/v01/drawing-metadata#DrawingType> rdf:type owl:Class;
     rdfs:label "Drawing type";
     rdfs:comment "Type of drawing view";
-    <http://example.org/aec-drawing/v01/core#labellableRoot> "false"^^xsd:boolean;
-    rdfs:subClassOf owl:Thing.
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "false"^^xsd:boolean.
 
 <http://example.org/aec-drawing/v01/drawing-metadata#Titleblock> rdf:type owl:Class;
     rdfs:label "Titleblock";
@@ -127,8 +125,7 @@
 <http://example.org/aec-drawing/v01/drawing-metadata#Orientation> rdf:type owl:Class;
     rdfs:label "Detail Orientation";
     rdfs:comment "Can be standalone label - drawing orientation";
-    <http://example.org/aec-drawing/v01/core#labellableRoot> "false"^^xsd:boolean;
-    rdfs:subClassOf owl:Thing.
+    <http://example.org/aec-drawing/v01/core#labellableRoot> "false"^^xsd:boolean.
 
 <http://example.org/aec-drawing/v01/drawing-metadata#Perspective> rdf:type owl:Class;
     rdfs:label "Perspective";
