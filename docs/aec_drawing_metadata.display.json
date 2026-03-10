@@ -1,0 +1,179 @@
+{
+  "version": 1,
+  "nodePositions": {
+    "TextualNote": {
+      "x": 35,
+      "y": 408
+    },
+    "Note": {
+      "x": 78,
+      "y": 230
+    },
+    "Metadata": {
+      "x": 432,
+      "y": -96
+    },
+    "DrawingSheet": {
+      "x": 1490,
+      "y": -503
+    },
+    "RevisionTable": {
+      "x": 283,
+      "y": 291
+    },
+    "Layout": {
+      "x": 1489,
+      "y": 0
+    },
+    "DrawingOrientation": {
+      "x": 3750,
+      "y": -273
+    },
+    "DrawingType": {
+      "x": 2247,
+      "y": 0
+    },
+    "Portrait": {
+      "x": 3217,
+      "y": 0
+    },
+    "Landscape": {
+      "x": 4274,
+      "y": 0
+    },
+    "Titleblock": {
+      "x": 562,
+      "y": 230
+    },
+    "Legend": {
+      "x": 814,
+      "y": 230
+    },
+    "Image": {
+      "x": 119,
+      "y": 408
+    },
+    "Plan": {
+      "x": 1723,
+      "y": 230
+    },
+    "Section": {
+      "x": 1918,
+      "y": 291
+    },
+    "Elevation": {
+      "x": 2183,
+      "y": 230
+    },
+    "Detail": {
+      "x": 2420,
+      "y": 230
+    },
+    "Orientation": {
+      "x": 2465,
+      "y": 492
+    },
+    "Perspective": {
+      "x": 2686,
+      "y": 230
+    },
+    "DetailLocation": {
+      "x": 6897,
+      "y": 0
+    },
+    "Base": {
+      "x": 6484,
+      "y": 324
+    },
+    "Corner": {
+      "x": 6652,
+      "y": 324
+    },
+    "Head": {
+      "x": 6819,
+      "y": 324
+    },
+    "SlabEdge": {
+      "x": 7029,
+      "y": 324
+    },
+    "Typical": {
+      "x": 7280,
+      "y": 324
+    },
+    "Horizontal": {
+      "x": 2163,
+      "y": 769
+    },
+    "Vertical": {
+      "x": 2640,
+      "y": 774
+    },
+    "__dataprop__TextualNote__refersToDrawingId": {
+      "x": 35,
+      "y": 451
+    }
+  },
+  "edgeStyleConfig": {
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#contains": {
+      "show": true,
+      "showLabel": true,
+      "color": "#8026d9",
+      "lineType": "solid"
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#has": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d92626",
+      "lineType": "solid"
+    },
+    "subClassOf": {
+      "show": true,
+      "showLabel": false,
+      "color": "#000000",
+      "lineType": "solid"
+    }
+  },
+  "wrapChars": 12,
+  "minFontSize": 20,
+  "maxFontSize": 70,
+  "relationshipFontSize": 18,
+  "dataPropertyFontSize": 12,
+  "layoutMode": "hierarchical03",
+  "searchQuery": "",
+  "includeNeighbors": true,
+  "annotationStyleConfig": {
+    "booleanProps": {
+      "labellableRoot": {
+        "whenTrue": {
+          "fillColor": "#2ecc71",
+          "borderColor": "#000000",
+          "borderLineType": "solid",
+          "show": true
+        },
+        "whenFalse": {
+          "fillColor": "#b8b8b8",
+          "borderColor": "#000000",
+          "borderLineType": "dashed",
+          "show": true
+        },
+        "whenUndefined": {
+          "fillColor": "#95a5a6",
+          "borderColor": "#000000",
+          "borderLineType": "dashed",
+          "show": true
+        }
+      }
+    },
+    "textProps": {}
+  },
+  "viewState": {
+    "scale": 0.18988052792011786,
+    "position": {
+      "x": 5052.753405430319,
+      "y": 210.39698966707726
+    }
+  },
+  "displayExternalReferences": true,
+  "externalNodeLayout": "auto"
+}

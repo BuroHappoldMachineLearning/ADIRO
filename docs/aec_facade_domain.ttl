@@ -5,7 +5,6 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix common: <https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols#> .
-@prefix core: <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#> .
 @prefix dcommon: <https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common#> .
 @prefix metadata: <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#> .
 
@@ -15,11 +14,10 @@
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain> rdf:type owl:Ontology ;
     rdfs:label "AEC Facade Domain Ontology" ;
-    rdfs:comment "Facade-specific concepts and symbols for facade engineering drawings. Dependencies: aec-core, aec-drawing-metadata, aec-common-symbols, aec-domain-common." ;
+    rdfs:comment "Facade-specific concepts and symbols for facade engineering drawings." ;
     owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain/1.0.0> ;
     owl:versionInfo "1.0.0" ;
-    owl:imports <https://burohappoldmachinelearning.github.io/ADIRO/aec-core>,
-                <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata>,
+    owl:imports <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata>,
                 <https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols>,
                 <https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common> .
 
@@ -31,523 +29,523 @@
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeComponent> rdf:type owl:Class;
     rdfs:label "Facade component";
     rdfs:comment "Component of a facade system; a type of drawing element";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols#DrawingElement>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeSystem> rdf:type owl:Class;
     rdfs:label "Facade system";
     rdfs:comment "Facade system - part of support type; a type of drawing element";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
-    rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols#DrawingElement>, [ rdf:type owl:Restriction ; owl:onProperty <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#contains> ; owl:someValuesFrom <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeComponent> ].
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
+    rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols#DrawingElement>, [ rdf:type owl:Restriction ; owl:onProperty <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#contains> ; owl:someValuesFrom <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeComponent> ].
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#LinearComponent> rdf:type owl:Class;
     rdfs:label "Linear component";
     rdfs:comment "Element category - linear facade component";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#PanelComponent> rdf:type owl:Class;
     rdfs:label "Panel component";
     rdfs:comment "Element category - panel-type facade component";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#PointComponent> rdf:type owl:Class;
     rdfs:label "Point component";
     rdfs:comment "Element category - point-type facade component";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CavityWallSystem> rdf:type owl:Class;
     rdfs:label "Cavity wall system";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeSystem>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CurtainWallSystem> rdf:type owl:Class;
     rdfs:label "Curtain wall system";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeSystem>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#PrecastSystem> rdf:type owl:Class;
     rdfs:label "Precast system";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeSystem>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#RainscreenSystem> rdf:type owl:Class;
     rdfs:label "Rainscreen";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeSystem>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#SemiUnitisedCurtainWall> rdf:type owl:Class;
     rdfs:label "Semi-unitised";
     rdfs:comment "Semi-unitised curtain wall";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CurtainWallSystem>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#StickCurtainWall> rdf:type owl:Class;
     rdfs:label "Stick";
     rdfs:comment "Stick curtain wall";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CurtainWallSystem>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#UnitisedCurtainWall> rdf:type owl:Class;
     rdfs:label "Unitised";
     rdfs:comment "Unitised curtain wall";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CurtainWallSystem>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#GRC> rdf:type owl:Class;
     rdfs:label "GRC";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#PrecastSystem>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#UMPC> rdf:type owl:Class;
     rdfs:label "UMPC";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#PrecastSystem>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Capping> rdf:type owl:Class;
     rdfs:label "Capping";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#LinearComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CWFrameMember> rdf:type owl:Class;
     rdfs:label "CW frame member";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#LinearComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeSecondaryStructure> rdf:type owl:Class;
     rdfs:label "Facade secondary structure";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#LinearComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Fin> rdf:type owl:Class;
     rdfs:label "Fin";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#LinearComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Firestop> rdf:type owl:Class;
     rdfs:label "Firestop";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#LinearComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Gasket> rdf:type owl:Class;
     rdfs:label "Gasket";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#LinearComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Louvre> rdf:type owl:Class;
     rdfs:label "Louvre";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#LinearComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Sealant> rdf:type owl:Class;
     rdfs:label "Sealant";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#LinearComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#WindowSystem> rdf:type owl:Class;
     rdfs:label "Window system";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#LinearComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#BackingWall> rdf:type owl:Class;
     rdfs:label "Backing wall";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#PanelComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Board> rdf:type owl:Class;
     rdfs:label "Board";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#PanelComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeCladding> rdf:type owl:Class;
     rdfs:label "Facade cladding";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#PanelComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Insulation> rdf:type owl:Class;
     rdfs:label "Insulation";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#PanelComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Membrane> rdf:type owl:Class;
     rdfs:label "Membrane";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#PanelComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#RoofCladding> rdf:type owl:Class;
     rdfs:label "Roof cladding";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#PanelComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Bracket> rdf:type owl:Class;
     rdfs:label "Bracket";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#PointComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Fixing> rdf:type owl:Class;
     rdfs:label "Fixing";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#PointComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#LocalisedPenetration> rdf:type owl:Class;
     rdfs:label "Localised penetration";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#PointComponent>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Mullion> rdf:type owl:Class;
     rdfs:label "Mullion";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CWFrameMember>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Transom> rdf:type owl:Class;
     rdfs:label "Transom";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CWFrameMember>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Rail> rdf:type owl:Class;
     rdfs:label "Rail";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeSecondaryStructure>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#ShelfAngle> rdf:type owl:Class;
     rdfs:label "Shelf angle";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeSecondaryStructure>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CavityBarrier> rdf:type owl:Class;
     rdfs:label "Cavity barrier";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Gasket>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Channel> rdf:type owl:Class;
     rdfs:label "Channel";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Gasket>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Flipper> rdf:type owl:Class;
     rdfs:label "Flipper";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Gasket>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#HollowGasketShape> rdf:type owl:Class;
     rdfs:label "Hollow gasket shape";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Gasket>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Reflvet> rdf:type owl:Class;
     rdfs:label "Reflvet";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Gasket>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#SolidGasketShape> rdf:type owl:Class;
     rdfs:label "Solid gasket shape";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Gasket>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#OGasket> rdf:type owl:Class;
     rdfs:label "O-gasket";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#HollowGasketShape>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#PGasket> rdf:type owl:Class;
     rdfs:label "P-gasket";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#HollowGasketShape>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#PushIn> rdf:type owl:Class;
     rdfs:label "Push-in";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#SolidGasketShape>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#SlideIn> rdf:type owl:Class;
     rdfs:label "Slide-in";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#SolidGasketShape>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Wedge> rdf:type owl:Class;
     rdfs:label "Wedge";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#SolidGasketShape>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#ClosedState> rdf:type owl:Class;
     rdfs:label "Closed state";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CavityBarrier>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#OpenState> rdf:type owl:Class;
     rdfs:label "Open state";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CavityBarrier>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Silicone> rdf:type owl:Class;
     rdfs:label "Silicone";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Sealant>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#DGU> rdf:type owl:Class ;
     rdfs:label "DGU" ;
     rdfs:comment "Double Glazing Unit" ;
-    core:labellableRoot "false"^^xsd:boolean ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeCladding> .
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Masonry> rdf:type owl:Class;
     rdfs:label "Masonry";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeCladding>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#PrecastConcrete> rdf:type owl:Class;
     rdfs:label "Precast concrete";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeCladding>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#ProfiledMetal> rdf:type owl:Class;
     rdfs:label "Profiled metal";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeCladding>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#SmallPanels> rdf:type owl:Class;
     rdfs:label "Small panels";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeCladding>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#TGU> rdf:type owl:Class;
     rdfs:label "TGU";
     rdfs:comment "Triple Glazed Unit";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeCladding>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Cementboard> rdf:type owl:Class;
     rdfs:label "Cementboard";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Board>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Plasterboard> rdf:type owl:Class;
     rdfs:label "Plasterboard";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Board>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#MineralWool> rdf:type owl:Class;
     rdfs:label "Mineral wool";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Insulation>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#OtherInsulation> rdf:type owl:Class;
     rdfs:label "Other insulation";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Insulation>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#VCL> rdf:type owl:Class;
     rdfs:label "VCL (Vapour control layer)";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Insulation>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#WoodFibre> rdf:type owl:Class;
     rdfs:label "Wood fibre";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Insulation>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#BreatherMembrane> rdf:type owl:Class;
     rdfs:label "Breather";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Membrane>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#EPDM> rdf:type owl:Class;
     rdfs:label "EPDM";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Membrane>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#WaterproofingMembrane> rdf:type owl:Class;
     rdfs:label "Waterproofing";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Membrane>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Blockwork> rdf:type owl:Class;
     rdfs:label "Blockwork";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#RoofCladding>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#TimberCassette> rdf:type owl:Class;
     rdfs:label "Timber cassette";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#RoofCladding>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#SFS> rdf:type owl:Class;
     rdfs:label "SFS";
     rdfs:comment "Steel Frame System";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#BackingWall>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#DeadLoadBracket> rdf:type owl:Class;
     rdfs:label "Dead load";
     rdfs:comment "Dead load bracket";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Bracket>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#HelpingHandBracket> rdf:type owl:Class;
     rdfs:label "Helping hand";
     rdfs:comment "Helping hand bracket";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Bracket>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#PrecastRestraintBracket> rdf:type owl:Class;
     rdfs:label "Precast restraint";
     rdfs:comment "Precast restraint bracket";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Bracket>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CastInChannel> rdf:type owl:Class;
     rdfs:label "Cast-in channel";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Fixing>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Screw> rdf:type owl:Class;
     rdfs:label "Screw";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Fixing>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#WeldedBolt> rdf:type owl:Class;
     rdfs:label "Welded bolt";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Fixing>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CWFrameMemberProperties> rdf:type owl:Class;
     rdfs:label "CW frame member properties";
     rdfs:comment "Specific properties of curtain wall frame members";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean.
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#GlazingProperties> rdf:type owl:Class;
     rdfs:label "Glazing properties";
     rdfs:comment "Specific properties of glazing elements";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean.
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeShape> rdf:type owl:Class;
     rdfs:label "Facade shape";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common#GeometricProperties>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FrameType> rdf:type owl:Class;
     rdfs:label "Frame type";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CWFrameMemberProperties>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#GlazingRetention> rdf:type owl:Class;
     rdfs:label "Glazing retention";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CWFrameMemberProperties>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CWSystem> rdf:type owl:Class;
     rdfs:label "CW system";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CWFrameMemberProperties>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#AddOn> rdf:type owl:Class;
     rdfs:label "Add-on";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FrameType>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Extruded> rdf:type owl:Class;
     rdfs:label "Extruded";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FrameType>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Fabricated> rdf:type owl:Class;
     rdfs:label "Fabricated";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FrameType>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Capped> rdf:type owl:Class;
     rdfs:label "Capped";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#GlazingRetention>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#SSG> rdf:type owl:Class;
     rdfs:label "SSG (Structural silicone glazing)";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#GlazingRetention>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Toggle> rdf:type owl:Class;
     rdfs:label "Toggle";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#GlazingRetention>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#DoubleLaminated> rdf:type owl:Class;
     rdfs:label "Double laminated";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#GlazingProperties>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Laminated> rdf:type owl:Class;
     rdfs:label "Laminated";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#GlazingProperties>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Monolithic> rdf:type owl:Class;
     rdfs:label "Monolithic";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#GlazingProperties>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Stick> rdf:type owl:Class;
     rdfs:label "Stick";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CWSystem>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Unitised> rdf:type owl:Class;
     rdfs:label "Unitised";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#CWSystem>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Curved> rdf:type owl:Class;
     rdfs:label "Curved";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeShape>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Faceted> rdf:type owl:Class;
     rdfs:label "Faceted";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeShape>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Planar> rdf:type owl:Class;
     rdfs:label "Planar";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeShape>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#SerratedSawtooth> rdf:type owl:Class;
     rdfs:label "Serrated/Sawtooth";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeShape>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#ZigZag> rdf:type owl:Class;
     rdfs:label "Zig-zag";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FacadeShape>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Aesthetic> rdf:type owl:Class;
     rdfs:label "Aesthetic";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common#Function>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Airtightness> rdf:type owl:Class;
     rdfs:label "Airtightness";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common#Function>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#FireCompartmentation> rdf:type owl:Class;
     rdfs:label "Fire compartmentation";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common#Function>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Thermal> rdf:type owl:Class;
     rdfs:label "Thermal";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common#Function>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Vision> rdf:type owl:Class;
     rdfs:label "Vision";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common#Function>.
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#Waterproofing> rdf:type owl:Class;
     rdfs:label "Waterproofing";
-    <https://burohappoldmachinelearning.github.io/ADIRO/aec-core#labellableRoot> "false"^^xsd:boolean;
+    <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
     rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common#Function>.

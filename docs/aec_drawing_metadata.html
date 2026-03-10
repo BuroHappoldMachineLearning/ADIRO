@@ -289,7 +289,7 @@ td {
     ],
     "https://schema.org/description": [
       {
-        "@value": "Sheet/layout/document structure for AEC drawings. Dependencies: aec-core."
+        "@value": "Sheet/layout/document structure for AEC drawings."
       }
     ],
     "https://schema.org/name": [
@@ -339,7 +339,7 @@ td {
             <dt>
               <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
             </dt>
-            <dd><p>Sheet/layout/document structure for AEC drawings. Dependencies: aec-core.</p></dd>
+            <dd><p>Sheet/layout/document structure for AEC drawings.</p></dd>
           </div>
         </dl>
       </div>
@@ -458,7 +458,10 @@ td {
                   <li>
                     <span>
                       <span>
-                        <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec-core#contains">core:contains</a>
+                        <span>
+                          <a href="#contains">contains</a>
+                          <sup class="sup-op" title="OWL Object Property">op</sup>
+                        </span>
                         <span>
                           <span class="cardinality">min</span>
                           <span>0</span>
@@ -469,7 +472,10 @@ td {
                   <li>
                     <span>
                       <span>
-                        <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec-core#contains">core:contains</a>
+                        <span>
+                          <a href="#contains">contains</a>
+                          <sup class="sup-op" title="OWL Object Property">op</sup>
+                        </span>
                         <span>
                           <span class="cardinality">max</span>
                           <span>1</span>
@@ -480,7 +486,10 @@ td {
                   <li>
                     <span>
                       <span>
-                        <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec-core#contains">core:contains</a>
+                        <span>
+                          <a href="#contains">contains</a>
+                          <sup class="sup-op" title="OWL Object Property">op</sup>
+                        </span>
                         <span>
                           <span class="cardinality">min</span>
                           <span>1</span>
@@ -491,7 +500,10 @@ td {
                   <li>
                     <span>
                       <span>
-                        <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec-core#has">core:has</a>
+                        <span>
+                          <a href="#has">hasProperty</a>
+                          <sup class="sup-op" title="OWL Object Property">op</sup>
+                        </span>
                         <span>
                           <span class="cardinality">exactly</span>
                           <span>1</span>
@@ -599,7 +611,10 @@ td {
                   <li>
                     <span>
                       <span>
-                        <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec-core#contains">core:contains</a>
+                        <span>
+                          <a href="#contains">contains</a>
+                          <sup class="sup-op" title="OWL Object Property">op</sup>
+                        </span>
                         <span>
                           <span class="cardinality">min</span>
                           <span>0</span>
@@ -610,7 +625,10 @@ td {
                   <li>
                     <span>
                       <span>
-                        <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec-core#has">core:has</a>
+                        <span>
+                          <a href="#has">hasProperty</a>
+                          <sup class="sup-op" title="OWL Object Property">op</sup>
+                        </span>
                         <span>
                           <span class="cardinality">exactly</span>
                           <span>1</span>
@@ -900,7 +918,10 @@ td {
               <td>
                 <span>
                   <span>
-                    <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec-core#has">core:has</a>
+                    <span>
+                      <a href="#has">hasProperty</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
                     <span>
                       <span class="cardinality">exactly</span>
                       <span>1</span>
@@ -1252,6 +1273,91 @@ td {
         <span class="cardinality">exactly</span>
         <span>1</span>
       </span>
+      <div class="section" id="objectproperties">
+        <h2>Object Properties</h2>
+        <div class="property entity" id="contains">
+          <h3>contains
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#contains</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Direct containment or has-part relationship. Min cardinality 0 by default (can contain).</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="http://www.w3.org/2002/07/owl#Thing">Thing</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="http://www.w3.org/2002/07/owl#Thing">Thing</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="has">
+          <h3>hasProperty
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#has</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Subject is characterised by a property.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="http://www.w3.org/2002/07/owl#Thing">Thing</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="http://www.w3.org/2002/07/owl#Thing">Thing</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
       <div class="section" id="datatypeproperties">
         <h2>Datatype Properties</h2>
         <div class="property entity" id="refersToDrawingId">
@@ -1293,20 +1399,61 @@ td {
           </table>
         </div>
       </div>
+      <div class="section" id="annotationproperties">
+        <h2>Annotation Properties</h2>
+        <div class="property entity" id="exampleimage">
+          <h3>example image
+            <sup class="sup-ap" title="OWL Annotation Property">ap</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#exampleImage</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Links a class or concept to an example image illustrating it.</p></td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="Labellableroot">
+          <h3>Labellable root
+            <sup class="sup-ap" title="OWL Annotation Property">ap</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>When true, this class can be used as a label by annotators (solid contour in diagram). When false, non-labellable (dashed contour).</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#boolean">xsd:boolean</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
       <div id="namespaces">
         <h2>Namespaces</h2>
         <dl>
           <dt id=":">:</dt>
           <dd>
             <code>https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#</code>
-          </dd>
-          <dt id="common">common</dt>
-          <dd>
-            <code>https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols#</code>
-          </dd>
-          <dt id="core">core</dt>
-          <dd>
-            <code>https://burohappoldmachinelearning.github.io/ADIRO/aec-core#</code>
           </dd>
           <dt id="ns1">ns1</dt>
           <dd>
@@ -1323,6 +1470,14 @@ td {
           <dt id="rdfs">rdfs</dt>
           <dd>
             <code>http://www.w3.org/2000/01/rdf-schema#</code>
+          </dd>
+          <dt id="xml">xml</dt>
+          <dd>
+            <code>http://www.w3.org/XML/1998/namespace</code>
+          </dd>
+          <dt id="xml1">xml1</dt>
+          <dd>
+            <code>http://www.w3.org/XML/1998/namespace#</code>
           </dd>
           <dt id="xsd">xsd</dt>
           <dd>
@@ -1341,9 +1496,21 @@ td {
           </tr>
           <tr>
             <td>
+              <sup class="sup-op" title="OWL Object Property">op</sup>
+            </td>
+            <td>Object Properties</td>
+          </tr>
+          <tr>
+            <td>
               <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
             </td>
             <td>Datatype Properties</td>
+          </tr>
+          <tr>
+            <td>
+              <sup class="sup-ap" title="OWL Annotation Property">ap</sup>
+            </td>
+            <td>Annotation Properties</td>
           </tr>
         </table>
       </div>
@@ -1459,11 +1626,37 @@ td {
         </li>
         <li>
           <h4>
+            <a href="#objectproperties">Object Properties</a>
+          </h4>
+          <ul class="second">
+            <li>
+              <a href="#contains">contains</a>
+            </li>
+            <li>
+              <a href="#has">hasProperty</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <h4>
             <a href="#datatypeproperties">Datatype Properties</a>
           </h4>
           <ul class="second">
             <li>
               <a href="#refersToDrawingId">refersToDrawingId</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <h4>
+            <a href="#annotationproperties">Annotation Properties</a>
+          </h4>
+          <ul class="second">
+            <li>
+              <a href="#exampleimage">example image</a>
+            </li>
+            <li>
+              <a href="#Labellableroot">Labellable root</a>
             </li>
           </ul>
         </li>
@@ -1476,12 +1669,6 @@ td {
               <a href="#"></a>
             </li>
             <li>
-              <a href="#common">common</a>
-            </li>
-            <li>
-              <a href="#core">core</a>
-            </li>
-            <li>
               <a href="#ns1">ns1</a>
             </li>
             <li>
@@ -1492,6 +1679,12 @@ td {
             </li>
             <li>
               <a href="#rdfs">rdfs</a>
+            </li>
+            <li>
+              <a href="#xml">xml</a>
+            </li>
+            <li>
+              <a href="#xml1">xml1</a>
             </li>
             <li>
               <a href="#xsd">xsd</a>

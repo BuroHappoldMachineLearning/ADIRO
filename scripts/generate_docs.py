@@ -28,12 +28,11 @@ def sort_by_dependency(ttl_files: list[Path]) -> list[Path]:
     Sort ontology files by their dependency hierarchy.
     
     Order:
-    1. Core (no ADIRO imports)
-    2. Drawing Metadata (imports Core)
-    3. Common Symbols (imports Core + Drawing Metadata)
-    4. Domain-common (imports Core + Drawing Metadata + Common Symbols)
-    5. Facade Domain (imports Core + Drawing Metadata + Common Symbols + Domain-common)
-    6. Drawing Ontology (monolith, last)
+    1. Drawing Metadata (no ADIRO imports - core merged into it)
+    2. Common Symbols (imports Drawing Metadata)
+    3. Domain-common (imports Drawing Metadata + Common Symbols)
+    4. Facade Domain (imports Drawing Metadata + Common Symbols + Domain-common)
+    5. Drawing Ontology (monolith, last)
     
     Args:
         ttl_files: List of TTL file paths
@@ -43,12 +42,11 @@ def sort_by_dependency(ttl_files: list[Path]) -> list[Path]:
     """
     # Define dependency order (lower number = fewer dependencies)
     dependency_order = {
-        'aec_core': 1,
-        'aec_drawing_metadata': 2,
-        'aec_common_symbols': 3,
-        'aec_domain_common': 4,
-        'aec_facade_domain': 5,
-        'aec_drawing_ontology': 6,  # Monolith, put last
+        'aec_drawing_metadata': 1,
+        'aec_common_symbols': 2,
+        'aec_domain_common': 3,
+        'aec_facade_domain': 4,
+        'aec_drawing_ontology': 5,  # Monolith, put last
     }
     
     def get_order(file_path: Path) -> int:
@@ -140,6 +138,47 @@ def extract_ontology_comment(ttl_file: Path) -> str:
         return ""
     except Exception:
         return ""
+
+
+def extract_adiro_dependencies(ttl_file: Path) -> list[str]:
+    """
+    Extract ADIRO ontology dependencies from owl:imports statements.
+    
+    Args:
+        ttl_file: Path to the TTL file
+        
+    Returns:
+        List of dependency names (e.g., ['aec-core', 'aec-drawing-metadata'])
+    """
+    try:
+        graph = Graph()
+        graph.parse(str(ttl_file), format="turtle")
+        
+        # Find the ontology declaration
+        ontologies = list(graph.subjects(RDF.type, OWL.Ontology))
+        if not ontologies:
+            return []
+        
+        ontology = ontologies[0]
+        
+        # Get all owl:imports
+        imports = list(graph.objects(ontology, OWL.imports))
+        
+        # Filter for ADIRO imports and extract the ontology name
+        adiro_base = "https://burohappoldmachinelearning.github.io/ADIRO/"
+        dependencies = []
+        
+        for imp in imports:
+            imp_str = str(imp)
+            if imp_str.startswith(adiro_base):
+                # Extract ontology name (e.g., "aec-core" from full IRI)
+                dep_name = imp_str.replace(adiro_base, "").split("/")[0]
+                dependencies.append(dep_name)
+        
+        return sorted(dependencies)  # Sort for consistent display
+        
+    except Exception:
+        return []
 
 
 def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
@@ -253,6 +292,13 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
             margin-bottom: 0.5rem;
             line-height: 1.5;
         }
+        .ontology-dependencies {
+            color: #777;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            margin-bottom: 0.5rem;
+            font-style: italic;
+        }
         .file-name {
             color: #666;
             font-size: 0.9rem;
@@ -321,17 +367,27 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
         html_filename = f"{ttl_file.stem}.html"
         ttl_filename = ttl_file.name
         comment = extract_ontology_comment(ttl_file)
+        dependencies = extract_adiro_dependencies(ttl_file)
         
         # Build the description HTML
         description_html = ""
         if comment:
             description_html = f'                    <div class="ontology-description">{comment}</div>'
         
+        # Build the dependencies HTML
+        dependencies_html = ""
+        if dependencies:
+            deps_text = ", ".join(dependencies)
+            dependencies_html = f'                    <div class="ontology-dependencies">Dependencies: {deps_text}</div>'
+        else:
+            dependencies_html = '                    <div class="ontology-dependencies">Dependencies: none</div>'
+        
         html_content += f"""        <li>
             <div class="ontology-item">
                 <div class="ontology-link-container">
                     <a href="{html_filename}">{ttl_file.stem.replace('_', ' ').title()}</a>
 {description_html}
+{dependencies_html}
                     <div class="file-name">Source: <a href="{ttl_filename}">{ttl_filename}</a></div>
                 </div>
                 <a href="#" class="ontocanvas-button" data-ontology="{html_filename}" target="_blank">
