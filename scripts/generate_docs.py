@@ -355,8 +355,9 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     <h1>ADIRO Ontologies Documentation</h1>
     
     <div class="intro">
-        <p>ADIRO (<i>AEC Drawing Information Representation Ontologies</i>) is a set of ontologies for AEC (<i>Architecture, Engineering, and Construction</i>) drawing representation, designed to support machine learning tasks, graph database storage, and information extraction workflows.</p>
-        <p>This site contains HTML documentation for all ontology files in the ADIRO repository. Scroll down to explore the available ontologies below.</p>
+        <p>ADIRO (<i>AEC Drawing Information Representation Ontologies</i>) is a set of ontologies for AEC (<i>Architecture, Engineering, and Construction</i>) drawing representation, designed to support machine learning tasks, in particular information extraction workflows.</p>
+        <p>The ontologies include concepts for drawing metadata, common symbols, domain-common symbols, and domain-specific symbols. They can be used to represent the information in AEC drawings, to make them machine-readable, and to support the creation of graph databases and knowledge graphs.</p>
+        <p>Scroll down to explore the available ontologies below.</p>
         <a href="https://github.com/BuroHappoldMachineLearning/ADIRO" class="github-button" target="_blank" rel="noopener noreferrer">View on GitHub</a>
     </div>
     
