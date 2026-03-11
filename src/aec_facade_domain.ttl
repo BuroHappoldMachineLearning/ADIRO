@@ -30,13 +30,13 @@
     rdfs:label "Facade component";
     rdfs:comment "Component of a facade system; a type of drawing element";
     <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
-    rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols#DrawingElement>.
+    rdfs:subClassOf metadata:DrawingElement.
 
 :FacadeSystem rdf:type owl:Class;
     rdfs:label "Facade system";
     rdfs:comment "Facade system - part of support type; a type of drawing element";
     <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#labellableRoot> "false"^^xsd:boolean;
-    rdfs:subClassOf <https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols#DrawingElement>, [ rdf:type owl:Restriction ; owl:onProperty <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#contains> ; owl:someValuesFrom :FacadeComponent ].
+    rdfs:subClassOf metadata:DrawingElement, [ rdf:type owl:Restriction ; owl:onProperty <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#contains> ; owl:someValuesFrom :FacadeComponent ].
 
 :LinearComponent rdf:type owl:Class;
     rdfs:label "Linear component";
