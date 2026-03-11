@@ -8,7 +8,7 @@
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols> rdf:type owl:Ontology ;
     rdfs:label "AEC Common Symbols Ontology" ;
-    rdfs:comment "Cross-discipline layout content. Generic classes like DrawingElement, which any symbols will be. Concepts like dimensions, callouts, grids, levels, etc. (mostly reusable non-domain symbols)." ;
+    rdfs:comment "Cross-discipline layout content. Generic symbol classes like dimensions, callouts, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology." ;
     owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols/1.0.0> ;
     owl:versionInfo "1.0.0" ;
     owl:imports <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata> .
@@ -17,7 +17,20 @@
 #    Classes
 #################################################################
 
-:DrawingElement rdf:type owl:Class ;
-    rdfs:comment "Element depicted on a drawing. Contained by Layout. Can be a Facade system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc." ;
-    rdfs:label "Drawing element" ;
-    metadata:labellableRoot "false"^^xsd:boolean .
+:Dimension rdf:type owl:Class;
+    rdfs:subClassOf metadata:DrawingElement;
+    rdfs:label "Dimension";
+    rdfs:comment "A dimension line or dimension annotation on a drawing, indicating measurements or distances.";
+    metadata:labellableRoot "true"^^xsd:boolean.
+
+:Callout rdf:type owl:Class;
+    rdfs:subClassOf metadata:DrawingElement;
+    rdfs:label "Callout";
+    rdfs:comment "A callout or detail marker that references another part of the drawing or a detail view.";
+    metadata:labellableRoot "true"^^xsd:boolean.
+
+:Grid rdf:type owl:Class;
+    rdfs:subClassOf metadata:DrawingElement;
+    rdfs:label "Grid";
+    rdfs:comment "A grid line or grid system used for alignment and reference in architectural drawings.";
+    metadata:labellableRoot "true"^^xsd:boolean.

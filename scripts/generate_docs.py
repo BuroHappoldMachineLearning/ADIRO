@@ -380,9 +380,9 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
         dependencies_html = ""
         if dependencies:
             deps_text = ", ".join(dependencies)
-            dependencies_html = f'                    <div class="ontology-dependencies">Dependencies: {deps_text}</div>'
+            dependencies_html = f'                    <div class="ontology-dependencies">Imports: {deps_text}</div>'
         else:
-            dependencies_html = '                    <div class="ontology-dependencies">Dependencies: none</div>'
+            dependencies_html = ""  # Don't show anything if no dependencies
         
         html_content += f"""        <li>
             <div class="ontology-item">
