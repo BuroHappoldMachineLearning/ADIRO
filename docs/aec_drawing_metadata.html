@@ -290,9 +290,6 @@ td {
     "https://schema.org/description": [
       {
         "@value": "Sheet/layout/document structure for AEC drawings."
-      },
-      {
-        "@value": "Created/edited with https://alelom.github.io/OntoCanvas/ version 1.8.1"
       }
     ],
     "https://schema.org/name": [
@@ -342,12 +339,7 @@ td {
             <dt>
               <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
             </dt>
-            <dd>
-              <ul>
-                <li><p>Sheet/layout/document structure for AEC drawings.</p></li>
-                <li><p>Created/edited with https://alelom.github.io/OntoCanvas/ version 1.8.1</p></li>
-              </ul>
-            </dd>
+            <dd><p>Sheet/layout/document structure for AEC drawings.</p></dd>
           </div>
         </dl>
       </div>
@@ -972,18 +964,36 @@ td {
                 <a class="hover_property" href="https://w3id.org/profile/ontdoc/restriction" title="Convenience property for things that subclass owl:Restriction. Defined in Ontology Documentation Profile">Restriction</a>
               </th>
               <td>
-                <span>
-                  <span>
+                <ul>
+                  <li>
                     <span>
-                      <a href="#has">hasProperty</a>
-                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                      <span>
+                        <span>
+                          <a href="#has">hasProperty</a>
+                          <sup class="sup-op" title="OWL Object Property">op</sup>
+                        </span>
+                        <span>
+                          <span class="cardinality">exactly</span>
+                          <span>1</span>
+                        </span><br>
+                      </span>
                     </span>
+                  </li>
+                  <li>
                     <span>
-                      <span class="cardinality">exactly</span>
-                      <span>1</span>
-                    </span><br>
-                  </span>
-                </span>
+                      <span>
+                        <span>
+                          <a href="#has">hasProperty</a>
+                          <sup class="sup-op" title="OWL Object Property">op</sup>
+                        </span>
+                        <span>
+                          <span class="cardinality">max</span>
+                          <span>1</span>
+                        </span><br>
+                      </span>
+                    </span>
+                  </li>
+                </ul>
               </td>
             </tr>
           </table>
@@ -1272,6 +1282,25 @@ td {
             </tr>
           </table>
         </div>
+        <div class="property entity" id="Drawingelement">
+          <h3>Drawing element
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#DrawingElement</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Element depicted on a drawing. Contained by Layout. Can be a Facade system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc.</p></td>
+            </tr>
+          </table>
+        </div>
       </div>
       <span>
         <span class="cardinality">min</span>
@@ -1280,6 +1309,10 @@ td {
       <span>
         <span class="cardinality">exactly</span>
         <span>1</span>
+      </span>
+      <span>
+        <span class="cardinality">min</span>
+        <span>0</span>
       </span>
       <div class="section" id="objectproperties">
         <h2>Object Properties</h2>
@@ -1461,7 +1494,7 @@ td {
         <dl>
           <dt id=":">:</dt>
           <dd>
-            <code>http://example.org/aec-drawing-ontology#</code>
+            <code>https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#</code>
           </dd>
           <dt id="ns1">ns1</dt>
           <dd>
@@ -1478,14 +1511,6 @@ td {
           <dt id="rdfs">rdfs</dt>
           <dd>
             <code>http://www.w3.org/2000/01/rdf-schema#</code>
-          </dd>
-          <dt id="xml">xml</dt>
-          <dd>
-            <code>http://www.w3.org/XML/1998/namespace</code>
-          </dd>
-          <dt id="xml1">xml1</dt>
-          <dd>
-            <code>http://www.w3.org/XML/1998/namespace#</code>
           </dd>
           <dt id="xsd">xsd</dt>
           <dd>
@@ -1630,6 +1655,9 @@ td {
             <li>
               <a href="#Vertical">Vertical</a>
             </li>
+            <li>
+              <a href="#Drawingelement">Drawing element</a>
+            </li>
           </ul>
         </li>
         <li>
@@ -1687,12 +1715,6 @@ td {
             </li>
             <li>
               <a href="#rdfs">rdfs</a>
-            </li>
-            <li>
-              <a href="#xml">xml</a>
-            </li>
-            <li>
-              <a href="#xml1">xml1</a>
             </li>
             <li>
               <a href="#xsd">xsd</a>

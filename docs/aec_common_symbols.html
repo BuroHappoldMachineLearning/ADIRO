@@ -289,7 +289,7 @@ td {
     ],
     "https://schema.org/description": [
       {
-        "@value": "Cross-discipline layout content. Generic classes like DrawingElement, which any symbols will be. Concepts like dimensions, callouts, grids, levels, etc. (mostly reusable non-domain symbols)."
+        "@value": "Cross-discipline layout content. Generic symbol classes like dimensions, callouts, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology."
       }
     ],
     "https://schema.org/name": [
@@ -339,28 +339,90 @@ td {
             <dt>
               <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
             </dt>
-            <dd><p>Cross-discipline layout content. Generic classes like DrawingElement, which any symbols will be. Concepts like dimensions, callouts, grids, levels, etc. (mostly reusable non-domain symbols).</p></dd>
+            <dd><p>Cross-discipline layout content. Generic symbol classes like dimensions, callouts, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology.</p></dd>
           </div>
         </dl>
       </div>
       <div class="section" id="classes">
         <h2>Classes</h2>
-        <div class="property entity" id="Drawingelement">
-          <h3>Drawing element
+        <div class="property entity" id="Dimension">
+          <h3>Dimension
             <sup class="sup-c" title="OWL/RDFS Class">c</sup>
           </h3>
           <table>
             <tr>
               <th>IRI</th>
               <td>
-                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols#DrawingElement</code>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols#Dimension</code>
               </td>
             </tr>
             <tr>
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Element depicted on a drawing. Contained by Layout. Can be a Facade system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc.</p></td>
+              <td><p>A dimension line or dimension annotation on a drawing, indicating measurements or distances.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#DrawingElement">metadata:DrawingElement</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="Callout">
+          <h3>Callout
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols#Callout</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A callout or detail marker that references another part of the drawing or a detail view.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#DrawingElement">metadata:DrawingElement</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="Grid">
+          <h3>Grid
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols#Grid</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A grid line or grid system used for alignment and reference in architectural drawings.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#DrawingElement">metadata:DrawingElement</a>
+              </td>
             </tr>
           </table>
         </div>
@@ -433,7 +495,13 @@ td {
           </h4>
           <ul class="second">
             <li>
-              <a href="#Drawingelement">Drawing element</a>
+              <a href="#Dimension">Dimension</a>
+            </li>
+            <li>
+              <a href="#Callout">Callout</a>
+            </li>
+            <li>
+              <a href="#Grid">Grid</a>
             </li>
           </ul>
         </li>
