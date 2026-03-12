@@ -76,7 +76,7 @@
     :labellableRoot "false"^^xsd:boolean.
 
 :DrawingSheet rdfs:subClassOf [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Note ], [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :RevisionTable ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ], [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass :Layout ], [ rdf:type owl:Restriction ; owl:onProperty :has ; owl:onClass :DrawingOrientation ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ];
-    rdfs:label "Drawing Sheeta";
+    rdfs:label "Drawing Sheet";
     rdfs:comment "Top-level container for a drawing. Contains Layout(s).";
     a owl:Class;
     :labellableRoot false.
