@@ -1,17 +1,17 @@
-@prefix : <https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols#> .
-@prefix metadata: <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#> .
+@prefix : <https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols#> .
+@prefix metadata: <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-<https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols> rdf:type owl:Ontology ;
+<https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols> rdf:type owl:Ontology ;
     rdfs:label "AEC Common Symbols Ontology" ;
     rdfs:comment "Cross-discipline layout content. Generic symbol classes like dimensions, callouts, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology." ;
-    owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols/1.0.0> ;
+    owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols/1.0.0> ;
     owl:versionInfo "1.0.0" ;
-    owl:imports <https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata> .
+    owl:imports <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata> .
 
 #################################################################
 #    Classes
