@@ -545,10 +545,7 @@ td {
                   <li>
                     <span>
                       <span>
-                        <span>
-                          <a href="#has">hasProperty</a>
-                          <sup class="sup-op" title="OWL Object Property">op</sup>
-                        </span>
+                        <a href="#has">has</a>
                         <span>
                           <span class="cardinality">exactly</span>
                           <span>1</span>
@@ -625,10 +622,7 @@ td {
                   <li>
                     <span>
                       <span>
-                        <span>
-                          <a href="#has">hasProperty</a>
-                          <sup class="sup-op" title="OWL Object Property">op</sup>
-                        </span>
+                        <a href="#has">has</a>
                         <span>
                           <span class="cardinality">exactly</span>
                           <span>1</span>
@@ -968,10 +962,7 @@ td {
                   <li>
                     <span>
                       <span>
-                        <span>
-                          <a href="#has">hasProperty</a>
-                          <sup class="sup-op" title="OWL Object Property">op</sup>
-                        </span>
+                        <a href="#has">has</a>
                         <span>
                           <span class="cardinality">exactly</span>
                           <span>1</span>
@@ -982,10 +973,7 @@ td {
                   <li>
                     <span>
                       <span>
-                        <span>
-                          <a href="#has">hasProperty</a>
-                          <sup class="sup-op" title="OWL Object Property">op</sup>
-                        </span>
+                        <a href="#has">has</a>
                         <span>
                           <span class="cardinality">max</span>
                           <span>1</span>
@@ -1331,7 +1319,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Direct containment or has-part relationship. Min cardinality 0 by default (can contain).</p></td>
+              <td><p>Direct containment: indicates physical containment of something within a parent thing (e.g. object in a box). Min cardinality 0 by default (can contain).</p></td>
             </tr>
             <tr>
               <th>
@@ -1357,7 +1345,7 @@ td {
             </tr>
           </table>
         </div>
-        <div class="property entity" id="has">
+        <div class="property entity" id="hasProperty">
           <h3>hasProperty
             <sup class="sup-op" title="OWL Object Property">op</sup>
           </h3>
@@ -1365,14 +1353,14 @@ td {
             <tr>
               <th>IRI</th>
               <td>
-                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#has</code>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#hasProperty</code>
               </td>
             </tr>
             <tr>
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Subject is characterised by a property.</p></td>
+              <td><p>Subject is characterised by a property, or quality. Used for example to indicate qualitative things like 'it is vertical' or 'it has a colour blue'.</p></td>
             </tr>
             <tr>
               <th>
@@ -1669,7 +1657,7 @@ td {
               <a href="#contains">contains</a>
             </li>
             <li>
-              <a href="#has">hasProperty</a>
+              <a href="#hasProperty">hasProperty</a>
             </li>
           </ul>
         </li>
