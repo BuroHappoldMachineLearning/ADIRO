@@ -415,7 +415,7 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
                 // Construct full URL to the ontology HTML file
                 const baseUrl = window.location.origin + window.location.pathname.replace(/\\/[^\\/]*$/, '');
                 const ontologyUrl = baseUrl + '/' + ontologyFile;
-                const ontocanvasUrl = 'https://alelom.github.io/OntoCanvas/?onto=' + encodeURIComponent(ontologyUrl);
+                const ontocanvasUrl = 'https://alelom.github.io/OntoCanvas/?onto=' + ontologyUrl;
                 button.setAttribute('href', ontocanvasUrl);
             });
         });
