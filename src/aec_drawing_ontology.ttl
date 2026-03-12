@@ -39,13 +39,13 @@
 #################################################################
 
 :contains rdf:type owl:ObjectProperty;
-    rdfs:comment "Direct containment or has-part relationship. Min cardinality 0 by default (can contain).";
+    rdfs:comment "Direct containment or has-part relationship. Used to describe a physical containment, e.g. 'item is contained in a box'. Min cardinality 0 by default (can contain).";
     rdfs:label "contains";
     rdfs:range owl:Thing;
     rdfs:domain owl:Thing.
 
-:has rdf:type owl:ObjectProperty;
-    rdfs:comment "Subject is characterised by a property.";
+:hasProperty rdf:type owl:ObjectProperty;
+    rdfs:comment "Subject is characterised by a property or quality, e.g. 'it has vertical alignment' or 'it is of colour blue'";
     rdfs:label "hasProperty";
     rdfs:range owl:Thing, :Orientation;
     rdfs:domain owl:Thing, :Detail.
@@ -248,7 +248,7 @@
     rdfs:comment "Detail drawing";
     rdfs:label "Detail";
     :labellableRoot "true"^^xsd:boolean;
-    rdfs:subClassOf :DrawingType, [ rdf:type owl:Restriction ; owl:onProperty :has ; owl:onClass :Orientation ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ].
+    rdfs:subClassOf :DrawingType, [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :Orientation ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ].
 
 :DetailLocation rdf:type owl:Class;
     rdfs:label "Detail location";
@@ -278,7 +278,7 @@
     rdfs:comment "Top-level container for a drawing. Contains Layout(s).";
     rdfs:label "Drawing sheet";
     :labellableRoot "false"^^xsd:boolean;
-    rdfs:subClassOf [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Note ], [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :RevisionTable ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ], [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass :Layout ], [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:someValuesFrom :FacadeComponent ], [ rdf:type owl:Restriction ; owl:onProperty :has ; owl:onClass :DrawingOrientation ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ].
+    rdfs:subClassOf [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Note ], [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :RevisionTable ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ], [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass :Layout ], [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:someValuesFrom :FacadeComponent ], [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :DrawingOrientation ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ].
 
 :DrawingType rdf:type owl:Class;
     rdfs:comment "Type of drawing view";
@@ -467,7 +467,7 @@
     rdfs:comment "Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content.";
     rdfs:label "Layout";
     :labellableRoot "true"^^xsd:boolean;
-    rdfs:subClassOf [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:integer ; owl:onClass :DrawingElement ], [ rdf:type owl:Restriction ; owl:onProperty :has ; owl:onClass :DrawingType ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ].
+    rdfs:subClassOf [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:integer ; owl:onClass :DrawingElement ], [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :DrawingType ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ].
 
 :Legend rdf:type owl:Class;
     rdfs:comment "A legend containing mapping information between symbols and a text signifier.";
