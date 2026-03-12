@@ -36,8 +36,7 @@
 
 :contains rdf:type owl:ObjectProperty;
     rdfs:label "contains";
-    rdfs:comment "Direct containment: indicates physical containment of something within a parent thing (e.g. object in a box).
-Min cardinality 0 by default (can contain).";
+    rdfs:comment "Direct containment: indicates physical containment of something within a parent thing (e.g. object in a box). Min cardinality 0 by default (can contain).";
     rdfs:range owl:Thing;
     rdfs:domain owl:Thing.
 
