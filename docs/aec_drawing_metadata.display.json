@@ -143,13 +143,13 @@
       "color": "#000000",
       "lineType": "solid"
     },
-    "https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#contains": {
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#contains": {
       "show": true,
       "showLabel": true,
       "color": "#8026d9",
       "lineType": "solid"
     },
-    "https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#has": {
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#has": {
       "show": true,
       "showLabel": true,
       "color": "#d92626",

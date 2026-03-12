@@ -409,21 +409,21 @@
       "x": 19257,
       "y": 0
     },
-    "https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols#DrawingElement": {
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols#DrawingElement": {
       "x": 7295,
       "y": -1072
     },
-    "https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common#GeometricProperties": {
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common#GeometricProperties": {
       "x": 15468,
       "y": -541
     },
-    "https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common#Function": {
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common#Function": {
       "x": 17859,
       "y": -641
     }
   },
   "edgeStyleConfig": {
-    "https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#contains": {
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#contains": {
       "show": true,
       "showLabel": true,
       "color": "#8000ff",
