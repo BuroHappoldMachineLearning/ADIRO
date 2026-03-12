@@ -33,7 +33,7 @@ jobs:
       - name: Validate ontology files
         run: uv run --python 3.12 --no-project python scripts/validate_ontology.py
 
-  generate-and-deploy:
+  generate-docs:
     needs: validate
     runs-on: ubuntu-latest
     
@@ -80,7 +80,7 @@ jobs:
           retention-days: 1
   
   deploy:
-    needs: generate-and-deploy
+    needs: generate-docs
     runs-on: ubuntu-latest
     environment:
       name: github-pages
