@@ -80,6 +80,7 @@
     rdfs:comment "Top-level container for a drawing. Contains Layout(s).";
     a owl:Class;
     :labellableRoot false.
+
 :RevisionTable rdf:type owl:Class;
     rdfs:subClassOf :Metadata;
     rdfs:label "Revision table";
@@ -89,6 +90,7 @@
     rdfs:label "Layout";
     rdfs:comment "Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content."; rdf:type owl:Class;
     :labellableRoot true.
+
 :DrawingOrientation rdf:type owl:Class;
     rdfs:subClassOf :Portrait, :Landscape;
     rdfs:label "DrawingOrientation".
@@ -141,6 +143,7 @@
     rdfs:label "Detail";
     rdfs:comment "Detail drawing";
     :labellableRoot true; rdf:type owl:Class.
+    
 :Orientation rdf:type owl:Class;
     rdfs:label "Detail Orientation";
     rdfs:comment "Can be standalone label - drawing orientation";
