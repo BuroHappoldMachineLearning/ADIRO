@@ -519,33 +519,3 @@
     rdfs:label "Zig-zag";
     metadata:labellableRoot "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeShape.
-
-:Aesthetic rdf:type owl:Class;
-    rdfs:label "Aesthetic";
-    metadata:labellableRoot "false"^^xsd:boolean;
-    rdfs:subClassOf dcommon:Function.
-
-:Airtightness rdf:type owl:Class;
-    rdfs:label "Airtightness";
-    metadata:labellableRoot "false"^^xsd:boolean;
-    rdfs:subClassOf dcommon:Function.
-
-:FireCompartmentation rdf:type owl:Class;
-    rdfs:label "Fire compartmentation";
-    metadata:labellableRoot "false"^^xsd:boolean;
-    rdfs:subClassOf dcommon:Function.
-
-:Thermal rdf:type owl:Class;
-    rdfs:label "Thermal";
-    metadata:labellableRoot "false"^^xsd:boolean;
-    rdfs:subClassOf dcommon:Function.
-
-:Vision rdf:type owl:Class;
-    rdfs:label "Vision";
-    metadata:labellableRoot "false"^^xsd:boolean;
-    rdfs:subClassOf dcommon:Function.
-
-:Waterproofing rdf:type owl:Class;
-    rdfs:label "Waterproofing";
-    metadata:labellableRoot "false"^^xsd:boolean;
-    rdfs:subClassOf dcommon:Function.
