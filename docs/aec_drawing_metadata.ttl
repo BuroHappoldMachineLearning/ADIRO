@@ -75,7 +75,7 @@
     rdfs:comment "Can be standalone label - drawing metadata";
     :labellableRoot "false"^^xsd:boolean.
 
-:DrawingSheet rdf:type owl:Class;
+:DrawingSheet rdf:type owl:Class ;
     rdfs:subClassOf 
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Note ], 
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Legend ], 
@@ -83,8 +83,8 @@
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Titleblock ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ], 
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass :Layout ], 
         [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :DrawingOrientation ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ];
-    rdfs:label "Drawing Sheet";
-    rdfs:comment "Top-level container for a drawing. Contains Layout(s).";
+    rdfs:label "Drawing Sheet" ;
+    rdfs:comment "Top-level container for a drawing. Contains Layout(s)." ;
     :labellableRoot false.
 
 :RevisionTable rdf:type owl:Class;
@@ -92,10 +92,10 @@
     rdfs:label "Revision table";
     :labellableRoot "true"^^xsd:boolean.
 
-:Layout rdf:type owl:Class;
+:Layout rdf:type owl:Class ;
     rdfs:subClassOf [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :DrawingElement ], [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :DrawingType ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ];
-    rdfs:label "Layout";
-    rdfs:comment "Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content."; rdf:type owl:Class;
+    rdfs:label "Layout" ;
+    rdfs:comment "Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content."; rdf:type owl:Class ;
     :labellableRoot true.
 
 :DrawingOrientation rdf:type owl:Class;
