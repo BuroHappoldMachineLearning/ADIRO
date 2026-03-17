@@ -146,12 +146,12 @@
     rdfs:label "Elevation";
     :labellableRoot "true"^^xsd:boolean.
 
-:Detail rdf:type owl:Class;
+:Detail rdf:type owl:Class ;
     rdfs:subClassOf :DrawingType, 
     [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :Orientation ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ], 
     [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :DetailLocation ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ];
-    rdfs:label "Detail";
-    rdfs:comment "Detail drawing";
+    rdfs:label "Detail" ;
+    rdfs:comment "Detail drawing" ;
     :labellableRoot true.
     
 :Orientation rdf:type owl:Class;
