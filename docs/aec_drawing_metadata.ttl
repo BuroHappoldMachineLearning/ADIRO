@@ -95,7 +95,7 @@
 :Layout rdf:type owl:Class ;
     rdfs:subClassOf [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :DrawingElement ], [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :DrawingType ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ];
     rdfs:label "Layout" ;
-    rdfs:comment "Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content."; rdf:type owl:Class ;
+    rdfs:comment "Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content." ;
     :labellableRoot true.
 
 :DrawingOrientation rdf:type owl:Class;
