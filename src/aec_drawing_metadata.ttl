@@ -179,35 +179,6 @@
     rdfs:label "Perspective";
     :labellableRoot "true"^^xsd:boolean.
 
-:DetailLocation rdf:type owl:Class;
-    rdfs:label "Detail location";
-    :labellableRoot "false"^^xsd:boolean.
-
-:Base rdf:type owl:Class;
-    rdfs:subClassOf :DetailLocation;
-    rdfs:label "Base";
-    :labellableRoot "true"^^xsd:boolean.
-
-:Corner rdf:type owl:Class;
-    rdfs:subClassOf :DetailLocation;
-    rdfs:label "Corner";
-    :labellableRoot "true"^^xsd:boolean.
-
-:Head rdf:type owl:Class;
-    rdfs:subClassOf :DetailLocation;
-    rdfs:label "Head";
-    :labellableRoot "true"^^xsd:boolean.
-
-:SlabEdge rdf:type owl:Class;
-    rdfs:subClassOf :DetailLocation;
-    rdfs:label "Slab edge";
-    :labellableRoot "true"^^xsd:boolean.
-
-:Typical rdf:type owl:Class;
-    rdfs:subClassOf :DetailLocation;
-    rdfs:label "Typical";
-    :labellableRoot "true"^^xsd:boolean.
-
 :Horizontal rdf:type owl:Class;
     rdfs:subClassOf :Orientation;
     rdfs:label "Horizontal";
