@@ -682,7 +682,7 @@ td {
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/superClassOf" title="Inverse of RDFS' subClassOf. Defined in Ontology Documentation Profile">Super Class Of</a>
               </th>
               <td>
                 <ul>
@@ -703,22 +703,22 @@ td {
             </tr>
           </table>
         </div>
-        <div class="property entity" id="Drawingtype">
-          <h3>Drawing type
+        <div class="property entity" id="Layoutcontenttype">
+          <h3>Layout content type
             <sup class="sup-c" title="OWL/RDFS Class">c</sup>
           </h3>
           <table>
             <tr>
               <th>IRI</th>
               <td>
-                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#DrawingType</code>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#LayoutContentType</code>
               </td>
             </tr>
             <tr>
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Type of drawing view</p></td>
+              <td><p>Type of content included in a layout.</p></td>
             </tr>
             <tr>
               <th>
@@ -734,13 +734,19 @@ td {
                   </li>
                   <li>
                     <span>
-                      <a href="#Section">Vertical Section</a>
+                      <a href="#Section">Section</a>
                       <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                     </span>
                   </li>
                   <li>
                     <span>
                       <a href="#Elevation">Elevation</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#Table">Table</a>
                       <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                     </span>
                   </li>
@@ -774,7 +780,13 @@ td {
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="https://w3id.org/profile/ontdoc/superClassOf" title="Inverse of RDFS' subClassOf. Defined in Ontology Documentation Profile">Super Class Of</a>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>The content of the drawing is oriented such that the height is greater than the width.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
               </th>
               <td>
                 <span>
@@ -798,7 +810,13 @@ td {
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="https://w3id.org/profile/ontdoc/superClassOf" title="Inverse of RDFS' subClassOf. Defined in Ontology Documentation Profile">Super Class Of</a>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>The content of the drawing is oriented such that the width is greater than the height.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
               </th>
               <td>
                 <span>
@@ -819,6 +837,12 @@ td {
               <td>
                 <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Titleblock</code>
               </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc.</p></td>
             </tr>
             <tr>
               <th>
@@ -904,7 +928,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#Drawingtype">Drawing type</a>
+                  <a href="#Layoutcontenttype">Layout content type</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -912,7 +936,7 @@ td {
           </table>
         </div>
         <div class="property entity" id="Section">
-          <h3>Vertical Section
+          <h3>Section
             <sup class="sup-c" title="OWL/RDFS Class">c</sup>
           </h3>
           <table>
@@ -924,12 +948,37 @@ td {
             </tr>
             <tr>
               <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Section drawing. Has a required property of orientation, which can be vertical or horizontal.</p></td>
+            </tr>
+            <tr>
+              <th>
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
               </th>
               <td>
                 <span>
-                  <a href="#Drawingtype">Drawing type</a>
+                  <a href="#Layoutcontenttype">Layout content type</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/restriction" title="Convenience property for things that subclass owl:Restriction. Defined in Ontology Documentation Profile">Restriction</a>
+              </th>
+              <td>
+                <span>
+                  <span>
+                    <span>
+                      <a href="#hasProperty">hasProperty</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                    <span>
+                      <span class="cardinality">exactly</span>
+                      <span>1</span>
+                    </span><br>
+                  </span>
                 </span>
               </td>
             </tr>
@@ -952,7 +1001,37 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#Drawingtype">Drawing type</a>
+                  <a href="#Layoutcontenttype">Layout content type</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="Table">
+          <h3>Table
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Table</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A table containing structured information, for example a schedule of elements.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Layoutcontenttype">Layout content type</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -982,7 +1061,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#Drawingtype">Drawing type</a>
+                  <a href="#Layoutcontenttype">Layout content type</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -1026,8 +1105,8 @@ td {
             </tr>
           </table>
         </div>
-        <div class="property entity" id="DetailOrientation">
-          <h3>Detail Orientation
+        <div class="property entity" id="Orientation">
+          <h3>Orientation
             <sup class="sup-c" title="OWL/RDFS Class">c</sup>
           </h3>
           <table>
@@ -1041,7 +1120,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Can be standalone label - drawing orientation</p></td>
+              <td><p>Orientation of the content of a layout. For example, a detail can be horizontal or vertical.</p></td>
             </tr>
             <tr>
               <th>
@@ -1083,7 +1162,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#Drawingtype">Drawing type</a>
+                  <a href="#Layoutcontenttype">Layout content type</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -1279,7 +1358,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#DetailOrientation">Detail Orientation</a>
+                  <a href="#Orientation">Orientation</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -1303,7 +1382,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#DetailOrientation">Detail Orientation</a>
+                  <a href="#Orientation">Orientation</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -1632,7 +1711,7 @@ td {
               <a href="#DrawingOrientation">DrawingOrientation</a>
             </li>
             <li>
-              <a href="#Drawingtype">Drawing type</a>
+              <a href="#Layoutcontenttype">Layout content type</a>
             </li>
             <li>
               <a href="#Portrait">Portrait</a>
@@ -1653,16 +1732,19 @@ td {
               <a href="#Plan">Plan</a>
             </li>
             <li>
-              <a href="#Section">Vertical Section</a>
+              <a href="#Section">Section</a>
             </li>
             <li>
               <a href="#Elevation">Elevation</a>
             </li>
             <li>
+              <a href="#Table">Table</a>
+            </li>
+            <li>
               <a href="#Detail">Detail</a>
             </li>
             <li>
-              <a href="#DetailOrientation">Detail Orientation</a>
+              <a href="#Orientation">Orientation</a>
             </li>
             <li>
               <a href="#Perspective">Perspective</a>

@@ -93,31 +93,38 @@
     :labellableRoot "true"^^xsd:boolean.
 
 :Layout rdf:type owl:Class ;
-    rdfs:subClassOf [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :DrawingElement ], [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :DrawingType ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ];
+    rdfs:subClassOf 
+        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :DrawingElement ], 
+        [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :LayoutContentType ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ];
     rdfs:label "Layout" ;
     rdfs:comment "Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content." ;
     :labellableRoot true.
 
 :DrawingOrientation rdf:type owl:Class;
-    rdfs:subClassOf :Portrait, :Landscape;
-    rdfs:label "DrawingOrientation".
+    rdfs:label "DrawingOrientation";
+    :labellableRoot "false"^^xsd:boolean.
 
-:DrawingType rdf:type owl:Class;
-    rdfs:label "Drawing type";
-    rdfs:comment "Type of drawing view";
+:LayoutContentType rdf:type owl:Class;
+    rdfs:label "Layout content type";
+    rdfs:comment "Type of content included in a layout.";
     :labellableRoot "false"^^xsd:boolean.
 
 :Portrait rdf:type owl:Class;
     rdfs:label "Portrait";
+    rdfs:comment "The content of the drawing is oriented such that the height is greater than the width.";
+    rdfs:subClassOf :DrawingOrientation ;
     :labellableRoot "true"^^xsd:boolean.
 
 :Landscape rdf:type owl:Class;
     rdfs:label "Landscape";
+    rdfs:comment "The content of the drawing is oriented such that the width is greater than the height.";
+    rdfs:subClassOf :DrawingOrientation ;
     :labellableRoot "true"^^xsd:boolean.
 
 :Titleblock rdf:type owl:Class;
     rdfs:subClassOf :Metadata;
     rdfs:label "Titleblock";
+    rdfs:comment "Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc.";
     :labellableRoot "true"^^xsd:boolean.
 
 :Legend rdf:type owl:Class;
@@ -132,35 +139,43 @@
     :labellableRoot "true"^^xsd:boolean.
 
 :Plan rdf:type owl:Class;
-    rdfs:subClassOf :DrawingType;
+    rdfs:subClassOf :LayoutContentType;
     rdfs:label "Plan";
     :labellableRoot "true"^^xsd:boolean.
 
 :Section rdf:type owl:Class;
-    rdfs:subClassOf :DrawingType;
-    rdfs:label "Vertical Section";
+    rdfs:subClassOf :LayoutContentType,
+        [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :Orientation ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ]; 
+    rdfs:label "Section";
+    rdfs:comment "Section drawing. Has a required property of orientation, which can be vertical or horizontal.";
     :labellableRoot "true"^^xsd:boolean.
 
 :Elevation rdf:type owl:Class;
-    rdfs:subClassOf :DrawingType;
+    rdfs:subClassOf :LayoutContentType;
     rdfs:label "Elevation";
     :labellableRoot "true"^^xsd:boolean.
 
+:Table rdf:type owl:Class;
+    rdfs:label "Table";
+    rdfs:subClassOf :LayoutContentType;
+    rdfs:comment "A table containing structured information, for example a schedule of elements.";
+    :labellableRoot "true"^^xsd:boolean.
+
 :Detail rdf:type owl:Class ;
-    rdfs:subClassOf :DrawingType, 
+    rdfs:subClassOf :LayoutContentType, 
     [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :Orientation ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ], 
-    [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :DetailLocation ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ];
+    [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :DetailLocation ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ];
     rdfs:label "Detail" ;
     rdfs:comment "Detail drawing" ;
     :labellableRoot true.
     
 :Orientation rdf:type owl:Class;
-    rdfs:label "Detail Orientation";
-    rdfs:comment "Can be standalone label - drawing orientation";
+    rdfs:label "Orientation";
+    rdfs:comment "Orientation of the content of a layout. For example, a detail can be horizontal or vertical.";
     :labellableRoot "false"^^xsd:boolean.
 
 :Perspective rdf:type owl:Class;
-    rdfs:subClassOf :DrawingType;
+    rdfs:subClassOf :LayoutContentType;
     rdfs:label "Perspective";
     :labellableRoot "true"^^xsd:boolean.
 
