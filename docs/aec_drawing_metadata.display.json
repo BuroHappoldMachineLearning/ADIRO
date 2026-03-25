@@ -2,120 +2,124 @@
   "version": 1,
   "nodePositions": {
     "TextualNote": {
-      "x": 35,
-      "y": 408
+      "x": 402,
+      "y": 54
     },
     "Note": {
-      "x": 78,
-      "y": 230
+      "x": 494,
+      "y": -56
     },
     "Metadata": {
-      "x": 451,
-      "y": 0
+      "x": 773,
+      "y": -336
     },
     "DrawingSheet": {
-      "x": 1486,
-      "y": -488
-    },
-    "RevisionTable": {
-      "x": 283,
-      "y": 291
-    },
-    "Layout": {
-      "x": 1483,
-      "y": -25
-    },
-    "DrawingOrientation": {
-      "x": 5435,
-      "y": -253
-    },
-    "DrawingType": {
-      "x": 2200,
-      "y": -16
-    },
-    "Portrait": {
-      "x": 5142,
-      "y": -19
-    },
-    "Landscape": {
-      "x": 5732,
-      "y": -22
-    },
-    "Titleblock": {
-      "x": 562,
-      "y": 230
+      "x": 2343,
+      "y": -656
     },
     "Legend": {
-      "x": 814,
-      "y": 230
+      "x": 673,
+      "y": 13
+    },
+    "RevisionTable": {
+      "x": 939,
+      "y": -5
+    },
+    "Titleblock": {
+      "x": 1263,
+      "y": 13
+    },
+    "Layout": {
+      "x": 2326,
+      "y": 365
+    },
+    "DrawingOrientation": {
+      "x": 3426,
+      "y": -551
+    },
+    "DrawingElement": {
+      "x": 2326,
+      "y": 570
+    },
+    "LayoutContentType": {
+      "x": 3099,
+      "y": 375
+    },
+    "Portrait": {
+      "x": 3306,
+      "y": -383
+    },
+    "Landscape": {
+      "x": 3573,
+      "y": -383
     },
     "Image": {
-      "x": 119,
-      "y": 408
+      "x": 521,
+      "y": 54
     },
     "Plan": {
-      "x": 1723,
-      "y": 230
+      "x": 2629,
+      "y": 735
     },
     "Section": {
-      "x": 1918,
-      "y": 291
-    },
-    "Elevation": {
-      "x": 2183,
-      "y": 230
-    },
-    "Detail": {
-      "x": 2825,
-      "y": 192
+      "x": 2896,
+      "y": 733
     },
     "Orientation": {
-      "x": 2897,
-      "y": 428
+      "x": 3018,
+      "y": 1082
     },
-    "Perspective": {
-      "x": 2468,
-      "y": 234
+    "Elevation": {
+      "x": 3957,
+      "y": 738
+    },
+    "Table": {
+      "x": 4307,
+      "y": 746
+    },
+    "Detail": {
+      "x": 3179,
+      "y": 728
     },
     "DetailLocation": {
-      "x": 3849,
-      "y": 369
+      "x": 3817,
+      "y": 1081
+    },
+    "Perspective": {
+      "x": 3607,
+      "y": 738
     },
     "Base": {
-      "x": 3440,
-      "y": 630
+      "x": 3415,
+      "y": 1345
     },
     "Corner": {
-      "x": 3608,
-      "y": 630
+      "x": 3583,
+      "y": 1345
     },
     "Head": {
-      "x": 3775,
-      "y": 630
+      "x": 3750,
+      "y": 1345
     },
     "SlabEdge": {
-      "x": 3984,
-      "y": 630
+      "x": 3960,
+      "y": 1345
     },
     "Typical": {
-      "x": 4236,
-      "y": 630
+      "x": 4211,
+      "y": 1345
     },
     "Horizontal": {
-      "x": 2696,
-      "y": 626
+      "x": 2883,
+      "y": 1332
     },
     "Vertical": {
-      "x": 3087,
-      "y": 626
-    },
-    "http://www.w3.org/2002/07/owl#Thing": {
-      "x": 1507,
-      "y": -1220
+      "x": 3116,
+      "y": 1332
     },
     "__dataprop__TextualNote__refersToDrawingId": {
-      "x": 35,
-      "y": 451
+      "x": 402,
+      "y": 97
     }
   },
   "edgeStyleConfig": {
@@ -125,13 +129,7 @@
       "color": "#8026d9",
       "lineType": "solid"
     },
-    "has": {
-      "show": true,
-      "showLabel": true,
-      "color": "#d92626",
-      "lineType": "solid"
-    },
-    "http://example.org/aec-drawing-ontology#has": {
+    "hasProperty": {
       "show": true,
       "showLabel": true,
       "color": "#d92626",
@@ -149,7 +147,7 @@
       "color": "#8026d9",
       "lineType": "solid"
     },
-    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#has": {
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#hasProperty": {
       "show": true,
       "showLabel": true,
       "color": "#d92626",
@@ -194,10 +192,10 @@
     }
   },
   "viewState": {
-    "scale": 0.23496164554357343,
+    "scale": 0.3935370709864719,
     "position": {
-      "x": 2947.785888671875,
-      "y": -301.24999999999994
+      "x": 3641.13246235802,
+      "y": 507.77989027388804
     }
   },
   "displayExternalReferences": true,
