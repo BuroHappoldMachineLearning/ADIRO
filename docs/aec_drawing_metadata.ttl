@@ -1,4 +1,5 @@
 @prefix : <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#> .
+@base <https://burohappoldmachinelearning.github.io/ADIRO/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace#> .
@@ -125,6 +126,8 @@
     rdfs:subClassOf :Metadata;
     rdfs:label "Titleblock";
     rdfs:comment "Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc.";
+    :exampleImage <img/aec_drawing_ontology/titleblock_01.png> ;
+    :exampleImage <img/aec_drawing_ontology/titleblock_02.png> ;
     :labellableRoot "true"^^xsd:boolean.
 
 :Legend rdf:type owl:Class;
@@ -177,35 +180,6 @@
 :Perspective rdf:type owl:Class;
     rdfs:subClassOf :LayoutContentType;
     rdfs:label "Perspective";
-    :labellableRoot "true"^^xsd:boolean.
-
-:DetailLocation rdf:type owl:Class;
-    rdfs:label "Detail location";
-    :labellableRoot "false"^^xsd:boolean.
-
-:Base rdf:type owl:Class;
-    rdfs:subClassOf :DetailLocation;
-    rdfs:label "Base";
-    :labellableRoot "true"^^xsd:boolean.
-
-:Corner rdf:type owl:Class;
-    rdfs:subClassOf :DetailLocation;
-    rdfs:label "Corner";
-    :labellableRoot "true"^^xsd:boolean.
-
-:Head rdf:type owl:Class;
-    rdfs:subClassOf :DetailLocation;
-    rdfs:label "Head";
-    :labellableRoot "true"^^xsd:boolean.
-
-:SlabEdge rdf:type owl:Class;
-    rdfs:subClassOf :DetailLocation;
-    rdfs:label "Slab edge";
-    :labellableRoot "true"^^xsd:boolean.
-
-:Typical rdf:type owl:Class;
-    rdfs:subClassOf :DetailLocation;
-    rdfs:label "Typical";
     :labellableRoot "true"^^xsd:boolean.
 
 :Horizontal rdf:type owl:Class;

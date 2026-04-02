@@ -8,10 +8,12 @@ to generate HTML documentation for each one.
 
 import sys
 import shutil
+import re
 from pathlib import Path
 from pylode.profiles.ontpub import OntPub
 from rdflib import Graph
 from rdflib.namespace import RDF, RDFS, OWL
+from rdflib.namespace import split_uri
 
 
 def find_ttl_files(root_dir: Path) -> list[Path]:
@@ -89,6 +91,9 @@ def generate_documentation(ttl_file: Path, output_dir: Path) -> bool:
         # Use pyLODE's OntPub profile to generate HTML
         od = OntPub(ontology=str(ttl_file))
         od.make_html(destination=str(output_file))
+
+        # Post-process HTML to render example images inline (if present)
+        inject_example_images(ttl_file=ttl_file, html_file=output_file)
         
         print(f"  [OK] Generated: {output_file}")
         
@@ -102,6 +107,120 @@ def generate_documentation(ttl_file: Path, output_dir: Path) -> bool:
     except Exception as e:
         print(f"  [ERROR] Error processing {ttl_file.name}: {e}", file=sys.stderr)
         return False
+
+
+def _local_name(term_iri: str) -> str | None:
+    """Extract a local name from an IRI for matching HTML entity IDs."""
+    try:
+        _, name = split_uri(term_iri)
+        return name
+    except Exception:
+        # Fallback for unusual IRIs
+        if "#" in term_iri:
+            return term_iri.rsplit("#", 1)[-1] or None
+        if "/" in term_iri:
+            return term_iri.rsplit("/", 1)[-1] or None
+        return None
+
+
+def _is_example_image_predicate(predicate_iri: str) -> bool:
+    name = _local_name(predicate_iri)
+    return (name or "").lower() == "exampleimage"
+
+
+def inject_example_images(ttl_file: Path, html_file: Path) -> None:
+    """Inject inline image previews for any :exampleImage annotations found in ttl_file.
+
+    pyLODE documents the annotation property itself, but it doesn't include
+    per-entity annotation values in the entity tables. This function adds an
+    'Example image' row to the relevant entity tables.
+    """
+
+    graph = Graph()
+    graph.parse(str(ttl_file), format="turtle")
+
+    # Find the exampleImage predicate(s) in this graph (namespace varies per ontology)
+    example_predicates = {
+        p for p in set(graph.predicates()) if _is_example_image_predicate(str(p))
+    }
+    if not example_predicates:
+        return
+
+    # Collect example images for OWL/RDFS classes
+    images_by_entity: dict[str, list[str]] = {}
+    class_subjects = set(graph.subjects(RDF.type, OWL.Class)) | set(
+        graph.subjects(RDF.type, RDFS.Class)
+    )
+
+    for subj in class_subjects:
+        subj_name = _local_name(str(subj))
+        if not subj_name:
+            continue
+
+        image_iris: list[str] = []
+        for pred in example_predicates:
+            for _, _, obj in graph.triples((subj, pred, None)):
+                if obj is None:
+                    continue
+                obj_str = str(obj).strip()
+                if not obj_str:
+                    continue
+                image_iris.append(obj_str)
+
+        if image_iris:
+            # Preserve order while deduplicating
+            deduped: list[str] = []
+            seen: set[str] = set()
+            for iri in image_iris:
+                if iri not in seen:
+                    deduped.append(iri)
+                    seen.add(iri)
+            images_by_entity[subj_name] = deduped
+
+    if not images_by_entity:
+        return
+
+    html = html_file.read_text(encoding="utf-8")
+
+    # Insert a new table row inside each matching entity div
+    for entity_id, image_iris in images_by_entity.items():
+        div_marker = f'<div class="property entity" id="{entity_id}">'
+        div_start = html.find(div_marker)
+        if div_start == -1:
+            continue
+
+        table_end = html.find("</table>", div_start)
+        if table_end == -1:
+            continue
+
+        # Avoid duplicate injection if docs are regenerated without a clean workspace
+        existing_slice = html[div_start:table_end]
+        if re.search(r">\s*Example image\s*<", existing_slice, flags=re.IGNORECASE):
+            continue
+
+        items_html: list[str] = []
+        for iri in image_iris:
+            # Show as link + inline preview. Keep styling minimal and consistent.
+            safe_iri = iri.replace('"', "%22")
+            items_html.append(
+                "<div>\n"
+                f"  <a href=\"{safe_iri}\" target=\"_blank\" rel=\"noopener noreferrer\"><code>{iri}</code></a><br>\n"
+                f"  <img src=\"{safe_iri}\" alt=\"Example image for {entity_id}\" style=\"max-width: 1000px;\">\n"
+                "</div>"
+            )
+
+        row_html = (
+            "\n            <tr>\n"
+            "              <th>\n"
+            "                <a class=\"hover_property\" href=\"#exampleimage\" title=\"Links a class or concept to an example image illustrating it.\">Example image</a>\n"
+            "              </th>\n"
+            f"              <td>{''.join(items_html)}</td>\n"
+            "            </tr>\n"
+        )
+
+        html = html[:table_end] + row_html + html[table_end:]
+
+    html_file.write_text(html, encoding="utf-8")
 
 
 def extract_ontology_comment(ttl_file: Path) -> str:
@@ -433,6 +552,13 @@ def main():
     # Get repository root (parent of scripts directory)
     repo_root = Path(__file__).parent.parent
     output_dir = repo_root / "docs"
+
+    # Keep docs/img in sync with src/images for GitHub Pages publishing
+    src_images_dir = repo_root / "src" / "images"
+    docs_img_dir = output_dir / "img"
+    if src_images_dir.exists():
+        docs_img_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copytree(src_images_dir, docs_img_dir, dirs_exist_ok=True)
     
     print(f"Scanning for TTL files in: {repo_root}")
     
