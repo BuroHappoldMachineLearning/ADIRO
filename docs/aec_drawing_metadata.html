@@ -862,10 +862,10 @@ td {
               </th>
               <td><div>
   <a href="https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/titleblock_01.png" target="_blank" rel="noopener noreferrer"><code>https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/titleblock_01.png</code></a><br>
-  <img src="https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/titleblock_01.png" alt="Example image for Titleblock" style="max-width: 1000px;">
+  <img src="https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/titleblock_01.png" alt="Example image for Titleblock" style="max-width: 500px;">
 </div><div>
   <a href="https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/titleblock_02.png" target="_blank" rel="noopener noreferrer"><code>https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/titleblock_02.png</code></a><br>
-  <img src="https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/titleblock_02.png" alt="Example image for Titleblock" style="max-width: 1000px;">
+  <img src="https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/titleblock_02.png" alt="Example image for Titleblock" style="max-width: 500px;">
 </div></td>
             </tr>
 </table>
@@ -984,7 +984,7 @@ td {
                 <span>
                   <span>
                     <span>
-                      <a href="#hasProperty">hasProperty</a>
+                      <a href="#hasOrientation">hasOrientation</a>
                       <sup class="sup-op" title="OWL Object Property">op</sup>
                     </span>
                     <span>
@@ -1089,7 +1089,7 @@ td {
                     <span>
                       <span>
                         <span>
-                          <a href="#hasProperty">hasProperty</a>
+                          <a href="#hasOrientation">hasOrientation</a>
                           <sup class="sup-op" title="OWL Object Property">op</sup>
                         </span>
                         <span>
@@ -1126,34 +1126,24 @@ td {
             <tr>
               <th>IRI</th>
               <td>
-                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Orientation</code>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#OrientationValue</code>
               </td>
             </tr>
             <tr>
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Orientation of the content of a layout. For example, a detail can be horizontal or vertical.</p></td>
+              <td><p>Enumerated orientation values used with hasOrientation.</p></td>
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="https://w3id.org/profile/ontdoc/superClassOf" title="Inverse of RDFS' subClassOf. Defined in Ontology Documentation Profile">Super Class Of</a>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
               </th>
               <td>
-                <ul>
-                  <li>
-                    <span>
-                      <a href="#Horizontal">Horizontal</a>
-                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                    </span>
-                  </li>
-                  <li>
-                    <span>
-                      <a href="#Vertical">Vertical</a>
-                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                    </span>
-                  </li>
-                </ul>
+                <span>
+                  <a href="#hasOrientation">hasOrientation</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
               </td>
             </tr>
           </table>
@@ -1176,54 +1166,6 @@ td {
               <td>
                 <span>
                   <a href="#Layoutcontenttype">Layout content type</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="Horizontal">
-          <h3>Horizontal
-            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Horizontal</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#Orientation">Orientation</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="Vertical">
-          <h3>Vertical
-            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Vertical</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#Orientation">Orientation</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -1348,6 +1290,52 @@ td {
               <td>
                 <span>
                   <a href="http://www.w3.org/2002/07/owl#Thing">Thing</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="hasOrientation">
+          <h3>hasOrientation
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#hasOrientation</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Orientation value for layouts where orientation is applicable.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Section">Section</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+                <span class="cardinality">or</span>
+                <span>
+                  <a href="#Detail">Detail</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Orientation">Orientation</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -1591,12 +1579,6 @@ td {
               <a href="#Perspective">Perspective</a>
             </li>
             <li>
-              <a href="#Horizontal">Horizontal</a>
-            </li>
-            <li>
-              <a href="#Vertical">Vertical</a>
-            </li>
-            <li>
               <a href="#Drawingelement">Drawing element</a>
             </li>
           </ul>
@@ -1611,6 +1593,9 @@ td {
             </li>
             <li>
               <a href="#hasProperty">hasProperty</a>
+            </li>
+            <li>
+              <a href="#hasOrientation">hasOrientation</a>
             </li>
           </ul>
         </li>

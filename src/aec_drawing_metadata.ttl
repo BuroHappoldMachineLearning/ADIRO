@@ -14,7 +14,7 @@
     rdfs:label "AEC Drawing Metadata Ontology" ;
     rdfs:comment "Sheet/layout/document structure for AEC drawings." ;
     owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata/1.0.0> ;
-    owl:versionInfo "1.0.0" ;
+    owl:versionInfo "2.0.0" ;
     owl:imports <http://www.w3.org/2002/07/owl#> .
 
 
@@ -46,6 +46,12 @@
     rdfs:comment "Subject is characterised by a property, or quality. Used for example to indicate qualitative things like 'it is vertical' or 'it has a colour blue'.";
     rdfs:range owl:Thing;
     rdfs:domain owl:Thing.
+
+:hasOrientation rdf:type owl:ObjectProperty;
+    rdfs:label "hasOrientation";
+    rdfs:comment "Orientation value for layouts where orientation is applicable.";
+    rdfs:range :OrientationValue;
+    rdfs:domain [ rdf:type owl:Class ; owl:unionOf ( :Section :Detail ) ] .
 
 #################################################################
 #    Data Properties
@@ -148,7 +154,7 @@
 
 :Section rdf:type owl:Class;
     rdfs:subClassOf :LayoutContentType,
-        [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :Orientation ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ]; 
+        [ rdf:type owl:Restriction ; owl:onProperty :hasOrientation ; owl:onClass :OrientationValue ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ]; 
     rdfs:label "Section";
     rdfs:comment "Section drawing. Has a required property of orientation, which can be vertical or horizontal.";
     :labellableRoot "true"^^xsd:boolean.
@@ -166,15 +172,16 @@
 
 :Detail rdf:type owl:Class ;
     rdfs:subClassOf :LayoutContentType, 
-    [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :Orientation ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ], 
+    [ rdf:type owl:Restriction ; owl:onProperty :hasOrientation ; owl:onClass :OrientationValue ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ], 
     [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :DetailLocation ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ];
     rdfs:label "Detail" ;
     rdfs:comment "Detail drawing" ;
     :labellableRoot true.
-    
-:Orientation rdf:type owl:Class;
-    rdfs:label "Orientation";
-    rdfs:comment "Orientation of the content of a layout. For example, a detail can be horizontal or vertical.";
+
+:OrientationValue rdf:type owl:Class ;
+    rdfs:label "Orientation" ;
+    rdfs:comment "Enumerated orientation values used with hasOrientation." ;
+    owl:oneOf ( :Undefined :Horizontal :Vertical ) ;
     :labellableRoot "false"^^xsd:boolean.
 
 :Perspective rdf:type owl:Class;
@@ -182,14 +189,16 @@
     rdfs:label "Perspective";
     :labellableRoot "true"^^xsd:boolean.
 
-:Horizontal rdf:type owl:Class;
-    rdfs:subClassOf :Orientation;
-    rdfs:label "Horizontal";
+:Undefined rdf:type owl:NamedIndividual, :OrientationValue ;
+    rdfs:label "Undefined" ;
     :labellableRoot "true"^^xsd:boolean.
 
-:Vertical rdf:type owl:Class;
-    rdfs:subClassOf :Orientation;
-    rdfs:label "Vertical";
+:Horizontal rdf:type owl:NamedIndividual, :OrientationValue ;
+    rdfs:label "Horizontal" ;
+    :labellableRoot "true"^^xsd:boolean.
+
+:Vertical rdf:type owl:NamedIndividual, :OrientationValue ;
+    rdfs:label "Vertical" ;
     :labellableRoot "true"^^xsd:boolean.
 
 :DrawingElement rdf:type owl:Class;

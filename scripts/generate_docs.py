@@ -205,7 +205,7 @@ def inject_example_images(ttl_file: Path, html_file: Path) -> None:
             items_html.append(
                 "<div>\n"
                 f"  <a href=\"{safe_iri}\" target=\"_blank\" rel=\"noopener noreferrer\"><code>{iri}</code></a><br>\n"
-                f"  <img src=\"{safe_iri}\" alt=\"Example image for {entity_id}\" style=\"max-width: 1000px;\">\n"
+                f"  <img src=\"{safe_iri}\" alt=\"Example image for {entity_id}\" style=\"max-width: 500px;\">\n"
                 "</div>"
             )
 
