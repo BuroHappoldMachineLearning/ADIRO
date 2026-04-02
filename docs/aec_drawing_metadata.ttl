@@ -14,7 +14,7 @@
     rdfs:label "AEC Drawing Metadata Ontology" ;
     rdfs:comment "Sheet/layout/document structure for AEC drawings." ;
     owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata/1.0.0> ;
-    owl:versionInfo "1.0.0" ;
+    owl:versionInfo "2.0.0" ;
     owl:imports <http://www.w3.org/2002/07/owl#> .
 
 
