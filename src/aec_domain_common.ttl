@@ -263,3 +263,68 @@
     rdfs:label "Upstand" ;
     metadata:labellableRoot "false"^^xsd:boolean ;
     rdfs:subClassOf :PanelStructuralComponent .
+
+###  Discipline
+
+:hasDiscipline rdf:type owl:AnnotationProperty ;
+    rdfs:label "hasDiscipline" ;
+    rdfs:comment "The discipline(s) associated with this layout content type. Required for Plan, Section, and Detail." ;
+    rdfs:domain [ rdf:type owl:Class ;
+                  owl:unionOf ( metadata:Plan metadata:Section metadata:Detail ) ] ;
+    rdfs:range :Discipline .
+
+:Discipline rdf:type owl:Class ;
+    rdfs:label "Discipline" ;
+    rdfs:comment "The engineering or architectural discipline associated with a drawing content type." ;
+    metadata:labellableRoot "false"^^xsd:boolean .
+
+:Architectural rdf:type owl:Class ;
+    rdfs:label "Architectural" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Discipline .
+
+:Facade rdf:type owl:Class ;
+    rdfs:label "Facade" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Discipline .
+
+:Structural rdf:type owl:Class ;
+    rdfs:label "Structural" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Discipline .
+
+:MEP rdf:type owl:Class ;
+    rdfs:label "MEP" ;
+    rdfs:comment "Mechanical, Electrical, and Plumbing." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Discipline .
+
+:Mechanical rdf:type owl:Class ;
+    rdfs:label "Mechanical" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :MEP .
+
+:Electrical rdf:type owl:Class ;
+    rdfs:label "Electrical" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :MEP .
+
+:Plumbing rdf:type owl:Class ;
+    rdfs:label "Plumbing" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :MEP .
+
+:Lighting rdf:type owl:Class ;
+    rdfs:label "Lighting" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :MEP .
+
+:FireLifeSafety rdf:type owl:Class ;
+    rdfs:label "Fire life safety" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Discipline .
+
+:Masterplan rdf:type owl:Class ;
+    rdfs:label "Masterplan" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Discipline .
