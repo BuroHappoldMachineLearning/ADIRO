@@ -266,13 +266,6 @@
 
 ###  Discipline
 
-:hasDiscipline rdf:type owl:AnnotationProperty ;
-    rdfs:label "hasDiscipline" ;
-    rdfs:comment "The discipline(s) associated with this layout content type. Required for Plan, Section, and Detail." ;
-    rdfs:domain [ rdf:type owl:Class ;
-                  owl:unionOf ( metadata:Plan metadata:Section metadata:Detail ) ] ;
-    rdfs:range :Discipline .
-
 :Discipline rdf:type owl:Class ;
     rdfs:label "Discipline" ;
     rdfs:comment "The engineering or architectural discipline associated with a drawing content type." ;

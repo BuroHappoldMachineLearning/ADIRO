@@ -1,5 +1,6 @@
 @prefix : <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#> .
 @base <https://burohappoldmachinelearning.github.io/ADIRO/> .
+@prefix adico: <https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace#> .
@@ -25,6 +26,10 @@
 :exampleImage rdf:type owl:AnnotationProperty ;
     rdfs:label "example image"@en ;
     rdfs:comment "Links a class or concept to an example image illustrating it."@en .
+
+:hasDiscipline rdf:type owl:AnnotationProperty ;
+    rdfs:label "hasDiscipline" ;
+    rdfs:comment "The discipline(s) associated with this layout content type. Applies to Plan, Section, and Detail." .
 
 :labellableRoot rdf:type owl:AnnotationProperty;
     rdfs:label "Labellable root";
@@ -150,14 +155,16 @@
 :Plan rdf:type owl:Class;
     rdfs:subClassOf :LayoutContentType;
     rdfs:label "Plan";
-    :labellableRoot "true"^^xsd:boolean.
+    :labellableRoot "true"^^xsd:boolean;
+    :hasDiscipline adico:Discipline.
 
 :Section rdf:type owl:Class;
     rdfs:subClassOf :LayoutContentType,
-        [ rdf:type owl:Restriction ; owl:onProperty :hasOrientation ; owl:onClass :OrientationValue ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ]; 
+        [ rdf:type owl:Restriction ; owl:onProperty :hasOrientation ; owl:onClass :OrientationValue ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ];
     rdfs:label "Section";
     rdfs:comment "Section drawing. Has a required property of orientation, which can be vertical or horizontal.";
-    :labellableRoot "true"^^xsd:boolean.
+    :labellableRoot "true"^^xsd:boolean;
+    :hasDiscipline adico:Discipline.
 
 :Elevation rdf:type owl:Class;
     rdfs:subClassOf :LayoutContentType;
@@ -171,12 +178,13 @@
     :labellableRoot "true"^^xsd:boolean.
 
 :Detail rdf:type owl:Class ;
-    rdfs:subClassOf :LayoutContentType, 
-    [ rdf:type owl:Restriction ; owl:onProperty :hasOrientation ; owl:onClass :OrientationValue ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ], 
+    rdfs:subClassOf :LayoutContentType,
+    [ rdf:type owl:Restriction ; owl:onProperty :hasOrientation ; owl:onClass :OrientationValue ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
     [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :DetailLocation ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ];
     rdfs:label "Detail" ;
     rdfs:comment "Detail drawing" ;
-    :labellableRoot true.
+    :labellableRoot true ;
+    :hasDiscipline adico:Discipline.
 
 :OrientationValue rdf:type owl:Class ;
     rdfs:label "Orientation" ;
