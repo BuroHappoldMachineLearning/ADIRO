@@ -1,6 +1,5 @@
 @prefix : <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#> .
 @base <https://burohappoldmachinelearning.github.io/ADIRO/> .
-@prefix adico: <https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace#> .
@@ -29,7 +28,8 @@
 
 :hasDiscipline rdf:type owl:AnnotationProperty ;
     rdfs:label "hasDiscipline" ;
-    rdfs:comment "The discipline(s) associated with this layout content type. Applies to Plan, Section, and Detail." .
+    rdfs:comment "When true, the annotator must assign a Discipline value to this layout content type." ;
+    rdfs:range xsd:boolean.
 
 :labellableRoot rdf:type owl:AnnotationProperty;
     rdfs:label "Labellable root";
@@ -156,7 +156,7 @@
     rdfs:subClassOf :LayoutContentType;
     rdfs:label "Plan";
     :labellableRoot "true"^^xsd:boolean;
-    :hasDiscipline adico:Discipline.
+    :hasDiscipline "true"^^xsd:boolean.
 
 :Section rdf:type owl:Class;
     rdfs:subClassOf :LayoutContentType,
@@ -164,7 +164,7 @@
     rdfs:label "Section";
     rdfs:comment "Section drawing. Has a required property of orientation, which can be vertical or horizontal.";
     :labellableRoot "true"^^xsd:boolean;
-    :hasDiscipline adico:Discipline.
+    :hasDiscipline "true"^^xsd:boolean.
 
 :Elevation rdf:type owl:Class;
     rdfs:subClassOf :LayoutContentType;
@@ -184,7 +184,7 @@
     rdfs:label "Detail" ;
     rdfs:comment "Detail drawing" ;
     :labellableRoot true ;
-    :hasDiscipline adico:Discipline.
+    :hasDiscipline "true"^^xsd:boolean.
 
 :OrientationValue rdf:type owl:Class ;
     rdfs:label "Orientation" ;
