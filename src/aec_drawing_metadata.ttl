@@ -26,10 +26,10 @@
     rdfs:label "example image"@en ;
     rdfs:comment "Links a class or concept to an example image illustrating it."@en .
 
-:hasDiscipline rdf:type owl:AnnotationProperty ;
-    rdfs:label "hasDiscipline" ;
-    rdfs:comment "When true, the annotator must assign a Discipline value to this layout content type." ;
-    rdfs:range xsd:boolean.
+:isCVATProperty rdf:type owl:AnnotationProperty ;
+    rdfs:label "isCVATProperty" ;
+    rdfs:comment "When true, the label is displayed on the right side of the CVAT annotation panel instead of the default left side." ;
+    rdfs:range xsd:boolean .
 
 :labellableRoot rdf:type owl:AnnotationProperty;
     rdfs:label "Labellable root";
@@ -57,6 +57,10 @@
     rdfs:comment "Orientation value for layouts where orientation is applicable.";
     rdfs:range :OrientationValue;
     rdfs:domain [ rdf:type owl:Class ; owl:unionOf ( :Section :Detail ) ] .
+
+:hasDiscipline rdf:type owl:ObjectProperty ;
+    rdfs:label "hasDiscipline" ;
+    rdfs:comment "Links a layout content type to an AEC discipline that the annotator must assign." .
 
 #################################################################
 #    Data Properties
@@ -155,16 +159,14 @@
 :Plan rdf:type owl:Class;
     rdfs:subClassOf :LayoutContentType;
     rdfs:label "Plan";
-    :labellableRoot "true"^^xsd:boolean;
-    :hasDiscipline "true"^^xsd:boolean.
+    :labellableRoot "true"^^xsd:boolean.
 
 :Section rdf:type owl:Class;
     rdfs:subClassOf :LayoutContentType,
         [ rdf:type owl:Restriction ; owl:onProperty :hasOrientation ; owl:onClass :OrientationValue ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ];
     rdfs:label "Section";
     rdfs:comment "Section drawing. Has a required property of orientation, which can be vertical or horizontal.";
-    :labellableRoot "true"^^xsd:boolean;
-    :hasDiscipline "true"^^xsd:boolean.
+    :labellableRoot "true"^^xsd:boolean.
 
 :Elevation rdf:type owl:Class;
     rdfs:subClassOf :LayoutContentType;
@@ -183,8 +185,7 @@
     [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :DetailLocation ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ];
     rdfs:label "Detail" ;
     rdfs:comment "Detail drawing" ;
-    :labellableRoot true ;
-    :hasDiscipline "true"^^xsd:boolean.
+    :labellableRoot true .
 
 :OrientationValue rdf:type owl:Class ;
     rdfs:label "Orientation" ;
