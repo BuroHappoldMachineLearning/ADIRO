@@ -263,3 +263,87 @@
     rdfs:label "Upstand" ;
     metadata:labellableRoot "false"^^xsd:boolean ;
     rdfs:subClassOf :PanelStructuralComponent .
+
+###  hasDiscipline
+
+:hasDiscipline rdf:type owl:ObjectProperty ;
+    rdfs:label "hasDiscipline" ;
+    rdfs:comment "Links a layout content type to an AEC discipline that the annotator must assign." .
+
+###  Discipline
+
+:Discipline rdf:type owl:Class ;
+    rdfs:label "Discipline" ;
+    rdfs:comment "The engineering or architectural discipline associated with a drawing content type." ;
+    metadata:labellableRoot "false"^^xsd:boolean .
+
+:hasDiscipline rdfs:domain metadata:LayoutContentType ;
+    rdfs:range :Discipline .
+
+metadata:LayoutContentType rdfs:subClassOf [
+    rdf:type owl:Restriction ;
+    owl:onProperty :hasDiscipline ;
+    owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+    owl:onClass :Discipline
+] .
+
+:Architectural rdf:type owl:Class ;
+    rdfs:label "Architectural" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :Discipline .
+
+:Facade rdf:type owl:Class ;
+    rdfs:label "Facade" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :Architectural .
+
+:Structural rdf:type owl:Class ;
+    rdfs:label "Structural" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :Discipline .
+
+:MEP rdf:type owl:Class ;
+    rdfs:label "MEP" ;
+    rdfs:comment "Mechanical, Electrical, and Plumbing." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :Discipline .
+
+:Mechanical rdf:type owl:Class ;
+    rdfs:label "Mechanical" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :MEP .
+
+:Electrical rdf:type owl:Class ;
+    rdfs:label "Electrical" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :MEP .
+
+:Plumbing rdf:type owl:Class ;
+    rdfs:label "Plumbing" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :MEP .
+
+:Lighting rdf:type owl:Class ;
+    rdfs:label "Lighting" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :Electrical .
+
+:FireLifeSafety rdf:type owl:Class ;
+    rdfs:label "Fire life safety" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :Architectural .
+
+:Masterplan rdf:type owl:Class ;
+    rdfs:label "Masterplan" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :Discipline .

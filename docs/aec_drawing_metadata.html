@@ -570,20 +570,6 @@ td {
                       </span>
                     </span>
                   </li>
-                  <li>
-                    <span>
-                      <span>
-                        <span>
-                          <a href="#hasProperty">hasProperty</a>
-                          <sup class="sup-op" title="OWL Object Property">op</sup>
-                        </span>
-                        <span>
-                          <span class="cardinality">exactly</span>
-                          <span>1</span>
-                        </span><br>
-                      </span>
-                    </span>
-                  </li>
                 </ul>
               </td>
             </tr>
@@ -669,40 +655,6 @@ td {
             </tr>
           </table>
         </div>
-        <div class="property entity" id="DrawingOrientation">
-          <h3>DrawingOrientation
-            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#DrawingOrientation</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="https://w3id.org/profile/ontdoc/superClassOf" title="Inverse of RDFS' subClassOf. Defined in Ontology Documentation Profile">Super Class Of</a>
-              </th>
-              <td>
-                <ul>
-                  <li>
-                    <span>
-                      <a href="#Portrait">Portrait</a>
-                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                    </span>
-                  </li>
-                  <li>
-                    <span>
-                      <a href="#Landscape">Landscape</a>
-                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                    </span>
-                  </li>
-                </ul>
-              </td>
-            </tr>
-          </table>
-        </div>
         <div class="property entity" id="Layoutcontenttype">
           <h3>Layout content type
             <sup class="sup-c" title="OWL/RDFS Class">c</sup>
@@ -763,66 +715,6 @@ td {
                     </span>
                   </li>
                 </ul>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="Portrait">
-          <h3>Portrait
-            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Portrait</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>The content of the drawing is oriented such that the height is greater than the width.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#DrawingOrientation">DrawingOrientation</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="Landscape">
-          <h3>Landscape
-            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Landscape</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>The content of the drawing is oriented such that the width is greater than the height.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#DrawingOrientation">DrawingOrientation</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
               </td>
             </tr>
           </table>
@@ -1405,6 +1297,33 @@ td {
             </tr>
           </table>
         </div>
+        <div class="property entity" id="isCVATProperty">
+          <h3>isCVATProperty
+            <sup class="sup-ap" title="OWL Annotation Property">ap</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#isCVATProperty</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>When true, the label is displayed on the right side of the CVAT annotation panel instead of the default left side.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#boolean">xsd:boolean</a>
+              </td>
+            </tr>
+          </table>
+        </div>
         <div class="property entity" id="Labellableroot">
           <h3>Labellable root
             <sup class="sup-ap" title="OWL Annotation Property">ap</sup>
@@ -1537,16 +1456,7 @@ td {
               <a href="#Layout">Layout</a>
             </li>
             <li>
-              <a href="#DrawingOrientation">DrawingOrientation</a>
-            </li>
-            <li>
               <a href="#Layoutcontenttype">Layout content type</a>
-            </li>
-            <li>
-              <a href="#Portrait">Portrait</a>
-            </li>
-            <li>
-              <a href="#Landscape">Landscape</a>
             </li>
             <li>
               <a href="#Titleblock">Titleblock</a>
@@ -1616,6 +1526,9 @@ td {
           <ul class="second">
             <li>
               <a href="#exampleimage">example image</a>
+            </li>
+            <li>
+              <a href="#isCVATProperty">isCVATProperty</a>
             </li>
             <li>
               <a href="#Labellableroot">Labellable root</a>
