@@ -264,6 +264,12 @@
     metadata:labellableRoot "false"^^xsd:boolean ;
     rdfs:subClassOf :PanelStructuralComponent .
 
+###  hasDiscipline
+
+:hasDiscipline rdf:type owl:ObjectProperty ;
+    rdfs:label "hasDiscipline" ;
+    rdfs:comment "Links a layout content type to an AEC discipline that the annotator must assign." .
+
 ###  Discipline
 
 :Discipline rdf:type owl:Class ;
@@ -271,12 +277,12 @@
     rdfs:comment "The engineering or architectural discipline associated with a drawing content type." ;
     metadata:labellableRoot "false"^^xsd:boolean .
 
-metadata:hasDiscipline rdfs:domain metadata:LayoutContentType ;
+:hasDiscipline rdfs:domain metadata:LayoutContentType ;
     rdfs:range :Discipline .
 
 metadata:LayoutContentType rdfs:subClassOf [
     rdf:type owl:Restriction ;
-    owl:onProperty metadata:hasDiscipline ;
+    owl:onProperty :hasDiscipline ;
     owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
     owl:onClass :Discipline
 ] .

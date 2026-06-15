@@ -58,10 +58,6 @@
     rdfs:range :OrientationValue;
     rdfs:domain [ rdf:type owl:Class ; owl:unionOf ( :Section :Detail ) ] .
 
-:hasDiscipline rdf:type owl:ObjectProperty ;
-    rdfs:label "hasDiscipline" ;
-    rdfs:comment "Links a layout content type to an AEC discipline that the annotator must assign." .
-
 #################################################################
 #    Data Properties
 #################################################################
