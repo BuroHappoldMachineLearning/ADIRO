@@ -75,6 +75,8 @@
 :TextualNote rdf:type owl:Class;
     rdfs:subClassOf :Note;
     rdfs:label "Text";
+    :exampleImage <img/aec_drawing_ontology/textual_note_01.png> ;
+    :exampleImage <img/aec_drawing_ontology/textual_note_02.png> ;
     :labellableRoot "true"^^xsd:boolean.
 
 :Note rdf:type owl:Class;
@@ -101,6 +103,8 @@
 :RevisionTable rdf:type owl:Class;
     rdfs:subClassOf :Metadata;
     rdfs:label "Revision table";
+    :exampleImage <img/aec_drawing_ontology/revision_table_01.png> ;
+    :exampleImage <img/aec_drawing_ontology/revision_table_02.png> ;
     :labellableRoot "true"^^xsd:boolean.
 
 :Layout rdf:type owl:Class ;
@@ -122,12 +126,16 @@
     rdfs:comment "Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc.";
     :exampleImage <img/aec_drawing_ontology/titleblock_01.png> ;
     :exampleImage <img/aec_drawing_ontology/titleblock_02.png> ;
+    :exampleImage <img/aec_drawing_ontology/titleblock_03.png> ;
+    :exampleImage <img/aec_drawing_ontology/titleblock_04.png> ;
     :labellableRoot "true"^^xsd:boolean.
 
 :Legend rdf:type owl:Class;
     rdfs:subClassOf :Metadata;
     rdfs:label "Legend";
     rdfs:comment "A legend containing mapping information between symbols and a text signifier.";
+    :exampleImage <img/aec_drawing_ontology/legend_01.png> ;
+    :exampleImage <img/aec_drawing_ontology/legend_02.png> ;
     :labellableRoot "true"^^xsd:boolean.
 
 :Image rdf:type owl:Class;
@@ -138,6 +146,8 @@
 :Plan rdf:type owl:Class;
     rdfs:subClassOf :LayoutContentType;
     rdfs:label "Plan";
+    :exampleImage <img/aec_drawing_ontology/plan_01.png> ;
+    :exampleImage <img/aec_drawing_ontology/plan_02.png> ;
     :labellableRoot "true"^^xsd:boolean.
 
 :Section rdf:type owl:Class;
@@ -145,17 +155,23 @@
         [ rdf:type owl:Restriction ; owl:onProperty :hasOrientation ; owl:onClass :OrientationValue ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ];
     rdfs:label "Section";
     rdfs:comment "Section drawing. Has a required property of orientation, which can be vertical or horizontal.";
+    :exampleImage <img/aec_drawing_ontology/section_01.png> ;
+    :exampleImage <img/aec_drawing_ontology/section_02.png> ;
     :labellableRoot "true"^^xsd:boolean.
 
 :Elevation rdf:type owl:Class;
     rdfs:subClassOf :LayoutContentType;
     rdfs:label "Elevation";
+    :exampleImage <img/aec_drawing_ontology/elevation_01.png> ;
+    :exampleImage <img/aec_drawing_ontology/elevation_02.png> ;
     :labellableRoot "true"^^xsd:boolean.
 
 :Table rdf:type owl:Class;
     rdfs:label "Table";
     rdfs:subClassOf :LayoutContentType;
     rdfs:comment "A table containing structured information, for example a schedule of elements.";
+    :exampleImage <img/aec_drawing_ontology/table_01.png> ;
+    :exampleImage <img/aec_drawing_ontology/table_02.png> ;
     :labellableRoot "true"^^xsd:boolean.
 
 :Detail rdf:type owl:Class ;
@@ -164,6 +180,8 @@
     [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :DetailLocation ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ];
     rdfs:label "Detail" ;
     rdfs:comment "Detail drawing" ;
+    :exampleImage <img/aec_drawing_ontology/detail_01.png> ;
+    :exampleImage <img/aec_drawing_ontology/detail_02.png> ;
     :labellableRoot true .
 
 :OrientationValue rdf:type owl:Class ;
