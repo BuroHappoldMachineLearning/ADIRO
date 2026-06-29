@@ -1,4 +1,6 @@
 
+> **⚠️ Draft v0.2 — not yet aligned with the current ontology. This use case will be revised in a follow-up PR.**
+
 > **Methodology:** LOT (Linked Open Terms) **Use Case ID:** UC-07 **Version:** 0.2 (draft) **Changes from v 0.1:** Introduced North Arrow as drawing-level orientation datum; introduced numeric scale ratio; distinguished on-drawing measurements from real-world dimensions; repositioned FacingDirection from a primary assertion to a classification derivable from geometric data.
 
 ---
