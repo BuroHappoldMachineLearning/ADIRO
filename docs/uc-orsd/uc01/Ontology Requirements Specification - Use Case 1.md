@@ -91,9 +91,9 @@ Links between two entities. New properties are wired into the existing generic t
 | `isRevisionOf`        | `DrawingRevision` | `DrawingSheet`      | `aec_drawing_metadata` | NEW    | (inverse of hasRevision)|
 | `belongsToProject`    | `DrawingSheet`    | `Project`           | `aec_drawing_metadata` | NEW    | (top-level)             |
 | `belongsToPackage`    | `DrawingSheet`    | `DrawingPackage`    | `aec_drawing_metadata` | NEW    | (top-level)             |
-| `hasAuthor`           | `DrawingRevision` | `Person`            | `aec_drawing_metadata` | NEW    | (top-level)             |
-| `hasChecker`          | `DrawingRevision` | `Person`            | `aec_drawing_metadata` | NEW    | (top-level)             |
-| `hasApprover`         | `DrawingRevision` | `Person`            | `aec_drawing_metadata` | NEW    | (top-level)             |
+| `isAuthoredBy`           | `DrawingRevision` | `Person`            | `aec_drawing_metadata` | NEW    | (top-level)             |
+| `isCheckedBy`          | `DrawingRevision` | `Person`            | `aec_drawing_metadata` | NEW    | (top-level)             |
+| `isApprovedBy`         | `DrawingRevision` | `Person`            | `aec_drawing_metadata` | NEW    | (top-level)             |
 | `hasStatusCode`       | `DrawingRevision` | `StatusCode`        | `aec_drawing_metadata` | NEW    | `metadata:hasProperty`  |
 
 ¹ ⚠️ **Open issue (G5):** `dcommon:hasDiscipline` currently has `rdfs:domain metadata:LayoutContentType`. v0.3 proposes moving the domain to `metadata:Layout` (along with the `min 1` cardinality restriction). Discipline characterises the layout itself, not its content type — and the two are orthogonal axes (see design note below). Pending @alelom / @m-asakihattori sign-off.
@@ -150,7 +150,7 @@ Each FR describes one representational capability the ontology must have, in imp
 > The ontology MUST distinguish between the roles of Author, Checker, and Approver as separate relationships between a drawing revision and a person, such that sheets can be filtered by a specific person in a specific role.
 
 - Source: UC-01
-- Derived terms: `metadata:Person` (NEW), `metadata:hasAuthor`, `metadata:hasChecker`, `metadata:hasApprover` (NEW, top-level), `metadata:personName` (NEW)
+- Derived terms: `metadata:Person` (NEW), `metadata:isAuthoredBy`, `metadata:isCheckedBy`, `metadata:isApprovedBy` (NEW, top-level), `metadata:personName` (NEW)
 
 > **Design note — inverse properties:** Only `isRevisionOf` is materialised as `owl:inverseOf` (CQ 3.x requires the reverse direction). For role-based relations, `isAuthoredBy` / `isCheckedBy` / `isApprovedBy` are *not* declared in v0.3 — forward properties are sufficient for SPARQL. ⚠️ **Open issue:** project-wide convention for `owl:inverseOf` vs reasoner-derived inverses — flagged for separate discussion.
 
@@ -290,7 +290,7 @@ SELECT ?sheet ?drawingIdentifier WHERE {
           dcommon:hasDiscipline      ?disc .
   ?disc   a                          dcommon:MEP .
 
-  ?rev    metadata:hasApprover       ?person ;
+  ?rev    metadata:isApprovedBy       ?person ;
           metadata:issueDate         ?date .
   ?person metadata:personName        "R. Jones" .
 
@@ -302,7 +302,7 @@ Every filter condition maps to a defined property:
 
 - `metadata:DrawingSheet`, `metadata:drawingIdentifier`, `metadata:belongsToProject`, `metadata:hasRevision`, `metadata:contains` — reused / new in `aec_drawing_metadata`.
 - `metadata:Layout`, `dcommon:hasDiscipline`, `dcommon:MEP` — reused; note the `rdf:type` check against the class hierarchy automatically matches `Mechanical`, `Electrical`, `Plumbing`, `Lighting` via `rdfs:subClassOf` reasoning.
-- `metadata:hasApprover`, `metadata:issueDate`, `metadata:personName` — new in `aec_drawing_metadata`.
+- `metadata:isApprovedBy`, `metadata:issueDate`, `metadata:personName` — new in `aec_drawing_metadata`.
 
 The query is fully expressible, confirming that CQ-I 1 is covered by the current term inventory. The previous v0.2 placeholder prefix (`https://example.org/aec-ontology#`) is retired in favour of the real module namespaces.
 
@@ -324,9 +324,9 @@ The query is fully expressible, confirming that CQ-I 1 is covered by the current
 | `metadata:contains`            | `aec_drawing_metadata` | REUSE  | CQ-I 1, CQ-I 2, CQ-I 3                         | (structural)                       |
 | `metadata:hasRevision`         | `aec_drawing_metadata` | NEW    | CQ 3.x                                         | FR 3                               |
 | `metadata:isRevisionOf`        | `aec_drawing_metadata` | NEW    | CQ 3.x (reverse navigation)                    | FR 3                               |
-| `metadata:hasAuthor`           | `aec_drawing_metadata` | NEW    | CQ 4.1                                         | FR 4                               |
-| `metadata:hasChecker`          | `aec_drawing_metadata` | NEW    | CQ 4.2                                         | FR 4                               |
-| `metadata:hasApprover`         | `aec_drawing_metadata` | NEW    | CQ 4.3, CQ-I 1                                 | FR 4                               |
+| `metadata:isAuthoredBy`           | `aec_drawing_metadata` | NEW    | CQ 4.1                                         | FR 4                               |
+| `metadata:isCheckedBy`          | `aec_drawing_metadata` | NEW    | CQ 4.2                                         | FR 4                               |
+| `metadata:isApprovedBy`         | `aec_drawing_metadata` | NEW    | CQ 4.3, CQ-I 1                                 | FR 4                               |
 | `metadata:hasStatusCode`       | `aec_drawing_metadata` | NEW    | CQ 7.x, CQ 8.2                                 | FR 7                               |
 | `metadata:belongsToProject`    | `aec_drawing_metadata` | NEW    | CQ 2.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 2                               |
 | `dcommon:hasDiscipline`        | `aec_domain_common`    | REUSE  | CQ 5.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 5                               |
@@ -366,7 +366,7 @@ aec_drawing_metadata
 
 | Module                 | UC-01 contribution                                                                                                                                                          |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `aec_drawing_metadata` | **New classes:** `DrawingRevision`, `Project`, `Person`, `StatusCode`, `DrawingPackage`. **New properties:** all UC-01 datatype properties; `hasRevision` (⊂ `contains`), `isRevisionOf`, `hasStatusCode` (⊂ `hasProperty`), `belongsToProject`, `belongsToPackage`, `hasAuthor`, `hasChecker`, `hasApprover`. |
+| `aec_drawing_metadata` | **New classes:** `DrawingRevision`, `Project`, `Person`, `StatusCode`, `DrawingPackage`. **New properties:** all UC-01 datatype properties; `hasRevision` (⊂ `contains`), `isRevisionOf`, `hasStatusCode` (⊂ `hasProperty`), `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`. |
 | `aec_common_symbols`   | No UC-01 contribution.                                                                                                                                                      |
 | `aec_domain_common`    | **Reused:** `Discipline` and its subclasses; `hasDiscipline` (with proposed domain change from `LayoutContentType` to `Layout` — see G5).                                   |
 | `aec_facade_domain`    | No UC-01 contribution.                                                                                                                                                      |
@@ -381,7 +381,7 @@ metadata:hasProperty (already exists)
   └── metadata:hasStatusCode (NEW)
 ```
 
-All other new object properties (`belongsToProject`, `belongsToPackage`, `hasAuthor`, `hasChecker`, `hasApprover`) are declared at the top level — they are associative or role-differentiated and do not fit the "containment" or "characterising property" generalisations.
+All other new object properties (`belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`) are declared at the top level — they are associative or role-differentiated and do not fit the "containment" or "characterising property" generalisations.
 
 ---
 

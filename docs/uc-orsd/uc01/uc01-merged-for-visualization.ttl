@@ -505,20 +505,20 @@ dcommon:Civil rdf:type owl:Class ;
     rdfs:range :DrawingPackage .
 
 # Role-differentiated (top-level — too specific to roll up)
-:hasAuthor rdf:type owl:ObjectProperty ;
-    rdfs:label "hasAuthor" ;
+:isAuthoredBy rdf:type owl:ObjectProperty ;
+    rdfs:label "isAuthoredBy" ;
     rdfs:comment "Person who authored this revision." ;
     rdfs:domain :DrawingRevision ;
     rdfs:range :Person .
 
-:hasChecker rdf:type owl:ObjectProperty ;
-    rdfs:label "hasChecker" ;
+:isCheckedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "isCheckedBy" ;
     rdfs:comment "Person who checked this revision." ;
     rdfs:domain :DrawingRevision ;
     rdfs:range :Person .
 
-:hasApprover rdf:type owl:ObjectProperty ;
-    rdfs:label "hasApprover" ;
+:isApprovedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "isApprovedBy" ;
     rdfs:comment "Person who approved this revision." ;
     rdfs:domain :DrawingRevision ;
     rdfs:range :Person .
