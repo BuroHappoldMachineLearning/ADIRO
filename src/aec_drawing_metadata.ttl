@@ -37,7 +37,7 @@
     rdfs:range xsd:boolean.
 
 #################################################################
-#    Object Properties
+#    Object Properties — Generic top-level
 #################################################################
 
 :contains rdf:type owl:ObjectProperty;
@@ -59,7 +59,76 @@
     rdfs:domain [ rdf:type owl:Class ; owl:unionOf ( :Section :Detail ) ] .
 
 #################################################################
-#    Data Properties
+#    Object Properties — UC-01 named subproperties
+#################################################################
+
+:hasLayout rdf:type owl:ObjectProperty ;
+    rdfs:label "hasLayout" ;
+    rdfs:comment "Named containment: a DrawingSheet contains one or more Layouts." ;
+    rdfs:subPropertyOf :contains ;
+    rdfs:domain :DrawingSheet ;
+    rdfs:range :Layout .
+
+:hasLayoutContentType rdf:type owl:ObjectProperty ;
+    rdfs:label "hasLayoutContentType" ;
+    rdfs:comment "Named characterisation: a Layout has exactly one LayoutContentType." ;
+    rdfs:subPropertyOf :hasProperty ;
+    rdfs:domain :Layout ;
+    rdfs:range :LayoutContentType .
+
+:hasRevision rdf:type owl:ObjectProperty ;
+    rdfs:label "hasRevision" ;
+    rdfs:comment "A DrawingSheet compositionally contains its DrawingRevisions." ;
+    rdfs:subPropertyOf :contains ;
+    owl:inverseOf :isRevisionOf ;
+    rdfs:domain :DrawingSheet ;
+    rdfs:range :DrawingRevision .
+
+:isRevisionOf rdf:type owl:ObjectProperty ;
+    rdfs:label "isRevisionOf" ;
+    rdfs:comment "Inverse of hasRevision. Navigates from a DrawingRevision back to its DrawingSheet." ;
+    rdfs:domain :DrawingRevision ;
+    rdfs:range :DrawingSheet .
+
+:belongsToProject rdf:type owl:ObjectProperty ;
+    rdfs:label "belongsToProject" ;
+    rdfs:comment "Associates a DrawingSheet with the Project it belongs to." ;
+    rdfs:domain :DrawingSheet ;
+    rdfs:range :Project .
+
+:belongsToPackage rdf:type owl:ObjectProperty ;
+    rdfs:label "belongsToPackage" ;
+    rdfs:comment "Associates a DrawingSheet with the DrawingPackage it belongs to." ;
+    rdfs:domain :DrawingSheet ;
+    rdfs:range :DrawingPackage .
+
+:isAuthoredBy rdf:type owl:ObjectProperty ;
+    rdfs:label "isAuthoredBy" ;
+    rdfs:comment "The Person who authored this DrawingRevision." ;
+    rdfs:domain :DrawingRevision ;
+    rdfs:range :Person .
+
+:isCheckedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "isCheckedBy" ;
+    rdfs:comment "The Person who checked this DrawingRevision." ;
+    rdfs:domain :DrawingRevision ;
+    rdfs:range :Person .
+
+:isApprovedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "isApprovedBy" ;
+    rdfs:comment "The Person who approved this DrawingRevision." ;
+    rdfs:domain :DrawingRevision ;
+    rdfs:range :Person .
+
+:hasStatusCode rdf:type owl:ObjectProperty ;
+    rdfs:label "hasStatusCode" ;
+    rdfs:comment "The controlled-vocabulary StatusCode assigned to a DrawingRevision." ;
+    rdfs:subPropertyOf :hasProperty ;
+    rdfs:domain :DrawingRevision ;
+    rdfs:range :StatusCode .
+
+#################################################################
+#    Datatype Properties — existing
 #################################################################
 
 :refersToDrawingId rdf:type owl:DatatypeProperty;
@@ -69,8 +138,129 @@
     rdfs:domain :TextualNote.
 
 #################################################################
-#    Classes
+#    Datatype Properties — DrawingSheet identity (UC-01)
 #################################################################
+
+:drawingIdentifier rdf:type owl:DatatypeProperty ;
+    rdfs:label "drawingIdentifier" ;
+    rdfs:comment "Sheet-level identifier, e.g. 'ST-201'. Also known as 'drawing number'." ;
+    rdfs:domain :DrawingSheet ;
+    rdfs:range xsd:string .
+
+:drawingTitle rdf:type owl:DatatypeProperty ;
+    rdfs:label "drawingTitle" ;
+    rdfs:comment "Title of the drawing sheet." ;
+    rdfs:domain :DrawingSheet ;
+    rdfs:range xsd:string .
+
+:hasScale rdf:type owl:DatatypeProperty ;
+    rdfs:label "hasScale" ;
+    rdfs:comment "Scale notation of the drawing sheet, e.g. '1:50'." ;
+    rdfs:domain :DrawingSheet ;
+    rdfs:range xsd:string .
+
+:sheetSize rdf:type owl:DatatypeProperty ;
+    rdfs:label "sheetSize" ;
+    rdfs:comment "Sheet size designation, e.g. 'A1', 'A0'." ;
+    rdfs:domain :DrawingSheet ;
+    rdfs:range xsd:string .
+
+#################################################################
+#    Datatype Properties — Layout identity (UC-03 dependency)
+#################################################################
+
+:layoutIdentifier rdf:type owl:DatatypeProperty ;
+    rdfs:label "layoutIdentifier" ;
+    rdfs:comment "Identifier for a Layout within its parent DrawingSheet. Also known as 'layout number'. Typically a small integer or letter ('1', '2', 'A')." ;
+    rdfs:domain :Layout ;
+    rdfs:range xsd:string .
+
+#################################################################
+#    Datatype Properties — UC-01 extension classes
+#################################################################
+
+:revisionCode rdf:type owl:DatatypeProperty ;
+    rdfs:label "revisionCode" ;
+    rdfs:comment "The code identifying a specific revision, e.g. 'A', 'B', 'P01'." ;
+    rdfs:domain :DrawingRevision ;
+    rdfs:range xsd:string .
+
+:issueDate rdf:type owl:DatatypeProperty ;
+    rdfs:label "issueDate" ;
+    rdfs:comment "The date this revision was issued." ;
+    rdfs:domain :DrawingRevision ;
+    rdfs:range xsd:date .
+
+:personName rdf:type owl:DatatypeProperty ;
+    rdfs:label "personName" ;
+    rdfs:comment "Name of the person." ;
+    rdfs:domain :Person ;
+    rdfs:range xsd:string .
+
+:projectName rdf:type owl:DatatypeProperty ;
+    rdfs:label "projectName" ;
+    rdfs:comment "Name of the project." ;
+    rdfs:domain :Project ;
+    rdfs:range xsd:string .
+
+:projectNumber rdf:type owl:DatatypeProperty ;
+    rdfs:label "projectNumber" ;
+    rdfs:comment "Project number." ;
+    rdfs:domain :Project ;
+    rdfs:range xsd:string .
+
+:packageName rdf:type owl:DatatypeProperty ;
+    rdfs:label "packageName" ;
+    rdfs:comment "Name of the drawing package." ;
+    rdfs:domain :DrawingPackage ;
+    rdfs:range xsd:string .
+
+:statusLabel rdf:type owl:DatatypeProperty ;
+    rdfs:label "statusLabel" ;
+    rdfs:comment "Display label for the status code, e.g. 'IFC', 'IFR', 'AFC'." ;
+    rdfs:domain :StatusCode ;
+    rdfs:range xsd:string .
+
+#################################################################
+#    Classes — MetadataContainer and supporting visual regions
+#################################################################
+
+:MetadataContainer rdf:type owl:Class;
+    rdfs:label "MetadataContainer";
+    rdfs:comment "Supporting visual region on a drawing sheet (titleblock, legend, etc.). Renamed from :Metadata to avoid confusion with semantic metadata properties on DrawingSheet.";
+    :labellableRoot "false"^^xsd:boolean.
+
+:Titleblock rdf:type owl:Class;
+    rdfs:subClassOf :MetadataContainer;
+    rdfs:label "Titleblock";
+    rdfs:comment "Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc.";
+    :exampleImage <img/aec_drawing_ontology/titleblock_01.png> ;
+    :exampleImage <img/aec_drawing_ontology/titleblock_02.png> ;
+    :exampleImage <img/aec_drawing_ontology/titleblock_03.png> ;
+    :exampleImage <img/aec_drawing_ontology/titleblock_04.png> ;
+    :labellableRoot "true"^^xsd:boolean.
+
+:RevisionTable rdf:type owl:Class;
+    rdfs:subClassOf :MetadataContainer;
+    rdfs:label "Revision table";
+    rdfs:comment "A table recording the documented change history of the drawing sheet, with columns for revision number, date, and description of each amendment." ;
+    :exampleImage <img/aec_drawing_ontology/revision_table_01.png> ;
+    :exampleImage <img/aec_drawing_ontology/revision_table_02.png> ;
+    :labellableRoot "true"^^xsd:boolean.
+
+:Legend rdf:type owl:Class;
+    rdfs:subClassOf :MetadataContainer;
+    rdfs:label "Legend";
+    rdfs:comment "A legend containing mapping information between symbols and a text signifier.";
+    :exampleImage <img/aec_drawing_ontology/legend_01.png> ;
+    :exampleImage <img/aec_drawing_ontology/legend_02.png> ;
+    :labellableRoot "true"^^xsd:boolean.
+
+:Note rdf:type owl:Class;
+    rdfs:subClassOf :MetadataContainer;
+    rdfs:label "Note";
+    rdfs:comment "Superclass for annotations on a drawing sheet that are not part of the drawing geometry, including textual notes and images." ;
+    :labellableRoot "true"^^xsd:boolean.
 
 :TextualNote rdf:type owl:Class;
     rdfs:subClassOf :Note;
@@ -80,71 +270,43 @@
     :exampleImage <img/aec_drawing_ontology/textual_note_02.png> ;
     :labellableRoot "true"^^xsd:boolean.
 
-:Note rdf:type owl:Class;
-    rdfs:subClassOf :Metadata;
-    rdfs:label "Note";
-    rdfs:comment "Superclass for annotations on a drawing sheet that are not part of the drawing geometry, including textual notes and images." ;
+:Image rdf:type owl:Class;
+    rdfs:subClassOf :Note;
+    rdfs:label "Image";
+    rdfs:comment "An image embedded within a note region on a drawing sheet.";
     :labellableRoot "true"^^xsd:boolean.
 
-:Metadata rdf:type owl:Class;
-    rdfs:label "Metadata";
-    rdfs:comment "Can be standalone label - drawing metadata";
-    :labellableRoot "false"^^xsd:boolean.
+#################################################################
+#    Classes — Drawing structure
+#################################################################
 
 :DrawingSheet rdf:type owl:Class ;
-    rdfs:subClassOf 
-        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Note ], 
-        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Legend ], 
-        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :RevisionTable ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ], 
-        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Titleblock ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ], 
+    rdfs:subClassOf
+        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Note ],
+        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Legend ],
+        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :RevisionTable ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ],
+        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Titleblock ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ],
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass :Layout ];
     rdfs:label "Drawing Sheet" ;
     rdfs:comment "Top-level container for a drawing. Contains Layout(s)." ;
     :labellableRoot false.
 
-:RevisionTable rdf:type owl:Class;
-    rdfs:subClassOf :Metadata;
-    rdfs:label "Revision table";
-    rdfs:comment "A table recording the documented change history of the drawing sheet, with columns for revision number, date, and description of each amendment." ;
-    :exampleImage <img/aec_drawing_ontology/revision_table_01.png> ;
-    :exampleImage <img/aec_drawing_ontology/revision_table_02.png> ;
-    :labellableRoot "true"^^xsd:boolean.
-
 :Layout rdf:type owl:Class ;
-    rdfs:subClassOf 
-        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :DrawingElement ], 
+    rdfs:subClassOf
+        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :DrawingElement ],
         [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :LayoutContentType ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ];
     rdfs:label "Layout" ;
     rdfs:comment "Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content." ;
     :labellableRoot true.
 
+#################################################################
+#    Classes — Layout content types
+#################################################################
+
 :LayoutContentType rdf:type owl:Class;
     rdfs:label "Layout content type";
     rdfs:comment "Type of content included in a layout.";
     :labellableRoot "false"^^xsd:boolean.
-
-:Titleblock rdf:type owl:Class;
-    rdfs:subClassOf :Metadata;
-    rdfs:label "Titleblock";
-    rdfs:comment "Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc.";
-    :exampleImage <img/aec_drawing_ontology/titleblock_01.png> ;
-    :exampleImage <img/aec_drawing_ontology/titleblock_02.png> ;
-    :exampleImage <img/aec_drawing_ontology/titleblock_03.png> ;
-    :exampleImage <img/aec_drawing_ontology/titleblock_04.png> ;
-    :labellableRoot "true"^^xsd:boolean.
-
-:Legend rdf:type owl:Class;
-    rdfs:subClassOf :Metadata;
-    rdfs:label "Legend";
-    rdfs:comment "A legend containing mapping information between symbols and a text signifier.";
-    :exampleImage <img/aec_drawing_ontology/legend_01.png> ;
-    :exampleImage <img/aec_drawing_ontology/legend_02.png> ;
-    :labellableRoot "true"^^xsd:boolean.
-
-:Image rdf:type owl:Class;
-    rdfs:subClassOf :Note;
-    rdfs:label "Image";
-    :labellableRoot "true"^^xsd:boolean.
 
 :Plan rdf:type owl:Class;
     rdfs:subClassOf :LayoutContentType;
@@ -171,6 +333,16 @@
     :exampleImage <img/aec_drawing_ontology/elevation_02.png> ;
     :labellableRoot "true"^^xsd:boolean.
 
+:Detail rdf:type owl:Class ;
+    rdfs:subClassOf :LayoutContentType,
+    [ rdf:type owl:Restriction ; owl:onProperty :hasOrientation ; owl:onClass :OrientationValue ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
+    [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :DetailLocation ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ];
+    rdfs:label "Detail" ;
+    rdfs:comment "A large-scale zoomed-in drawing of a specific construction assembly or connection, showing how individual components fit together with dense material callouts and dimensions. Can be vertical or horizontal." ;
+    :exampleImage <img/aec_drawing_ontology/detail_01.png> ;
+    :exampleImage <img/aec_drawing_ontology/detail_02.png> ;
+    :labellableRoot true .
+
 :Table rdf:type owl:Class;
     rdfs:label "Table";
     rdfs:subClassOf :LayoutContentType;
@@ -179,27 +351,21 @@
     :exampleImage <img/aec_drawing_ontology/table_02.png> ;
     :labellableRoot "true"^^xsd:boolean.
 
-:Detail rdf:type owl:Class ;
-    rdfs:subClassOf :LayoutContentType,
-    [ rdf:type owl:Restriction ; owl:onProperty :hasOrientation ; owl:onClass :OrientationValue ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
-    [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :DetailLocation ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ];
-    rdfs:label "Detail" ;
-    rdfs:comment "A large-scale zoomed-in drawing of a specific construction assembly or connection, showing how individual components fit together with dense material callouts and dimensions.Can be vertical or horizontal" ;
-    :exampleImage <img/aec_drawing_ontology/detail_01.png> ;
-    :exampleImage <img/aec_drawing_ontology/detail_02.png> ;
-    :labellableRoot true .
+:Perspective rdf:type owl:Class;
+    rdfs:subClassOf :LayoutContentType;
+    rdfs:label "Perspective";
+    rdfs:comment "A three-dimensional pictorial view of a building or assembly showing depth and spatial relationships, used where orthographic drawings cannot convey form." ;
+    :labellableRoot "true"^^xsd:boolean.
+
+#################################################################
+#    Classes — Orientation
+#################################################################
 
 :OrientationValue rdf:type owl:Class ;
     rdfs:label "Orientation" ;
     rdfs:comment "Enumerated orientation values used with hasOrientation." ;
     owl:oneOf ( :Undefined :Horizontal :Vertical ) ;
     :labellableRoot "false"^^xsd:boolean.
-
-:Perspective rdf:type owl:Class;
-    rdfs:subClassOf :LayoutContentType;
-    rdfs:label "Perspective";
-    rdfs:comment "A three-dimensional pictorial view of a building or assembly showing depth and spatial relationships, used where orthographic drawings cannot convey form." ;
-    :labellableRoot "true"^^xsd:boolean.
 
 :Undefined rdf:type owl:NamedIndividual, :OrientationValue ;
     rdfs:label "Undefined" ;
@@ -213,7 +379,40 @@
     rdfs:label "Vertical" ;
     :labellableRoot "true"^^xsd:boolean.
 
+#################################################################
+#    Classes — Drawing elements
+#################################################################
+
 :DrawingElement rdf:type owl:Class;
     rdfs:comment "Element depicted on a drawing. Contained by Layout. Can be a Facade system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc.";
     rdfs:label "Drawing element";
     :labellableRoot "false"^^xsd:boolean.
+
+#################################################################
+#    Classes — UC-01 extension (semantic entities, not CVAT-labellable)
+#################################################################
+
+:DrawingRevision rdf:type owl:Class ;
+    rdfs:label "DrawingRevision" ;
+    rdfs:comment "A specific revision of a DrawingSheet. Carries revision-specific metadata: code, issue date, status, and role-differentiated person attribution." ;
+    :labellableRoot "false"^^xsd:boolean .
+
+:Project rdf:type owl:Class ;
+    rdfs:label "Project" ;
+    rdfs:comment "A project under which DrawingSheets are grouped." ;
+    :labellableRoot "false"^^xsd:boolean .
+
+:Person rdf:type owl:Class ;
+    rdfs:label "Person" ;
+    rdfs:comment "A named individual associated with a DrawingRevision in some role (author, checker, approver). The role is expressed by the object property, not by subclassing." ;
+    :labellableRoot "false"^^xsd:boolean .
+
+:StatusCode rdf:type owl:Class ;
+    rdfs:label "StatusCode" ;
+    rdfs:comment "Controlled-vocabulary status assigned to a DrawingRevision, e.g. IFC (Issued for Construction), IFR (Issued for Review), AFC (Approved for Construction)." ;
+    :labellableRoot "false"^^xsd:boolean .
+
+:DrawingPackage rdf:type owl:Class ;
+    rdfs:label "DrawingPackage" ;
+    rdfs:comment "A grouping of DrawingSheets within a Project, e.g. a volume or submission package." ;
+    :labellableRoot "false"^^xsd:boolean .

@@ -1,0 +1,216 @@
+@prefix : <https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols#> .
+@base <https://burohappoldmachinelearning.github.io/ADIRO/> .
+@prefix metadata: <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#> .
+@prefix csymbol: <https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+#################################################################
+#  UC-03 CORE ONTOLOGY FOR VISUALIZATION
+#
+#  Scope: only the core concepts of UC-03 (Reference Symbol
+#  Cross-Sheet Linking), plus the minimum context from
+#  aec_drawing_metadata needed to make the visualisation
+#  coherent.
+#
+#  Design principle:
+#    "The ontology models facts, not their display derivatives."
+#    Concretely: store only what cannot be recomputed from
+#    other triples. Everything derivable (composite labels,
+#    cached target identifiers, even single-number identifiers)
+#    is left to SPARQL / application layer. See debate document.
+#
+#  Decisions baked in:
+#    - ReferenceSymbol REPLACES the original csymbol:Callout
+#      (subclass of metadata:DrawingElement).
+#    - ReferenceSymbol mounts on Layout, not on DrawingSheet.
+#      Both source (appearsOn) and target (referencesLayout)
+#      are Layout-level.
+#    - SymbolType / hasSymbolType / typeLabel are NOT modelled.
+#      Type derivable from the target Layout's LayoutContentType.
+#    - symbolLabel ("2/ST-201") is NOT modelled. Derivable from
+#      symbolNumber + targetSheet.drawingIdentifier via CONCAT.
+#    - Redundant target identifiers (targetLayoutNumber,
+#      targetDrawingNumber) on ReferenceSymbol are NOT introduced.
+#      Resolved via referencesLayout → Layout → DrawingSheet
+#      traversal at query time. Denormalisation rejected on
+#      consistency-cost vs. negligible-query-savings grounds.
+#    - symbolNumber is NOT modelled either. Per mainstream NCS/
+#      AIA/BS convention, the number inside a marker bubble
+#      equals the target Layout's layoutIdentifier — i.e. it is
+#      derivable. ReferenceSymbol is therefore a pure relational
+#      node with no datatype properties. RDF URIs handle instance
+#      uniqueness (multiple identical markers at different
+#      positions on the same source Layout are distinct URIs,
+#      not distinct symbolNumbers).
+#    - If future requirements demand position differentiation
+#      among multiple identical markers, the proper extension
+#      is :hasLocation → LayoutRegion (geometric layer), not
+#      a re-introduction of symbolNumber.
+#
+#  Open issues (not encoded here, see plan file):
+#    - Should a broader "annotation symbol" supertype be kept?
+#    - Layout numbering (cross-UC dependency on UC-01 v0.4)
+#    - Inverse property convention (project-wide)
+#    - Promote :hasLocation → LayoutRegion from "deferred
+#      geometric layer" to UC-03 core, if position
+#      differentiation becomes a real CQ?
+#################################################################
+
+
+#################################################################
+#  PART 1 — Minimum context from aec_drawing_metadata
+#  (only what's needed to make UC-03 readable)
+#################################################################
+
+###  Annotation property
+
+metadata:labellableRoot rdf:type owl:AnnotationProperty ;
+    rdfs:label "labellableRoot" ;
+    rdfs:range xsd:boolean .
+
+
+###  Generic top-level properties (already exist in metadata module)
+
+metadata:contains rdf:type owl:ObjectProperty ;
+    rdfs:label "contains" ;
+    rdfs:comment "Generic containment relationship." .
+
+metadata:hasProperty rdf:type owl:ObjectProperty ;
+    rdfs:label "hasProperty" ;
+    rdfs:comment "Generic characterising-quality relationship." .
+
+
+###  Core classes (REUSE from aec_drawing_metadata)
+
+metadata:DrawingSheet rdf:type owl:Class ;
+    rdfs:label "DrawingSheet" ;
+    rdfs:comment "Top-level searchable unit. UC-01 'Drawing' maps here. Carries drawingIdentifier for UC-03's compound-label resolution." ;
+    metadata:labellableRoot "false"^^xsd:boolean .
+
+metadata:Layout rdf:type owl:Class ;
+    rdfs:label "Layout" ;
+    rdfs:comment "A view region within a DrawingSheet. UC-03's ReferenceSymbol mounts here (both source and target ends). Carries layoutIdentifier so a ReferenceSymbol target can resolve to a unique Layout (drawingIdentifier + layoutIdentifier pair)." ;
+    metadata:labellableRoot "true"^^xsd:boolean .
+
+
+###  Identity datatype properties (needed to uniquely locate a Layout)
+###  NOTE: drawingIdentifier (formerly drawingNumber) is owned by UC-01 v0.3. layoutIdentifier (formerly layoutNumber) is a
+###  cross-UC dependency that UC-03 needs but properly belongs in
+###  UC-01 v0.4 (FR 1 — identity fields extension).
+
+metadata:drawingIdentifier rdf:type owl:DatatypeProperty ;
+    rdfs:label "drawingIdentifier" ;
+    rdfs:comment "UC-01 FR 1. Sheet-level identifier, e.g. 'ST-201'. Also known as 'drawing number'." ;
+    rdfs:domain metadata:DrawingSheet ;
+    rdfs:range xsd:string .
+
+metadata:layoutIdentifier rdf:type owl:DatatypeProperty ;
+    rdfs:label "layoutIdentifier" ;
+    rdfs:comment "The identifier assigned to a Layout in the title strip beneath it on its parent DrawingSheet. Also known as 'layout number'. Typically a small integer or letter ('1', '2', 'A') that drafters use to refer to that specific view (e.g. the '2' beneath a Section view labelled 'SECTION 2 — SCALE 1:50'). Together with the parent sheet's drawingIdentifier, it forms the address that ReferenceSymbol labels like '2/ST-201' point to. Cross-UC dependency: this property is needed by UC-03 but properly belongs to UC-01's identity-fields domain — pending formal introduction in UC-01 v0.4." ;
+    rdfs:domain metadata:Layout ;
+    rdfs:range xsd:string .
+
+metadata:LayoutContentType rdf:type owl:Class ;
+    rdfs:label "LayoutContentType" ;
+    rdfs:comment "Type of content (Plan, Section, Detail, Elevation, Table, Perspective). UC-03 derives ReferenceSymbol type from the target Layout's content type." ;
+    metadata:labellableRoot "false"^^xsd:boolean .
+
+metadata:Plan rdf:type owl:Class ;
+    rdfs:subClassOf metadata:LayoutContentType ;
+    rdfs:label "Plan" .
+
+metadata:Section rdf:type owl:Class ;
+    rdfs:subClassOf metadata:LayoutContentType ;
+    rdfs:label "Section" .
+
+metadata:Detail rdf:type owl:Class ;
+    rdfs:subClassOf metadata:LayoutContentType ;
+    rdfs:label "Detail" .
+
+metadata:Elevation rdf:type owl:Class ;
+    rdfs:subClassOf metadata:LayoutContentType ;
+    rdfs:label "Elevation" .
+
+metadata:DrawingElement rdf:type owl:Class ;
+    rdfs:label "DrawingElement" ;
+    rdfs:comment "Base class for elements depicted on a drawing. Contained by Layout." ;
+    metadata:labellableRoot "false"^^xsd:boolean .
+
+
+###  Context relationships (named subproperties of :contains,
+###  needed so WebVOWL renders the edges)
+
+metadata:hasLayout rdf:type owl:ObjectProperty ;
+    rdfs:label "hasLayout" ;
+    rdfs:subPropertyOf metadata:contains ;
+    rdfs:domain metadata:DrawingSheet ;
+    rdfs:range metadata:Layout .
+
+metadata:hasLayoutContentType rdf:type owl:ObjectProperty ;
+    rdfs:label "hasLayoutContentType" ;
+    rdfs:subPropertyOf metadata:hasProperty ;
+    rdfs:domain metadata:Layout ;
+    rdfs:range metadata:LayoutContentType .
+
+
+#################################################################
+#  PART 2 — UC-03 core: ReferenceSymbol
+#
+#  Replaces the original csymbol:Callout class. Sits in the
+#  aec_common_symbols module as a subclass of DrawingElement.
+#################################################################
+
+csymbol:ReferenceSymbol rdf:type owl:Class ;
+    rdfs:subClassOf metadata:DrawingElement ;
+    rdfs:label "ReferenceSymbol" ;
+    rdfs:comment "A symbol drawn on a Layout that references another Layout (on the same or a different DrawingSheet). Working name in UC-03 v0.2 — see UC03-1 for final naming decision vs csymbol:Callout. Typical instances include Detail Markers, Section Markers, and Elevation Markers — but the type axis is not modelled (derived from the target Layout's LayoutContentType). See NCS Module 6 and ISO 128-30 for visual conventions.\n\nReferenceSymbol is a PURE RELATIONAL NODE: it has no datatype properties. Instance identity is provided by RDF URI; the displayed marker label (e.g. '2/ST-201') is derivable from referencesLayout → Layout → layoutIdentifier and the target DrawingSheet's drawingIdentifier. See design-debate document for the full reasoning." ;
+    metadata:labellableRoot "true"^^xsd:boolean .
+
+
+###  No datatype properties on ReferenceSymbol.
+###  (See class comment above and the design-debate document.)
+###
+###  Properties that were considered and REJECTED:
+###    - symbolLabel  → derivable via CONCAT, see header.
+###    - symbolNumber → equals target.layoutIdentifier under mainstream
+###                     drafting conventions (NCS/AIA/BS); derivable
+###                     by graph traversal.
+###    - typeLabel    → derivable from target Layout's content type.
+###    - targetDrawingNumber / targetLayoutNumber → derivable
+###                     redundancy; rejected on consistency grounds.
+
+
+###  Object properties — Source side (where the symbol is drawn)
+
+csymbol:appearsOn rdf:type owl:ObjectProperty ;
+    rdfs:label "appearsOn" ;
+    rdfs:comment "Source Layout — the Layout on which this ReferenceSymbol is drawn." ;
+    owl:inverseOf csymbol:hasReferenceSymbol ;
+    rdfs:domain csymbol:ReferenceSymbol ;
+    rdfs:range metadata:Layout .
+
+csymbol:hasReferenceSymbol rdf:type owl:ObjectProperty ;
+    rdfs:label "hasReferenceSymbol" ;
+    rdfs:comment "Inverse of appearsOn. A Layout contains one or more ReferenceSymbols." ;
+    rdfs:subPropertyOf metadata:contains ;
+    rdfs:domain metadata:Layout ;
+    rdfs:range csymbol:ReferenceSymbol .
+
+
+###  Object properties — Target side (what the symbol points to)
+
+csymbol:referencesLayout rdf:type owl:ObjectProperty ;
+    rdfs:label "referencesLayout" ;
+    rdfs:comment "Target Layout — the Layout this ReferenceSymbol points to. Note: target is Layout-level, not DrawingSheet-level — the marker resolves to a specific view (e.g. 'Section 2' on sheet ST-201), not just the sheet as a whole." ;
+    owl:inverseOf csymbol:isReferencedBy ;
+    rdfs:domain csymbol:ReferenceSymbol ;
+    rdfs:range metadata:Layout .
+
+csymbol:isReferencedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "isReferencedBy" ;
+    rdfs:comment "Inverse of referencesLayout. A Layout that is the target of one or more ReferenceSymbols." ;
+    rdfs:domain metadata:Layout ;
+    rdfs:range csymbol:ReferenceSymbol .
