@@ -92,18 +92,18 @@
     rdfs:domain :TextualNote .
 
 
-###  Metadata-region class tree (visual regions for CV annotation)
-###  NOTE (G10): the name :Metadata is misleading — it models
-###  supporting visual regions, not semantic metadata. Candidate
-###  future rename: :SupportingRegion.
+###  MetadataContainer class tree (visual regions for CV annotation)
+###  NOTE (G10 — resolved): renamed from :Metadata to :MetadataContainer
+###  per team decision. The class models supporting visual regions
+###  (titleblock, legend, etc.), not semantic metadata.
 
-:Metadata rdf:type owl:Class ;
-    rdfs:label "Metadata?" ;
-    rdfs:comment "Supporting visual region on a drawing sheet (titleblock, legend, etc.). The label carries a question mark to flag that the name is misleading — this class models visual regions, NOT semantic metadata. Candidate future rename: SupportingRegion. See ORSD G10." ;
+:MetadataContainer rdf:type owl:Class ;
+    rdfs:label "MetadataContainer" ;
+    rdfs:comment "Supporting visual region on a drawing sheet (titleblock, legend, etc.). Renamed from :Metadata to avoid confusion with semantic metadata properties (drawingIdentifier, drawingTitle, etc.) on DrawingSheet. Also known as 'Metadata' in earlier versions." ;
     :labellableRoot "false"^^xsd:boolean .
 
 :Titleblock rdf:type owl:Class ;
-    rdfs:subClassOf :Metadata ;
+    rdfs:subClassOf :MetadataContainer ;
     rdfs:label "Titleblock" ;
     rdfs:comment "Titleblock containing visual information about the drawing (project name, drawing title, drawing number, etc.)." ;
     :exampleImage <img/aec_drawing_ontology/titleblock_01.png> ;
@@ -111,18 +111,18 @@
     :labellableRoot "true"^^xsd:boolean .
 
 :RevisionTable rdf:type owl:Class ;
-    rdfs:subClassOf :Metadata ;
+    rdfs:subClassOf :MetadataContainer ;
     rdfs:label "Revision table" ;
     :labellableRoot "true"^^xsd:boolean .
 
 :Legend rdf:type owl:Class ;
-    rdfs:subClassOf :Metadata ;
+    rdfs:subClassOf :MetadataContainer ;
     rdfs:label "Legend" ;
     rdfs:comment "A legend containing mapping information between symbols and a text signifier." ;
     :labellableRoot "true"^^xsd:boolean .
 
 :Note rdf:type owl:Class ;
-    rdfs:subClassOf :Metadata ;
+    rdfs:subClassOf :MetadataContainer ;
     rdfs:label "Note" ;
     :labellableRoot "true"^^xsd:boolean .
 
@@ -530,8 +530,8 @@ dcommon:Civil rdf:type owl:Class ;
 #  G5  — Should DrawingSheet itself carry hasDiscipline (a
 #         "primary discipline"), in addition to the existing
 #         Layout-level discipline? Pending team decision.
-#  G10 — :Metadata class name is misleading; candidate
-#         future rename: :SupportingRegion.
+#  G10 — Resolved: :Metadata renamed to :MetadataContainer
+#         (team decision).
 #  Civil — Confirmed by team: to be added as direct subclass
 #         of dcommon:Discipline.
 #################################################################

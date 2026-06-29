@@ -52,7 +52,7 @@ Things that exist independently and will become OWL Classes.
 
 > **Design note — Titleblock as visual region vs titleblock data:** The existing `metadata:Titleblock` class models the *visual region* on a sheet (for CV annotation). The *information* conventionally found inside it (`drawingIdentifier`, `drawingTitle`, …) is attached as datatype properties directly on `DrawingSheet`. The two layers coexist independently: a sheet has a drawing number whether or not its visual Titleblock region has been bounded in annotation.
 
-> **Design note — `:Metadata` class name:** The existing `:Metadata` class is the parent of `Titleblock`, `RevisionTable`, `Legend`, and `Note` — i.e. it models *visual supporting regions*, not semantic metadata. Once UC-01's datatype properties (drawingIdentifier etc.) land on `DrawingSheet`, the name `:Metadata` becomes misleading. ⚠️ **Open issue (G10):** rename `:Metadata` to e.g. `:SupportingRegion`, or remove the parent class. Flagged for team discussion; not actioned in this revision.
+> **Design note — `:Metadata` → `:MetadataContainer`:** The existing `:Metadata` class has been renamed to `:MetadataContainer` (team decision). It is the parent of `Titleblock`, `RevisionTable`, `Legend`, and `Note` — i.e. it models *visual supporting regions*, not semantic metadata. The rename avoids confusion with UC-01's datatype properties (`drawingIdentifier`, `drawingTitle`, etc.) on `DrawingSheet`.
 
 > **Design note — DrawingType deprecated:** UC-01 v0.2 introduced `:DrawingType` (Plan, Section, Elevation, Detail, Schedule). This is the same axis as `metadata:LayoutContentType` (Plan, Section, Elevation, Detail, Table, Perspective). "Schedule" maps to `Table`. `DrawingType` is removed in v0.3 — `LayoutContentType` is reused.
 
@@ -393,7 +393,7 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | G5  | Should `hasDiscipline` domain move from `LayoutContentType` to `Layout`? v0.3 proposes yes — discipline characterises the layout, not its content type.            |
 | G5b | Should `DrawingSheet` itself carry a `hasDiscipline` (a "primary discipline" for the whole sheet) in addition to Layout-level discipline?                          |
-| G10 | The existing `:Metadata` class name is misleading once UC-01 datatype properties land on `DrawingSheet`. Candidate future rename: `:SupportingRegion`. Or remove?  |
+| G10 | ~~`:Metadata` class name misleading~~ — **resolved**: renamed to `:MetadataContainer` (team decision). The class models visual supporting regions (titleblock, legend, etc.), not semantic metadata. |
 | —   | Project-wide convention for `owl:inverseOf` — when to materialise vs rely on reasoner? v0.3 only materialises `isRevisionOf`.                                      |
 | —   | ~~"Civil" discipline~~ — **resolved**: `Civil` to be added as a direct subclass of `dcommon:Discipline` (team decision).                                           |
 
