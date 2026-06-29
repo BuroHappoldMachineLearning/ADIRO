@@ -10,7 +10,7 @@
 > - `hasReferenceSymbol` wired via `rdfs:subPropertyOf metadata:contains` (G6).
 > - SPARQL placeholder namespace replaced with real module prefixes (G8).
 > - CQ groups consolidated from 5 → 3 (Discovery / Navigation / Network) per @AhmedElnagar1's "competency questions repeat themselves".
-> - Identified cross-UC dependency: UC-03 needs `metadata:layoutNumber`, which properly belongs in UC-01 v0.4 — flagged in Open Issues.
+> - Identified cross-UC dependency: UC-03 needs `metadata:layoutIdentifier`, which properly belongs in UC-01 v0.4 — flagged in Open Issues.
 
 ---
 
@@ -34,8 +34,8 @@
 
 | Entity                   | Module                 | Action | Rationale                                                                                                                              |
 | ------------------------ | ---------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `DrawingSheet`           | `aec_drawing_metadata` | REUSE  | Parent container of the Layouts being linked. Carries `drawingNumber`. UC-01 owns this.                                                |
-| `Layout`                 | `aec_drawing_metadata` | REUSE  | The actual unit linked at both ends of a ReferenceSymbol. Carries `layoutNumber`.                                                      |
+| `DrawingSheet`           | `aec_drawing_metadata` | REUSE  | Parent container of the Layouts being linked. Carries `drawingIdentifier`. UC-01 owns this.                                                |
+| `Layout`                 | `aec_drawing_metadata` | REUSE  | The actual unit linked at both ends of a ReferenceSymbol. Carries `layoutIdentifier`.                                                      |
 | `LayoutContentType`      | `aec_drawing_metadata` | REUSE  | Plan / Section / Detail / Elevation / Table / Perspective. UC-03 derives a ReferenceSymbol's "type" from the target Layout's content type. |
 | `ReferenceSymbol`        | `aec_common_symbols`   | NEW (see UC03-1 re naming) | The linking entity itself — a `metadata:DrawingElement` subclass drawn on a source Layout, pointing to a target Layout. |
 
@@ -43,7 +43,7 @@
 
 > **Design note — Layout-level mounting.** v0.1 had ReferenceSymbol link `Drawing → Drawing`. v0.2 links `Layout → Layout`: a marker like "2/ST-201" specifies view 2 on sheet ST-201, a specific Layout. Layout-level mounting also keeps ReferenceSymbol architecturally consistent with `Dimension`, `Grid`, and other `DrawingElement` subclasses, which are all contained by Layout, not Sheet.
 
-> **Design note — ReferenceSymbol is a pure relational node.** No datatype properties. v0.1's `symbolLabel` ("2/ST-201") is derivable via `CONCAT`. v0.1's `symbolNumber` ("2") equals the target Layout's `layoutNumber` under mainstream NCS / AIA / BS drafting conventions, and is therefore derivable by graph traversal. RDF URIs handle instance uniqueness — multiple identical markers (e.g. three Detail Markers at three locations all reading "2/ST-201") are distinct URIs, not distinct datatype values. See the design-debate note for the full reasoning, including the "RDF identity vs domain identity" distinction.
+> **Design note — ReferenceSymbol is a pure relational node.** No datatype properties. v0.1's `symbolLabel` ("2/ST-201") is derivable via `CONCAT`. v0.1's `symbolNumber` ("2") equals the target Layout's `layoutIdentifier` under mainstream NCS / AIA / BS drafting conventions, and is therefore derivable by graph traversal. RDF URIs handle instance uniqueness — multiple identical markers (e.g. three Detail Markers at three locations all reading "2/ST-201") are distinct URIs, not distinct datatype values. See the design-debate note for the full reasoning, including the "RDF identity vs domain identity" distinction.
 
 > **Design note — `:hasLocation → LayoutRegion` still deferred.** Position-level differentiation among identical markers (the only mechanism that would distinguish three "2/ST-201" markers at three places on the same Plan) belongs to a future geometric-layer extension. If a CQ ever requires this, the correct response is to promote `:hasLocation` to UC-03 core, not to re-introduce a string-keyed identifier.
 
@@ -51,10 +51,10 @@
 
 | Attribute       | Entity            | Module                 | Action | Expected Type | Notes                                                                                              |
 | --------------- | ----------------- | ---------------------- | ------ | ------------- | -------------------------------------------------------------------------------------------------- |
-| `drawingNumber` | `DrawingSheet`    | `aec_drawing_metadata` | REUSE  | `xsd:string`  | Owned by UC-01 v0.3.                                                                                |
-| `layoutNumber`  | `Layout`          | `aec_drawing_metadata` | NEW¹   | `xsd:string`  | The number assigned to a Layout in its title strip (e.g. the "2" in "SECTION 2 — SCALE 1:50"). Together with the parent sheet's `drawingNumber`, uniquely addresses a Layout. |
+| `drawingIdentifier` | `DrawingSheet`    | `aec_drawing_metadata` | REUSE  | `xsd:string`  | Owned by UC-01 v0.3.                                                                                |
+| `layoutIdentifier`  | `Layout`          | `aec_drawing_metadata` | NEW¹   | `xsd:string`  | The number assigned to a Layout in its title strip (e.g. the "2" in "SECTION 2 — SCALE 1:50"). Together with the parent sheet's `drawingIdentifier`, uniquely addresses a Layout. |
 
-¹ **Cross-UC dependency.** UC-03 needs `layoutNumber` to resolve composite reference labels like "2/ST-201", but as an identity field it properly belongs in UC-01's domain. To be formally introduced in **UC-01 v0.4** (FR 1 — identity fields extension). UC-03 references it as if already present; v0.2 will be re-finalised once UC-01 v0.4 lands.
+¹ **Cross-UC dependency.** UC-03 needs `layoutIdentifier` to resolve composite reference labels like "2/ST-201", but as an identity field it properly belongs in UC-01's domain. To be formally introduced in **UC-01 v0.4** (FR 1 — identity fields extension). UC-03 references it as if already present; v0.2 will be re-finalised once UC-01 v0.4 lands.
 
 **ReferenceSymbol has no datatype properties.** See the design-debate note for why `symbolNumber`, `symbolLabel`, and `typeLabel` were all rejected.
 
@@ -117,11 +117,11 @@
 
 **FR 5 — Composite-Label Resolution**
 
-> The ontology MUST support resolving a composite marker label of the form `"<symbol number>/<sheet number>"` (e.g. `"2/ST-201"`) to a specific target Layout, given the existence of `metadata:layoutNumber` (per UC-01 v0.4) and `metadata:drawingNumber` (per UC-01 v0.3).
+> The ontology MUST support resolving a composite marker label of the form `"<symbol number>/<sheet number>"` (e.g. `"2/ST-201"`) to a specific target Layout, given the existence of `metadata:layoutIdentifier` (per UC-01 v0.4) and `metadata:drawingIdentifier` (per UC-01 v0.3).
 
 - Source: UC-03
 - Derived terms: none new — uses existing identity fields
-- Note: The composite label itself is not stored. Resolution is performed at query time: parse the label, look up the DrawingSheet by `drawingNumber`, then locate the Layout within it by `layoutNumber`.
+- Note: The composite label itself is not stored. Resolution is performed at query time: parse the label, look up the DrawingSheet by `drawingIdentifier`, then locate the Layout within it by `layoutIdentifier`.
 
 ---
 
@@ -191,7 +191,7 @@ PREFIX metadata: <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing
 PREFIX csymbol:  <https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols#>
 
 SELECT DISTINCT ?connectedSheet WHERE {
-  ?GA001 metadata:drawingNumber "GA-001" ;
+  ?GA001 metadata:drawingIdentifier "GA-001" ;
          metadata:contains      ?sourceLayout .
 
   {
@@ -225,9 +225,9 @@ PREFIX csymbol:  <https://burohappoldmachinelearning.github.io/ADIRO/aec_common_
 
 # Given composite label "2/ST-201":
 SELECT ?targetLayout WHERE {
-  ?targetSheet  metadata:drawingNumber "ST-201" ;
+  ?targetSheet  metadata:drawingIdentifier "ST-201" ;
                 metadata:contains      ?targetLayout .
-  ?targetLayout metadata:layoutNumber  "2" .
+  ?targetLayout metadata:layoutIdentifier  "2" .
 }
 ```
 
@@ -248,8 +248,8 @@ This demonstrates FR 5: composite labels are parsed at query time, not stored on
 | `csymbol:appearsOn`            | `aec_common_symbols`   | NEW    | CQ 3.2, CQ 3.3                       | FR 2             |
 | `csymbol:referencesLayout`    | `aec_common_symbols`   | NEW    | CQ 2.x, CQ 3.x, CQ-I 1, CQ-I 2       | FR 3             |
 | `csymbol:isReferencedBy`       | `aec_common_symbols`   | NEW    | CQ 3.2, CQ 3.3                       | FR 4             |
-| `metadata:drawingNumber`       | `aec_drawing_metadata` | REUSE  | CQ 2.x                               | FR 5 (UC-01 v0.3) |
-| `metadata:layoutNumber`        | `aec_drawing_metadata` | NEW¹   | CQ 2.x                               | FR 5 (pending UC-01 v0.4) |
+| `metadata:drawingIdentifier`       | `aec_drawing_metadata` | REUSE  | CQ 2.x                               | FR 5 (UC-01 v0.3) |
+| `metadata:layoutIdentifier`        | `aec_drawing_metadata` | NEW¹   | CQ 2.x                               | FR 5 (pending UC-01 v0.4) |
 
 ---
 
@@ -273,7 +273,7 @@ aec_drawing_metadata
 
 | Module                 | UC-03 contribution                                                                                                                                                  |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `aec_drawing_metadata` | **New (cross-UC dependency):** `layoutNumber` — properly belongs to UC-01 v0.4. **Reused:** `DrawingSheet`, `Layout`, `LayoutContentType`, `contains`, `drawingNumber`. |
+| `aec_drawing_metadata` | **New (cross-UC dependency):** `layoutIdentifier` — properly belongs to UC-01 v0.4. **Reused:** `DrawingSheet`, `Layout`, `LayoutContentType`, `contains`, `drawingIdentifier`. |
 | `aec_common_symbols`   | **New classes:** `ReferenceSymbol` (replaces `Callout`). **New properties:** `hasReferenceSymbol` (⊂ `metadata:contains`), `appearsOn`, `referencesLayout`, `isReferencedBy`. |
 | `aec_domain_common`    | No UC-03 contribution.                                                                                                                                              |
 | `aec_facade_domain`    | No UC-03 contribution.                                                                                                                                              |
@@ -296,9 +296,10 @@ These items affect UC-03 but cannot be unilaterally decided in the ORSD.
 | ID    | Issue                                                                                                                                                                                                                                       |
 | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | UC03-1 | **Naming and relationship: `ReferenceSymbol` vs `Callout`.** The *scope* of UC-03's cross-sheet linking class is agreed. The **name** is open: (a) keep `ReferenceSymbol` as introduced here; (b) rename the existing `Callout` to `ReferenceSymbol`; (c) keep both with distinct scopes (Callout = same-sheet annotation pointer; ReferenceSymbol = cross-sheet linker); (d) introduce a broader supertype (e.g. `AnnotationSymbol`) above both. Decision for @alelom / @AhmedElnagar1 with reference to the broader `aec_common_symbols` module design. |
-| UC03-2 | **`layoutNumber` belongs in UC-01.** UC-03 introduces it provisionally. UC-01 v0.4 should formally adopt it as an identity-fields extension; UC-03 v0.2 will be re-finalised at that point.                                                  |
+| UC03-2 | **`layoutIdentifier` belongs in UC-01.** UC-03 introduces it provisionally. UC-01 v0.4 should formally adopt it as an identity-fields extension; UC-03 v0.2 will be re-finalised at that point.                                                  |
 | UC03-3 | **Optional geometric-layer extension (GeoSPARQL).** If a CQ ever demands distinguishing multiple identical markers at different positions on the same source Layout, or precise spatial queries over Layout bounds, the preferred approach is a GeoSPARQL extension: add `geo:hasGeometry` to both `ReferenceSymbol` (point — symbol centre on its source Layout) and `Layout` (polygon — bounding rectangle on the DrawingSheet), using a drawing-local coordinate CRS. This is a better long-term option than a custom `LayoutRegion` class: standard OGC vocabulary, built-in spatial SPARQL functions (`geof:sfWithin` etc.), and interoperability with BIM/IFC spatial data. *Subject* of `hasLocation`-style triples would be `ReferenceSymbol`. Prerequisite: verify the target SPARQL engine's support for custom (non-geographic) CRS. No current CQ requires this; defer until a geometric use case is confirmed. |
 | UC03-4 | **Match Lines and other reference symbol types.** Industry usage extends beyond Detail/Section/Elevation markers (Match Lines for split-sheet continuation, Schedule references, Key Plan references, etc.). UC-03's current scope covers the three primary types; broader coverage may need additional modelling if a CQ requires it. |
+| UC03-5 | **Sheet-level references (backlog).** UC-03's `referencesLayout` only covers graphical markers (Detail / Section / Elevation Markers), which by definition point to a specific Layout. If a future case arises where a graphical marker refers to an entire DrawingSheet rather than a specific Layout, the ontology may need a `referencesSheet` property or equivalent. Note: textual whole-sheet references ("See drawing ST-201") are already covered by the existing `metadata:TextualNote.refersToDrawingId` and are outside UC-03's scope. |
 | —     | **Inverse-property convention** (project-wide, not UC-03-specific): when to declare `owl:inverseOf` vs rely on a reasoner? UC-03 declares inverses for both forward/reverse pairs. UC-01 v0.3 only materialises `isRevisionOf`. The two should be reconciled. |
 
 ---
@@ -310,8 +311,8 @@ For the full design-debate reasoning behind the v0.2 modelling choices, see the 
 1. **§1 — Ontology role:** This ontology is a **query layer**, not a raw-storage layer. Parsing, OCR clean-up, and provenance live upstream/elsewhere.
 2. **§2 — Layout-level mounting:** Both ends of a ReferenceSymbol link `Layout → Layout`, not `Sheet → Sheet`. Better precision; aligns with the existing DrawingElement architecture.
 3. **§3 — No `SymbolType`:** Marker type (Detail / Section / Elevation) is derivable from the target Layout's `LayoutContentType`. FR 2 from v0.1 removed.
-4. **§4 — No `symbolLabel`:** The composite label "2/ST-201" is derivable via `CONCAT(symbolNumber, "/", targetSheet.drawingNumber)`.
-5. **§5 — No `symbolNumber`:** Under mainstream NCS / AIA / BS conventions, the number inside a marker bubble equals the target Layout's `layoutNumber` — derivable by graph traversal. ReferenceSymbol becomes a pure relational node.
+4. **§4 — No `symbolLabel`:** The composite label "2/ST-201" is derivable via `CONCAT(symbolNumber, "/", targetSheet.drawingIdentifier)`.
+5. **§5 — No `symbolNumber`:** Under mainstream NCS / AIA / BS conventions, the number inside a marker bubble equals the target Layout's `layoutIdentifier` — derivable by graph traversal. ReferenceSymbol becomes a pure relational node.
 6. **§6 — Reusable principle:** *"The ontology models facts, not their display derivatives."* Three-step check for any new datatype property — derivability test, independent-assertion test, optimisation warning.
 7. **§7 — RDF identity ≠ domain identity:** Instance uniqueness is provided by RDF URI, never by adding a datatype property. Multiple identical markers are distinct URIs, not distinct values.
 

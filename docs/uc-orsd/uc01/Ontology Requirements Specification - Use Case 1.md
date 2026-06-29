@@ -7,7 +7,7 @@
 > - `dcommon:hasDiscipline` proposed to move from `LayoutContentType` to `Layout` (G5 — open issue).
 > - Reuse `dcommon:Discipline` class hierarchy; drop `disciplineCode` string property (G3).
 > - Reuse `metadata:LayoutContentType`; drop `DrawingType` / `hasDrawingType` / `typeLabel` (G4).
-> - Datatype properties (`drawingNumber`, `drawingTitle`, `hasScale`, `sheetSize`) attached directly to `DrawingSheet` — no intermediate entity (G2).
+> - Datatype properties (`drawingIdentifier`, `drawingTitle`, `hasScale`, `sheetSize`) attached directly to `DrawingSheet` — no intermediate entity (G2).
 > - New object properties wired into `metadata:contains` / `metadata:hasProperty` via `rdfs:subPropertyOf` (G6).
 > - SPARQL placeholder namespace replaced with real module prefixes (G8).
 > - Only `isRevisionOf` materialised as `owl:inverseOf`; other inverses deferred (G9).
@@ -50,9 +50,9 @@ Things that exist independently and will become OWL Classes.
 
 > **Design note — DrawingSheet vs Layout:** A `DrawingSheet` may contain multiple `Layout`s, each with its own `LayoutContentType` and `Discipline`. Queries for "Structural Plan drawings" filter for sheets containing at least one Layout whose content type is `Plan` and whose discipline is (a subclass of) `Structural`.
 
-> **Design note — Titleblock as visual region vs titleblock data:** The existing `metadata:Titleblock` class models the *visual region* on a sheet (for CV annotation). The *information* conventionally found inside it (`drawingNumber`, `drawingTitle`, …) is attached as datatype properties directly on `DrawingSheet`. The two layers coexist independently: a sheet has a drawing number whether or not its visual Titleblock region has been bounded in annotation.
+> **Design note — Titleblock as visual region vs titleblock data:** The existing `metadata:Titleblock` class models the *visual region* on a sheet (for CV annotation). The *information* conventionally found inside it (`drawingIdentifier`, `drawingTitle`, …) is attached as datatype properties directly on `DrawingSheet`. The two layers coexist independently: a sheet has a drawing number whether or not its visual Titleblock region has been bounded in annotation.
 
-> **Design note — `:Metadata` class name:** The existing `:Metadata` class is the parent of `Titleblock`, `RevisionTable`, `Legend`, and `Note` — i.e. it models *visual supporting regions*, not semantic metadata. Once UC-01's datatype properties (drawingNumber etc.) land on `DrawingSheet`, the name `:Metadata` becomes misleading. ⚠️ **Open issue (G10):** rename `:Metadata` to e.g. `:SupportingRegion`, or remove the parent class. Flagged for team discussion; not actioned in this revision.
+> **Design note — `:Metadata` class name:** The existing `:Metadata` class is the parent of `Titleblock`, `RevisionTable`, `Legend`, and `Note` — i.e. it models *visual supporting regions*, not semantic metadata. Once UC-01's datatype properties (drawingIdentifier etc.) land on `DrawingSheet`, the name `:Metadata` becomes misleading. ⚠️ **Open issue (G10):** rename `:Metadata` to e.g. `:SupportingRegion`, or remove the parent class. Flagged for team discussion; not actioned in this revision.
 
 > **Design note — DrawingType deprecated:** UC-01 v0.2 introduced `:DrawingType` (Plan, Section, Elevation, Detail, Schedule). This is the same axis as `metadata:LayoutContentType` (Plan, Section, Elevation, Detail, Table, Perspective). "Schedule" maps to `Table`. `DrawingType` is removed in v0.3 — `LayoutContentType` is reused.
 
@@ -64,19 +64,19 @@ Things that exist independently and will become OWL Classes.
 
 Characteristics of a single entity. **Datatype properties on `DrawingSheet` are attached directly — no intermediate "metadata container" entity.**
 
-| Attribute        | Entity            | Module                 | Action | Expected Type |
-| ---------------- | ----------------- | ---------------------- | ------ | ------------- |
-| `drawingNumber`  | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  |
-| `drawingTitle`   | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  |
-| `hasScale`       | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  |
-| `sheetSize`      | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  |
-| `revisionCode`   | `DrawingRevision` | `aec_drawing_metadata` | NEW    | `xsd:string`  |
-| `issueDate`      | `DrawingRevision` | `aec_drawing_metadata` | NEW    | `xsd:date`    |
-| `personName`     | `Person`          | `aec_drawing_metadata` | NEW    | `xsd:string`  |
-| `projectName`    | `Project`         | `aec_drawing_metadata` | NEW    | `xsd:string`  |
-| `projectNumber`  | `Project`         | `aec_drawing_metadata` | NEW    | `xsd:string`  |
-| `packageName`    | `DrawingPackage`  | `aec_drawing_metadata` | NEW    | `xsd:string`  |
-| `statusLabel`    | `StatusCode`      | `aec_drawing_metadata` | NEW    | `xsd:string`  |
+| Attribute        | Entity            | Module                 | Action | Expected Type | Notes |
+| ---------------- | ----------------- | ---------------------- | ------ | ------------- | ----- |
+| `drawingIdentifier`  | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | Also known as "drawing number". |
+| `drawingTitle`   | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
+| `hasScale`       | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
+| `sheetSize`      | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
+| `revisionCode`   | `DrawingRevision` | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
+| `issueDate`      | `DrawingRevision` | `aec_drawing_metadata` | NEW    | `xsd:date`    | |
+| `personName`     | `Person`          | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
+| `projectName`    | `Project`         | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
+| `projectNumber`  | `Project`         | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
+| `packageName`    | `DrawingPackage`  | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
+| `statusLabel`    | `StatusCode`      | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
 
 ### 2.3 Relations — Object Properties
 
@@ -123,7 +123,7 @@ Each FR describes one representational capability the ontology must have, in imp
 > The ontology MUST represent the core identity fields of a drawing sheet — drawing number, title, scale, and sheet size — such that sheets can be retrieved and distinguished by these fields.
 
 - Source: UC-01
-- Derived terms: `metadata:DrawingSheet` (REUSE), `metadata:drawingNumber`, `metadata:drawingTitle`, `metadata:hasScale`, `metadata:sheetSize` (NEW datatype properties on `DrawingSheet`)
+- Derived terms: `metadata:DrawingSheet` (REUSE), `metadata:drawingIdentifier`, `metadata:drawingTitle`, `metadata:hasScale`, `metadata:sheetSize` (NEW datatype properties on `DrawingSheet`)
 
 ---
 
@@ -163,7 +163,7 @@ Each FR describes one representational capability the ontology must have, in imp
 - Source: UC-01
 - Derived terms: `dcommon:Discipline` (REUSE), `dcommon:hasDiscipline` (REUSE — domain proposed to move from `LayoutContentType` to `Layout`, see G5)
 - Note: `disciplineCode` from v0.2 is **removed** — filtering uses `rdf:type` against the class hierarchy, which gives automatic sub-discipline rollup (querying `dcommon:MEP` auto-includes `Mechanical`, `Electrical`, `Plumbing`).
-- Note: "Civil" is not yet in `dcommon:Discipline`. ⚠️ **Open issue:** candidate addition pending team review.
+- Note: `Civil` is to be added to `dcommon:Discipline` as a direct subclass of `Discipline` (confirmed by team discussion).
 
 ---
 
@@ -279,9 +279,9 @@ PREFIX metadata: <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing
 PREFIX dcommon:  <https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common#>
 PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
 
-SELECT ?sheet ?drawingNumber WHERE {
+SELECT ?sheet ?drawingIdentifier WHERE {
   ?sheet  a                          metadata:DrawingSheet ;
-          metadata:drawingNumber     ?drawingNumber ;
+          metadata:drawingIdentifier     ?drawingIdentifier ;
           metadata:belongsToProject  metadata:ProjectX ;
           metadata:hasRevision       ?rev ;
           metadata:contains          ?layout .
@@ -300,7 +300,7 @@ SELECT ?sheet ?drawingNumber WHERE {
 
 Every filter condition maps to a defined property:
 
-- `metadata:DrawingSheet`, `metadata:drawingNumber`, `metadata:belongsToProject`, `metadata:hasRevision`, `metadata:contains` — reused / new in `aec_drawing_metadata`.
+- `metadata:DrawingSheet`, `metadata:drawingIdentifier`, `metadata:belongsToProject`, `metadata:hasRevision`, `metadata:contains` — reused / new in `aec_drawing_metadata`.
 - `metadata:Layout`, `dcommon:hasDiscipline`, `dcommon:MEP` — reused; note the `rdf:type` check against the class hierarchy automatically matches `Mechanical`, `Electrical`, `Plumbing`, `Lighting` via `rdfs:subClassOf` reasoning.
 - `metadata:hasApprover`, `metadata:issueDate`, `metadata:personName` — new in `aec_drawing_metadata`.
 
@@ -332,7 +332,7 @@ The query is fully expressible, confirming that CQ-I 1 is covered by the current
 | `dcommon:hasDiscipline`        | `aec_domain_common`    | REUSE  | CQ 5.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 5                               |
 | `metadata:hasProperty`         | `aec_drawing_metadata` | REUSE  | CQ 6.x, CQ-I 3                                 | FR 6                               |
 | `metadata:belongsToPackage`    | `aec_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
-| `metadata:drawingNumber`       | `aec_drawing_metadata` | NEW    | CQ 1.1, CQ 1.2                                 | FR 1                               |
+| `metadata:drawingIdentifier`       | `aec_drawing_metadata` | NEW    | CQ 1.1, CQ 1.2                                 | FR 1                               |
 | `metadata:drawingTitle`        | `aec_drawing_metadata` | NEW    | CQ 1.2                                         | FR 1                               |
 | `metadata:hasScale`            | `aec_drawing_metadata` | NEW    | CQ 1.3, CQ-I 2                                 | FR 1                               |
 | `metadata:sheetSize`           | `aec_drawing_metadata` | NEW    | —                                              | FR 1                               |
@@ -395,7 +395,7 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 | G5b | Should `DrawingSheet` itself carry a `hasDiscipline` (a "primary discipline" for the whole sheet) in addition to Layout-level discipline?                          |
 | G10 | The existing `:Metadata` class name is misleading once UC-01 datatype properties land on `DrawingSheet`. Candidate future rename: `:SupportingRegion`. Or remove?  |
 | —   | Project-wide convention for `owl:inverseOf` — when to materialise vs rely on reasoner? v0.3 only materialises `isRevisionOf`.                                      |
-| —   | "Civil" discipline — not in `dcommon:Discipline`. Candidate addition?                                                                                              |
+| —   | ~~"Civil" discipline~~ — **resolved**: `Civil` to be added as a direct subclass of `dcommon:Discipline` (team decision).                                           |
 
 ---
 

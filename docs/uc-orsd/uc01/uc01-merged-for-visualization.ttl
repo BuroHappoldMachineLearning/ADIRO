@@ -307,8 +307,11 @@ dcommon:Masterplan rdf:type owl:Class ;
     :labellableRoot "false"^^xsd:boolean ;
     :isCVATProperty "true"^^xsd:boolean .
 
-# ⚠️ "Civil" is not yet defined in dcommon:Discipline.
-# Candidate addition pending team review — see UC-01 ORSD.
+dcommon:Civil rdf:type owl:Class ;
+    rdfs:subClassOf dcommon:Discipline ;
+    rdfs:label "Civil" ;
+    :labellableRoot "false"^^xsd:boolean ;
+    :isCVATProperty "true"^^xsd:boolean .
 
 
 #################################################################
@@ -318,9 +321,9 @@ dcommon:Masterplan rdf:type owl:Class ;
 
 ###  Datatype Properties on DrawingSheet (G2: directly attached)
 
-:drawingNumber rdf:type owl:DatatypeProperty ;
-    rdfs:label "drawingNumber" ;
-    rdfs:comment "The drawing number uniquely identifying the sheet (e.g. 'ST-101')." ;
+:drawingIdentifier rdf:type owl:DatatypeProperty ;
+    rdfs:label "drawingIdentifier" ;
+    rdfs:comment "The unique identifier for the drawing sheet (e.g. 'ST-101'). Also known as 'drawing number'." ;
     rdfs:domain :DrawingSheet ;
     rdfs:range xsd:string .
 
@@ -529,6 +532,6 @@ dcommon:Masterplan rdf:type owl:Class ;
 #         Layout-level discipline? Pending team decision.
 #  G10 — :Metadata class name is misleading; candidate
 #         future rename: :SupportingRegion.
-#  Civil — Not yet in dcommon:Discipline. Candidate addition
-#         pending team review.
+#  Civil — Confirmed by team: to be added as direct subclass
+#         of dcommon:Discipline.
 #################################################################
