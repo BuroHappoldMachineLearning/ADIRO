@@ -1,0 +1,330 @@
+{
+  "version": 1,
+  "nodePositions": {
+    "MaterialProperties": {
+      "x": 751,
+      "y": 0
+    },
+    "Material": {
+      "x": 751,
+      "y": 335
+    },
+    "FunctionalProperties": {
+      "x": 1794,
+      "y": 0
+    },
+    "Function": {
+      "x": 1794,
+      "y": 335
+    },
+    "GeometricProperties": {
+      "x": 2293,
+      "y": 0
+    },
+    "SectionProperties": {
+      "x": 3603,
+      "y": 0
+    },
+    "StructuralProperties": {
+      "x": 5171,
+      "y": 0
+    },
+    "Aluminium": {
+      "x": 113,
+      "y": 547
+    },
+    "Concrete": {
+      "x": 336,
+      "y": 547
+    },
+    "Glass": {
+      "x": 513,
+      "y": 547
+    },
+    "Metal": {
+      "x": 656,
+      "y": 547
+    },
+    "Timber": {
+      "x": 810,
+      "y": 547
+    },
+    "Polycarbonate": {
+      "x": 1056,
+      "y": 547
+    },
+    "Precast": {
+      "x": 1313,
+      "y": 547
+    },
+    "Clay": {
+      "x": 1467,
+      "y": 547
+    },
+    "FacingMaterial": {
+      "x": 5923,
+      "y": 0
+    },
+    "Brick": {
+      "x": 5650,
+      "y": 335
+    },
+    "Stone": {
+      "x": 5842,
+      "y": 335
+    },
+    "Terracotta": {
+      "x": 6116,
+      "y": 335
+    },
+    "SectionShape": {
+      "x": 2981,
+      "y": 407
+    },
+    "GenericShapeProperty": {
+      "x": 3730,
+      "y": 478
+    },
+    "Symmetry": {
+      "x": 4352,
+      "y": 335
+    },
+    "CHS": {
+      "x": 2610,
+      "y": 690
+    },
+    "ISection": {
+      "x": 2776,
+      "y": 690
+    },
+    "RHS": {
+      "x": 2941,
+      "y": 690
+    },
+    "SectionChannel": {
+      "x": 3107,
+      "y": 740
+    },
+    "TopHat": {
+      "x": 3318,
+      "y": 690
+    },
+    "Circular": {
+      "x": 3518,
+      "y": 833
+    },
+    "Rectangular": {
+      "x": 3764,
+      "y": 833
+    },
+    "Square": {
+      "x": 3987,
+      "y": 833
+    },
+    "Asymmetrical": {
+      "x": 4222,
+      "y": 547
+    },
+    "Symmetrical": {
+      "x": 4514,
+      "y": 547
+    },
+    "DeadLoad": {
+      "x": 5007,
+      "y": 335
+    },
+    "Restraint": {
+      "x": 5335,
+      "y": 335
+    },
+    "StructuralComponent": {
+      "x": 6824,
+      "y": 0
+    },
+    "LinearStructuralComponent": {
+      "x": 6610,
+      "y": 478
+    },
+    "PanelStructuralComponent": {
+      "x": 7079,
+      "y": 478
+    },
+    "StructuralMember": {
+      "x": 6540,
+      "y": 883
+    },
+    "Beam": {
+      "x": 6398,
+      "y": 1115
+    },
+    "Column": {
+      "x": 6488,
+      "y": 1115
+    },
+    "ChordBracing": {
+      "x": 6634,
+      "y": 1115
+    },
+    "Cable": {
+      "x": 6791,
+      "y": 833
+    },
+    "Slab": {
+      "x": 6928,
+      "y": 833
+    },
+    "Wall": {
+      "x": 7048,
+      "y": 833
+    },
+    "Upstand": {
+      "x": 7202,
+      "y": 833
+    },
+    "Discipline": {
+      "x": 8210,
+      "y": 0
+    },
+    "Architectural": {
+      "x": 7574,
+      "y": 241
+    },
+    "Facade": {
+      "x": 7458,
+      "y": 452
+    },
+    "Structural": {
+      "x": 7980,
+      "y": 241
+    },
+    "MEP": {
+      "x": 8422,
+      "y": 241
+    },
+    "Mechanical": {
+      "x": 8252,
+      "y": 452
+    },
+    "Electrical": {
+      "x": 8510,
+      "y": 452
+    },
+    "Plumbing": {
+      "x": 8744,
+      "y": 452
+    },
+    "Lighting": {
+      "x": 8510,
+      "y": 701
+    },
+    "FireLifeSafety": {
+      "x": 7658,
+      "y": 502
+    },
+    "Masterplan": {
+      "x": 8895,
+      "y": 241
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#LayoutContentType": {
+      "x": 8209,
+      "y": -299
+    }
+  },
+  "edgeStyleConfig": {
+    "hasDiscipline": {
+      "show": true,
+      "showLabel": true,
+      "color": "#8000ff",
+      "lineType": "solid"
+    },
+    "subClassOf": {
+      "show": true,
+      "showLabel": false,
+      "color": "#000000",
+      "lineType": "solid"
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common#hasDiscipline": {
+      "show": true,
+      "showLabel": true,
+      "color": "#8000ff",
+      "lineType": "solid"
+    }
+  },
+  "wrapChars": 12,
+  "minFontSize": 20,
+  "maxFontSize": 70,
+  "relationshipFontSize": 18,
+  "dataPropertyFontSize": 12,
+  "layoutMode": "hierarchical03",
+  "searchQuery": "",
+  "includeNeighbors": true,
+  "annotationStyleConfig": {
+    "booleanProps": {
+      "isCVATProperty": {
+        "whenTrue": {
+          "fillColor": "#f34f4f",
+          "borderColor": "#000000",
+          "borderLineType": "solid",
+          "show": true,
+          "active": true
+        },
+        "whenFalse": {
+          "fillColor": "#b8b8b8",
+          "borderColor": "#000000",
+          "borderLineType": "dashed",
+          "show": true,
+          "active": false
+        },
+        "whenUndefined": {
+          "fillColor": "#95a5a6",
+          "borderColor": "#000000",
+          "borderLineType": "dashed",
+          "show": true,
+          "active": false
+        }
+      },
+      "labellableRoot": {
+        "whenTrue": {
+          "fillColor": "#2ecc71",
+          "borderColor": "#000000",
+          "borderLineType": "solid",
+          "show": true,
+          "active": true
+        },
+        "whenFalse": {
+          "fillColor": "#b8b8b8",
+          "borderColor": "#000000",
+          "borderLineType": "dashed",
+          "show": true,
+          "active": false
+        },
+        "whenUndefined": {
+          "fillColor": "#95a5a6",
+          "borderColor": "#000000",
+          "borderLineType": "dashed",
+          "show": true,
+          "active": false
+        }
+      }
+    },
+    "textProps": {},
+    "defaultStyle": {
+      "fillColor": "#d6dadb",
+      "borderColor": "#000000",
+      "borderLineType": "dashed"
+    }
+  },
+  "annotationPropertyOrder": [
+    "isCVATProperty",
+    "labellableRoot"
+  ],
+  "viewState": {
+    "scale": 0.26584521010584705,
+    "position": {
+      "x": 7976.553325574446,
+      "y": 122.98597832458938
+    }
+  },
+  "displayExternalReferences": true,
+  "externalNodeLayout": "auto"
+}

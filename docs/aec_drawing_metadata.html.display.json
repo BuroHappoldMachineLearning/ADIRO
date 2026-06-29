@@ -1,0 +1,207 @@
+{
+  "version": 1,
+  "nodePositions": {
+    "OrientationValue": {
+      "x": 3018,
+      "y": 1082
+    },
+    "Section": {
+      "x": 2896,
+      "y": 733
+    },
+    "Detail": {
+      "x": 3179,
+      "y": 728
+    },
+    "TextualNote": {
+      "x": 402,
+      "y": 54
+    },
+    "Note": {
+      "x": 494,
+      "y": -56
+    },
+    "Metadata": {
+      "x": 773,
+      "y": -336
+    },
+    "DrawingSheet": {
+      "x": 2343,
+      "y": -656
+    },
+    "Legend": {
+      "x": 673,
+      "y": 13
+    },
+    "RevisionTable": {
+      "x": 939,
+      "y": -5
+    },
+    "Titleblock": {
+      "x": 1263,
+      "y": 13
+    },
+    "Layout": {
+      "x": 2326,
+      "y": 365
+    },
+    "DrawingElement": {
+      "x": 2326,
+      "y": 570
+    },
+    "LayoutContentType": {
+      "x": 3099,
+      "y": 375
+    },
+    "Image": {
+      "x": 521,
+      "y": 54
+    },
+    "Plan": {
+      "x": 2629,
+      "y": 735
+    },
+    "Elevation": {
+      "x": 3957,
+      "y": 738
+    },
+    "Table": {
+      "x": 4307,
+      "y": 746
+    },
+    "Perspective": {
+      "x": 3607,
+      "y": 738
+    },
+    "__dataprop__TextualNote__refersToDrawingId": {
+      "x": 402,
+      "y": 97
+    }
+  },
+  "edgeStyleConfig": {
+    "contains": {
+      "show": true,
+      "showLabel": true,
+      "color": "#8026d9",
+      "lineType": "solid"
+    },
+    "hasOrientation": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26d926",
+      "lineType": "solid"
+    },
+    "hasProperty": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d92626",
+      "lineType": "solid"
+    },
+    "subClassOf": {
+      "show": true,
+      "showLabel": false,
+      "color": "#000000",
+      "lineType": "solid"
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#contains": {
+      "show": true,
+      "showLabel": true,
+      "color": "#8026d9",
+      "lineType": "solid"
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#hasOrientation": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26d926",
+      "lineType": "solid"
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#hasProperty": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d92626",
+      "lineType": "solid"
+    }
+  },
+  "wrapChars": 12,
+  "minFontSize": 20,
+  "maxFontSize": 70,
+  "relationshipFontSize": 18,
+  "dataPropertyFontSize": 12,
+  "layoutMode": "hierarchical03",
+  "searchQuery": "",
+  "includeNeighbors": true,
+  "annotationStyleConfig": {
+    "booleanProps": {
+      "isCVATProperty": {
+        "whenTrue": {
+          "fillColor": "#ed4545",
+          "borderColor": "#000000",
+          "borderLineType": "solid",
+          "show": true,
+          "active": true
+        },
+        "whenFalse": {
+          "fillColor": "#b8b8b8",
+          "borderColor": "#000000",
+          "borderLineType": "dashed",
+          "show": true,
+          "active": false
+        },
+        "whenUndefined": {
+          "fillColor": "#95a5a6",
+          "borderColor": "#000000",
+          "borderLineType": "dashed",
+          "show": true,
+          "active": false
+        }
+      },
+      "labellableRoot": {
+        "whenTrue": {
+          "fillColor": "#2ecc71",
+          "borderColor": "#000000",
+          "borderLineType": "solid",
+          "show": true,
+          "active": true
+        },
+        "whenFalse": {
+          "fillColor": "#b8b8b8",
+          "borderColor": "#000000",
+          "borderLineType": "dashed",
+          "show": true,
+          "active": false
+        },
+        "whenUndefined": {
+          "fillColor": "#95a5a6",
+          "borderColor": "#000000",
+          "borderLineType": "dashed",
+          "show": true,
+          "active": false
+        }
+      }
+    },
+    "textProps": {
+      "exampleImage": {
+        "rules": []
+      }
+    },
+    "defaultStyle": {
+      "fillColor": "#c8d0d5",
+      "borderColor": "#000000",
+      "borderLineType": "dashed"
+    }
+  },
+  "annotationPropertyOrder": [
+    "exampleImage",
+    "isCVATProperty",
+    "labellableRoot"
+  ],
+  "viewState": {
+    "scale": 0.1570909090909091,
+    "position": {
+      "x": 2360.0517578125,
+      "y": 195.5
+    }
+  },
+  "displayExternalReferences": true,
+  "externalNodeLayout": "auto"
+}
