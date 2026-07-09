@@ -8,13 +8,13 @@
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols> rdf:type owl:Ontology ;
     rdfs:label "AEC Common Symbols Ontology" ;
-    rdfs:comment "Cross-discipline layout content. Generic symbol classes like dimensions, callouts, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology." ;
+    rdfs:comment "Cross-discipline layout content. Generic symbol classes like dimensions, reference symbols, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology." ;
     owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols/1.0.0> ;
     owl:versionInfo "1.0.0" ;
     owl:imports <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata> .
 
 #################################################################
-#    Classes
+#    Classes — Generic drawing symbols
 #################################################################
 
 :Dimension rdf:type owl:Class;
@@ -23,14 +23,49 @@
     rdfs:comment "A dimension line or dimension annotation on a drawing, indicating measurements or distances.";
     metadata:labellableRoot "true"^^xsd:boolean.
 
-:Callout rdf:type owl:Class;
-    rdfs:subClassOf metadata:DrawingElement;
-    rdfs:label "Callout";
-    rdfs:comment "A callout or detail marker that references another part of the drawing or a detail view.";
-    metadata:labellableRoot "true"^^xsd:boolean.
-
 :Grid rdf:type owl:Class;
     rdfs:subClassOf metadata:DrawingElement;
     rdfs:label "Grid";
     rdfs:comment "A grid line or grid system used for alignment and reference in architectural drawings.";
     metadata:labellableRoot "true"^^xsd:boolean.
+
+#################################################################
+#    Classes — UC-03 Reference Symbol (cross-sheet linking)
+#################################################################
+
+:ReferenceSymbol rdf:type owl:Class;
+    rdfs:subClassOf metadata:DrawingElement;
+    rdfs:label "ReferenceSymbol";
+    rdfs:comment "A symbol drawn on a Layout that references another Layout (on the same or a different DrawingSheet). Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target Layout's LayoutContentType.";
+    metadata:labellableRoot "true"^^xsd:boolean.
+
+#################################################################
+#    Object Properties — UC-03 Reference Symbol relations
+#################################################################
+
+:appearsOn rdf:type owl:ObjectProperty ;
+    rdfs:label "appearsOn" ;
+    rdfs:comment "Source Layout — the Layout on which this ReferenceSymbol is drawn." ;
+    owl:inverseOf :hasReferenceSymbol ;
+    rdfs:domain :ReferenceSymbol ;
+    rdfs:range metadata:Layout .
+
+:hasReferenceSymbol rdf:type owl:ObjectProperty ;
+    rdfs:label "hasReferenceSymbol" ;
+    rdfs:comment "Inverse of appearsOn. A Layout contains one or more ReferenceSymbols." ;
+    rdfs:subPropertyOf metadata:contains ;
+    rdfs:domain metadata:Layout ;
+    rdfs:range :ReferenceSymbol .
+
+:referencesLayout rdf:type owl:ObjectProperty ;
+    rdfs:label "referencesLayout" ;
+    rdfs:comment "Target Layout — the Layout this ReferenceSymbol points to. The target is Layout-level, not DrawingSheet-level." ;
+    owl:inverseOf :isReferencedBy ;
+    rdfs:domain :ReferenceSymbol ;
+    rdfs:range metadata:Layout .
+
+:isReferencedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "isReferencedBy" ;
+    rdfs:comment "Inverse of referencesLayout. A Layout that is the target of one or more ReferenceSymbols." ;
+    rdfs:domain metadata:Layout ;
+    rdfs:range :ReferenceSymbol .
