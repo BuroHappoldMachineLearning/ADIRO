@@ -12,6 +12,8 @@ See [docs/uc-orsd/README.md](docs/uc-orsd/README.md) for the full use case catal
 
 ## Documentation
 
+Find the docs here: https://burohappoldmachinelearning.github.io/ADIRO/.
+
 Documentation is automatically generated (in HTML, using PyLode) and deployed to GitHub Pages whenever:
 - Changes are pushed to the `main` or `master` branch
 - The workflow is manually triggered from the GitHub Actions tab
