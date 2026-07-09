@@ -12,19 +12,15 @@ See [docs/uc-orsd/README.md](docs/uc-orsd/README.md) for the full use case catal
 
 ## Documentation
 
-HTML documentation for all ontology files is automatically generated using [pyLODE](https://github.com/RDFLib/pyLODE).
-
-### Automated Generation
-
-Documentation is automatically generated and deployed to GitHub Pages whenever:
+Documentation is automatically generated (in HTML, using PyLode) and deployed to GitHub Pages whenever:
 - Changes are pushed to the `main` or `master` branch
 - The workflow is manually triggered from the GitHub Actions tab
 
 The documentation is available at the repository's GitHub Pages URL (typically `https://<username>.github.io/<repository-name>/`).
 
-### Manual Generation
+To generate documentation manually, locally:
 
-To generate documentation locally:
+<details>
 
 ```bash
 # Install dependencies
@@ -35,6 +31,8 @@ uv run python scripts/generate_docs.py
 ```
 
 The generated files will be placed in the `docs/` directory. Each `.ttl` file in the repository root will have a corresponding `.html` file generated, and any `*.display.json` files in the repository root will also be copied to `docs/` for public access via GitHub Pages.
+
+</details>
 
 ### Adding New Ontologies
 
