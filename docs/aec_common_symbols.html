@@ -289,7 +289,7 @@ td {
     ],
     "https://schema.org/description": [
       {
-        "@value": "Cross-discipline layout content. Generic symbol classes like dimensions, callouts, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology."
+        "@value": "Cross-discipline layout content. Generic symbol classes like dimensions, reference symbols, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology."
       }
     ],
     "https://schema.org/name": [
@@ -339,7 +339,7 @@ td {
             <dt>
               <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
             </dt>
-            <dd><p>Cross-discipline layout content. Generic symbol classes like dimensions, callouts, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology.</p></dd>
+            <dd><p>Cross-discipline layout content. Generic symbol classes like dimensions, reference symbols, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology.</p></dd>
           </div>
         </dl>
       </div>
@@ -361,33 +361,6 @@ td {
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
               <td><p>A dimension line or dimension annotation on a drawing, indicating measurements or distances.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
-              </th>
-              <td>
-                <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#DrawingElement">metadata:DrawingElement</a>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="Callout">
-          <h3>Callout
-            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols#Callout</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>A callout or detail marker that references another part of the drawing or a detail view.</p></td>
             </tr>
             <tr>
               <th>
@@ -422,6 +395,238 @@ td {
               </th>
               <td>
                 <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#DrawingElement">metadata:DrawingElement</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="ReferenceSymbol">
+          <h3>ReferenceSymbol
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols#ReferenceSymbol</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A symbol drawn on a Layout that references another Layout (on the same or a different DrawingSheet). Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target Layout's LayoutContentType.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#DrawingElement">metadata:DrawingElement</a>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
+              </th>
+              <td>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#appearsOn">appearsOn</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#referencesLayout">referencesLayout</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
+              </th>
+              <td>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#hasReferenceSymbol">hasReferenceSymbol</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#isReferencedBy">isReferencedBy</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="section" id="objectproperties">
+        <h2>Object Properties</h2>
+        <div class="property entity" id="appearsOn">
+          <h3>appearsOn
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols#appearsOn</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Source Layout — the Layout on which this ReferenceSymbol is drawn.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#ReferenceSymbol">ReferenceSymbol</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Layout">metadata:Layout</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="hasReferenceSymbol">
+          <h3>hasReferenceSymbol
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols#hasReferenceSymbol</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Inverse of appearsOn. A Layout contains one or more ReferenceSymbols.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subPropertyOf" title="The subject is a subproperty of a property. Defined in The RDF Schema vocabulary (RDFS)">Sub Property Of</a>
+              </th>
+              <td>
+                <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#contains">metadata:contains</a>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Layout">metadata:Layout</a>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#ReferenceSymbol">ReferenceSymbol</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="referencesLayout">
+          <h3>referencesLayout
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols#referencesLayout</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Target Layout — the Layout this ReferenceSymbol points to. The target is Layout-level, not DrawingSheet-level.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#ReferenceSymbol">ReferenceSymbol</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Layout">metadata:Layout</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="isReferencedBy">
+          <h3>isReferencedBy
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols#isReferencedBy</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Inverse of referencesLayout. A Layout that is the target of one or more ReferenceSymbols.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Layout">metadata:Layout</a>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#ReferenceSymbol">ReferenceSymbol</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
               </td>
             </tr>
           </table>
@@ -465,6 +670,12 @@ td {
             </td>
             <td>Classes</td>
           </tr>
+          <tr>
+            <td>
+              <sup class="sup-op" title="OWL Object Property">op</sup>
+            </td>
+            <td>Object Properties</td>
+          </tr>
         </table>
       </div>
     </div>
@@ -498,10 +709,29 @@ td {
               <a href="#Dimension">Dimension</a>
             </li>
             <li>
-              <a href="#Callout">Callout</a>
+              <a href="#Grid">Grid</a>
             </li>
             <li>
-              <a href="#Grid">Grid</a>
+              <a href="#ReferenceSymbol">ReferenceSymbol</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <h4>
+            <a href="#objectproperties">Object Properties</a>
+          </h4>
+          <ul class="second">
+            <li>
+              <a href="#appearsOn">appearsOn</a>
+            </li>
+            <li>
+              <a href="#hasReferenceSymbol">hasReferenceSymbol</a>
+            </li>
+            <li>
+              <a href="#referencesLayout">referencesLayout</a>
+            </li>
+            <li>
+              <a href="#isReferencedBy">isReferencedBy</a>
             </li>
           </ul>
         </li>

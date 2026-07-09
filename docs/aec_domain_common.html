@@ -1742,7 +1742,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The engineering or architectural discipline associated with a drawing content type.</p></td>
+              <td><p>The engineering or architectural discipline associated with a Layout.</p></td>
             </tr>
             <tr>
               <th>
@@ -1782,6 +1782,12 @@ td {
                   <li>
                     <span>
                       <a href="#Masterplan">Masterplan</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#Civil">Civil</a>
                       <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                     </span>
                   </li>
@@ -2095,6 +2101,36 @@ td {
             </tr>
           </table>
         </div>
+        <div class="property entity" id="Civil">
+          <h3>Civil
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common#Civil</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Civil engineering discipline.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Discipline">Discipline</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
       </div>
       <div class="section" id="objectproperties">
         <h2>Object Properties</h2>
@@ -2113,14 +2149,14 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Links a layout content type to an AEC discipline that the annotator must assign.</p></td>
+              <td><p>Links a Layout to an AEC discipline. Discipline characterises the Layout itself, not its content type — the two are orthogonal axes.</p></td>
             </tr>
             <tr>
               <th>
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
               </th>
               <td>
-                <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#LayoutContentType">metadata:LayoutContentType</a>
+                <a href="https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Layout">metadata:Layout</a>
               </td>
             </tr>
             <tr>
@@ -2377,6 +2413,9 @@ td {
             </li>
             <li>
               <a href="#Masterplan">Masterplan</a>
+            </li>
+            <li>
+              <a href="#Civil">Civil</a>
             </li>
           </ul>
         </li>

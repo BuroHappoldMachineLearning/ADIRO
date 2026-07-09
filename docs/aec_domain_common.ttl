@@ -268,19 +268,18 @@
 
 :hasDiscipline rdf:type owl:ObjectProperty ;
     rdfs:label "hasDiscipline" ;
-    rdfs:comment "Links a layout content type to an AEC discipline that the annotator must assign." .
+    rdfs:comment "Links a Layout to an AEC discipline. Discipline characterises the Layout itself, not its content type — the two are orthogonal axes." ;
+    rdfs:domain metadata:Layout ;
+    rdfs:range :Discipline .
 
 ###  Discipline
 
 :Discipline rdf:type owl:Class ;
     rdfs:label "Discipline" ;
-    rdfs:comment "The engineering or architectural discipline associated with a drawing content type." ;
+    rdfs:comment "The engineering or architectural discipline associated with a Layout." ;
     metadata:labellableRoot "false"^^xsd:boolean .
 
-:hasDiscipline rdfs:domain metadata:LayoutContentType ;
-    rdfs:range :Discipline .
-
-metadata:LayoutContentType rdfs:subClassOf [
+metadata:Layout rdfs:subClassOf [
     rdf:type owl:Restriction ;
     owl:onProperty :hasDiscipline ;
     owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
@@ -344,6 +343,13 @@ metadata:LayoutContentType rdfs:subClassOf [
 
 :Masterplan rdf:type owl:Class ;
     rdfs:label "Masterplan" ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :Discipline .
+
+:Civil rdf:type owl:Class ;
+    rdfs:label "Civil" ;
+    rdfs:comment "Civil engineering discipline." ;
     metadata:labellableRoot "false"^^xsd:boolean ;
     metadata:isCVATProperty "true"^^xsd:boolean ;
     rdfs:subClassOf :Discipline .
