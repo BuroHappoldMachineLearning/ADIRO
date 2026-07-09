@@ -4,6 +4,12 @@ Set of ontologies representing information in AEC drawings
 
 https://burohappoldmachinelearning.github.io/ADIRO/
 
+## Use Cases
+
+The ontology is developed against a set of use cases following the **LOT (Linked Open Terms)** methodology (`Use Case → Information Needs → Functional Requirements → Competency Questions → OWL Terms`).
+
+See [docs/uc-orsd/README.md](docs/uc-orsd/README.md) for the full use case catalogue, prioritization matrix, and current ORSD status across all use cases (UC-01 through UC-07).
+
 ## Documentation
 
 HTML documentation for all ontology files is automatically generated using [pyLODE](https://github.com/RDFLib/pyLODE).
