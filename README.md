@@ -58,10 +58,13 @@ Each `.ttl` file in `src/` gets a corresponding `.html` reference page in `docs/
 
 </details>
 
-## Further documentation
+## Contributing
 
-The following topics now live on the documentation site:
+Contributions are welcome — please propose additions or changes as a
+**[GitHub issue](https://github.com/BuroHappoldMachineLearning/ADIRO/issues)**.
 
-- **[Adding New Ontologies](https://burohappoldmachinelearning.github.io/ADIRO/adding-ontologies/)** — how to add a new `.ttl` and have it documented automatically.
-- **[Versioning](https://burohappoldmachinelearning.github.io/ADIRO/versioning/)** — versioned/unversioned IRIs, version backups, and how to cut a new version.
-- **[Design Decisions](https://burohappoldmachinelearning.github.io/ADIRO/design-decisions/)** — rationale behind OWL restrictions, annotation properties, and relationship modelling.
+See the **[Contribute](https://burohappoldmachinelearning.github.io/ADIRO/contribute/)** section of the documentation site for details:
+
+- **[Adding New Ontologies](https://burohappoldmachinelearning.github.io/ADIRO/contribute/adding-ontologies/)** — how to add a new `.ttl` and have it documented automatically.
+- **[Versioning](https://burohappoldmachinelearning.github.io/ADIRO/contribute/versioning/)** — versioned/unversioned IRIs, version backups, and how to cut a new version.
+- **[Design Decisions](https://burohappoldmachinelearning.github.io/ADIRO/contribute/design-decisions/)** — rationale behind OWL restrictions, annotation properties, and relationship modelling.

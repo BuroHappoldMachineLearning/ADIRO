@@ -35,6 +35,7 @@ theme:
     - navigation.tracking
     - navigation.top
     - navigation.sections
+    - navigation.indexes
     - content.code.copy
     - content.action.edit
     - toc.follow
@@ -47,9 +48,11 @@ nav:
   - Home: index.md
   - Ontology Requirements (ORSD): ORSD_v1.md
   - Use Cases: uc-orsd/README.md
-  - Adding New Ontologies: adding-ontologies.md
-  - Versioning: versioning.md
-  - Design Decisions: design-decisions.md
+  - Contribute:
+    - contribute/index.md
+    - Adding New Ontologies: contribute/adding-ontologies.md
+    - Versioning: contribute/versioning.md
+    - Design Decisions: contribute/design-decisions.md
 
 markdown_extensions:
   - admonition
