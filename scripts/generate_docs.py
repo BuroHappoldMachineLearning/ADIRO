@@ -304,6 +304,9 @@ def extract_adiro_dependencies(ttl_file: Path) -> list[str]:
 # external tools (e.g. OntoCanvas) that need the full URL of an ontology page.
 SITE_BASE_URL = "https://burohappoldmachinelearning.github.io/ADIRO"
 
+# OntoCanvas branding icon, reused from the previous HTML landing page.
+ONTOCANVAS_ICON_URL = "https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png"
+
 
 def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     """
@@ -396,7 +399,8 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
         lines.append(f"    Source: [`{ttl_filename}`]({ttl_filename})")
         lines.append("")
         lines.append(
-            f"    [:material-graph-outline: Open in OntoCanvas]({ontocanvas_url}){{ .md-button target=_blank }}"
+            f"    [![OntoCanvas]({ONTOCANVAS_ICON_URL}){{ .ontocanvas-icon }} Open in OntoCanvas]"
+            f"({ontocanvas_url}){{ .md-button target=_blank }}"
         )
         lines.append("")
 
