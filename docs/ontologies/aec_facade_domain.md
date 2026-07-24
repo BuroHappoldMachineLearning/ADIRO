@@ -26,9 +26,9 @@ graph BT
     aec_facade_domain --> aec_common_symbols
     aec_facade_domain --> aec_domain_common
     aec_facade_domain --> aec_drawing_metadata
-    classDef base fill:#16305f,stroke:#0e2247,stroke-width:2px,color:#ffffff;
+    classDef base fill:#16305f,stroke:#0e2247,stroke-width:2px,color:#9ecbff;
     class aec_drawing_metadata,aec_common_symbols,aec_domain_common base;
-    classDef current fill:#f58a1f,stroke:#16305f,stroke-width:3px,color:#ffffff;
+    classDef current fill:#f58a1f,stroke:#16305f,stroke-width:3px,color:#16305f;
     class aec_facade_domain current;
 ```
 

@@ -27,6 +27,25 @@
   --md-typeset-a-color: #3fb6bf;
 }
 
+/* Dependency-diagram node label colours. Material for MkDocs applies its own
+   Mermaid label colour, which overrides the diagram's classDef `color:`, so we
+   set the text colour here (with enough specificity) to keep it legible:
+   light blue on the navy base nodes, dark navy on the orange current node. */
+.mermaid g.base .nodeLabel,
+.mermaid g.base .nodeLabel p,
+.mermaid g.base text,
+.mermaid g.base tspan {
+  color: #9ecbff !important;
+  fill: #9ecbff !important;
+}
+.mermaid g.current .nodeLabel,
+.mermaid g.current .nodeLabel p,
+.mermaid g.current text,
+.mermaid g.current tspan {
+  color: #16305f !important;
+  fill: #16305f !important;
+}
+
 /* OntoCanvas branding icon inside the "Open in OntoCanvas" buttons on the
    landing page. Sized to sit inline with the button label, matching the look
    of the previous HTML documentation page. */

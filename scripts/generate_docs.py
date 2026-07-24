@@ -452,13 +452,13 @@ def build_dependency_mermaid(ttl_files: list[Path], highlight: str | None = None
     if base_nodes:
         lines.append(
             "    classDef base fill:#16305f,stroke:#0e2247,"
-            "stroke-width:2px,color:#ffffff;"
+            "stroke-width:2px,color:#9ecbff;"
         )
         lines.append(f"    class {','.join(base_nodes)} base;")
     if highlight and highlight in titles:
         lines.append(
             "    classDef current fill:#f58a1f,stroke:#16305f,"
-            "stroke-width:3px,color:#ffffff;"
+            "stroke-width:3px,color:#16305f;"
         )
         lines.append(f"    class {highlight} current;")
     lines.append("```")
