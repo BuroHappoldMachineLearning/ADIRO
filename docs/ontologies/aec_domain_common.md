@@ -15,6 +15,7 @@ Shared domain abstractions reused across multiple domain ontologies (e.g., facad
 Arrows point from an ontology to the ontologies it imports; the current ontology is highlighted.
 
 ```mermaid
+%%{init: {"themeCSS": ".base .nodeLabel,.base .nodeLabel p,.base text,.base tspan{fill:#9ecbff !important;color:#9ecbff !important}.current .nodeLabel,.current .nodeLabel p,.current text,.current tspan{fill:#16305f !important;color:#16305f !important}"} }%%
 graph BT
     aec_drawing_metadata["Aec Drawing Metadata"]
     aec_common_symbols["Aec Common Symbols"]

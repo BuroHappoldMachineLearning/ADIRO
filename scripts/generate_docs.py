@@ -318,6 +318,27 @@ SITE_BASE_URL = "https://burohappoldmachinelearning.github.io/ADIRO"
 # OntoCanvas branding icon, reused from the previous HTML landing page.
 ONTOCANVAS_ICON_URL = "https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png"
 
+# Brand palette, derived from the favicon (docs/img/favicon.png):
+#   navy   BRAND_NAVY   border / I-beam
+#   teal   BRAND_TEAL   graph nodes
+#   orange BRAND_ORANGE graph node
+# BRAND_LABEL_ON_NAVY is a light tint used for legible text on the navy nodes.
+# These are the single source of truth for the dependency-diagram colours and
+# are asserted against the favicon by tests/test_diagram_colors.py.
+BRAND_NAVY = "#16305f"
+BRAND_NAVY_DARK = "#0e2247"
+BRAND_TEAL = "#159ca4"
+BRAND_ORANGE = "#f58a1f"
+BRAND_LABEL_ON_NAVY = "#9ecbff"
+
+# Dependency-diagram node styling: (fill, stroke, text) per node role.
+DIAGRAM_BASE_FILL = BRAND_NAVY
+DIAGRAM_BASE_STROKE = BRAND_NAVY_DARK
+DIAGRAM_BASE_TEXT = BRAND_LABEL_ON_NAVY
+DIAGRAM_CURRENT_FILL = BRAND_ORANGE
+DIAGRAM_CURRENT_STROKE = BRAND_NAVY
+DIAGRAM_CURRENT_TEXT = BRAND_NAVY
+
 
 def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     """
@@ -435,10 +456,23 @@ def build_dependency_mermaid(ttl_files: list[Path], highlight: str | None = None
     titles = {f.stem: f.stem.replace("_", " ").title() for f in ttl_files}
     deps = {f.stem: extract_adiro_dependencies(f) for f in ttl_files}
 
+    # Material for MkDocs styles Mermaid node labels with a CSS rule scoped to
+    # the diagram's SVG id, which out-specifies any rule we could put in
+    # extra.css. So we colour the labels via Mermaid's own `themeCSS`, which is
+    # injected into the SVG's <style> and therefore wins. `classDef` handles the
+    # box fills/strokes (which it applies reliably).
+    theme_css = (
+        f".base .nodeLabel,.base .nodeLabel p,.base text,.base tspan"
+        f"{{fill:{DIAGRAM_BASE_TEXT} !important;color:{DIAGRAM_BASE_TEXT} !important}}"
+        f".current .nodeLabel,.current .nodeLabel p,.current text,.current tspan"
+        f"{{fill:{DIAGRAM_CURRENT_TEXT} !important;color:{DIAGRAM_CURRENT_TEXT} !important}}"
+    )
+    init = '%%{init: {"themeCSS": "' + theme_css + '"} }%%'
+
     # Bottom-to-top layout: edges still read "imports" (importer --> imported),
     # but the imported base ontologies are drawn at the top and the leaf
     # ontologies (which import others but are imported by none) at the bottom.
-    lines = ["```mermaid", "graph BT"]
+    lines = ["```mermaid", init, "graph BT"]
     for stem in stems:
         lines.append(f'    {stem}["{titles[stem]}"]')
     for stem in stems:
@@ -451,14 +485,14 @@ def build_dependency_mermaid(ttl_files: list[Path], highlight: str | None = None
     base_nodes = [s for s in stems if s != highlight]
     if base_nodes:
         lines.append(
-            "    classDef base fill:#16305f,stroke:#0e2247,"
-            "stroke-width:2px,color:#9ecbff;"
+            f"    classDef base fill:{DIAGRAM_BASE_FILL},stroke:{DIAGRAM_BASE_STROKE},"
+            f"stroke-width:2px,color:{DIAGRAM_BASE_TEXT};"
         )
         lines.append(f"    class {','.join(base_nodes)} base;")
     if highlight and highlight in titles:
         lines.append(
-            "    classDef current fill:#f58a1f,stroke:#16305f,"
-            "stroke-width:3px,color:#16305f;"
+            f"    classDef current fill:{DIAGRAM_CURRENT_FILL},stroke:{DIAGRAM_CURRENT_STROKE},"
+            f"stroke-width:3px,color:{DIAGRAM_CURRENT_TEXT};"
         )
         lines.append(f"    class {highlight} current;")
     lines.append("```")
