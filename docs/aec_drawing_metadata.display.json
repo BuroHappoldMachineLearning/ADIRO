@@ -1,125 +1,149 @@
 {
   "version": 1,
   "nodePositions": {
-    "TextualNote": {
-      "x": 402,
-      "y": 54
-    },
-    "Note": {
-      "x": 494,
-      "y": -56
-    },
-    "MetadataContainer": {
-      "x": 773,
-      "y": -336
-    },
-    "DrawingSheet": {
-      "x": 2343,
-      "y": -656
-    },
-    "Legend": {
-      "x": 673,
-      "y": 13
-    },
-    "RevisionTable": {
-      "x": 939,
-      "y": -5
-    },
-    "Titleblock": {
-      "x": 1263,
-      "y": 13
-    },
-    "Layout": {
-      "x": 2326,
-      "y": 365
-    },
-    "DrawingOrientation": {
-      "x": 3426,
-      "y": -551
-    },
-    "DrawingElement": {
-      "x": 2326,
-      "y": 570
-    },
-    "LayoutContentType": {
-      "x": 3099,
-      "y": 375
-    },
-    "Portrait": {
-      "x": 3306,
-      "y": -383
-    },
-    "Landscape": {
-      "x": 3573,
-      "y": -383
-    },
-    "Image": {
-      "x": 521,
-      "y": 54
-    },
-    "Plan": {
-      "x": 2629,
-      "y": 735
+    "OrientationValue": {
+      "x": -4627,
+      "y": 1562
     },
     "Section": {
-      "x": 2896,
-      "y": 733
-    },
-    "Orientation": {
-      "x": 3018,
-      "y": 1082
-    },
-    "Elevation": {
-      "x": 3957,
-      "y": 738
-    },
-    "Table": {
-      "x": 4307,
-      "y": 746
+      "x": -4506,
+      "y": 1314
     },
     "Detail": {
-      "x": 3179,
-      "y": 728
+      "x": -4747,
+      "y": 1314
     },
-    "DetailLocation": {
-      "x": 3817,
-      "y": 1081
+    "DrawingSheet": {
+      "x": -3709,
+      "y": -227
+    },
+    "Layout": {
+      "x": -4464,
+      "y": 699
+    },
+    "LayoutContentType": {
+      "x": -4067,
+      "y": 1019
+    },
+    "DrawingRevision": {
+      "x": -4640,
+      "y": -44
+    },
+    "Project": {
+      "x": -2539,
+      "y": 694
+    },
+    "DrawingPackage": {
+      "x": -3055,
+      "y": 694
+    },
+    "Person": {
+      "x": -4895,
+      "y": 155
+    },
+    "StatusCode": {
+      "x": -4341,
+      "y": 149
+    },
+    "TextualNote": {
+      "x": -3722,
+      "y": 1019
+    },
+    "MetadataContainer": {
+      "x": -4263,
+      "y": 491
+    },
+    "Titleblock": {
+      "x": -3767,
+      "y": 725
+    },
+    "RevisionTable": {
+      "x": -4016,
+      "y": 699
+    },
+    "Legend": {
+      "x": -4720,
+      "y": 704
+    },
+    "Note": {
+      "x": -4256,
+      "y": 702
+    },
+    "Image": {
+      "x": -4419,
+      "y": 1019
+    },
+    "DrawingElement": {
+      "x": -4618,
+      "y": 1019
+    },
+    "Plan": {
+      "x": -3615,
+      "y": 1314
+    },
+    "Elevation": {
+      "x": -4223,
+      "y": 1314
+    },
+    "Table": {
+      "x": -3429,
+      "y": 1314
     },
     "Perspective": {
-      "x": 3607,
-      "y": 738
+      "x": -3884,
+      "y": 1314
     },
-    "Base": {
-      "x": 3415,
-      "y": 1345
+    "__dataprop__DrawingSheet__drawingIdentifier": {
+      "x": -3891,
+      "y": -115
     },
-    "Corner": {
-      "x": 3583,
-      "y": 1345
+    "__dataprop__DrawingSheet__drawingTitle": {
+      "x": -3730,
+      "y": -115
     },
-    "Head": {
-      "x": 3750,
-      "y": 1345
+    "__dataprop__DrawingSheet__hasScale": {
+      "x": -3603,
+      "y": -115
     },
-    "SlabEdge": {
-      "x": 3960,
-      "y": 1345
+    "__dataprop__DrawingSheet__sheetSize": {
+      "x": -3486,
+      "y": -115
     },
-    "Typical": {
-      "x": 4211,
-      "y": 1345
+    "__dataprop__DrawingRevision__issueDate": {
+      "x": -4717,
+      "y": 33
     },
-    "Horizontal": {
-      "x": 2883,
-      "y": 1332
+    "__dataprop__DrawingRevision__revisionCode": {
+      "x": -4586,
+      "y": 33
     },
-    "Vertical": {
-      "x": 3116,
-      "y": 1332
+    "__dataprop__Layout__layoutIdentifier": {
+      "x": -4464,
+      "y": 757
+    },
+    "__dataprop__DrawingPackage__packageName": {
+      "x": -3055,
+      "y": 771
+    },
+    "__dataprop__Person__personName": {
+      "x": -4900,
+      "y": 232
+    },
+    "__dataprop__Project__projectName": {
+      "x": -2614,
+      "y": 771
+    },
+    "__dataprop__Project__projectNumber": {
+      "x": -2471,
+      "y": 771
     },
     "__dataprop__TextualNote__refersToDrawingId": {
-      "x": 402,
-      "y": 97
+      "x": -3722,
+      "y": 1063
+    },
+    "__dataprop__StatusCode__statusLabel": {
+      "x": -4343,
+      "y": 226
     }
   },
   "edgeStyleConfig": {
@@ -129,7 +153,73 @@
       "color": "#8026d9",
       "lineType": "solid"
     },
+    "hasOrientation": {
+      "show": true,
+      "showLabel": true,
+      "color": "#5326d9",
+      "lineType": "solid"
+    },
     "hasProperty": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d92626",
+      "lineType": "solid"
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#belongsToPackage": {
+      "show": true,
+      "showLabel": true,
+      "color": "#2680d9",
+      "lineType": "solid"
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#belongsToProject": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26d9d9",
+      "lineType": "solid"
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#hasLayout": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26d980",
+      "lineType": "solid"
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#hasLayoutContentType": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26d926",
+      "lineType": "solid"
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#hasRevision": {
+      "show": true,
+      "showLabel": true,
+      "color": "#80d926",
+      "lineType": "solid"
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#hasStatusCode": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d9d926",
+      "lineType": "solid"
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#isApprovedBy": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d9ac26",
+      "lineType": "solid"
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#isAuthoredBy": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d98026",
+      "lineType": "solid"
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#isCheckedBy": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d95326",
+      "lineType": "solid"
+    },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#isRevisionOf": {
       "show": true,
       "showLabel": true,
       "color": "#d92626",
@@ -147,6 +237,12 @@
       "color": "#8026d9",
       "lineType": "solid"
     },
+    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#hasOrientation": {
+      "show": true,
+      "showLabel": true,
+      "color": "#5326d9",
+      "lineType": "solid"
+    },
     "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#hasProperty": {
       "show": true,
       "showLabel": true,
@@ -159,29 +255,56 @@
   "maxFontSize": 70,
   "relationshipFontSize": 18,
   "dataPropertyFontSize": 12,
-  "layoutMode": "hierarchical03",
+  "layoutMode": "hierarchical-dag",
   "searchQuery": "",
   "includeNeighbors": true,
+  "exactMatch": true,
   "annotationStyleConfig": {
     "booleanProps": {
-      "labellableRoot": {
+      "isCVATProperty": {
         "whenTrue": {
           "fillColor": "#2ecc71",
           "borderColor": "#000000",
           "borderLineType": "solid",
-          "show": true
+          "show": true,
+          "active": true
         },
         "whenFalse": {
           "fillColor": "#b8b8b8",
           "borderColor": "#000000",
           "borderLineType": "dashed",
-          "show": true
+          "show": true,
+          "active": false
         },
         "whenUndefined": {
           "fillColor": "#95a5a6",
           "borderColor": "#000000",
           "borderLineType": "dashed",
-          "show": true
+          "show": true,
+          "active": false
+        }
+      },
+      "labellableRoot": {
+        "whenTrue": {
+          "fillColor": "#2ecc71",
+          "borderColor": "#000000",
+          "borderLineType": "solid",
+          "show": true,
+          "active": true
+        },
+        "whenFalse": {
+          "fillColor": "#b8b8b8",
+          "borderColor": "#000000",
+          "borderLineType": "dashed",
+          "show": true,
+          "active": false
+        },
+        "whenUndefined": {
+          "fillColor": "#95a5a6",
+          "borderColor": "#000000",
+          "borderLineType": "dashed",
+          "show": true,
+          "active": false
         }
       }
     },
@@ -189,13 +312,23 @@
       "exampleImage": {
         "rules": []
       }
+    },
+    "defaultStyle": {
+      "fillColor": "#bdc3c7",
+      "borderColor": "#000000",
+      "borderLineType": "solid"
     }
   },
+  "annotationPropertyOrder": [
+    "exampleImage",
+    "isCVATProperty",
+    "labellableRoot"
+  ],
   "viewState": {
-    "scale": 0.3935370709864719,
+    "scale": 0.3135499387000957,
     "position": {
-      "x": 3641.13246235802,
-      "y": 507.77989027388804
+      "x": -3601.1219075903837,
+      "y": 442.95196686512827
     }
   },
   "displayExternalReferences": true,
