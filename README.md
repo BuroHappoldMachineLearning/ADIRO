@@ -4,9 +4,7 @@
   <img src="docs/img/adiro_banner.png" alt="ADIRO" width="320">
 </p>
 
-Set of ontologies representing information in AEC drawings
-
-https://burohappoldmachinelearning.github.io/ADIRO/
+Set of ontologies representing information in AEC drawings.
 
 ## Documentation
 
