@@ -10,17 +10,17 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
 <div class="grid cards" markdown>
 
--   :material-clipboard-list-outline: __Use Cases__
-
-    Use case catalogue (UC-01 through UC-07), prioritization matrix, and current ORSD status across all use cases.
-
-    [:octicons-arrow-right-24: Use Cases](uc-orsd/README.md)
-
 -   :material-file-document-check-outline: __Ontology Requirements (ORSD)__
 
     Ontology Requirements Specification Document: purpose, scope, intended users and uses, and the functional/non-functional requirements.
 
     [:octicons-arrow-right-24: ORSD](ORSD_v1.md)
+    
+-   :material-clipboard-list-outline: __Use Cases__
+
+    Use case catalogue (UC-01 through UC-07), prioritization matrix, and current ORSD status across all use cases.
+
+    [:octicons-arrow-right-24: Use Cases](uc-orsd/README.md)
 
 </div>
 
