@@ -327,6 +327,8 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     lines: list[str] = []
     lines.append("# ADIRO Ontologies Documentation")
     lines.append("")
+    lines.append('![ADIRO](img/adiro_banner.png){ .adiro-banner }')
+    lines.append("")
     lines.append(
         "ADIRO (*AEC Drawing Information Representation Ontologies*) is a set of "
         "ontologies for AEC (*Architecture, Engineering, and Construction*) drawing "
@@ -352,15 +354,6 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     lines.append("")
     lines.append('<div class="grid cards" markdown>')
     lines.append("")
-    lines.append("-   :material-clipboard-list-outline: __Use Cases__")
-    lines.append("")
-    lines.append(
-        "    Use case catalogue (UC-01 through UC-07), prioritization matrix, and "
-        "current ORSD status across all use cases."
-    )
-    lines.append("")
-    lines.append("    [:octicons-arrow-right-24: Use Cases](uc-orsd/README.md)")
-    lines.append("")
     lines.append("-   :material-file-document-check-outline: __Ontology Requirements (ORSD)__")
     lines.append("")
     lines.append(
@@ -369,6 +362,15 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     )
     lines.append("")
     lines.append("    [:octicons-arrow-right-24: ORSD](ORSD_v1.md)")
+    lines.append("")
+    lines.append("-   :material-clipboard-list-outline: __Use Cases__")
+    lines.append("")
+    lines.append(
+        "    Use case catalogue (UC-01 through UC-07), prioritization matrix, and "
+        "current ORSD status across all use cases."
+    )
+    lines.append("")
+    lines.append("    [:octicons-arrow-right-24: Use Cases](uc-orsd/README.md)")
     lines.append("")
     lines.append("</div>")
     lines.append("")

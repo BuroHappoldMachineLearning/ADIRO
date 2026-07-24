@@ -1,5 +1,7 @@
 # ADIRO Ontologies Documentation
 
+![ADIRO](img/adiro_banner.png){ .adiro-banner }
+
 ADIRO (*AEC Drawing Information Representation Ontologies*) is a set of ontologies for AEC (*Architecture, Engineering, and Construction*) drawing representation, designed to support machine learning tasks, in particular information extraction workflows.
 
 The ontologies include concepts for drawing metadata, common symbols, domain-common symbols, and domain-specific symbols. They can be used to represent the information in AEC drawings, to make them machine-readable, and to support the creation of graph databases and knowledge graphs.
@@ -10,17 +12,17 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
 <div class="grid cards" markdown>
 
--   :material-clipboard-list-outline: __Use Cases__
-
-    Use case catalogue (UC-01 through UC-07), prioritization matrix, and current ORSD status across all use cases.
-
-    [:octicons-arrow-right-24: Use Cases](uc-orsd/README.md)
-
 -   :material-file-document-check-outline: __Ontology Requirements (ORSD)__
 
     Ontology Requirements Specification Document: purpose, scope, intended users and uses, and the functional/non-functional requirements.
 
     [:octicons-arrow-right-24: ORSD](ORSD_v1.md)
+
+-   :material-clipboard-list-outline: __Use Cases__
+
+    Use case catalogue (UC-01 through UC-07), prioritization matrix, and current ORSD status across all use cases.
+
+    [:octicons-arrow-right-24: Use Cases](uc-orsd/README.md)
 
 </div>
 

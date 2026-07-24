@@ -40,11 +40,16 @@ theme:
     - toc.follow
   icon:
     repo: fontawesome/brands/github
+  logo: img/favicon.png
+  favicon: img/favicon.png
 
 nav:
   - Home: index.md
-  - Use Cases: uc-orsd/README.md
   - Ontology Requirements (ORSD): ORSD_v1.md
+  - Use Cases: uc-orsd/README.md
+  - Adding New Ontologies: adding-ontologies.md
+  - Versioning: versioning.md
+  - Design Decisions: design-decisions.md
 
 markdown_extensions:
   - admonition
