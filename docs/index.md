@@ -67,6 +67,3 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
     [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain.html){ .md-button target=_blank }
 
 </div>
-
-!!! note ""
-    Ontology reference pages are generated automatically by [pyLODE](https://github.com/RDFLib/pyLODE).

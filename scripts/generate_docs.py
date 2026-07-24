@@ -406,12 +406,6 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
 
     lines.append("</div>")
     lines.append("")
-    lines.append(
-        "!!! note \"\"\n"
-        "    Ontology reference pages are generated automatically by "
-        "[pyLODE](https://github.com/RDFLib/pyLODE)."
-    )
-    lines.append("")
 
     index_file.write_text("\n".join(lines), encoding="utf-8")
     print(f"  [OK] Generated index: {index_file}")
