@@ -1,4 +1,4 @@
-# ADIRO Documentation
+# ADIRO Ontologies Documentation
 
 ![ADIRO](img/adiro_banner.png){ .adiro-banner }
 
