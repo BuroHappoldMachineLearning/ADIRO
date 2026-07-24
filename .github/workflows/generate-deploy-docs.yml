@@ -33,8 +33,27 @@ jobs:
       - name: Validate ontology files
         run: uv run --python 3.12 --no-project python scripts/validate_ontology.py
 
+  test-ttl2md:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Run ttl2md tests
+        working-directory: ttl2md
+        run: uv run --python 3.12 --extra test python -m pytest -q
+
   generate-docs:
-    needs: validate
+    needs: [validate, test-ttl2md]
     runs-on: ubuntu-latest
     
     steps:

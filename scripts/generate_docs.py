@@ -15,6 +15,17 @@ from rdflib import Graph
 from rdflib.namespace import RDF, RDFS, OWL
 from rdflib.namespace import split_uri
 
+# ttl2md is a self-contained package that lives in this repository (see the
+# ttl2md/ folder) and is intended to be published separately later. Import it
+# directly from its source tree so the docs pipeline works without a separate
+# install step. The src path is prepended so the real package wins over the
+# repo-root ttl2md/ directory (which would otherwise resolve as an empty
+# namespace package).
+_TTL2MD_SRC = Path(__file__).parent.parent / "ttl2md" / "src"
+if _TTL2MD_SRC.exists() and str(_TTL2MD_SRC) not in sys.path:
+    sys.path.insert(0, str(_TTL2MD_SRC))
+import ttl2md
+
 
 def find_ttl_files(root_dir: Path) -> list[Path]:
     """Find all .ttl files in the src directory."""
@@ -413,6 +424,81 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     print(f"  [OK] Generated index: {index_file}")
 
 
+def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path) -> None:
+    """Generate native Markdown pages for each ontology using ttl2md.
+
+    These pages populate the "Ontologies" section of the MkDocs site: unlike the
+    standalone pyLODE HTML pages (kept for the interactive/OntoCanvas view), they
+    are themed by Material, indexed by the site search and get an in-page table
+    of contents. Each page also links out to the pyLODE HTML, the TTL source and
+    OntoCanvas.
+
+    Example images (the ``:exampleImage`` annotations) are rendered inline by
+    ttl2md, reproducing the behaviour of the pyLODE HTML post-processing.
+    """
+    ontologies_dir = output_dir / "ontologies"
+    ontologies_dir.mkdir(parents=True, exist_ok=True)
+
+    index_lines: list[str] = [
+        "# Ontologies",
+        "",
+        "Reference documentation for each ADIRO ontology, generated from the "
+        "Turtle sources. Each page also links to an interactive HTML view "
+        "(pyLODE) and to OntoCanvas.",
+        "",
+        '<div class="grid cards" markdown>',
+        "",
+    ]
+
+    for ttl_file in ttl_files:
+        stem = ttl_file.stem
+        title = stem.replace("_", " ").title()
+        html_filename = f"{stem}.html"
+        ontocanvas_url = (
+            f"https://alelom.github.io/OntoCanvas/?onto={SITE_BASE_URL}/{html_filename}"
+        )
+
+        # Pages live in docs/ontologies/, one level below docs/img/, so relative
+        # image references (if any) resolve via "../"; absolute image URLs (the
+        # ADIRO case, resolved against @base) are left untouched by ttl2md.
+        body = ttl2md.convert_file(ttl_file, title=title, asset_prefix="../")
+
+        links_block = (
+            f"[:material-file-code: Interactive HTML view]({SITE_BASE_URL}/{html_filename}){{ .md-button }}\n"
+            f"[:material-file-document-outline: TTL source]({SITE_BASE_URL}/{ttl_file.name}){{ .md-button }}\n"
+            f"[Open in OntoCanvas]({ontocanvas_url}){{ .md-button target=_blank }}"
+        )
+
+        # Insert the links row directly under the H1 emitted by ttl2md.
+        body_lines = body.splitlines()
+        rest = body_lines[1:]
+        while rest and rest[0] == "":
+            rest.pop(0)
+        page = "\n".join([body_lines[0], "", links_block, ""] + rest).rstrip() + "\n"
+
+        page_file = ontologies_dir / f"{stem}.md"
+        page_file.write_text(page, encoding="utf-8")
+        print(f"  [OK] Generated ontology page: {page_file}")
+
+        comment = extract_ontology_comment(ttl_file)
+        dependencies = extract_adiro_dependencies(ttl_file)
+        index_lines.append(f"-   ### [{title}]({stem}.md)")
+        index_lines.append("")
+        if comment:
+            index_lines.append(f"    {comment}")
+            index_lines.append("")
+        if dependencies:
+            index_lines.append(f"    *Imports: {', '.join(dependencies)}*")
+            index_lines.append("")
+
+    index_lines.append("</div>")
+    index_lines.append("")
+
+    index_file = ontologies_dir / "index.md"
+    index_file.write_text("\n".join(index_lines), encoding="utf-8")
+    print(f"  [OK] Generated ontologies index: {index_file}")
+
+
 def main():
     """Main function to generate documentation for all TTL files."""
     # Get repository root (parent of scripts directory)
@@ -458,6 +544,9 @@ def main():
     # Generate index.html
     print("-" * 60)
     generate_index(ttl_files, output_dir)
+
+    # Generate native Markdown ontology pages (Ontologies nav section)
+    generate_ontology_markdown_pages(ttl_files, output_dir)
 
     # Copy all .display.json files to docs directory for GitHub Pages publishing
     for display_json_file in display_json_files:

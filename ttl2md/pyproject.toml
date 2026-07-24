@@ -1,0 +1,29 @@
+[project]
+name = "ttl2md"
+version = "0.1.0"
+description = "Convert OWL/RDFS ontologies (Turtle, RDF/XML, JSON-LD, …) into clean Markdown documentation."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "BuroHappold Machine Learning" }]
+keywords = ["owl", "rdf", "ontology", "documentation", "markdown", "turtle", "ttl"]
+dependencies = [
+    "rdflib>=6.0.0",
+]
+
+[project.scripts]
+ttl2md = "ttl2md.cli:main"
+
+[project.optional-dependencies]
+test = ["pytest>=7.0"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ttl2md"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
