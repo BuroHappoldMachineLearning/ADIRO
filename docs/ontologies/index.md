@@ -2,6 +2,26 @@
 
 Reference documentation for each ADIRO ontology, generated from the Turtle sources. Each page also links to an interactive HTML view (pyLODE) and to OntoCanvas.
 
+## Dependencies
+
+The ADIRO ontologies are modular and build on one another via `owl:imports`. Arrows point from an ontology to the ontologies it imports.
+
+```mermaid
+graph TD
+    aec_drawing_metadata["Aec Drawing Metadata"]
+    aec_common_symbols["Aec Common Symbols"]
+    aec_domain_common["Aec Domain Common"]
+    aec_facade_domain["Aec Facade Domain"]
+    aec_common_symbols --> aec_drawing_metadata
+    aec_domain_common --> aec_common_symbols
+    aec_domain_common --> aec_drawing_metadata
+    aec_facade_domain --> aec_common_symbols
+    aec_facade_domain --> aec_domain_common
+    aec_facade_domain --> aec_drawing_metadata
+```
+
+## Available ontologies
+
 <div class="grid cards" markdown>
 
 -   ### [Aec Drawing Metadata](aec_drawing_metadata.md)

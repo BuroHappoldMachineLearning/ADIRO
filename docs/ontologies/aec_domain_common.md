@@ -10,6 +10,26 @@ Shared domain abstractions reused across multiple domain ontologies (e.g., facad
 - **Version:** 1.0.0
 - **Imports:** `aec_common_symbols`, `aec_drawing_metadata`
 
+## Dependencies
+
+Arrows point from an ontology to the ontologies it imports; the current ontology is highlighted.
+
+```mermaid
+graph TD
+    aec_drawing_metadata["Aec Drawing Metadata"]
+    aec_common_symbols["Aec Common Symbols"]
+    aec_domain_common["Aec Domain Common"]
+    aec_facade_domain["Aec Facade Domain"]
+    aec_common_symbols --> aec_drawing_metadata
+    aec_domain_common --> aec_common_symbols
+    aec_domain_common --> aec_drawing_metadata
+    aec_facade_domain --> aec_common_symbols
+    aec_facade_domain --> aec_domain_common
+    aec_facade_domain --> aec_drawing_metadata
+    classDef highlight fill:#1e88e5,stroke:#0d47a1,stroke-width:3px,color:#ffffff;
+    class aec_domain_common highlight;
+```
+
 ## Classes
 
 ### Aluminium {#Aluminium}

@@ -424,6 +424,34 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     print(f"  [OK] Generated index: {index_file}")
 
 
+def build_dependency_mermaid(ttl_files: list[Path], highlight: str | None = None) -> list[str]:
+    """Build a Mermaid flowchart of the owl:imports between ADIRO ontologies.
+
+    Edges point from an ontology to the ontology it imports (i.e. depends on).
+    When ``highlight`` (an ontology stem) is given, that node is styled as the
+    "current" ontology, for use on the per-ontology sub-pages.
+    """
+    stems = [f.stem for f in ttl_files]
+    titles = {f.stem: f.stem.replace("_", " ").title() for f in ttl_files}
+    deps = {f.stem: extract_adiro_dependencies(f) for f in ttl_files}
+
+    lines = ["```mermaid", "graph TD"]
+    for stem in stems:
+        lines.append(f'    {stem}["{titles[stem]}"]')
+    for stem in stems:
+        for imp in deps[stem]:
+            if imp in titles:
+                lines.append(f"    {stem} --> {imp}")
+    if highlight and highlight in titles:
+        lines.append(
+            "    classDef highlight fill:#1e88e5,stroke:#0d47a1,"
+            "stroke-width:3px,color:#ffffff;"
+        )
+        lines.append(f"    class {highlight} highlight;")
+    lines.append("```")
+    return lines
+
+
 def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path) -> None:
     """Generate native Markdown pages for each ontology using ttl2md.
 
@@ -445,6 +473,16 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path) ->
         "Reference documentation for each ADIRO ontology, generated from the "
         "Turtle sources. Each page also links to an interactive HTML view "
         "(pyLODE) and to OntoCanvas.",
+        "",
+        "## Dependencies",
+        "",
+        "The ADIRO ontologies are modular and build on one another via "
+        "`owl:imports`. Arrows point from an ontology to the ontologies it "
+        "imports.",
+        "",
+        *build_dependency_mermaid(ttl_files),
+        "",
+        "## Available ontologies",
         "",
         '<div class="grid cards" markdown>',
         "",
@@ -475,6 +513,24 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path) ->
         rest = body_lines[1:]
         while rest and rest[0] == "":
             rest.pop(0)
+
+        # Insert a dependency diagram (with the current ontology highlighted)
+        # after the ontology description/metadata and before the first term
+        # section (## …).
+        dep_section = [
+            "## Dependencies",
+            "",
+            "Arrows point from an ontology to the ontologies it imports; the "
+            "current ontology is highlighted.",
+            "",
+            *build_dependency_mermaid(ttl_files, highlight=stem),
+            "",
+        ]
+        insert_at = next(
+            (i for i, line in enumerate(rest) if line.startswith("## ")), len(rest)
+        )
+        rest = rest[:insert_at] + dep_section + rest[insert_at:]
+
         page = "\n".join([body_lines[0], "", links_block, ""] + rest).rstrip() + "\n"
 
         page_file = ontologies_dir / f"{stem}.md"
