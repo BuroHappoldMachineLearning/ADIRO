@@ -1,3 +1,32 @@
+/* ------------------------------------------------------------------ */
+/* Brand palette, derived from the ADIRO favicon/logo:                  */
+/*   navy   #16305f  (border / I-beam)                                  */
+/*   teal   #159ca4  (graph nodes)                                      */
+/*   orange #f58a1f  (graph node)                                       */
+/* Material's palette is set to "custom" in mkdocs.yml, so these        */
+/* variables drive the theme colours.                                   */
+/* ------------------------------------------------------------------ */
+:root {
+  --md-primary-fg-color:          #16305f;
+  --md-primary-fg-color--light:   #2a4a80;
+  --md-primary-fg-color--dark:    #0e2247;
+  --md-primary-bg-color:          #ffffff;
+  --md-primary-bg-color--light:   rgba(255, 255, 255, 0.7);
+  --md-accent-fg-color:           #f58a1f;
+  --md-accent-fg-color--transparent: rgba(245, 138, 31, 0.1);
+}
+
+/* Light scheme: navy links on white content. */
+[data-md-color-scheme="default"] {
+  --md-typeset-a-color: #16305f;
+}
+
+/* Dark scheme: use the brighter teal for links so they stay legible on
+   the dark content background, while the header stays brand navy. */
+[data-md-color-scheme="slate"] {
+  --md-typeset-a-color: #3fb6bf;
+}
+
 /* OntoCanvas branding icon inside the "Open in OntoCanvas" buttons on the
    landing page. Sized to sit inline with the button label, matching the look
    of the previous HTML documentation page. */

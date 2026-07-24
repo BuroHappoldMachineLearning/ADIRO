@@ -447,7 +447,7 @@ def build_dependency_mermaid(ttl_files: list[Path], highlight: str | None = None
                 lines.append(f"    {stem} --> {imp}")
     if highlight and highlight in titles:
         lines.append(
-            "    classDef highlight fill:#1e88e5,stroke:#0d47a1,"
+            "    classDef highlight fill:#159ca4,stroke:#16305f,"
             "stroke-width:3px,color:#ffffff;"
         )
         lines.append(f"    class {highlight} highlight;")
