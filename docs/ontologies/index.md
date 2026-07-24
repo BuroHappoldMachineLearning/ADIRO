@@ -18,6 +18,8 @@ graph BT
     aec_facade_domain --> aec_common_symbols
     aec_facade_domain --> aec_domain_common
     aec_facade_domain --> aec_drawing_metadata
+    classDef base fill:#16305f,stroke:#0e2247,stroke-width:2px,color:#ffffff;
+    class aec_drawing_metadata,aec_common_symbols,aec_domain_common,aec_facade_domain base;
 ```
 
 ## Available ontologies

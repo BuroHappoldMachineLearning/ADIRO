@@ -445,12 +445,22 @@ def build_dependency_mermaid(ttl_files: list[Path], highlight: str | None = None
         for imp in deps[stem]:
             if imp in titles:
                 lines.append(f"    {stem} --> {imp}")
+
+    # Base (blue) style for every ontology node; the current ontology (on the
+    # per-ontology sub-pages) is overridden with the orange accent.
+    base_nodes = [s for s in stems if s != highlight]
+    if base_nodes:
+        lines.append(
+            "    classDef base fill:#16305f,stroke:#0e2247,"
+            "stroke-width:2px,color:#ffffff;"
+        )
+        lines.append(f"    class {','.join(base_nodes)} base;")
     if highlight and highlight in titles:
         lines.append(
-            "    classDef highlight fill:#159ca4,stroke:#16305f,"
+            "    classDef current fill:#f58a1f,stroke:#16305f,"
             "stroke-width:3px,color:#ffffff;"
         )
-        lines.append(f"    class {highlight} highlight;")
+        lines.append(f"    class {highlight} current;")
     lines.append("```")
     return lines
 
