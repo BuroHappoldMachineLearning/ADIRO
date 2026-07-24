@@ -1,0 +1,86 @@
+site_name: ADIRO Ontologies Documentation
+site_description: >-
+  ADIRO (AEC Drawing Information Representation Ontologies) is a set of
+  ontologies for AEC drawing representation, designed to support machine
+  learning tasks, in particular information extraction workflows.
+site_url: https://burohappoldmachinelearning.github.io/ADIRO/
+repo_url: https://github.com/BuroHappoldMachineLearning/ADIRO
+repo_name: BuroHappoldMachineLearning/ADIRO
+edit_uri: edit/main/docs/
+
+# The pyLODE-generated per-ontology HTML pages, the .ttl sources and the
+# .display.json files live in docs/ and are copied verbatim into the built site.
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.top
+    - navigation.sections
+    - content.code.copy
+    - content.action.edit
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+
+nav:
+  - Home: index.md
+  - Use Cases: uc-orsd/README.md
+  - Ontology Requirements (ORSD): ORSD_v1.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+plugins:
+  - search
+
+# The docs/ folder also contains internal working notes that are not part of the
+# published site. Exclude them from the build so the site stays focused.
+exclude_docs: |
+  brainstorming/
+  modularization/
+  governance/
+
+# The per-use-case ORSD pages are intentionally reachable via links (e.g. from
+# the Use Cases overview) but are not part of the top-level navigation.
+not_in_nav: |
+  /uc-orsd/uc01/
+  /uc-orsd/uc03/
+  /uc-orsd/uc06/
+  /uc-orsd/uc07/
+
+validation:
+  nav:
+    omitted_files: info
+    not_found: warn
+  links:
+    not_found: warn
+    anchors: info

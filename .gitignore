@@ -41,4 +41,7 @@ uv.lock
 .DS_Store
 Thumbs.db
 
+# MkDocs build output (the published site is built in CI and deployed to Pages)
+site/
+
 # Note: docs/ folder is intentionally NOT ignored so generated documentation is tracked
