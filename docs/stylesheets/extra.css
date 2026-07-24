@@ -1,0 +1,9 @@
+/* OntoCanvas branding icon inside the "Open in OntoCanvas" buttons on the
+   landing page. Sized to sit inline with the button label, matching the look
+   of the previous HTML documentation page. */
+.md-button img.ontocanvas-icon {
+  height: 1.25em;
+  width: auto;
+  vertical-align: text-bottom;
+  margin-right: 0.45em;
+}

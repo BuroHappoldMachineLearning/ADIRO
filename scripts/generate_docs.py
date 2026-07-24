@@ -300,250 +300,114 @@ def extract_adiro_dependencies(ttl_file: Path) -> list[str]:
         return []
 
 
+# Base URL of the published GitHub Pages site. Used to build absolute links for
+# external tools (e.g. OntoCanvas) that need the full URL of an ontology page.
+SITE_BASE_URL = "https://burohappoldmachinelearning.github.io/ADIRO"
+
+# OntoCanvas branding icon, reused from the previous HTML landing page.
+ONTOCANVAS_ICON_URL = "https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png"
+
+
 def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     """
-    Generate an index.html file that lists all generated documentation.
-    
+    Generate the Material for MkDocs landing page (``index.md``).
+
+    The page replicates the previous standalone ``index.html`` landing page: an
+    intro, links to the Use Cases and ORSD documentation, and a card grid of the
+    available ontologies (each linking to its pyLODE HTML page, its source TTL,
+    and OntoCanvas). The list of ontologies is generated automatically from the
+    TTL files so newly added ontologies appear without manual edits.
+
     Args:
         ttl_files: List of TTL files that were processed
-        output_dir: Directory where HTML files are located
+        output_dir: Directory where the MkDocs source lives (docs/)
     """
-    index_file = output_dir / "index.html"
-    
-    html_content = """<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADIRO Ontologies Documentation</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: #f5f5f5;
-        }
-        h1 {
-            color: #333;
-            border-bottom: 3px solid #007acc;
-            padding-bottom: 0.5rem;
-        }
-        .intro {
-            background-color: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .intro-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-bottom: 0.5rem;
-        }
-        .github-button {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.35rem 0.75rem;
-            background-color: #24292f;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            font-size: 0.82rem;
-            font-weight: 500;
-            transition: background-color 0.2s, transform 0.2s;
-            white-space: nowrap;
-        }
-        .github-button:hover {
-            background-color: #1b1f24;
-            transform: translateY(-1px);
-            text-decoration: none;
-            color: white;
-        }
-        .github-button:active {
-            transform: translateY(0);
-        }
-        .ontology-list {
-            list-style: none;
-            padding: 0;
-        }
-        .ontology-list li {
-            background-color: white;
-            margin-bottom: 1rem;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .ontology-list li:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        .ontology-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-        .ontology-link-container {
-            flex: 1;
-        }
-        .ontology-list a {
-            text-decoration: none;
-            color: #007acc;
-            font-weight: 500;
-            font-size: 1.1rem;
-        }
-        .ontology-list a:hover {
-            text-decoration: underline;
-        }
-        .ontology-list a.ontocanvas-button {
-            color: white !important;
-        }
-        .ontology-description {
-            color: #555;
-            font-size: 0.95rem;
-            margin-top: 0.5rem;
-            margin-bottom: 0.5rem;
-            line-height: 1.5;
-        }
-        .ontology-dependencies {
-            color: #777;
-            font-size: 0.85rem;
-            margin-top: 0.25rem;
-            margin-bottom: 0.5rem;
-            font-style: italic;
-        }
-        .file-name {
-            color: #666;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-        }
-        .file-name a {
-            color: #007acc;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: normal;
-        }
-        .file-name a:hover {
-            text-decoration: underline;
-        }
-        .ontocanvas-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background-color: #007acc;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: background-color 0.2s, transform 0.2s;
-            white-space: nowrap;
-        }
-        .ontocanvas-button:hover {
-            background-color: #005a9e;
-            transform: translateY(-1px);
-            text-decoration: none;
-            color: white;
-        }
-        .ontocanvas-button:active {
-            transform: translateY(0);
-        }
-        .ontocanvas-icon {
-            width: 20px;
-            height: 20px;
-            vertical-align: middle;
-        }
-        footer {
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid #ddd;
-            text-align: center;
-            color: #666;
-            font-size: 0.9rem;
-        }
-    </style>
-</head>
-<body>
-    <h1>ADIRO Ontologies Documentation</h1>
-    
-    <div class="intro">
-        <p>ADIRO (<i>AEC Drawing Information Representation Ontologies</i>) is a set of ontologies for AEC (<i>Architecture, Engineering, and Construction</i>) drawing representation, designed to support machine learning tasks, in particular information extraction workflows.</p>
-        <p>The ontologies include concepts for drawing metadata, common symbols, domain-common symbols, and domain-specific symbols. They can be used to represent the information in AEC drawings, to make them machine-readable, and to support the creation of graph databases and knowledge graphs.</p>
-        <p>Scroll down to explore the available ontologies below.</p>
-        <a href="https://github.com/BuroHappoldMachineLearning/ADIRO" class="github-button" target="_blank" rel="noopener noreferrer">View on GitHub</a>
-    </div>
-    
-    <h2>Available Ontologies</h2>
-    <ul class="ontology-list">
-"""
-    
+    index_file = output_dir / "index.md"
+
+    lines: list[str] = []
+    lines.append("# ADIRO Ontologies Documentation")
+    lines.append("")
+    lines.append(
+        "ADIRO (*AEC Drawing Information Representation Ontologies*) is a set of "
+        "ontologies for AEC (*Architecture, Engineering, and Construction*) drawing "
+        "representation, designed to support machine learning tasks, in particular "
+        "information extraction workflows."
+    )
+    lines.append("")
+    lines.append(
+        "The ontologies include concepts for drawing metadata, common symbols, "
+        "domain-common symbols, and domain-specific symbols. They can be used to "
+        "represent the information in AEC drawings, to make them machine-readable, "
+        "and to support the creation of graph databases and knowledge graphs."
+    )
+    lines.append("")
+    lines.append(
+        "[:fontawesome-brands-github: View on GitHub]"
+        "(https://github.com/BuroHappoldMachineLearning/ADIRO){ .md-button }"
+    )
+    lines.append("")
+
+    # Documentation sections (Use Cases + ORSD)
+    lines.append("## Documentation")
+    lines.append("")
+    lines.append('<div class="grid cards" markdown>')
+    lines.append("")
+    lines.append("-   :material-clipboard-list-outline: __Use Cases__")
+    lines.append("")
+    lines.append(
+        "    Use case catalogue (UC-01 through UC-07), prioritization matrix, and "
+        "current ORSD status across all use cases."
+    )
+    lines.append("")
+    lines.append("    [:octicons-arrow-right-24: Use Cases](uc-orsd/README.md)")
+    lines.append("")
+    lines.append("-   :material-file-document-check-outline: __Ontology Requirements (ORSD)__")
+    lines.append("")
+    lines.append(
+        "    Ontology Requirements Specification Document: purpose, scope, intended "
+        "users and uses, and the functional/non-functional requirements."
+    )
+    lines.append("")
+    lines.append("    [:octicons-arrow-right-24: ORSD](ORSD_v1.md)")
+    lines.append("")
+    lines.append("</div>")
+    lines.append("")
+
+    # Available ontologies
+    lines.append("## Available Ontologies")
+    lines.append("")
+    lines.append('<div class="grid cards" markdown>')
+    lines.append("")
+
     for ttl_file in ttl_files:
         html_filename = f"{ttl_file.stem}.html"
         ttl_filename = ttl_file.name
+        title = ttl_file.stem.replace("_", " ").title()
         comment = extract_ontology_comment(ttl_file)
         dependencies = extract_adiro_dependencies(ttl_file)
-        
-        # Build the description HTML
-        description_html = ""
+        ontocanvas_url = f"https://alelom.github.io/OntoCanvas/?onto={SITE_BASE_URL}/{html_filename}"
+
+        lines.append(f"-   ### [{title}]({html_filename})")
+        lines.append("")
         if comment:
-            description_html = f'                    <div class="ontology-description">{comment}</div>'
-        
-        # Build the dependencies HTML
-        dependencies_html = ""
+            lines.append(f"    {comment}")
+            lines.append("")
         if dependencies:
             deps_text = ", ".join(dependencies)
-            dependencies_html = f'                    <div class="ontology-dependencies">Imports: {deps_text}</div>'
-        else:
-            dependencies_html = ""  # Don't show anything if no dependencies
-        
-        html_content += f"""        <li>
-            <div class="ontology-item">
-                <div class="ontology-link-container">
-                    <a href="{html_filename}">{ttl_file.stem.replace('_', ' ').title()}</a>
-{description_html}
-{dependencies_html}
-                    <div class="file-name">Source: <a href="{ttl_filename}">{ttl_filename}</a></div>
-                </div>
-                <a href="#" class="ontocanvas-button" data-ontology="{html_filename}" target="_blank">
-                    <img src="https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png" alt="OntoCanvas" class="ontocanvas-icon">
-                    Open in OntoCanvas
-                </a>
-            </div>
-        </li>
-"""
-    
-    html_content += """    </ul>
-    
-    <footer>
-        <p>Generated automatically by <a href="https://github.com/RDFLib/pyLODE" target="_blank">pyLODE</a></p>
-    </footer>
-    
-    <script>
-        // Set up OntoCanvas button links
-        document.addEventListener('DOMContentLoaded', function() {
-            const buttons = document.querySelectorAll('.ontocanvas-button');
-            buttons.forEach(function(button) {
-                const ontologyFile = button.getAttribute('data-ontology');
-                // Construct full URL to the ontology HTML file
-                const baseUrl = window.location.origin + window.location.pathname.replace(/\\/[^\\/]*$/, '');
-                const ontologyUrl = baseUrl + '/' + ontologyFile;
-                const ontocanvasUrl = 'https://alelom.github.io/OntoCanvas/?onto=' + ontologyUrl;
-                button.setAttribute('href', ontocanvasUrl);
-            });
-        });
-    </script>
-</body>
-</html>
-"""
-    
-    index_file.write_text(html_content, encoding='utf-8')
+            lines.append(f"    *Imports: {deps_text}*")
+            lines.append("")
+        lines.append(f"    Source: [`{ttl_filename}`]({ttl_filename})")
+        lines.append("")
+        lines.append(
+            f"    [![OntoCanvas]({ONTOCANVAS_ICON_URL}){{ .ontocanvas-icon }} Open in OntoCanvas]"
+            f"({ontocanvas_url}){{ .md-button target=_blank }}"
+        )
+        lines.append("")
+
+    lines.append("</div>")
+    lines.append("")
+
+    index_file.write_text("\n".join(lines), encoding="utf-8")
     print(f"  [OK] Generated index: {index_file}")
 
 

@@ -14,25 +14,49 @@ See [docs/uc-orsd/README.md](docs/uc-orsd/README.md) for the full use case catal
 
 Find the docs here: https://burohappoldmachinelearning.github.io/ADIRO/.
 
-Documentation is automatically generated (in HTML, using PyLode) and deployed to GitHub Pages whenever:
+The documentation site is built with **[Material for MkDocs](https://squidfunk.github.io/mkdocs-material/)** and deployed to GitHub Pages whenever:
 - Changes are pushed to the `main` or `master` branch
 - The workflow is manually triggered from the GitHub Actions tab
 
-The documentation is available at the repository's GitHub Pages URL (typically `https://<username>.github.io/<repository-name>/`).
+The site provides a landing page (`docs/index.md`), a **Use Cases** page (`docs/uc-orsd/README.md`), an **Ontology Requirements (ORSD)** page (`docs/ORSD_v1.md`), and a detailed per-ontology reference page for each ontology, generated with **[pyLODE](https://github.com/RDFLib/pyLODE)**.
 
-To generate documentation manually, locally:
+### How it fits together
+
+- `scripts/generate_docs.py` reads every `.ttl` in `src/`, generates a pyLODE HTML reference page for each into `docs/`, copies the `.ttl` and `*.display.json` sources into `docs/`, and (re)generates the MkDocs landing page `docs/index.md` (including the auto-discovered list of ontologies).
+- `mkdocs.yml` configures the Material site. It uses `docs/` as its source directory, so the generated pyLODE HTML pages, the `.ttl` sources, and the `.display.json` files are copied verbatim into the built site alongside the Markdown pages.
+- The site is built into `site/` (git-ignored) and deployed to GitHub Pages.
+
+### Preview the site locally
+
+To view the documentation site on your machine with live reload:
+
+```bash
+# 1. Install dependencies (once)
+uv sync
+
+# 2. Generate the pyLODE ontology pages + the MkDocs landing page (docs/index.md)
+uv run python scripts/generate_docs.py
+
+# 3. Start the live-reloading preview server
+uv run mkdocs serve
+```
+
+Then open **http://127.0.0.1:8000/ADIRO/** in your browser. The server rebuilds automatically whenever you edit a file under `docs/` or `mkdocs.yml`.
+
+> Tip: to serve on a different address/port, use e.g. `uv run mkdocs serve -a localhost:8001`.
+
+### Building the static site
+
+To produce the deployable static site (what CI publishes to GitHub Pages):
 
 <details>
 
 ```bash
-# Install dependencies
-uv sync
-
-# Generate documentation for all TTL files in the root directory
-uv run python scripts/generate_docs.py
+uv run python scripts/generate_docs.py   # regenerate ontology pages + index.md
+uv run mkdocs build                       # outputs the static site into site/
 ```
 
-The generated files will be placed in the `docs/` directory. Each `.ttl` file in the repository root will have a corresponding `.html` file generated, and any `*.display.json` files in the repository root will also be copied to `docs/` for public access via GitHub Pages.
+Each `.ttl` file in `src/` gets a corresponding `.html` reference page in `docs/`, and any `*.display.json` files are copied to `docs/` for public access via GitHub Pages. The final static site is produced in `site/` (git-ignored).
 
 </details>
 
