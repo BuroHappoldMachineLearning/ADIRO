@@ -464,9 +464,10 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path) ->
         body = ttl2md.convert_file(ttl_file, title=title, asset_prefix="../")
 
         links_block = (
-            f"[:material-file-code: Interactive HTML view]({SITE_BASE_URL}/{html_filename}){{ .md-button }}\n"
+            f"[![OntoCanvas]({ONTOCANVAS_ICON_URL}){{ .ontocanvas-icon }} Open in OntoCanvas]"
+            f"({ontocanvas_url}){{ .md-button target=_blank }}\n"
             f"[:material-file-document-outline: TTL source]({SITE_BASE_URL}/{ttl_file.name}){{ .md-button }}\n"
-            f"[Open in OntoCanvas]({ontocanvas_url}){{ .md-button target=_blank }}"
+            f"[:material-file-code: pyLODE HTML]({SITE_BASE_URL}/{html_filename}){{ .md-button }}"
         )
 
         # Insert the links row directly under the H1 emitted by ttl2md.

@@ -1,8 +1,8 @@
 # Aec Domain Common
 
-[:material-file-code: Interactive HTML view](https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common.html){ .md-button }
+[![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common.html){ .md-button target=_blank }
 [:material-file-document-outline: TTL source](https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common.ttl){ .md-button }
-[Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common.html){ .md-button target=_blank }
+[:material-file-code: pyLODE HTML](https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common.html){ .md-button }
 
 Shared domain abstractions reused across multiple domain ontologies (e.g., facade+structural).
 

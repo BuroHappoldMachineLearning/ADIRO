@@ -1,8 +1,8 @@
 # Aec Facade Domain
 
-[:material-file-code: Interactive HTML view](https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain.html){ .md-button }
+[![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain.html){ .md-button target=_blank }
 [:material-file-document-outline: TTL source](https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain.ttl){ .md-button }
-[Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain.html){ .md-button target=_blank }
+[:material-file-code: pyLODE HTML](https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain.html){ .md-button }
 
 Facade-specific concepts and symbols for facade engineering drawings.
 
