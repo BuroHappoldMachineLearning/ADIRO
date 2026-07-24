@@ -7,7 +7,7 @@ Reference documentation for each ADIRO ontology, generated from the Turtle sourc
 The ADIRO ontologies are modular and build on one another via `owl:imports`. Arrows point from an ontology to the ontologies it imports.
 
 ```mermaid
-graph TD
+graph BT
     aec_drawing_metadata["Aec Drawing Metadata"]
     aec_common_symbols["Aec Common Symbols"]
     aec_domain_common["Aec Domain Common"]

@@ -435,7 +435,10 @@ def build_dependency_mermaid(ttl_files: list[Path], highlight: str | None = None
     titles = {f.stem: f.stem.replace("_", " ").title() for f in ttl_files}
     deps = {f.stem: extract_adiro_dependencies(f) for f in ttl_files}
 
-    lines = ["```mermaid", "graph TD"]
+    # Bottom-to-top layout: edges still read "imports" (importer --> imported),
+    # but the imported base ontologies are drawn at the top and the leaf
+    # ontologies (which import others but are imported by none) at the bottom.
+    lines = ["```mermaid", "graph BT"]
     for stem in stems:
         lines.append(f'    {stem}["{titles[stem]}"]')
     for stem in stems:

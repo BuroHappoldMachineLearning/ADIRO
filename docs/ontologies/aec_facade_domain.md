@@ -15,7 +15,7 @@ Facade-specific concepts and symbols for facade engineering drawings.
 Arrows point from an ontology to the ontologies it imports; the current ontology is highlighted.
 
 ```mermaid
-graph TD
+graph BT
     aec_drawing_metadata["Aec Drawing Metadata"]
     aec_common_symbols["Aec Common Symbols"]
     aec_domain_common["Aec Domain Common"]
