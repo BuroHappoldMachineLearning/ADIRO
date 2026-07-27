@@ -1,7 +1,7 @@
-# ADIRO Ontology Requirements Specification — v1
+# ADIRO Ontology Requirements Specification — v1.1
 
 **Author:** ADIRO project team
-**Version:** 1.0 (June 2026)
+**Version:** 1.1 (July 2026)
 
 ---
 
@@ -29,7 +29,7 @@ The ontology is implemented using RDF and OWL to establish a standardized and in
 
 | # | User | Description |
 |---|------|-------------|
-| User 1 | **Facade Engineer** | Interprets specialized facade systems, materials, and performance lines while identifying logical inconsistencies or design gaps within facade-related drawing content. |
+| User 1 | **AEC Engineer** | Interprets specialized systems, materials, and source information from technical AEC drawings for a variety of purposes, like: extracting required information in order to design new components; identifying logical inconsistencies or design gaps; verify compliance against legal Codes. |
 | User 2 | **Designer** | Inspects spatial and logical drawing relationships to compare design intent across multiple documents and traces how specific building elements are represented across different sheets. |
 | User 3 | **ML/AI Practitioner** | Employs ontology-grounded representations to facilitate structured information extraction, post-processing, explainable AI (XAI), and human-in-the-loop validation workflows. |
 | User 4 | **Downstream Application Developer** | Reuses standardized ontology concepts to build knowledge graphs, retrieval systems, and reporting pipelines that support interoperability across the AECO industry. |
