@@ -1,6 +1,6 @@
 # ADIRO Ontologies Documentation
 
-<img src="img/adiro_banner.png" width="300" alt="ADIRO image">
+![ADIRO](img/adiro_banner.png){ .adiro-banner }
 
 ADIRO (*AEC Drawing Information Representation Ontologies*) is a set of ontologies for AEC (*Architecture, Engineering, and Construction*) drawing representation, designed to support machine learning tasks, in particular information extraction workflows.
 
