@@ -119,14 +119,15 @@ class YouTrack:
         _request("POST", url, self.headers, {"text": text})
 
     def apply_tag(self, issue_id: str, tag_name: str) -> None:
-        """Best-effort: apply an existing tag by name. Non-fatal on failure."""
+        """Best-effort: apply a tag by name, creating it if missing. Non-fatal."""
         try:
             url = f"{self.base}/api/issueTags?fields=id,name&$top=1000"
             tags = _request("GET", url, self.headers) or []
             tag = next((t for t in tags if t.get("name", "").lower() == tag_name.lower()), None)
             if not tag:
-                print(f"::warning::YouTrack tag '{tag_name}' not found; skipping tag.")
-                return
+                create_url = f"{self.base}/api/issueTags?fields=id,name"
+                tag = _request("POST", create_url, self.headers, {"name": tag_name})
+                print(f"Created YouTrack tag '{tag_name}'.")
             tag_url = f"{self.base}/api/issues/{issue_id}/tags?fields=id"
             _request("POST", tag_url, self.headers, {"id": tag["id"]})
         except SystemExit:

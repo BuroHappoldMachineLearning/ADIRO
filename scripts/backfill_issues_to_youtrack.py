@@ -86,6 +86,10 @@ def main() -> None:
         existing_id = gh.find_marker(number)
 
         if existing_id:
+            # Already mirrored: don't recreate, but (re)apply the tag so a re-run
+            # can backfill tags onto issues created before the tag existed.
+            if not dry_run and tag_name:
+                yt.apply_tag(existing_id, tag_name)
             print(f"  #{number}  SKIP  already mirrored as {existing_id}  — {title}")
             skipped += 1
             continue
