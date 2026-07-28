@@ -197,11 +197,13 @@ def build_custom_fields() -> list:
     fields: list = []
     assignee = os.environ.get("YOUTRACK_ASSIGNEE", "").strip()
     if assignee:
+        # RES's Assignee is a MULTI-user field (schema: "Array of logins"), so the
+        # field type is MultiUserIssueCustomField and the value must be a list.
         fields.append(
             {
                 "name": "Assignee",
-                "$type": "SingleUserIssueCustomField",
-                "value": {"login": assignee, "$type": "User"},
+                "$type": "MultiUserIssueCustomField",
+                "value": [{"login": assignee, "$type": "User"}],
             }
         )
     state = os.environ.get("YOUTRACK_STATE", "").strip()
@@ -220,6 +222,15 @@ def build_custom_fields() -> list:
                 "name": "Size",
                 "$type": "SingleEnumIssueCustomField",
                 "value": {"name": size, "$type": "EnumBundleElement"},
+            }
+        )
+    estimation = os.environ.get("YOUTRACK_ESTIMATION", "").strip()
+    if estimation:
+        fields.append(
+            {
+                "name": "Estimation-hours",
+                "$type": "SimpleIssueCustomField",
+                "value": int(estimation),
             }
         )
     return fields

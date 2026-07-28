@@ -45,8 +45,9 @@ jobs:
           YOUTRACK_PROJECT: ${{ vars.YOUTRACK_PROJECT }}
           YOUTRACK_TAG: ${{ vars.YOUTRACK_ADIRO_TAG }}
           YOUTRACK_ASSIGNEE: ${{ vars.YOUTRACK_ASSIGNEE }}   # required by the RES project
-          YOUTRACK_STATE: ${{ vars.YOUTRACK_STATE }}         # optional; set only if the project requires it
-          YOUTRACK_SIZE: ${{ vars.YOUTRACK_SIZE }}           # optional; set only if the project requires it
+          YOUTRACK_STATE: ${{ vars.YOUTRACK_STATE }}         # required by RES (no default)
+          YOUTRACK_SIZE: ${{ vars.YOUTRACK_SIZE }}           # required by RES (no default)
+          YOUTRACK_ESTIMATION: ${{ vars.YOUTRACK_ESTIMATION }}  # required by RES (no default)
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BACKFILL_STATE: ${{ inputs.state }}
           BACKFILL_DRY_RUN: ${{ inputs.dry_run }}
