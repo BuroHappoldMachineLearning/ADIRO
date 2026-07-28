@@ -1,0 +1,41 @@
+name: Sync GitHub Issues to YouTrack
+
+# One-way mirror: GitHub -> YouTrack ("inbox" model, see YouTrack MAN-8 / MAN-A-3).
+# GitHub stays the source of truth for public content; YouTrack holds the internal
+# planning overlay and is never pushed back. Fires for issues opened by anyone
+# (including external contributors), because `issues` events run in the base repo
+# context with access to repo secrets.
+
+on:
+  issues:
+    types: [opened, edited, reopened, closed]
+
+permissions:
+  contents: read
+  issues: write   # required to post the youtrack-id marker comment back on the issue
+
+concurrency:
+  # Serialize events for the same issue so create/update can't race.
+  group: yt-sync-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Sync issue to YouTrack
+        env:
+          YOUTRACK_URL: ${{ secrets.YOUTRACK_URL }}
+          YOUTRACK_TOKEN: ${{ secrets.YOUTRACK_TOKEN }}
+          YOUTRACK_PROJECT: ${{ vars.YOUTRACK_PROJECT }}
+          YOUTRACK_TAG: ${{ vars.YOUTRACK_ADIRO_TAG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/sync_issue_to_youtrack.py
