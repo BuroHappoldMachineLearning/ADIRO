@@ -41,9 +41,7 @@ A large-scale zoomed-in drawing of a specific construction assembly or connectio
 
 - **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Detail`
 - **Sub class of:** [Layout content type](#LayoutContentType)
-- **Restrictions:**
-    - [hasOrientation](#hasOrientation) exactly 1 [Orientation](#OrientationValue)
-    - [hasProperty](#hasProperty) min 0 max 1 `:DetailLocation`
+- **Restrictions:** [hasOrientation](#hasOrientation) exactly 1 [Orientation](#OrientationValue)
 - **Labellable root:** true
 
 *Example images:*

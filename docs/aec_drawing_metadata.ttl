@@ -284,8 +284,8 @@
     rdfs:subClassOf
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Note ],
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Legend ],
-        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :RevisionTable ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ],
-        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Titleblock ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ],
+        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:onClass :RevisionTable ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
+        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:onClass :Titleblock ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass :Layout ];
     rdfs:label "Drawing Sheet" ;
     rdfs:comment "Top-level container for a drawing. Contains Layout(s)." ;
@@ -335,8 +335,7 @@
 
 :Detail rdf:type owl:Class ;
     rdfs:subClassOf :LayoutContentType,
-    [ rdf:type owl:Restriction ; owl:onProperty :hasOrientation ; owl:onClass :OrientationValue ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
-    [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :DetailLocation ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:maxQualifiedCardinality "1"^^xsd:nonNegativeInteger ];
+    [ rdf:type owl:Restriction ; owl:onProperty :hasOrientation ; owl:onClass :OrientationValue ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ];
     rdfs:label "Detail" ;
     rdfs:comment "A large-scale zoomed-in drawing of a specific construction assembly or connection, showing how individual components fit together with dense material callouts and dimensions. Can be vertical or horizontal." ;
     :exampleImage <img/aec_drawing_ontology/detail_01.png> ;
