@@ -60,10 +60,15 @@ def main() -> None:
     if state not in ("open", "all"):
         state = "open"
 
-    yt = YouTrack(env("YOUTRACK_URL"), env("YOUTRACK_TOKEN"))
     gh = GitHub(env("GITHUB_TOKEN"), repo)
-    project_key = env("YOUTRACK_PROJECT")
-    tag_name = env("YOUTRACK_TAG", required=False)
+    # YouTrack config is only needed for real writes; a dry run must be able to
+    # preview using GITHUB_TOKEN alone.
+    yt = None
+    project_key = tag_name = None
+    if not dry_run:
+        yt = YouTrack(env("YOUTRACK_URL"), env("YOUTRACK_TOKEN"))
+        project_key = env("YOUTRACK_PROJECT")
+        tag_name = env("YOUTRACK_TAG", required=False)
 
     mode = "DRY RUN (no writes)" if dry_run else "LIVE (creating issues)"
     print(f"Backfill starting — repo={repo} state={state} — {mode}")
