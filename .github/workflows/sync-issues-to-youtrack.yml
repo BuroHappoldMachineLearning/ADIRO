@@ -37,5 +37,8 @@ jobs:
           YOUTRACK_TOKEN: ${{ secrets.YOUTRACK_TOKEN }}
           YOUTRACK_PROJECT: ${{ vars.YOUTRACK_PROJECT }}
           YOUTRACK_TAG: ${{ vars.YOUTRACK_ADIRO_TAG }}
+          YOUTRACK_ASSIGNEE: ${{ vars.YOUTRACK_ASSIGNEE }}   # required by the RES project
+          YOUTRACK_STATE: ${{ vars.YOUTRACK_STATE }}         # optional; set only if the project requires it
+          YOUTRACK_SIZE: ${{ vars.YOUTRACK_SIZE }}           # optional; set only if the project requires it
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python scripts/sync_issue_to_youtrack.py

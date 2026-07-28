@@ -29,6 +29,7 @@ from sync_issue_to_youtrack import (  # reuse the live logic
     GitHub,
     YouTrack,
     _request,
+    build_custom_fields,
     build_description,
     env,
 )
@@ -99,7 +100,7 @@ def main() -> None:
 
         summary = f"[GitHub #{number}] {title}"
         description = build_description(issue, repo)
-        result = yt.create_issue(project_id, summary, description)
+        result = yt.create_issue(project_id, summary, description, build_custom_fields())
         youtrack_id = result["idReadable"]
         if tag_name:
             yt.apply_tag(youtrack_id, tag_name)
