@@ -114,6 +114,20 @@ class YouTrack:
         payload = {"summary": summary, "description": description}
         return _request("POST", url, self.headers, payload)  # type: ignore[return-value]
 
+    def update_state(self, issue_id: str, state_name: str) -> None:
+        """Set the issue's State custom field (used to reflect GitHub open/close)."""
+        url = f"{self.base}/api/issues/{issue_id}?fields=id,idReadable"
+        payload = {
+            "customFields": [
+                {
+                    "name": "State",
+                    "$type": "StateIssueCustomField",
+                    "value": {"name": state_name, "$type": "StateBundleElement"},
+                }
+            ]
+        }
+        _request("POST", url, self.headers, payload)
+
     def add_comment(self, issue_id: str, text: str) -> None:
         url = f"{self.base}/api/issues/{issue_id}/comments?fields=id"
         _request("POST", url, self.headers, {"text": text})
@@ -259,20 +273,38 @@ def main() -> None:
     project_key = env("YOUTRACK_PROJECT")
     tag_name = env("YOUTRACK_TAG", required=False)
 
+    # States used to reflect GitHub open/close status onto the YouTrack mirror.
+    resolved_state = os.environ.get("YOUTRACK_RESOLVED_STATE", "").strip() or "Resolved"
+    wontfix_state = os.environ.get("YOUTRACK_WONTFIX_STATE", "").strip() or "Closed/Won't fix"
+    reopened_state = os.environ.get("YOUTRACK_REOPENED_STATE", "").strip() or "Reopened"
+
     existing_id = gh.find_marker(number)
     description = build_description(issue, repo)
     summary = f"[GitHub #{number}] {title}"
 
     if action == "closed":
         if existing_id:
-            yt.add_comment(existing_id, f"ℹ️ The source GitHub issue #{number} was **closed**.")
-            print(f"Commented on {existing_id}: GitHub issue closed.")
+            # GitHub distinguishes "completed" from "not planned" — map accordingly.
+            reason = issue.get("state_reason") or "completed"
+            target_state = wontfix_state if reason == "not_planned" else resolved_state
+            yt.update_state(existing_id, target_state)
+            yt.add_comment(
+                existing_id,
+                f"ℹ️ The source GitHub issue #{number} was **closed** ({reason}); "
+                f"State set to '{target_state}'.",
+            )
+            print(f"Resolved {existing_id} (State -> {target_state}) from GitHub #{number} close.")
         else:
             print("Issue closed but no YouTrack mirror exists; nothing to do.")
         return
 
     if action == "reopened" and existing_id:
-        yt.add_comment(existing_id, f"ℹ️ The source GitHub issue #{number} was **reopened**.")
+        yt.update_state(existing_id, reopened_state)
+        yt.add_comment(
+            existing_id,
+            f"ℹ️ The source GitHub issue #{number} was **reopened**; "
+            f"State set to '{reopened_state}'.",
+        )
 
     if existing_id:
         yt.update_issue(existing_id, summary, description)
