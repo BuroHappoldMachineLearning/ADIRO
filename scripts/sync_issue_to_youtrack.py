@@ -96,13 +96,17 @@ class YouTrack:
         available = ", ".join(p.get("shortName", "?") for p in projects)
         fail(f"YouTrack project '{short_name}' not found. Available: {available}")
 
-    def create_issue(self, project_id: str, summary: str, description: str) -> dict:
+    def create_issue(
+        self, project_id: str, summary: str, description: str, custom_fields: list | None = None
+    ) -> dict:
         url = f"{self.base}/api/issues?fields=id,idReadable"
         payload = {
             "project": {"id": project_id},
             "summary": summary,
             "description": description,
         }
+        if custom_fields:
+            payload["customFields"] = custom_fields
         return _request("POST", url, self.headers, payload)  # type: ignore[return-value]
 
     def update_issue(self, issue_id: str, summary: str, description: str) -> dict:
@@ -182,6 +186,45 @@ def build_description(issue: dict, repo: str) -> str:
     )
 
 
+def build_custom_fields() -> list:
+    """Custom fields required by the target YouTrack project, from env.
+
+    RES enforces a required `Assignee` (workflow rule), so mirrored issues must
+    carry one — set YOUTRACK_ASSIGNEE to a login. State/Size are optional here
+    (they have project defaults); set YOUTRACK_STATE / YOUTRACK_SIZE only if the
+    project also requires them without a default.
+    """
+    fields: list = []
+    assignee = os.environ.get("YOUTRACK_ASSIGNEE", "").strip()
+    if assignee:
+        fields.append(
+            {
+                "name": "Assignee",
+                "$type": "SingleUserIssueCustomField",
+                "value": {"login": assignee, "$type": "User"},
+            }
+        )
+    state = os.environ.get("YOUTRACK_STATE", "").strip()
+    if state:
+        fields.append(
+            {
+                "name": "State",
+                "$type": "StateIssueCustomField",
+                "value": {"name": state, "$type": "StateBundleElement"},
+            }
+        )
+    size = os.environ.get("YOUTRACK_SIZE", "").strip()
+    if size:
+        fields.append(
+            {
+                "name": "Size",
+                "$type": "SingleEnumIssueCustomField",
+                "value": {"name": size, "$type": "EnumBundleElement"},
+            }
+        )
+    return fields
+
+
 def main() -> None:
     event_name = env("GITHUB_EVENT_NAME")
     event_path = env("GITHUB_EVENT_PATH")
@@ -226,7 +269,7 @@ def main() -> None:
 
     # No mirror yet -> create one and record the mapping back on GitHub.
     project_id = yt.resolve_project_id(project_key)
-    created = yt.create_issue(project_id, summary, description)
+    created = yt.create_issue(project_id, summary, description, build_custom_fields())
     youtrack_id = created["idReadable"]
     if tag_name:
         yt.apply_tag(youtrack_id, tag_name)
