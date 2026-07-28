@@ -1,0 +1,50 @@
+name: Backfill GitHub Issues to YouTrack
+
+# One-shot, manually triggered port of pre-existing GitHub issues into YouTrack.
+# Reuses the same secrets/variables and logic as the live sync. Idempotent:
+# issues already carrying a youtrack-id marker comment are skipped.
+#
+# Run from the Actions tab (or `gh workflow run`). Leave dry_run=true first to
+# preview the list, then re-run with dry_run=false to apply.
+
+on:
+  workflow_dispatch:
+    inputs:
+      state:
+        description: "Which issues to port"
+        type: choice
+        default: open
+        options:
+          - open
+          - all
+      dry_run:
+        description: "Preview only (no writes)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  issues: write   # required to post the youtrack-id marker comment back on each issue
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Backfill issues to YouTrack
+        env:
+          YOUTRACK_URL: ${{ secrets.YOUTRACK_URL }}
+          YOUTRACK_TOKEN: ${{ secrets.YOUTRACK_TOKEN }}
+          YOUTRACK_PROJECT: ${{ vars.YOUTRACK_PROJECT }}
+          YOUTRACK_TAG: ${{ vars.YOUTRACK_ADIRO_TAG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BACKFILL_STATE: ${{ inputs.state }}
+          BACKFILL_DRY_RUN: ${{ inputs.dry_run }}
+        run: python scripts/backfill_issues_to_youtrack.py
