@@ -1,19 +1,25 @@
 ---
+description:
+globs:
 alwaysApply: true
 ---
 
-Always parse ontology files for correctness after authoring/modifying them. Write any required python script with tests in order to author/modify/test the ontologies, in the /scripts folder.
+The shared, tool-agnostic conventions for this repo live in **[AGENTS.md](../../AGENTS.md)** — purpose and
+module structure, the docs build & publish pipeline (MkDocs → GitHub Pages), validation & YouTrack-sync CI,
+per-module SemVer versioning (and the RES-27 hold on TBox edits), and the mandatory keep-in-sync rules.
+Follow it. Keep general conventions in `AGENTS.md`, not here, so Claude/Cursor/others share one source of
+truth; this file adds only the **Cursor-specific** rule below.
 
-For scripts, use `uv` to handle dependencies.
+@AGENTS.md
 
-**CRITICAL: After ANY modification to a `.ttl` ontology file, you MUST validate it immediately using:**
+## Ontology validation (Cursor tooling)
+Always parse ontology files for correctness after authoring/modifying them. Write any required Python (with
+tests) under `/scripts`, using `uv` for dependencies.
+
+**CRITICAL: after ANY modification to a `.ttl` file, validate it immediately** (do not rely on editor lints):
 ```bash
-uv run python scripts/validate_ontology.py src/<modified_file.ttl>
+uv run python scripts/validate_ontology.py src/<modified_file>.ttl   # single file
+uv run python scripts/validate_ontology.py                          # all of src/
 ```
-
-Or validate all ontology files in the src/ directory:
-```bash
-uv run python scripts/validate_ontology.py
-```
-
-**Never skip validation** - syntax errors like missing periods, incomplete statements, or malformed RDF will cause parsing failures that must be caught immediately. 
+Never skip validation — missing periods, incomplete statements, or malformed RDF cause parse failures that
+must be caught at once. (Note: TBox `.ttl` edits are on hold pending RES-27 — see `AGENTS.md`.)
