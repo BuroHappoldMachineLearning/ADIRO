@@ -27,7 +27,12 @@ Each module declares three kinds of IRI:
 
 ### Resolvability
 
-The unversioned IRI and every versioned IRI must be **resolvable** — the annotation pipeline pins a specific ontology version and must dereference the exact version it was built against. Today this is served from GitHub Pages (unversioned "latest" `.ttl`; versioned snapshots are being added — [RES-54](https://bhmlrnd.youtrack.cloud/issue/RES-54)). A future migration to `w3id.org` for full content negotiation is tracked in [RES-69](https://bhmlrnd.youtrack.cloud/issue/RES-69).
+Ontology files must be **resolvable** — the annotation pipeline pins a specific ontology version and must dereference the exact version it was built against. Served from GitHub Pages:
+
+- **Latest:** `…/ADIRO/<module>.ttl` (e.g. `…/ADIRO/aec_drawing_metadata.ttl`).
+- **Versioned:** `…/ADIRO/<module>/<semver>/<module>.ttl` (e.g. `…/ADIRO/aec_drawing_metadata/2.0.0/aec_drawing_metadata.ttl`) — published from `versions/` by the deploy workflow. Consumers that pin a version (e.g. the pipeline) reference this URL.
+
+Note the declared `owl:versionIRI` (`…/<module>/<semver>`, without a filename) is an **identifier**, not necessarily dereferenceable on Pages — Pages can't content-negotiate, so you fetch the explicit `.ttl` above. A future `w3id.org` migration ([RES-69](https://bhmlrnd.youtrack.cloud/issue/RES-69)) would make the bare IRI content-negotiate.
 
 ## Bump rules (SemVer, per module)
 
@@ -73,7 +78,7 @@ A release affects **only the changed module(s)**. To cut a release for a module:
 3. **Move** that module's `[Unreleased]` changelog entries under the new version heading.
 4. **Tag** `<module>-v<semver>` — e.g. `aec_common_symbols-v1.2.0` — and create a **GitHub Release**.
 5. **Snapshot** (automatic): `.github/workflows/backup-version.yml` copies the module to `versions/<module>/<semver>/`.
-6. **Publish** (automatic): the Pages deploy serves both the unversioned latest (`…/<module>`) and the versioned snapshot (`…/<module>/<semver>`) as resolvable URLs.
+6. **Publish** (automatic): the Pages deploy serves the unversioned latest `…/<module>.ttl` and the versioned snapshot `…/<module>/<semver>/<module>.ttl` as resolvable URLs.
 
 If several modules changed together, cut **one tag per changed module** — each is an independent release.
 

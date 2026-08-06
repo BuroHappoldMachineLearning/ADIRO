@@ -114,7 +114,23 @@ jobs:
       
       - name: Build MkDocs (Material) site
         run: uv run --python 3.12 --no-project mkdocs build
-      
+
+      - name: Publish versioned ontology snapshots into the site
+        run: |
+          # Serve each versions/<module>/<semver>/<module>.ttl at
+          # <site>/<module>/<semver>/<module>.ttl so versioned IRIs resolve
+          # (e.g. .../ADIRO/aec_drawing_metadata/2.0.0/aec_drawing_metadata.ttl).
+          if [ -d versions ]; then
+            find versions -name '*.ttl' -print0 | while IFS= read -r -d '' f; do
+              dest="site/${f#versions/}"
+              mkdir -p "$(dirname "$dest")"
+              cp "$f" "$dest"
+              echo "published $dest"
+            done
+          else
+            echo "No versions/ directory yet; nothing to publish."
+          fi
+
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
