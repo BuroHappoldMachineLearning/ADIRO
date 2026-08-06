@@ -35,9 +35,9 @@ The bump for a module is decided by classifying its change against **that module
 
 | Bump | When | Examples |
 |---|---|---|
-| **MAJOR** (`x`.0.0) | Any **breaking** change | Term removed/renamed, namespace moved, type changed, a restriction tightened so existing data becomes invalid, **deprecation** (see below) |
-| **MINOR** (0.`x`.0) | **Non-breaking** additions | New class/property/individual, a loosened restriction |
-| **PATCH** (0.0.`x`) | Annotation-only | Labels, comments, `rdfs:seeAlso`, metadata |
+| **MAJOR** (`x.0.0`) | Any **breaking** change | Term removed/renamed, namespace moved, type changed, a restriction tightened so existing data becomes invalid, **deprecation** (see below) |
+| **MINOR** (`0.x.0`) | **Non-breaking** additions | New class/property/individual, a loosened restriction |
+| **PATCH** (`0.0.x`) | Annotation-only | Labels, comments, `rdfs:seeAlso`, metadata |
 
 *Potentially-breaking* changes (domain/range/superclass changes) default to **MAJOR** unless review confirms they're safe.
 

@@ -92,6 +92,10 @@ def find_version_inconsistencies(graph) -> list[str]:
 
     for ontology in graph.subjects(RDF.type, OWL.Ontology):
         if isinstance(ontology, BNode):
+            errors.append(
+                "anonymous (blank node) owl:Ontology declaration - the ontology must "
+                "have a named IRI carrying owl:versionInfo / owl:versionIRI"
+            )
             continue
 
         version_infos = list(graph.objects(ontology, OWL.versionInfo))
