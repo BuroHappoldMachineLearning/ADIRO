@@ -13,9 +13,11 @@ description: >-
 In brief: a Material-for-MkDocs site is generated from `src/*.ttl` by `scripts/generate_docs.py` (pyLODE HTML
 + `ttl2md` Markdown) and deployed to GitHub Pages by `.github/workflows/generate-deploy-docs.yml`. PRs run
 `validate-ontology.yml` (`scripts/validate_ontology.py`); GitHub issues mirror to YouTrack RES via
-`sync-issues-to-youtrack.yml`. Versioning is per-module SemVer — **TBox `.ttl` edits are on hold pending
-RES-27** (KB https://bhmlrnd.youtrack.cloud/articles/DATA-A-10). Full workflow names, commands, gotchas, and
-the mandatory keep-in-sync rules are in `AGENTS.md`.
+`sync-issues-to-youtrack.yml`. Versioning is per-module SemVer (scheme in `docs/contribute/versioning.md`,
+RES-27) — additive TBox `.ttl` edits go under the module's `changelogs/<module>.md` `[Unreleased]` section,
+with `owl:versionInfo`/`owl:versionIRI` bumped only at a release cut (KB
+https://bhmlrnd.youtrack.cloud/articles/DATA-A-10). Full workflow names, commands, gotchas, and the mandatory
+keep-in-sync rules are in `AGENTS.md`.
 
 **Keep in sync:** if you change CI/docs/versioning, update `AGENTS.md` in the same PR. CI wins on conflicts.
 

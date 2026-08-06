@@ -1,50 +1,86 @@
 # Versioning
 
-The ontologies use OWL 2 versioning best practices with unversioned and versioned IRIs:
+ADIRO is a suite of **four independently-versioned OWL modules** (dependency order):
 
-- **Unversioned ontology IRI**: `https://burohappoldmachinelearning.github.io/ADIRO/aec-core` (always resolves to current version)
-- **Versioned ontology IRI**: `https://burohappoldmachinelearning.github.io/ADIRO/aec-core/1.0.0` (specific version)
-- **Namespace prefix**: `https://burohappoldmachinelearning.github.io/ADIRO/aec-core#` (unversioned, always current)
+1. `aec_drawing_metadata`
+2. `aec_common_symbols`
+3. `aec_domain_common`
+4. `aec_facade_domain`
 
-Each ontology declares both an unversioned IRI and a versioned IRI using `owl:versionIRI` and `owl:versionInfo`. The filenames do not include version numbers (e.g., `aec_core.ttl` rather than `aec_core_v01.ttl`).
+Each module carries **its own [SemVer](https://semver.org/) version** and is released on its own cadence — there is **no single umbrella version**. (Architecture & rationale: KB [DATA-A-10](https://bhmlrnd.youtrack.cloud/articles/DATA-A-10); plan & decisions: [RES-27](https://bhmlrnd.youtrack.cloud/issue/RES-27).)
 
-## Version Backups
+Current versions: `aec_drawing_metadata` **2.0.0**; the other three **1.0.0**. These are per-module starting points, not a suite version.
 
-When a new version is released (via a tagged release in GitHub), the current version of all ontology files is automatically backed up to the `versions/` folder. The backup process is triggered automatically by GitHub Actions when a release tag is created or published.
+## IRIs
 
-The backup structure is:
+Each module declares three kinds of IRI:
 
-```
-versions/
-  1.0.0/
-    aec_core.ttl
-    aec_drawing_metadata.ttl
-    aec_common_symbols.ttl
-    aec_domain_common.ttl
-    aec_facade_domain.ttl
-  1.1.0/
-    ...
-```
+| Kind | Example | Stability |
+|---|---|---|
+| **Unversioned ontology IRI** ("latest") | `…/ADIRO/aec_drawing_metadata` | Always resolves to the current release |
+| **Versioned IRI** (`owl:versionIRI`) | `…/ADIRO/aec_drawing_metadata/2.0.0` | Immutable — a specific release |
+| **Term namespace** (`#`) | `…/ADIRO/aec_drawing_metadata#Titleblock` | **Unversioned / stable** — what consumers depend on |
 
-This backup process preserves the complete state of all ontology files at each release point, allowing for:
+- The `owl:versionIRI` **must** equal the unversioned ontology IRI + `/` + `owl:versionInfo` (enforced in CI — see [Validation](#validation)).
+- **Filenames stay unversioned** (`aec_drawing_metadata.ttl`, never `aec_drawing_metadata_v2.ttl`). Versioned copies live under `versions/` (see [Releases](#releases)).
+- **Term IRIs never carry a version** — term stability across releases is exactly what downstream consumers (e.g. the ml-drawing-data-pipeline, CVAT labels) rely on.
 
-- Historical reference and comparison
-- Rollback capabilities if needed
-- Clear versioning documentation
+### Resolvability
 
-## Creating a New Version
+The unversioned IRI and every versioned IRI must be **resolvable** — the annotation pipeline pins a specific ontology version and must dereference the exact version it was built against. Today this is served from GitHub Pages (unversioned "latest" `.ttl`; versioned snapshots are being added — [RES-54](https://bhmlrnd.youtrack.cloud/issue/RES-54)). A future migration to `w3id.org` for full content negotiation is tracked in [RES-69](https://bhmlrnd.youtrack.cloud/issue/RES-69).
 
-To create a new version:
+## Bump rules (SemVer, per module)
 
-1. Make your changes to the ontology files in `src/`
-2. Update the version number in the ontology IRI (e.g., `1.0.0` → `1.1.0`) and update `owl:versionIRI` and `owl:versionInfo` in all ontology files
-3. Commit and push your changes to `main` or `master`
-4. The `deploy-docs` workflow will automatically:
-   - Validate all ontology files
-   - Generate documentation
-   - Deploy to GitHub Pages
-5. Create a new release in GitHub with a tag matching the version (e.g., `v1.1.0` or `1.1.0`)
-6. The `backup-version` workflow will automatically:
-   - Extract the version from the release tag
-   - Copy all `.ttl` files from `src/` to `versions/<version>/`
-   - Commit and push the backup to the repository
+The bump for a module is decided by classifying its change against **that module's last released version**, per the [compatibility-diff spec](https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/docs/governance/compatibility-diff-algorithm-spec.md):
+
+| Bump | When | Examples |
+|---|---|---|
+| **MAJOR** (`x`.0.0) | Any **breaking** change | Term removed/renamed, namespace moved, type changed, a restriction tightened so existing data becomes invalid, **deprecation** (see below) |
+| **MINOR** (0.`x`.0) | **Non-breaking** additions | New class/property/individual, a loosened restriction |
+| **PATCH** (0.0.`x`) | Annotation-only | Labels, comments, `rdfs:seeAlso`, metadata |
+
+*Potentially-breaking* changes (domain/range/superclass changes) default to **MAJOR** unless review confirms they're safe.
+
+## Imports
+
+- **Internal imports default to "latest"** — modules import each other via the **unversioned** IRI (`owl:imports <…/aec_drawing_metadata>`). The working norm is to keep every module functioning against every other module's *latest*.
+- **Version-pinned imports are allowed only for WIP / specific cases**, and each pinned import **must be documented and justified**: an `rdfs:comment` on the `owl:imports` axiom **plus** a note in the module's changelog. Treat a pin as **temporary** unless the justification is permanent.
+- **External-ontology imports** (geometry, DaNO, …) follow a separate strategy — SLME extraction + version-pinning + a reasoner gate. See KB [RES-A-12](https://bhmlrnd.youtrack.cloud/articles/RES-A-12) / [RES-68](https://bhmlrnd.youtrack.cloud/issue/RES-68).
+
+### Root change that could break dependents
+
+Because dependents import a root (e.g. `aec_drawing_metadata`) at **latest**, a **MAJOR** bump on a root can break them at latest. Rule: after any module bump, CI runs the reasoner across the **whole suite at latest** (validation track [RES-36](https://bhmlrnd.youtrack.cloud/issue/RES-36)); any dependent that breaks gets **its own follow-up release** (bumped per its own compat classification). As a temporary WIP measure, a dependent may pin the prior root version (the documented+justified exception above) until updated.
+
+## Deprecation — never delete
+
+Never delete or re-use a term IRI. To remove a term: mark it `owl:deprecated true`, add a history note, and provide a replacement mapping (`owl:equivalentClass` / `rdfs:subClassOf`) per the compatibility-diff spec. Deprecation counts as a **MAJOR** change. This keeps consumers' data valid across releases.
+
+## Changelogs
+
+Every change is recorded in **Keep-a-Changelog** style:
+
+- **Per-module changelog** — `changelogs/<module>.md` is the **source of truth** for that module (so a leaf ontology stays independently extractable with its own history). Day-to-day edits accumulate under an **`[Unreleased]`** heading.
+- **Top-level rollup** — `CHANGELOG.md` links the modules and their latest entries.
+
+`owl:versionInfo` / `owl:versionIRI` are **only** bumped at a release cut (below) — *not* on every edit. In-flight edits live under `[Unreleased]`.
+
+## Releases
+
+A release affects **only the changed module(s)**. To cut a release for a module:
+
+1. **Determine the bump** by classifying the change vs the module's last released version (compat-diff spec) → MAJOR / MINOR / PATCH.
+2. **Bump** `owl:versionInfo` **and** `owl:versionIRI` in that module's `.ttl` (CI enforces tag == `versionInfo` == `versionIRI` tail).
+3. **Move** that module's `[Unreleased]` changelog entries under the new version heading.
+4. **Tag** `<module>-v<semver>` — e.g. `aec_common_symbols-v1.2.0` — and create a **GitHub Release**.
+5. **Snapshot** (automatic): `.github/workflows/backup-version.yml` copies the module to `versions/<module>/<semver>/`.
+6. **Publish** (automatic): the Pages deploy serves both the unversioned latest (`…/<module>`) and the versioned snapshot (`…/<module>/<semver>`) as resolvable URLs.
+
+If several modules changed together, cut **one tag per changed module** — each is an independent release.
+
+> Tag convention: `<module>-v<semver>`. Module names use `_` and never contain `-v`, so the tag parses unambiguously into module + version, and maps 1:1 to the versionIRI path `…/<module>/<semver>`.
+
+## Validation
+
+Every PR runs `scripts/validate_ontology.py` (via `validate-ontology.yml`), which checks TTL parsing, circular subclass hierarchies, an `owl:Ontology` declaration, **and per-module version consistency** ([RES-66](https://bhmlrnd.youtrack.cloud/issue/RES-66)): each module must carry exactly one `owl:versionInfo` and one `owl:versionIRI`, and the versionIRI must equal the unversioned ontology IRI + `/` + the versionInfo.
+
+Deeper ontology QA/QC — OWL reasoner consistency, unsatisfiable-class detection, ROBOT `report` — is a separate standing validation track ([RES-36](https://bhmlrnd.youtrack.cloud/issue/RES-36)) and is what backs the root-change reasoner gate above.
