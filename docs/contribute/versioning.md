@@ -36,8 +36,8 @@ The bump for a module is decided by classifying its change against **that module
 | Bump | When | Examples |
 |---|---|---|
 | **MAJOR** (`x.0.0`) | Any **breaking** change | Term removed/renamed, namespace moved, type changed, a restriction tightened so existing data becomes invalid, **deprecation** (see below) |
-| **MINOR** (`0.x.0`) | **Non-breaking** additions | New class/property/individual, a loosened restriction |
-| **PATCH** (`0.0.x`) | Annotation-only | Labels, comments, `rdfs:seeAlso`, metadata |
+| **MINOR** (`x.y.0`) | **Non-breaking** additions | New class/property/individual, a loosened restriction |
+| **PATCH** (`x.y.z`) | Annotation-only | Labels, comments, `rdfs:seeAlso`, metadata |
 
 *Potentially-breaking* changes (domain/range/superclass changes) default to **MAJOR** unless review confirms they're safe.
 
@@ -49,7 +49,7 @@ The bump for a module is decided by classifying its change against **that module
 
 ### Root change that could break dependents
 
-Because dependents import a root (e.g. `aec_drawing_metadata`) at **latest**, a **MAJOR** bump on a root can break them at latest. Rule: after any module bump, CI runs the reasoner across the **whole suite at latest** (validation track [RES-36](https://bhmlrnd.youtrack.cloud/issue/RES-36)); any dependent that breaks gets **its own follow-up release** (bumped per its own compat classification). As a temporary WIP measure, a dependent may pin the prior root version (the documented+justified exception above) until updated.
+Because dependents import a root (e.g. `aec_drawing_metadata`) at **latest**, a **MAJOR** bump on a root can break them at latest. Rule: after any module bump, the OWL reasoner should be run across the **whole suite at latest** to catch this — the intended release gate, to be **automated in CI** via the validation track ([RES-36](https://bhmlrnd.youtrack.cloud/issue/RES-36); not yet implemented — today's PR CI only runs `scripts/validate_ontology.py`). Any dependent that breaks gets **its own follow-up release** (bumped per its own compat classification). As a temporary WIP measure, a dependent may pin the prior root version (the documented+justified exception above) until updated.
 
 ## Deprecation — never delete
 
