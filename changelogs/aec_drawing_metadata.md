@@ -9,5 +9,5 @@ _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumpe
 
 ## [2.0.0]
 
-Current in-repo baseline (not yet cut as a GitHub release). Includes the RES-37 fix aligning
+Current in-repo baseline (not yet cut as a GitHub release). Includes the [RES-37](https://bhmlrnd.youtrack.cloud/issue/RES-37) fix aligning
 `owl:versionIRI` with `owl:versionInfo`. No earlier released version to diff against.

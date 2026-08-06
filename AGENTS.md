@@ -68,15 +68,15 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
 `owl:versionInfo` (currently `aec_drawing_metadata` 2.0.0; the other three 1.0.0). The full scheme — IRI
 strategy, bump rules (compatibility-diff spec), imports policy, deprecation, the tag-driven release flow, and
 changelogs — is in **`docs/contribute/versioning.md`**; rationale in KB
-**https://bhmlrnd.youtrack.cloud/articles/DATA-A-10**; plan/decisions in **RES-27**
-(https://bhmlrnd.youtrack.cloud/issue/RES-27).
+[DATA-A-10](https://bhmlrnd.youtrack.cloud/articles/DATA-A-10); plan/decisions in
+[RES-27](https://bhmlrnd.youtrack.cloud/issue/RES-27).
 - **Releases are per-module:** tag `<module>-v<semver>` (e.g. `aec_common_symbols-v1.2.0`) →
   `.github/workflows/backup-version.yml` snapshots to `versions/`. *(That workflow currently snapshots the whole
-  `src/` set under one tag; per-module rework is tracked in RES-54.)*
+  `src/` set under one tag; per-module rework is tracked in [RES-54](https://bhmlrnd.youtrack.cloud/issue/RES-54).)*
 - **Changelogs:** per-module `changelogs/<module>.md` (source of truth, `[Unreleased]` section) + a top-level
   `CHANGELOG.md` rollup. Bump `owl:versionInfo` / `owl:versionIRI` **only at a release cut**, not per edit.
-- **CI enforces per-module version consistency** (`scripts/validate_ontology.py`, RES-66).
-- **TBox `.ttl` edits:** the scheme is agreed (RES-27) and the repo now has the Phase-0 docs + version-consistency
+- **CI enforces per-module version consistency** (`scripts/validate_ontology.py`, [RES-66](https://bhmlrnd.youtrack.cloud/issue/RES-66)).
+- **TBox `.ttl` edits:** the scheme is agreed ([RES-27](https://bhmlrnd.youtrack.cloud/issue/RES-27)) and the repo now has the Phase-0 docs + version-consistency
   CI, so **additive TBox edits may resume** — record them under the module's `[Unreleased]` changelog; the next
   release cut performs the bump. *(Supersedes the earlier "hold pending ratification".)*
 
