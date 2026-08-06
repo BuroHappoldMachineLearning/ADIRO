@@ -2,58 +2,95 @@ name: Backup Ontology Version
 
 on:
   release:
-    types: [published, created]  # Trigger when a release is created or published
+    types: [published]  # Only when a release is published (a draft's "created" event must not snapshot)
 
 permissions:
   contents: write
 
+concurrency:
+  # One snapshot at a time per release tag, to avoid a commit/push race if the
+  # event fires more than once.
+  group: backup-version-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
+
 jobs:
   backup-version:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Checkout repository
+      # A `release` event checks out the tag ref (detached HEAD), which can't be
+      # committed/pushed. Check out the default branch to push to, and read the
+      # tagged ontology content explicitly via `git show <tag>:...` so the
+      # snapshot is the exact tagged file even if the branch has moved on.
+      - name: Checkout default branch
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch all history
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0        # full history
+          fetch-tags: true      # ensure the release tag is available for `git show`
           token: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Extract version from tag
-        id: version
+
+      - name: Parse module + version from tag
+        id: parse
         run: |
-          # Remove 'v' prefix if present (e.g., v1.0.0 -> 1.0.0)
-          VERSION="${GITHUB_REF#refs/tags/}"
-          VERSION="${VERSION#v}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Backing up version: $VERSION"
-      
-      - name: Create version directory
+          TAG="${{ github.event.release.tag_name }}"
+          echo "Release tag: $TAG"
+          # Per-module tag convention: <module>-v<semver>, e.g. aec_common_symbols-v1.2.0
+          # (module names use '_' and never contain '-v', so this parses unambiguously).
+          if [[ ! "$TAG" =~ ^([a-z0-9_]+)-v([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            echo "::error::Tag '$TAG' does not match '<module>-v<semver>' (e.g. aec_common_symbols-v1.2.0)."
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "module=${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
+          echo "version=${BASH_REMATCH[2]}" >> "$GITHUB_OUTPUT"
+          echo "Module: ${BASH_REMATCH[1]}  Version: ${BASH_REMATCH[2]}"
+
+      - name: Verify tagged module source and tag/version match
         run: |
-          mkdir -p "versions/${{ steps.version.outputs.version }}"
-      
-      - name: Copy ontology files to version directory
+          TAG="${{ steps.parse.outputs.tag }}"
+          MODULE="${{ steps.parse.outputs.module }}"
+          VERSION="${{ steps.parse.outputs.version }}"
+          if ! git cat-file -e "refs/tags/${TAG}:src/${MODULE}.ttl" 2>/dev/null; then
+            echo "::error::src/${MODULE}.ttl does not exist at tag ${TAG}."
+            exit 1
+          fi
+          # The tag version must match the module's declared owl:versionInfo at the tag.
+          if ! git show "refs/tags/${TAG}:src/${MODULE}.ttl" | grep -q "owl:versionInfo \"${VERSION}\""; then
+            echo "::error::src/${MODULE}.ttl at tag ${TAG} does not declare owl:versionInfo \"${VERSION}\" — bump the module before tagging."
+            exit 1
+          fi
+
+      - name: Snapshot tagged module to versions/<module>/<semver>/
         run: |
-          # Copy all .ttl files from src/ to versions/<version>/
-          cp src/*.ttl "versions/${{ steps.version.outputs.version }}/"
-          echo "Copied ontology files to versions/${{ steps.version.outputs.version }}/"
-          ls -la "versions/${{ steps.version.outputs.version }}/"
-      
+          TAG="${{ steps.parse.outputs.tag }}"
+          MODULE="${{ steps.parse.outputs.module }}"
+          VERSION="${{ steps.parse.outputs.version }}"
+          DEST="versions/${MODULE}/${VERSION}"
+          mkdir -p "$DEST"
+          git show "refs/tags/${TAG}:src/${MODULE}.ttl" > "$DEST/${MODULE}.ttl"
+          echo "Snapshotted src/${MODULE}.ttl @ ${TAG} -> $DEST/${MODULE}.ttl"
+          ls -la "$DEST"
+
       - name: Setup Git user
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-      
-      - name: Commit and push version backup
+
+      - name: Commit and push snapshot
         run: |
-          git add "versions/${{ steps.version.outputs.version }}/"
+          MODULE="${{ steps.parse.outputs.module }}"
+          VERSION="${{ steps.parse.outputs.version }}"
+          git add "versions/${MODULE}/${VERSION}/"
           if git diff --staged --quiet; then
-            echo "No changes to commit (files may already exist)"
+            echo "No changes to commit (snapshot already exists)."
           else
-            git commit -m "chore: Backup ontology version ${{ steps.version.outputs.version }} [skip actions]"
+            # No [skip actions]: this push should trigger generate-deploy-docs so the
+            # new versioned snapshot is published to GitHub Pages and becomes resolvable.
+            git commit -m "chore: snapshot ${MODULE} ${VERSION}"
             git push
           fi
-      
+
       - name: Summary
         run: |
-          echo "✅ Version ${{ steps.version.outputs.version }} backed up successfully"
-          echo "Files are available in: versions/${{ steps.version.outputs.version }}/"
+          echo "Backed up ${{ steps.parse.outputs.module }} ${{ steps.parse.outputs.version }} to versions/${{ steps.parse.outputs.module }}/${{ steps.parse.outputs.version }}/"

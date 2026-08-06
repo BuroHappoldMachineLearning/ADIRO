@@ -71,8 +71,8 @@ changelogs — is in **`docs/contribute/versioning.md`**; rationale in KB
 [DATA-A-10](https://bhmlrnd.youtrack.cloud/articles/DATA-A-10); plan/decisions in
 [RES-27](https://bhmlrnd.youtrack.cloud/issue/RES-27).
 - **Releases are per-module:** tag `<module>-v<semver>` (e.g. `aec_common_symbols-v1.2.0`) →
-  `.github/workflows/backup-version.yml` snapshots to `versions/`. *(That workflow currently snapshots the whole
-  `src/` set under one tag; per-module rework is tracked in [RES-54](https://bhmlrnd.youtrack.cloud/issue/RES-54).)*
+  `.github/workflows/backup-version.yml` snapshots that module to `versions/<module>/<semver>/`, and the deploy
+  workflow serves it at `…/ADIRO/<module>/<semver>/<module>.ttl` (alongside the latest `…/ADIRO/<module>.ttl`).
 - **Changelogs:** per-module `changelogs/<module>.md` (source of truth, `[Unreleased]` section) + a top-level
   `CHANGELOG.md` rollup. Bump `owl:versionInfo` / `owl:versionIRI` **only at a release cut**, not per edit.
 - **CI enforces per-module version consistency** (`scripts/validate_ontology.py`, [RES-66](https://bhmlrnd.youtrack.cloud/issue/RES-66)).
