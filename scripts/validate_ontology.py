@@ -73,6 +73,67 @@ def find_circular_references(graph):
     return cycles
 
 
+def find_version_inconsistencies(graph) -> list[str]:
+    """
+    Check per-module version metadata consistency (RES-66).
+
+    For each owl:Ontology declared in the file:
+    - it must carry exactly one owl:versionInfo and one owl:versionIRI;
+    - the versionIRI must end with the versionInfo
+      (e.g. ".../aec_drawing_metadata/2.0.0" <-> "2.0.0");
+    - the versionIRI must equal the (unversioned) ontology IRI + "/" + versionInfo.
+
+    Versions are per-module and independent, so this deliberately does NOT
+    require different modules to share a version.
+
+    Returns a list of error strings (empty if consistent).
+    """
+    errors = []
+
+    for ontology in graph.subjects(RDF.type, OWL.Ontology):
+        if isinstance(ontology, BNode):
+            errors.append(
+                "anonymous (blank node) owl:Ontology declaration - the ontology must "
+                "have a named IRI carrying owl:versionInfo / owl:versionIRI"
+            )
+            continue
+
+        version_infos = list(graph.objects(ontology, OWL.versionInfo))
+        version_iris = list(graph.objects(ontology, OWL.versionIRI))
+
+        if not version_infos:
+            errors.append(f"{ontology}: missing owl:versionInfo")
+        elif len(version_infos) > 1:
+            errors.append(f"{ontology}: multiple owl:versionInfo values")
+
+        if not version_iris:
+            errors.append(f"{ontology}: missing owl:versionIRI")
+        elif len(version_iris) > 1:
+            errors.append(f"{ontology}: multiple owl:versionIRI values")
+
+        if len(version_infos) != 1 or len(version_iris) != 1:
+            continue
+
+        version_info = str(version_infos[0]).strip()
+        version_iri = str(version_iris[0]).strip()
+        iri_tail = version_iri.rstrip("/").rsplit("/", 1)[-1]
+
+        if iri_tail != version_info:
+            errors.append(
+                f'{ontology}: owl:versionInfo "{version_info}" does not match the '
+                f'owl:versionIRI tail "{iri_tail}" ({version_iri})'
+            )
+
+        expected_iri = f"{str(ontology).rstrip('/')}/{version_info}"
+        if version_iri != expected_iri:
+            errors.append(
+                f'{ontology}: owl:versionIRI "{version_iri}" should be the unversioned '
+                f'ontology IRI + "/" + version, i.e. "{expected_iri}"'
+            )
+
+    return errors
+
+
 def validate_ontology(ttl_file: Path) -> tuple[bool, list[str]]:
     """
     Validate an ontology file.
@@ -99,7 +160,10 @@ def validate_ontology(ttl_file: Path) -> tuple[bool, list[str]]:
         ontologies = list(graph.subjects(RDF.type, OWL.Ontology))
         if not ontologies:
             errors.append("No ontology declaration found")
-        
+
+        # Check per-module version metadata consistency (RES-66)
+        errors.extend(find_version_inconsistencies(graph))
+
         return len(errors) == 0, errors
         
     except Exception as e:

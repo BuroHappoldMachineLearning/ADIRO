@@ -51,7 +51,8 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
 
 ## Validation & YouTrack-sync CI
 - **`.github/workflows/validate-ontology.yml`** — on PRs to any branch; runs `scripts/validate_ontology.py`
-  over `src/*.ttl` (parse check, circular-subclass detection, ensures an `owl:Ontology` declaration). The
+  over `src/*.ttl` (parse check, circular-subclass detection, ensures an `owl:Ontology` declaration, and
+  per-module version consistency — `owl:versionInfo` == `owl:versionIRI` tail == ontology IRI + version). The
   same validate step gates the deploy workflow. **After any `.ttl` edit, validate immediately:**
   `uv run python scripts/validate_ontology.py src/<file>.ttl` (or with no arg to validate all of `src/`).
   Never skip it — a missing period or malformed RDF fails parsing and must be caught at once.
@@ -63,20 +64,29 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
   `vars.*` from repo settings.
 
 ## Versioning
-**Per-module SemVer.** Each `src/*.ttl` carries its own `owl:versionIRI` (versioned IRI) and `owl:versionInfo`
-string, versioned independently (currently `aec_drawing_metadata` 2.0.0; the other three 1.0.0). On a GitHub
-**release**, `.github/workflows/backup-version.yml` snapshots `src/*.ttl` into `versions/<tag>/`.
-- Architecture / rationale: KB **https://bhmlrnd.youtrack.cloud/articles/DATA-A-10**.
-- Status: issue **RES-27** (https://bhmlrnd.youtrack.cloud/issue/RES-27) — **the versioning scheme is on
-  hold pending ratification: do NOT make TBox `.ttl` edits until it is ratified.**
+**Per-module SemVer** — each `src/*.ttl` is versioned independently via its own `owl:versionIRI` +
+`owl:versionInfo` (currently `aec_drawing_metadata` 2.0.0; the other three 1.0.0). The full scheme — IRI
+strategy, bump rules (compatibility-diff spec), imports policy, deprecation, the tag-driven release flow, and
+changelogs — is in **`docs/contribute/versioning.md`**; rationale in KB
+[DATA-A-10](https://bhmlrnd.youtrack.cloud/articles/DATA-A-10); plan/decisions in
+[RES-27](https://bhmlrnd.youtrack.cloud/issue/RES-27).
+- **Releases are per-module:** tag `<module>-v<semver>` (e.g. `aec_common_symbols-v1.2.0`) →
+  `.github/workflows/backup-version.yml` snapshots to `versions/`. *(That workflow currently snapshots the whole
+  `src/` set under one tag; per-module rework is tracked in [RES-54](https://bhmlrnd.youtrack.cloud/issue/RES-54).)*
+- **Changelogs:** per-module `changelogs/<module>.md` (source of truth, `[Unreleased]` section) + a top-level
+  `CHANGELOG.md` rollup. Bump `owl:versionInfo` / `owl:versionIRI` **only at a release cut**, not per edit.
+- **CI enforces per-module version consistency** (`scripts/validate_ontology.py`, [RES-66](https://bhmlrnd.youtrack.cloud/issue/RES-66)).
+- **TBox `.ttl` edits:** the scheme is agreed ([RES-27](https://bhmlrnd.youtrack.cloud/issue/RES-27)) and the repo now has the Phase-0 docs + version-consistency
+  CI, so **additive TBox edits may resume** — record them under the module's `[Unreleased]` changelog; the next
+  release cut performs the bump. *(Supersedes the earlier "hold pending ratification".)*
 
 ## Keep in sync (mandatory)
-- **Ontology ↔ docs.** The published docs are generated from `src/*.ttl`. Whenever a `.ttl` changes (once the
-  TBox hold above is lifted), regenerate the docs in the same change: `uv run python scripts/generate_docs.py`,
+- **Ontology ↔ docs.** The published docs are generated from `src/*.ttl`. Whenever a `.ttl` changes, regenerate
+  the docs in the same change: `uv run python scripts/generate_docs.py`,
   and let `generate-deploy-docs.yml` publish. Do not hand-edit generated pages in `docs/` — they are overwritten.
-- **Versioning.** Any change to a module's semantics must be reflected in its `owl:versionIRI` /
-  `owl:versionInfo` per the scheme in DATA-A-10 (https://bhmlrnd.youtrack.cloud/articles/DATA-A-10) —
-  currently gated by the RES-27 hold.
+- **Versioning.** Record any change to a module's semantics under that module's `changelogs/<module>.md`
+  `[Unreleased]` section; bump its `owl:versionIRI` / `owl:versionInfo` **only at a release cut** (tag
+  `<module>-v<semver>`), per `docs/contribute/versioning.md`.
 - **Downstream label consumers (CVAT).** The metadata module defines the `isCVATProperty` annotation, and
   domain modules mark labellable classes with it, so the ontology **drives CVAT annotation labels**. Changes
   to labellable classes or `isCVATProperty` usage affect those consumers — coordinate via DATA-A-9
