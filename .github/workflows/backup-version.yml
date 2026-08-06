@@ -2,10 +2,16 @@ name: Backup Ontology Version
 
 on:
   release:
-    types: [published, created]  # Trigger when a per-module release is created or published
+    types: [published]  # Only when a release is published (a draft's "created" event must not snapshot)
 
 permissions:
   contents: write
+
+concurrency:
+  # One snapshot at a time per release tag, to avoid a commit/push race if the
+  # event fires more than once.
+  group: backup-version-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
 
 jobs:
   backup-version:
@@ -27,7 +33,7 @@ jobs:
       - name: Parse module + version from tag
         id: parse
         run: |
-          TAG="${GITHUB_REF#refs/tags/}"
+          TAG="${{ github.event.release.tag_name }}"
           echo "Release tag: $TAG"
           # Per-module tag convention: <module>-v<semver>, e.g. aec_common_symbols-v1.2.0
           # (module names use '_' and never contain '-v', so this parses unambiguously).
