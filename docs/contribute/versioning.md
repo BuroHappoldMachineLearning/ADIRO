@@ -17,7 +17,7 @@ Each module declares three kinds of IRI:
 
 | Kind | Example | Stability |
 |---|---|---|
-| **Unversioned ontology IRI** ("latest") | `…/ADIRO/aec_drawing_metadata` | Always resolves to the current release |
+| **Unversioned ontology IRI** ("latest") | `…/ADIRO/aec_drawing_metadata` | Identifies the current release (fetch as `…/<module>.ttl`) |
 | **Versioned IRI** (`owl:versionIRI`) | `…/ADIRO/aec_drawing_metadata/2.0.0` | Immutable — a specific release |
 | **Term namespace** (`#`) | `…/ADIRO/aec_drawing_metadata#Titleblock` | **Unversioned / stable** — what consumers depend on |
 
@@ -32,7 +32,7 @@ Ontology files must be **resolvable** — the annotation pipeline pins a specifi
 - **Latest:** `…/ADIRO/<module>.ttl` (e.g. `…/ADIRO/aec_drawing_metadata.ttl`).
 - **Versioned:** `…/ADIRO/<module>/<semver>/<module>.ttl` (e.g. `…/ADIRO/aec_drawing_metadata/2.0.0/aec_drawing_metadata.ttl`) — published from `versions/` by the deploy workflow. Consumers that pin a version (e.g. the pipeline) reference this URL.
 
-Note the declared `owl:versionIRI` (`…/<module>/<semver>`, without a filename) is an **identifier**, not necessarily dereferenceable on Pages — Pages can't content-negotiate, so you fetch the explicit `.ttl` above. A future `w3id.org` migration ([RES-69](https://bhmlrnd.youtrack.cloud/issue/RES-69)) would make the bare IRI content-negotiate.
+Note that **both** the unversioned ontology IRI (`…/<module>`) and the `owl:versionIRI` (`…/<module>/<semver>`) are **identifiers**, distinct from the `.ttl` fetch URLs above — neither is necessarily dereferenceable on Pages (which can't content-negotiate), so consumers fetch the explicit `.ttl`. A future `w3id.org` migration ([RES-69](https://bhmlrnd.youtrack.cloud/issue/RES-69)) would make the bare IRIs content-negotiate.
 
 ## Bump rules (SemVer, per module)
 

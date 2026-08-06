@@ -12,10 +12,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      # A `release` event checks out the tag ref (detached HEAD), which can't be
+      # committed/pushed. Check out the default branch to push to, and read the
+      # tagged ontology content explicitly via `git show <tag>:...` so the
+      # snapshot is the exact tagged file even if the branch has moved on.
+      - name: Checkout default branch
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch all history
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0        # full history
+          fetch-tags: true      # ensure the release tag is available for `git show`
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Parse module + version from tag
@@ -29,33 +35,35 @@ jobs:
             echo "::error::Tag '$TAG' does not match '<module>-v<semver>' (e.g. aec_common_symbols-v1.2.0)."
             exit 1
           fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "module=${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
           echo "version=${BASH_REMATCH[2]}" >> "$GITHUB_OUTPUT"
           echo "Module: ${BASH_REMATCH[1]}  Version: ${BASH_REMATCH[2]}"
 
-      - name: Verify module source and tag/version match
+      - name: Verify tagged module source and tag/version match
         run: |
+          TAG="${{ steps.parse.outputs.tag }}"
           MODULE="${{ steps.parse.outputs.module }}"
           VERSION="${{ steps.parse.outputs.version }}"
-          SRC="src/${MODULE}.ttl"
-          if [ ! -f "$SRC" ]; then
-            echo "::error::No such module source: $SRC"
+          if ! git cat-file -e "refs/tags/${TAG}:src/${MODULE}.ttl" 2>/dev/null; then
+            echo "::error::src/${MODULE}.ttl does not exist at tag ${TAG}."
             exit 1
           fi
-          # The tag version must match the module's declared owl:versionInfo.
-          if ! grep -q "owl:versionInfo \"${VERSION}\"" "$SRC"; then
-            echo "::error::$SRC does not declare owl:versionInfo \"${VERSION}\" — bump the module before tagging."
+          # The tag version must match the module's declared owl:versionInfo at the tag.
+          if ! git show "refs/tags/${TAG}:src/${MODULE}.ttl" | grep -q "owl:versionInfo \"${VERSION}\""; then
+            echo "::error::src/${MODULE}.ttl at tag ${TAG} does not declare owl:versionInfo \"${VERSION}\" — bump the module before tagging."
             exit 1
           fi
 
-      - name: Snapshot module to versions/<module>/<semver>/
+      - name: Snapshot tagged module to versions/<module>/<semver>/
         run: |
+          TAG="${{ steps.parse.outputs.tag }}"
           MODULE="${{ steps.parse.outputs.module }}"
           VERSION="${{ steps.parse.outputs.version }}"
           DEST="versions/${MODULE}/${VERSION}"
           mkdir -p "$DEST"
-          cp "src/${MODULE}.ttl" "$DEST/${MODULE}.ttl"
-          echo "Snapshotted src/${MODULE}.ttl -> $DEST/${MODULE}.ttl"
+          git show "refs/tags/${TAG}:src/${MODULE}.ttl" > "$DEST/${MODULE}.ttl"
+          echo "Snapshotted src/${MODULE}.ttl @ ${TAG} -> $DEST/${MODULE}.ttl"
           ls -la "$DEST"
 
       - name: Setup Git user
