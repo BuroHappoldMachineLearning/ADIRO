@@ -157,13 +157,18 @@ def _diff_restrictions(old, new):
 
 
 def compute_deltas(old_syms, new_syms):
-    """Return a list of (delta_type, term) records (exact-IRI matching only)."""
+    """Return a list of (delta_type, term) records (exact-IRI matching only).
+
+    Set differences/intersections are iterated in sorted(IRI) order so the
+    emitted list is deterministic across runs (independent of PYTHONHASHSEED) —
+    keeps CI logs diffable and guards against order-sensitive tests going flaky.
+    """
     deltas = []
-    for iri in old_syms.keys() - new_syms.keys():
+    for iri in sorted(old_syms.keys() - new_syms.keys()):
         deltas.append(("TERM_REMOVED", iri))
-    for iri in new_syms.keys() - old_syms.keys():
+    for iri in sorted(new_syms.keys() - old_syms.keys()):
         deltas.append(("TERM_ADDED", iri))
-    for iri in old_syms.keys() & new_syms.keys():
+    for iri in sorted(old_syms.keys() & new_syms.keys()):
         o, n = old_syms[iri], new_syms[iri]
         if o["kind"] != n["kind"]:
             deltas.append(("TYPE_CHANGED", iri))
