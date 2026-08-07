@@ -107,7 +107,7 @@ Civil engineering discipline.
 - **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common#Concrete`
 - **Sub class of:** [Material](#Material)
 
-### Dead load {#DeadLoad}
+### Dead Load {#DeadLoad}
 
 - **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common#DeadLoad`
 - **Sub class of:** [Structural properties](#StructuralProperties)

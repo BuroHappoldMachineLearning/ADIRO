@@ -196,7 +196,7 @@
 #################################################################
 
 :DeadLoad rdf:type owl:Class ;
-    rdfs:label "Dead load" ;
+    rdfs:label "Dead Load" ;
     metadata:labellableRoot "false"^^xsd:boolean ;
     rdfs:subClassOf :StructuralProperties .
 

@@ -77,19 +77,19 @@
     rdfs:subClassOf :FacadeSystem.
 
 :SemiUnitisedCurtainWall rdf:type owl:Class;
-    rdfs:label "Semi-unitised";
+    rdfs:label "Semi Unitised Curtain Wall";
     rdfs:comment "Semi-unitised curtain wall";
     metadata:labellableRoot "false"^^xsd:boolean;
     rdfs:subClassOf :CurtainWallSystem.
 
 :StickCurtainWall rdf:type owl:Class;
-    rdfs:label "Stick";
+    rdfs:label "Stick Curtain Wall";
     rdfs:comment "Stick curtain wall";
     metadata:labellableRoot "false"^^xsd:boolean;
     rdfs:subClassOf :CurtainWallSystem.
 
 :UnitisedCurtainWall rdf:type owl:Class;
-    rdfs:label "Unitised";
+    rdfs:label "Unitised Curtain Wall";
     rdfs:comment "Unitised curtain wall";
     metadata:labellableRoot "false"^^xsd:boolean;
     rdfs:subClassOf :CurtainWallSystem.
@@ -378,7 +378,7 @@
     rdfs:subClassOf :BackingWall.
 
 :DeadLoadBracket rdf:type owl:Class;
-    rdfs:label "Dead load";
+    rdfs:label "Dead Load Bracket";
     rdfs:comment "Dead load bracket";
     metadata:labellableRoot "false"^^xsd:boolean;
     rdfs:subClassOf :Bracket.

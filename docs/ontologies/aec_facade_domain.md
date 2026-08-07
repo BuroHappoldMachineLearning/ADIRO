@@ -131,7 +131,7 @@ Specific properties of curtain wall frame members
 - **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain#CWSystem`
 - **Sub class of:** [CW frame member properties](#CWFrameMemberProperties)
 
-### Dead load {#DeadLoadBracket}
+### Dead Load Bracket {#DeadLoadBracket}
 
 Dead load bracket
 
@@ -411,7 +411,7 @@ Precast restraint bracket
 - **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain#Sealant`
 - **Sub class of:** [Linear component](#LinearComponent)
 
-### Semi-unitised {#SemiUnitisedCurtainWall}
+### Semi Unitised Curtain Wall {#SemiUnitisedCurtainWall}
 
 Semi-unitised curtain wall
 
@@ -465,7 +465,7 @@ Steel Frame System
 - **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain#Stick`
 - **Sub class of:** [CW system](#CWSystem)
 
-### Stick {#StickCurtainWall}
+### Stick Curtain Wall {#StickCurtainWall}
 
 Stick curtain wall
 
@@ -504,7 +504,7 @@ Triple Glazed Unit
 - **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain#Unitised`
 - **Sub class of:** [CW system](#CWSystem)
 
-### Unitised {#UnitisedCurtainWall}
+### Unitised Curtain Wall {#UnitisedCurtainWall}
 
 Unitised curtain wall
 

@@ -84,6 +84,17 @@ changelogs — is in **`docs/contribute/versioning.md`**; rationale in KB
   CI, so **additive TBox edits may resume** — record them under the module's `[Unreleased]` changelog; the next
   release cut performs the bump. *(Supersedes the earlier "hold pending ratification".)*
 
+## Ontology authoring conventions
+- **`rdfs:label` contains the class name.** Every class's `rdfs:label` **must contain** the class's PascalCase
+  local name split into whitespace-separated words (Title Case): `:UnitisedCurtainWall` → `"Unitised Curtain
+  Wall"`, `:DrawingRevision` → `"Drawing Revision"`. **Acronyms / all-caps tokens stay whole** (`:DGU` →
+  `"DGU"`, not `"D G U"`). The label **may** carry extra human-helpful text beyond that required core (an
+  expansion or qualifier), e.g. `:VCL` → `"VCL (Vapour control layer)"`. Labels must stay **unique** across
+  classes — enforced by ROBOT `report` `duplicate_label` ([RES-36](https://bhmlrnd.youtrack.cloud/issue/RES-36))
+  — because labels drive **CVAT** annotation labels. Object/data **properties** keep their lowerCamelCase name
+  as the label. *(Bringing legacy labels into conformance is tracked in
+  [RES-92](https://bhmlrnd.youtrack.cloud/issue/RES-92); new/edited terms follow this now.)*
+
 ## Keep in sync (mandatory)
 - **Ontology ↔ docs.** The published docs are generated from `src/*.ttl`. Whenever a `.ttl` changes, regenerate
   the docs in the same change: `uv run python scripts/generate_docs.py`,
