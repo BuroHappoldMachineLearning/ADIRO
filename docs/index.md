@@ -16,7 +16,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Ontology Requirements Specification Document: purpose, scope, intended users and uses, and the functional/non-functional requirements.
 
-    [:octicons-arrow-right-24: ORSD](ORSD_v1.md)
+    [:octicons-arrow-right-24: ORSD](ORSD_v1.1.md)
 
 -   :material-clipboard-list-outline: __Use Cases__
 
