@@ -29,19 +29,32 @@ REASONER="${REASONER:-hermit}"
 OUT_DIR="${OUT_DIR:-$REPO_ROOT/.tools/reasoning-out}"
 CATALOG="src/catalog-v001.xml"
 
+# Create the output dir up front so even a setup failure below still yields the
+# reason.rc / reason.out that CI's comment step (and local users) read.
+mkdir -p "$OUT_DIR"
+
+# Record a setup failure (missing java, failed download) as a non-zero reason.rc
+# + a message, then exit per mode — warn: 0 (don't block the PR); enforce: 2.
+fail_setup() {
+  echo "$1" | tee "$OUT_DIR/reason.out" >&2
+  echo "2" > "$OUT_DIR/reason.rc"
+  rm -f "$OUT_DIR/report.tsv"
+  [ "${ENFORCE:-0}" = "1" ] && exit 2
+  exit 0
+}
+
 if ! command -v java >/dev/null 2>&1; then
-  echo "ERROR: 'java' not found on PATH. Install a JDK 11+ (see AGENTS.md), then open a new terminal." >&2
-  exit 2
+  fail_setup "ERROR: 'java' not found on PATH. Install a Java 11+ runtime (JRE or JDK; see AGENTS.md), then open a new terminal."
 fi
 
 if [ ! -f "$ROBOT_JAR" ]; then
   echo "Downloading ROBOT $ROBOT_VERSION -> $ROBOT_JAR"
   mkdir -p "$(dirname "$ROBOT_JAR")"
-  curl -fL -o "$ROBOT_JAR" \
-    "https://github.com/ontodev/robot/releases/download/${ROBOT_VERSION}/robot.jar"
+  if ! curl -fL -o "$ROBOT_JAR" \
+      "https://github.com/ontodev/robot/releases/download/${ROBOT_VERSION}/robot.jar"; then
+    fail_setup "ERROR: could not download ROBOT ${ROBOT_VERSION} (curl missing or network error; see AGENTS.md)."
+  fi
 fi
-
-mkdir -p "$OUT_DIR"
 
 # Discover all modules (new modules are picked up automatically; add a matching
 # catalog entry in src/catalog-v001.xml so their imports resolve offline).

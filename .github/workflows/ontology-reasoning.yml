@@ -15,8 +15,9 @@ name: Ontology reasoning (warn)
 # Java is required only here in CI: OWL DL reasoners + ROBOT are JVM tools with
 # no pure-Python equivalent. Imports resolve OFFLINE via src/catalog-v001.xml.
 #
-# Note: PRs from forks get a read-only token, so the comment step no-ops there;
-# ADIRO PRs are branch-based (internal), so this works as-is.
+# Note: PRs from forks get a read-only GITHUB_TOKEN that can't post comments, so
+# the comment step is guarded to run only for same-repo PRs (the reasoning still
+# runs either way); ADIRO PRs are branch-based (internal), so it comments as normal.
 
 on:
   pull_request:
@@ -118,6 +119,9 @@ jobs:
           cat reasoning-comment.md
 
       - name: Upsert sticky PR comment
+        # Fork PRs get a read-only token (comment API returns 403), so only post
+        # for same-repo PRs. The reasoning/report steps above still run for forks.
+        if: github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/github-script@v7
         with:
           script: |

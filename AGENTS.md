@@ -73,8 +73,8 @@ CI exactly (handy when an LLM/agent is iterating). It merges `src/*.ttl` at late
 **consistency + unsatisfiable-class** detection, then ROBOT `report`. ROBOT is fetched automatically to
 `.tools/robot.jar` (git-ignored) on first run; outputs land in `.tools/reasoning-out/`.
 
-Prerequisite — a **JDK 11+** on `PATH` (OWL DL reasoners + ROBOT are JVM tools; there is no pure-Python
-equivalent for DL consistency/unsat). Install once, then open a new terminal:
+Prerequisite — a **Java 11+ runtime (JRE or JDK)** on `PATH` (OWL DL reasoners + ROBOT are JVM tools; there is
+no pure-Python equivalent for DL consistency/unsat). Install once, then open a new terminal:
 - **Windows (org standard):** `winget install EclipseAdoptium.Temurin.17.JDK`
 - **Linux (Debian/Ubuntu):** `sudo apt-get install -y openjdk-17-jre` — distro-agnostic alternative:
   SDKMAN (`curl -s https://get.sdkman.io | bash` → `sdk install java 17.0.20-tem`)
