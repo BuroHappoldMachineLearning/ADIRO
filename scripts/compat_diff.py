@@ -227,6 +227,25 @@ def declared_bump(old_v, new_v):
     return BUMP_NONE
 
 
+def apply_bump(version, bump):
+    """Return the version that results from applying ``bump`` to ``version``.
+
+    e.g. apply_bump("2.0.0", "major") -> "3.0.0"; minor -> "2.1.0"; patch ->
+    "2.0.1"; none -> unchanged. Returns None for a non-SemVer input.
+    """
+    m = SEMVER_RE.match(version or "")
+    if not m:
+        return None
+    x, y, z = (int(v) for v in m.groups())
+    if bump == BUMP_MAJOR:
+        return f"{x + 1}.0.0"
+    if bump == BUMP_MINOR:
+        return f"{x}.{y + 1}.0"
+    if bump == BUMP_PATCH:
+        return f"{x}.{y}.{z + 1}"
+    return f"{x}.{y}.{z}"
+
+
 def latest_snapshot(repo_root, module):
     base = repo_root / "versions" / module
     if not base.is_dir():
@@ -262,6 +281,12 @@ def analyze_module(repo_root, module):
         verdict = "OK"
     elif decl is None:
         verdict = "UNKNOWN_VERSION"
+    elif decl == BUMP_NONE:
+        # Accumulation phase: owl:versionInfo intentionally not bumped yet (repo
+        # policy - bump only at the release cut). This is expected, not a fault;
+        # we forecast the next version rather than warn. INSUFFICIENT_BUMP is
+        # reserved for a release-cut PR that *did* bump, but not far enough.
+        verdict = "RELEASE_PENDING"
     elif BUMP_RANK.get(decl, 0) >= BUMP_RANK[req]:
         verdict = "OK"
     else:
@@ -274,6 +299,9 @@ def analyze_module(repo_root, module):
         "new_version": new_v,
         "required_bump": req,
         "declared_bump": decl,
+        # Minimum next release version implied by the changes = last released
+        # version + the required bump. This is the "prospective new version".
+        "prospective_version": apply_bump(old_v, req),
         "verdict": verdict,
         "deltas": deltas,
     }
@@ -299,16 +327,103 @@ def print_report(result):
             print(f"      - [{sev}] {d}: {local}")
 
 
+_BUMP_LABEL = {BUMP_MAJOR: "MAJOR", BUMP_MINOR: "MINOR", BUMP_PATCH: "PATCH", BUMP_NONE: "none"}
+_VERDICT_ICON = {
+    "OK": "✅",
+    "RELEASE_PENDING": "📋",
+    "INSUFFICIENT_BUMP": "⚠️",
+    "VERSION_DECREASED": "⛔",
+    "UNKNOWN_VERSION": "❓",
+}
+
+
+def to_markdown(results):
+    """Render results as a GitHub-flavored Markdown report (for a PR comment)."""
+    out = [
+        "## 🔢 Ontology compatibility diff — prospective versions",
+        "",
+        "Each module's working `src/` is diffed against its **last released snapshot**; "
+        "the change is classified per the "
+        "[compatibility-diff spec](https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/docs/governance/compatibility-diff-algorithm-spec.md) "
+        "and mapped to the **minimum next version** for the next release cut. "
+        "This reflects *all* unreleased changes so far, not just the latest commit. "
+        "Advisory only — it never blocks the PR.",
+        "",
+    ]
+    analyzed = [r for r in results if r["status"] == "analyzed"]
+    changed = [r for r in analyzed if r["required_bump"] != BUMP_NONE]
+    skipped = [r for r in results if r["status"] != "analyzed"]
+
+    if not changed:
+        out.append(
+            "**No version-affecting changes** vs the last released snapshots — "
+            "every module stays compatible at its current version."
+        )
+    else:
+        out.append("| Module | Released | Change | → Next (min) | Declared | Status |")
+        out.append("|---|---|:--:|:--:|:--:|---|")
+        for r in changed:
+            icon = _VERDICT_ICON.get(r["verdict"], "")
+            out.append(
+                f"| `{r['module']}` | `{r['old_version']}` | "
+                f"**{_BUMP_LABEL[r['required_bump']]}** | "
+                f"**`{r['prospective_version']}`** | "
+                f"{r['declared_bump'] or 'n/a'} | {icon} {r['verdict']} |"
+            )
+        out.append("")
+        for r in changed:
+            by_sev = {}
+            for d, iri in r["deltas"]:
+                by_sev.setdefault(DELTA_SEVERITY[d], []).append((d, iri))
+            out.append(
+                f"<details><summary><code>{r['module']}</code> — "
+                f"{len(r['deltas'])} change(s), min next <code>{r['prospective_version']}</code></summary>"
+            )
+            out.append("")
+            for sev in (BREAKING, POTENTIALLY, NON_BREAKING):
+                for d, iri in by_sev.get(sev, []):
+                    local = iri.rsplit("/", 1)[-1].rsplit("#", 1)[-1]
+                    out.append(f"- `[{sev}]` **{d}** — `{local}`")
+            out.append("")
+            out.append("</details>")
+
+    if skipped:
+        names = ", ".join(f"`{r['module']}`" for r in skipped)
+        out.append("")
+        out.append(f"> ℹ️ No released snapshot to diff against (skipped): {names}.")
+
+    problems = [r for r in analyzed if r["verdict"] in ("INSUFFICIENT_BUMP", "VERSION_DECREASED")]
+    if problems:
+        out.append("")
+        out.append(
+            f"⚠️ **{len(problems)} module(s)** carry a declared `owl:versionInfo` bump "
+            "smaller than the change requires. Bump at the next release cut."
+        )
+    out.append("")
+    out.append(
+        "<sub>RES-67 · compatibility-diff classifier (Phase 2a, warn mode). "
+        "Bump `owl:versionInfo`/`owl:versionIRI` at the release cut, not per edit.</sub>"
+    )
+    return "\n".join(out)
+
+
 def main():
     repo_root = Path(__file__).parent.parent
     enforce = "--enforce" in sys.argv
+    as_markdown = "--markdown" in sys.argv
     args = [a for a in sys.argv[1:] if not a.startswith("-")]
     modules = args or sorted(p.stem for p in (repo_root / "src").glob("*.ttl"))
 
+    results = [analyze_module(repo_root, module) for module in modules]
+
+    if as_markdown:
+        # UTF-8 to stdout regardless of the host console codepage (Windows cp1252).
+        sys.stdout.buffer.write((to_markdown(results) + "\n").encode("utf-8"))
+        return
+
     print("Compatibility diff (warn mode) - src/ vs last released snapshot:")
     problems = 0
-    for module in modules:
-        result = analyze_module(repo_root, module)
+    for result in results:
         print_report(result)
         if result.get("verdict") in ("INSUFFICIENT_BUMP", "VERSION_DECREASED"):
             problems += 1

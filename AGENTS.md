@@ -54,7 +54,10 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
   over `src/*.ttl` (parse check, circular-subclass detection, ensures an `owl:Ontology` declaration, and
   per-module version consistency — `owl:versionInfo` == `owl:versionIRI` tail == ontology IRI + version), plus
   `scripts/compat_diff.py` (RES-67, *warn* mode) which flags when a module's declared SemVer bump is smaller
-  than its change requires. The same validate step gates the deploy workflow. **After any `.ttl` edit, validate immediately:**
+  than its change requires. The same validate step gates the deploy workflow.
+- **`.github/workflows/compat-diff-comment.yml`** — on PRs touching `src/**.ttl` (RES-67), posts a sticky
+  comment with each changed module's **prospective next version** (`compat_diff.py --markdown`). Report-only;
+  the gate is the warn step above. **After any `.ttl` edit, validate immediately:**
   `uv run python scripts/validate_ontology.py src/<file>.ttl` (or with no arg to validate all of `src/`).
   Never skip it — a missing period or malformed RDF fails parsing and must be caught at once.
 - **`.github/workflows/sync-issues-to-youtrack.yml`** — one-way mirror of GitHub issue events → YouTrack

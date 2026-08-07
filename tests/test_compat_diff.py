@@ -63,5 +63,30 @@ def test_declared_bump():
     assert cd.declared_bump("2.0.0", "1.0.0") == "decreased"
 
 
+def test_apply_bump():
+    assert cd.apply_bump("2.0.0", cd.BUMP_MAJOR) == "3.0.0"
+    assert cd.apply_bump("1.2.3", cd.BUMP_MINOR) == "1.3.0"
+    assert cd.apply_bump("1.2.3", cd.BUMP_PATCH) == "1.2.4"
+    assert cd.apply_bump("1.2.3", cd.BUMP_NONE) == "1.2.3"
+    assert cd.apply_bump("not-semver", cd.BUMP_MAJOR) is None
+
+
+def test_prospective_version_in_markdown():
+    # add-only against a baseline -> MINOR -> next version bumps the minor.
+    # versionInfo not yet bumped (accumulation) -> RELEASE_PENDING, not a warning.
+    results = [
+        {
+            "module": "m", "status": "analyzed", "old_version": "1.0.0",
+            "new_version": "1.0.0", "required_bump": cd.BUMP_MINOR,
+            "declared_bump": cd.BUMP_NONE, "prospective_version": "1.1.0",
+            "verdict": "RELEASE_PENDING", "deltas": [("TERM_ADDED", "https://ex.org/m#B")],
+        }
+    ]
+    md = cd.to_markdown(results)
+    assert "1.1.0" in md and "MINOR" in md and "RELEASE_PENDING" in md
+    # accumulation forecast must NOT raise the insufficient-bump warning
+    assert "smaller than the change requires" not in md
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__, "-q"]))

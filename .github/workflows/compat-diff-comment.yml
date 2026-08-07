@@ -1,0 +1,70 @@
+name: Compat-diff PR comment
+
+# RES-67 (Phase 2a). On any PR that touches an ontology (or the classifier
+# itself), compute each module's prospective next SemVer - src/ vs its last
+# released snapshot - and upsert a single sticky comment on the PR. Advisory:
+# this workflow only reports; the required-bump *gate* lives in
+# validate-ontology.yml (warn mode). Keep both in sync if the script's CLI
+# changes.
+#
+# Note: PRs from forks receive a read-only GITHUB_TOKEN, so the comment step is
+# a no-op there. ADIRO PRs are branch-based (internal), so this works as-is; if
+# fork PRs ever need it, move the comment to a pull_request_target companion
+# that does NOT check out or execute PR code.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'src/**/*.ttl'
+      - 'versions/**/*.ttl'
+      - 'scripts/compat_diff.py'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: compat-diff-comment-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --python 3.12 --no-install-project
+
+      - name: Compute prospective versions (markdown)
+        run: uv run --python 3.12 --no-project python scripts/compat_diff.py --markdown > compat-diff.md
+
+      - name: Upsert sticky PR comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const marker = '<!-- compat-diff-report -->';
+            const body = marker + '\n' + fs.readFileSync('compat-diff.md', 'utf8');
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner, repo, issue_number, per_page: 100,
+            });
+            const existing = comments.find(c => c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
