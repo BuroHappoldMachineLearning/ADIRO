@@ -393,7 +393,7 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
         "users and uses, and the functional/non-functional requirements."
     )
     lines.append("")
-    lines.append("    [:octicons-arrow-right-24: ORSD](ORSD_v1.md)")
+    lines.append("    [:octicons-arrow-right-24: ORSD](ORSD_v1.1.md)")
     lines.append("")
     lines.append("-   :material-clipboard-list-outline: __Use Cases__")
     lines.append("")

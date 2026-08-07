@@ -166,3 +166,32 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  check-links:
+    needs: deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download workflow artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: docs
+          path: site/
+
+      - name: Check links on the published site
+        uses: lycheeverse/lychee-action@v2
+        with:
+          # --base-url resolves the site's internal (relative/absolute) links
+          # against the live Pages URL, so they're checked as real HTTP requests
+          # against the deployed site rather than just local file existence.
+          args: >-
+            --no-progress
+            --base-url https://burohappoldmachinelearning.github.io/ADIRO/
+            --accept '100..=103,200..=299,429'
+            './site/**/*.html'
+          fail: true
+          jobSummary: true
+          token: ${{ secrets.GITHUB_TOKEN }}
