@@ -44,4 +44,7 @@ Thumbs.db
 # MkDocs build output (the published site is built in CI and deployed to Pages)
 site/
 
+# Local tooling cache (ROBOT jar + reasoning outputs from scripts/run_reasoning.sh)
+.tools/
+
 # Note: docs/ folder is intentionally NOT ignored so generated documentation is tracked
