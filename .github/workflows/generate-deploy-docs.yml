@@ -70,8 +70,8 @@ jobs:
       - name: Install dependencies
         run: uv sync --python 3.12 --no-install-project
 
-      - name: Run diagram colour tests
-        run: uv run --python 3.12 --no-project --with pytest --with pillow python -m pytest tests -q
+      - name: Run tests (diagram colours + compat-diff classifier)
+        run: uv run --python 3.12 --no-project --with pytest --with pillow --with rdflib python -m pytest tests -q
 
   generate-docs:
     needs: [validate, test-ttl2md, test-docs]
