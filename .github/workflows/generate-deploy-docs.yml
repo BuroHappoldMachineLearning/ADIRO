@@ -113,7 +113,11 @@ jobs:
           fi
       
       - name: Build MkDocs (Material) site
-        run: uv run --python 3.12 --no-project mkdocs build
+        # --strict fails the build on broken internal / nav links (dead-link gate,
+        # BEFORE deploy) - see #43. Retain this gate across the Zensical
+        # generator switch (#42) and the w3id.org IRI migration (RES-69): update
+        # the config, don't drop it.
+        run: uv run --python 3.12 --no-project mkdocs build --strict
 
       - name: Publish versioned ontology snapshots into the site
         run: |
@@ -167,6 +171,11 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
+  # Docs link-integrity is a retained feature (tracking: #43). Internal / nav links
+  # are gated at build by `mkdocs build --strict` above (fails BEFORE deploy);
+  # external links are checked post-deploy by lychee here. Keep BOTH when actioning
+  # the docs-generator switch (Zensical, #42) and the w3id.org IRI migration
+  # (RES-69) - update these checks' config, don't remove them.
   check-links:
     needs: deploy
     runs-on: ubuntu-latest
@@ -181,15 +190,19 @@ jobs:
           name: docs
           path: site/
 
-      - name: Check links on the published site
+      - name: Check external links in the published site
         uses: lycheeverse/lychee-action@v2
         with:
-          # --base-url resolves the site's internal (relative/absolute) links
-          # against the live Pages URL, so they're checked as real HTTP requests
-          # against the deployed site rather than just local file existence.
+          # External-only. `--scheme https/http` checks only absolute URLs and
+          # skips the site's own relative links (those are gated at build by
+          # `mkdocs build --strict`); `.lycheeignore` excludes the internal host
+          # and the auth-gated YouTrack. This avoids the /ADIRO/ project-subpath
+          # false positives that `--base-url` produced (it rewrote a relative link
+          # like `ORSD_v1.1/` to `github.io/ORSD_v1.1/`, dropping the /ADIRO/ prefix).
           args: >-
             --no-progress
-            --base-url https://burohappoldmachinelearning.github.io/ADIRO/
+            --scheme https
+            --scheme http
             --accept '100..=103,200..=299,429'
             './site/**/*.html'
           fail: true
