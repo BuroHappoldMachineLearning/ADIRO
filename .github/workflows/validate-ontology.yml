@@ -29,3 +29,8 @@ jobs:
       
       - name: Validate ontology files
         run: uv run --python 3.12 --no-project python scripts/validate_ontology.py
+
+      - name: Compatibility diff (warn)
+        # RES-67, warn mode: classifies each module's change vs its last released
+        # snapshot and flags an under-sized SemVer bump. Advisory (never blocks).
+        run: uv run --python 3.12 --no-project python scripts/compat_diff.py
