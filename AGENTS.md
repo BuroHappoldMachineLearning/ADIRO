@@ -83,6 +83,11 @@ equivalent for DL consistency/unsat). Install once, then open a new terminal:
 Run: `bash scripts/run_reasoning.sh` (warn mode, always exits 0). `ENFORCE=1 bash scripts/run_reasoning.sh`
 exits non-zero on inconsistency/unsatisfiable classes. Override defaults with `REASONER=` / `ROBOT_VERSION=`
 / `ROBOT_JAR=`.
+
+**Shell:** the script is bash. On **Windows** run it in **Git Bash** (ships with Git for Windows) — **WSL is
+not required** (it drives the native Windows `java.exe` fine; MSYS2 and WSL also work). Pure-PowerShell users
+who won't use bash can instead run the two underlying `java -jar robot.jar merge … reason …` / `… report …`
+commands directly, but Git Bash is simpler.
 - **`.github/workflows/sync-issues-to-youtrack.yml`** — one-way mirror of GitHub issue events → YouTrack
   **RES** project via `scripts/sync_issue_to_youtrack.py` (inbox model; YouTrack is never pushed back).
 - **`.github/workflows/backfill-issues-to-youtrack.yml`** — manual one-shot backfill (`dry_run` defaults
