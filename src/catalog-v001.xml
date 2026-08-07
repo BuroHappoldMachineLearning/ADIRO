@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  OASIS XML catalog for OFFLINE import resolution (RES-36).
+
+  Each ADIRO module owl:imports the others via their unversioned ("latest")
+  github.io ontology IRIs. This catalog maps those IRIs to the local
+  working-tree TTL files (paths are relative to this file, i.e. the src/
+  directory), so ROBOT / the OWL API reason over *this branch's* sources
+  instead of fetching the published copies over the network. This makes the
+  reasoning CI deterministic (it checks the PR, not what's already deployed)
+  and network-independent.
+
+  Consumed via ROBOT's catalog option (robot merge ... catalog src/catalog-v001.xml).
+-->
+<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+  <uri name="https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata" uri="aec_drawing_metadata.ttl"/>
+  <uri name="https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols" uri="aec_common_symbols.ttl"/>
+  <uri name="https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common" uri="aec_domain_common.ttl"/>
+  <uri name="https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain" uri="aec_facade_domain.ttl"/>
+</catalog>
