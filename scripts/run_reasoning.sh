@@ -28,6 +28,10 @@ ROBOT_JAR="${ROBOT_JAR:-$REPO_ROOT/.tools/robot.jar}"
 REASONER="${REASONER:-hermit}"
 OUT_DIR="${OUT_DIR:-$REPO_ROOT/.tools/reasoning-out}"
 CATALOG="src/catalog-v001.xml"
+# ROBOT `report` profile = the tool's default with `duplicate_label` downgraded
+# ERROR -> WARN (RES-36/RES-92): label uniqueness is a docs-quality convention,
+# not an RDF/CVAT requirement, so a justified exception shouldn't hard-fail.
+REPORT_PROFILE="${REPORT_PROFILE:-config/robot_report_profile.txt}"
 
 # Create the output dir up front so even a setup failure below still yields the
 # reason.rc / reason.out that CI's comment step (and local users) read.
@@ -71,7 +75,7 @@ echo "reason exit code: $REASON_RC"
 
 echo "== ROBOT report (logical / structural QC) =="
 java -jar "$ROBOT_JAR" merge --catalog "$CATALOG" "${INPUTS[@]}" \
-  report --fail-on none --output "$OUT_DIR/report.tsv" 2>&1 | tee "$OUT_DIR/report.out" || true
+  report --profile "$REPORT_PROFILE" --fail-on none --output "$OUT_DIR/report.tsv" 2>&1 | tee "$OUT_DIR/report.out" || true
 
 if [ -f "$OUT_DIR/report.tsv" ]; then
   echo "== report summary =="
