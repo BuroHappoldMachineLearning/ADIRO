@@ -85,15 +85,24 @@ changelogs — is in **`docs/contribute/versioning.md`**; rationale in KB
   release cut performs the bump. *(Supersedes the earlier "hold pending ratification".)*
 
 ## Ontology authoring conventions
-- **`rdfs:label` contains the class name.** Every class's `rdfs:label` **must contain** the class's PascalCase
-  local name split into whitespace-separated words (Title Case): `:UnitisedCurtainWall` → `"Unitised Curtain
-  Wall"`, `:DrawingRevision` → `"Drawing Revision"`. **Acronyms / all-caps tokens stay whole** (`:DGU` →
-  `"DGU"`, not `"D G U"`). The label **may** carry extra human-helpful text beyond that required core (an
-  expansion or qualifier), e.g. `:VCL` → `"VCL (Vapour control layer)"`. Labels must stay **unique** across
-  classes — enforced by ROBOT `report` `duplicate_label` ([RES-36](https://bhmlrnd.youtrack.cloud/issue/RES-36))
-  — because labels drive **CVAT** annotation labels. Object/data **properties** keep their lowerCamelCase name
-  as the label. *(Bringing legacy labels into conformance is tracked in
-  [RES-92](https://bhmlrnd.youtrack.cloud/issue/RES-92); new/edited terms follow this now.)*
+- **`rdfs:label` is the human-readable name.** Give every class a clear label that **contains** the class's
+  PascalCase local name split into words (Title Case) — `:UnitisedCurtainWall` → `"Unitised Curtain Wall"` —
+  but the label *is* a human name, so it may **expand acronyms** (`:DGU` → `"Double Glazing Unit"`) or add a
+  qualifier; keep the short form as `skos:altLabel` (`:DGU skos:altLabel "DGU"`). Object/data **properties**
+  keep their lowerCamelCase name as the label.
+- **Keep labels unique across classes** — but note this is a **docs-quality convention, *not* an RDF/OWL
+  requirement** (RDF is fine with duplicate labels; the IRI is the identifier). We enforce it because the
+  published docs (pyLODE / ttl2md) and label-based search display `rdfs:label`, so duplicates confuse a human
+  reader — and because for `owl:oneOf` **enumeration values** the `rdfs:label` *is* the CVAT SELECT option a
+  person picks. Enforced by ROBOT `report` `duplicate_label` ([RES-36](https://bhmlrnd.youtrack.cloud/issue/RES-36)),
+  as a **warning** (exceptions allowed). Legacy-label conformance is tracked in
+  [RES-92](https://bhmlrnd.youtrack.cloud/issue/RES-92).
+- **CVAT label text comes from the URI, not `rdfs:label`.** The pipeline builds each CVAT *class* label from the
+  class **IRI local name** (fragment after `#`) and normalizes it via its own `name_normalizer_rules`; it does
+  **not** read the class's `rdfs:label`. `rdfs:label` reaches CVAT only for `owl:oneOf` enumeration values
+  (SELECT options). So class identity in CVAT is guaranteed by the (unique) IRI — `rdfs:label` uniqueness is for
+  humans/docs, not CVAT. Verified against the pipeline; see KB
+  [DATA-A-9](https://bhmlrnd.youtrack.cloud/articles/DATA-A-9).
 
 ## Keep in sync (mandatory)
 - **Ontology ↔ docs.** The published docs are generated from `src/*.ttl`. Whenever a `.ttl` changes, regenerate
@@ -103,9 +112,11 @@ changelogs — is in **`docs/contribute/versioning.md`**; rationale in KB
   `[Unreleased]` section; bump its `owl:versionIRI` / `owl:versionInfo` **only at a release cut** (tag
   `<module>-v<semver>`), per `docs/contribute/versioning.md`.
 - **Downstream label consumers (CVAT).** The metadata module defines the `isCVATProperty` annotation, and
-  domain modules mark labellable classes with it, so the ontology **drives CVAT annotation labels**. Changes
-  to labellable classes or `isCVATProperty` usage affect those consumers — coordinate via DATA-A-9
-  (https://bhmlrnd.youtrack.cloud/articles/DATA-A-9). *(verify: exact DATA-A-9 scope / article slug.)*
+  domain modules mark labellable classes with `labellableRoot`, so the ontology **drives CVAT annotation
+  labels**. The CVAT label *text* is the class **IRI local name** (normalized by the pipeline's
+  `name_normalizer_rules`) — **not** `rdfs:label`; `rdfs:label` reaches CVAT only for `owl:oneOf` enumeration
+  values (see "Ontology authoring conventions" above). Changes to labellable classes or `isCVATProperty` usage
+  affect those consumers — coordinate via KB [DATA-A-9](https://bhmlrnd.youtrack.cloud/articles/DATA-A-9).
 - **This file ↔ CI.** If you change CI, docs generation, or versioning, update the relevant section here in
   the same PR. CI wins on conflicts.
 
