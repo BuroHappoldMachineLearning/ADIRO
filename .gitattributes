@@ -1,0 +1,11 @@
+# Shell scripts must stay LF so they run on the Linux CI runners regardless of a
+# contributor's core.autocrlf setting (a CRLF shebang breaks `bash script.sh`).
+*.sh text eol=lf
+
+# Normalise common text types; let Git auto-detect the rest.
+*.py   text
+*.ttl  text
+*.md   text
+*.yml  text
+*.yaml text
+*.xml  text

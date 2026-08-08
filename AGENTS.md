@@ -57,9 +57,37 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
   than its change requires. The same validate step gates the deploy workflow.
 - **`.github/workflows/compat-diff-comment.yml`** — on PRs touching `src/**.ttl` (RES-67), posts a sticky
   comment with each changed module's **prospective next version** (`compat_diff.py --markdown`). Report-only;
-  the gate is the warn step above. **After any `.ttl` edit, validate immediately:**
-  `uv run python scripts/validate_ontology.py src/<file>.ttl` (or with no arg to validate all of `src/`).
-  Never skip it — a missing period or malformed RDF fails parsing and must be caught at once.
+  the gate is the warn step above.
+- **`.github/workflows/ontology-reasoning.yml`** — on PRs touching `src/**.ttl` (RES-36), runs an OWL 2 DL
+  reasoner (**HermiT**) + ROBOT `report` over the whole suite at latest and posts a sticky comment (**warn**
+  mode). It calls `scripts/run_reasoning.sh` — the *same* script you run locally (below) — so CI and local
+  match. Imports resolve offline via `src/catalog-v001.xml`.
+
+**After any `.ttl` edit, validate immediately:**
+`uv run python scripts/validate_ontology.py src/<file>.ttl` (or with no arg to validate all of `src/`).
+Never skip it — a missing period or malformed RDF fails parsing and must be caught at once.
+
+### Local ontology reasoning / QC (ROBOT)
+The reasoning CI and humans run the **same** script — `scripts/run_reasoning.sh` — so a local run reproduces
+CI exactly (handy when an LLM/agent is iterating). It merges `src/*.ttl` at latest, runs HermiT for
+**consistency + unsatisfiable-class** detection, then ROBOT `report`. ROBOT is fetched automatically to
+`.tools/robot.jar` (git-ignored) on first run; outputs land in `.tools/reasoning-out/`.
+
+Prerequisite — a **Java 11+ runtime (JRE or JDK)** on `PATH` (OWL DL reasoners + ROBOT are JVM tools; there is
+no pure-Python equivalent for DL consistency/unsat). Install once, then open a new terminal:
+- **Windows (org standard):** `winget install EclipseAdoptium.Temurin.17.JDK`
+- **Linux (Debian/Ubuntu):** `sudo apt-get install -y openjdk-17-jre` — distro-agnostic alternative:
+  SDKMAN (`curl -s https://get.sdkman.io | bash` → `sdk install java 17.0.20-tem`)
+- **macOS:** `brew install temurin@17`
+
+Run: `bash scripts/run_reasoning.sh` (warn mode, always exits 0). `ENFORCE=1 bash scripts/run_reasoning.sh`
+exits non-zero on inconsistency/unsatisfiable classes. Override defaults with `REASONER=` / `ROBOT_VERSION=`
+/ `ROBOT_JAR=`.
+
+**Shell:** the script is bash. On **Windows** run it in **Git Bash** (ships with Git for Windows) — **WSL is
+not required** (it drives the native Windows `java.exe` fine; MSYS2 and WSL also work). Pure-PowerShell users
+who won't use bash can instead run the two underlying `java -jar robot.jar merge … reason …` / `… report …`
+commands directly, but Git Bash is simpler.
 - **`.github/workflows/sync-issues-to-youtrack.yml`** — one-way mirror of GitHub issue events → YouTrack
   **RES** project via `scripts/sync_issue_to_youtrack.py` (inbox model; YouTrack is never pushed back).
 - **`.github/workflows/backfill-issues-to-youtrack.yml`** — manual one-shot backfill (`dry_run` defaults
