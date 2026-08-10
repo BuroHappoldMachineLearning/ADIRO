@@ -91,6 +91,31 @@ jobs:
             git push
           fi
 
+      - name: Publish changelog to the GitHub Release notes
+        # RES-82 / #49: set the Release body from changelogs/<module>.md so the
+        # change notes live in the repo's Releases tab alongside the release,
+        # with resolvable ontology URLs. Idempotent (re-running sets the same body).
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.parse.outputs.tag }}"
+          MODULE="${{ steps.parse.outputs.module }}"
+          VERSION="${{ steps.parse.outputs.version }}"
+          PAGES="https://burohappoldmachinelearning.github.io/ADIRO"
+          {
+            echo "## ${MODULE} ${VERSION}"
+            echo ""
+            python3 scripts/extract_changelog.py "$MODULE" "$VERSION"
+            echo ""
+            echo "---"
+            echo "**Resolvable ontology URLs**"
+            echo "- Latest: ${PAGES}/${MODULE}.ttl"
+            echo "- This version (${VERSION}): ${PAGES}/${MODULE}/${VERSION}/${MODULE}.ttl"
+            echo "- Docs: ${PAGES}/"
+          } > release-notes.md
+          echo "----- release notes -----"; cat release-notes.md
+          gh release edit "$TAG" --repo "${{ github.repository }}" --notes-file release-notes.md
+
       - name: Summary
         run: |
           echo "Backed up ${{ steps.parse.outputs.module }} ${{ steps.parse.outputs.version }} to versions/${{ steps.parse.outputs.module }}/${{ steps.parse.outputs.version }}/"
