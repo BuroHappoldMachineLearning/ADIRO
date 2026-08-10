@@ -19,8 +19,8 @@
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
-    owl:versionIRI <https://w3id.org/adiro/aec_drawing_metadata/2.0.0> ;
-    owl:versionInfo "2.0.0" .
+    owl:versionIRI <https://w3id.org/adiro/aec_drawing_metadata/3.0.0> ;
+    owl:versionInfo "3.0.0" .
 
 
 #################################################################
