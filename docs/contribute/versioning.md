@@ -49,7 +49,7 @@ w3id is a **host-independent** front door: it redirects *to* github.io today, so
 
 ## Bump rules (SemVer, per module)
 
-The bump for a module is decided by classifying its change against **that module's last released version**, per the [compatibility-diff spec](https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/docs/governance/compatibility-diff-algorithm-spec.md):
+The bump for a module is decided by classifying its change against **that module's last released version**, per the [compatibility-diff spec](../governance/compatibility-diff-algorithm-spec.md):
 
 | Bump | When | Examples |
 |---|---|---|
@@ -101,7 +101,7 @@ If several modules changed together, cut **one tag per changed module** — each
 
 Every PR runs `scripts/validate_ontology.py` (via `validate-ontology.yml`), which checks TTL parsing, circular subclass hierarchies, an `owl:Ontology` declaration, **and per-module version consistency** ([RES-66](https://bhmlrnd.youtrack.cloud/issue/RES-66)): each module must carry exactly one `owl:versionInfo` and one `owl:versionIRI`, and the versionIRI must equal the unversioned ontology IRI + `/` + the versionInfo.
 
-PRs also run `scripts/compat_diff.py` ([RES-67](https://bhmlrnd.youtrack.cloud/issue/RES-67), **warn** mode): it classifies each module's change against its last released snapshot (per the [compatibility-diff spec](https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/docs/governance/compatibility-diff-algorithm-spec.md)) and flags when the **declared** version bump is smaller than the change requires. It's advisory for now; the entailment-based upgrade and `enforce` mode are Phase 2b (RES-78 / RES-81).
+PRs also run `scripts/compat_diff.py` ([RES-67](https://bhmlrnd.youtrack.cloud/issue/RES-67), **warn** mode): it classifies each module's change against its last released snapshot (per the [compatibility-diff spec](../governance/compatibility-diff-algorithm-spec.md)) and flags when the **declared** version bump is smaller than the change requires. It's advisory for now; the entailment-based upgrade and `enforce` mode are Phase 2b (RES-78 / RES-81).
 
 On any PR that touches an ontology, a second workflow (`compat-diff-comment.yml`) posts a **sticky comment** with two parts: **Changes in this PR** (deltas diffed against the base branch — what the PR itself touches) and **Next version if released** (the cumulative forecast — each module's `src/` vs its last released snapshot, i.e. the running total of *all* unreleased changes). Because `owl:versionInfo` is only bumped at the release cut, the forecast spans every unreleased PR, not just this one; an under-bump warning appears only on a release-cut PR that bumped `owl:versionInfo` by less than the change requires.
 

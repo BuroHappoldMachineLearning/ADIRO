@@ -57,7 +57,9 @@ nav:
   - Contribute:
     - contribute/index.md
     - Adding New Ontologies: contribute/adding-ontologies.md
-    - Versioning: contribute/versioning.md
+    - Versioning:
+      - contribute/versioning.md
+      - Compatibility-diff algorithm: governance/compatibility-diff-algorithm-spec.md
     - Design Decisions: contribute/design-decisions.md
 
 markdown_extensions:
@@ -89,6 +91,7 @@ exclude_docs: |
   brainstorming/
   modularization/
   governance/
+  !governance/compatibility-diff-algorithm-spec.md
 
 # The per-use-case ORSD pages are intentionally reachable via links (e.g. from
 # the Use Cases overview) but are not part of the top-level navigation.
