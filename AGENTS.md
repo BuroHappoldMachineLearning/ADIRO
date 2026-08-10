@@ -59,9 +59,10 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
   comment with each changed module's **prospective next version** (`compat_diff.py --markdown`). Report-only;
   the gate is the warn step above.
 - **`.github/workflows/ontology-reasoning.yml`** — on PRs touching `src/**.ttl` (RES-36), runs an OWL 2 DL
-  reasoner (**HermiT**) + ROBOT `report` over the whole suite at latest and posts a sticky comment (**warn**
-  mode). It calls `scripts/run_reasoning.sh` — the *same* script you run locally (below) — so CI and local
-  match. Imports resolve offline via `src/catalog-v001.xml`.
+  reasoner (**HermiT**) + ROBOT `report` over the whole suite at latest and posts a sticky comment. The
+  **reasoner is a blocking gate** — a PR that makes the merged suite inconsistent / unsatisfiable / non-DL
+  fails the check; ROBOT `report` stays **advisory** (warn-only). It calls `scripts/run_reasoning.sh` — the
+  *same* script you run locally (below) — so CI and local match. Imports resolve offline via `src/catalog-v001.xml`.
 
 **After any `.ttl` edit, validate immediately:**
 `uv run python scripts/validate_ontology.py src/<file>.ttl` (or with no arg to validate all of `src/`).
