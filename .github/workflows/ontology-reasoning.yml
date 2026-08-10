@@ -70,7 +70,7 @@ jobs:
           if [ "$RC" = "0" ]; then
             STATUS="✅ **Consistent** — no unsatisfiable classes (HermiT, suite at latest)."
           else
-            STATUS="⚠️ **Reasoner could not confirm consistency** — the merged suite is either inconsistent, has an unsatisfiable class, or is not valid OWL 2 DL. See the reasoner output below. *(advisory — does not block this PR yet)*"
+            STATUS="⛔ **Reasoner failed** — the merged suite is inconsistent, has an unsatisfiable class, or is not valid OWL 2 DL. See the reasoner output below. **This fails the check — fix before merge.**"
           fi
 
           ERR=0; WARN=0; INFO=0
@@ -81,9 +81,9 @@ jobs:
           fi
 
           {
-            echo "## 🧠 Ontology reasoning &amp; QC — warn mode"
+            echo "## 🧠 Ontology reasoning &amp; QC"
             echo ""
-            echo "Whole-suite OWL 2 DL reasoning (**HermiT**) + ROBOT \`report\`, over all modules merged at *latest* (imports resolved offline via \`src/catalog-v001.xml\`). Run via \`scripts/run_reasoning.sh\` — the same script you can run locally (see AGENTS.md). Advisory — see [RES-36](https://bhmlrnd.youtrack.cloud/issue/RES-36)."
+            echo "Whole-suite OWL 2 DL reasoning (**HermiT**) + ROBOT \`report\`, over all modules merged at *latest* (imports resolved offline via \`src/catalog-v001.xml\`). Run via \`scripts/run_reasoning.sh\` — the same script you can run locally (see AGENTS.md). The **reasoner is a blocking gate**; ROBOT \`report\` is advisory. See [RES-36](https://bhmlrnd.youtrack.cloud/issue/RES-36)."
             echo ""
             echo "### Consistency / satisfiability"
             echo "$STATUS"
@@ -114,7 +114,7 @@ jobs:
               echo "</details>"
             fi
             echo ""
-            echo "<sub>RES-36 · warn mode. Once the suite is confirmed clean, \`reason\` becomes a blocking gate (incl. the root-bump-breaks-dependents check).</sub>"
+            echo "<sub>RES-36 · the reasoner blocks (consistency / unsatisfiable / OWL 2 DL — incl. the root-bump-breaks-dependents check); ROBOT \`report\` stays advisory.</sub>"
           } > reasoning-comment.md
 
           cat reasoning-comment.md
