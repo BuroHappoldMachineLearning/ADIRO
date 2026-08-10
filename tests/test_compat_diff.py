@@ -83,9 +83,9 @@ def test_prospective_version_in_markdown():
         }
     ]
     md = cd.to_markdown(results)
-    assert "1.1.0" in md and "MINOR" in md and "RELEASE_PENDING" in md
-    # accumulation forecast must NOT raise the insufficient-bump warning
-    assert "smaller than the change requires" not in md
+    assert "1.1.0" in md and "MINOR" in md
+    # accumulation forecast is just a table row — no under-bump warning
+    assert "Heads-up" not in md
 
 
 if __name__ == "__main__":

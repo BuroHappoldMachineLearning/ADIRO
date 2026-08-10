@@ -328,47 +328,30 @@ def print_report(result):
 
 
 _BUMP_LABEL = {BUMP_MAJOR: "MAJOR", BUMP_MINOR: "MINOR", BUMP_PATCH: "PATCH", BUMP_NONE: "none"}
-_VERDICT_ICON = {
-    "OK": "✅",
-    "RELEASE_PENDING": "📋",
-    "INSUFFICIENT_BUMP": "⚠️",
-    "VERSION_DECREASED": "⛔",
-    "UNKNOWN_VERSION": "❓",
-}
-
-
 def to_markdown(results):
     """Render results as a GitHub-flavored Markdown report (for a PR comment)."""
-    out = [
-        "## 🔢 Ontology compatibility diff — prospective versions",
-        "",
-        "Each module's working `src/` is diffed against its **last released snapshot**; "
-        "the change is classified per the "
-        "[compatibility-diff spec](https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/docs/governance/compatibility-diff-algorithm-spec.md) "
-        "and mapped to the **minimum next version** for the next release cut. "
-        "This reflects *all* unreleased changes so far, not just the latest commit. "
-        "Advisory only — it never blocks the PR.",
-        "",
-    ]
     analyzed = [r for r in results if r["status"] == "analyzed"]
     changed = [r for r in analyzed if r["required_bump"] != BUMP_NONE]
     skipped = [r for r in results if r["status"] != "analyzed"]
 
+    out = ["## 🔢 Prospective ontology versions", ""]
+
     if not changed:
         out.append(
-            "**No version-affecting changes** vs the last released snapshots — "
-            "every module stays compatible at its current version."
+            "✅ **No version-affecting changes** — every module stays compatible at its current version."
         )
     else:
-        out.append("| Module | Released | Change | → Next (min) | Declared | Status |")
-        out.append("|---|---|:--:|:--:|:--:|---|")
+        out.append(
+            "If released now, these modules would take the version bumps below "
+            "(covering all unreleased changes since each module's last release):"
+        )
+        out.append("")
+        out.append("| Module | Current | Change | → Next version |")
+        out.append("|---|:--:|:--:|:--:|")
         for r in changed:
-            icon = _VERDICT_ICON.get(r["verdict"], "")
             out.append(
                 f"| `{r['module']}` | `{r['old_version']}` | "
-                f"**{_BUMP_LABEL[r['required_bump']]}** | "
-                f"**`{r['prospective_version']}`** | "
-                f"{r['declared_bump'] or 'n/a'} | {icon} {r['verdict']} |"
+                f"**{_BUMP_LABEL[r['required_bump']]}** | **`{r['prospective_version']}`** |"
             )
         out.append("")
         for r in changed:
@@ -377,7 +360,7 @@ def to_markdown(results):
                 by_sev.setdefault(DELTA_SEVERITY[d], []).append((d, iri))
             out.append(
                 f"<details><summary><code>{r['module']}</code> — "
-                f"{len(r['deltas'])} change(s), min next <code>{r['prospective_version']}</code></summary>"
+                f"{len(r['deltas'])} change(s) → <code>{r['prospective_version']}</code></summary>"
             )
             out.append("")
             for sev in (BREAKING, POTENTIALLY, NON_BREAKING):
@@ -390,20 +373,34 @@ def to_markdown(results):
     if skipped:
         names = ", ".join(f"`{r['module']}`" for r in skipped)
         out.append("")
-        out.append(f"> ℹ️ No released snapshot to diff against (skipped): {names}.")
+        out.append(f"> ℹ️ No released snapshot to diff against yet (skipped): {names}.")
 
+    # Only surface a warning when a release-cut PR actually under-bumped
+    # owl:versionInfo (rare) — during normal editing there is no version bump yet,
+    # so there's nothing to flag.
     problems = [r for r in analyzed if r["verdict"] in ("INSUFFICIENT_BUMP", "VERSION_DECREASED")]
     if problems:
         out.append("")
-        out.append(
-            f"⚠️ **{len(problems)} module(s)** carry a declared `owl:versionInfo` bump "
-            "smaller than the change requires. Bump at the next release cut."
-        )
+        out.append("⚠️ **Heads-up — the declared version bump is smaller than the change needs:**")
+        for r in problems:
+            out.append(
+                f"- `{r['module']}`: this PR sets `owl:versionInfo` to a "
+                f"**{r['declared_bump'] or 'none'}** bump, but the changes need "
+                f"**{_BUMP_LABEL[r['required_bump']]}** (→ `{r['prospective_version']}`)."
+            )
+
+    out.append("")
+    out.append("<details><summary>ℹ️ How this works</summary>")
     out.append("")
     out.append(
-        "<sub>RES-67 · compatibility-diff classifier (Phase 2a, warn mode). "
-        "Bump `owl:versionInfo`/`owl:versionIRI` at the release cut, not per edit.</sub>"
+        "Each module's working `src/` is compared against its **last released snapshot**; the change is "
+        "classified per the [compatibility-diff spec](https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/docs/governance/compatibility-diff-algorithm-spec.md) "
+        "and mapped to the **minimum next [SemVer](https://semver.org/)** for the next release. The version is "
+        "only bumped **at the release cut (after merge)**, so this is a *forecast* of the accumulated unreleased "
+        "changes, not something this PR changes. Advisory only — it never blocks the PR. (RES-67 · warn mode.)"
     )
+    out.append("")
+    out.append("</details>")
     return "\n".join(out)
 
 
