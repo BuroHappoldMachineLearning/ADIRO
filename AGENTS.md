@@ -127,5 +127,10 @@ changelogs — is in **`docs/contribute/versioning.md`**; rationale in KB
   the same PR. CI wins on conflicts.
 
 ## Team workflow
-Issue-first: propose additions/changes as an issue before coding (GitHub issues mirror into YouTrack RES).
+Issue-first: propose additions/changes as an issue before coding. **ADIRO is open-source, so file issues on
+GitHub — _not_ directly in YouTrack.** A one-way GitHub→YouTrack automation mirrors each ADIRO GitHub issue
+into RES (closing the GitHub issue resolves its mirror), and filing on GitHub keeps the activity on the public
+repo. Create an ADIRO issue **directly in YouTrack only** for internal decisions/tooling not meant to be public
+(e.g. how the ml-pipeline parses ADIRO). Full guidance: KB
+[MAN-A-3](https://bhmlrnd.youtrack.cloud/articles/MAN-A-3) (decision [MAN-8](https://bhmlrnd.youtrack.cloud/issue/MAN-8)).
 Team knowledge base: **https://bhmlrnd.youtrack.cloud/articles/MAN-A-13**.
