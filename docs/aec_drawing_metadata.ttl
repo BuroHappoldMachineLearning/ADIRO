@@ -5,6 +5,7 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
 
 #################################################################
 #    Ontology
@@ -13,9 +14,13 @@
 <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata> rdf:type owl:Ontology ;
     rdfs:label "AEC Drawing Metadata Ontology" ;
     rdfs:comment "Sheet/layout/document structure for AEC drawings." ;
+    dcterms:title "AEC Drawing Metadata Ontology" ;
+    dcterms:description "Sheet/layout/document structure for AEC drawings." ;
+    dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
+    dcterms:creator "Buro Happold — Machine Learning R&D" ;
+    dcterms:publisher "Buro Happold" ;
     owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata/2.0.0> ;
-    owl:versionInfo "2.0.0" ;
-    owl:imports <http://www.w3.org/2002/07/owl#> .
+    owl:versionInfo "2.0.0" .
 
 
 #################################################################

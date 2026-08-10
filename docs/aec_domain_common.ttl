@@ -6,10 +6,16 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
 
 <https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common> rdf:type owl:Ontology ;
     rdfs:label "AEC Domain Common Ontology" ;
     rdfs:comment "Shared domain abstractions reused across multiple domain ontologies (e.g., facade+structural)." ;
+    dcterms:title "AEC Domain Common Ontology" ;
+    dcterms:description "Shared domain abstractions reused across multiple domain ontologies (e.g., facade+structural)." ;
+    dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
+    dcterms:creator "Buro Happold — Machine Learning R&D" ;
+    dcterms:publisher "Buro Happold" ;
     owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common/1.0.0> ;
     owl:versionInfo "1.0.0" ;
     owl:imports <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata>,

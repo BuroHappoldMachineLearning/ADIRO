@@ -8,7 +8,6 @@ Sheet/layout/document structure for AEC drawings.
 
 - **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata`
 - **Version:** 2.0.0
-- **Imports:** `owl`
 
 ## Dependencies
 

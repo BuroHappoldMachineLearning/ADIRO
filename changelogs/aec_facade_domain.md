@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+### Added
+- Ontology-header provenance metadata (`dcterms:title`, `dcterms:description`, `dcterms:license`, `dcterms:creator`, `dcterms:publisher`) for FAIR / registry readiness (#50).
+
 ### Changed
 - Relabel `:StickCurtainWall` ("Stick"→"Stick Curtain Wall"), `:UnitisedCurtainWall` ("Unitised"→"Unitised
   Curtain Wall"), `:SemiUnitisedCurtainWall` ("Semi-unitised"→"Semi Unitised Curtain Wall"), and
