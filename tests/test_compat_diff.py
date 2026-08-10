@@ -83,9 +83,26 @@ def test_prospective_version_in_markdown():
         }
     ]
     md = cd.to_markdown(results)
-    assert "1.1.0" in md and "MINOR" in md and "RELEASE_PENDING" in md
-    # accumulation forecast must NOT raise the insufficient-bump warning
-    assert "smaller than the change requires" not in md
+    assert "1.1.0" in md and "MINOR" in md
+    # accumulation forecast is just a table row — no under-bump warning
+    assert "Heads-up" not in md
+
+
+def test_two_section_markdown_this_pr_vs_cumulative():
+    cumulative = [{
+        "module": "m", "status": "analyzed", "old_version": "1.0.0",
+        "new_version": "1.0.0", "required_bump": cd.BUMP_MINOR,
+        "declared_bump": cd.BUMP_NONE, "prospective_version": "1.1.0",
+        "verdict": "RELEASE_PENDING", "deltas": [("TERM_ADDED", "https://ex.org/m#B")],
+    }]
+    pr_with_change = [{"module": "m", "deltas": [("TERM_ADDED", "https://ex.org/m#B")], "required_bump": cd.BUMP_MINOR}]
+    md = cd.to_markdown(cumulative, pr_with_change)
+    assert "### Changes in this PR" in md and "### Next version if released" in md
+    assert "TERM_ADDED" in md and "1.1.0" in md
+
+    # a PR that changes no ontology file -> explicit "no changes" in section 1
+    md2 = cd.to_markdown(cumulative, [{"module": "m", "deltas": [], "required_bump": cd.BUMP_NONE}])
+    assert "makes **no changes**" in md2
 
 
 if __name__ == "__main__":

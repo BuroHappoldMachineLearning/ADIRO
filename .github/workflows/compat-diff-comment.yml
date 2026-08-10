@@ -1,24 +1,19 @@
 name: Compat-diff PR comment
 
-# RES-67 (Phase 2a). On any PR that touches an ontology (or the classifier
-# itself), compute each module's prospective next SemVer - src/ vs its last
-# released snapshot - and upsert a single sticky comment on the PR. Advisory:
-# this workflow only reports; the required-bump *gate* lives in
-# validate-ontology.yml (warn mode). Keep both in sync if the script's CLI
-# changes.
+# RES-67. On a PR that changes an ontology (`src/**.ttl`), upsert a single sticky
+# comment with (1) the changes this PR makes (diffed against the base branch) and
+# (2) the prospective next version (cumulative — each module's `src/` vs its last
+# released snapshot). Report-only; the required-bump *gate* lives in
+# validate-ontology.yml (warn mode). Keep both in sync if the script CLI changes.
 #
-# Note: PRs from forks receive a read-only GITHUB_TOKEN, so the comment step is
-# a no-op there. ADIRO PRs are branch-based (internal), so this works as-is; if
-# fork PRs ever need it, move the comment to a pull_request_target companion
-# that does NOT check out or execute PR code.
+# Triggers only on `src/**.ttl` changes — NOT on classifier/script edits — so a
+# PR that doesn't touch an ontology never gets a (confusing) version comment.
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
       - 'src/**/*.ttl'
-      - 'versions/**/*.ttl'
-      - 'scripts/compat_diff.py'
 
 permissions:
   contents: read
@@ -35,6 +30,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # need the base branch to diff this PR's own changes
 
       - name: Install uv
         uses: astral-sh/setup-uv@v4
@@ -47,10 +44,24 @@ jobs:
       - name: Install dependencies
         run: uv sync --python 3.12 --no-install-project
 
-      - name: Compute prospective versions (markdown)
-        run: uv run --python 3.12 --no-project python scripts/compat_diff.py --markdown > compat-diff.md
+      - name: Snapshot base-branch src/ (to diff this PR's changes)
+        run: |
+          BASE="${{ github.base_ref }}"
+          git fetch --no-tags origin "$BASE"
+          mkdir -p .tools/base-src
+          for f in src/*.ttl; do
+            name="$(basename "$f")"
+            git show "origin/$BASE:src/$name" > ".tools/base-src/$name" 2>/dev/null \
+              || echo "  ($name is new in this PR — no base version)"
+          done
+
+      - name: Compute comment (this-PR changes + prospective versions)
+        run: uv run --python 3.12 --no-project python scripts/compat_diff.py --markdown --base-dir .tools/base-src > compat-diff.md
 
       - name: Upsert sticky PR comment
+        # Fork PRs get a read-only token (comment API 403s), so only post for
+        # same-repo PRs; the computation above still runs either way.
+        if: github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/github-script@v7
         with:
           script: |

@@ -307,6 +307,27 @@ def analyze_module(repo_root, module):
     }
 
 
+def analyze_pr_change(repo_root, base_dir, module):
+    """Deltas introduced by THIS PR: base-branch `src/<module>.ttl` vs working `src/<module>.ttl`.
+
+    Returns {module, deltas, required_bump}, or None if the module has no working
+    file. A module absent from base_dir (new in this PR) diffs as all-added.
+    """
+    new_file = repo_root / "src" / f"{module}.ttl"
+    if not new_file.is_file():
+        return None
+    new_g = Graph()
+    new_g.parse(str(new_file), format="turtle")
+    old_syms = {}
+    old_file = Path(base_dir) / f"{module}.ttl"
+    if old_file.is_file():
+        old_g = Graph()
+        old_g.parse(str(old_file), format="turtle")
+        old_syms = build_symbols(old_g)
+    deltas = compute_deltas(old_syms, build_symbols(new_g))
+    return {"module": module, "deltas": deltas, "required_bump": required_bump(deltas)}
+
+
 def print_report(result):
     m = result["module"]
     if result["status"] == "no-baseline":
@@ -328,97 +349,115 @@ def print_report(result):
 
 
 _BUMP_LABEL = {BUMP_MAJOR: "MAJOR", BUMP_MINOR: "MINOR", BUMP_PATCH: "PATCH", BUMP_NONE: "none"}
-_VERDICT_ICON = {
-    "OK": "✅",
-    "RELEASE_PENDING": "📋",
-    "INSUFFICIENT_BUMP": "⚠️",
-    "VERSION_DECREASED": "⛔",
-    "UNKNOWN_VERSION": "❓",
-}
+def to_markdown(results, pr_results=None):
+    """Render a GitHub-flavored Markdown report (for a PR comment).
 
+    ``results`` — cumulative analysis (working ``src/`` vs each module's last
+    released snapshot); drives the "Next version if released" forecast.
+    ``pr_results`` — optional per-module deltas *introduced by this PR* (``src/``
+    vs the base branch, from ``analyze_pr_change``); when given, a "Changes in
+    this PR" section is shown first. When ``None`` (e.g. a local run without
+    ``--base-dir``) that section is omitted.
+    """
+    out = ["## 🔢 Ontology version impact", ""]
 
-def to_markdown(results):
-    """Render results as a GitHub-flavored Markdown report (for a PR comment)."""
-    out = [
-        "## 🔢 Ontology compatibility diff — prospective versions",
-        "",
-        "Each module's working `src/` is diffed against its **last released snapshot**; "
-        "the change is classified per the "
-        "[compatibility-diff spec](https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/docs/governance/compatibility-diff-algorithm-spec.md) "
-        "and mapped to the **minimum next version** for the next release cut. "
-        "This reflects *all* unreleased changes so far, not just the latest commit. "
-        "Advisory only — it never blocks the PR.",
-        "",
-    ]
+    # --- Section 1: what THIS PR changes (base branch -> this PR) --------------
+    if pr_results is not None:
+        pr_changed = [r for r in pr_results if r and r["deltas"]]
+        out.append("### Changes in this PR")
+        if not pr_changed:
+            out.append("This PR makes **no changes** to the ontology `src/` files.")
+        else:
+            for r in pr_changed:
+                out.append(
+                    f"- **`{r['module']}`** — {len(r['deltas'])} change(s), "
+                    f"**{_BUMP_LABEL[r['required_bump']]}**-level:"
+                )
+                by_sev = {}
+                for d, iri in r["deltas"]:
+                    by_sev.setdefault(DELTA_SEVERITY[d], []).append((d, iri))
+                for sev in (BREAKING, POTENTIALLY, NON_BREAKING):
+                    for d, iri in by_sev.get(sev, []):
+                        local = iri.rsplit("/", 1)[-1].rsplit("#", 1)[-1]
+                        out.append(f"  - `[{sev}]` {d} — `{local}`")
+        out.append("")
+
+    # --- Section 2: cumulative next-version forecast (src vs last released) ----
     analyzed = [r for r in results if r["status"] == "analyzed"]
     changed = [r for r in analyzed if r["required_bump"] != BUMP_NONE]
     skipped = [r for r in results if r["status"] != "analyzed"]
 
+    out.append("### Next version if released")
     if not changed:
-        out.append(
-            "**No version-affecting changes** vs the last released snapshots — "
-            "every module stays compatible at its current version."
-        )
+        out.append("✅ No unreleased changes — every module stays at its current version.")
     else:
-        out.append("| Module | Released | Change | → Next (min) | Declared | Status |")
-        out.append("|---|---|:--:|:--:|:--:|---|")
+        out.append(
+            "The running total of **all unreleased changes since each module's last release** "
+            "(not just this PR) — i.e. what the next release would be:"
+        )
+        out.append("")
+        out.append("| Module | Current | → Next version |")
+        out.append("|---|:--:|:--:|")
         for r in changed:
-            icon = _VERDICT_ICON.get(r["verdict"], "")
             out.append(
                 f"| `{r['module']}` | `{r['old_version']}` | "
-                f"**{_BUMP_LABEL[r['required_bump']]}** | "
-                f"**`{r['prospective_version']}`** | "
-                f"{r['declared_bump'] or 'n/a'} | {icon} {r['verdict']} |"
+                f"**`{r['prospective_version']}`** ({_BUMP_LABEL[r['required_bump']]}) |"
             )
-        out.append("")
-        for r in changed:
-            by_sev = {}
-            for d, iri in r["deltas"]:
-                by_sev.setdefault(DELTA_SEVERITY[d], []).append((d, iri))
-            out.append(
-                f"<details><summary><code>{r['module']}</code> — "
-                f"{len(r['deltas'])} change(s), min next <code>{r['prospective_version']}</code></summary>"
-            )
-            out.append("")
-            for sev in (BREAKING, POTENTIALLY, NON_BREAKING):
-                for d, iri in by_sev.get(sev, []):
-                    local = iri.rsplit("/", 1)[-1].rsplit("#", 1)[-1]
-                    out.append(f"- `[{sev}]` **{d}** — `{local}`")
-            out.append("")
-            out.append("</details>")
 
     if skipped:
         names = ", ".join(f"`{r['module']}`" for r in skipped)
         out.append("")
-        out.append(f"> ℹ️ No released snapshot to diff against (skipped): {names}.")
+        out.append(f"> ℹ️ No released snapshot to diff against yet (skipped): {names}.")
 
+    # Warn only when a release-cut PR actually under-bumped owl:versionInfo (rare).
     problems = [r for r in analyzed if r["verdict"] in ("INSUFFICIENT_BUMP", "VERSION_DECREASED")]
     if problems:
         out.append("")
-        out.append(
-            f"⚠️ **{len(problems)} module(s)** carry a declared `owl:versionInfo` bump "
-            "smaller than the change requires. Bump at the next release cut."
-        )
+        out.append("⚠️ **Heads-up — the declared version bump is smaller than the change needs:**")
+        for r in problems:
+            out.append(
+                f"- `{r['module']}`: this PR sets `owl:versionInfo` to a "
+                f"**{r['declared_bump'] or 'none'}** bump, but the changes need "
+                f"**{_BUMP_LABEL[r['required_bump']]}** (→ `{r['prospective_version']}`)."
+            )
+
+    out.append("")
+    out.append("<details><summary>ℹ️ How this works</summary>")
     out.append("")
     out.append(
-        "<sub>RES-67 · compatibility-diff classifier (Phase 2a, warn mode). "
-        "Bump `owl:versionInfo`/`owl:versionIRI` at the release cut, not per edit.</sub>"
+        "**Changes in this PR** diffs the PR against its base branch. **Next version if released** compares "
+        "each module's working `src/` against its **last released snapshot** and maps the accumulated change "
+        "to the **minimum next [SemVer](https://semver.org/)** (per the "
+        "[compatibility-diff spec](https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/docs/governance/compatibility-diff-algorithm-spec.md)). "
+        "`owl:versionInfo` is only bumped **at the release cut (after merge)**, so the forecast is cumulative "
+        "across every unreleased PR. Advisory only — it never blocks the PR. (RES-67 · warn mode.)"
     )
+    out.append("")
+    out.append("</details>")
     return "\n".join(out)
 
 
 def main():
     repo_root = Path(__file__).parent.parent
-    enforce = "--enforce" in sys.argv
-    as_markdown = "--markdown" in sys.argv
-    args = [a for a in sys.argv[1:] if not a.startswith("-")]
-    modules = args or sorted(p.stem for p in (repo_root / "src").glob("*.ttl"))
+    argv = sys.argv[1:]
+    enforce = "--enforce" in argv
+    as_markdown = "--markdown" in argv
+    base_dir = None
+    if "--base-dir" in argv:
+        i = argv.index("--base-dir")
+        base_dir = argv[i + 1] if i + 1 < len(argv) else None
+    # Positional args = modules; exclude flags and the --base-dir value.
+    modules = [a for a in argv if not a.startswith("-") and a != base_dir]
+    modules = modules or sorted(p.stem for p in (repo_root / "src").glob("*.ttl"))
 
     results = [analyze_module(repo_root, module) for module in modules]
 
     if as_markdown:
+        pr_results = None
+        if base_dir is not None:
+            pr_results = [analyze_pr_change(repo_root, base_dir, m) for m in modules]
         # UTF-8 to stdout regardless of the host console codepage (Windows cp1252).
-        sys.stdout.buffer.write((to_markdown(results) + "\n").encode("utf-8"))
+        sys.stdout.buffer.write((to_markdown(results, pr_results) + "\n").encode("utf-8"))
         return
 
     print("Compatibility diff (warn mode) - src/ vs last released snapshot:")
