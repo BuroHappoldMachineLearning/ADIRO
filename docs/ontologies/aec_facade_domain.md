@@ -7,7 +7,7 @@
 Facade-specific concepts and symbols for facade engineering drawings.
 
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain`
-- **Version:** 1.0.0
+- **Version:** 2.0.0
 - **Imports:** `aec_common_symbols`, `aec_domain_common`, `aec_drawing_metadata`
 
 ## Dependencies

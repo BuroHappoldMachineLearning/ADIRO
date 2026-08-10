@@ -7,7 +7,7 @@
 Shared domain abstractions reused across multiple domain ontologies (e.g., facade+structural).
 
 - **IRI:** `https://w3id.org/adiro/aec_domain_common`
-- **Version:** 1.0.0
+- **Version:** 2.0.0
 - **Imports:** `aec_common_symbols`, `aec_drawing_metadata`
 
 ## Dependencies

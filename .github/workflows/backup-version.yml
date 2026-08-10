@@ -101,17 +101,17 @@ jobs:
           TAG="${{ steps.parse.outputs.tag }}"
           MODULE="${{ steps.parse.outputs.module }}"
           VERSION="${{ steps.parse.outputs.version }}"
-          PAGES="https://burohappoldmachinelearning.github.io/ADIRO"
+          W3ID="https://w3id.org/adiro"
           {
             echo "## ${MODULE} ${VERSION}"
             echo ""
             python3 scripts/extract_changelog.py "$MODULE" "$VERSION"
             echo ""
             echo "---"
-            echo "**Resolvable ontology URLs**"
-            echo "- Latest: ${PAGES}/${MODULE}.ttl"
-            echo "- This version (${VERSION}): ${PAGES}/${MODULE}/${VERSION}/${MODULE}.ttl"
-            echo "- Docs: ${PAGES}/"
+            echo "**Canonical URLs** ([w3id.org/adiro](https://w3id.org/adiro) — content-negotiating; redirects to GitHub Pages)"
+            echo "- Ontology (latest): ${W3ID}/${MODULE}"
+            echo "- This version (${VERSION}): ${W3ID}/${MODULE}/${VERSION}"
+            echo "- Docs: https://burohappoldmachinelearning.github.io/ADIRO/"
           } > release-notes.md
           echo "----- release notes -----"; cat release-notes.md
           gh release edit "$TAG" --repo "${{ github.repository }}" --notes-file release-notes.md

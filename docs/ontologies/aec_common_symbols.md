@@ -7,7 +7,7 @@
 Cross-discipline layout content. Generic symbol classes like dimensions, reference symbols, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology.
 
 - **IRI:** `https://w3id.org/adiro/aec_common_symbols`
-- **Version:** 1.0.0
+- **Version:** 2.0.0
 - **Imports:** `aec_drawing_metadata`
 
 ## Dependencies
