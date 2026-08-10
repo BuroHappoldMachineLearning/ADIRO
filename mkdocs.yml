@@ -60,6 +60,7 @@ nav:
     - Versioning:
       - contribute/versioning.md
       - Compatibility-diff algorithm: governance/compatibility-diff-algorithm-spec.md
+      - Comparison to ODK / OBO Foundry: contribute/versioning-vs-odk.md
     - Design Decisions: contribute/design-decisions.md
 
 markdown_extensions:
