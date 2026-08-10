@@ -111,7 +111,7 @@ jobs:
             echo "**Canonical URLs** ([w3id.org/adiro](https://w3id.org/adiro) — content-negotiating; redirects to GitHub Pages)"
             echo "- Ontology (latest): ${W3ID}/${MODULE}"
             echo "- This version (${VERSION}): ${W3ID}/${MODULE}/${VERSION}"
-            echo "- Docs: https://burohappoldmachinelearning.github.io/ADIRO/"
+            echo "- Docs: https://w3id.org/adiro/"
           } > release-notes.md
           echo "----- release notes -----"; cat release-notes.md
           gh release edit "$TAG" --repo "${{ github.repository }}" --notes-file release-notes.md
