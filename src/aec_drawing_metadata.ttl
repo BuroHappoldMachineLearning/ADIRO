@@ -1,5 +1,5 @@
-@prefix : <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#> .
-@base <https://burohappoldmachinelearning.github.io/ADIRO/> .
+@prefix : <https://w3id.org/adiro/aec_drawing_metadata#> .
+@base <https://w3id.org/adiro/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace#> .
@@ -11,7 +11,7 @@
 #    Ontology
 #################################################################
 
-<https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata> rdf:type owl:Ontology ;
+<https://w3id.org/adiro/aec_drawing_metadata> rdf:type owl:Ontology ;
     rdfs:label "AEC Drawing Metadata Ontology" ;
     rdfs:comment "Sheet/layout/document structure for AEC drawings." ;
     dcterms:title "AEC Drawing Metadata Ontology" ;
@@ -19,7 +19,7 @@
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
-    owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata/2.0.0> ;
+    owl:versionIRI <https://w3id.org/adiro/aec_drawing_metadata/2.0.0> ;
     owl:versionInfo "2.0.0" .
 
 
