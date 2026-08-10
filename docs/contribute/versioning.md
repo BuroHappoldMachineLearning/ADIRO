@@ -32,7 +32,20 @@ Ontology files must be **resolvable** — the annotation pipeline pins a specifi
 - **Latest:** `…/ADIRO/<module>.ttl` (e.g. `…/ADIRO/aec_drawing_metadata.ttl`).
 - **Versioned:** `…/ADIRO/<module>/<semver>/<module>.ttl` (e.g. `…/ADIRO/aec_drawing_metadata/2.0.0/aec_drawing_metadata.ttl`) — published from `versions/` by the deploy workflow. Consumers that pin a version (e.g. the pipeline) reference this URL.
 
-Note that **both** the unversioned ontology IRI (`…/<module>`) and the `owl:versionIRI` (`…/<module>/<semver>`) are **identifiers**, distinct from the `.ttl` fetch URLs above — neither is necessarily dereferenceable on Pages (which can't content-negotiate), so consumers fetch the explicit `.ttl`. A future `w3id.org` migration ([RES-69](https://bhmlrnd.youtrack.cloud/issue/RES-69)) would make the bare IRIs content-negotiate.
+Note that **both** the unversioned ontology IRI (`…/<module>`) and the `owl:versionIRI` (`…/<module>/<semver>`) are **identifiers**, distinct from the `.ttl` fetch URLs above — on GitHub Pages (which can't content-negotiate) the bare IRIs don't dereference, so Pages consumers fetch the explicit `.ttl`.
+
+#### `w3id.org/adiro` (live — content-negotiating front door)
+
+**`https://w3id.org/adiro/…` is live** ([perma-id/w3id.org#6514](https://github.com/perma-id/w3id.org/pull/6514)) and *does* content-negotiate, redirecting (302) to the Pages files above:
+
+| Request | Resolves to |
+|---|---|
+| `w3id.org/adiro/<module>` + `Accept: text/turtle` | latest `…/ADIRO/<module>.ttl` |
+| `w3id.org/adiro/<module>` + `Accept: text/html` | the pyLODE HTML docs page |
+| `w3id.org/adiro/<module>/<semver>` | that version's `.ttl` |
+| `w3id.org/adiro/<any path>` | passthrough to `…/ADIRO/<any path>` |
+
+w3id is a **host-independent** front door: it redirects *to* github.io today, so if hosting ever moves only the `.htaccess` changes and pinned `w3id` URLs keep working. **The ontology's own IRIs are still `github.io`** — repointing them to `w3id.org/adiro` is a separate, deliberate identity change (deferred; [RES-69](https://bhmlrnd.youtrack.cloud/issue/RES-69)). Until then, consumers may pin **either** front door for a given version.
 
 ## Bump rules (SemVer, per module)
 
