@@ -1,19 +1,19 @@
-@prefix : <https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain#> .
+@prefix : <https://w3id.org/adiro/aec_facade_domain#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix common: <https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols#> .
-@prefix dcommon: <https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common#> .
-@prefix metadata: <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#> .
+@prefix common: <https://w3id.org/adiro/aec_common_symbols#> .
+@prefix dcommon: <https://w3id.org/adiro/aec_domain_common#> .
+@prefix metadata: <https://w3id.org/adiro/aec_drawing_metadata#> .
 
 #################################################################
 #    Ontology
 #################################################################
 
-<https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain> rdf:type owl:Ontology ;
+<https://w3id.org/adiro/aec_facade_domain> rdf:type owl:Ontology ;
     rdfs:label "AEC Facade Domain Ontology" ;
     rdfs:comment "Facade-specific concepts and symbols for facade engineering drawings." ;
     dcterms:title "AEC Facade Domain Ontology" ;
@@ -21,11 +21,11 @@
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
-    owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain/1.0.0> ;
+    owl:versionIRI <https://w3id.org/adiro/aec_facade_domain/1.0.0> ;
     owl:versionInfo "1.0.0" ;
-    owl:imports <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata>,
-                <https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols>,
-                <https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common> .
+    owl:imports <https://w3id.org/adiro/aec_drawing_metadata>,
+                <https://w3id.org/adiro/aec_common_symbols>,
+                <https://w3id.org/adiro/aec_domain_common> .
 
 
 #################################################################

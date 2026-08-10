@@ -295,7 +295,7 @@ def extract_adiro_dependencies(ttl_file: Path) -> list[str]:
         imports = list(graph.objects(ontology, OWL.imports))
         
         # Filter for ADIRO imports and extract the ontology name
-        adiro_base = "https://burohappoldmachinelearning.github.io/ADIRO/"
+        adiro_base = "https://w3id.org/adiro/"
         dependencies = []
         
         for imp in imports:

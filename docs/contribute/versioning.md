@@ -13,13 +13,13 @@ Current versions: `aec_drawing_metadata` **2.0.0**; the other three **1.0.0**. T
 
 ## IRIs
 
-Each module declares three kinds of IRI:
+Each module declares three kinds of IRI, all on the canonical **`w3id.org/adiro`** namespace (since the [#53](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/53) migration; the files are physically served from GitHub Pages — see [Resolvability](#resolvability)):
 
 | Kind | Example | Stability |
 |---|---|---|
-| **Unversioned ontology IRI** ("latest") | `…/ADIRO/aec_drawing_metadata` | Identifies the current release (fetch as `…/<module>.ttl`) |
-| **Versioned IRI** (`owl:versionIRI`) | `…/ADIRO/aec_drawing_metadata/2.0.0` | Immutable — a specific release |
-| **Term namespace** (`#`) | `…/ADIRO/aec_drawing_metadata#Titleblock` | **Unversioned / stable** — what consumers depend on |
+| **Unversioned ontology IRI** ("latest") | `https://w3id.org/adiro/aec_drawing_metadata` | Identifies the current release |
+| **Versioned IRI** (`owl:versionIRI`) | `https://w3id.org/adiro/aec_drawing_metadata/2.0.0` | Immutable — a specific release |
+| **Term namespace** (`#`) | `https://w3id.org/adiro/aec_drawing_metadata#Titleblock` | **Unversioned / stable** — what consumers depend on |
 
 - The `owl:versionIRI` **must** equal the unversioned ontology IRI + `/` + `owl:versionInfo` (enforced in CI — see [Validation](#validation)).
 - **Filenames stay unversioned** (`aec_drawing_metadata.ttl`, never `aec_drawing_metadata_v2.ttl`). Versioned copies live under `versions/` (see [Releases](#releases)).
@@ -32,7 +32,7 @@ Ontology files must be **resolvable** — the annotation pipeline pins a specifi
 - **Latest:** `…/ADIRO/<module>.ttl` (e.g. `…/ADIRO/aec_drawing_metadata.ttl`).
 - **Versioned:** `…/ADIRO/<module>/<semver>/<module>.ttl` (e.g. `…/ADIRO/aec_drawing_metadata/2.0.0/aec_drawing_metadata.ttl`) — published from `versions/` by the deploy workflow. Consumers that pin a version (e.g. the pipeline) reference this URL.
 
-Note that **both** the unversioned ontology IRI (`…/<module>`) and the `owl:versionIRI` (`…/<module>/<semver>`) are **identifiers**, distinct from the `.ttl` fetch URLs above — on GitHub Pages (which can't content-negotiate) the bare IRIs don't dereference, so Pages consumers fetch the explicit `.ttl`.
+The ontology IRIs are `w3id.org/adiro/…` **identifiers**, distinct from the physical `.ttl` fetch URLs above. Through w3id they **content-negotiate** (bare IRI → the `.ttl` for RDF clients, or the HTML docs for browsers); the raw GitHub Pages `.ttl` URLs remain the direct-fetch fallback (Pages itself can't content-negotiate).
 
 #### `w3id.org/adiro` (live — content-negotiating front door)
 

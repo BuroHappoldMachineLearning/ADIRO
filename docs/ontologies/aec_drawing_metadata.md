@@ -6,7 +6,7 @@
 
 Sheet/layout/document structure for AEC drawings.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata`
 - **Version:** 2.0.0
 
 ## Dependencies
@@ -38,29 +38,29 @@ graph BT
 
 A large-scale zoomed-in drawing of a specific construction assembly or connection, showing how individual components fit together with dense material callouts and dimensions. Can be vertical or horizontal.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Detail`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Detail`
 - **Sub class of:** [Layout content type](#LayoutContentType)
 - **Restrictions:** [hasOrientation](#hasOrientation) exactly 1 [Orientation](#OrientationValue)
 - **Labellable root:** true
 
 *Example images:*
 
-![Detail — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/detail_01.png)
+![Detail — example](https://w3id.org/adiro/img/aec_drawing_ontology/detail_01.png)
 
-![Detail — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/detail_02.png)
+![Detail — example](https://w3id.org/adiro/img/aec_drawing_ontology/detail_02.png)
 
 ### Drawing element {#DrawingElement}
 
 Element depicted on a drawing. Contained by Layout. Can be a Facade system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#DrawingElement`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#DrawingElement`
 - **Labellable root:** false
 
 ### Drawing Sheet {#DrawingSheet}
 
 Top-level container for a drawing. Contains Layout(s).
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#DrawingSheet`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#DrawingSheet`
 - **Restrictions:**
     - [contains](#contains) exactly 1 [Revision table](#RevisionTable)
     - [contains](#contains) exactly 1 [Titleblock](#Titleblock)
@@ -73,35 +73,35 @@ Top-level container for a drawing. Contains Layout(s).
 
 A grouping of DrawingSheets within a Project, e.g. a volume or submission package.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#DrawingPackage`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#DrawingPackage`
 - **Labellable root:** false
 
 ### DrawingRevision {#DrawingRevision}
 
 A specific revision of a DrawingSheet. Carries revision-specific metadata: code, issue date, status, and role-differentiated person attribution.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#DrawingRevision`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#DrawingRevision`
 - **Labellable root:** false
 
 ### Elevation {#Elevation}
 
 A flat, frontal orthographic view of a building facade or interior face, showing surface appearance, window positions, and heights without revealing internal construction.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Elevation`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Elevation`
 - **Sub class of:** [Layout content type](#LayoutContentType)
 - **Labellable root:** true
 
 *Example images:*
 
-![Elevation — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/elevation_01.png)
+![Elevation — example](https://w3id.org/adiro/img/aec_drawing_ontology/elevation_01.png)
 
-![Elevation — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/elevation_02.png)
+![Elevation — example](https://w3id.org/adiro/img/aec_drawing_ontology/elevation_02.png)
 
 ### Image {#Image}
 
 An image embedded within a note region on a drawing sheet.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Image`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Image`
 - **Sub class of:** [Note](#Note)
 - **Labellable root:** true
 
@@ -109,7 +109,7 @@ An image embedded within a note region on a drawing sheet.
 
 Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Layout`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Layout`
 - **Restrictions:**
     - [contains](#contains) min 0 [Drawing element](#DrawingElement)
     - [hasProperty](#hasProperty) exactly 1 [Layout content type](#LayoutContentType)
@@ -119,35 +119,35 @@ Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotati
 
 Type of content included in a layout.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#LayoutContentType`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#LayoutContentType`
 - **Labellable root:** false
 
 ### Legend {#Legend}
 
 A legend containing mapping information between symbols and a text signifier.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Legend`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Legend`
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
 - **Labellable root:** true
 
 *Example images:*
 
-![Legend — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/legend_01.png)
+![Legend — example](https://w3id.org/adiro/img/aec_drawing_ontology/legend_01.png)
 
-![Legend — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/legend_02.png)
+![Legend — example](https://w3id.org/adiro/img/aec_drawing_ontology/legend_02.png)
 
 ### MetadataContainer {#MetadataContainer}
 
 Supporting visual region on a drawing sheet (titleblock, legend, etc.). Renamed from :Metadata to avoid confusion with semantic metadata properties on DrawingSheet.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#MetadataContainer`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#MetadataContainer`
 - **Labellable root:** false
 
 ### Note {#Note}
 
 Superclass for annotations on a drawing sheet that are not part of the drawing geometry, including textual notes and images.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Note`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Note`
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
 - **Labellable root:** true
 
@@ -155,7 +155,7 @@ Superclass for annotations on a drawing sheet that are not part of the drawing g
 
 Enumerated orientation values used with hasOrientation.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#OrientationValue`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#OrientationValue`
 - **One of:**
     - [Undefined](#Undefined)
     - [Horizontal](#Horizontal)
@@ -166,14 +166,14 @@ Enumerated orientation values used with hasOrientation.
 
 A named individual associated with a DrawingRevision in some role (author, checker, approver). The role is expressed by the object property, not by subclassing.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Person`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Person`
 - **Labellable root:** false
 
 ### Perspective {#Perspective}
 
 A three-dimensional pictorial view of a building or assembly showing depth and spatial relationships, used where orthographic drawings cannot convey form.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Perspective`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Perspective`
 - **Sub class of:** [Layout content type](#LayoutContentType)
 - **Labellable root:** true
 
@@ -181,104 +181,104 @@ A three-dimensional pictorial view of a building or assembly showing depth and s
 
 A horizontal cut through a building viewed from above, showing the arrangement of spaces, walls, doors, and openings at a given floor level.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Plan`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Plan`
 - **Sub class of:** [Layout content type](#LayoutContentType)
 - **Labellable root:** true
 
 *Example images:*
 
-![Plan — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/plan_01.png)
+![Plan — example](https://w3id.org/adiro/img/aec_drawing_ontology/plan_01.png)
 
-![Plan — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/plan_02.png)
+![Plan — example](https://w3id.org/adiro/img/aec_drawing_ontology/plan_02.png)
 
 ### Project {#Project}
 
 A project under which DrawingSheets are grouped.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Project`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Project`
 - **Labellable root:** false
 
 ### Revision table {#RevisionTable}
 
 A table recording the documented change history of the drawing sheet, with columns for revision number, date, and description of each amendment.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#RevisionTable`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#RevisionTable`
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
 - **Labellable root:** true
 
 *Example images:*
 
-![Revision table — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/revision_table_01.png)
+![Revision table — example](https://w3id.org/adiro/img/aec_drawing_ontology/revision_table_01.png)
 
-![Revision table — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/revision_table_02.png)
+![Revision table — example](https://w3id.org/adiro/img/aec_drawing_ontology/revision_table_02.png)
 
 ### Section {#Section}
 
 Section drawing. Has a required property of orientation, which can be vertical or horizontal.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Section`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Section`
 - **Sub class of:** [Layout content type](#LayoutContentType)
 - **Restrictions:** [hasOrientation](#hasOrientation) exactly 1 [Orientation](#OrientationValue)
 - **Labellable root:** true
 
 *Example images:*
 
-![Section — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/section_01.png)
+![Section — example](https://w3id.org/adiro/img/aec_drawing_ontology/section_01.png)
 
-![Section — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/section_02.png)
+![Section — example](https://w3id.org/adiro/img/aec_drawing_ontology/section_02.png)
 
 ### StatusCode {#StatusCode}
 
 Controlled-vocabulary status assigned to a DrawingRevision, e.g. IFC (Issued for Construction), IFR (Issued for Review), AFC (Approved for Construction).
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#StatusCode`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#StatusCode`
 - **Labellable root:** false
 
 ### Table {#Table}
 
 A table containing structured information, for example a schedule of elements.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Table`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Table`
 - **Sub class of:** [Layout content type](#LayoutContentType)
 - **Labellable root:** true
 
 *Example images:*
 
-![Table — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/table_01.png)
+![Table — example](https://w3id.org/adiro/img/aec_drawing_ontology/table_01.png)
 
-![Table — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/table_02.png)
+![Table — example](https://w3id.org/adiro/img/aec_drawing_ontology/table_02.png)
 
 ### Text {#TextualNote}
 
 A free-form block of text, such as numbered lists or paragraphs, containing general requirements, assumptions, or keyed notes that apply to the drawing.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#TextualNote`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#TextualNote`
 - **Sub class of:** [Note](#Note)
 - **Labellable root:** true
 
 *Example images:*
 
-![Text — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/textual_note_01.png)
+![Text — example](https://w3id.org/adiro/img/aec_drawing_ontology/textual_note_01.png)
 
-![Text — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/textual_note_02.png)
+![Text — example](https://w3id.org/adiro/img/aec_drawing_ontology/textual_note_02.png)
 
 ### Titleblock {#Titleblock}
 
 Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Titleblock`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Titleblock`
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
 - **Labellable root:** true
 
 *Example images:*
 
-![Titleblock — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/titleblock_01.png)
+![Titleblock — example](https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_01.png)
 
-![Titleblock — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/titleblock_02.png)
+![Titleblock — example](https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_02.png)
 
-![Titleblock — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/titleblock_03.png)
+![Titleblock — example](https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_03.png)
 
-![Titleblock — example](https://burohappoldmachinelearning.github.io/ADIRO/img/aec_drawing_ontology/titleblock_04.png)
+![Titleblock — example](https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_04.png)
 
 ## Object Properties
 
@@ -286,7 +286,7 @@ Titleblock containing information about the drawing, for example project name, d
 
 Associates a DrawingSheet with the DrawingPackage it belongs to.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#belongsToPackage`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#belongsToPackage`
 - **Domain:** [Drawing Sheet](#DrawingSheet)
 - **Range:** [DrawingPackage](#DrawingPackage)
 
@@ -294,7 +294,7 @@ Associates a DrawingSheet with the DrawingPackage it belongs to.
 
 Associates a DrawingSheet with the Project it belongs to.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#belongsToProject`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#belongsToProject`
 - **Domain:** [Drawing Sheet](#DrawingSheet)
 - **Range:** [Project](#Project)
 
@@ -302,7 +302,7 @@ Associates a DrawingSheet with the Project it belongs to.
 
 Direct containment: indicates physical containment of something within a parent thing (e.g. object in a box). Min cardinality 0 by default (can contain).
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#contains`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#contains`
 - **Domain:** `owl:Thing`
 - **Range:** `owl:Thing`
 
@@ -310,7 +310,7 @@ Direct containment: indicates physical containment of something within a parent 
 
 Named containment: a DrawingSheet contains one or more Layouts.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#hasLayout`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#hasLayout`
 - **Sub property of:** [contains](#contains)
 - **Domain:** [Drawing Sheet](#DrawingSheet)
 - **Range:** [Layout](#Layout)
@@ -319,7 +319,7 @@ Named containment: a DrawingSheet contains one or more Layouts.
 
 Named characterisation: a Layout has exactly one LayoutContentType.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#hasLayoutContentType`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#hasLayoutContentType`
 - **Sub property of:** [hasProperty](#hasProperty)
 - **Domain:** [Layout](#Layout)
 - **Range:** [Layout content type](#LayoutContentType)
@@ -328,7 +328,7 @@ Named characterisation: a Layout has exactly one LayoutContentType.
 
 Orientation value for layouts where orientation is applicable.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#hasOrientation`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#hasOrientation`
 - **Domain:** ([Section](#Section) or [Detail](#Detail))
 - **Range:** [Orientation](#OrientationValue)
 
@@ -336,7 +336,7 @@ Orientation value for layouts where orientation is applicable.
 
 Subject is characterised by a property, or quality. Used for example to indicate qualitative things like 'it is vertical' or 'it has a colour blue'.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#hasProperty`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#hasProperty`
 - **Domain:** `owl:Thing`
 - **Range:** `owl:Thing`
 
@@ -344,7 +344,7 @@ Subject is characterised by a property, or quality. Used for example to indicate
 
 A DrawingSheet compositionally contains its DrawingRevisions.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#hasRevision`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#hasRevision`
 - **Sub property of:** [contains](#contains)
 - **Domain:** [Drawing Sheet](#DrawingSheet)
 - **Range:** [DrawingRevision](#DrawingRevision)
@@ -354,7 +354,7 @@ A DrawingSheet compositionally contains its DrawingRevisions.
 
 The controlled-vocabulary StatusCode assigned to a DrawingRevision.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#hasStatusCode`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#hasStatusCode`
 - **Sub property of:** [hasProperty](#hasProperty)
 - **Domain:** [DrawingRevision](#DrawingRevision)
 - **Range:** [StatusCode](#StatusCode)
@@ -363,7 +363,7 @@ The controlled-vocabulary StatusCode assigned to a DrawingRevision.
 
 The Person who approved this DrawingRevision.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#isApprovedBy`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isApprovedBy`
 - **Domain:** [DrawingRevision](#DrawingRevision)
 - **Range:** [Person](#Person)
 
@@ -371,7 +371,7 @@ The Person who approved this DrawingRevision.
 
 The Person who authored this DrawingRevision.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#isAuthoredBy`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isAuthoredBy`
 - **Domain:** [DrawingRevision](#DrawingRevision)
 - **Range:** [Person](#Person)
 
@@ -379,7 +379,7 @@ The Person who authored this DrawingRevision.
 
 The Person who checked this DrawingRevision.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#isCheckedBy`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isCheckedBy`
 - **Domain:** [DrawingRevision](#DrawingRevision)
 - **Range:** [Person](#Person)
 
@@ -387,7 +387,7 @@ The Person who checked this DrawingRevision.
 
 Inverse of hasRevision. Navigates from a DrawingRevision back to its DrawingSheet.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#isRevisionOf`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isRevisionOf`
 - **Domain:** [DrawingRevision](#DrawingRevision)
 - **Range:** [Drawing Sheet](#DrawingSheet)
 
@@ -397,7 +397,7 @@ Inverse of hasRevision. Navigates from a DrawingRevision back to its DrawingShee
 
 Sheet-level identifier, e.g. 'ST-201'. Also known as 'drawing number'.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#drawingIdentifier`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#drawingIdentifier`
 - **Domain:** [Drawing Sheet](#DrawingSheet)
 - **Range:** `xsd:string`
 
@@ -405,7 +405,7 @@ Sheet-level identifier, e.g. 'ST-201'. Also known as 'drawing number'.
 
 Title of the drawing sheet.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#drawingTitle`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#drawingTitle`
 - **Domain:** [Drawing Sheet](#DrawingSheet)
 - **Range:** `xsd:string`
 
@@ -413,7 +413,7 @@ Title of the drawing sheet.
 
 Scale notation of the drawing sheet, e.g. '1:50'.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#hasScale`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#hasScale`
 - **Domain:** [Drawing Sheet](#DrawingSheet)
 - **Range:** `xsd:string`
 
@@ -421,7 +421,7 @@ Scale notation of the drawing sheet, e.g. '1:50'.
 
 The date this revision was issued.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#issueDate`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#issueDate`
 - **Domain:** [DrawingRevision](#DrawingRevision)
 - **Range:** `xsd:date`
 
@@ -429,7 +429,7 @@ The date this revision was issued.
 
 Identifier for a Layout within its parent DrawingSheet. Also known as 'layout number'. Typically a small integer or letter ('1', '2', 'A').
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#layoutIdentifier`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#layoutIdentifier`
 - **Domain:** [Layout](#Layout)
 - **Range:** `xsd:string`
 
@@ -437,7 +437,7 @@ Identifier for a Layout within its parent DrawingSheet. Also known as 'layout nu
 
 Name of the drawing package.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#packageName`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#packageName`
 - **Domain:** [DrawingPackage](#DrawingPackage)
 - **Range:** `xsd:string`
 
@@ -445,7 +445,7 @@ Name of the drawing package.
 
 Name of the person.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#personName`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#personName`
 - **Domain:** [Person](#Person)
 - **Range:** `xsd:string`
 
@@ -453,7 +453,7 @@ Name of the person.
 
 Name of the project.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#projectName`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#projectName`
 - **Domain:** [Project](#Project)
 - **Range:** `xsd:string`
 
@@ -461,7 +461,7 @@ Name of the project.
 
 Project number.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#projectNumber`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#projectNumber`
 - **Domain:** [Project](#Project)
 - **Range:** `xsd:string`
 
@@ -469,7 +469,7 @@ Project number.
 
 References another Drawing by using a drawing identifier, like a drawing number.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#refersToDrawingId`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#refersToDrawingId`
 - **Domain:** [Text](#TextualNote)
 - **Range:** `xsd:string`
 
@@ -477,7 +477,7 @@ References another Drawing by using a drawing identifier, like a drawing number.
 
 The code identifying a specific revision, e.g. 'A', 'B', 'P01'.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#revisionCode`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#revisionCode`
 - **Domain:** [DrawingRevision](#DrawingRevision)
 - **Range:** `xsd:string`
 
@@ -485,7 +485,7 @@ The code identifying a specific revision, e.g. 'A', 'B', 'P01'.
 
 Sheet size designation, e.g. 'A1', 'A0'.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#sheetSize`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#sheetSize`
 - **Domain:** [Drawing Sheet](#DrawingSheet)
 - **Range:** `xsd:string`
 
@@ -493,7 +493,7 @@ Sheet size designation, e.g. 'A1', 'A0'.
 
 Display label for the status code, e.g. 'IFC', 'IFR', 'AFC'.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#statusLabel`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#statusLabel`
 - **Domain:** [StatusCode](#StatusCode)
 - **Range:** `xsd:string`
 
@@ -503,38 +503,38 @@ Display label for the status code, e.g. 'IFC', 'IFR', 'AFC'.
 
 Links a class or concept to an example image illustrating it.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#exampleImage`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#exampleImage`
 
 ### isCVATProperty {#isCVATProperty}
 
 When true, the label is displayed on the right side of the CVAT annotation panel instead of the default left side.
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#isCVATProperty`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isCVATProperty`
 - **Range:** `xsd:boolean`
 
 ### Labellable root {#labellableRoot}
 
 When true, this class can be used as a label by annotators (solid contour in diagram). When false, non-labellable (dashed contour).
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#labellableRoot`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#labellableRoot`
 - **Range:** `xsd:boolean`
 
 ## Named Individuals
 
 ### Horizontal {#Horizontal}
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Horizontal`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Horizontal`
 - **Type:** [Orientation](#OrientationValue)
 - **Labellable root:** true
 
 ### Undefined {#Undefined}
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Undefined`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Undefined`
 - **Type:** [Orientation](#OrientationValue)
 - **Labellable root:** true
 
 ### Vertical {#Vertical}
 
-- **IRI:** `https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Vertical`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Vertical`
 - **Type:** [Orientation](#OrientationValue)
 - **Labellable root:** true

@@ -1,5 +1,5 @@
-@prefix : <https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols#> .
-@prefix metadata: <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#> .
+@prefix : <https://w3id.org/adiro/aec_common_symbols#> .
+@prefix metadata: <https://w3id.org/adiro/aec_drawing_metadata#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace#> .
@@ -7,7 +7,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 
-<https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols> rdf:type owl:Ontology ;
+<https://w3id.org/adiro/aec_common_symbols> rdf:type owl:Ontology ;
     rdfs:label "AEC Common Symbols Ontology" ;
     rdfs:comment "Cross-discipline layout content. Generic symbol classes like dimensions, reference symbols, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology." ;
     dcterms:title "AEC Common Symbols Ontology" ;
@@ -15,9 +15,9 @@
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
-    owl:versionIRI <https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols/1.0.0> ;
+    owl:versionIRI <https://w3id.org/adiro/aec_common_symbols/1.0.0> ;
     owl:versionInfo "1.0.0" ;
-    owl:imports <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata> .
+    owl:imports <https://w3id.org/adiro/aec_drawing_metadata> .
 
 #################################################################
 #    Classes — Generic drawing symbols
