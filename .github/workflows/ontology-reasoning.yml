@@ -1,4 +1,4 @@
-name: Ontology reasoning (warn)
+name: Ontology reasoning
 
 # RES-36 — standing ontology QA/QC track. On any PR that touches an ontology,
 # run an OWL 2 DL reasoner (HermiT) over the whole suite at latest to catch
@@ -8,9 +8,10 @@ name: Ontology reasoning (warn)
 # The actual reasoning is scripts/run_reasoning.sh — the SAME script humans run
 # locally (see AGENTS.md "Local ontology reasoning"), so local == CI, no drift.
 #
-# WARN-FIRST (deliberate): the job never fails the PR yet — it only reports.
-# Once the suite is confirmed clean (blocked today by RES-71: the owl# import),
-# flip to blocking by un-commenting the "enforce" step at the end.
+# The reasoner is a BLOCKING gate: a PR that makes the merged suite inconsistent,
+# unsatisfiable, or not-valid-OWL-2-DL fails the check (see the enforce step at
+# the end). ROBOT `report` stays ADVISORY (warn-only) — only the reasoner blocks.
+# (Baseline made clean by RES-71 dropping the owl# import + provenance metadata.)
 #
 # Java is required only here in CI: OWL DL reasoners + ROBOT are JVM tools with
 # no pure-Python equivalent. Imports resolve OFFLINE via src/catalog-v001.xml.
@@ -69,7 +70,7 @@ jobs:
           if [ "$RC" = "0" ]; then
             STATUS="✅ **Consistent** — no unsatisfiable classes (HermiT, suite at latest)."
           else
-            STATUS="⚠️ **Reasoner could not confirm consistency** — the merged suite is either inconsistent, has an unsatisfiable class, or is not valid OWL 2 DL. See the reasoner output below. *(advisory — does not block this PR yet)*"
+            STATUS="⛔ **Reasoner failed** — the merged suite is inconsistent, has an unsatisfiable class, or is not valid OWL 2 DL. See the reasoner output below. **This fails the check — fix before merge.**"
           fi
 
           ERR=0; WARN=0; INFO=0
@@ -80,9 +81,9 @@ jobs:
           fi
 
           {
-            echo "## 🧠 Ontology reasoning &amp; QC — warn mode"
+            echo "## 🧠 Ontology reasoning &amp; QC"
             echo ""
-            echo "Whole-suite OWL 2 DL reasoning (**HermiT**) + ROBOT \`report\`, over all modules merged at *latest* (imports resolved offline via \`src/catalog-v001.xml\`). Run via \`scripts/run_reasoning.sh\` — the same script you can run locally (see AGENTS.md). Advisory — see [RES-36](https://bhmlrnd.youtrack.cloud/issue/RES-36)."
+            echo "Whole-suite OWL 2 DL reasoning (**HermiT**) + ROBOT \`report\`, over all modules merged at *latest* (imports resolved offline via \`src/catalog-v001.xml\`). Run via \`scripts/run_reasoning.sh\` — the same script you can run locally (see AGENTS.md). The **reasoner is a blocking gate**; ROBOT \`report\` is advisory. See [RES-36](https://bhmlrnd.youtrack.cloud/issue/RES-36)."
             echo ""
             echo "### Consistency / satisfiability"
             echo "$STATUS"
@@ -113,7 +114,7 @@ jobs:
               echo "</details>"
             fi
             echo ""
-            echo "<sub>RES-36 · warn mode. Once the suite is confirmed clean, \`reason\` becomes a blocking gate (incl. the root-bump-breaks-dependents check).</sub>"
+            echo "<sub>RES-36 · the reasoner blocks (consistency / unsatisfiable / OWL 2 DL — incl. the root-bump-breaks-dependents check); ROBOT \`report\` stays advisory.</sub>"
           } > reasoning-comment.md
 
           cat reasoning-comment.md
@@ -140,7 +141,17 @@ jobs:
               await github.rest.issues.createComment({ owner, repo, issue_number, body });
             }
 
-      # --- ENFORCE (RES-36 follow-up; keep commented until the suite is confirmed
-      #     clean — today it fails only because of the owl# import, RES-71) ---
-      # - name: Fail on inconsistency / unsatisfiable classes
-      #   run: ENFORCE=1 bash scripts/run_reasoning.sh
+      # ENFORCE (RES-36): fail the check on a reasoner problem — inconsistency,
+      # an unsatisfiable class, or not-valid-OWL-2-DL. Runs AFTER the sticky
+      # comment so the ⛔ explanation still posts, and reuses reason.rc from the
+      # warn run above (no second reasoning pass). ROBOT `report` stays advisory —
+      # only the reasoner blocks. (A rare ROBOT-download/setup failure also yields
+      # a non-zero rc; just re-run the job to clear an infra flake.)
+      - name: Fail on inconsistency / unsatisfiable classes
+        run: |
+          RC="$(cat .tools/reasoning-out/reason.rc 2>/dev/null || echo 1)"
+          if [ "$RC" != "0" ]; then
+            echo "::error::OWL 2 DL reasoning failed (rc=$RC) — the merged suite is inconsistent, has an unsatisfiable class, or is not valid OWL 2 DL. See the reasoning comment on this PR for details."
+            exit "$RC"
+          fi
+          echo "Reasoner OK — suite is consistent with no unsatisfiable classes."
