@@ -119,6 +119,10 @@ changelogs — is in **`docs/contribute/versioning.md`**; rationale in KB
   but the label *is* a human name, so it may **expand acronyms** (`:DGU` → `"Double Glazing Unit"`) or add a
   qualifier; keep the short form as `skos:altLabel` (`:DGU skos:altLabel "DGU"`). Object/data **properties**
   keep their lowerCamelCase name as the label.
+- **Exactly one `rdfs:label` per term, in English.** ROBOT `report` raises **`multiple_labels` as an
+  ERROR** for any term with more than one, so multilingual naming goes in `skos:altLabel`, not in a second
+  `rdfs:label`. German and abbreviated drawing captions therefore live in `skos:altLabel` — which is also
+  where extraction tooling looks for them.
 - **Keep labels unique across classes** — but note this is a **docs-quality convention, *not* an RDF/OWL
   requirement** (RDF is fine with duplicate labels; the IRI is the identifier). We enforce it because the
   published docs (pyLODE / ttl2md) and label-based search display `rdfs:label`, so duplicates confuse a human
@@ -134,6 +138,10 @@ changelogs — is in **`docs/contribute/versioning.md`**; rationale in KB
   [DATA-A-9](https://bhmlrnd.youtrack.cloud/articles/DATA-A-9).
 
 ## Keep in sync (mandatory)
+- **Worklog.** Record any non-trivial change you make in **`docs/ai/worklog.md`** (newest entry first) — what
+  changed, how it was verified (including gates you could *not* run), decisions deferred or rejected, and the
+  next step. It is the handover record between sessions; `git log` does not carry intent or open threads. Excluded
+  from the built site (`exclude_docs`).
 - **Ontology ↔ docs.** The published docs are generated from `src/*.ttl`. Whenever a `.ttl` changes, regenerate
   the docs in the same change: `uv run python scripts/generate_docs.py`,
   and let `generate-deploy-docs.yml` publish. Do not hand-edit generated pages in `docs/` — they are overwritten.
@@ -150,6 +158,18 @@ changelogs — is in **`docs/contribute/versioning.md`**; rationale in KB
   the same PR. CI wins on conflicts.
 
 ## Team workflow
+**Documentation lives on GitHub.** As of 2026-08-11, **GitHub is the source of truth for everything
+ADIRO-related** — design notes and research write-ups are maintained as **GitHub Discussions**, and repo docs
+under `docs/`. The former YouTrack KB articles for the title-block work (`RES-A-9`, `RES-A-21`, `RES-A-22`,
+`RES-A-23`) are **frozen**, each carrying a pointer to its Discussion; do not edit or cite them. YouTrack
+remains the **issue tracker** (and the KB for material that must stay internal — e.g. anything carrying client,
+project or security-classification detail, which must not be published to this public repo).
+
+**Publishing standards content.** ISO / DIN / IEC / ASME documents are licensed. Published pages may cite clause
+numbers and reproduce **field names and obligation status** where that is the minimum needed to record how ADIRO
+maps to a standard, under an explicit licensing notice — but **never** normative text, definitions, figures,
+dimensions or layouts. `rdfs:comment` in the TTL still paraphrases and cites; it does not quote.
+
 Issue-first: propose additions/changes as an issue before coding. **ADIRO is open-source, so file issues on
 GitHub — _not_ directly in YouTrack.** A one-way GitHub→YouTrack automation mirrors each ADIRO GitHub issue
 into RES (closing the GitHub issue resolves its mirror), and filing on GitHub keeps the activity on the public
