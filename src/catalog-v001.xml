@@ -14,6 +14,7 @@
 -->
 <catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
   <uri name="https://w3id.org/adiro/aec_drawing_metadata" uri="aec_drawing_metadata.ttl"/>
+  <uri name="https://w3id.org/adiro/aec_titleblock" uri="aec_titleblock.ttl"/>
   <uri name="https://w3id.org/adiro/aec_common_symbols" uri="aec_common_symbols.ttl"/>
   <uri name="https://w3id.org/adiro/aec_domain_common" uri="aec_domain_common.ttl"/>
   <uri name="https://w3id.org/adiro/aec_facade_domain" uri="aec_facade_domain.ttl"/>

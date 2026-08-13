@@ -56,10 +56,11 @@ def sort_by_dependency(ttl_files: list[Path]) -> list[Path]:
     # Define dependency order (lower number = fewer dependencies)
     dependency_order = {
         'aec_drawing_metadata': 1,
-        'aec_common_symbols': 2,
-        'aec_domain_common': 3,
-        'aec_facade_domain': 4,
-        'aec_drawing_ontology': 5,  # Monolith, put last
+        'aec_titleblock': 2,        # imports aec_drawing_metadata (RES-89)
+        'aec_common_symbols': 3,
+        'aec_domain_common': 4,
+        'aec_facade_domain': 5,
+        'aec_drawing_ontology': 6,  # Monolith, put last
     }
     
     def get_order(file_path: Path) -> int:
