@@ -1,0 +1,254 @@
+@prefix : <https://w3id.org/adiro/aec_titleblock#> .
+@prefix tb: <https://w3id.org/adiro/aec_titleblock#> .
+@base <https://w3id.org/adiro/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dm: <https://w3id.org/adiro/aec_drawing_metadata#> .
+
+#################################################################
+#    Ontology
+#
+#    Initial version (0.1.0). Design authority: GitHub Discussion #64
+#    https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/64
+#    Vocabulary review: docs/modularization/titleblock-vocabulary-review.md
+#
+#    WHAT THIS VERSION DELIBERATELY DOES AND DOES NOT CONTAIN
+#
+#    Contains: only terms that have NO counterpart anywhere in
+#    aec_drawing_metadata. Every term whose meaning overlaps an existing
+#    dm: term is listed under "Deferred" at the foot of this file and is
+#    NOT minted, because the placement question is unresolved — see below.
+#
+#    THE UNRESOLVED QUESTION (decision 1 of the vocabulary review)
+#
+#    UC-01 "Titleblock-Based Drawing Search" is implemented, and it attaches
+#    title-block information to dm:DrawingSheet as datatype properties,
+#    treating dm:Titleblock as the visual region only. This module's premise
+#    is the opposite: the title block ASSERTS metadata, so content properties
+#    take dm:Titleblock as their domain and are promoted to the sheet or
+#    document only once validated. Both are reviewed positions serving
+#    different jobs (search vs extraction-with-provenance).
+#
+#    This version uses dm:Titleblock as the domain, consistent with the
+#    module's stated purpose. That is PROVISIONAL. The 0.1.0 version number
+#    signals it may break. Nothing downstream binds these terms yet, so a
+#    reversal costs a rename, not a migration.
+#
+#    NAMING CONVENTION (review feedback, 2026-08-13)
+#
+#    Value-bearing object properties are named asserts<Thing>, not
+#    has<Thing>. A title block states a CLAIM, not a verified fact, and the
+#    property name is the cheapest place to make that visible at every call
+#    site. It also keeps this module's terms obviously distinct from their
+#    aec_drawing_metadata counterparts (tb:assertsClient vs dm:isCheckedBy
+#    etc.), so the two layers cannot be mistaken for each other.
+#
+#    LABELLING CONVENTION (learned from ROBOT report, 2026-08-11)
+#
+#    Exactly ONE rdfs:label per term, in English. ROBOT's report raises
+#    multiple_labels as an ERROR when a term carries more than one, and
+#    AGENTS.md puts alternate and short forms in skos:altLabel. German and
+#    abbreviated captions therefore go in skos:altLabel, which is also where
+#    the extractor wants them.
+#################################################################
+
+<https://w3id.org/adiro/aec_titleblock> rdf:type owl:Ontology ;
+    rdfs:label "AEC Titleblock Ontology" ;
+    rdfs:comment "What a title block asserts: the content fields printed in the titleblock region of an AEC drawing sheet, bound to ISO 7200 / ISO 19650 / DIN 1356-1 concepts. Complements aec_drawing_metadata, which models the titleblock as a detectable graphical region." ;
+    dcterms:title "AEC Titleblock Ontology" ;
+    dcterms:description "What a title block asserts: the content fields printed in the titleblock region of an AEC drawing sheet, bound to ISO 7200 / ISO 19650 / DIN 1356-1 concepts. Complements aec_drawing_metadata, which models the titleblock as a detectable graphical region." ;
+    dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
+    dcterms:creator "Buro Happold — Machine Learning R&D" ;
+    dcterms:publisher "Buro Happold" ;
+    owl:versionIRI <https://w3id.org/adiro/aec_titleblock/0.1.0> ;
+    owl:versionInfo "0.1.0" ;
+    owl:imports <https://w3id.org/adiro/aec_drawing_metadata> .
+
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+:extractionHint rdf:type owl:AnnotationProperty ;
+    rdfs:label "extraction hint"@en ;
+    rdfs:comment "Free-text guidance for an information-extraction model on where and how a field typically appears in a title block (adjacent captions, cell grouping, formatting). Consumed by the generated extraction profile, not by reasoning."@en ;
+    rdfs:range xsd:string .
+
+
+#################################################################
+#    Classes
+#
+#    Only Organization is minted. Person, Project, DrawingSheet and
+#    DrawingRevision already exist in aec_drawing_metadata and are reused as
+#    ranges — see the vocabulary review, which found that minting tb: twins
+#    would duplicate the UC-01 deliverable.
+#################################################################
+
+:Organization rdf:type owl:Class ;
+    rdfs:label "Organization"@en ;
+    rdfs:comment "A legal entity named in a title block — client, originator, legal owner or responsible department. Modelled as a class rather than a string so that one organisation recurring across many sheets is a single individual, which is what makes cross-sheet questions answerable. Aligns to ct:Organisation (ISO 21597-1) and IfcActorSelect; note the ISO spelling differs."@en ;
+    skos:altLabel "Organisation"@en .
+
+#################################################################
+#    Object properties — structural
+#################################################################
+
+:assertsMetadataFor rdf:type owl:ObjectProperty ;
+    rdfs:label "asserts metadata for"@en ;
+    rdfs:domain dm:Titleblock ;
+    rdfs:range dm:DrawingSheet ;
+    rdfs:comment "Links a titleblock region to the drawing sheet whose metadata it asserts. The separation matters because a value read from a titleblock is a claim, not a fact: two sheets can assert conflicting values for one document, and a claim must be validated before it is promoted. Range is dm:DrawingSheet rather than a separate Document class: the sheet is the unit UC-01 established as searchable, and introducing a competing Document class would deepen an unresolved placement question rather than settle it."@en ;
+    :extractionHint "Not extracted. Asserted by the pipeline when a titleblock region is detected on a sheet."@en .
+
+
+#################################################################
+#    Object properties — organisations named in the title block
+#
+#    Client and originator are easily confused: on an in-house drawing both
+#    often carry the same printed string, so each comment states what the
+#    property is NOT. hasLegalOwner was withdrawn after review — see the
+#    footer.
+#################################################################
+
+:assertsClient rdf:type owl:ObjectProperty ;
+    rdfs:label "asserts client"@en ;
+    rdfs:domain dm:Titleblock ;
+    rdfs:range :Organization ;
+    rdfs:comment "The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from assertsOriginator, which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor)."@en ;
+    skos:altLabel "client"@en, "employer"@en, "for"@en,
+                  "Bauherr"@de, "Auftraggeber"@de ;
+    :extractionHint "Often the most prominent organisation name on the sheet, sometimes a logo rather than text. Frequently in its own cell above or beside the originator's block."@en .
+
+:assertsOriginator rdf:type owl:ObjectProperty ;
+    rdfs:label "asserts originator"@en ;
+    rdfs:domain dm:Titleblock ;
+    rdfs:range :Organization ;
+    rdfs:comment "The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. This is the practice or consultancy whose name and logo appear as author of the sheet. Distinct from assertsClient, which names who commissioned the work. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor)."@en ;
+    skos:altLabel "originator"@en, "drawn by (company)"@en, "consultant"@en,
+                  "Planverfasser"@de, "Verfasser"@de ;
+    :extractionHint "Usually the organisation whose logo sits in or beside the title block, and whose code appears in the drawing-number originator segment."@en .
+
+
+#################################################################
+#    Datatype properties
+#################################################################
+
+:organizationName rdf:type owl:DatatypeProperty ;
+    rdfs:label "organizationName" ;
+    rdfs:domain :Organization ;
+    rdfs:range xsd:string ;
+    rdfs:comment "The name of an organisation as printed. Parallels dm:personName. Verbatim: not normalised, expanded or translated at extraction time."@en ;
+    :extractionHint "Transcribe exactly as printed, including any legal suffix."@en .
+
+:supplementaryTitle rdf:type owl:DatatypeProperty ;
+    rdfs:label "supplementaryTitle" ;
+    rdfs:domain dm:Titleblock ;
+    rdfs:range rdf:langString ;
+    rdfs:comment "A secondary or qualifying title line, per ISO 7200:2004 §5.2.3 (optional in that standard). Distinct from the main title: AEC title blocks commonly stack two or three title lines, of which the first is the subject and the rest narrow it. Language-tagged because bilingual title blocks are normal on German projects."@en ;
+    skos:altLabel "subtitle"@en, "secondary title"@en,
+                  "Untertitel"@de, "Planinhalt"@de ;
+    :extractionHint "The second and subsequent lines of a stacked title cell. Keep line order; do not concatenate into the main title."@en .
+
+:sheetNumber rdf:type owl:DatatypeProperty ;
+    rdfs:label "sheetNumber" ;
+    rdfs:domain dm:Titleblock ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Which sheet this is within a multi-sheet document, per ISO 7200:2004 §5.1.6 (mandatory in that standard). A string rather than an integer because forms such as '3a' occur. Distinct from dm:drawingIdentifier, which identifies the sheet itself rather than its position in a set."@en ;
+    skos:altLabel "sheet"@en, "sheet no"@en,
+                  "Blatt"@de, "Blatt-Nr"@de ;
+    :extractionHint "Usually printed as 'Sheet 3 of 7' or 'Blatt 3 von 7'; capture only the position here and the total in numberOfSheets."@en .
+
+:numberOfSheets rdf:type owl:DatatypeProperty ;
+    rdfs:label "numberOfSheets" ;
+    rdfs:domain dm:Titleblock ;
+    rdfs:range xsd:integer ;
+    rdfs:comment "How many sheets the document comprises, per ISO 7200:2004 §5.1.7 (optional in that standard). Read together with sheetNumber from a single printed phrase."@en ;
+    skos:altLabel "of"@en, "total sheets"@en,
+                  "von"@de, "Blätter"@de ;
+    :extractionHint "The second number in 'Sheet 3 of 7'. Omit the property if the sheet does not state a total."@en .
+
+:planKey rdf:type owl:DatatypeProperty ;
+    rdfs:label "planKey" ;
+    rdfs:domain dm:Titleblock ;
+    rdfs:range xsd:string ;
+    rdfs:comment "The composite coded identifier printed in the title block (Plankopf), as expected by DIN SPEC 91391-1. Stored whole and verbatim; its segments are obtained by parsing rather than by separate extraction. Valuable beyond identification: DIN SPEC 91391-1 expects the plan key to agree with the file name, which gives a consistency check runnable over an entire corpus without any annotation."@en ;
+    skos:altLabel "plan key"@en, "drawing key"@en, "document code"@en,
+                  "Planschlüssel"@de, "Plankennzeichen"@de ;
+    :extractionHint "A long hyphen- or dot-separated code, usually the most structured string in the block. Capture the whole string; do not split it."@en .
+
+:dimensionUnits rdf:type owl:DatatypeProperty ;
+    rdfs:label "dimensionUnits" ;
+    rdfs:domain dm:Titleblock ;
+    rdfs:range xsd:string ;
+    rdfs:comment "The units in which the drawing's dimensions are expressed, where the title block states them alongside the scale. German practice per DIN 1356-1 writes both together, as in '1:50 – m,cm'. Held separately from the scale so the scale value stays parseable as a ratio."@en ;
+    skos:altLabel "units"@en, "dimensions in"@en,
+                  "Maßeinheit"@de, "Maße in"@de ;
+    :extractionHint "Appears beside or beneath the scale, often after a dash. Extract only the unit part; the ratio belongs to the scale field."@en .
+
+
+#################################################################
+#    DEFERRED — not minted in this version
+#
+#    (a) Pending decision 1 (placement). Each of these overlaps an existing
+#        aec_drawing_metadata term, so minting a tb: counterpart would create
+#        two vocabularies for one concept. Deliberately absent until the
+#        sheet-level (UC-01) vs titleblock-level placement is agreed:
+#          identificationNumber   overlaps dm:drawingIdentifier
+#          title                  overlaps dm:drawingTitle
+#          scale                  overlaps dm:hasScale (and UC-07 scaleRatio)
+#          paperSize              overlaps dm:sheetSize
+#          revisionIndex          overlaps dm:revisionCode
+#          dateOfIssue            overlaps dm:issueDate
+#          createdBy/checkedBy/approvedBy
+#                                 overlap dm:isAuthoredBy / isCheckedBy / isApprovedBy
+#          the three status properties
+#                                 overlap dm:hasStatusCode / dm:StatusCode
+#
+#    (a2) Withdrawn after review of PR #66 (2026-08-13):
+#          hasLegalOwner          Alessio Lombardi and Tianyang Huang both
+#                                 observe that a title block does not
+#                                 normally express legal ownership. Deferred
+#                                 pending the field-frequency survey; under
+#                                 the agreed <40%-of-sheets rule it is
+#                                 unlikely to return. ISO 7200 §5.1.2 defines
+#                                 it, but the standard is not the evidence —
+#                                 the drawings are.
+#          DocumentType,
+#          DocumentTypeScheme,
+#          hasDocumentType        Withdrawn to pass 3, to land complete. A
+#                                 controlled vocabulary with no concepts in
+#                                 it cannot be used, which was the review
+#                                 objection, and the definition needed
+#                                 tightening. Populating it also touches the
+#                                 standards-licensing question (listing DIN
+#                                 1356-1 Planart values), which is worth
+#                                 deciding rather than rushing.
+#
+#    (b) Dropped as redundant, per the vocabulary review — do not add:
+#          Sheet                  use dm:DrawingSheet
+#          Discipline             use dcommon:Discipline (a class hierarchy,
+#                                 which gives sub-discipline rollup that a flat
+#                                 SKOS scheme would lose). NOTE: referencing it
+#                                 needs an owl:imports of aec_domain_common,
+#                                 which would pull the whole module chain — the
+#                                 import question is unresolved, so nothing here
+#                                 references dcommon: yet.
+#          hasNorthPointOrientation   use UC-07 northArrowAngle (drawing-level)
+#          hasAnnotationBlock     use dm:Legend / dm:Note with dm:contains
+#          pageNumber/numberOfPages   duplicate sheetNumber/numberOfSheets
+#
+#    (c) Later passes: the remaining SKOS schemes and their concepts; the
+#        extension properties; and the extraction-provenance layer, which is
+#        blocked on the RDF-star vs reification decision. An extraction
+#        timestamp must be included when that lands — its absence was a real
+#        gap found by comparison with DANO.
+#
+#    (d) Revision modelling: dm:DrawingRevision is reused. Whether it can
+#        carry the fuller revision-history model, or needs a tb: counterpart,
+#        is an open question and is not pre-empted here.
+#################################################################
