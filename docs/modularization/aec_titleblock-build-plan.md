@@ -2,7 +2,7 @@
 
 **Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) (State: `Backlog` at time of writing — not yet started)
 **Design authority:** [Discussion #64](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/64) · **Research input:** [Discussion #61](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/61) · **Consumer:** RES-A-13 (internal test plan, not published)
-**Branch:** `res-89-aec-titleblock-tbox` · **Status:** initial `aec_titleblock.ttl` written (14 terms, §1); first PR not yet opened
+**Branch:** `res-89-aec-titleblock-tbox` · **Status:** PR [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) open — 11 terms after review round 1 (§1)
 
 ## What this document is (and is not)
 
@@ -47,14 +47,24 @@ Discussion #64, so there is one place to change when a decision changes.
 
 ## 1. Current state of `src/aec_titleblock.ttl`
 
-**Initial version written 2026-08-11 — 14 terms, all validating.**
+**11 terms, all validating.** Written 2026-08-11; revised 2026-08-13 after the first review round on PR
+[#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66).
 
 | Kind | Terms |
 | --- | --- |
-| Classes (2) | `Organization`, `DocumentType` (+ `DocumentTypeScheme` as a `skos:ConceptScheme`) |
-| Object properties (5) | `assertsMetadataFor`, `hasClient`, `hasLegalOwner`, `hasOriginator`, `hasDocumentType` |
+| Class (1) | `Organization` |
+| Object properties (3) | `assertsMetadataFor`, `assertsClient`, `assertsOriginator` |
 | Datatype properties (6) | `organizationName`, `supplementaryTitle`, `sheetNumber`, `numberOfSheets`, `planKey`, `dimensionUnits` |
 | Annotation property (1) | `extractionHint` |
+
+**Naming convention (review feedback):** value-bearing object properties are `asserts<Thing>`, not
+`has<Thing>`. A title block states a claim, not a verified fact, and the property name is the cheapest place to
+make that visible at every call site — it also keeps `tb:` terms obviously distinct from their `dm:`
+counterparts, so the two layers cannot be mistaken for each other.
+
+**Withdrawn in review round 1:** `hasLegalOwner` (a title block does not normally express legal ownership —
+deferred pending the survey), and `DocumentType` / `DocumentTypeScheme` / `hasDocumentType` (deferred to a later
+pass so the scheme lands *with* its values; an empty controlled vocabulary cannot be used).
 
 **Selection rule:** a term is in this version only if it has **no counterpart anywhere in
 `aec_drawing_metadata`**. That is what makes the first PR safe to review before the placement decision — nothing
@@ -75,7 +85,7 @@ a migration.
 | Every property has label + domain + range + comment | pass (checked via rdflib) |
 | Duplicate `rdfs:label` across the merged suite | **0** — clean by construction, given the selection rule |
 | **HermiT consistency + unsatisfiable classes** | **pass — `reason exit code: 0`** on the merged 5-module suite |
-| ROBOT `report` | **0 ERROR.** 14 `missing_definition` WARN + 1 `missing_superclass` INFO from this module, both matching 213 / 19 pre-existing rows of the same type — i.e. consistent with existing repo practice, not a new divergence |
+| ROBOT `report` | **0 ERROR.** 11 `missing_definition` WARN + 1 `missing_superclass` INFO from this module, both matching 213 / 19 pre-existing rows of the same type — i.e. consistent with existing repo practice, not a new divergence |
 | `generate_docs.py` / `mkdocs build` | 5/5 clean / clean |
 
 Java 17 (Temurin) was installed to run the reasoner; `scripts/run_reasoning.sh` fetches ROBOT to

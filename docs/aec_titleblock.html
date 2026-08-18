@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>ADIRO document type scheme</title>
+    <title>AEC Titleblock Ontology</title>
     <style>
         #pylode {
             position: fixed;
@@ -312,28 +312,6 @@ td {
         "@value": "Buro Happold"
       }
     ]
-  },
-  {
-    "@id": "https://w3id.org/adiro/aec_titleblock#DocumentTypeScheme",
-    "@type": [
-      "https://schema.org/DefinedTermSet"
-    ],
-    "https://schema.org/description": [
-      {
-        "@language": "en",
-        "@value": "Concept scheme collecting DocumentType concepts. A SKOS scheme rather than an owl:oneOf enumeration because these values must carry notations as printed, bilingual labels, and mappings between code systems — capabilities a closed enumeration forecloses. Populated in a later pass."
-      }
-    ],
-    "https://schema.org/name": [
-      {
-        "@language": "en",
-        "@value": "Document Type Scheme"
-      },
-      {
-        "@language": "en",
-        "@value": "ADIRO document type scheme"
-      }
-    ]
   }
 ]
 	</script>
@@ -341,7 +319,7 @@ td {
   <body>
     <div id="content">
       <div class="section" id="metadata">
-        <h1>AEC Titleblock OntologyDocument Type SchemeADIRO document type scheme</h1>
+        <h1>AEC Titleblock Ontology</h1>
         <h2>Metadata</h2>
         <dl>
           <div>
@@ -349,20 +327,14 @@ td {
               <strong>IRI</strong>
             </dt>
             <dd>
-              <code>https://w3id.org/adiro/aec_titleblock#DocumentTypeScheme</code>
+              <code>https://w3id.org/adiro/aec_titleblock</code>
             </dd>
           </div>
           <div>
             <dt>
               <a class="hover_property" href="http://purl.org/dc/terms/title" title="A name given to the resource. Defined in DCMI Metadata Terms">Title</a>
             </dt>
-            <dd>
-              <ul>
-                <li><p>AEC Titleblock Ontology</p></li>
-                <li><p>Document Type Scheme</p></li>
-                <li><p>ADIRO document type scheme</p></li>
-              </ul>
-            </dd>
+            <dd><p>AEC Titleblock Ontology</p></dd>
           </div>
           <div>
             <dt>
@@ -389,7 +361,7 @@ td {
               <a class="hover_property" href="http://www.w3.org/2002/07/owl#versionIRI" title="The property that identifies the version IRI of an ontology. Defined in The OWL 2 Schema vocabulary (OWL 2)">Version Iri</a>
             </dt>
             <dd>
-              <a href="https://w3id.org/adiro/aec_titleblock/0.1.0">https://w3id.org/adiro/aec_titleblock/0.1.0</a>
+              <a href="#0.1.0">https://w3id.org/adiro/aec_titleblock/0.1.0</a>
             </dd>
           </div>
           <div>
@@ -402,12 +374,7 @@ td {
             <dt>
               <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
             </dt>
-            <dd>
-              <ul>
-                <li><p>What a title block asserts: the content fields printed in the titleblock region of an AEC drawing sheet, bound to ISO 7200 / ISO 19650 / DIN 1356-1 concepts. Complements aec_drawing_metadata, which models the titleblock as a detectable graphical region.</p></li>
-                <li><p>Concept scheme collecting DocumentType concepts. A SKOS scheme rather than an owl:oneOf enumeration because these values must carry notations as printed, bilingual labels, and mappings between code systems — capabilities a closed enumeration forecloses. Populated in a later pass.</p></li>
-              </ul>
-            </dd>
+            <dd><p>What a title block asserts: the content fields printed in the titleblock region of an AEC drawing sheet, bound to ISO 7200 / ISO 19650 / DIN 1356-1 concepts. Complements aec_drawing_metadata, which models the titleblock as a detectable graphical region.</p></dd>
           </div>
         </dl>
       </div>
@@ -436,7 +403,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="https://w3id.org/adiro/aec_titleblock#organizationName">organizationName</a>
+                  <a href="#organizationName">organizationName</a>
                   <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
                 </span>
               </td>
@@ -449,64 +416,17 @@ td {
                 <ul>
                   <li>
                     <span>
-                      <a href="https://w3id.org/adiro/aec_titleblock#hasClient">has client</a>
+                      <a href="#assertsClient">asserts client</a>
                       <sup class="sup-op" title="OWL Object Property">op</sup>
                     </span>
                   </li>
                   <li>
                     <span>
-                      <a href="https://w3id.org/adiro/aec_titleblock#hasLegalOwner">has legal owner</a>
-                      <sup class="sup-op" title="OWL Object Property">op</sup>
-                    </span>
-                  </li>
-                  <li>
-                    <span>
-                      <a href="https://w3id.org/adiro/aec_titleblock#hasOriginator">has originator</a>
+                      <a href="#assertsOriginator">asserts originator</a>
                       <sup class="sup-op" title="OWL Object Property">op</sup>
                     </span>
                   </li>
                 </ul>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="DocumentType">
-          <h3>Document Type
-            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_titleblock#DocumentType</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>The kind of drawing, as a concept in a controlled vocabulary: DIN 1356-1 Planart values (design stage) plus ISO 19650-2 type codes. NOT the same axis as dm:LayoutContentType, which classifies the view (Plan / Section / Elevation / Detail / Table / Perspective). A single sheet has one document type and may contain several layouts of differing content type. Concept individuals are added in a later pass.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
-              </th>
-              <td>
-                <span>
-                  <a href="http://www.w3.org/2004/02/skos/core#Concept">Concept</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
-              </th>
-              <td>
-                <span>
-                  <a href="https://w3id.org/adiro/aec_titleblock#hasDocumentType">has document type</a>
-                  <sup class="sup-op" title="OWL Object Property">op</sup>
-                </span>
               </td>
             </tr>
           </table>
@@ -549,22 +469,22 @@ td {
             </tr>
           </table>
         </div>
-        <div class="property entity" id="hasclient">
-          <h3>has client
+        <div class="property entity" id="assertsClient">
+          <h3>asserts client
             <sup class="sup-op" title="OWL Object Property">op</sup>
           </h3>
           <table>
             <tr>
               <th>IRI</th>
               <td>
-                <code>https://w3id.org/adiro/aec_titleblock#hasClient</code>
+                <code>https://w3id.org/adiro/aec_titleblock#assertsClient</code>
               </td>
             </tr>
             <tr>
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The client or employer commissioning the work, as named in the title block. Universal on AEC title blocks and, notably, absent from ISO 7200, which provides only a legal-owner field. Distinct from hasLegalOwner (who owns the document) and hasOriginator (who produced the file); on an in-house drawing all three may print the same name, which is why each is separately named here.</p></td>
+              <td><p>The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from assertsOriginator, which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor).</p></td>
             </tr>
             <tr>
               <th>
@@ -580,29 +500,29 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="https://w3id.org/adiro/aec_titleblock#Organization">Organization</a>
+                  <a href="#Organization">Organization</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
             </tr>
           </table>
         </div>
-        <div class="property entity" id="haslegalowner">
-          <h3>has legal owner
+        <div class="property entity" id="assertsOriginator">
+          <h3>asserts originator
             <sup class="sup-op" title="OWL Object Property">op</sup>
           </h3>
           <table>
             <tr>
               <th>IRI</th>
               <td>
-                <code>https://w3id.org/adiro/aec_titleblock#hasLegalOwner</code>
+                <code>https://w3id.org/adiro/aec_titleblock#assertsOriginator</code>
               </td>
             </tr>
             <tr>
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The organisation legally owning the document, per ISO 7200:2004 §5.1.2 (a mandatory field in that standard). Distinct from hasClient: the owner of the document is not necessarily the party who commissioned the work. Distinct from hasOriginator: ownership is not authorship.</p></td>
+              <td><p>The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. This is the practice or consultancy whose name and logo appear as author of the sheet. Distinct from assertsClient, which names who commissioned the work. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor).</p></td>
             </tr>
             <tr>
               <th>
@@ -618,83 +538,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="https://w3id.org/adiro/aec_titleblock#Organization">Organization</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="hasoriginator">
-          <h3>has originator
-            <sup class="sup-op" title="OWL Object Property">op</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_titleblock#hasOriginator</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. Distinct from hasLegalOwner and hasClient. This is the practice or consultancy whose name and logo appear as author of the sheet.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <a href="https://w3id.org/adiro/aec_drawing_metadata#Titleblock">dm:Titleblock</a>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <span>
-                  <a href="https://w3id.org/adiro/aec_titleblock#Organization">Organization</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="hasdocumenttype">
-          <h3>has document type
-            <sup class="sup-op" title="OWL Object Property">op</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_titleblock#hasDocumentType</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>The kind of drawing asserted by the title block — DIN 1356-1 Planart or an ISO 19650-2 type code. Read the DocumentType comment before binding: this is design stage and document kind, not the view type carried by dm:LayoutContentType.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <a href="https://w3id.org/adiro/aec_drawing_metadata#Titleblock">dm:Titleblock</a>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <span>
-                  <a href="https://w3id.org/adiro/aec_titleblock#DocumentType">Document Type</a>
+                  <a href="#Organization">Organization</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -727,7 +571,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="https://w3id.org/adiro/aec_titleblock#Organization">Organization</a>
+                  <a href="#Organization">Organization</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -959,6 +803,10 @@ td {
           <dd>
             <code>https://w3id.org/adiro/aec_drawing_metadata#</code>
           </dd>
+          <dt id="ns1">ns1</dt>
+          <dd>
+            <code>https://w3id.org/adiro/</code>
+          </dd>
           <dt id="owl">owl</dt>
           <dd>
             <code>http://www.w3.org/2002/07/owl#</code>
@@ -1044,9 +892,6 @@ td {
             <li>
               <a href="#Organization">Organization</a>
             </li>
-            <li>
-              <a href="#DocumentType">Document Type</a>
-            </li>
           </ul>
         </li>
         <li>
@@ -1058,16 +903,10 @@ td {
               <a href="#assertsmetadatafor">asserts metadata for</a>
             </li>
             <li>
-              <a href="#hasclient">has client</a>
+              <a href="#assertsClient">asserts client</a>
             </li>
             <li>
-              <a href="#haslegalowner">has legal owner</a>
-            </li>
-            <li>
-              <a href="#hasoriginator">has originator</a>
-            </li>
-            <li>
-              <a href="#hasdocumenttype">has document type</a>
+              <a href="#assertsOriginator">asserts originator</a>
             </li>
           </ul>
         </li>
@@ -1116,6 +955,9 @@ td {
             </li>
             <li>
               <a href="#dm">dm</a>
+            </li>
+            <li>
+              <a href="#ns1">ns1</a>
             </li>
             <li>
               <a href="#owl">owl</a>

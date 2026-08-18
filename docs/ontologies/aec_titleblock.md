@@ -37,13 +37,6 @@ graph BT
 
 ## Classes
 
-### Document Type {#DocumentType}
-
-The kind of drawing, as a concept in a controlled vocabulary: DIN 1356-1 Planart values (design stage) plus ISO 19650-2 type codes. NOT the same axis as dm:LayoutContentType, which classifies the view (Plan / Section / Elevation / Detail / Table / Perspective). A single sheet has one document type and may contain several layouts of differing content type. Concept individuals are added in a later pass.
-
-- **IRI:** `https://w3id.org/adiro/aec_titleblock#DocumentType`
-- **Sub class of:** `skos:Concept`
-
 ### Organization {#Organization}
 
 A legal entity named in a title block — client, originator, legal owner or responsible department. Modelled as a class rather than a string so that one organisation recurring across many sheets is a single individual, which is what makes cross-sheet questions answerable. Aligns to ct:Organisation (ISO 21597-1) and IfcActorSelect; note the ISO spelling differs.
@@ -51,6 +44,15 @@ A legal entity named in a title block — client, originator, legal owner or res
 - **IRI:** `https://w3id.org/adiro/aec_titleblock#Organization`
 
 ## Object Properties
+
+### asserts client {#assertsClient}
+
+The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from assertsOriginator, which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor).
+
+- **IRI:** `https://w3id.org/adiro/aec_titleblock#assertsClient`
+- **Domain:** `dm:Titleblock`
+- **Range:** [Organization](#Organization)
+- **extraction hint:** Often the most prominent organisation name on the sheet, sometimes a logo rather than text. Frequently in its own cell above or beside the originator's block.
 
 ### asserts metadata for {#assertsMetadataFor}
 
@@ -61,38 +63,11 @@ Links a titleblock region to the drawing sheet whose metadata it asserts. The se
 - **Range:** `dm:DrawingSheet`
 - **extraction hint:** Not extracted. Asserted by the pipeline when a titleblock region is detected on a sheet.
 
-### has client {#hasClient}
+### asserts originator {#assertsOriginator}
 
-The client or employer commissioning the work, as named in the title block. Universal on AEC title blocks and, notably, absent from ISO 7200, which provides only a legal-owner field. Distinct from hasLegalOwner (who owns the document) and hasOriginator (who produced the file); on an in-house drawing all three may print the same name, which is why each is separately named here.
+The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. This is the practice or consultancy whose name and logo appear as author of the sheet. Distinct from assertsClient, which names who commissioned the work. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor).
 
-- **IRI:** `https://w3id.org/adiro/aec_titleblock#hasClient`
-- **Domain:** `dm:Titleblock`
-- **Range:** [Organization](#Organization)
-- **extraction hint:** Often the most prominent organisation name on the sheet, sometimes a logo rather than text. Frequently in its own cell above or beside the originator's block.
-
-### has document type {#hasDocumentType}
-
-The kind of drawing asserted by the title block — DIN 1356-1 Planart or an ISO 19650-2 type code. Read the DocumentType comment before binding: this is design stage and document kind, not the view type carried by dm:LayoutContentType.
-
-- **IRI:** `https://w3id.org/adiro/aec_titleblock#hasDocumentType`
-- **Domain:** `dm:Titleblock`
-- **Range:** [Document Type](#DocumentType)
-- **extraction hint:** On German sheets a labelled 'Planart' cell. On UK sheets often absent as a field and encoded instead in the drawing-number type segment.
-
-### has legal owner {#hasLegalOwner}
-
-The organisation legally owning the document, per ISO 7200:2004 §5.1.2 (a mandatory field in that standard). Distinct from hasClient: the owner of the document is not necessarily the party who commissioned the work. Distinct from hasOriginator: ownership is not authorship.
-
-- **IRI:** `https://w3id.org/adiro/aec_titleblock#hasLegalOwner`
-- **Domain:** `dm:Titleblock`
-- **Range:** [Organization](#Organization)
-- **extraction hint:** Often appears as a copyright line or ownership statement rather than a labelled cell, sometimes in small print at the edge of the block.
-
-### has originator {#hasOriginator}
-
-The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. Distinct from hasLegalOwner and hasClient. This is the practice or consultancy whose name and logo appear as author of the sheet.
-
-- **IRI:** `https://w3id.org/adiro/aec_titleblock#hasOriginator`
+- **IRI:** `https://w3id.org/adiro/aec_titleblock#assertsOriginator`
 - **Domain:** `dm:Titleblock`
 - **Range:** [Organization](#Organization)
 - **extraction hint:** Usually the organisation whose logo sits in or beside the title block, and whose code appears in the drawing-number originator segment.

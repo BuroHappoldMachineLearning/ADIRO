@@ -22,6 +22,85 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-08-13 (review round 1) — PR #66 changes requested; 14 terms → 11
+
+**Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`
+
+### CI came back green; the blocker was human
+
+HermiT consistent, ROBOT 0 ERROR, compat-diff reported 14 non-breaking `TERM_ADDED` at MINOR level. **Alessio
+Lombardi requested changes**, and separately Ahmed Zaalouk left five recommendations on
+[Discussion #61](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/61) which Alessio agreed with in
+full.
+
+### What was asked, and what was done
+
+| Request | Source | Action |
+| --- | --- | --- |
+| `DocumentType` definition is long and vague, and defines by reference to other concepts rather than saying what it is | PR review | **Withdrawn to a later pass**, with the trio `DocumentType` / `DocumentTypeScheme` / `hasDocumentType` |
+| A controlled vocabulary with no values listed is unusable — *"otherwise how do we use this?"* | PR review | Same withdrawal. Agreed as a general rule: **a scheme ships with its concepts or it does not ship.** Recorded in §10 acceptance criteria |
+| Are all three organisation properties needed? `hasLegalOwner` is probably not something a title block expresses | PR review (Alessio + Tianyang Huang) | **`hasLegalOwner` withdrawn**, deferred pending the field-frequency survey |
+| Consider `describes` / `defines` / **`asserts`** instead of `has*` | PR review | **Adopted.** `hasClient` → `assertsClient`, `hasOriginator` → `assertsOriginator`, recorded as the naming convention for all future value-bearing properties |
+| Why not list values as classes, like `dm:LayoutContentType`? | PR review | Answered in **Discussion #64 §6** with a three-way comparison (classes / `owl:oneOf` / SKOS) rather than the two-way one that was there |
+| Defer any field appearing on <~40% of sampled sheets | Discussion #61 (Zaalouk 1, Alessio agreed) | **Adopted as an acceptance criterion** (§10). Makes the survey a gating input, not a nice-to-have |
+| Don't implement the manufacturing-heritage fields | Discussion #61 (Zaalouk 2) | Already 🟠 in the assessment; now recorded as **do not implement** in §11.2 |
+| Minimal standards per use case; ICDD as the anchor for cross-sheet document links | Discussion #61 (Zaalouk 3) | Recorded in §10. **Note this changes ICDD's status** — see below |
+| Use ROBOT to catch conflicting/redundant terms | Discussion #61 (Zaalouk 3) | Already in place and run: 0 duplicate labels across the merged suite |
+| Separate Titleblock ontology linked to `aec_drawing_metadata` | Discussion #61 (Zaalouk 4) | Already the shipped design |
+| Target the 29 🟢 Core terms, defer the 20 marginal; use `dano:depicts` to link out rather than import | Discussion #61 (Zaalouk 5, Ahmed agreed) | See the stale-ratings problem below |
+
+### Two things worth recording beyond the mechanical changes
+
+**1. "Build the 29 🟢 Core terms" was an instruction pointing at stale ratings.** Ahmed's reply on #61 says to
+build the first pass from the 🟢 Core set. But the use-case/DANO review had already downgraded three of those
+rows to 🔴 Redundant — `Discipline`, `scale` and `hasNorthPointOrientation` — and §11.1 had **not** been
+updated. Building "the 29 core" as #61 then read would have minted three duplicates, which is precisely what
+Zaalouk's own point 3 warns against.
+
+Fixed: #61 now carries a **red banner** at the top of §11.1 and a new **§11.2 "Revisions to the assessment —
+current position"** listing every change with its driver. The original emoji are kept for traceability but §11.2
+is marked authoritative. *A rating table that people build from is a live instruction, and it has to be corrected
+the moment the assessment moves.*
+
+**2. ICDD's status has flipped, and this is not yet reflected in the decision record.** The demotion said
+alignment was "conditional on a stated ICDD/openCDE deliverable requirement". Zaalouk point 3b makes ISO 21597-1
+the anchor for the document-to-document links UC-03 needs, and Alessio agreed — **so the condition has been
+met.** The ~4 alignment axioms should now be scheduled rather than deferred. Left as a next step rather than
+changed unilaterally, because it is a scope addition.
+
+### Also unaddressed by the review
+
+Neither reviewer engaged with the two structural findings in the PR body: the **UC-01 placement contradiction**
+(Alessio's *"isn't this already what we proposed?"* on Zaalouk's point 4 suggests he read it as agreement, but the
+finding is that UC-01's *implementation* puts the data on the sheet, accepted in his own G2 review) and the
+**~40-terms-without-a-competency-question** traceability gap. Both remain open and both are more consequential
+than anything fixed in this round.
+
+### Verification after the changes
+
+| Check | Result |
+| --- | --- |
+| `validate_ontology.py` (module, then all five) | pass |
+| Term count / completeness | **11 terms**; every property has label + domain + range + comment; no dangling references to removed terms |
+| **HermiT** | **pass — `reason exit code: 0`** |
+| ROBOT `report` | **0 ERROR**; 11 `missing_definition` WARN + 1 INFO, matching pre-existing practice |
+| `generate_docs.py` / `mkdocs build` | clean |
+
+### Next steps
+
+**Not done deliberately:** no reply was posted to the PR review — Ahmed will handle that conversation.
+
+1. **Post the review reply**, covering the five actions above, the SKOS three-way answer, and resurfacing the two
+   unaddressed structural findings. Tag Zaalouk and Tianyang, whom Alessio asked for opinions.
+2. **The placement decision** — still the highest-value open item; determines whether the first pass stays at 11
+   terms or grows to ~29.
+3. **Schedule the ICDD alignment axioms** now that UC-03 supplies the requirement.
+4. **Run the field-frequency survey** — now formally gating every marginal term under the <40% rule.
+5. **Pass 3:** `DocumentType` and the remaining schemes, landing complete with their concept values.
+6. **Extraction ORSD**, or cut to use-case demand.
+
+---
+
 ## 2026-08-11 (implementation) — initial `aec_titleblock.ttl`; PR policy changed
 
 **Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **Branch:** `res-89-aec-titleblock-tbox`
