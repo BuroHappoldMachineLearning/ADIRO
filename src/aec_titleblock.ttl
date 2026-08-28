@@ -24,20 +24,34 @@
 #    dm: term is listed under "Deferred" at the foot of this file and is
 #    NOT minted, because the placement question is unresolved — see below.
 #
-#    THE UNRESOLVED QUESTION (decision 1 of the vocabulary review)
+#    DECISION 1 — PLACEMENT (resolved 2026-08-19, Option 1)
 #
 #    UC-01 "Titleblock-Based Drawing Search" is implemented, and it attaches
-#    title-block information to dm:DrawingSheet as datatype properties,
-#    treating dm:Titleblock as the visual region only. This module's premise
-#    is the opposite: the title block ASSERTS metadata, so content properties
-#    take dm:Titleblock as their domain and are promoted to the sheet or
-#    document only once validated. Both are reviewed positions serving
-#    different jobs (search vs extraction-with-provenance).
+#    title-block information to dm:DrawingSheet / dm:DrawingRevision as
+#    datatype/object properties, treating dm:Titleblock as the visual region
+#    only. This module's premise is the opposite: the title block ASSERTS
+#    metadata, so content properties minted HERE take dm:Titleblock as their
+#    domain. Both are reviewed positions serving different jobs (search vs
+#    extraction-with-provenance) — see
+#    docs/modularization/titleblock-placement-option1-plan.md for the full
+#    comparison and the trade-offs accepted below.
 #
-#    This version uses dm:Titleblock as the domain, consistent with the
-#    module's stated purpose. That is PROVISIONAL. The 0.1.0 version number
-#    signals it may break. Nothing downstream binds these terms yet, so a
-#    reversal costs a rename, not a migration.
+#    RESOLVED for the 10 fields that overlap dm: (drawing number, title,
+#    scale, sheet size, revision code, issue date, author/checker/approver,
+#    status): DO NOT mint tb: counterparts for these. They are reused
+#    directly from dm: via the owl:imports below — see the Deferred section
+#    at the foot of this file, which now records "resolved: reuse dm:
+#    directly" rather than "pending". The extraction pipeline writes these
+#    values straight onto dm:DrawingSheet / dm:DrawingRevision; there is no
+#    tb:-level staging layer for them. Accepted trade-off: no per-field
+#    "unvalidated claim" quarantine for these 10 — any pre-write checking is
+#    the pipeline's/SHACL's job, not the ontology's.
+#
+#    This decision is scoped to the 10 fields above ONLY. It is still
+#    provisional in the sense that new tb: terms below (Organization,
+#    assertsClient, assertsOriginator, etc.) keep dm:Titleblock as their
+#    domain — the assertion-layer pattern is not abandoned, just not
+#    duplicated where dm: already covers the same ground.
 #
 #    NAMING CONVENTION (review feedback, 2026-08-13)
 #
@@ -194,20 +208,23 @@
 #################################################################
 #    DEFERRED — not minted in this version
 #
-#    (a) Pending decision 1 (placement). Each of these overlaps an existing
-#        aec_drawing_metadata term, so minting a tb: counterpart would create
-#        two vocabularies for one concept. Deliberately absent until the
-#        sheet-level (UC-01) vs titleblock-level placement is agreed:
-#          identificationNumber   overlaps dm:drawingIdentifier
-#          title                  overlaps dm:drawingTitle
-#          scale                  overlaps dm:hasScale (and UC-07 scaleRatio)
-#          paperSize              overlaps dm:sheetSize
-#          revisionIndex          overlaps dm:revisionCode
-#          dateOfIssue            overlaps dm:issueDate
-#          createdBy/checkedBy/approvedBy
-#                                 overlap dm:isAuthoredBy / isCheckedBy / isApprovedBy
-#          the three status properties
-#                                 overlap dm:hasStatusCode / dm:StatusCode
+#    (a) RESOLVED 2026-08-19 (Option 1) — reuse dm: directly, no tb: term.
+#        See docs/modularization/titleblock-placement-option1-plan.md.
+#        These are NOT missing; they are intentionally absent from this
+#        module because they already exist and are imported:
+#          identificationNumber   use dm:drawingIdentifier   (DrawingSheet)
+#          title                  use dm:drawingTitle        (DrawingSheet)
+#          scale                  use dm:hasScale            (DrawingSheet)
+#          paperSize              use dm:sheetSize           (DrawingSheet)
+#          revisionIndex          use dm:revisionCode        (DrawingRevision)
+#          dateOfIssue            use dm:issueDate           (DrawingRevision)
+#          createdBy              use dm:isAuthoredBy        (DrawingRevision -> Person)
+#          checkedBy              use dm:isCheckedBy         (DrawingRevision -> Person)
+#          approvedBy             use dm:isApprovedBy        (DrawingRevision -> Person)
+#          status                 use dm:hasStatusCode       (DrawingRevision -> StatusCode)
+#        Extraction writes these directly onto dm:DrawingSheet /
+#        dm:DrawingRevision. There is no tb:-level "unvalidated claim" stage
+#        for them — that trade-off was accepted explicitly, not by default.
 #
 #    (a2) Withdrawn after review of PR #66 (2026-08-13):
 #          hasLegalOwner          Alessio Lombardi and Tianyang Huang both

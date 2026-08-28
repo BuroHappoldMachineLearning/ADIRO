@@ -22,6 +22,68 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-08-19 — Placement question resolved: Option 1 (reuse `dm:` directly)
+
+**Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`
+
+### The decision
+
+For the 10 content properties that overlap `aec_drawing_metadata` (drawing number, title, scale, sheet size,
+revision code, issue date, author/checker/approver, status) — **reuse `dm:` directly. No `tb:` counterpart is
+minted for any of them, and no parallel assertion layer is built.** This resolves what Discussion #64 called
+"the largest open decision in the whole plan" (§1.1, open question 6).
+
+Concretely: the extraction pipeline writes these 10 values straight onto the existing `dm:DrawingSheet` /
+`dm:DrawingRevision` properties — the same ones UC-01's search feature already reads. There is no `tb:`-level
+"unvalidated claim" stage for them.
+
+**Preceded by a proposal document** written for team review before implementing:
+`docs/modularization/titleblock-placement-option1-plan.md`. It lays out what Option 1 buys (zero new terms, zero
+migration risk to UC-01, and — a fact confirmed while drafting it — `aec_drawing_metadata` already restricts
+every `DrawingSheet` to exactly one `Titleblock`, so the two are already the same fact at the schema level for
+this piece), what it costs (no per-field quarantine before an extracted value becomes "official"; validation
+must happen in the pipeline or via SHACL instead), and three questions put to the team before implementation.
+
+### What this does NOT resolve
+
+Flagged explicitly so it isn't conflated: ADIRO still has no `Document` class distinct from `DrawingSheet`, so
+the separate concern in [RES-A-9 finding 2](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/61)
+— *different sheets* in one document set disagreeing with each other — remains an open gap regardless of this
+decision. Tracked as its own item, not folded into placement.
+
+### Changes made
+
+| Surface | Change |
+| --- | --- |
+| `docs/modularization/titleblock-placement-option1-plan.md` | **New.** The proposal document, written before implementation |
+| `src/aec_titleblock.ttl` | Header's "unresolved question" note rewritten as "Decision 1 — Placement (resolved)"; footer section (a) rewritten from "pending decision 1" to "resolved: reuse `dm:` directly" for all 10 fields, each with its `dm:` target and attachment point named |
+| [Discussion #64](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/64) | §1.1 gains a resolution banner; the old "A for classes + B for properties" recommendation is struck through as superseded for properties (A for classes stands); open question 6 closed |
+| `docs/modularization/aec_titleblock-build-plan.md` | Status line, the "Reconciliation with existing terms" note, and the PR table updated — former PR 2 ("remaining core properties, once the placement decision lands") is dropped from the sequence entirely, since Option 1 means there is nothing left to build for those 10 fields. The separate `assertsMetadataFor`/`Document` provisional note is now explicitly distinguished from this resolved decision, not conflated with it |
+
+### Verification
+
+No new terms were minted — this was a documentation/decision change, not a vocabulary change. Re-ran every gate
+to confirm nothing regressed:
+
+| Check | Result |
+| --- | --- |
+| Term count | **11** (unchanged) |
+| `validate_ontology.py` (module, then all five) | pass |
+| **HermiT** | pass — `reason exit code: 0` |
+| ROBOT `report` | 0 ERROR (unchanged) |
+| `generate_docs.py` / `mkdocs build` | clean |
+
+### Next steps
+
+1. **Update the extraction pipeline / `build_extraction_profile.py`** to write the 10 fields onto `dm:` properties
+   directly, per this decision — this is the actual remaining work, and it lives outside the ontology.
+2. **Decide where pre-write validation for these 10 fields lives** — pipeline code or a SHACL shape run before
+   the write. Option 1 does not supply this for free; it was an accepted trade-off, not a solved problem.
+3. **Consider tracking the `Document`-vs-`DrawingSheet` gap as its own issue**, independent of this decision.
+4. Pass 3 (SKOS enumerations), the extraction ORSD, and the field-frequency survey remain as previously recorded.
+
+---
+
 ## 2026-08-13 (review round 1) — PR #66 changes requested; 14 terms → 11
 
 **Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`

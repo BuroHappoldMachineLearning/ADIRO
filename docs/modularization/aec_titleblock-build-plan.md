@@ -2,7 +2,7 @@
 
 **Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) (State: `Backlog` at time of writing — not yet started)
 **Design authority:** [Discussion #64](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/64) · **Research input:** [Discussion #61](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/61) · **Consumer:** RES-A-13 (internal test plan, not published)
-**Branch:** `res-89-aec-titleblock-tbox` · **Status:** PR [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) open — 11 terms after review round 1 (§1)
+**Branch:** `res-89-aec-titleblock-tbox` · **Status:** PR [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) open — 11 terms (§1); placement decision resolved 2026-08-19, Option 1 (see `titleblock-placement-option1-plan.md`)
 
 ## What this document is (and is not)
 
@@ -22,14 +22,15 @@ This document is the **repo-side execution plan**: the files each pass touches, 
 and the local commands to run. It is deliberately thin — everything that is a *modelling* decision belongs in
 Discussion #64, so there is one place to change when a decision changes.
 
-> **Reconciliation with existing terms.** `aec_drawing_metadata` already declares `:Person`, `:Project`,
-> `:DrawingSheet`, `:DrawingRevision` and ~12 title-block-adjacent properties, and they hang off
-> `:DrawingSheet`/`:DrawingRevision` rather than `:Titleblock`. That is the largest open decision in the whole
-> plan and it is owned by **[Discussion #64 §1.1](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/64)** (proposed:
-> reuse the classes, mint the properties as a parallel assertion layer, reject migration), and it is
-> complicated by the UC-01 finding in `titleblock-vocabulary-review.md` §2.1. **The initial TTL sidesteps it**
-> by minting only terms with no `dm:` counterpart (§1), so the decision is still open and still owed. Do not
-> resolve it from this file.
+> **Reconciliation with existing terms — RESOLVED 2026-08-19 (Option 1).** `aec_drawing_metadata` already
+> declares `:Person`, `:Project`, `:DrawingSheet`, `:DrawingRevision` and ~12 title-block-adjacent properties.
+> For the 10 content properties that overlap (drawing number, title, scale, sheet size, revision code, issue
+> date, author/checker/approver, status), **`aec_titleblock` reuses `dm:` directly — no `tb:` counterpart, no
+> parallel assertion layer.** The classes (`Person`, `Project`, `DrawingSheet`, `DrawingRevision`) were already
+> being reused, unaffected by this. Full reasoning and the trade-offs accepted:
+> `docs/modularization/titleblock-placement-option1-plan.md`. Recorded in
+> [Discussion #64 §1.1](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/64) and in the TTL's
+> header/footer. Closes what this document previously called "the largest open decision in the whole plan".
 
 ### Settled decisions (do not relitigate here)
 
@@ -72,10 +73,13 @@ here is a second vocabulary for an existing concept. The TTL's footer lists, in 
 deferred for that reason and every term dropped as redundant, so the omissions are legible to a reader of the
 module rather than only to a reader of this plan.
 
-**Provisional choice recorded in the file:** domains are `dm:Titleblock`, consistent with the module's stated
-purpose, and `assertsMetadataFor` ranges over `dm:DrawingSheet` rather than a newly minted `Document` class.
-Both are flagged in the TTL header as provisional pending decision 1. At `0.1.0` a reversal costs a rename, not
-a migration.
+**Provisional choice recorded in the file:** domains for `tb:`-minted properties are `dm:Titleblock`, consistent
+with the module's stated purpose, and `assertsMetadataFor` ranges over `dm:DrawingSheet` rather than a newly
+minted `Document` class. Neither is decided by the Option 1 placement resolution above — that decision was only
+about whether to mint `tb:` counterparts for the 10 overlapping content properties, not about whether ADIRO ever
+needs a `Document` class distinct from `DrawingSheet`. That is a separate, still-open gap: two sheets in the same
+document set can currently disagree with no node to reconcile them against. See
+`titleblock-placement-option1-plan.md` §3, point 4. At `0.1.0` a reversal costs a rename, not a migration.
 
 **Verified — all gates, including the blocking one:**
 
@@ -168,19 +172,19 @@ initial term set. Subsequent PRs remain one per pass.
 
 | PR | Content | Depends on |
 | --- | --- | --- |
-| **1** | **Initial version.** The design and review documents, the pass-1 plumbing, **and an initial `aec_titleblock.ttl`** — the terms that have no counterpart in `aec_drawing_metadata`, so the module is reviewable without pre-empting the unresolved placement question (the settled-decisions block above) | — |
-| 2 | The remaining core properties, once the placement decision lands | PR 1 + decision 1 |
+| **1** | **Initial version.** The design and review documents, the pass-1 plumbing, **and an initial `aec_titleblock.ttl`** — the terms that have no counterpart in `aec_drawing_metadata` | — |
+| 2 | ~~The remaining core properties, once the placement decision lands~~ — **not needed.** Resolved as Option 1 (§1): those 10 properties are reused from `dm:` directly and require no new `tb:` terms. This PR is dropped from the sequence | — |
 | 3 | SKOS enumerations and their concepts | PR 1 |
 | 4 | SHACL shapes + `build_extraction_profile.py` | PR 3 |
 | 5 | Extension properties | PR 3 |
 | 6 | Extraction-provenance layer, including the timestamp | the RDF-star vs reification decision |
 | — | Alignment axioms (IFC, `ct:`, `dano:`) — **not a scheduled PR.** Additive; build when a consumer requires it | a real deliverable requirement |
 
-**What "initial version" means here.** It is deliberately the terms that are *uncontested*: everything whose
-meaning overlaps an existing `dm:` term is listed as deferred in the TTL's footer rather than minted, because the
-sheet-level (UC-01) vs titleblock-level placement is unresolved — see
-`titleblock-vocabulary-review.md` §2.1. That keeps the first PR reviewable and reversible: nothing in it needs
-withdrawing whichever way the placement decision goes.
+**What "initial version" means here.** It is deliberately the terms that had no `dm:` counterpart at the time —
+everything that overlapped an existing `dm:` term was listed as deferred in the TTL's footer rather than minted,
+pending the sheet-level (UC-01) vs titleblock-level placement decision. **That decision is now resolved (Option
+1, 2026-08-19)** — see `titleblock-placement-option1-plan.md`. The footer entries for those 10 fields now read
+"resolved: reuse `dm:` directly" rather than "pending", and no former PR 2 is required to close them out.
 
 ADIRO is open-source, so issues go on **GitHub**, mirrored one-way into RES
 ([MAN-A-3](https://bhmlrnd.youtrack.cloud/articles/MAN-A-3)).
@@ -189,7 +193,9 @@ ADIRO is open-source, so issues go on **GitHub**, mirrored one-way into RES
 
 [Discussion #64 §10](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/64) is the checklist, and it already incorporates
 the repo's CI gates (HermiT blocking, `duplicate_label` as a design signal, the plumbing items in §1 above, and
-the duplicate-term criterion as amended by the §1.1 decision). Nothing further is added here.
+the duplicate-term criterion as amended by the §1.1 decision). The duplicate-term criterion is now easier to
+state: no `tb:` term duplicates a `dm:` term at all, full stop — Option 1 means there is no longer an
+assertion-layer exception to carve out. Nothing further is added here.
 
 ## 6. Open questions
 
