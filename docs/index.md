@@ -38,6 +38,16 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata.html){ .md-button target=_blank }
 
+-   ### [Aec Titleblock](aec_titleblock.html)
+
+    What a title block asserts: the content fields printed in the titleblock region of an AEC drawing sheet, bound to ISO 7200 / ISO 19650 / DIN 1356-1 concepts. Complements aec_drawing_metadata, which models the titleblock as a detectable graphical region.
+
+    *Imports: aec_drawing_metadata*
+
+    Source: [`aec_titleblock.ttl`](aec_titleblock.ttl)
+
+    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_titleblock.html){ .md-button target=_blank }
+
 -   ### [Aec Common Symbols](aec_common_symbols.html)
 
     Cross-discipline layout content. Generic symbol classes like dimensions, reference symbols, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology.
