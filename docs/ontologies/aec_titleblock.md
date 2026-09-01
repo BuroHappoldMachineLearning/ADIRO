@@ -74,6 +74,15 @@ The organisation that produced the drawing — the originator in ISO 19650-2 ter
 
 ## Datatype Properties
 
+### assertsCrossReferenceNumber {#assertsCrossReferenceNumber}
+
+A second (or third) identifier the title block prints for the same sheet, issued by a system other than the one dm:drawingIdentifier is read from — a design-team-internal number, a client/EDMS document number, or a sketch/site-advice reference. Evidenced by a four-project field-frequency survey (docs/modularization/titleblock-field-survey-2026-09.md §3.2), where it recurs under different labels in 3 of 4 projects. Stored whole and verbatim, like planKey; which system issued it is not modelled as a controlled vocabulary here — an empty scheme was the objection that withdrew DocumentType in review round 1 — so that distinction is carried by extractionHint only. Named asserts- rather than has- for the same reason as assertsClient/assertsOriginator: the title block states a claim, not a verified fact (see assertsMetadataFor).
+
+- **IRI:** `https://w3id.org/adiro/aec_titleblock#assertsCrossReferenceNumber`
+- **Domain:** `dm:Titleblock`
+- **Range:** `xsd:string`
+- **extraction hint:** A second coded number near or below the primary drawing number, often prefixed by the issuing system's initials (e.g. a sketch/site-advice code, or an EDMS platform's own document ID). Do not conflate with dm:drawingIdentifier — capture only when a sheet prints more than one numbering system.
+
 ### dimensionUnits {#dimensionUnits}
 
 The units in which the drawing's dimensions are expressed, where the title block states them alongside the scale. German practice per DIN 1356-1 writes both together, as in '1:50 – m,cm'. Held separately from the scale so the scale value stays parseable as a ratio.

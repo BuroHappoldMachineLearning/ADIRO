@@ -2,7 +2,7 @@
 
 **Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) (State: `Backlog` at time of writing — not yet started)
 **Design authority:** [Discussion #64](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/64) · **Research input:** [Discussion #61](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/61) · **Consumer:** RES-A-13 (internal test plan, not published)
-**Branch:** `res-89-aec-titleblock-tbox` · **Status:** PR [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) open — 11 terms (§1); placement decision resolved 2026-08-19, Option 1 (see `titleblock-placement-option1-plan.md`)
+**Branch:** `res-89-aec-titleblock-tbox` · **Status:** PR [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) open — 12 terms (§1); placement decision resolved 2026-08-19, Option 1 (see `titleblock-placement-option1-plan.md`); `assertsCrossReferenceNumber` added 2026-09-01 from field-survey evidence (see `titleblock-field-survey-2026-09.md`)
 
 ## What this document is (and is not)
 
@@ -48,15 +48,31 @@ Discussion #64, so there is one place to change when a decision changes.
 
 ## 1. Current state of `src/aec_titleblock.ttl`
 
-**11 terms, all validating.** Written 2026-08-11; revised 2026-08-13 after the first review round on PR
-[#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66).
+**12 terms, all validating.** Written 2026-08-11; revised 2026-08-13 after the first review round on PR
+[#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66); `assertsCrossReferenceNumber` added
+2026-09-01 from a four-project field-frequency survey (§1a below).
 
 | Kind | Terms |
 | --- | --- |
 | Class (1) | `Organization` |
 | Object properties (3) | `assertsMetadataFor`, `assertsClient`, `assertsOriginator` |
-| Datatype properties (6) | `organizationName`, `supplementaryTitle`, `sheetNumber`, `numberOfSheets`, `planKey`, `dimensionUnits` |
+| Datatype properties (7) | `organizationName`, `supplementaryTitle`, `sheetNumber`, `numberOfSheets`, `planKey`, `dimensionUnits`, `assertsCrossReferenceNumber` |
 | Annotation property (1) | `extractionHint` |
+
+### 1a. `assertsCrossReferenceNumber` — added 2026-09-01
+
+Ahmed Zaalouk's field-frequency survey of four real BH projects (`docs/modularization/titleblock-field-survey-2026-09.md`)
+found that real sheets often print a **second** drawing-numbering system alongside `dm:drawingIdentifier` —
+a design-team-internal number, a client/EDMS document number (e.g. Aconex), or a sketch/site-advice reference —
+recurring in 3 of 4 sampled projects under different labels. Not in the original 73-term brainstorm. Minted as a
+single datatype property, string-valued and stored verbatim like `planKey`, with the observed labels kept as
+`skos:altLabel`s and no controlled vocabulary for "which system issued it" (the `DocumentType` lesson: an empty
+scheme cannot be reviewed).
+
+The same survey surfaced a second candidate gap — a contractor/consultant/engineer/architect organisation role,
+present in all four projects — which was **deliberately parked, not minted**: `assertsOriginator` already covers
+the general case, and the four candidate names (`assertsContractor`, `assertsEngineer`, `assertsArchitect`,
+`assertsConsultant`) need a team discussion on shape before any of them land. See the survey doc §3.1, §5.
 
 **Naming convention (review feedback):** value-bearing object properties are `asserts<Thing>`, not
 `has<Thing>`. A title block states a claim, not a verified fact, and the property name is the cheapest place to

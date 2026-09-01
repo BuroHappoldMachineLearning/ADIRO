@@ -22,6 +22,97 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-09-01 (decision) — `assertsCrossReferenceNumber` minted; organisation-role candidates parked
+
+**Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`
+
+### The decision
+
+Reviewed the two candidates from the field-survey proposal below (same date, earlier entry) and decided: mint
+`tb:assertsCrossReferenceNumber` now; park the four organisation-role candidates (`assertsContractor`,
+`assertsEngineer`, `assertsArchitect`, `assertsConsultant`) for a future discussion, since `tb:assertsOriginator`
+already covers the general case for a first pass.
+
+Also anonymised the survey document at the same time: it named four real BH projects, and was rewritten to refer
+to them only as Project A–D, consistently, so it can be cited outside project-restricted channels without a
+mapping back to specific clients/projects appearing in this public repo.
+
+### What changed
+
+| File | Change |
+| --- | --- |
+| `src/aec_titleblock.ttl` | New datatype property `assertsCrossReferenceNumber` (domain `dm:Titleblock`, range `xsd:string`), following the `planKey`/`asserts*` conventions — stored whole and verbatim, `skos:altLabel`s for the observed labels, no controlled vocabulary for the issuing system |
+| `changelogs/aec_titleblock.md` | `[Unreleased]` section updated: term count 11 → 12, new bullet recording the addition and the parked organisation-role candidates |
+| `docs/modularization/aec_titleblock-build-plan.md` | Status line and §1 term table updated to 12 terms; new §1a summarising the addition |
+| `docs/modularization/titleblock-field-survey-2026-09.md` | Rewritten: project names anonymised to Project A–D; §3.1 and §3.2 updated from "candidate" to "parked" / "decided, implemented"; §6 recommendation rewritten as an outcome |
+| `docs/**` | Regenerated (`generate_docs.py`) |
+
+### Verification
+
+| Check | Result |
+| --- | --- |
+| Term count | **12** (was 11) |
+| `validate_ontology.py` (module, then all five) | pass |
+| **HermiT** | pass — `reason exit code: 0` on the merged 5-module suite |
+| ROBOT `report` | **0 ERROR.** WARN/INFO counts rose by one `missing_definition` WARN, consistent with the existing pattern for every property in this module (advisory, not new practice) |
+| `generate_docs.py` | 5/5 clean |
+| `mkdocs build` | not run this session |
+
+### Next steps
+
+1. Team discussion on the four parked organisation-role names (shape: one property per role vs. one generic
+   property + role annotation) — see the survey doc §3.1, §5.
+2. Push this to PR #66 (or a follow-up PR, team's call) and update the extraction profile / `RES-A-13` to read
+   the new field once merged.
+
+---
+
+## 2026-09-01 — Field-frequency survey analysed; two candidates proposed for the next pass
+
+**Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`
+
+### What happened
+
+Ahmed Zaalouk collected a field-frequency spreadsheet from four real BH projects (Barbican, DDC – Project W,
+Whiteleys, Fulham Riverside) — the survey the 2026-08-13 entry below and the TTL footer both said was still
+pending before `hasLegalOwner` and the `<40%-of-sheets` acceptance criterion could be applied with real
+evidence, and the same survey Zaalouk referenced on PR #66 (2026-08-19) as needed before he could review the
+organisation properties in detail. Analysed it against the shipped `tb:` terms, the Option 1 `dm:` reuse
+decision, and the original 73-term brainstorm (Discussion #61 §11.1).
+
+**No `.ttl` edited — this is a proposal document only**, matching how decision 1 (Option 1) was drafted: a plan
+for team review before implementation, not a unilateral mint.
+
+### Findings, written up in `docs/modularization/titleblock-field-survey-2026-09.md`
+
+- **Nine field groups need no new term** — the survey corroborates that `dm:Project`, `dm:DrawingPackage`,
+  `dcommon:Discipline`, the shipped `tb:` terms, and the Option 1 `dm:` reuse already cover the majority of what
+  real title blocks print.
+- **Two genuine gaps, both crossing multiple independent projects, neither in the original 73-term list:**
+  a contractor/consultant organisation role (4/4 projects, under five different labels) and a secondary
+  drawing-reference number distinct from `dm:drawingIdentifier` (3/4 projects — an EDMS/Aconex number, a
+  design-team-internal number, or a sketch/site-advice reference).
+- Recommended starting narrow — `tb:assertsContractor` and `tb:assertsCrossReferenceNumber` — rather than
+  minting every DDC-specific role split or reference-number label as its own term, for the same reason
+  `DocumentType` was withdrawn in review round 1.
+- Several surveyed fields explicitly **not** proposed (Level, Drawer Number, GHB.DRG.No., and six near-noise
+  fields), with the reason recorded so the spreadsheet does not need re-reading to rediscover why.
+
+### Verification
+
+Not applicable — no ontology or code changed. Cross-checked proposed terms against `src/aec_drawing_metadata.ttl`
+(current property/class list) and Discussion #61's raw term table (`gh api graphql`) to confirm neither gap was
+already considered and rejected.
+
+### Next step
+
+Team decision on the two open shape questions in the proposal (§5): one property per organisation role vs one
+generic property with the role left to `extractionHint`; and one generic cross-reference-number property vs
+named properties per issuing system. Once decided, implementation is a small, single-purpose PR against the
+already-open PR #66 branch or a follow-up.
+
+---
+
 ## 2026-08-19 — Placement question resolved: Option 1 (reuse `dm:` directly)
 
 **Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`

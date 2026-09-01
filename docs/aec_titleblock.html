@@ -761,6 +761,41 @@ td {
             </tr>
           </table>
         </div>
+        <div class="property entity" id="assertsCrossReferenceNumber">
+          <h3>assertsCrossReferenceNumber
+            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_titleblock#assertsCrossReferenceNumber</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A second (or third) identifier the title block prints for the same sheet, issued by a system other than the one dm:drawingIdentifier is read from — a design-team-internal number, a client/EDMS document number, or a sketch/site-advice reference. Evidenced by a four-project field-frequency survey (docs/modularization/titleblock-field-survey-2026-09.md §3.2), where it recurs under different labels in 3 of 4 projects. Stored whole and verbatim, like planKey; which system issued it is not modelled as a controlled vocabulary here — an empty scheme was the objection that withdrew DocumentType in review round 1 — so that distinction is carried by extractionHint only. Named asserts- rather than has- for the same reason as assertsClient/assertsOriginator: the title block states a claim, not a verified fact (see assertsMetadataFor).</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <a href="https://w3id.org/adiro/aec_drawing_metadata#Titleblock">dm:Titleblock</a>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+              </td>
+            </tr>
+          </table>
+        </div>
       </div>
       <div class="section" id="annotationproperties">
         <h2>Annotation Properties</h2>
@@ -932,6 +967,9 @@ td {
             </li>
             <li>
               <a href="#dimensionUnits">dimensionUnits</a>
+            </li>
+            <li>
+              <a href="#assertsCrossReferenceNumber">assertsCrossReferenceNumber</a>
             </li>
           </ul>
         </li>

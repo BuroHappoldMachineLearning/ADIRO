@@ -14,9 +14,17 @@ _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumpe
 - **New module `aec_titleblock` — initial version.** Ontology declaration under `https://w3id.org/adiro/aec_titleblock`
   at `0.1.0`, importing `aec_drawing_metadata`; provenance metadata (`dcterms:*`); registered in
   `src/catalog-v001.xml`, `scripts/generate_docs.py` dependency order and the `mkdocs.yml` nav.
-- **11 terms.** Class: `Organization`. Object properties: `assertsMetadataFor`, `assertsClient`,
+- **12 terms.** Class: `Organization`. Object properties: `assertsMetadataFor`, `assertsClient`,
   `assertsOriginator`. Datatype properties: `organizationName`, `supplementaryTitle`, `sheetNumber`,
-  `numberOfSheets`, `planKey`, `dimensionUnits`. Annotation property: `extractionHint`.
+  `numberOfSheets`, `planKey`, `dimensionUnits`, `assertsCrossReferenceNumber`. Annotation property:
+  `extractionHint`.
+- **`assertsCrossReferenceNumber` (2026-09-01).** A second identifier a title block prints for the same sheet
+  from a different numbering system (design-team-internal, client/EDMS, sketch/site-advice) — evidenced by a
+  four-project field-frequency survey, recurring in 3 of 4 sampled projects. String-valued, stored verbatim
+  like `planKey`; no controlled vocabulary for the issuing system. See
+  `docs/modularization/titleblock-field-survey-2026-09.md` §3.2. The same survey identified a second candidate —
+  a contractor/consultant/engineer/architect organisation role, present in all four projects — which is
+  **deliberately parked, not minted**, pending a team discussion on shape (§3.1 of the same document).
 - **Naming convention:** value-bearing object properties are `asserts<Thing>`, not `has<Thing>` — a title block
   states a claim, not a verified fact, and the name makes that visible at every call site. It also keeps these
   terms obviously distinct from their `aec_drawing_metadata` counterparts.

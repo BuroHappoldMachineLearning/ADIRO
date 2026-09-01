@@ -204,6 +204,15 @@
                   "Maßeinheit"@de, "Maße in"@de ;
     :extractionHint "Appears beside or beneath the scale, often after a dash. Extract only the unit part; the ratio belongs to the scale field."@en .
 
+:assertsCrossReferenceNumber rdf:type owl:DatatypeProperty ;
+    rdfs:label "assertsCrossReferenceNumber" ;
+    rdfs:domain dm:Titleblock ;
+    rdfs:range xsd:string ;
+    rdfs:comment "A second (or third) identifier the title block prints for the same sheet, issued by a system other than the one dm:drawingIdentifier is read from — a design-team-internal number, a client/EDMS document number, or a sketch/site-advice reference. Evidenced by a four-project field-frequency survey (docs/modularization/titleblock-field-survey-2026-09.md §3.2), where it recurs under different labels in 3 of 4 projects. Stored whole and verbatim, like planKey; which system issued it is not modelled as a controlled vocabulary here — an empty scheme was the objection that withdrew DocumentType in review round 1 — so that distinction is carried by extractionHint only. Named asserts- rather than has- for the same reason as assertsClient/assertsOriginator: the title block states a claim, not a verified fact (see assertsMetadataFor)."@en ;
+    skos:altLabel "SA/SK No."@en, "sketch number"@en, "EDMS document number"@en,
+                  "design team drawing number"@en, "client reference number"@en ;
+    :extractionHint "A second coded number near or below the primary drawing number, often prefixed by the issuing system's initials (e.g. a sketch/site-advice code, or an EDMS platform's own document ID). Do not conflate with dm:drawingIdentifier — capture only when a sheet prints more than one numbering system."@en .
+
 
 #################################################################
 #    DEFERRED — not minted in this version
