@@ -76,7 +76,7 @@ The organisation that produced the drawing — the originator in ISO 19650-2 ter
 
 ### assertsCrossReferenceNumber {#assertsCrossReferenceNumber}
 
-A second (or third) identifier the title block prints for the same sheet, issued by a system other than the one dm:drawingIdentifier is read from — a design-team-internal number, a client/EDMS document number, or a sketch/site-advice reference. Evidenced by a four-project field-frequency survey (docs/modularization/titleblock-field-survey-2026-09.md §3.2), where it recurs under different labels in 3 of 4 projects. Stored whole and verbatim, like planKey; which system issued it is not modelled as a controlled vocabulary here — an empty scheme was the objection that withdrew DocumentType in review round 1 — so that distinction is carried by extractionHint only. Named asserts- rather than has- for the same reason as assertsClient/assertsOriginator: the title block states a claim, not a verified fact (see assertsMetadataFor).
+A second (or third) identifier the title block prints for the same sheet, issued by a system other than the one dm:drawingIdentifier is read from — a design-team-internal number, a client/EDMS document number, or a sketch/site-advice reference. Evidenced by a four-project field-frequency survey (docs/modularization/titleblock-field-survey-2026-09.md §3.2), where it recurs under different labels in 3 of 4 projects. Stored whole and verbatim, not parsed into segments; which system issued it is not modelled as a controlled vocabulary here — an empty scheme was the objection that withdrew DocumentType in review round 1 — so that distinction is carried by extractionHint only. Named asserts- rather than has- for the same reason as assertsClient/assertsOriginator: the title block states a claim, not a verified fact (see assertsMetadataFor).
 
 - **IRI:** `https://w3id.org/adiro/aec_titleblock#assertsCrossReferenceNumber`
 - **Domain:** `dm:Titleblock`
@@ -92,15 +92,6 @@ The units in which the drawing's dimensions are expressed, where the title block
 - **Range:** `xsd:string`
 - **extraction hint:** Appears beside or beneath the scale, often after a dash. Extract only the unit part; the ratio belongs to the scale field.
 
-### numberOfSheets {#numberOfSheets}
-
-How many sheets the document comprises, per ISO 7200:2004 §5.1.7 (optional in that standard). Read together with sheetNumber from a single printed phrase.
-
-- **IRI:** `https://w3id.org/adiro/aec_titleblock#numberOfSheets`
-- **Domain:** `dm:Titleblock`
-- **Range:** `xsd:integer`
-- **extraction hint:** The second number in 'Sheet 3 of 7'. Omit the property if the sheet does not state a total.
-
 ### organizationName {#organizationName}
 
 The name of an organisation as printed. Parallels dm:personName. Verbatim: not normalised, expanded or translated at extraction time.
@@ -110,15 +101,6 @@ The name of an organisation as printed. Parallels dm:personName. Verbatim: not n
 - **Range:** `xsd:string`
 - **extraction hint:** Transcribe exactly as printed, including any legal suffix.
 
-### planKey {#planKey}
-
-The composite coded identifier printed in the title block (Plankopf), as expected by DIN SPEC 91391-1. Stored whole and verbatim; its segments are obtained by parsing rather than by separate extraction. Valuable beyond identification: DIN SPEC 91391-1 expects the plan key to agree with the file name, which gives a consistency check runnable over an entire corpus without any annotation.
-
-- **IRI:** `https://w3id.org/adiro/aec_titleblock#planKey`
-- **Domain:** `dm:Titleblock`
-- **Range:** `xsd:string`
-- **extraction hint:** A long hyphen- or dot-separated code, usually the most structured string in the block. Capture the whole string; do not split it.
-
 ### sheetNumber {#sheetNumber}
 
 Which sheet this is within a multi-sheet document, per ISO 7200:2004 §5.1.6 (mandatory in that standard). A string rather than an integer because forms such as '3a' occur. Distinct from dm:drawingIdentifier, which identifies the sheet itself rather than its position in a set.
@@ -126,16 +108,7 @@ Which sheet this is within a multi-sheet document, per ISO 7200:2004 §5.1.6 (ma
 - **IRI:** `https://w3id.org/adiro/aec_titleblock#sheetNumber`
 - **Domain:** `dm:Titleblock`
 - **Range:** `xsd:string`
-- **extraction hint:** Usually printed as 'Sheet 3 of 7' or 'Blatt 3 von 7'; capture only the position here and the total in numberOfSheets.
-
-### supplementaryTitle {#supplementaryTitle}
-
-A secondary or qualifying title line, per ISO 7200:2004 §5.2.3 (optional in that standard). Distinct from the main title: AEC title blocks commonly stack two or three title lines, of which the first is the subject and the rest narrow it. Language-tagged because bilingual title blocks are normal on German projects.
-
-- **IRI:** `https://w3id.org/adiro/aec_titleblock#supplementaryTitle`
-- **Domain:** `dm:Titleblock`
-- **Range:** `rdf:langString`
-- **extraction hint:** The second and subsequent lines of a stacked title cell. Keep line order; do not concatenate into the main title.
+- **extraction hint:** Usually printed as 'Sheet 3 of 7' or 'Blatt 3 von 7'; capture only the position here, not the total — the total is not modelled (see the footer).
 
 ## Annotation Properties
 

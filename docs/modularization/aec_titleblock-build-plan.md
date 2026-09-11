@@ -2,7 +2,7 @@
 
 **Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) (State: `Backlog` at time of writing — not yet started)
 **Design authority:** [Discussion #64](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/64) · **Research input:** [Discussion #61](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/61) · **Consumer:** RES-A-13 (internal test plan, not published)
-**Branch:** `res-89-aec-titleblock-tbox` · **Status:** PR [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) open — 12 terms (§1); placement decision resolved 2026-08-19, Option 1 (see `titleblock-placement-option1-plan.md`); `assertsCrossReferenceNumber` added 2026-09-01 from field-survey evidence (see `titleblock-field-survey-2026-09.md`)
+**Branch:** `res-89-aec-titleblock-tbox` · **Status:** PR [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) open — 9 terms (§1); placement decision resolved 2026-08-19, Option 1 (see `titleblock-placement-option1-plan.md`); `assertsCrossReferenceNumber` added and three unevidenced standards-derived terms withdrawn, both from field-survey evidence (see `titleblock-field-survey-2026-09.md`)
 
 ## What this document is (and is not)
 
@@ -48,15 +48,16 @@ Discussion #64, so there is one place to change when a decision changes.
 
 ## 1. Current state of `src/aec_titleblock.ttl`
 
-**12 terms, all validating.** Written 2026-08-11; revised 2026-08-13 after the first review round on PR
+**9 terms, all validating.** Written 2026-08-11; revised 2026-08-13 after the first review round on PR
 [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66); `assertsCrossReferenceNumber` added
-2026-09-01 from a four-project field-frequency survey (§1a below).
+2026-09-01 and three unevidenced terms withdrawn 2026-09-11, both from a four-project field-frequency survey
+(§1a below).
 
 | Kind | Terms |
 | --- | --- |
 | Class (1) | `Organization` |
 | Object properties (3) | `assertsMetadataFor`, `assertsClient`, `assertsOriginator` |
-| Datatype properties (7) | `organizationName`, `supplementaryTitle`, `sheetNumber`, `numberOfSheets`, `planKey`, `dimensionUnits`, `assertsCrossReferenceNumber` |
+| Datatype properties (4) | `organizationName`, `sheetNumber`, `dimensionUnits`, `assertsCrossReferenceNumber` |
 | Annotation property (1) | `extractionHint` |
 
 ### 1a. `assertsCrossReferenceNumber` — added 2026-09-01
@@ -65,14 +66,30 @@ Ahmed Zaalouk's field-frequency survey of four real BH projects (`docs/modulariz
 found that real sheets often print a **second** drawing-numbering system alongside `dm:drawingIdentifier` —
 a design-team-internal number, a client/EDMS document number (e.g. Aconex), or a sketch/site-advice reference —
 recurring in 3 of 4 sampled projects under different labels. Not in the original 73-term brainstorm. Minted as a
-single datatype property, string-valued and stored verbatim like `planKey`, with the observed labels kept as
-`skos:altLabel`s and no controlled vocabulary for "which system issued it" (the `DocumentType` lesson: an empty
-scheme cannot be reviewed).
+single datatype property, string-valued and stored verbatim rather than parsed into segments, with the observed
+labels kept as `skos:altLabel`s and no controlled vocabulary for "which system issued it" (the `DocumentType`
+lesson: an empty scheme cannot be reviewed).
 
 The same survey surfaced a second candidate gap — a contractor/consultant/engineer/architect organisation role,
 present in all four projects — which was **deliberately parked, not minted**: `assertsOriginator` already covers
 the general case, and the four candidate names (`assertsContractor`, `assertsEngineer`, `assertsArchitect`,
 `assertsConsultant`) need a team discussion on shape before any of them land. See the survey doc §3.1, §5.
+
+### 1b. Three terms withdrawn 2026-09-11 — the survey cuts both ways
+
+The survey is evidence for removal as well as addition. `supplementaryTitle` (ISO 7200 §5.2.3),
+`numberOfSheets` (ISO 7200 §5.1.7) and `planKey` (DIN SPEC 91391-1) appeared in **none** of the four sampled
+projects, so none clears the agreed `<40%-of-sheets` rule. All three had been minted from a standards reading
+rather than from drawings — the same basis the `hasLegalOwner` withdrawal already rejected ("the standard is not
+the evidence — the drawings are"). Recorded in the TTL footer §(a3).
+
+Two caveats worth keeping visible:
+
+- **`sheetNumber` is kept, the sheet total is not.** Do not read the surviving half as a broken pair — the pair
+  was never evidenced as a pair on a real sheet.
+- **`planKey` is withdrawn as unevidenced, not as wrong.** The surveyed corpus is UK/US projects and the plan key
+  is German practice, so it is a plausible return when German projects are sampled. That is a sampling gap in the
+  survey, not a judgement on the term.
 
 **Naming convention (review feedback):** value-bearing object properties are `asserts<Thing>`, not
 `has<Thing>`. A title block states a claim, not a verified fact, and the property name is the cheapest place to

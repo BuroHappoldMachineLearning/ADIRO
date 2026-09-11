@@ -22,6 +22,66 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-09-11 — Three unevidenced terms withdrawn; 12 → 9
+
+**Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`
+
+### What changed
+
+Removed `supplementaryTitle`, `numberOfSheets` and `planKey` from `aec_titleblock` at Ahmed Elnagar's
+direction. The evidential basis: none of the three appears in **any** of the four projects in the field survey
+(`docs/modularization/titleblock-field-survey-2026-09.md`), so none clears the agreed `<40%-of-sheets` rule.
+All three were minted from a standards reading (ISO 7200 §5.2.3, §5.1.7; DIN SPEC 91391-1) rather than from
+drawings — the same basis the `hasLegalOwner` withdrawal already rejected in review round 1: *"the standard is
+not the evidence — the drawings are."*
+
+This is the survey cutting **both** ways. The 2026-09-01 entry below used it to add a term; the same document
+justifies subtracting three.
+
+| File | Change |
+| --- | --- |
+| `src/aec_titleblock.ttl` | Three property blocks removed; new footer §(a3) recording each withdrawal with its standard reference and the reason |
+| `changelogs/aec_titleblock.md` | Term count 12 → 9; new withdrawal paragraph above the 2026-08-13 one |
+| `docs/modularization/aec_titleblock-build-plan.md` | Status line and §1 table updated; new §1b |
+| `docs/**` | Regenerated (`generate_docs.py`) |
+
+### Two things deliberately *not* done, and why
+
+- **`sheetNumber` was kept** even though its partner `numberOfSheets` is gone. The extraction hint was rewritten
+  so it no longer points at a term that does not exist, and the footer says plainly that the total is not
+  modelled. Do not read the surviving half as an oversight — the pair was never evidenced *as a pair* on a real
+  sheet, and `sheetNumber` alone did appear.
+- **`planKey` is withdrawn as unevidenced, not as wrong.** The surveyed corpus is UK/US projects and the plan
+  key is German practice (DIN SPEC 91391-1), so its absence is at least partly a **sampling gap in the survey**
+  rather than a finding about the field. It is a plausible return once German projects are sampled, and the
+  footer and changelog both say so — otherwise a future reader will re-derive the term and re-argue the case.
+
+Also fixed two now-dangling references to `planKey` that would have survived the removal: one in
+`assertsCrossReferenceNumber`'s `rdfs:comment` ("stored whole and verbatim, like planKey") and one in the build
+plan §1a, plus the footer §(b) line that cross-referenced `numberOfSheets`.
+
+### Verification
+
+| Check | Result |
+| --- | --- |
+| Term count | **9** (was 12) |
+| `validate_ontology.py` (module, then all five) | pass |
+| **HermiT** | pass — `reason exit code: 0` on the merged 5-module suite |
+| ROBOT `report` | **0 ERROR.** WARN 225 → 222 — exactly one fewer `missing_definition` per removed property, no new class of finding |
+| `compat_diff.py` | `aec_titleblock` **skipped — no released snapshot to diff against.** So the removals raise no breaking-change flag: the module is pre-release and nothing downstream can have consumed these terms |
+| `generate_docs.py` | 5/5 clean |
+| `mkdocs build` | not run this session |
+
+### Next step
+
+Unchanged from the entry below — Alessio's `CHANGES_REQUESTED` from 2026-08-13 is still standing and has never
+been re-reviewed, through three subsequent rounds of work. That, not further vocabulary work, is what the PR is
+waiting on. Zaalouk's 2026-09-10 comment endorsed the Option 1 reuse design but left one ambiguity open (whether
+"`aec_drawing_metadata` should contain *all* metadata" extends to newly minted terms, which would reopen the
+settled separate-module decision) — worth one clarifying question.
+
+---
+
 ## 2026-09-01 (decision) — `assertsCrossReferenceNumber` minted; organisation-role candidates parked
 
 **Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`
