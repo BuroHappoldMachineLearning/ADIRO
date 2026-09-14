@@ -467,10 +467,10 @@ Title of the drawing sheet.
 
 ### hasScale {#hasScale}
 
-Scale notation of the drawing sheet, e.g. '1:50'.
+Scale notation, e.g. '1:50'. Applies to a DrawingSheet where one scale governs the whole sheet, and to a Layout where the sheet carries several drawings at different scales — a detail at 1:5 beside a plan at 1:100 is ordinary. Where a Layout carries its own value it is the more specific one and describes that drawing; the sheet-level value, where both are present, is the sheet's nominal or predominant scale rather than a claim about every layout on it.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#hasScale`
-- **Domain:** [Drawing Sheet](#DrawingSheet)
+- **Domain:** ([Drawing Sheet](#DrawingSheet) or [Layout](#Layout))
 - **Range:** `xsd:string`
 
 ### issueDate {#issueDate}
@@ -496,7 +496,7 @@ The caption naming an individual Layout, distinct from the sheet-level drawingTi
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#layoutTitle`
 - **Domain:** [Layout](#Layout)
 - **Range:** `xsd:string`
-- **extraction hint:** Printed adjacent to its layout rather than in the title block — usually directly beneath or above the drawing, often with the layout number and scale in the same caption line ('3  MULLION HEAD  1:5'). Capture only the descriptive part; the number belongs to layoutIdentifier and the scale is sheet-level. Do not confuse with drawingTitle, which is the single sheet-level title inside the title block.
+- **extraction hint:** Printed adjacent to its layout rather than in the title block — usually directly beneath or above the drawing, often with the layout number and scale in the same caption line ('3  MULLION HEAD  1:5'). Capture only the descriptive part: that caption decomposes across three properties on the same Layout — layoutIdentifier '3', layoutTitle 'MULLION HEAD', hasScale '1:5'. Do not confuse with drawingTitle, which is the single sheet-level title inside the title block.
 
 ### organisationName {#organisationName}
 

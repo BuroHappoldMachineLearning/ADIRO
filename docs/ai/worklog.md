@@ -22,6 +22,63 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-09-14 — `hasScale` extended to `Layout`
+
+**Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`
+
+### What changed
+
+`hasScale`'s domain widened from `DrawingSheet` to `owl:unionOf (DrawingSheet Layout)`. A sheet routinely
+carries several drawings at different scales — a detail at 1:5 beside a plan at 1:100 — which a single
+sheet-level scale cannot express.
+
+### Why the domain had to be widened rather than the property just reused
+
+This is the part worth recording, because the wrong version of it would have passed every gate.
+
+`rdfs:domain` in OWL is an **inference rule, not a constraint**. Leaving the domain as `DrawingSheet` and
+asserting `someLayout hasScale "1:5"` does not raise an error — it makes a reasoner **infer
+`someLayout a DrawingSheet`**. That layout would then inherit `DrawingSheet`'s restrictions and be required to
+contain a `Titleblock` and a `Layout` of its own.
+
+And it would **not** have been caught: nothing in the suite declares `Layout` and `DrawingSheet` disjoint, so
+there is no inconsistency for HermiT to find. The suite would have reasoned cleanly while quietly typing every
+scaled layout as a drawing sheet.
+
+Used the `owl:unionOf` domain idiom already established in this file by `hasOrientation` (`Section ∪ Detail`),
+rather than inventing a pattern.
+
+### Two smaller things
+
+**Non-breaking.** A *widened* domain permits strictly more than before; every existing `DrawingSheet hasScale`
+assertion stays valid with identical entailments. (Contrast the `RevisionTable` relaxation in the entry below,
+which was also non-breaking but did cost an entailment.)
+
+**A stale hint fixed.** `layoutTitle`'s `extractionHint` said *"the number belongs to layoutIdentifier and the
+scale is sheet-level"* — written yesterday, wrong as of today. Corrected, and the correction is a genuinely nice
+outcome: the common caption line `3  MULLION HEAD  1:5` now decomposes **completely** across three properties on
+a single `Layout` — `layoutIdentifier` `3`, `layoutTitle` `MULLION HEAD`, `hasScale` `1:5`. Nothing in that
+caption is left unmodelled.
+
+### Verification
+
+| Check | Result |
+| --- | --- |
+| `validate_ontology.py` (all four) | pass |
+| **HermiT** | pass — `reason exit code: 0`; checked specifically because a union domain is the kind of change that can go non-DL |
+| ROBOT `report` | **0 ERROR**, WARN unchanged at 222 |
+| `compat_diff.py` | Forecast unmoved (already MAJOR for unrelated reasons) |
+| `generate_docs.py` | 4/4 clean |
+| `mkdocs build` | not re-run — no nav or page added or removed |
+
+### Note for later
+
+UC-07 proposes `scaleRatio` (decimal, for arithmetic) alongside the string `hasScale`. It is **not in any shipped
+module** — checked. If it lands, it will want the same union domain for the same reason, and the two should be
+widened together rather than drifting apart.
+
+---
+
 ## 2026-09-14 (resolution) — `DrawingSheet`'s `RevisionTable` cardinality relaxed to `min 0`
 
 **Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`
