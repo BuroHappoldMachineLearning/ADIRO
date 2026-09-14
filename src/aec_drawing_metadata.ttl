@@ -159,7 +159,7 @@
 :assertsClient rdf:type owl:ObjectProperty ;
     rdfs:label "asserts client"@en ;
     rdfs:domain :Titleblock ;
-    rdfs:range :Organization ;
+    rdfs:range :Organisation ;
     rdfs:comment "The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from assertsOriginator, which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value."@en ;
     skos:altLabel "client"@en, "employer"@en, "for"@en,
                   "Bauherr"@de, "Auftraggeber"@de ;
@@ -168,7 +168,7 @@
 :assertsOriginator rdf:type owl:ObjectProperty ;
     rdfs:label "asserts originator"@en ;
     rdfs:domain :Titleblock ;
-    rdfs:range :Organization ;
+    rdfs:range :Organisation ;
     rdfs:comment "The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. This is the practice or consultancy whose name and logo appear as author of the sheet. Distinct from assertsClient, which names who commissioned the work."@en ;
     skos:altLabel "originator"@en, "drawn by (company)"@en, "consultant"@en,
                   "Planverfasser"@de, "Verfasser"@de ;
@@ -283,9 +283,9 @@
 #    rationale.
 #################################################################
 
-:organizationName rdf:type owl:DatatypeProperty ;
-    rdfs:label "organizationName" ;
-    rdfs:domain :Organization ;
+:organisationName rdf:type owl:DatatypeProperty ;
+    rdfs:label "organisationName" ;
+    rdfs:domain :Organisation ;
     rdfs:range xsd:string ;
     rdfs:comment "The name of an organisation as printed. Parallels personName. Verbatim: not normalised, expanded or translated at extraction time."@en ;
     :extractionHint "Transcribe exactly as printed, including any legal suffix."@en .
@@ -500,8 +500,8 @@
     rdfs:comment "A named individual associated with a DrawingRevision in some role (author, checker, approver). The role is expressed by the object property, not by subclassing." ;
     :labellableRoot "false"^^xsd:boolean .
 
-:Organization rdf:type owl:Class ;
-    rdfs:label "Organization" ;
+:Organisation rdf:type owl:Class ;
+    rdfs:label "Organisation" ;
     rdfs:comment "A legal entity named in a title block — client, originator, legal owner or responsible department. Modelled as a class rather than a string so that one organisation recurring across many sheets is a single individual, which is what makes cross-sheet questions answerable. Aligns to ct:Organisation (ISO 21597-1) and IfcActorSelect; note the ISO spelling differs." ;
     skos:altLabel "Organisation"@en ;
     :labellableRoot "false"^^xsd:boolean .

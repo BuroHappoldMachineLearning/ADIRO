@@ -115,11 +115,11 @@ vocabulary is required to answer any existing CQ.
 Cross-referencing all four ORSDs' CQs against the 73 terms, roughly **40 have no competency question behind
 them** — including every one of these:
 
-`Organization` · `hasClient` · `hasLegalOwner` · `hasOriginator` · `hasResponsibleDepartment` ·
+`Organisation` · `hasClient` · `hasLegalOwner` · `hasOriginator` · `hasResponsibleDepartment` ·
 `hasTechnicalReference` · `ConfidentialityClassification` · `hasConfidentialityClassification` ·
 `SuitabilityStatus` · `ContainerState` · `ClassificationCode` · `hasClassification` · `keyword` · `Language` ·
 `hasLanguage` · `planKey` · `paperSize` · `hasProjectionMethod` · `purpose` · `intendedUse` · `validFrom` ·
-`validUntil` · `organizationIdentifier` · `sequentialNumber` · `volumeSystemCode` · `levelLocationCode` ·
+`validUntil` · `organisationIdentifier` · `sequentialNumber` · `volumeSystemCode` · `levelLocationCode` ·
 `supplementaryTitle` · `numberOfSheets` · `numberOfPages` · `pageNumber` · `revisionDescription` · `supersedes` ·
 `hasRole` · the whole §10 provenance layer
 

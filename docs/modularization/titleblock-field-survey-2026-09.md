@@ -90,7 +90,7 @@ the team asked for before deciding `hasLegalOwner` and the acceptance criterion.
 
 **Breadth: 4/4 projects**, under five different labels. That is the strongest cross-project signal in the whole
 survey, and it lines up with the thing Zaalouk himself flagged on PR #66 (2026-08-19) as needing "a robust
-analysis" before he could review the organisation properties. `tb:Organization` and the `asserts<Thing>` naming
+analysis" before he could review the organisation properties. `tb:Organisation` and the `asserts<Thing>` naming
 pattern already exist and generalise cleanly — the open question is **shape, not whether**:
 
 - **One new property per role**, mirroring `assertsClient` / `assertsOriginator` — e.g. `assertsContractor`,
@@ -98,7 +98,7 @@ pattern already exist and generalise cleanly — the open question is **shape, n
   risks the same fragmentation the `DocumentType` withdrawal was trying to avoid if Project B's three-way split
   (Executive Architect / Architect of Record / Infrastructure + Engineers) turns out to be real rather than one
   project's house style.
-- **One generic property**, e.g. `assertsInvolvedOrganization`, with the specific role captured as a
+- **One generic property**, e.g. `assertsInvolvedOrganisation`, with the specific role captured as a
   `skos:altLabel`-style annotation or left to `extractionHint` rather than the property name. Fewer terms, but
   loses the "the property name states the claim" clarity that was the whole point of the `asserts*` convention.
 

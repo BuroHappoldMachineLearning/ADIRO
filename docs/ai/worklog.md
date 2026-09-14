@@ -105,7 +105,7 @@ readings did lead to materially different repositories.
 
 | Term | Now |
 | --- | --- |
-| `Organization`, `organizationName` | `dm:Organization`, `dm:organizationName` |
+| `Organisation`, `organisationName` | `dm:Organisation`, `dm:organisationName` |
 | `assertsMetadataFor`, `assertsClient`, `assertsOriginator` | same names, `dm:` |
 | `dimensionUnits`, `assertsCrossReferenceNumber`, `extractionHint` | same names, `dm:` |
 
@@ -552,9 +552,9 @@ bundles the documents, the pass-1 plumbing and the initial terms; later PRs stay
 
 | Kind | Terms |
 | --- | --- |
-| Classes | `Organization`, `DocumentType` (+ `DocumentTypeScheme` as a `skos:ConceptScheme`) |
+| Classes | `Organisation`, `DocumentType` (+ `DocumentTypeScheme` as a `skos:ConceptScheme`) |
 | Object properties | `assertsMetadataFor`, `hasClient`, `hasLegalOwner`, `hasOriginator`, `hasDocumentType` |
-| Datatype properties | `organizationName`, `supplementaryTitle`, `sheetNumber`, `numberOfSheets`, `planKey`, `dimensionUnits` |
+| Datatype properties | `organisationName`, `supplementaryTitle`, `sheetNumber`, `numberOfSheets`, `planKey`, `dimensionUnits` |
 | Annotation property | `extractionHint` |
 
 ### The selection rule, and why it matters
@@ -1110,7 +1110,7 @@ PR opened.
    issue first (ADIRO is open-source; GitHub → YouTrack is one-way, per
    [MAN-A-3](https://bhmlrnd.youtrack.cloud/articles/MAN-A-3)). Install Java and run the reasoner first if the
    PR should show a green gate.
-5. **PR 1** — fill the two placeholder sections: `Organization`, `SourceFile`, `BoundingBox` (if the proposal
+5. **PR 1** — fill the two placeholder sections: `Organisation`, `SourceFile`, `BoundingBox` (if the proposal
    holds) and `assertsMetadataFor`. Note that needs a `Document` concept and `aec_drawing_metadata` has
    `DrawingSheet` but no `Document` — one more thing the reconciliation should settle.
 6. **PRs 2 and 3 in parallel** (both depend only on PR 1) — the 17 core properties, and the SKOS enumerations.

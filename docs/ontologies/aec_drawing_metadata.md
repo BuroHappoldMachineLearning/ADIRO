@@ -160,11 +160,11 @@ Superclass for annotations on a drawing sheet that are not part of the drawing g
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
 - **Labellable root:** true
 
-### Organization {#Organization}
+### Organisation {#Organisation}
 
 A legal entity named in a title block — client, originator, legal owner or responsible department. Modelled as a class rather than a string so that one organisation recurring across many sheets is a single individual, which is what makes cross-sheet questions answerable. Aligns to ct:Organisation (ISO 21597-1) and IfcActorSelect; note the ISO spelling differs.
 
-- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Organization`
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Organisation`
 - **Labellable root:** false
 
 ### Orientation {#OrientationValue}
@@ -304,7 +304,7 @@ The organisation commissioning the work — the client or employer — as named 
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#assertsClient`
 - **Domain:** [Titleblock](#Titleblock)
-- **Range:** [Organization](#Organization)
+- **Range:** [Organisation](#Organisation)
 - **extraction hint:** Often the most prominent organisation name on the sheet, sometimes a logo rather than text. Frequently in its own cell above or beside the originator's block.
 
 ### asserts metadata for {#assertsMetadataFor}
@@ -322,7 +322,7 @@ The organisation that produced the drawing — the originator in ISO 19650-2 ter
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#assertsOriginator`
 - **Domain:** [Titleblock](#Titleblock)
-- **Range:** [Organization](#Organization)
+- **Range:** [Organisation](#Organisation)
 - **extraction hint:** Usually the organisation whose logo sits in or beside the title block, and whose code appears in the drawing-number originator segment.
 
 ### belongsToPackage {#belongsToPackage}
@@ -503,12 +503,12 @@ The caption naming an individual Layout, distinct from the sheet-level drawingTi
 - **Range:** `xsd:string`
 - **extraction hint:** Printed adjacent to its layout rather than in the title block — usually directly beneath or above the drawing, often with the layout number and scale in the same caption line ('3  MULLION HEAD  1:5'). Capture only the descriptive part; the number belongs to layoutIdentifier and the scale is sheet-level. Do not confuse with drawingTitle, which is the single sheet-level title inside the title block.
 
-### organizationName {#organizationName}
+### organisationName {#organisationName}
 
 The name of an organisation as printed. Parallels personName. Verbatim: not normalised, expanded or translated at extraction time.
 
-- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#organizationName`
-- **Domain:** [Organization](#Organization)
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#organisationName`
+- **Domain:** [Organisation](#Organisation)
 - **Range:** `xsd:string`
 - **extraction hint:** Transcribe exactly as printed, including any legal suffix.
 
