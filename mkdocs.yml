@@ -89,6 +89,7 @@ plugins:
 # The docs/ folder also contains internal working notes that are not part of the
 # published site. Exclude them from the build so the site stays focused.
 exclude_docs: |
+  ai/
   brainstorming/
   modularization/
   governance/
