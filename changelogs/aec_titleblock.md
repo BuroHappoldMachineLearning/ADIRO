@@ -14,8 +14,8 @@ _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumpe
 - **New module `aec_titleblock` — initial version.** Ontology declaration under `https://w3id.org/adiro/aec_titleblock`
   at `0.1.0`, importing `aec_drawing_metadata`; provenance metadata (`dcterms:*`); registered in
   `src/catalog-v001.xml`, `scripts/generate_docs.py` dependency order and the `mkdocs.yml` nav.
-- **9 terms.** Class: `Organization`. Object properties: `assertsMetadataFor`, `assertsClient`,
-  `assertsOriginator`. Datatype properties: `organizationName`, `sheetNumber`, `dimensionUnits`,
+- **8 terms.** Class: `Organization`. Object properties: `assertsMetadataFor`, `assertsClient`,
+  `assertsOriginator`. Datatype properties: `organizationName`, `dimensionUnits`,
   `assertsCrossReferenceNumber`. Annotation property: `extractionHint`.
 - **`assertsCrossReferenceNumber` (2026-09-01).** A second identifier a title block prints for the same sheet
   from a different numbering system (design-team-internal, client/EDMS, sketch/site-advice) — evidenced by a
@@ -37,12 +37,18 @@ TTL footer, because the sheet-level vs titleblock-level placement question is un
 `docs/modularization/titleblock-vocabulary-review.md` §2.1. Domains are `dm:Titleblock` and
 `assertsMetadataFor` ranges over `dm:DrawingSheet`; both are **provisional** and flagged as such in the file.
 
-**Withdrawn 2026-09-11, after the field survey:** `supplementaryTitle` (ISO 7200 §5.2.3), `numberOfSheets`
-(ISO 7200 §5.1.7) and `planKey` (DIN SPEC 91391-1). None appeared in any of the four sampled projects, so none
-clears the agreed <40%-of-sheets rule — all three were minted from a standards reading rather than from
-drawings. `sheetNumber` is kept; the sheet *total* is simply not modelled. `planKey` is withdrawn as
-**unevidenced, not as wrong** — the surveyed corpus is UK/US projects and it is a German-practice field, so it
-may return when German projects are sampled. Recorded in the TTL footer §(a3).
+**Withdrawn 2026-09-11 and 2026-09-14, after the field survey:** `supplementaryTitle` (ISO 7200 §5.2.3),
+`numberOfSheets` (§5.1.7), `planKey` (DIN SPEC 91391-1) and `sheetNumber` (§5.1.6). None appeared in any of the
+four sampled projects, so none clears the agreed <40%-of-sheets rule — all were minted from a standards reading
+rather than from drawings. Two points worth keeping visible:
+
+- The **sheet-position concept is now absent entirely** rather than half-modelled: `numberOfSheets` went first
+  and `sheetNumber` followed. Note ISO 7200 §5.1.6 is **mandatory** in that standard, so this is a deliberate,
+  evidence-led departure from it — not an oversight.
+- `planKey` is withdrawn as **unevidenced, not as wrong** — the surveyed corpus is UK/US projects and it is a
+  German-practice field, so it may return when German projects are sampled.
+
+Recorded in the TTL footer §(a3).
 
 **Withdrawn in review of PR #66 (2026-08-13):** `hasLegalOwner` — a title block does not normally express legal
 ownership, so it is deferred pending the field-frequency survey and the agreed <40%-of-sheets rule.

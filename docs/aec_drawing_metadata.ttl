@@ -261,6 +261,12 @@
     :exampleImage <img/aec_drawing_ontology/legend_02.png> ;
     :labellableRoot "true"^^xsd:boolean.
 
+:KeyPlan rdf:type owl:Class;
+    rdfs:subClassOf :MetadataContainer;
+    rdfs:label "Key Plan";
+    rdfs:comment "A small locator diagram on a drawing sheet showing where the sheet's subject sits within the wider building or site, typically with the relevant area hatched or outlined. A graphical region rather than a text field: its value is the diagram, so it is modelled here as a detectable region alongside Legend and RevisionTable, not as an asserted title-block property. Evidenced by a four-project title-block field survey in which it appeared as a distinct field on two of the four projects." ;
+    :labellableRoot "true"^^xsd:boolean.
+
 :Note rdf:type owl:Class;
     rdfs:subClassOf :MetadataContainer;
     rdfs:label "Note";
@@ -289,6 +295,7 @@
     rdfs:subClassOf
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Note ],
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Legend ],
+        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :KeyPlan ],
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:onClass :RevisionTable ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:onClass :Titleblock ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass :Layout ];

@@ -48,16 +48,16 @@ Discussion #64, so there is one place to change when a decision changes.
 
 ## 1. Current state of `src/aec_titleblock.ttl`
 
-**9 terms, all validating.** Written 2026-08-11; revised 2026-08-13 after the first review round on PR
+**8 terms, all validating.** Written 2026-08-11; revised 2026-08-13 after the first review round on PR
 [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66); `assertsCrossReferenceNumber` added
-2026-09-01 and three unevidenced terms withdrawn 2026-09-11, both from a four-project field-frequency survey
-(§1a below).
+2026-09-01 and four unevidenced terms withdrawn 2026-09-11/14, all from a four-project field-frequency survey
+(§1a, §1b below). `KeyPlan` from the same survey landed in `aec_drawing_metadata`, not here (§1c).
 
 | Kind | Terms |
 | --- | --- |
 | Class (1) | `Organization` |
 | Object properties (3) | `assertsMetadataFor`, `assertsClient`, `assertsOriginator` |
-| Datatype properties (4) | `organizationName`, `sheetNumber`, `dimensionUnits`, `assertsCrossReferenceNumber` |
+| Datatype properties (3) | `organizationName`, `dimensionUnits`, `assertsCrossReferenceNumber` |
 | Annotation property (1) | `extractionHint` |
 
 ### 1a. `assertsCrossReferenceNumber` — added 2026-09-01
@@ -75,21 +75,56 @@ present in all four projects — which was **deliberately parked, not minted**: 
 the general case, and the four candidate names (`assertsContractor`, `assertsEngineer`, `assertsArchitect`,
 `assertsConsultant`) need a team discussion on shape before any of them land. See the survey doc §3.1, §5.
 
-### 1b. Three terms withdrawn 2026-09-11 — the survey cuts both ways
+### 1b. Four terms withdrawn 2026-09-11 and 2026-09-14 — the survey cuts both ways
 
 The survey is evidence for removal as well as addition. `supplementaryTitle` (ISO 7200 §5.2.3),
-`numberOfSheets` (ISO 7200 §5.1.7) and `planKey` (DIN SPEC 91391-1) appeared in **none** of the four sampled
-projects, so none clears the agreed `<40%-of-sheets` rule. All three had been minted from a standards reading
-rather than from drawings — the same basis the `hasLegalOwner` withdrawal already rejected ("the standard is not
-the evidence — the drawings are"). Recorded in the TTL footer §(a3).
+`numberOfSheets` (§5.1.7), `planKey` (DIN SPEC 91391-1) and `sheetNumber` (§5.1.6) appeared in **none** of the
+four sampled projects, so none clears the agreed `<40%-of-sheets` rule. All had been minted from a standards
+reading rather than from drawings — the same basis the `hasLegalOwner` withdrawal already rejected ("the
+standard is not the evidence — the drawings are"). Recorded in the TTL footer §(a3).
 
 Two caveats worth keeping visible:
 
-- **`sheetNumber` is kept, the sheet total is not.** Do not read the surviving half as a broken pair — the pair
-  was never evidenced as a pair on a real sheet.
+- **The sheet-position concept is now absent entirely**, not half-modelled. `numberOfSheets` went on 09-11 and
+  `sheetNumber` followed on 09-14. Worth stating plainly that **ISO 7200 §5.1.6 is mandatory** in that standard,
+  so dropping `sheetNumber` is a deliberate, evidence-led departure from ISO 7200 rather than an oversight. If
+  the team wants ISO 7200 conformance as a stated goal, this is the decision to revisit.
 - **`planKey` is withdrawn as unevidenced, not as wrong.** The surveyed corpus is UK/US projects and the plan key
   is German practice, so it is a plausible return when German projects are sampled. That is a sampling gap in the
   survey, not a judgement on the term.
+
+### 1c. `KeyPlan` added 2026-09-14 — but to `aec_drawing_metadata`, not here
+
+The survey's "key plan" field (a small locator diagram showing where the sheet's subject sits in the wider
+building or site) was minted as **`dm:KeyPlan`**, a `MetadataContainer` subclass beside `Legend` and
+`RevisionTable` — *not* as a `tb:` property. The reason is the module split itself: `dm:` models **detectable
+visual regions**, `tb:` models **content the title block asserts as text**. A key plan's value *is* the diagram,
+so it is a region. Putting it in `tb:` would have made the first `tb:` term that is not an assertable string.
+
+This also matches Ahmed Zaalouk's position on [PR #66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66)
+(2026-09-10) that `aec_drawing_metadata` should be the repository for metadata, with `aec_titleblock` importing
+what it needs.
+
+**Two consequences to flag rather than discover later:**
+
+- **It adds a new CVAT annotation label.** `KeyPlan` carries `labellableRoot true`, and CVAT class labels derive
+  from the IRI local name — so the annotation label set changes. Coordinate per KB
+  [DATA-A-9](https://bhmlrnd.youtrack.cloud/articles/DATA-A-9).
+- **It widens this PR into a released module.** `aec_drawing_metadata` is at `2.0.0`; `aec_titleblock` is not yet
+  released. The addition is non-breaking (`TERM_ADDED`) and the module was *already* forecast MAJOR for other
+  accumulated unreleased reasons, so the forecast does not move — but a PR scoped to the title-block module now
+  touches `dm:`, which reviewers should be told rather than left to notice. Backing it out means reverting
+  `src/aec_drawing_metadata.ttl` and its changelog entry, dropping this section and the survey-row correction,
+  then regenerating — not a single-commit revert.
+
+**Evidence quality, stated honestly.** The survey records "key plan" on two of four projects at 100% each, but
+only one of the two descriptions actually describes a key plan ("denotes the location of the drawing in plan",
+value type *Sketch*). The other project's row describes copyright statements and disclaimers, which reads like a
+mislabelled cell rather than a key plan. So the real evidence is **one solid project plus one doubtful one**, not
+two clean ones. That is still better evidence than any of the four withdrawn terms had (zero), but it is not the
+clean 2-of-4 the raw table suggests, and the original survey §2 row — which filed "key plan" under *already
+covered by `dm:Note`/`dm:Legend`* — was wrong to lump it with the notes fields on the strength of that
+description.
 
 **Naming convention (review feedback):** value-bearing object properties are `asserts<Thing>`, not
 `has<Thing>`. A title block states a claim, not a verified fact, and the property name is the cheapest place to

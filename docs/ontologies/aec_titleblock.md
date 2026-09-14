@@ -101,15 +101,6 @@ The name of an organisation as printed. Parallels dm:personName. Verbatim: not n
 - **Range:** `xsd:string`
 - **extraction hint:** Transcribe exactly as printed, including any legal suffix.
 
-### sheetNumber {#sheetNumber}
-
-Which sheet this is within a multi-sheet document, per ISO 7200:2004 §5.1.6 (mandatory in that standard). A string rather than an integer because forms such as '3a' occur. Distinct from dm:drawingIdentifier, which identifies the sheet itself rather than its position in a set.
-
-- **IRI:** `https://w3id.org/adiro/aec_titleblock#sheetNumber`
-- **Domain:** `dm:Titleblock`
-- **Range:** `xsd:string`
-- **extraction hint:** Usually printed as 'Sheet 3 of 7' or 'Blatt 3 von 7'; capture only the position here, not the total — the total is not modelled (see the footer).
-
 ## Annotation Properties
 
 ### extraction hint {#extractionHint}

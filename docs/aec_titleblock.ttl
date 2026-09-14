@@ -159,15 +159,6 @@
     rdfs:comment "The name of an organisation as printed. Parallels dm:personName. Verbatim: not normalised, expanded or translated at extraction time."@en ;
     :extractionHint "Transcribe exactly as printed, including any legal suffix."@en .
 
-:sheetNumber rdf:type owl:DatatypeProperty ;
-    rdfs:label "sheetNumber" ;
-    rdfs:domain dm:Titleblock ;
-    rdfs:range xsd:string ;
-    rdfs:comment "Which sheet this is within a multi-sheet document, per ISO 7200:2004 §5.1.6 (mandatory in that standard). A string rather than an integer because forms such as '3a' occur. Distinct from dm:drawingIdentifier, which identifies the sheet itself rather than its position in a set."@en ;
-    skos:altLabel "sheet"@en, "sheet no"@en,
-                  "Blatt"@de, "Blatt-Nr"@de ;
-    :extractionHint "Usually printed as 'Sheet 3 of 7' or 'Blatt 3 von 7'; capture only the position here, not the total — the total is not modelled (see the footer)."@en .
-
 :dimensionUnits rdf:type owl:DatatypeProperty ;
     rdfs:label "dimensionUnits" ;
     rdfs:domain dm:Titleblock ;
@@ -239,11 +230,16 @@
 #                                 title lines do occur, but no surveyed sheet
 #                                 separated them into a distinct field; the
 #                                 surveyed title fields map to dm:drawingTitle.
-#          numberOfSheets         ISO 7200 §5.1.7 (optional there). The
-#                                 'Sheet 3 of 7' total. sheetNumber is kept;
-#                                 the total is simply not modelled, so do not
-#                                 read the pair as broken — it was never
-#                                 evidenced as a pair on a real sheet.
+#          numberOfSheets,
+#          sheetNumber            ISO 7200 §5.1.7 and §5.1.6 — the 'Sheet 3
+#                                 of 7' pair. numberOfSheets went 2026-09-11
+#                                 and sheetNumber followed 2026-09-14, so the
+#                                 sheet-position concept is now absent
+#                                 ENTIRELY rather than half-modelled. Note
+#                                 §5.1.6 is MANDATORY in ISO 7200 — this is a
+#                                 deliberate departure from the standard on
+#                                 the grounds that the sampled drawings do not
+#                                 print it, not an oversight.
 #          planKey                DIN SPEC 91391-1 Plankopf composite code. A
 #                                 German-practice field; the surveyed corpus
 #                                 is UK/US projects, so it may well return
@@ -261,8 +257,8 @@
 #                                 references dcommon: yet.
 #          hasNorthPointOrientation   use UC-07 northArrowAngle (drawing-level)
 #          hasAnnotationBlock     use dm:Legend / dm:Note with dm:contains
-#          pageNumber/numberOfPages   duplicate sheetNumber (and the sheet
-#                                 total, itself withdrawn in (a3) above)
+#          pageNumber/numberOfPages   duplicated the sheet-position pair,
+#                                 itself withdrawn entirely in (a3) above
 #
 #    (c) Later passes: the remaining SKOS schemes and their concepts; the
 #        extension properties; and the extraction-provenance layer, which is

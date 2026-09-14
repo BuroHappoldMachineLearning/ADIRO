@@ -22,6 +22,79 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-09-14 — `sheetNumber` withdrawn (9 → 8); `KeyPlan` added to `aec_drawing_metadata`
+
+**Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`
+
+### What changed
+
+Two changes at Ahmed Elnagar's direction, continuing the survey-led pruning of the entry below.
+
+| File | Change |
+| --- | --- |
+| `src/aec_titleblock.ttl` | `sheetNumber` removed (8 terms left); footer §(a3) rewritten to cover the whole sheet-position pair |
+| `src/aec_drawing_metadata.ttl` | **New class `KeyPlan`** (`MetadataContainer` subclass) + a `min 0` `contains` restriction on `DrawingSheet`, matching the `Legend`/`Note` pattern |
+| `changelogs/aec_titleblock.md`, `changelogs/aec_drawing_metadata.md` | Both `[Unreleased]` sections updated |
+| `docs/modularization/aec_titleblock-build-plan.md` | §1 table; §1b extended; new §1c on the `KeyPlan` placement |
+| `docs/modularization/titleblock-field-survey-2026-09.md` | §2 row corrected — see below |
+| `docs/**` | Regenerated |
+
+### `KeyPlan` went to `dm:`, not `tb:` — and why that is the substantive decision here
+
+`dm:` models **detectable visual regions**; `tb:` models **content a title block asserts as text**. A key plan's
+value *is* the diagram, so it is a region, and it sits beside `Legend` and `RevisionTable`. Putting it in `tb:`
+would have made it the first `tb:` term that is not an assertable string. This also matches Zaalouk's
+2026-09-10 position on PR #66 that `aec_drawing_metadata` should be the metadata repository.
+
+### Three things flagged rather than left to be discovered
+
+1. **A new CVAT annotation label.** `KeyPlan` carries `labellableRoot true`, and CVAT class labels derive from
+   the IRI local name — so the annotation label set changes. Needs coordination per KB
+   [DATA-A-9](https://bhmlrnd.youtrack.cloud/articles/DATA-A-9) before annotation work assumes the old set.
+2. **This PR now touches a released module.** It was scoped to `aec_titleblock` (unreleased); `dm:` is at
+   `2.0.0`. The addition is non-breaking (`TERM_ADDED`) and `dm:` was *already* forecast MAJOR for unrelated
+   accumulated reasons, so the forecast does not move — but reviewers should be told, not left to notice. If
+   Alessio would rather keep the PR single-module, backing `KeyPlan` out means reverting two source edits
+   (`src/aec_drawing_metadata.ttl`, its changelog), dropping build-plan §1c and the survey-row correction, then
+   regenerating — it is not a clean single-commit revert, because this commit also carries the `sheetNumber`
+   removal and the shared narrative docs.
+3. **ISO 7200 §5.1.6 is mandatory, and we have now dropped it.** With `sheetNumber` gone the sheet-position
+   concept is absent entirely. That is defensible on the evidence (zero of four projects printed it) but it is a
+   deliberate departure from a mandatory clause, so it is recorded as such in the footer and build plan. If ISO
+   7200 conformance ever becomes a stated goal, this is the decision to revisit.
+
+### A correction to my own earlier analysis
+
+The survey doc's §2 filed "key plan" under *already covered by `dm:Note`/`dm:Legend`*. That was wrong, and the
+row is now struck through and corrected in place. The error came from trusting Project B's description
+("copyright statements, usage notes and disclaimers" — almost certainly a mislabelled cell) over Project D's
+accurate one ("denotes the location of the drawing in plan", value type *Sketch*).
+
+Stated honestly: the real evidence for `KeyPlan` is **one solid project plus one doubtful one**, not the clean
+2-of-4 the raw frequency table suggests. Still far better than the four withdrawn terms (zero each), but the
+distinction matters if anyone re-runs this reasoning.
+
+### Verification
+
+| Check | Result |
+| --- | --- |
+| Term counts | `aec_titleblock` **8** (was 9); `aec_drawing_metadata` +1 class |
+| `validate_ontology.py` (all five) | pass |
+| **HermiT** | pass — `reason exit code: 0` |
+| ROBOT `report` | **0 ERROR.** WARN flat at 222 — −1 from the removed property, +1 from the added class |
+| `compat_diff.py` | `aec_drawing_metadata` still forecasts `3.0.0` (MAJOR) — unchanged, the addition is `TERM_ADDED`. `aec_titleblock` still skipped, no released snapshot |
+| `generate_docs.py` | 5/5 clean |
+| `mkdocs build` | not run this session |
+
+### Next step
+
+Unchanged and now five rounds stale: **Alessio's `CHANGES_REQUESTED` from 2026-08-13 has never been
+re-reviewed.** Also still open — the ambiguity in Zaalouk's 2026-09-10 comment about whether "`dm:` contains all
+metadata" extends to newly minted terms. Note `KeyPlan` is the first term to land under the broad reading of
+that, so it is a useful concrete case to put to him.
+
+---
+
 ## 2026-09-11 — Three unevidenced terms withdrawn; 12 → 9
 
 **Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`

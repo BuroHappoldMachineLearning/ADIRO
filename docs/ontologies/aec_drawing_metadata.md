@@ -66,6 +66,7 @@ Top-level container for a drawing. Contains Layout(s).
 - **Restrictions:**
     - [contains](#contains) exactly 1 [Revision table](#RevisionTable)
     - [contains](#contains) exactly 1 [Titleblock](#Titleblock)
+    - [contains](#contains) min 0 [Key Plan](#KeyPlan)
     - [contains](#contains) min 0 [Legend](#Legend)
     - [contains](#contains) min 0 [Note](#Note)
     - [contains](#contains) min 1 [Layout](#Layout)
@@ -105,6 +106,14 @@ An image embedded within a note region on a drawing sheet.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Image`
 - **Sub class of:** [Note](#Note)
+- **Labellable root:** true
+
+### Key Plan {#KeyPlan}
+
+A small locator diagram on a drawing sheet showing where the sheet's subject sits within the wider building or site, typically with the relevant area hatched or outlined. A graphical region rather than a text field: its value is the diagram, so it is modelled here as a detectable region alongside Legend and RevisionTable, not as an asserted title-block property. Evidenced by a four-project title-block field survey in which it appeared as a distinct field on two of the four projects.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#KeyPlan`
+- **Sub class of:** [MetadataContainer](#MetadataContainer)
 - **Labellable root:** true
 
 ### Layout {#Layout}
