@@ -186,3 +186,79 @@ anticipated. **Decided 2026-09-01:**
 
 Everything else the survey turned up either confirms the shipped design needs no change (§2) or falls below the
 team's own 40% threshold with no cross-project corroboration (§4).
+
+---
+
+## 7. Vocabulary considered and **not** minted — the full record
+
+> **Rehomed here 2026-09-14.** This record lived in the footer of `src/aec_titleblock.ttl`. That module was
+> deleted when its terms moved into `aec_drawing_metadata`, and this is the only copy — so it is kept here
+> rather than lost with the file. It is the reasoning for terms a reviewer may well ask about; a rejected
+> option is the most expensive thing to rediscover.
+
+All term names below are *proposals that were never minted*, except where a `dm:` target is named.
+
+### 7.1 Resolved 2026-08-19 (Option 1) — reuse `aec_drawing_metadata` directly
+
+These are not missing; they already exist and are used as-is. Extraction writes straight onto
+`dm:DrawingSheet` / `dm:DrawingRevision`, with **no "unvalidated claim" staging layer** — a trade-off accepted
+explicitly, not by default. (The 2026-09-14 relocation makes the *placement* question moot, since there is no
+longer a second module to duplicate into, but this still explains why no `dm:asserts*` twin exists for these
+ten.)
+
+| Proposed | Use instead | Attaches to |
+| --- | --- | --- |
+| `identificationNumber` | `dm:drawingIdentifier` | `DrawingSheet` |
+| `title` | `dm:drawingTitle` | `DrawingSheet` |
+| `scale` | `dm:hasScale` | `DrawingSheet` |
+| `paperSize` | `dm:sheetSize` | `DrawingSheet` |
+| `revisionIndex` | `dm:revisionCode` | `DrawingRevision` |
+| `dateOfIssue` | `dm:issueDate` | `DrawingRevision` |
+| `createdBy` | `dm:isAuthoredBy` | `DrawingRevision` → `Person` |
+| `checkedBy` | `dm:isCheckedBy` | `DrawingRevision` → `Person` |
+| `approvedBy` | `dm:isApprovedBy` | `DrawingRevision` → `Person` |
+| `status` | `dm:hasStatusCode` | `DrawingRevision` → `StatusCode` |
+
+### 7.2 Withdrawn after review of PR #66 (2026-08-13)
+
+- **`hasLegalOwner`** — Alessio Lombardi and Tianyang Huang both observe that a title block does not normally
+  express legal ownership. Deferred pending the field survey; under the agreed `<40%` rule it is unlikely to
+  return. ISO 7200 §5.1.2 defines it, but **the standard is not the evidence — the drawings are.**
+- **`DocumentType` / `DocumentTypeScheme` / `hasDocumentType`** — withdrawn to land complete. A controlled
+  vocabulary with no concepts in it cannot be used, which was the review objection, and the definition needed
+  tightening. Populating it also touches the standards-licensing question (listing DIN 1356-1 *Planart* values),
+  worth deciding rather than rushing.
+
+### 7.3 Withdrawn 2026-09-11 and 2026-09-14, on this survey's evidence
+
+None appeared in **any** of the four sampled projects, so none clears the `<40%` rule. All were minted from a
+standards reading rather than from drawings — exactly the basis §7.2 rejected.
+
+- **`supplementaryTitle`** (ISO 7200 §5.2.3, optional) — stacked title lines do occur, but no surveyed sheet
+  separated them into a distinct field; the surveyed title fields map to `dm:drawingTitle`.
+- **`numberOfSheets` and `sheetNumber`** (ISO 7200 §5.1.7 and §5.1.6) — the "Sheet 3 of 7" pair. The first went
+  2026-09-11, the second followed 2026-09-14, so the sheet-position concept is absent **entirely** rather than
+  half-modelled. Note **§5.1.6 is mandatory in ISO 7200** — a deliberate, evidence-led departure from the
+  standard, not an oversight. If ISO 7200 conformance becomes a stated goal, this is the decision to revisit.
+- **`planKey`** (DIN SPEC 91391-1 *Plankopf* composite code) — a German-practice field; the surveyed corpus is
+  UK/US projects, so it may well return once German projects are sampled. Withdrawn as **unevidenced, not as
+  wrong.**
+
+### 7.4 Dropped as redundant, per the vocabulary review — do not re-add
+
+| Proposed | Use instead |
+| --- | --- |
+| `Sheet` | `dm:DrawingSheet` |
+| `Discipline` | `dcommon:Discipline` — a class hierarchy, giving sub-discipline rollup a flat SKOS scheme would lose. Referencing it needs an `owl:imports` of `aec_domain_common`, which pulls the whole module chain; that import question is unresolved, so nothing references `dcommon:` yet |
+| `hasNorthPointOrientation` | UC-07 `northArrowAngle` (drawing-level) |
+| `hasAnnotationBlock` | `dm:Legend` / `dm:Note` with `dm:contains` |
+| `pageNumber` / `numberOfPages` | duplicated the sheet-position pair, itself withdrawn entirely in §7.3 |
+
+### 7.5 Still to come, now targeting `aec_drawing_metadata`
+
+- The remaining SKOS schemes and their concepts; the extension properties.
+- The **extraction-provenance layer**, blocked on the RDF-star vs reification decision. An extraction timestamp
+  must be included when it lands — its absence was a real gap found by comparison with DANO.
+- **Parked 2026-09-01** pending a team discussion on shape: the organisation-role gap found in all four surveyed
+  projects — `assertsContractor`, `assertsEngineer`, `assertsArchitect`, `assertsConsultant`.
+  `dm:assertsOriginator` covers the general case for now (§3.1, §5).

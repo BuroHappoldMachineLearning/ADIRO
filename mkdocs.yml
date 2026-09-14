@@ -51,7 +51,6 @@ nav:
   - Ontologies:
     - ontologies/index.md
     - Aec Drawing Metadata: ontologies/aec_drawing_metadata.md
-    - Aec Titleblock: ontologies/aec_titleblock.md
     - Aec Common Symbols: ontologies/aec_common_symbols.md
     - Aec Domain Common: ontologies/aec_domain_common.md
     - Aec Facade Domain: ontologies/aec_facade_domain.md

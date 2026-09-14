@@ -22,6 +22,72 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-09-14 (cleanup) — `aec_titleblock` module deleted; PR trimmed to what it needs
+
+**Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`
+
+### What this PR now is
+
+Following the relocation in the entry below, `aec_titleblock` held nothing. It is now **deleted outright** —
+closing the open question that entry left. The suite is back to **four modules**.
+
+The PR is no longer "add a title-block module". It is: **add ten terms to `aec_drawing_metadata` and remove a
+module that was never released.**
+
+### Deleted
+
+| Deleted | Why |
+| --- | --- |
+| `src/aec_titleblock.ttl`, `src/aec_titleblock.display.json` | The module |
+| `src/catalog-v001.xml` entry | Otherwise imports resolve to a missing file — this breaks reasoning CI if missed |
+| `scripts/generate_docs.py` dependency-order entry | Renumbered the remaining four |
+| `mkdocs.yml` nav entry | The nav is curated, not auto-discovered |
+| `changelogs/aec_titleblock.md`, `CHANGELOG.md` rollup row | Per-module changelog for a module that no longer exists |
+| `docs/aec_titleblock.{ttl,html,display.json}`, `docs/ontologies/aec_titleblock.md` | Generated artefacts |
+| `docs/modularization/aec_titleblock-build-plan.md` | A repo-side build plan — passes, PR sequence, plumbing checklists — for a deleted module. Moot in full |
+| `docs/modularization/titleblock-placement-option1-plan.md` | Reasoned entirely about whether to mint `tb:` counterparts vs reuse `dm:`. That is no longer a choice that can be made |
+
+### Rescued before deleting, because it existed in exactly one place
+
+The `aec_titleblock.ttl` footer carried the **record of ~15 terms considered and rejected, with reasons** —
+the Option 1 reuse table, the PR #66 withdrawals (`hasLegalOwner`, `DocumentType` trio), the survey-driven
+withdrawals, the redundancy drops, and the parked organisation roles. None of it is carried in
+`aec_drawing_metadata`, and deleting the file would have destroyed it.
+
+Rehomed as **§7 of `docs/modularization/titleblock-field-survey-2026-09.md`**, which is the natural home: that
+document is the evidence base, and most of the withdrawals are its findings. The operative conclusion of the
+deleted Option 1 plan (extraction writes straight onto `dm:` with no staging layer, accepted explicitly) is
+preserved in §7.1; its one still-open question — whether the "one document, many sheets can disagree" gap
+should be tracked separately — is already recorded as a next step in the 2026-08-19 entry below.
+
+### Kept, deliberately
+
+- **`titleblock-field-survey-2026-09.md`** — the evidence for every term in the PR and every term withdrawn
+  from it. A reviewer asking "why this term and not that one" needs it.
+- **`titleblock-vocabulary-review.md`** — the review against the use cases and DANO. Untouched by the module
+  restructuring, and its findings are still open and forward-looking: the UC-01 placement contradiction, the
+  ~40-terms-without-a-competency-question traceability gap, and the DANO alignment evidence that bears on the
+  not-yet-built provenance layer.
+
+### Verification
+
+| Check | Result |
+| --- | --- |
+| `validate_ontology.py` | pass — **4 modules** (was 5) |
+| **HermiT** | pass — `reason exit code: 0`; merge input is now four files |
+| ROBOT `report` | **0 ERROR.** WARN 223, unchanged — the terms moved namespace, they did not disappear |
+| `generate_docs.py` | **4/4** clean |
+| **`mkdocs build`** | **clean** — run this time specifically because the nav entry and a nav target were removed |
+| Dangling references | None. The four remaining mentions of the name are all deliberate history: this worklog, the `dm:` changelog (recording where the terms came from), and the survey doc |
+
+### Next step
+
+The PR title and body still describe adding a title-block module, which is now the opposite of what it does —
+they need rewriting before re-review is requested. Alessio's `CHANGES_REQUESTED` from 2026-08-13 is now seven
+rounds stale and predates every structural decision in this branch.
+
+---
+
 ## 2026-09-14 (team decision) — `aec_titleblock` emptied into `aec_drawing_metadata`; `layoutTitle` added
 
 **Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`

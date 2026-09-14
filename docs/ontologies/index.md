@@ -10,11 +10,9 @@ The ADIRO ontologies are modular and build on one another via `owl:imports`. Arr
 %%{init: {"themeCSS": ".base .nodeLabel,.base .nodeLabel p,.base text,.base tspan{fill:#9ecbff !important;color:#9ecbff !important}.current .nodeLabel,.current .nodeLabel p,.current text,.current tspan{fill:#16305f !important;color:#16305f !important}"} }%%
 graph BT
     aec_drawing_metadata["Aec Drawing Metadata"]
-    aec_titleblock["Aec Titleblock"]
     aec_common_symbols["Aec Common Symbols"]
     aec_domain_common["Aec Domain Common"]
     aec_facade_domain["Aec Facade Domain"]
-    aec_titleblock --> aec_drawing_metadata
     aec_common_symbols --> aec_drawing_metadata
     aec_domain_common --> aec_common_symbols
     aec_domain_common --> aec_drawing_metadata
@@ -22,7 +20,7 @@ graph BT
     aec_facade_domain --> aec_domain_common
     aec_facade_domain --> aec_drawing_metadata
     classDef base fill:#16305f,stroke:#0e2247,stroke-width:2px,color:#9ecbff;
-    class aec_drawing_metadata,aec_titleblock,aec_common_symbols,aec_domain_common,aec_facade_domain base;
+    class aec_drawing_metadata,aec_common_symbols,aec_domain_common,aec_facade_domain base;
 ```
 
 ## Available ontologies
@@ -32,12 +30,6 @@ graph BT
 -   ### [Aec Drawing Metadata](aec_drawing_metadata.md)
 
     Sheet/layout/document structure for AEC drawings.
-
--   ### [Aec Titleblock](aec_titleblock.md)
-
-    Retired placeholder. Every term formerly declared here was relocated to aec_drawing_metadata on 2026-09-14 by team decision, that module being the single repository for drawing metadata. This file declares no terms and is retained only for its record of vocabulary considered and rejected; whether it should be deleted outright is an open question.
-
-    *Imports: aec_drawing_metadata*
 
 -   ### [Aec Common Symbols](aec_common_symbols.md)
 

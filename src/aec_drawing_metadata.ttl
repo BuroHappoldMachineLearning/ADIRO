@@ -141,17 +141,12 @@
 #################################################################
 #    Object Properties — title-block assertions
 #
-#    Relocated from aec_titleblock 2026-09-14 by team decision: this
-#    module is the single repository for drawing metadata, so new
-#    concepts land here rather than in a parallel module.
-#
 #    NAMING — asserts<Thing>, not has<Thing>. A title block states a
 #    CLAIM, not a verified fact, and the property name is the cheapest
-#    place to make that visible at every call site. This matters MORE
-#    now than it did in a separate module, not less: assertsClient (a
-#    claim read off a printed region) and isCheckedBy (a fact about a
-#    revision) now sit in the same namespace, and the prefix no longer
-#    distinguishes them. The verb has to.
+#    place to make that visible at every call site. It carries real
+#    weight here: assertsClient (a claim read off a printed region) and
+#    isCheckedBy (a fact about a revision) sit in the same namespace,
+#    so the verb is the only thing distinguishing them.
 #################################################################
 
 :assertsMetadataFor rdf:type owl:ObjectProperty ;
@@ -284,8 +279,8 @@
 
 #################################################################
 #    Datatype Properties — title-block assertions
-#    Relocated from aec_titleblock 2026-09-14 (see the object-property
-#    section above for the naming rationale).
+#    See the object-property section above for the asserts- naming
+#    rationale.
 #################################################################
 
 :organizationName rdf:type owl:DatatypeProperty ;
