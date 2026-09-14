@@ -22,6 +22,64 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-09-14 (resolution) — `DrawingSheet`'s `RevisionTable` cardinality relaxed to `min 0`
+
+**Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`
+
+### The decision
+
+Option 1 of the three offered in the entry below. `DrawingSheet contains exactly 1 RevisionTable` becomes
+`min 0`. A sheet is no longer required to contain a revision table **directly**, which is what the new
+`Titleblock contains RevisionTable` restriction needed in order to be usable: `:contains` is direct and
+non-transitive, so a revision table nested in the title block left the sheet with none of its own and the
+`exactly 1` manufactured a phantom.
+
+The constraint and the real-world layout were in conflict. The layout wins.
+
+### Two things to be precise about
+
+**`min 0` is logically vacuous.** It asserts nothing at all. The file uses it as a documentation idiom for "may
+contain", so the honest description of this change is that **the constraint was removed**, not weakened.
+
+**It is non-breaking by the repo's own spec, but an entailment is lost.**
+`docs/governance/compatibility-diff-algorithm-spec.md` classifies `RESTRICTION_LOOSENED` as non-breaking, and
+nothing previously valid becomes invalid. But you could previously infer, from `?x a DrawingSheet` alone, that
+`?x` contains a `RevisionTable` — and you no longer can. A consumer relying on the *inference* rather than on
+asserted data would notice, even though the classification says non-breaking.
+
+**Checked before changing it, rather than asserting a risk vaguely:** I had flagged this as "weakens a
+constraint UC-01 may rely on". Grepping `docs/uc-orsd/` and `ORSD_v1.1.md`, **no competency question or SPARQL
+depends on the cardinality** — the only UC-01 mentions are a design note about `MetadataContainer` parentage and
+a `hasRevisionTable` property that lives in UC-01's own working file, not in the shipped module. So the risk I
+flagged does not appear to be real. Recording that I looked, since "may rely on" is cheap to write and expensive
+to leave unresolved.
+
+Incidentally the check turned up a **malformed restriction in
+`docs/uc-orsd/uc01/uc01-merged-for-visualization.ttl` line 146** — one restriction node carrying
+`minQualifiedCardinality 0`, `qualifiedCardinality 1` *and* `maxQualifiedCardinality 1` together. That file is a
+visualisation artefact, not a source module, so it is out of scope here and untouched, but it is wrong and worth
+someone's attention.
+
+`Titleblock`'s own `exactly 1` on `DrawingSheet` is **unchanged** — every sheet still has exactly one title block.
+
+### Verification
+
+| Check | Result |
+| --- | --- |
+| `validate_ontology.py` (all four) | pass |
+| **HermiT** | pass — `reason exit code: 0` |
+| ROBOT `report` | **0 ERROR**, WARN unchanged at 222 |
+| `compat_diff.py` | Forecast unmoved — `aec_drawing_metadata` was already MAJOR for unrelated accumulated reasons. `RESTRICTION_LOOSENED` is non-breaking by the spec, so this change would not have forced a MAJOR on its own |
+| `generate_docs.py` | 4/4 clean |
+| `mkdocs build` | not re-run — no nav or page added or removed |
+
+### Next step
+
+Unchanged: @alelom's `CHANGES_REQUESTED` (2026-08-13) still stands, and the survey's German-sampling gap would
+settle three parked terms cheaply.
+
+---
+
 ## 2026-09-14 (late) — `dimensionUnits` withdrawn; nine terms in the PR
 
 **Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`
@@ -88,7 +146,7 @@ inferences during the first real extraction run, at which point it is much more 
 
 `KeyPlan` and `Legend` are **unaffected** — both are `min 0` on `DrawingSheet`, so nesting them costs nothing.
 
-Three ways out, none taken here because this changes UC-01-adjacent semantics and is not mine to decide:
+Three ways out were put to Ahmed Elnagar:
 
 1. **Relax `DrawingSheet`'s `RevisionTable` to `min 0`** — simplest, but weakens a constraint UC-01 may rely on.
 2. **Add a transitive super-property** (e.g. `containsTransitively`, with `contains rdfs:subPropertyOf` it) and
@@ -96,6 +154,8 @@ Three ways out, none taken here because this changes UC-01-adjacent semantics an
 3. **Require the pipeline to always assert the sheet-level edge too**, treating the title-block edge as
    additional rather than alternative. No ontology change; pushes the burden onto every consumer, and nothing
    enforces it.
+
+**Option 1 chosen and implemented** — see the entry above.
 
 ### Next step
 

@@ -62,11 +62,11 @@ Top-level container for a drawing. Contains Layout(s).
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#DrawingSheet`
 - **Restrictions:**
-    - [contains](#contains) exactly 1 [Revision table](#RevisionTable)
     - [contains](#contains) exactly 1 [Titleblock](#Titleblock)
     - [contains](#contains) min 0 [Key Plan](#KeyPlan)
     - [contains](#contains) min 0 [Legend](#Legend)
     - [contains](#contains) min 0 [Note](#Note)
+    - [contains](#contains) min 0 [Revision table](#RevisionTable)
     - [contains](#contains) min 1 [Layout](#Layout)
 - **Labellable root:** false
 
