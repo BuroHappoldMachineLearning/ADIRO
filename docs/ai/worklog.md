@@ -66,10 +66,42 @@ three at once** — that is now the single highest-value addition to the survey.
 | `generate_docs.py` | 4/4 clean |
 | `mkdocs build` | not re-run — no nav or page was added or removed this time |
 
+### `Titleblock` can now contain `KeyPlan`, `Legend` and `RevisionTable`
+
+Added three `min 0` `contains` restrictions to `Titleblock`, mirroring the `DrawingSheet` pattern. All three are
+commonly printed inside the title-block strip rather than standing alone, so both placements are now expressible.
+`KeyPlan`'s and `Titleblock`'s `rdfs:comment`s say so, since that is where an annotator or pipeline author looks.
+
+#### ⚠️ One genuine trap this opens, flagged not fixed — `RevisionTable`
+
+`:contains` is **direct** containment. Its own comment says so and it is not declared `owl:TransitiveProperty`.
+And `DrawingSheet` requires **exactly 1** `RevisionTable` (`owl:qualifiedCardinality "1"`), not `min 0`.
+
+So for a sheet whose revision table sits inside the title block, asserting the natural thing —
+`sheet contains titleblock` and `titleblock contains revisionTable` — leaves the sheet with **no direct
+`RevisionTable`**. The `exactly 1` then forces a reasoner to infer a *second, anonymous* revision table that the
+sheet contains directly. A phantom.
+
+**This does not show up in the gates**, which is why it is worth writing down: the TBox reasons cleanly (HermiT
+exit 0, 0 ERROR) because the contradiction only materialises once individuals exist. It would surface as strange
+inferences during the first real extraction run, at which point it is much more expensive to diagnose.
+
+`KeyPlan` and `Legend` are **unaffected** — both are `min 0` on `DrawingSheet`, so nesting them costs nothing.
+
+Three ways out, none taken here because this changes UC-01-adjacent semantics and is not mine to decide:
+
+1. **Relax `DrawingSheet`'s `RevisionTable` to `min 0`** — simplest, but weakens a constraint UC-01 may rely on.
+2. **Add a transitive super-property** (e.g. `containsTransitively`, with `contains rdfs:subPropertyOf` it) and
+   hang the cardinality restrictions off that instead. Correct, and more work.
+3. **Require the pipeline to always assert the sheet-level edge too**, treating the title-block edge as
+   additional rather than alternative. No ontology change; pushes the burden onto every consumer, and nothing
+   enforces it.
+
 ### Next step
 
 Unchanged: @alelom's `CHANGES_REQUESTED` from 2026-08-13 still stands and now predates every structural decision
 on the branch. Plus the survey's German-sampling gap above, which is cheap and would resolve three parked terms.
+And the `RevisionTable` cardinality question above, which wants an answer before extraction data lands.
 
 ---
 

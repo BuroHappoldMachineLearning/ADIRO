@@ -309,9 +309,12 @@
     :labellableRoot "false"^^xsd:boolean.
 
 :Titleblock rdf:type owl:Class;
-    rdfs:subClassOf :MetadataContainer;
+    rdfs:subClassOf :MetadataContainer,
+        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :KeyPlan ],
+        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Legend ],
+        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :RevisionTable ];
     rdfs:label "Titleblock";
-    rdfs:comment "Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc.";
+    rdfs:comment "Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc. May itself contain a KeyPlan, Legend or RevisionTable, which are commonly printed inside the title-block strip rather than standing alone on the page; all three are optional, and each may alternatively be contained directly by the DrawingSheet.";
     :exampleImage <img/aec_drawing_ontology/titleblock_01.png> ;
     :exampleImage <img/aec_drawing_ontology/titleblock_02.png> ;
     :exampleImage <img/aec_drawing_ontology/titleblock_03.png> ;
@@ -337,7 +340,7 @@
 :KeyPlan rdf:type owl:Class;
     rdfs:subClassOf :MetadataContainer;
     rdfs:label "Key Plan";
-    rdfs:comment "A small locator diagram on a drawing sheet showing where the sheet's subject sits within the wider building or site, typically with the relevant area hatched or outlined. A graphical region rather than a text field: its value is the diagram, so it is modelled here as a detectable region alongside Legend and RevisionTable, not as an asserted title-block property." ;
+    rdfs:comment "A small locator diagram on a drawing sheet showing where the sheet's subject sits within the wider building or site, typically with the relevant area hatched or outlined. A graphical region rather than a text field: its value is the diagram, so it is modelled here as a detectable region alongside Legend and RevisionTable, not as an asserted title-block property. Contained either by a Titleblock, where it is printed inside the title-block strip, or directly by a DrawingSheet where it stands alone on the page; both placements occur and both are optional." ;
     :labellableRoot "true"^^xsd:boolean.
 
 :Note rdf:type owl:Class;

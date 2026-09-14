@@ -108,7 +108,7 @@ An image embedded within a note region on a drawing sheet.
 
 ### Key Plan {#KeyPlan}
 
-A small locator diagram on a drawing sheet showing where the sheet's subject sits within the wider building or site, typically with the relevant area hatched or outlined. A graphical region rather than a text field: its value is the diagram, so it is modelled here as a detectable region alongside Legend and RevisionTable, not as an asserted title-block property.
+A small locator diagram on a drawing sheet showing where the sheet's subject sits within the wider building or site, typically with the relevant area hatched or outlined. A graphical region rather than a text field: its value is the diagram, so it is modelled here as a detectable region alongside Legend and RevisionTable, not as an asserted title-block property. Contained either by a Titleblock, where it is printed inside the title-block strip, or directly by a DrawingSheet where it stands alone on the page; both placements occur and both are optional.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#KeyPlan`
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
@@ -280,10 +280,14 @@ A free-form block of text, such as numbered lists or paragraphs, containing gene
 
 ### Titleblock {#Titleblock}
 
-Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc.
+Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc. May itself contain a KeyPlan, Legend or RevisionTable, which are commonly printed inside the title-block strip rather than standing alone on the page; all three are optional, and each may alternatively be contained directly by the DrawingSheet.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Titleblock`
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
+- **Restrictions:**
+    - [contains](#contains) min 0 [Key Plan](#KeyPlan)
+    - [contains](#contains) min 0 [Legend](#Legend)
+    - [contains](#contains) min 0 [Revision table](#RevisionTable)
 - **Labellable root:** true
 
 *Example images:*
