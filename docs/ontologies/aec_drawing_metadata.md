@@ -164,7 +164,7 @@ Superclass for annotations on a drawing sheet that are not part of the drawing g
 
 ### Organization {#Organization}
 
-A legal entity named in a title block — client, originator, legal owner or responsible department. Modelled as a class rather than a string so that one organisation recurring across many sheets is a single individual, which is what makes cross-sheet questions answerable. Aligns to ct:Organisation (ISO 21597-1) and IfcActorSelect; note the ISO spelling differs. Relocated from aec_titleblock 2026-09-14.
+A legal entity named in a title block — client, originator, legal owner or responsible department. Modelled as a class rather than a string so that one organisation recurring across many sheets is a single individual, which is what makes cross-sheet questions answerable. Aligns to ct:Organisation (ISO 21597-1) and IfcActorSelect; note the ISO spelling differs.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Organization`
 - **Labellable root:** false
@@ -302,7 +302,7 @@ Titleblock containing information about the drawing, for example project name, d
 
 ### asserts client {#assertsClient}
 
-The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from assertsOriginator, which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor).
+The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from assertsOriginator, which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#assertsClient`
 - **Domain:** [Titleblock](#Titleblock)
@@ -311,7 +311,7 @@ The organisation commissioning the work — the client or employer — as named 
 
 ### asserts metadata for {#assertsMetadataFor}
 
-Links a titleblock region to the drawing sheet whose metadata it asserts. The separation matters because a value read from a titleblock is a claim, not a fact: two sheets can assert conflicting values for one document, and a claim must be validated before it is promoted. Range is DrawingSheet rather than a separate Document class: the sheet is the unit UC-01 established as searchable, and introducing a competing Document class would deepen an unresolved placement question rather than settle it.
+Links a titleblock region to the drawing sheet whose metadata it asserts. Range is DrawingSheet rather than a separate Document class: the sheet is the unit UC-01 established as searchable, and introducing a competing Document class would deepen an unresolved placement question rather than settle it.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#assertsMetadataFor`
 - **Domain:** [Titleblock](#Titleblock)
@@ -320,7 +320,7 @@ Links a titleblock region to the drawing sheet whose metadata it asserts. The se
 
 ### asserts originator {#assertsOriginator}
 
-The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. This is the practice or consultancy whose name and logo appear as author of the sheet. Distinct from assertsClient, which names who commissioned the work. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor).
+The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. This is the practice or consultancy whose name and logo appear as author of the sheet. Distinct from assertsClient, which names who commissioned the work.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#assertsOriginator`
 - **Domain:** [Titleblock](#Titleblock)
@@ -440,7 +440,7 @@ Inverse of hasRevision. Navigates from a DrawingRevision back to its DrawingShee
 
 ### assertsCrossReferenceNumber {#assertsCrossReferenceNumber}
 
-A second (or third) identifier the title block prints for the same sheet, issued by a system other than the one drawingIdentifier is read from — a design-team-internal number, a client/EDMS document number, or a sketch/site-advice reference. Evidenced by a four-project field-frequency survey (docs/modularization/titleblock-field-survey-2026-09.md §3.2), where it recurs under different labels in 3 of 4 projects. Stored whole and verbatim, not parsed into segments; which system issued it is not modelled as a controlled vocabulary here — an empty scheme was the objection that withdrew DocumentType in review round 1 — so that distinction is carried by extractionHint only. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor).
+A second (or third) identifier the title block prints for the same sheet, issued by a system other than the one drawingIdentifier is read from — a design-team-internal number, a client/EDMS document number, or a sketch/site-advice reference. Stored whole and verbatim, not parsed into segments; which system issued it is not modelled as a controlled vocabulary here, so that distinction is carried by extractionHint only.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#assertsCrossReferenceNumber`
 - **Domain:** [Titleblock](#Titleblock)
@@ -498,7 +498,7 @@ Identifier for a Layout within its parent DrawingSheet. Also known as 'layout nu
 
 ### layoutTitle {#layoutTitle}
 
-The caption naming an individual Layout, distinct from the sheet-level drawingTitle. A sheet routinely carries several drawings — details, sections, plans at different scales — each with its own printed title such as 'Mullion Head Detail' or 'Ground Floor Plan'. Without this, every layout on a sheet inherits one title and the drawings cannot be told apart. Pairs with layoutIdentifier as title-to-number: the identifier says which layout, this says what it depicts.
+The caption naming an individual Layout, distinct from the sheet-level drawingTitle. A sheet routinely carries several drawings — details, sections, plans at different scales — each with its own printed title such as 'Mullion Head Detail' or 'Ground Floor Plan'. Pairs with layoutIdentifier as title-to-number: the identifier says which layout, this says what it depicts.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#layoutTitle`
 - **Domain:** [Layout](#Layout)

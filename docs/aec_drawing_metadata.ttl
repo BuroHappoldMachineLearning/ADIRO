@@ -158,14 +158,14 @@
     rdfs:label "asserts metadata for"@en ;
     rdfs:domain :Titleblock ;
     rdfs:range :DrawingSheet ;
-    rdfs:comment "Links a titleblock region to the drawing sheet whose metadata it asserts. The separation matters because a value read from a titleblock is a claim, not a fact: two sheets can assert conflicting values for one document, and a claim must be validated before it is promoted. Range is DrawingSheet rather than a separate Document class: the sheet is the unit UC-01 established as searchable, and introducing a competing Document class would deepen an unresolved placement question rather than settle it."@en ;
+    rdfs:comment "Links a titleblock region to the drawing sheet whose metadata it asserts. Range is DrawingSheet rather than a separate Document class: the sheet is the unit UC-01 established as searchable, and introducing a competing Document class would deepen an unresolved placement question rather than settle it."@en ;
     :extractionHint "Not extracted. Asserted by the pipeline when a titleblock region is detected on a sheet."@en .
 
 :assertsClient rdf:type owl:ObjectProperty ;
     rdfs:label "asserts client"@en ;
     rdfs:domain :Titleblock ;
     rdfs:range :Organization ;
-    rdfs:comment "The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from assertsOriginator, which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor)."@en ;
+    rdfs:comment "The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from assertsOriginator, which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value."@en ;
     skos:altLabel "client"@en, "employer"@en, "for"@en,
                   "Bauherr"@de, "Auftraggeber"@de ;
     :extractionHint "Often the most prominent organisation name on the sheet, sometimes a logo rather than text. Frequently in its own cell above or beside the originator's block."@en .
@@ -174,7 +174,7 @@
     rdfs:label "asserts originator"@en ;
     rdfs:domain :Titleblock ;
     rdfs:range :Organization ;
-    rdfs:comment "The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. This is the practice or consultancy whose name and logo appear as author of the sheet. Distinct from assertsClient, which names who commissioned the work. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor)."@en ;
+    rdfs:comment "The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. This is the practice or consultancy whose name and logo appear as author of the sheet. Distinct from assertsClient, which names who commissioned the work."@en ;
     skos:altLabel "originator"@en, "drawn by (company)"@en, "consultant"@en,
                   "Planverfasser"@de, "Verfasser"@de ;
     :extractionHint "Usually the organisation whose logo sits in or beside the title block, and whose code appears in the drawing-number originator segment."@en .
@@ -229,7 +229,7 @@
 
 :layoutTitle rdf:type owl:DatatypeProperty ;
     rdfs:label "layoutTitle" ;
-    rdfs:comment "The caption naming an individual Layout, distinct from the sheet-level drawingTitle. A sheet routinely carries several drawings — details, sections, plans at different scales — each with its own printed title such as 'Mullion Head Detail' or 'Ground Floor Plan'. Without this, every layout on a sheet inherits one title and the drawings cannot be told apart. Pairs with layoutIdentifier as title-to-number: the identifier says which layout, this says what it depicts." ;
+    rdfs:comment "The caption naming an individual Layout, distinct from the sheet-level drawingTitle. A sheet routinely carries several drawings — details, sections, plans at different scales — each with its own printed title such as 'Mullion Head Detail' or 'Ground Floor Plan'. Pairs with layoutIdentifier as title-to-number: the identifier says which layout, this says what it depicts." ;
     rdfs:domain :Layout ;
     rdfs:range xsd:string ;
     skos:altLabel "drawing title"@en, "detail title"@en, "view title"@en,
@@ -308,7 +308,7 @@
     rdfs:label "assertsCrossReferenceNumber" ;
     rdfs:domain :Titleblock ;
     rdfs:range xsd:string ;
-    rdfs:comment "A second (or third) identifier the title block prints for the same sheet, issued by a system other than the one drawingIdentifier is read from — a design-team-internal number, a client/EDMS document number, or a sketch/site-advice reference. Evidenced by a four-project field-frequency survey (docs/modularization/titleblock-field-survey-2026-09.md §3.2), where it recurs under different labels in 3 of 4 projects. Stored whole and verbatim, not parsed into segments; which system issued it is not modelled as a controlled vocabulary here — an empty scheme was the objection that withdrew DocumentType in review round 1 — so that distinction is carried by extractionHint only. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor)."@en ;
+    rdfs:comment "A second (or third) identifier the title block prints for the same sheet, issued by a system other than the one drawingIdentifier is read from — a design-team-internal number, a client/EDMS document number, or a sketch/site-advice reference. Stored whole and verbatim, not parsed into segments; which system issued it is not modelled as a controlled vocabulary here, so that distinction is carried by extractionHint only."@en ;
     skos:altLabel "SA/SK No."@en, "sketch number"@en, "EDMS document number"@en,
                   "design team drawing number"@en, "client reference number"@en ;
     :extractionHint "A second coded number near or below the primary drawing number, often prefixed by the issuing system's initials (e.g. a sketch/site-advice code, or an EDMS platform's own document ID). Do not conflate with drawingIdentifier — capture only when a sheet prints more than one numbering system."@en .
@@ -507,7 +507,7 @@
 
 :Organization rdf:type owl:Class ;
     rdfs:label "Organization" ;
-    rdfs:comment "A legal entity named in a title block — client, originator, legal owner or responsible department. Modelled as a class rather than a string so that one organisation recurring across many sheets is a single individual, which is what makes cross-sheet questions answerable. Aligns to ct:Organisation (ISO 21597-1) and IfcActorSelect; note the ISO spelling differs. Relocated from aec_titleblock 2026-09-14." ;
+    rdfs:comment "A legal entity named in a title block — client, originator, legal owner or responsible department. Modelled as a class rather than a string so that one organisation recurring across many sheets is a single individual, which is what makes cross-sheet questions answerable. Aligns to ct:Organisation (ISO 21597-1) and IfcActorSelect; note the ISO spelling differs." ;
     skos:altLabel "Organisation"@en ;
     :labellableRoot "false"^^xsd:boolean .
 
