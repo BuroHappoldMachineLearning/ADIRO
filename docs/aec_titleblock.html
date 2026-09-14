@@ -294,7 +294,7 @@ td {
     ],
     "https://schema.org/description": [
       {
-        "@value": "What a title block asserts: the content fields printed in the titleblock region of an AEC drawing sheet, bound to ISO 7200 / ISO 19650 / DIN 1356-1 concepts. Complements aec_drawing_metadata, which models the titleblock as a detectable graphical region."
+        "@value": "Retired placeholder. Every term formerly declared here was relocated to aec_drawing_metadata on 2026-09-14 by team decision, that module being the single repository for drawing metadata. This file declares no terms and is retained only for its record of vocabulary considered and rejected; whether it should be deleted outright is an open question."
       }
     ],
     "https://schema.org/license": [
@@ -374,318 +374,9 @@ td {
             <dt>
               <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
             </dt>
-            <dd><p>What a title block asserts: the content fields printed in the titleblock region of an AEC drawing sheet, bound to ISO 7200 / ISO 19650 / DIN 1356-1 concepts. Complements aec_drawing_metadata, which models the titleblock as a detectable graphical region.</p></dd>
+            <dd><p>Retired placeholder. Every term formerly declared here was relocated to aec_drawing_metadata on 2026-09-14 by team decision, that module being the single repository for drawing metadata. This file declares no terms and is retained only for its record of vocabulary considered and rejected; whether it should be deleted outright is an open question.</p></dd>
           </div>
         </dl>
-      </div>
-      <div class="section" id="classes">
-        <h2>Classes</h2>
-        <div class="property entity" id="Organization">
-          <h3>Organization
-            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_titleblock#Organization</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>A legal entity named in a title block — client, originator, legal owner or responsible department. Modelled as a class rather than a string so that one organisation recurring across many sheets is a single individual, which is what makes cross-sheet questions answerable. Aligns to ct:Organisation (ISO 21597-1) and IfcActorSelect; note the ISO spelling differs.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#organizationName">organizationName</a>
-                  <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
-              </th>
-              <td>
-                <ul>
-                  <li>
-                    <span>
-                      <a href="#assertsClient">asserts client</a>
-                      <sup class="sup-op" title="OWL Object Property">op</sup>
-                    </span>
-                  </li>
-                  <li>
-                    <span>
-                      <a href="#assertsOriginator">asserts originator</a>
-                      <sup class="sup-op" title="OWL Object Property">op</sup>
-                    </span>
-                  </li>
-                </ul>
-              </td>
-            </tr>
-          </table>
-        </div>
-      </div>
-      <div class="section" id="objectproperties">
-        <h2>Object Properties</h2>
-        <div class="property entity" id="assertsmetadatafor">
-          <h3>asserts metadata for
-            <sup class="sup-op" title="OWL Object Property">op</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_titleblock#assertsMetadataFor</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>Links a titleblock region to the drawing sheet whose metadata it asserts. The separation matters because a value read from a titleblock is a claim, not a fact: two sheets can assert conflicting values for one document, and a claim must be validated before it is promoted. Range is dm:DrawingSheet rather than a separate Document class: the sheet is the unit UC-01 established as searchable, and introducing a competing Document class would deepen an unresolved placement question rather than settle it.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <a href="https://w3id.org/adiro/aec_drawing_metadata#Titleblock">dm:Titleblock</a>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <a href="https://w3id.org/adiro/aec_drawing_metadata#DrawingSheet">dm:DrawingSheet</a>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="assertsClient">
-          <h3>asserts client
-            <sup class="sup-op" title="OWL Object Property">op</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_titleblock#assertsClient</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from assertsOriginator, which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor).</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <a href="https://w3id.org/adiro/aec_drawing_metadata#Titleblock">dm:Titleblock</a>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#Organization">Organization</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="assertsOriginator">
-          <h3>asserts originator
-            <sup class="sup-op" title="OWL Object Property">op</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_titleblock#assertsOriginator</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. This is the practice or consultancy whose name and logo appear as author of the sheet. Distinct from assertsClient, which names who commissioned the work. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor).</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <a href="https://w3id.org/adiro/aec_drawing_metadata#Titleblock">dm:Titleblock</a>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#Organization">Organization</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-          </table>
-        </div>
-      </div>
-      <div class="section" id="datatypeproperties">
-        <h2>Datatype Properties</h2>
-        <div class="property entity" id="organizationName">
-          <h3>organizationName
-            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_titleblock#organizationName</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>The name of an organisation as printed. Parallels dm:personName. Verbatim: not normalised, expanded or translated at extraction time.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#Organization">Organization</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="dimensionUnits">
-          <h3>dimensionUnits
-            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_titleblock#dimensionUnits</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>The units in which the drawing's dimensions are expressed, where the title block states them alongside the scale. German practice per DIN 1356-1 writes both together, as in '1:50 – m,cm'. Held separately from the scale so the scale value stays parseable as a ratio.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <a href="https://w3id.org/adiro/aec_drawing_metadata#Titleblock">dm:Titleblock</a>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="assertsCrossReferenceNumber">
-          <h3>assertsCrossReferenceNumber
-            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_titleblock#assertsCrossReferenceNumber</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>A second (or third) identifier the title block prints for the same sheet, issued by a system other than the one dm:drawingIdentifier is read from — a design-team-internal number, a client/EDMS document number, or a sketch/site-advice reference. Evidenced by a four-project field-frequency survey (docs/modularization/titleblock-field-survey-2026-09.md §3.2), where it recurs under different labels in 3 of 4 projects. Stored whole and verbatim, not parsed into segments; which system issued it is not modelled as a controlled vocabulary here — an empty scheme was the objection that withdrew DocumentType in review round 1 — so that distinction is carried by extractionHint only. Named asserts- rather than has- for the same reason as assertsClient/assertsOriginator: the title block states a claim, not a verified fact (see assertsMetadataFor).</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <a href="https://w3id.org/adiro/aec_drawing_metadata#Titleblock">dm:Titleblock</a>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
-              </td>
-            </tr>
-          </table>
-        </div>
-      </div>
-      <div class="section" id="annotationproperties">
-        <h2>Annotation Properties</h2>
-        <div class="property entity" id="extractionhint">
-          <h3>extraction hint
-            <sup class="sup-ap" title="OWL Annotation Property">ap</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_titleblock#extractionHint</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>Free-text guidance for an information-extraction model on where and how a field typically appears in a title block (adjacent captions, cell grouping, formatting). Consumed by the generated extraction profile, not by reasoning.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
-              </td>
-            </tr>
-          </table>
-        </div>
       </div>
       <div id="namespaces">
         <h2>Namespaces</h2>
@@ -693,10 +384,6 @@ td {
           <dt id="dcterms">dcterms</dt>
           <dd>
             <code>http://purl.org/dc/terms/</code>
-          </dd>
-          <dt id="dm">dm</dt>
-          <dd>
-            <code>https://w3id.org/adiro/aec_drawing_metadata#</code>
           </dd>
           <dt id="ns1">ns1</dt>
           <dd>
@@ -714,48 +401,11 @@ td {
           <dd>
             <code>http://www.w3.org/2000/01/rdf-schema#</code>
           </dd>
-          <dt id="skos">skos</dt>
-          <dd>
-            <code>http://www.w3.org/2004/02/skos/core#</code>
-          </dd>
-          <dt id="tb">tb</dt>
-          <dd>
-            <code>https://w3id.org/adiro/aec_titleblock#</code>
-          </dd>
-          <dt id="xsd">xsd</dt>
-          <dd>
-            <code>http://www.w3.org/2001/XMLSchema#</code>
-          </dd>
         </dl>
       </div>
       <div id="legend">
         <h2>Legend</h2>
-        <table class="entity">
-          <tr>
-            <td>
-              <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-            </td>
-            <td>Classes</td>
-          </tr>
-          <tr>
-            <td>
-              <sup class="sup-op" title="OWL Object Property">op</sup>
-            </td>
-            <td>Object Properties</td>
-          </tr>
-          <tr>
-            <td>
-              <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
-            </td>
-            <td>Datatype Properties</td>
-          </tr>
-          <tr>
-            <td>
-              <sup class="sup-ap" title="OWL Annotation Property">ap</sup>
-            </td>
-            <td>Annotation Properties</td>
-          </tr>
-        </table>
+        <table class="entity"></table>
       </div>
     </div>
     <div id="pylode">
@@ -781,66 +431,11 @@ td {
         </li>
         <li>
           <h4>
-            <a href="#classes">Classes</a>
-          </h4>
-          <ul class="second">
-            <li>
-              <a href="#Organization">Organization</a>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <h4>
-            <a href="#objectproperties">Object Properties</a>
-          </h4>
-          <ul class="second">
-            <li>
-              <a href="#assertsmetadatafor">asserts metadata for</a>
-            </li>
-            <li>
-              <a href="#assertsClient">asserts client</a>
-            </li>
-            <li>
-              <a href="#assertsOriginator">asserts originator</a>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <h4>
-            <a href="#datatypeproperties">Datatype Properties</a>
-          </h4>
-          <ul class="second">
-            <li>
-              <a href="#organizationName">organizationName</a>
-            </li>
-            <li>
-              <a href="#dimensionUnits">dimensionUnits</a>
-            </li>
-            <li>
-              <a href="#assertsCrossReferenceNumber">assertsCrossReferenceNumber</a>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <h4>
-            <a href="#annotationproperties">Annotation Properties</a>
-          </h4>
-          <ul class="second">
-            <li>
-              <a href="#extractionhint">extraction hint</a>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <h4>
             <a href="#namespaces">Namespaces</a>
           </h4>
           <ul class="second">
             <li>
               <a href="#dcterms">dcterms</a>
-            </li>
-            <li>
-              <a href="#dm">dm</a>
             </li>
             <li>
               <a href="#ns1">ns1</a>
@@ -853,15 +448,6 @@ td {
             </li>
             <li>
               <a href="#rdfs">rdfs</a>
-            </li>
-            <li>
-              <a href="#skos">skos</a>
-            </li>
-            <li>
-              <a href="#tb">tb</a>
-            </li>
-            <li>
-              <a href="#xsd">xsd</a>
             </li>
           </ul>
         </li>

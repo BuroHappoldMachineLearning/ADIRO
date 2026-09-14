@@ -110,7 +110,7 @@ An image embedded within a note region on a drawing sheet.
 
 ### Key Plan {#KeyPlan}
 
-A small locator diagram on a drawing sheet showing where the sheet's subject sits within the wider building or site, typically with the relevant area hatched or outlined. A graphical region rather than a text field: its value is the diagram, so it is modelled here as a detectable region alongside Legend and RevisionTable, not as an asserted title-block property. Evidenced by a four-project title-block field survey in which it appeared as a distinct field on two of the four projects.
+A small locator diagram on a drawing sheet showing where the sheet's subject sits within the wider building or site, typically with the relevant area hatched or outlined. A graphical region rather than a text field: its value is the diagram, so it is modelled here as a detectable region alongside Legend and RevisionTable, not as an asserted title-block property.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#KeyPlan`
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
@@ -161,6 +161,13 @@ Superclass for annotations on a drawing sheet that are not part of the drawing g
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Note`
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
 - **Labellable root:** true
+
+### Organization {#Organization}
+
+A legal entity named in a title block — client, originator, legal owner or responsible department. Modelled as a class rather than a string so that one organisation recurring across many sheets is a single individual, which is what makes cross-sheet questions answerable. Aligns to ct:Organisation (ISO 21597-1) and IfcActorSelect; note the ISO spelling differs. Relocated from aec_titleblock 2026-09-14.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Organization`
+- **Labellable root:** false
 
 ### Orientation {#OrientationValue}
 
@@ -293,6 +300,33 @@ Titleblock containing information about the drawing, for example project name, d
 
 ## Object Properties
 
+### asserts client {#assertsClient}
+
+The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from assertsOriginator, which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor).
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#assertsClient`
+- **Domain:** [Titleblock](#Titleblock)
+- **Range:** [Organization](#Organization)
+- **extraction hint:** Often the most prominent organisation name on the sheet, sometimes a logo rather than text. Frequently in its own cell above or beside the originator's block.
+
+### asserts metadata for {#assertsMetadataFor}
+
+Links a titleblock region to the drawing sheet whose metadata it asserts. The separation matters because a value read from a titleblock is a claim, not a fact: two sheets can assert conflicting values for one document, and a claim must be validated before it is promoted. Range is DrawingSheet rather than a separate Document class: the sheet is the unit UC-01 established as searchable, and introducing a competing Document class would deepen an unresolved placement question rather than settle it.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#assertsMetadataFor`
+- **Domain:** [Titleblock](#Titleblock)
+- **Range:** [Drawing Sheet](#DrawingSheet)
+- **extraction hint:** Not extracted. Asserted by the pipeline when a titleblock region is detected on a sheet.
+
+### asserts originator {#assertsOriginator}
+
+The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. This is the practice or consultancy whose name and logo appear as author of the sheet. Distinct from assertsClient, which names who commissioned the work. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor).
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#assertsOriginator`
+- **Domain:** [Titleblock](#Titleblock)
+- **Range:** [Organization](#Organization)
+- **extraction hint:** Usually the organisation whose logo sits in or beside the title block, and whose code appears in the drawing-number originator segment.
+
 ### belongsToPackage {#belongsToPackage}
 
 Associates a DrawingSheet with the DrawingPackage it belongs to.
@@ -404,6 +438,24 @@ Inverse of hasRevision. Navigates from a DrawingRevision back to its DrawingShee
 
 ## Datatype Properties
 
+### assertsCrossReferenceNumber {#assertsCrossReferenceNumber}
+
+A second (or third) identifier the title block prints for the same sheet, issued by a system other than the one drawingIdentifier is read from — a design-team-internal number, a client/EDMS document number, or a sketch/site-advice reference. Evidenced by a four-project field-frequency survey (docs/modularization/titleblock-field-survey-2026-09.md §3.2), where it recurs under different labels in 3 of 4 projects. Stored whole and verbatim, not parsed into segments; which system issued it is not modelled as a controlled vocabulary here — an empty scheme was the objection that withdrew DocumentType in review round 1 — so that distinction is carried by extractionHint only. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor).
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#assertsCrossReferenceNumber`
+- **Domain:** [Titleblock](#Titleblock)
+- **Range:** `xsd:string`
+- **extraction hint:** A second coded number near or below the primary drawing number, often prefixed by the issuing system's initials (e.g. a sketch/site-advice code, or an EDMS platform's own document ID). Do not conflate with drawingIdentifier — capture only when a sheet prints more than one numbering system.
+
+### dimensionUnits {#dimensionUnits}
+
+The units in which the drawing's dimensions are expressed, where the title block states them alongside the scale. German practice per DIN 1356-1 writes both together, as in '1:50 – m,cm'. Held separately from the scale so the scale value stays parseable as a ratio.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#dimensionUnits`
+- **Domain:** [Titleblock](#Titleblock)
+- **Range:** `xsd:string`
+- **extraction hint:** Appears beside or beneath the scale, often after a dash. Extract only the unit part; the ratio belongs to hasScale.
+
 ### drawingIdentifier {#drawingIdentifier}
 
 Sheet-level identifier, e.g. 'ST-201'. Also known as 'drawing number'.
@@ -443,6 +495,24 @@ Identifier for a Layout within its parent DrawingSheet. Also known as 'layout nu
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#layoutIdentifier`
 - **Domain:** [Layout](#Layout)
 - **Range:** `xsd:string`
+
+### layoutTitle {#layoutTitle}
+
+The caption naming an individual Layout, distinct from the sheet-level drawingTitle. A sheet routinely carries several drawings — details, sections, plans at different scales — each with its own printed title such as 'Mullion Head Detail' or 'Ground Floor Plan'. Without this, every layout on a sheet inherits one title and the drawings cannot be told apart. Pairs with layoutIdentifier as title-to-number: the identifier says which layout, this says what it depicts.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#layoutTitle`
+- **Domain:** [Layout](#Layout)
+- **Range:** `xsd:string`
+- **extraction hint:** Printed adjacent to its layout rather than in the title block — usually directly beneath or above the drawing, often with the layout number and scale in the same caption line ('3  MULLION HEAD  1:5'). Capture only the descriptive part; the number belongs to layoutIdentifier and the scale is sheet-level. Do not confuse with drawingTitle, which is the single sheet-level title inside the title block.
+
+### organizationName {#organizationName}
+
+The name of an organisation as printed. Parallels personName. Verbatim: not normalised, expanded or translated at extraction time.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#organizationName`
+- **Domain:** [Organization](#Organization)
+- **Range:** `xsd:string`
+- **extraction hint:** Transcribe exactly as printed, including any legal suffix.
 
 ### packageName {#packageName}
 
@@ -515,6 +585,13 @@ Display label for the status code, e.g. 'IFC', 'IFR', 'AFC'.
 Links a class or concept to an example image illustrating it.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#exampleImage`
+
+### extraction hint {#extractionHint}
+
+Free-text guidance for an information-extraction model on where and how a field typically appears on a drawing sheet (adjacent captions, cell grouping, formatting). Consumed by the generated extraction profile, not by reasoning.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#extractionHint`
+- **Range:** `xsd:string`
 
 ### isCVATProperty {#isCVATProperty}
 

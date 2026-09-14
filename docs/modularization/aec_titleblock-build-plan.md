@@ -48,17 +48,26 @@ Discussion #64, so there is one place to change when a decision changes.
 
 ## 1. Current state of `src/aec_titleblock.ttl`
 
-**8 terms, all validating.** Written 2026-08-11; revised 2026-08-13 after the first review round on PR
-[#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66); `assertsCrossReferenceNumber` added
-2026-09-01 and four unevidenced terms withdrawn 2026-09-11/14, all from a four-project field-frequency survey
-(§1a, §1b below). `KeyPlan` from the same survey landed in `aec_drawing_metadata`, not here (§1c).
+> **⚠️ Superseded in part, 2026-09-14.** The team decided that `aec_drawing_metadata` is the single repository
+> for drawing metadata, so **every term this module held was relocated there** and `aec_titleblock` now
+> declares nothing. This document is kept because the *reasoning* — what was minted, what was withdrawn and
+> why — still applies to the relocated terms. Read "this module" below as "the title-block vocabulary,
+> wherever it now lives". See §1d.
 
-| Kind | Terms |
+**0 terms — all relocated to `aec_drawing_metadata` on 2026-09-14.** Written 2026-08-11; revised 2026-08-13
+after the first review round on PR [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66);
+`assertsCrossReferenceNumber` added 2026-09-01 and four unevidenced terms withdrawn 2026-09-11/14, all from a
+four-project field-frequency survey (§1a, §1b). `KeyPlan` from the same survey went straight to
+`aec_drawing_metadata` (§1c), which turned out to anticipate the relocation decision.
+
+The eight surviving terms, with their names after the move — local names are unchanged, only the namespace:
+
+| Kind | Terms (now in `aec_drawing_metadata`) |
 | --- | --- |
-| Class (1) | `Organization` |
-| Object properties (3) | `assertsMetadataFor`, `assertsClient`, `assertsOriginator` |
-| Datatype properties (3) | `organizationName`, `dimensionUnits`, `assertsCrossReferenceNumber` |
-| Annotation property (1) | `extractionHint` |
+| Class (1) | `dm:Organization` |
+| Object properties (3) | `dm:assertsMetadataFor`, `dm:assertsClient`, `dm:assertsOriginator` |
+| Datatype properties (3) | `dm:organizationName`, `dm:dimensionUnits`, `dm:assertsCrossReferenceNumber` |
+| Annotation property (1) | `dm:extractionHint` |
 
 ### 1a. `assertsCrossReferenceNumber` — added 2026-09-01
 
@@ -128,8 +137,37 @@ description.
 
 **Naming convention (review feedback):** value-bearing object properties are `asserts<Thing>`, not
 `has<Thing>`. A title block states a claim, not a verified fact, and the property name is the cheapest place to
-make that visible at every call site — it also keeps `tb:` terms obviously distinct from their `dm:`
-counterparts, so the two layers cannot be mistaken for each other.
+make that visible at every call site. The second original reason — keeping `tb:` terms distinct from their
+`dm:` counterparts — **did not survive the relocation, and inverted into a stronger one**: claim and fact now
+share a namespace, so `dm:assertsClient` and `dm:isCheckedBy` sit side by side and the prefix no longer tells
+them apart. The verb is the only thing that does.
+
+### 1d. Relocation to `aec_drawing_metadata` — 2026-09-14
+
+The team decided that `aec_drawing_metadata` is the single repository for drawing metadata, so new concepts
+land there rather than in a parallel module. All eight terms moved, local names unchanged. Nothing had been
+released from `aec_titleblock`, so no published IRI is invalidated.
+
+This resolves — in the strict direction — the ambiguity flagged after Zaalouk's
+[PR #66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) comment of 2026-09-10 ("`aec_drawing_metadata`
+should be the *repository* containing all of the metadata"). The loose reading was "`dm:` keeps what it already
+has, `tb:` mints the gaps"; the strict reading was "new terms go to `dm:` too". The team took the strict one.
+
+**What this costs, stated plainly.** It reverses the 2026-08-11 separate-module decision (Ahmed Elnagar +
+Alessio Lombardi), which rested on **independent releasability** — a title-block release not dragging the
+metadata module's version along — and on **volume**, the supporting classes and SKOS schemes not belonging in a
+module describing six page regions. Neither concern has gone away; the team has simply judged
+single-responsibility more valuable. The volume argument in particular gets sharper, not weaker, as the parked
+vocabulary lands: the SKOS schemes, the extension properties and the provenance layer all now target `dm:`.
+
+**Open — whether `src/aec_titleblock.ttl` should exist at all.** It currently declares no terms, which still
+validates but publishes an empty documentation page. Deleting it means also removing the `catalog-v001.xml`
+entry, the `generate_docs.py` dependency-order entry, the `mkdocs.yml` nav entry, `changelogs/aec_titleblock.md`,
+the display JSON and the generated `docs/` artefacts — and it changes what PR #66 *is*, from "add a module" to
+"add terms to an existing module", which the reviewer should probably be the one to decide. **Not done here**,
+because deletion was not part of the relocation instruction. The file is kept, with its header explaining why
+and its record of rejected vocabulary intact — that record is not carried in `aec_drawing_metadata` and is the
+most expensive thing to rediscover.
 
 **Withdrawn in review round 1:** `hasLegalOwner` (a title block does not normally express legal ownership —
 deferred pending the survey), and `DocumentType` / `DocumentTypeScheme` / `hasDocumentType` (deferred to a later

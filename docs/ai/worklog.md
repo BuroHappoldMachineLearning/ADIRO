@@ -22,6 +22,90 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-09-14 (team decision) — `aec_titleblock` emptied into `aec_drawing_metadata`; `layoutTitle` added
+
+**Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`
+
+### The decision
+
+The team decided that **`aec_drawing_metadata` is the single repository for drawing metadata**, so new concepts
+land there rather than in a parallel module. All eight remaining `aec_titleblock` terms were relocated, keeping
+their local names. `aec_titleblock` now declares nothing.
+
+This resolves, **in the strict direction**, the ambiguity flagged in the entry below after Zaalouk's 2026-09-10
+comment. The loose reading was "`dm:` keeps what it already has, `tb:` mints the gaps"; the strict reading was
+"new terms go to `dm:` too". The team took the strict one. Worth noting the flag was warranted — the two
+readings did lead to materially different repositories.
+
+| Term | Now |
+| --- | --- |
+| `Organization`, `organizationName` | `dm:Organization`, `dm:organizationName` |
+| `assertsMetadataFor`, `assertsClient`, `assertsOriginator` | same names, `dm:` |
+| `dimensionUnits`, `assertsCrossReferenceNumber`, `extractionHint` | same names, `dm:` |
+
+### `layoutTitle` — new, and a modelling call worth recording
+
+Added `dm:layoutTitle`: the caption naming an individual `Layout`, distinct from sheet-level `drawingTitle`. A
+sheet routinely carries several drawings — details, sections, plans at different scales — each with its own
+printed title; without this they all inherit one title and cannot be told apart. It pairs with the existing
+`layoutIdentifier` as title-to-number.
+
+**Modelled as a datatype property on `Layout`, not as a class**, despite being asked for as "LayoutTitle". The
+reason is the same test that put `KeyPlan` in `dm:` as a region yesterday, applied in the other direction: a key
+plan's value *is* a diagram, so it is a region; a title's value is *text*, so it is a property. The decisive
+precedent is `drawingTitle` — the sheet's own title is a datatype property even though it too is visible text
+inside a region. Named `layoutTitle` (lowerCamelCase) per the `AGENTS.md` property convention.
+
+If what was actually wanted is a **labellable caption region** for annotators to box, that is a different term
+(`LayoutTitle` as a `MetadataContainer` subclass, with a new CVAT label) and is cheap to add alongside — say so
+and it lands in one edit.
+
+### What changed
+
+| File | Change |
+| --- | --- |
+| `src/aec_drawing_metadata.ttl` | +8 relocated terms, +`layoutTitle`; new `skos:` prefix (first use in this module); two new section headers carrying the naming rationale |
+| `src/aec_titleblock.ttl` | All terms removed. Header rewritten to record where each went; the withdrawal record (§a–d) **kept deliberately** |
+| `changelogs/*.md` | Both updated; the `aec_titleblock` one gains a banner, and its term list is struck through rather than deleted |
+| `docs/modularization/aec_titleblock-build-plan.md` | §1 superseded-banner + rewritten; new §1d on the relocation |
+| `docs/**` | Regenerated |
+
+### Two things flagged rather than decided unilaterally
+
+1. **Whether `src/aec_titleblock.ttl` should exist at all.** It validates while declaring nothing, but publishes
+   an empty docs page. Deleting it also means removing the `catalog-v001.xml` entry, the `generate_docs.py`
+   dependency-order entry, the `mkdocs.yml` nav entry, its changelog, the display JSON and the generated
+   artefacts — and it changes what PR #66 *is*, from "add a module" to "add terms to an existing module". **Not
+   done**, because deletion was not part of the instruction and it is the reviewer's call. The file is kept with
+   its header explaining why, and its record of rejected vocabulary intact — that record is not carried in
+   `aec_drawing_metadata` and is the most expensive thing to rediscover.
+2. **This reverses the 2026-08-11 separate-module decision** (Ahmed Elnagar + Alessio Lombardi), which rested on
+   independent releasability and on volume. Neither concern has gone away — the volume one *sharpens* as the
+   parked vocabulary lands, since the SKOS schemes, extension properties and provenance layer now all target
+   `dm:`. The team has judged single-responsibility more valuable, which is a legitimate trade, but Alessio
+   co-owned the decision being reversed and his `CHANGES_REQUESTED` is still standing.
+
+### Verification
+
+| Check | Result |
+| --- | --- |
+| `validate_ontology.py` (all five) | pass |
+| **HermiT** | pass — `reason exit code: 0` |
+| ROBOT `report` | **0 ERROR.** WARN 222 → 223 (+1, the new `layoutTitle`; the relocated terms carry their existing `missing_definition` warnings across unchanged) |
+| **`duplicate_label`** | **none** — the namespace merge introduced no label collision, which was the specific risk of moving eight terms into a populated module |
+| `compat_diff.py` | `aec_drawing_metadata` still forecasts `3.0.0` (MAJOR), unmoved — the relocated terms are all `TERM_ADDED` here. `aec_titleblock` still skipped, no released snapshot, so nothing published is invalidated |
+| `generate_docs.py` | 5/5 clean |
+| `mkdocs build` | not run this session |
+
+### Next step
+
+The PR now changes a **released** module substantially and an unreleased one down to nothing, which is a
+materially different review from the one Alessio last looked at on 2026-08-13. His `CHANGES_REQUESTED` is now
+six rounds stale. Re-review is the blocker, and the PR title/description no longer describe what the PR does —
+both need updating before asking.
+
+---
+
 ## 2026-09-14 — `sheetNumber` withdrawn (9 → 8); `KeyPlan` added to `aec_drawing_metadata`
 
 **Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`

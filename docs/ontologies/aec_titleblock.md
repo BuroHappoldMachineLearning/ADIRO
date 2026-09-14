@@ -4,12 +4,11 @@
 [:material-file-document-outline: TTL source](https://burohappoldmachinelearning.github.io/ADIRO/aec_titleblock.ttl){ .md-button }
 [:material-file-code: pyLODE HTML](https://burohappoldmachinelearning.github.io/ADIRO/aec_titleblock.html){ .md-button }
 
-What a title block asserts: the content fields printed in the titleblock region of an AEC drawing sheet, bound to ISO 7200 / ISO 19650 / DIN 1356-1 concepts. Complements aec_drawing_metadata, which models the titleblock as a detectable graphical region.
+Retired placeholder. Every term formerly declared here was relocated to aec_drawing_metadata on 2026-09-14 by team decision, that module being the single repository for drawing metadata. This file declares no terms and is retained only for its record of vocabulary considered and rejected; whether it should be deleted outright is an open question.
 
 - **IRI:** `https://w3id.org/adiro/aec_titleblock`
 - **Version:** 0.1.0
 - **Imports:** `aec_drawing_metadata`
-
 ## Dependencies
 
 Arrows point from an ontology to the ontologies it imports; the current ontology is highlighted.
@@ -34,78 +33,3 @@ graph BT
     classDef current fill:#f58a1f,stroke:#16305f,stroke-width:3px,color:#16305f;
     class aec_titleblock current;
 ```
-
-## Classes
-
-### Organization {#Organization}
-
-A legal entity named in a title block — client, originator, legal owner or responsible department. Modelled as a class rather than a string so that one organisation recurring across many sheets is a single individual, which is what makes cross-sheet questions answerable. Aligns to ct:Organisation (ISO 21597-1) and IfcActorSelect; note the ISO spelling differs.
-
-- **IRI:** `https://w3id.org/adiro/aec_titleblock#Organization`
-
-## Object Properties
-
-### asserts client {#assertsClient}
-
-The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from assertsOriginator, which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor).
-
-- **IRI:** `https://w3id.org/adiro/aec_titleblock#assertsClient`
-- **Domain:** `dm:Titleblock`
-- **Range:** [Organization](#Organization)
-- **extraction hint:** Often the most prominent organisation name on the sheet, sometimes a logo rather than text. Frequently in its own cell above or beside the originator's block.
-
-### asserts metadata for {#assertsMetadataFor}
-
-Links a titleblock region to the drawing sheet whose metadata it asserts. The separation matters because a value read from a titleblock is a claim, not a fact: two sheets can assert conflicting values for one document, and a claim must be validated before it is promoted. Range is dm:DrawingSheet rather than a separate Document class: the sheet is the unit UC-01 established as searchable, and introducing a competing Document class would deepen an unresolved placement question rather than settle it.
-
-- **IRI:** `https://w3id.org/adiro/aec_titleblock#assertsMetadataFor`
-- **Domain:** `dm:Titleblock`
-- **Range:** `dm:DrawingSheet`
-- **extraction hint:** Not extracted. Asserted by the pipeline when a titleblock region is detected on a sheet.
-
-### asserts originator {#assertsOriginator}
-
-The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. This is the practice or consultancy whose name and logo appear as author of the sheet. Distinct from assertsClient, which names who commissioned the work. Named asserts- rather than has- because the title block states a claim, not a verified fact (see assertsMetadataFor).
-
-- **IRI:** `https://w3id.org/adiro/aec_titleblock#assertsOriginator`
-- **Domain:** `dm:Titleblock`
-- **Range:** [Organization](#Organization)
-- **extraction hint:** Usually the organisation whose logo sits in or beside the title block, and whose code appears in the drawing-number originator segment.
-
-## Datatype Properties
-
-### assertsCrossReferenceNumber {#assertsCrossReferenceNumber}
-
-A second (or third) identifier the title block prints for the same sheet, issued by a system other than the one dm:drawingIdentifier is read from — a design-team-internal number, a client/EDMS document number, or a sketch/site-advice reference. Evidenced by a four-project field-frequency survey (docs/modularization/titleblock-field-survey-2026-09.md §3.2), where it recurs under different labels in 3 of 4 projects. Stored whole and verbatim, not parsed into segments; which system issued it is not modelled as a controlled vocabulary here — an empty scheme was the objection that withdrew DocumentType in review round 1 — so that distinction is carried by extractionHint only. Named asserts- rather than has- for the same reason as assertsClient/assertsOriginator: the title block states a claim, not a verified fact (see assertsMetadataFor).
-
-- **IRI:** `https://w3id.org/adiro/aec_titleblock#assertsCrossReferenceNumber`
-- **Domain:** `dm:Titleblock`
-- **Range:** `xsd:string`
-- **extraction hint:** A second coded number near or below the primary drawing number, often prefixed by the issuing system's initials (e.g. a sketch/site-advice code, or an EDMS platform's own document ID). Do not conflate with dm:drawingIdentifier — capture only when a sheet prints more than one numbering system.
-
-### dimensionUnits {#dimensionUnits}
-
-The units in which the drawing's dimensions are expressed, where the title block states them alongside the scale. German practice per DIN 1356-1 writes both together, as in '1:50 – m,cm'. Held separately from the scale so the scale value stays parseable as a ratio.
-
-- **IRI:** `https://w3id.org/adiro/aec_titleblock#dimensionUnits`
-- **Domain:** `dm:Titleblock`
-- **Range:** `xsd:string`
-- **extraction hint:** Appears beside or beneath the scale, often after a dash. Extract only the unit part; the ratio belongs to the scale field.
-
-### organizationName {#organizationName}
-
-The name of an organisation as printed. Parallels dm:personName. Verbatim: not normalised, expanded or translated at extraction time.
-
-- **IRI:** `https://w3id.org/adiro/aec_titleblock#organizationName`
-- **Domain:** [Organization](#Organization)
-- **Range:** `xsd:string`
-- **extraction hint:** Transcribe exactly as printed, including any legal suffix.
-
-## Annotation Properties
-
-### extraction hint {#extractionHint}
-
-Free-text guidance for an information-extraction model on where and how a field typically appears in a title block (adjacent captions, cell grouping, formatting). Consumed by the generated extraction profile, not by reasoning.
-
-- **IRI:** `https://w3id.org/adiro/aec_titleblock#extractionHint`
-- **Range:** `xsd:string`

@@ -13,69 +13,51 @@
 #################################################################
 #    Ontology
 #
-#    Initial version (0.1.0). Design authority: GitHub Discussion #64
-#    https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/64
-#    Vocabulary review: docs/modularization/titleblock-vocabulary-review.md
+#    THIS MODULE NOW DECLARES NO TERMS.
 #
-#    WHAT THIS VERSION DELIBERATELY DOES AND DOES NOT CONTAIN
+#    Team decision, 2026-09-14: aec_drawing_metadata is the single
+#    repository for drawing metadata, so every new concept lands there
+#    rather than in a parallel module. All eight terms this module held
+#    were relocated to aec_drawing_metadata on that date, keeping their
+#    local names:
 #
-#    Contains: only terms that have NO counterpart anywhere in
-#    aec_drawing_metadata. Every term whose meaning overlaps an existing
-#    dm: term is listed under "Deferred" at the foot of this file and is
-#    NOT minted, because the placement question is unresolved — see below.
+#      Organization                 -> dm:Organization
+#      assertsMetadataFor           -> dm:assertsMetadataFor
+#      assertsClient                -> dm:assertsClient
+#      assertsOriginator            -> dm:assertsOriginator
+#      organizationName             -> dm:organizationName
+#      dimensionUnits               -> dm:dimensionUnits
+#      assertsCrossReferenceNumber  -> dm:assertsCrossReferenceNumber
+#      extractionHint               -> dm:extractionHint
 #
-#    DECISION 1 — PLACEMENT (resolved 2026-08-19, Option 1)
+#    The asserts<Thing> naming survives the move and matters MORE in
+#    the merged namespace, not less: dm:assertsClient (a claim read off
+#    a printed region) and dm:isCheckedBy (a fact about a revision) now
+#    sit side by side, and the prefix no longer tells them apart. The
+#    verb has to.
 #
-#    UC-01 "Titleblock-Based Drawing Search" is implemented, and it attaches
-#    title-block information to dm:DrawingSheet / dm:DrawingRevision as
-#    datatype/object properties, treating dm:Titleblock as the visual region
-#    only. This module's premise is the opposite: the title block ASSERTS
-#    metadata, so content properties minted HERE take dm:Titleblock as their
-#    domain. Both are reviewed positions serving different jobs (search vs
-#    extraction-with-provenance) — see
-#    docs/modularization/titleblock-placement-option1-plan.md for the full
-#    comparison and the trade-offs accepted below.
+#    OPEN — WHETHER THIS FILE SHOULD EXIST AT ALL.
 #
-#    RESOLVED for the 10 fields that overlap dm: (drawing number, title,
-#    scale, sheet size, revision code, issue date, author/checker/approver,
-#    status): DO NOT mint tb: counterparts for these. They are reused
-#    directly from dm: via the owl:imports below — see the Deferred section
-#    at the foot of this file, which now records "resolved: reuse dm:
-#    directly" rather than "pending". The extraction pipeline writes these
-#    values straight onto dm:DrawingSheet / dm:DrawingRevision; there is no
-#    tb:-level staging layer for them. Accepted trade-off: no per-field
-#    "unvalidated claim" quarantine for these 10 — any pre-write checking is
-#    the pipeline's/SHACL's job, not the ontology's.
+#    An ontology declaring nothing still validates, but it publishes an
+#    empty documentation page and invites the question this comment is
+#    answering. Deleting it means also removing the catalog-v001.xml
+#    entry, the generate_docs.py dependency_order entry, the mkdocs.yml
+#    nav entry, changelogs/aec_titleblock.md, the display JSON and the
+#    generated docs/ artefacts. That was NOT part of the relocation
+#    decision, so the file is kept pending an explicit call — see
+#    docs/modularization/aec_titleblock-build-plan.md §1d.
 #
-#    This decision is scoped to the 10 fields above ONLY. It is still
-#    provisional in the sense that new tb: terms below (Organization,
-#    assertsClient, assertsOriginator, etc.) keep dm:Titleblock as their
-#    domain — the assertion-layer pattern is not abandoned, just not
-#    duplicated where dm: already covers the same ground.
-#
-#    NAMING CONVENTION (review feedback, 2026-08-13)
-#
-#    Value-bearing object properties are named asserts<Thing>, not
-#    has<Thing>. A title block states a CLAIM, not a verified fact, and the
-#    property name is the cheapest place to make that visible at every call
-#    site. It also keeps this module's terms obviously distinct from their
-#    aec_drawing_metadata counterparts (tb:assertsClient vs dm:isCheckedBy
-#    etc.), so the two layers cannot be mistaken for each other.
-#
-#    LABELLING CONVENTION (learned from ROBOT report, 2026-08-11)
-#
-#    Exactly ONE rdfs:label per term, in English. ROBOT's report raises
-#    multiple_labels as an ERROR when a term carries more than one, and
-#    AGENTS.md puts alternate and short forms in skos:altLabel. German and
-#    abbreviated captions therefore go in skos:altLabel, which is also where
-#    the extractor wants them.
+#    The withdrawal record below is retained deliberately. It is the
+#    reasoning for terms that were considered and rejected, which is
+#    the most expensive thing to rediscover, and it is not duplicated
+#    in aec_drawing_metadata.
 #################################################################
 
 <https://w3id.org/adiro/aec_titleblock> rdf:type owl:Ontology ;
     rdfs:label "AEC Titleblock Ontology" ;
-    rdfs:comment "What a title block asserts: the content fields printed in the titleblock region of an AEC drawing sheet, bound to ISO 7200 / ISO 19650 / DIN 1356-1 concepts. Complements aec_drawing_metadata, which models the titleblock as a detectable graphical region." ;
+    rdfs:comment "Retired placeholder. Every term formerly declared here was relocated to aec_drawing_metadata on 2026-09-14 by team decision, that module being the single repository for drawing metadata. This file declares no terms and is retained only for its record of vocabulary considered and rejected; whether it should be deleted outright is an open question." ;
     dcterms:title "AEC Titleblock Ontology" ;
-    dcterms:description "What a title block asserts: the content fields printed in the titleblock region of an AEC drawing sheet, bound to ISO 7200 / ISO 19650 / DIN 1356-1 concepts. Complements aec_drawing_metadata, which models the titleblock as a detectable graphical region." ;
+    dcterms:description "Retired placeholder. Every term formerly declared here was relocated to aec_drawing_metadata on 2026-09-14 by team decision, that module being the single repository for drawing metadata. This file declares no terms and is retained only for its record of vocabulary considered and rejected; whether it should be deleted outright is an open question." ;
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
@@ -85,106 +67,15 @@
 
 
 #################################################################
-#    Annotation properties
-#################################################################
-
-:extractionHint rdf:type owl:AnnotationProperty ;
-    rdfs:label "extraction hint"@en ;
-    rdfs:comment "Free-text guidance for an information-extraction model on where and how a field typically appears in a title block (adjacent captions, cell grouping, formatting). Consumed by the generated extraction profile, not by reasoning."@en ;
-    rdfs:range xsd:string .
-
-
-#################################################################
-#    Classes
+#    NOT MINTED — the record of what was considered and rejected
 #
-#    Only Organization is minted. Person, Project, DrawingSheet and
-#    DrawingRevision already exist in aec_drawing_metadata and are reused as
-#    ranges — see the vocabulary review, which found that minting tb: twins
-#    would duplicate the UC-01 deliverable.
-#################################################################
-
-:Organization rdf:type owl:Class ;
-    rdfs:label "Organization"@en ;
-    rdfs:comment "A legal entity named in a title block — client, originator, legal owner or responsible department. Modelled as a class rather than a string so that one organisation recurring across many sheets is a single individual, which is what makes cross-sheet questions answerable. Aligns to ct:Organisation (ISO 21597-1) and IfcActorSelect; note the ISO spelling differs."@en ;
-    skos:altLabel "Organisation"@en .
-
-#################################################################
-#    Object properties — structural
-#################################################################
-
-:assertsMetadataFor rdf:type owl:ObjectProperty ;
-    rdfs:label "asserts metadata for"@en ;
-    rdfs:domain dm:Titleblock ;
-    rdfs:range dm:DrawingSheet ;
-    rdfs:comment "Links a titleblock region to the drawing sheet whose metadata it asserts. Range is dm:DrawingSheet rather than a separate Document class: the sheet is the unit UC-01 established as searchable, and introducing a competing Document class would deepen an unresolved placement question rather than settle it."@en ;
-    :extractionHint "Not extracted. Asserted by the pipeline when a titleblock region is detected on a sheet."@en .
-
-
-#################################################################
-#    Object properties — organisations named in the title block
+#    Retained through the 2026-09-14 relocation because none of it is
+#    carried in aec_drawing_metadata. Nothing below is a term; this is
+#    reasoning, kept so it is not re-derived.
 #
-#    Client and originator are easily confused: on an in-house drawing both
-#    often carry the same printed string, so each comment states what the
-#    property is NOT. hasLegalOwner was withdrawn after review — see the
-#    footer.
-#################################################################
-
-:assertsClient rdf:type owl:ObjectProperty ;
-    rdfs:label "asserts client"@en ;
-    rdfs:domain dm:Titleblock ;
-    rdfs:range :Organization ;
-    rdfs:comment "The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from assertsOriginator, which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value."@en ;
-    skos:altLabel "client"@en, "employer"@en, "for"@en,
-                  "Bauherr"@de, "Auftraggeber"@de ;
-    :extractionHint "Often the most prominent organisation name on the sheet, sometimes a logo rather than text. Frequently in its own cell above or beside the originator's block."@en .
-
-:assertsOriginator rdf:type owl:ObjectProperty ;
-    rdfs:label "asserts originator"@en ;
-    rdfs:domain dm:Titleblock ;
-    rdfs:range :Organization ;
-    rdfs:comment "The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. This is the practice or consultancy whose name and logo appear as author of the sheet. Distinct from assertsClient, which names who commissioned the work."@en ;
-    skos:altLabel "originator"@en, "drawn by (company)"@en, "consultant"@en,
-                  "Planverfasser"@de, "Verfasser"@de ;
-    :extractionHint "Usually the organisation whose logo sits in or beside the title block, and whose code appears in the drawing-number originator segment."@en .
-
-
-#################################################################
-#    Datatype properties
-#################################################################
-
-:organizationName rdf:type owl:DatatypeProperty ;
-    rdfs:label "organizationName" ;
-    rdfs:domain :Organization ;
-    rdfs:range xsd:string ;
-    rdfs:comment "The name of an organisation as printed. Parallels dm:personName. Verbatim: not normalised, expanded or translated at extraction time."@en ;
-    :extractionHint "Transcribe exactly as printed, including any legal suffix."@en .
-
-:dimensionUnits rdf:type owl:DatatypeProperty ;
-    rdfs:label "dimensionUnits" ;
-    rdfs:domain dm:Titleblock ;
-    rdfs:range xsd:string ;
-    rdfs:comment "The units in which the drawing's dimensions are expressed, where the title block states them alongside the scale. German practice per DIN 1356-1 writes both together, as in '1:50 – m,cm'. Held separately from the scale so the scale value stays parseable as a ratio."@en ;
-    skos:altLabel "units"@en, "dimensions in"@en,
-                  "Maßeinheit"@de, "Maße in"@de ;
-    :extractionHint "Appears beside or beneath the scale, often after a dash. Extract only the unit part; the ratio belongs to the scale field."@en .
-
-:assertsCrossReferenceNumber rdf:type owl:DatatypeProperty ;
-    rdfs:label "assertsCrossReferenceNumber" ;
-    rdfs:domain dm:Titleblock ;
-    rdfs:range xsd:string ;
-    rdfs:comment "A second (or third) identifier the title block prints for the same sheet, issued by a system other than the one dm:drawingIdentifier is read from — a design-team-internal number, a client/EDMS document number, or a sketch/site-advice reference. Stored whole and verbatim, not parsed into segments; which system issued it is not modelled as a controlled vocabulary here, so that distinction is carried by extractionHint only."@en ;
-    skos:altLabel "SA/SK No."@en, "sketch number"@en, "EDMS document number"@en,
-                  "design team drawing number"@en, "client reference number"@en ;
-    :extractionHint "A second coded number near or below the primary drawing number, often prefixed by the issuing system's initials (e.g. a sketch/site-advice code, or an EDMS platform's own document ID). Do not conflate with dm:drawingIdentifier — capture only when a sheet prints more than one numbering system."@en .
-
-
-#################################################################
-#    DEFERRED — not minted in this version
-#
-#    (a) RESOLVED 2026-08-19 (Option 1) — reuse dm: directly, no tb: term.
-#        See docs/modularization/titleblock-placement-option1-plan.md.
-#        These are NOT missing; they are intentionally absent from this
-#        module because they already exist and are imported:
+#    (a) RESOLVED 2026-08-19 (Option 1) — reuse dm: directly, no
+#        separate term. These are NOT missing; they already exist in
+#        aec_drawing_metadata:
 #          identificationNumber   use dm:drawingIdentifier   (DrawingSheet)
 #          title                  use dm:drawingTitle        (DrawingSheet)
 #          scale                  use dm:hasScale            (DrawingSheet)
@@ -196,8 +87,12 @@
 #          approvedBy             use dm:isApprovedBy        (DrawingRevision -> Person)
 #          status                 use dm:hasStatusCode       (DrawingRevision -> StatusCode)
 #        Extraction writes these directly onto dm:DrawingSheet /
-#        dm:DrawingRevision. There is no tb:-level "unvalidated claim" stage
-#        for them — that trade-off was accepted explicitly, not by default.
+#        dm:DrawingRevision. There is no "unvalidated claim" staging
+#        layer for them — that trade-off was accepted explicitly, not
+#        by default. The 2026-09-14 relocation makes this decision
+#        moot in one sense (there is no longer a second module to
+#        duplicate into) but the reasoning still explains why no
+#        dm:asserts* twin exists for these ten.
 #
 #    (a2) Withdrawn after review of PR #66 (2026-08-13):
 #          hasLegalOwner          Alessio Lombardi and Tianyang Huang both
@@ -210,8 +105,8 @@
 #                                 the drawings are.
 #          DocumentType,
 #          DocumentTypeScheme,
-#          hasDocumentType        Withdrawn to pass 3, to land complete. A
-#                                 controlled vocabulary with no concepts in
+#          hasDocumentType        Withdrawn to a later pass, to land complete.
+#                                 A controlled vocabulary with no concepts in
 #                                 it cannot be used, which was the review
 #                                 objection, and the definition needed
 #                                 tightening. Populating it also touches the
@@ -219,12 +114,12 @@
 #                                 1356-1 Planart values), which is worth
 #                                 deciding rather than rushing.
 #
-#    (a3) Withdrawn 2026-09-11, after the four-project field survey
-#         (docs/modularization/titleblock-field-survey-2026-09.md). None of
-#         the three appeared in ANY of the four sampled projects, so none
-#         clears the agreed <40%-of-sheets rule. All three were minted from
-#         a standards reading rather than from drawings — which is exactly
-#         the basis the hasLegalOwner withdrawal rejected above ("the
+#    (a3) Withdrawn 2026-09-11 and 2026-09-14, after the four-project
+#         field survey (docs/modularization/titleblock-field-survey-2026-09.md).
+#         None appeared in ANY of the four sampled projects, so none
+#         clears the agreed <40%-of-sheets rule. All were minted from a
+#         standards reading rather than from drawings — exactly the
+#         basis the hasLegalOwner withdrawal rejected above ("the
 #         standard is not the evidence — the drawings are"):
 #          supplementaryTitle     ISO 7200 §5.2.3 (optional there). Stacked
 #                                 title lines do occur, but no surveyed sheet
@@ -234,12 +129,12 @@
 #          sheetNumber            ISO 7200 §5.1.7 and §5.1.6 — the 'Sheet 3
 #                                 of 7' pair. numberOfSheets went 2026-09-11
 #                                 and sheetNumber followed 2026-09-14, so the
-#                                 sheet-position concept is now absent
-#                                 ENTIRELY rather than half-modelled. Note
-#                                 §5.1.6 is MANDATORY in ISO 7200 — this is a
-#                                 deliberate departure from the standard on
-#                                 the grounds that the sampled drawings do not
-#                                 print it, not an oversight.
+#                                 sheet-position concept is absent ENTIRELY
+#                                 rather than half-modelled. Note §5.1.6 is
+#                                 MANDATORY in ISO 7200 — this is a deliberate
+#                                 departure from the standard on the grounds
+#                                 that the sampled drawings do not print it,
+#                                 not an oversight.
 #          planKey                DIN SPEC 91391-1 Plankopf composite code. A
 #                                 German-practice field; the surveyed corpus
 #                                 is UK/US projects, so it may well return
@@ -253,7 +148,7 @@
 #                                 SKOS scheme would lose). NOTE: referencing it
 #                                 needs an owl:imports of aec_domain_common,
 #                                 which would pull the whole module chain — the
-#                                 import question is unresolved, so nothing here
+#                                 import question is unresolved, so nothing
 #                                 references dcommon: yet.
 #          hasNorthPointOrientation   use UC-07 northArrowAngle (drawing-level)
 #          hasAnnotationBlock     use dm:Legend / dm:Note with dm:contains
@@ -264,9 +159,12 @@
 #        extension properties; and the extraction-provenance layer, which is
 #        blocked on the RDF-star vs reification decision. An extraction
 #        timestamp must be included when that lands — its absence was a real
-#        gap found by comparison with DANO.
+#        gap found by comparison with DANO. All of these now target
+#        aec_drawing_metadata rather than this module.
 #
-#    (d) Revision modelling: dm:DrawingRevision is reused. Whether it can
-#        carry the fuller revision-history model, or needs a tb: counterpart,
-#        is an open question and is not pre-empted here.
+#    (d) Parked 2026-09-01, pending a team discussion on shape: the
+#        organisation-role gap found in all four surveyed projects —
+#        assertsContractor, assertsEngineer, assertsArchitect,
+#        assertsConsultant. dm:assertsOriginator covers the general case
+#        for now. See the survey doc §3.1, §5.
 #################################################################
