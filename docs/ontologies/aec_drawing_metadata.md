@@ -445,15 +445,6 @@ A second (or third) identifier the title block prints for the same sheet, issued
 - **Range:** `xsd:string`
 - **extraction hint:** A second coded number near or below the primary drawing number, often prefixed by the issuing system's initials (e.g. a sketch/site-advice code, or an EDMS platform's own document ID). Do not conflate with drawingIdentifier — capture only when a sheet prints more than one numbering system.
 
-### dimensionUnits {#dimensionUnits}
-
-The units in which the drawing's dimensions are expressed, where the title block states them alongside the scale. German practice per DIN 1356-1 writes both together, as in '1:50 – m,cm'. Held separately from the scale so the scale value stays parseable as a ratio.
-
-- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#dimensionUnits`
-- **Domain:** [Titleblock](#Titleblock)
-- **Range:** `xsd:string`
-- **extraction hint:** Appears beside or beneath the scale, often after a dash. Extract only the unit part; the ratio belongs to hasScale.
-
 ### drawingIdentifier {#drawingIdentifier}
 
 Sheet-level identifier, e.g. 'ST-201'. Also known as 'drawing number'.

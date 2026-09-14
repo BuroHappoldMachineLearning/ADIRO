@@ -22,6 +22,57 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-09-14 (late) — `dimensionUnits` withdrawn; nine terms in the PR
+
+**Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`
+
+### What changed
+
+Removed `dm:dimensionUnits` at Ahmed Elnagar's direction. The PR now adds **nine** terms, not ten.
+
+It goes on the same grounds as `planKey`: a German-practice field (DIN 1356-1's `1:50 – m,cm`) appearing in none
+of the four surveyed projects, so it does not clear the agreed `<40%-of-sheets` rule.
+
+**Worth distinguishing from the other withdrawals, though.** The vocabulary review had separately confirmed
+this concept is genuinely *not* covered by any other module or use case
+(`titleblock-vocabulary-review.md` §2.3). So unlike `Discipline` or `scale`, this is **purely an evidence call,
+not a redundancy one** — the concept is real and unclaimed, no sampled drawing printed it, and the sample is
+UK/US. Of the five withdrawn terms it is the likeliest to return.
+
+### A pattern now visible across the withdrawals, recorded in the survey doc
+
+Three of the five withdrawn terms — `planKey`, `dimensionUnits`, and arguably `supplementaryTitle` — are
+**German/DIN practice, and the survey contains no German project.** The `<40%` rule is behaving correctly on the
+corpus it has, but the corpus has a known geographic gap. "Withdrawn" for these should be read as *not evidenced
+by these four UK/US projects*, not *not a real title-block field*. **Sampling one German project would settle all
+three at once** — that is now the single highest-value addition to the survey.
+
+| File | Change |
+| --- | --- |
+| `src/aec_drawing_metadata.ttl` | Term removed |
+| `changelogs/aec_drawing_metadata.md` | Relocated-terms list corrected to seven; withdrawal recorded |
+| `docs/modularization/titleblock-field-survey-2026-09.md` | §7.3 gains the term and the German-sampling-gap note |
+| `docs/modularization/titleblock-vocabulary-review.md` | §2.3 row struck through and corrected — it still said "Keep", which was live guidance pointing the wrong way |
+| PR #66 title/body | Updated; body also corrected to the British `Organisation` spelling standardised in `fd75891` |
+
+### Verification
+
+| Check | Result |
+| --- | --- |
+| Terms added by this PR | **9** (was 10) |
+| `validate_ontology.py` (all four) | pass |
+| **HermiT** | pass — `reason exit code: 0` |
+| ROBOT `report` | **0 ERROR**; WARN down by one, the removed property's `missing_definition` |
+| `generate_docs.py` | 4/4 clean |
+| `mkdocs build` | not re-run — no nav or page was added or removed this time |
+
+### Next step
+
+Unchanged: @alelom's `CHANGES_REQUESTED` from 2026-08-13 still stands and now predates every structural decision
+on the branch. Plus the survey's German-sampling gap above, which is cheap and would resolve three parked terms.
+
+---
+
 ## 2026-09-14 (cleanup) — `aec_titleblock` module deleted; PR trimmed to what it needs
 
 **Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`

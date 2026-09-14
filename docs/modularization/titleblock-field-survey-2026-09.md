@@ -243,6 +243,17 @@ standards reading rather than from drawings — exactly the basis §7.2 rejected
 - **`planKey`** (DIN SPEC 91391-1 *Plankopf* composite code) — a German-practice field; the surveyed corpus is
   UK/US projects, so it may well return once German projects are sampled. Withdrawn as **unevidenced, not as
   wrong.**
+- **`dimensionUnits`** (DIN 1356-1, the `m,cm` in `1:50 – m,cm`) — withdrawn 2026-09-14, on the same grounds as
+  `planKey` and with the same caveat. Note the vocabulary review had separately confirmed this concept is
+  genuinely **not** covered by any other module or use case (`titleblock-vocabulary-review.md` §2.3), so this is
+  purely an evidence call, not a redundancy one: the concept is real, no sampled drawing printed it, and the
+  sample is UK/US. It is the strongest candidate of the five withdrawals to return.
+
+**A pattern worth naming across §7.3.** Three of these five — `planKey`, `dimensionUnits` and arguably
+`supplementaryTitle` — are German/DIN practice, and the survey has **no German project in it**. The `<40%` rule
+is doing exactly what it should on this corpus, but the corpus has a known geographic gap, so "withdrawn" here
+should be read as *"not evidenced by these four UK/US projects"* rather than *"not a real title-block field"*.
+Sampling one German project would settle all three at once.
 
 ### 7.4 Dropped as redundant, per the vocabulary review — do not re-add
 
