@@ -89,6 +89,10 @@ markdown_extensions:
 extra_css:
   - stylesheets/extra.css
 
+extra_javascript:
+  - javascripts/mermaid-init.js
+  - javascripts/header-title-link.js
+
 # The docs/ folder also contains internal working notes that are not part of the
 # published site. Exclude them from the build so the site stays focused.
 exclude_docs: |

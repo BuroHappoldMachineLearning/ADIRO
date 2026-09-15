@@ -445,12 +445,19 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     print(f"  [OK] Generated index: {index_file}")
 
 
-def build_dependency_mermaid(ttl_files: list[Path], highlight: str | None = None) -> list[str]:
+def build_dependency_mermaid(
+    ttl_files: list[Path], highlight: str | None = None, link_prefix: str = ""
+) -> list[str]:
     """Build a Mermaid flowchart of the owl:imports between ADIRO ontologies.
 
     Edges point from an ontology to the ontology it imports (i.e. depends on).
     When ``highlight`` (an ontology stem) is given, that node is styled as the
     "current" ontology, for use on the per-ontology sub-pages.
+
+    ``link_prefix`` is prepended to each node's click-through link, relative to
+    the page embedding the diagram (e.g. ``"../"`` from a page one level below
+    ``docs/ontologies/``) — kept site-relative (not ``SITE_BASE_URL``) so links
+    work under any base path, including local ``mkdocs serve``.
     """
     stems = [f.stem for f in ttl_files]
     titles = {f.stem: f.stem.replace("_", " ").title() for f in ttl_files}
@@ -479,6 +486,14 @@ def build_dependency_mermaid(ttl_files: list[Path], highlight: str | None = None
         for imp in deps[stem]:
             if imp in titles:
                 lines.append(f"    {stem} --> {imp}")
+
+    # Clicking a node navigates to that ontology's own reference page. Requires
+    # Mermaid's `securityLevel: loose` (set via docs/javascripts/mermaid-init.js) —
+    # Material's default ("strict") silently drops click bindings.
+    for stem in stems:
+        lines.append(
+            f'    click {stem} "{link_prefix}{stem}/" "{titles[stem]} reference page"'
+        )
 
     # Base (blue) style for every ontology node; the current ontology (on the
     # per-ontology sub-pages) is overridden with the orange accent.
@@ -570,7 +585,7 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path) ->
             "Arrows point from an ontology to the ontologies it imports; the "
             "current ontology is highlighted.",
             "",
-            *build_dependency_mermaid(ttl_files, highlight=stem),
+            *build_dependency_mermaid(ttl_files, highlight=stem, link_prefix="../"),
             "",
         ]
         insert_at = next(
