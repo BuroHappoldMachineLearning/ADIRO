@@ -96,14 +96,6 @@ exclude_docs: |
   brainstorming/
   modularization/
 
-# The per-use-case ORSD pages are intentionally reachable via links (e.g. from
-# the Use Cases overview) but are not part of the top-level navigation.
-not_in_nav: |
-  /specification/use-cases/UC-01/
-  /specification/use-cases/UC-03/
-  /specification/use-cases/UC-06/
-  /specification/use-cases/UC-07/
-
 validation:
   nav:
     omitted_files: info
