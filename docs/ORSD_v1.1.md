@@ -46,8 +46,8 @@ The ontology is implemented using RDF and OWL to establish a standardized and in
 | Use 4 | **Inter-drawing connectivity** | Enable navigation across sheets and drawing sets by automatically matching and linking reference symbols, including detail, section, and elevation markers. |
 | Use 5 | **Spatial reasoning and similarity analysis** | Identify repeated occurrences of building elements and quantify components based on geometric attributes such as orientation or location. |
 
-> **Cross-reference note (not part of the LOT template — reviewer aid only):** This note maps the "Use N" labels above to the canonical, stable `UC-0x` IDs used in the per-use-case ORSDs (`docs/uc-orsd/`), for reviewers checking alignment between this umbrella document and the per-UC ORSDs. It is scaffolding, not a permanent fixture — it can be removed once use-case numbering has stabilised, in favour of `docs/uc-orsd/README.md`, which maintains its own authoritative "Related documents" index.
->
+
+
 > | ORSD v1 label | Corresponding UC ORSD |
 > |---|---|
 > | Use 1 | UC-01 + UC-06 — see [Related documents](uc-orsd/README.md#5-related-documents) |
