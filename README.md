@@ -16,9 +16,9 @@ The documentation site is built with **[Material for MkDocs](https://squidfunk.g
 - Changes are pushed to the `main` or `master` branch
 - The workflow is manually triggered from the GitHub Actions tab
 
-The site provides a landing page (`docs/index.md`), a **Use Cases** page (`docs/uc-orsd/README.md`), an **Ontology Requirements (ORSD)** page (`docs/ORSD_v1.1.md`), and a detailed per-ontology reference page for each ontology, generated with **[pyLODE](https://github.com/RDFLib/pyLODE)**.
+The site provides a landing page (`docs/index.md`), a **Use Cases** page (`docs/specification/use-cases/README.md`), an **Ontology Requirements (ORSD)** page (`docs/specification/ORSD_v1.1.md`), and a detailed per-ontology reference page for each ontology, generated with **[pyLODE](https://github.com/RDFLib/pyLODE)**.
 
-### How it fits together
+### Documentation website automation
 
 - `scripts/generate_docs.py` reads every `.ttl` in `src/`, generates a pyLODE HTML reference page for each into `docs/`, copies the `.ttl` and `*.display.json` sources into `docs/`, and (re)generates the MkDocs landing page `docs/index.md` (including the auto-discovered list of ontologies).
 - `mkdocs.yml` configures the Material site. It uses `docs/` as its source directory, so the generated pyLODE HTML pages, the `.ttl` sources, and the `.display.json` files are copied verbatim into the built site alongside the Markdown pages.

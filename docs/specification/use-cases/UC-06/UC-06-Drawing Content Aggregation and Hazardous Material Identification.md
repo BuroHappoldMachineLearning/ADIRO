@@ -1,3 +1,4 @@
+# UC-06: Drawing Content Aggregation & Hazardous Material Identification
 
 > **⚠️ Draft v0.1 — not yet aligned with the current ontology. This use case will be revised in a follow-up PR.**
 

@@ -1,4 +1,4 @@
-# Reference Symbol Cross-Sheet Linking
+# UC-03: Reference Symbol Cross-Sheet Linking
 
 > **Methodology:** LOT (Linked Open Terms) **Use Case ID:** UC-03 **Version:** 0.2 (reviewed & implemented — see §8 for resolved / deferred items)
 >

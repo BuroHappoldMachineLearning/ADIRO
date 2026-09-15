@@ -357,7 +357,7 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     index_file = output_dir / "index.md"
 
     lines: list[str] = []
-    lines.append("# ADIRO Ontologies Documentation")
+    lines.append("# Introduction")
     lines.append("")
     lines.append('![ADIRO](img/adiro_banner.png){ .adiro-banner }')
     lines.append("")
@@ -393,7 +393,7 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
         "users and uses, and the functional/non-functional requirements."
     )
     lines.append("")
-    lines.append("    [:octicons-arrow-right-24: ORSD](ORSD_v1.1.md)")
+    lines.append("    [:octicons-arrow-right-24: ORSD](specification/ORSD_v1.1.md)")
     lines.append("")
     lines.append("-   :material-clipboard-list-outline: __Use Cases__")
     lines.append("")
@@ -402,7 +402,7 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
         "current ORSD status across all use cases."
     )
     lines.append("")
-    lines.append("    [:octicons-arrow-right-24: Use Cases](uc-orsd/README.md)")
+    lines.append("    [:octicons-arrow-right-24: Use Cases](specification/use-cases/README.md)")
     lines.append("")
     lines.append("</div>")
     lines.append("")

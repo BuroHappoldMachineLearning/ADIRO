@@ -32,7 +32,7 @@ This pipeline enforces **forward traceability** (every OWL term traces back to a
 | **Actor**       | Engineer                                                                                                  |
 | **Goal**        | Search drawings based on titleblock information                                                          |
 | **Description** | As an engineer, I want to search easily a number of drawings based on the information in the titleblock. |
-| **ORSD Status** | ✅ [Completed (v0.3)](<uc01/Ontology Requirements Specification - Use Case 1.md>) |
+| **ORSD Status** | ✅ [Completed (v0.3)](<UC-01/UC-01-Titleblock-Based Drawing Search.md>) |
 
 ### UC-02: Facade Performance Lines
 
@@ -50,7 +50,7 @@ This pipeline enforces **forward traceability** (every OWL term traces back to a
 | **Actor**       | Designer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | **Goal**        | Navigate across sheets via reference symbols                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | **Description** | As a designer, I want to understand how a certain building element or parts are designed, so I want to find all the drawings that are connected to a drawing. In engineering drawings, there are typically Reference Symbols such as Detail Markers, Section Markers, and Elevation Markers. By recognising these Reference Symbols, we can automatically match and link the Sections, Details, and Elevations they reference -- enabling navigation across sheets and even across drawing sets. |
-| **ORSD Status** | ✅ [Completed (v0.2)](<uc03/Ontology Requirements Specification — Use Case 3.md>) — 3 open issues remaining |
+| **ORSD Status** | ✅ [Completed (v0.2)](<UC-03/UC-03-Reference Symbol Cross-Sheet Linking.md>) — 3 open issues remaining |
 
 ### UC-04: Element Similarity Search
 
@@ -77,7 +77,7 @@ This pipeline enforces **forward traceability** (every OWL term traces back to a
 | **Actor** | Engineer |
 | **Goal** | Aggregate/summarise drawing content for reports, archiving, and Building Safety Act compliance |
 | **Description** | As an engineer, I want to aggregate/summarise the content of many different drawings so they can be easily grouped for inclusion in a report or archiving. Related to the Building Safety Act. |
-| **ORSD Status** | ⚠️ [Draft (v0.1)](<uc06/Ontology Requirements Specification — Use Case 6.md>) — not yet aligned with the current ontology |
+| **ORSD Status** | ⚠️ [Draft (v0.1)](<UC-06/UC-06-Drawing Content Aggregation and Hazardous Material Identification.md>) — not yet aligned with the current ontology |
 
 ### UC-07: Wall Orientation Identification & Measurement
 
@@ -86,7 +86,7 @@ This pipeline enforces **forward traceability** (every OWL term traces back to a
 | **Actor** | Engineer |
 | **Goal** | Measure all walls facing a specific cardinal direction in a plan drawing |
 | **Description** | As an engineer, I want to measure all walls that are facing north or east in a plan drawing. |
-| **ORSD Status** | ⚠️ [Draft (v0.2)](<uc07/Ontology Requirements Specification — Use Case 7.md>) — not yet aligned with the current ontology |
+| **ORSD Status** | ⚠️ [Draft (v0.2)](<UC-07/UC-07 Wall Orientation Identification & Measurement in Plan Drawings.md>) — not yet aligned with the current ontology |
 
 ---
 
@@ -155,7 +155,7 @@ Execute the SPARQL queries defined in each ORSD against the populated A-Box to v
 
 | Use case | ORSD | Visualization TTL |
 |---|---|---|
-| UC-01 | [Ontology Requirements Specification - Use Case 1.md](<uc01/Ontology Requirements Specification - Use Case 1.md>) | [uc01-merged-for-visualization.ttl](uc01/uc01-merged-for-visualization.ttl) |
-| UC-03 | [Ontology Requirements Specification — Use Case 3.md](<uc03/Ontology Requirements Specification — Use Case 3.md>) | [uc03-core-for-visualization.ttl](uc03/uc03-core-for-visualization.ttl) |
-| UC-06 | [Ontology Requirements Specification — Use Case 6.md](<uc06/Ontology Requirements Specification — Use Case 6.md>) | — |
-| UC-07 | [Ontology Requirements Specification — Use Case 7.md](<uc07/Ontology Requirements Specification — Use Case 7.md>) | — |
+| UC-01 | [UC-01-Titleblock-Based Drawing Search.md](<UC-01/UC-01-Titleblock-Based Drawing Search.md>) | [uc01-merged-for-visualization.ttl](UC-01/uc01-merged-for-visualization.ttl) |
+| UC-03 | [UC-03-Reference Symbol Cross-Sheet Linking.md](<UC-03/UC-03-Reference Symbol Cross-Sheet Linking.md>) | [uc03-core-for-visualization.ttl](UC-03/uc03-core-for-visualization.ttl) |
+| UC-06 | [UC-06-Drawing Content Aggregation and Hazardous Material Identification.md](<UC-06/UC-06-Drawing Content Aggregation and Hazardous Material Identification.md>) | — |
+| UC-07 | [UC-07 Wall Orientation Identification & Measurement in Plan Drawings.md](<UC-07/UC-07 Wall Orientation Identification & Measurement in Plan Drawings.md>) | — |

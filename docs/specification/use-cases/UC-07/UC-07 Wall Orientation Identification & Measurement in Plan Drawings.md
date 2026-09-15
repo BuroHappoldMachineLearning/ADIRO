@@ -1,3 +1,4 @@
+# UC-07: Wall Orientation Identification & Measurement in Plan Drawings
 
 > **⚠️ Draft v0.2 — not yet aligned with the current ontology. This use case will be revised in a follow-up PR.**
 

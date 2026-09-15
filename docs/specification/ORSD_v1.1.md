@@ -46,15 +46,13 @@ The ontology is implemented using RDF and OWL to establish a standardized and in
 | Use 4 | **Inter-drawing connectivity** | Enable navigation across sheets and drawing sets by automatically matching and linking reference symbols, including detail, section, and elevation markers. |
 | Use 5 | **Spatial reasoning and similarity analysis** | Identify repeated occurrences of building elements and quantify components based on geometric attributes such as orientation or location. |
 
-
-
 > | ORSD v1 label | Corresponding UC ORSD |
 > |---|---|
-> | Use 1 | UC-01 + UC-06 — see [Related documents](uc-orsd/README.md#5-related-documents) |
+> | Use 1 | UC-01 + UC-06 — see [Related documents](use-cases/README.md#5-related-documents) |
 > | Use 2 | *No dedicated UC ORSD yet* |
 > | Use 3 | *No dedicated UC ORSD yet* |
-> | Use 4 | UC-03 — see [Related documents](uc-orsd/README.md#5-related-documents) |
-> | Use 5 | UC-07 — see [Related documents](uc-orsd/README.md#5-related-documents) |
+> | Use 4 | UC-03 — see [Related documents](use-cases/README.md#5-related-documents) |
+> | Use 5 | UC-07 — see [Related documents](use-cases/README.md#5-related-documents) |
 
 ---
 
