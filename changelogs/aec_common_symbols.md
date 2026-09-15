@@ -1,6 +1,6 @@
 # Changelog — aec_common_symbols
 
-Per-module SemVer. See [../docs/contribute/versioning.md](../docs/contribute/versioning.md).
+Per-module SemVer. See [../docs/contribute/versioning/](../docs/contribute/versioning/).
 Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]

@@ -15,5 +15,5 @@ Good things to include in an issue:
 ## Contribution guides
 
 - **[Adding New Ontologies](adding-ontologies.md)** — how to add a new `.ttl` and have it documented automatically.
-- **[Versioning](versioning.md)** — versioned/unversioned IRIs, version backups, and how to cut a new version.
+- **[Versioning](versioning/index.md)** — versioned/unversioned IRIs, version backups, and how to cut a new version.
 - **[Design Decisions](design-decisions.md)** — the rationale behind key modelling choices (OWL restrictions, annotation properties, relationships).

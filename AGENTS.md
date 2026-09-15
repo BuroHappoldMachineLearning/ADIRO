@@ -100,7 +100,7 @@ commands directly, but Git Bash is simpler.
 **Per-module SemVer** — each `src/*.ttl` is versioned independently via its own `owl:versionIRI` +
 `owl:versionInfo` (currently `aec_drawing_metadata` 2.0.0; the other three 1.0.0). The full scheme — IRI
 strategy, bump rules (compatibility-diff spec), imports policy, deprecation, the tag-driven release flow, and
-changelogs — is in **`docs/contribute/versioning.md`**; rationale in KB
+changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
 [DATA-A-10](https://bhmlrnd.youtrack.cloud/articles/DATA-A-10); plan/decisions in
 [RES-27](https://bhmlrnd.youtrack.cloud/issue/RES-27).
 - **Releases are per-module:** tag `<module>-v<semver>` (e.g. `aec_common_symbols-v1.2.0`) →
@@ -147,7 +147,7 @@ changelogs — is in **`docs/contribute/versioning.md`**; rationale in KB
   and let `generate-deploy-docs.yml` publish. Do not hand-edit generated pages in `docs/` — they are overwritten.
 - **Versioning.** Record any change to a module's semantics under that module's `changelogs/<module>.md`
   `[Unreleased]` section; bump its `owl:versionIRI` / `owl:versionInfo` **only at a release cut** (tag
-  `<module>-v<semver>`), per `docs/contribute/versioning.md`.
+  `<module>-v<semver>`), per `docs/contribute/versioning/`.
 - **Downstream label consumers (CVAT).** The metadata module defines the `isCVATProperty` annotation, and
   domain modules mark labellable classes with `labellableRoot`, so the ontology **drives CVAT annotation
   labels**. The CVAT label *text* is the class **IRI local name** (normalized by the pipeline's

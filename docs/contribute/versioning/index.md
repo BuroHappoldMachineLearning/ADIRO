@@ -49,7 +49,7 @@ w3id is a **host-independent** front door: it redirects *to* github.io today, so
 
 ## Bump rules (SemVer, per module)
 
-The bump for a module is decided by classifying its change against **that module's last released version**, per the [compatibility-diff spec](../specification/governance/compatibility-diff-algorithm-spec.md):
+The bump for a module is decided by classifying its change against **that module's last released version**, per the [compatibility-diff spec](compatibility-diff-algorithm-spec.md):
 
 | Bump | When | Examples |
 |---|---|---|
@@ -84,24 +84,15 @@ Every change is recorded in **Keep-a-Changelog** style:
 
 ## Releases
 
-A release affects **only the changed module(s)**. To cut a release for a module:
-
-1. **Determine the bump** by classifying the change vs the module's last released version (compat-diff spec) → MAJOR / MINOR / PATCH.
-2. **Bump** `owl:versionInfo` **and** `owl:versionIRI` in that module's `.ttl` (CI enforces tag == `versionInfo` == `versionIRI` tail).
-3. **Move** that module's `[Unreleased]` changelog entries under the new version heading.
-4. **Tag** `<module>-v<semver>` — e.g. `aec_common_symbols-v1.2.0` — and create a **GitHub Release**.
-5. **Snapshot** (automatic): `.github/workflows/backup-version.yml` copies the module to `versions/<module>/<semver>/`.
-6. **Publish** (automatic): the Pages deploy serves the unversioned latest `…/<module>.ttl` and the versioned snapshot `…/<module>/<semver>/<module>.ttl` as resolvable URLs.
+A release affects **only the changed module(s)**: determine the bump (compat-diff spec), bump `owl:versionInfo`/`owl:versionIRI`, move that module's `[Unreleased]` changelog entries under the new version heading, then tag `<module>-v<semver>` (e.g. `aec_common_symbols-v1.2.0`) and publish a **GitHub Release** from that tag. Snapshotting to `versions/<module>/<semver>/` and publishing to Pages then happen automatically — see **[Release process](release-process.md)** for the step-by-step and which GitHub Action does what.
 
 If several modules changed together, cut **one tag per changed module** — each is an independent release.
-
-> Tag convention: `<module>-v<semver>`. Module names use `_` and never contain `-v`, so the tag parses unambiguously into module + version, and maps 1:1 to the versionIRI path `…/<module>/<semver>`.
 
 ## Validation
 
 Every PR runs `scripts/validate_ontology.py` (via `validate-ontology.yml`), which checks TTL parsing, circular subclass hierarchies, an `owl:Ontology` declaration, **and per-module version consistency** ([RES-66](https://bhmlrnd.youtrack.cloud/issue/RES-66)): each module must carry exactly one `owl:versionInfo` and one `owl:versionIRI`, and the versionIRI must equal the unversioned ontology IRI + `/` + the versionInfo.
 
-PRs also run `scripts/compat_diff.py` ([RES-67](https://bhmlrnd.youtrack.cloud/issue/RES-67), **warn** mode): it classifies each module's change against its last released snapshot (per the [compatibility-diff spec](../specification/governance/compatibility-diff-algorithm-spec.md)) and flags when the **declared** version bump is smaller than the change requires. It's advisory for now; the entailment-based upgrade and `enforce` mode are Phase 2b (RES-78 / RES-81).
+The same `validate-ontology.yml` run also runs `scripts/compat_diff.py` ([RES-67](https://bhmlrnd.youtrack.cloud/issue/RES-67), **warn** mode): it classifies each module's change against its last released snapshot (per the [compatibility-diff spec](compatibility-diff-algorithm-spec.md)) and flags when the **declared** version bump is smaller than the change requires. It's advisory for now; the entailment-based upgrade and `enforce` mode are Phase 2b (RES-78 / RES-81).
 
 On any PR that touches an ontology, a second workflow (`compat-diff-comment.yml`) posts a **sticky comment** with two parts: **Changes in this PR** (deltas diffed against the base branch — what the PR itself touches) and **Next version if released** (the cumulative forecast — each module's `src/` vs its last released snapshot, i.e. the running total of *all* unreleased changes). Because `owl:versionInfo` is only bumped at the release cut, the forecast spans every unreleased PR, not just this one; an under-bump warning appears only on a release-cut PR that bumped `owl:versionInfo` by less than the change requires.
 

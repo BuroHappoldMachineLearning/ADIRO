@@ -1,7 +1,7 @@
 # Changelog
 
 ADIRO's modules are versioned **independently** (per-module SemVer — see
-[docs/contribute/versioning.md](docs/contribute/versioning.md)). This file is a rollup; the
+[docs/contribute/versioning/](docs/contribute/versioning/)). This file is a rollup; the
 **source of truth** for each module is its own changelog under `changelogs/`.
 
 | Module | Version | Changelog |

@@ -1,4 +1,6 @@
-# Compatibility Guard: Diff Algorithm Specification
+# Diff Algorithm Specification
+
+Implemented by `scripts/compat_diff.py`, which classifies a module's change to decide its SemVer bump — see [Versioning](index.md#bump-rules-semver-per-module) for how that decision feeds a release.
 
 ## Purpose
 Define a deterministic algorithm that compares two ontology versions and classifies changes as non-breaking, potentially-breaking, or breaking, then proposes compatibility actions.

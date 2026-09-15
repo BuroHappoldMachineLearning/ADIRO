@@ -13,7 +13,7 @@ description: >-
 In brief: a Material-for-MkDocs site is generated from `src/*.ttl` by `scripts/generate_docs.py` (pyLODE HTML
 + `ttl2md` Markdown) and deployed to GitHub Pages by `.github/workflows/generate-deploy-docs.yml`. PRs run
 `validate-ontology.yml` (`scripts/validate_ontology.py`); GitHub issues mirror to YouTrack RES via
-`sync-issues-to-youtrack.yml`. Versioning is per-module SemVer (scheme in `docs/contribute/versioning.md`,
+`sync-issues-to-youtrack.yml`. Versioning is per-module SemVer (scheme in `docs/contribute/versioning/`,
 [RES-27](https://bhmlrnd.youtrack.cloud/issue/RES-27)) — additive TBox `.ttl` edits go under the module's
 `changelogs/<module>.md` `[Unreleased]` section, with `owl:versionInfo`/`owl:versionIRI` bumped only at a
 release cut (KB [DATA-A-10](https://bhmlrnd.youtrack.cloud/articles/DATA-A-10)). Full workflow names, commands, gotchas, and the mandatory

@@ -5,7 +5,7 @@ Compatibility-diff classifier (RES-67, Phase 2a - warn mode).
 For each ADIRO module, compare the working ``src/<module>.ttl`` against that
 module's last released snapshot ``versions/<module>/<max-semver>/<module>.ttl``,
 classify the changes by compatibility severity (per
-``docs/specification/governance/compatibility-diff-algorithm-spec.md``), derive the REQUIRED
+``docs/contribute/versioning/compatibility-diff-algorithm-spec.md``), derive the REQUIRED
 SemVer bump, and compare it to the DECLARED bump (``owl:versionInfo``).
 
 Phase 2a scope (syntactic, warn): category deltas + severity + required-vs-declared
@@ -428,7 +428,7 @@ def to_markdown(results, pr_results=None):
         "**Changes in this PR** diffs the PR against its base branch. **Next version if released** compares "
         "each module's working `src/` against its **last released snapshot** and maps the accumulated change "
         "to the **minimum next [SemVer](https://semver.org/)** (per the "
-        "[compatibility-diff spec](https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/docs/specification/governance/compatibility-diff-algorithm-spec.md)). "
+        "[compatibility-diff spec](https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/docs/contribute/versioning/compatibility-diff-algorithm-spec.md)). "
         "`owl:versionInfo` is only bumped **at the release cut (after merge)**, so the forecast is cumulative "
         "across every unreleased PR. Advisory only — it never blocks the PR. (RES-67 · warn mode.)"
     )
