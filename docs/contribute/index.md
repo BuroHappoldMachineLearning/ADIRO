@@ -1,16 +1,18 @@
 # Contribute
 
-Contributions to ADIRO are welcome! The ontologies are developed in the open, and we value input from the AEC and semantic-web communities alike — whether that's a new use case, a modelling suggestion, a correction, or a whole new domain ontology.
+Contributions to ADIRO are welcome — a new use case, a modelling suggestion, a correction, or a new domain ontology.
+
+## Discussions vs. issues
+
+- **[Discussions](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions)** — open-ended: design notes, research write-ups, "should we model X this way?" questions, ideas not yet ready to act on.
+- **[Issues](https://github.com/BuroHappoldMachineLearning/ADIRO/issues)** — a concrete, actionable change, tracked to completion. Start here once there's something to act on.
 
 ## How to propose a change
 
-Please **open a [GitHub issue](https://github.com/BuroHappoldMachineLearning/ADIRO/issues)** to propose any addition, change, or fix. This lets us discuss the request, agree on the approach, and track it against the relevant use cases before any changes are made.
+Open an issue before making a change, so the approach can be agreed and tracked against the relevant use cases first. Include:
 
-Good things to include in an issue:
-
-- **What** you'd like to add or change, and **why** (ideally tied to a concrete use case or competency question).
-- Any relevant AEC drawing examples, terms, or references.
-- Whether you're proposing a discussion or already have a concrete change in mind.
+- **What** you'd like to add or change, and **why** (ideally tied to a use case or competency question).
+- Relevant AEC drawing examples, terms, or references.
 
 ## Contribution guides
 
