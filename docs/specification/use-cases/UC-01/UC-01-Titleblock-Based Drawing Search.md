@@ -1,18 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) **Use Case ID:** UC-01 **Version:** 0.3 (draft)
->
-> **Changes from v 0.2:** Aligned with existing ontology modules (`aec_drawing_metadata`, `aec_domain_common`) per @alelom's PR review. Key changes:
-> - `Drawing` → `metadata:DrawingSheet`; `Layout` added as a first-class entity (G1).
-> - `dcommon:hasDiscipline` proposed to move from `LayoutContentType` to `Layout` (G5 — open issue).
-> - Reuse `dcommon:Discipline` class hierarchy; drop `disciplineCode` string property (G3).
-> - Reuse `metadata:LayoutContentType`; drop `DrawingType` / `hasDrawingType` / `typeLabel` (G4).
-> - Datatype properties (`drawingIdentifier`, `drawingTitle`, `hasScale`, `sheetSize`) attached directly to `DrawingSheet` — no intermediate entity (G2).
-> - New object properties wired into `metadata:contains` / `metadata:hasProperty` via `rdfs:subPropertyOf` (G6).
-> - SPARQL placeholder namespace replaced with real module prefixes (G8).
-> - Only `isRevisionOf` materialised as `owl:inverseOf`; other inverses deferred (G9).
-> - Stray editing artifact on FR 4 removed.
-> - New Section 7: Module Alignment Summary.
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.3 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -348,7 +336,7 @@ The query is fully expressible, confirming that CQ-I 1 is covered by the current
 
 ## 7. Module Alignment Summary
 
-This section makes the placement of every UC-01 term in the existing module hierarchy explicit, per @alelom's cross-cutting review point #2.
+This section makes the placement of every UC-01 term in the existing module hierarchy explicit, per [PR #15](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/15) review point #2 (@alelom).
 
 **Existing module hierarchy** (unchanged):
 
@@ -396,6 +384,29 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 | G10 | ~~`:Metadata` class name misleading~~ — **resolved**: renamed to `:MetadataContainer` (team decision). The class models visual supporting regions (titleblock, legend, etc.), not semantic metadata. |
 | —   | Project-wide convention for `owl:inverseOf` — when to materialise vs rely on reasoner? v0.3 only materialises `isRevisionOf`.                                      |
 | —   | ~~"Civil" discipline~~ — **resolved**: `Civil` to be added as a direct subclass of `dcommon:Discipline` (team decision).                                           |
+
+---
+
+## 9. Version History
+
+### v0.3 (current)
+
+Aligned with the existing ontology modules (`aec_drawing_metadata`, `aec_domain_common`) per [PR #15](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/15) review (@alelom):
+
+- `Drawing` → `metadata:DrawingSheet`; `Layout` added as a first-class entity (G1).
+- `dcommon:hasDiscipline` proposed to move from `LayoutContentType` to `Layout` (G5 — open issue).
+- Reuse `dcommon:Discipline` class hierarchy; drop `disciplineCode` string property (G3).
+- Reuse `metadata:LayoutContentType`; drop `DrawingType` / `hasDrawingType` / `typeLabel` (G4).
+- Datatype properties (`drawingIdentifier`, `drawingTitle`, `hasScale`, `sheetSize`) attached directly to `DrawingSheet` — no intermediate entity (G2).
+- New object properties wired into `metadata:contains` / `metadata:hasProperty` via `rdfs:subPropertyOf` (G6).
+- SPARQL placeholder namespace replaced with real module prefixes (G8).
+- Only `isRevisionOf` materialised as `owl:inverseOf`; other inverses deferred (G9).
+- Stray editing artifact on FR 4 removed.
+- New §7 Module Alignment Summary added.
+
+### v0.2 and earlier
+
+Predate this changelog.
 
 ---
 

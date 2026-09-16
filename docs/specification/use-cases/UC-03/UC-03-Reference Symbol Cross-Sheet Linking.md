@@ -1,16 +1,6 @@
 # UC-03: Reference Symbol Cross-Sheet Linking
 
-> **Methodology:** LOT (Linked Open Terms) **Use Case ID:** UC-03 **Version:** 0.2 (reviewed & implemented — see §8 for resolved / deferred items)
->
-> **Changes from v 0.1:** Aligned with existing ontology modules (`aec_drawing_metadata`, `aec_common_symbols`) per @alelom's and @AhmedElnagar1's PR review. Key changes:
-> - Fixed: all internal `UC-02` references corrected to `UC-03` (v0.1 used the wrong ID throughout).
-> - `Drawing` → `metadata:DrawingSheet`; ReferenceSymbol now mounts on `metadata:Layout` (not on Sheet) — see G1, decision §2.
-> - The class for cross-sheet linking symbols is introduced in `aec_common_symbols`. Its **scope** is confirmed (Detail / Section / Elevation markers and similar cross-sheet linkers); its **name** (`ReferenceSymbol`, `Callout`, or an alternative) and its relationship to the existing `csymbol:Callout` class are left for team review — see Open Issue UC03-1.
-> - **ReferenceSymbol is a pure relational node** — zero datatype properties. v0.1's `symbolLabel`, `symbolNumber`, and `SymbolType` / `hasSymbolType` / `typeLabel` all removed; see decisions §3–§5 and the *design-debate* note.
-> - `hasReferenceSymbol` wired via `rdfs:subPropertyOf metadata:contains` (G6).
-> - SPARQL placeholder namespace replaced with real module prefixes (G8).
-> - CQ groups consolidated from 5 → 3 (Discovery / Navigation / Network) per @AhmedElnagar1's "competency questions repeat themselves".
-> - Identified cross-UC dependency: UC-03 needs `metadata:layoutIdentifier`, which properly belongs in UC-01 v0.4 — flagged in Open Issues.
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-03 · **Version:** 0.2 (reviewed & implemented — see [§8](#8-open-issues-pending-team-discussion) for resolved / deferred items, [§10](#10-version-history) for changelog)
 
 ---
 
@@ -255,7 +245,7 @@ This demonstrates FR 5: composite labels are parsed at query time, not stored on
 
 ## 7. Module Alignment Summary
 
-Per the project's import hierarchy and @alelom's cross-cutting review point #2, every UC-03 term is placed in its proper module.
+Per the project's import hierarchy and [PR #15](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/15) review point #2 (@alelom), every UC-03 term is placed in its proper module.
 
 **Module hierarchy** (unchanged):
 
@@ -315,6 +305,27 @@ For the full design-debate reasoning behind the v0.2 modelling choices, see the 
 5. **§5 — No `symbolNumber`:** Under mainstream NCS / AIA / BS conventions, the number inside a marker bubble equals the target Layout's `layoutIdentifier` — derivable by graph traversal. ReferenceSymbol becomes a pure relational node.
 6. **§6 — Reusable principle:** *"The ontology models facts, not their display derivatives."* Three-step check for any new datatype property — derivability test, independent-assertion test, optimisation warning.
 7. **§7 — RDF identity ≠ domain identity:** Instance uniqueness is provided by RDF URI, never by adding a datatype property. Multiple identical markers are distinct URIs, not distinct values.
+
+---
+
+## 10. Version History
+
+### v0.2 (current — reviewed & implemented)
+
+Aligned with the existing ontology modules (`aec_drawing_metadata`, `aec_common_symbols`) per [PR #15](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/15) review (@alelom, @AhmedElnagar1):
+
+- Fixed: all internal `UC-02` references corrected to `UC-03` (v0.1 used the wrong ID throughout).
+- `Drawing` → `metadata:DrawingSheet`; ReferenceSymbol now mounts on `metadata:Layout` (not on Sheet) — see G1, [§2](#2-information-needs-analysis).
+- The class for cross-sheet linking symbols is introduced in `aec_common_symbols`. Its **scope** is confirmed (Detail / Section / Elevation markers and similar cross-sheet linkers); its **name** (`ReferenceSymbol`, `Callout`, or an alternative) and its relationship to the existing `csymbol:Callout` class are left for team review — see Open Issue UC03-1.
+- **ReferenceSymbol is a pure relational node** — zero datatype properties. v0.1's `symbolLabel`, `symbolNumber`, and `SymbolType` / `hasSymbolType` / `typeLabel` all removed; see [§9 Design Decisions](#9-design-decisions-reasoning-index) §3–§5 and the *design-debate* note.
+- `hasReferenceSymbol` wired via `rdfs:subPropertyOf metadata:contains` (G6).
+- SPARQL placeholder namespace replaced with real module prefixes (G8).
+- CQ groups consolidated from 5 → 3 (Discovery / Navigation / Network) per @AhmedElnagar1's "competency questions repeat themselves".
+- Identified cross-UC dependency: UC-03 needs `metadata:layoutIdentifier`, which properly belongs in UC-01 v0.4 — flagged in Open Issues.
+
+### v0.1
+
+Predates this changelog.
 
 ---
 

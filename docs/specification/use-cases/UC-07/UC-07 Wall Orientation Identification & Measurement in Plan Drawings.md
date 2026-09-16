@@ -1,8 +1,8 @@
 # UC-07: Wall Orientation Identification & Measurement in Plan Drawings
 
 > **⚠️ Draft v0.2 — not yet aligned with the current ontology. This use case will be revised in a follow-up PR.**
-
-> **Methodology:** LOT (Linked Open Terms) **Use Case ID:** UC-07 **Version:** 0.2 (draft) **Changes from v 0.1:** Introduced North Arrow as drawing-level orientation datum; introduced numeric scale ratio; distinguished on-drawing measurements from real-world dimensions; repositioned FacingDirection from a primary assertion to a classification derivable from geometric data.
+>
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-07 · **Version:** 0.2 (draft) — see [§8 Version History](#8-version-history)
 
 ---
 
@@ -373,6 +373,23 @@ The `BuildingElement` superclass provides an extension point for `:Column`, `:Be
 ### 7.4 Measurement Ontology Integration
 
 Currently uses `xsd:decimal` (mm by convention). A future extension may integrate QUDT / OM for multi-unit support and unit-conversion reasoning.
+
+---
+
+## 8. Version History
+
+### v0.2 (current — draft)
+
+Changes from v0.1:
+
+- Introduced North Arrow as a drawing-level orientation datum.
+- Introduced a numeric scale ratio.
+- Distinguished on-drawing measurements from real-world dimensions.
+- Repositioned `FacingDirection` from a primary assertion to a classification derivable from geometric data.
+
+### v0.1
+
+Predates this changelog.
 
 ---
 
