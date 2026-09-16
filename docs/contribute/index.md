@@ -14,6 +14,8 @@ Open an issue before making a change, so the approach can be agreed and tracked 
 - **What** you'd like to add or change, and **why** (ideally tied to a use case or competency question).
 - Relevant AEC drawing examples, terms, or references.
 
+Proposing a new [use case or competency question](../specification/use-cases/README.md) works the same way — raise a Discussion if it's still an open question, or an issue once it's concrete.
+
 ## Contribution guides
 
 - **[Adding New Ontologies](adding-ontologies.md)** — how to add a new `.ttl` and have it documented automatically.
