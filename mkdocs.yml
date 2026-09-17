@@ -98,7 +98,6 @@ extra_javascript:
 exclude_docs: |
   ai/
   brainstorming/
-  modularization/
 
 validation:
   nav:

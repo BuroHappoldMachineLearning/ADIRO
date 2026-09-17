@@ -20,4 +20,4 @@ Proposing a new [use case or competency question](../specification/use-cases/REA
 
 - **[Adding New Ontologies](adding-ontologies.md)** — how to add a new `.ttl` and have it documented automatically.
 - **[Versioning](versioning/index.md)** — versioned/unversioned IRIs, version backups, and how to cut a new version.
-- **[Design Decisions](design-decisions.md)** — the rationale behind key modelling choices (OWL restrictions, annotation properties, relationships).
+- **[Design Decisions](../design-decisions/index.md)** — the rationale behind key modelling choices (OWL restrictions, annotation properties, relationships).

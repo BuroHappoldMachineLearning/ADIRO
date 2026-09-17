@@ -46,8 +46,9 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
   uv run mkdocs serve                         # live preview at http://127.0.0.1:8000/ADIRO/
   # or: uv run mkdocs build                   # produce the static site into site/
   ```
-- `docs/brainstorming/`, `docs/modularization/`, and `docs/ai/` are excluded from the built site
-  (`exclude_docs` in `mkdocs.yml`) — verify before assuming a docs page publishes.
+- `docs/brainstorming/` and `docs/ai/` are excluded from the built site (`exclude_docs` in `mkdocs.yml`) —
+  verify before assuming a docs page publishes. Design-decision notes (including modularization write-ups)
+  live under `docs/design-decisions/` and **are** published.
 
 ## Validation & YouTrack-sync CI
 - **`.github/workflows/validate-ontology.yml`** — on PRs to any branch; runs `scripts/validate_ontology.py`

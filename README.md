@@ -67,4 +67,4 @@ See the **[Contribute](https://burohappoldmachinelearning.github.io/ADIRO/contri
 
 - **[Adding New Ontologies](https://burohappoldmachinelearning.github.io/ADIRO/contribute/adding-ontologies/)** — how to add a new `.ttl` and have it documented automatically.
 - **[Versioning](https://burohappoldmachinelearning.github.io/ADIRO/contribute/versioning/)** — versioned/unversioned IRIs, version backups, and how to cut a new version.
-- **[Design Decisions](https://burohappoldmachinelearning.github.io/ADIRO/contribute/design-decisions/)** — rationale behind OWL restrictions, annotation properties, and relationship modelling.
+- **[Design Decisions](https://burohappoldmachinelearning.github.io/ADIRO/design-decisions/)** — rationale behind OWL restrictions, annotation properties, and relationship modelling.

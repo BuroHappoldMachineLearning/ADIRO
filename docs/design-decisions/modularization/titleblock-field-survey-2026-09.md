@@ -8,7 +8,7 @@ withdrawal of `hasLegalOwner` both said was still pending
 **Also relevant to:** Ahmed Zaalouk's PR #66 comment (2026-08-19) deferring detailed review of the organisation
 properties until he could "take a look at the title blocks" — this is that look
 **Scope:** which `tb:` terms to add in the *next* pass, not a re-litigation of the 11 terms already shipped or of
-decision 1 (Option 1, resolved — see `titleblock-placement-option1-plan.md`)
+decision 1 (Option 1, resolved — the former `titleblock-placement-option1-plan.md` is no longer in the repo)
 
 > **Project identity.** The source spreadsheet names four real BH projects. This document refers to them only as
 > **Project A–D**, consistently, so it can be cited outside project-restricted channels. The mapping is not
@@ -56,7 +56,7 @@ Cross-checking the survey against `src/aec_drawing_metadata.ttl` and the shipped
 | --- | --- | --- | --- |
 | Project / Building / Site (100%, A) · Project Title (100%, B) · Project Name (100%, D) | `dm:Project` + `dm:projectName` + `dm:belongsToProject` | 3/4 | **Already modelled.** Same shape as decision 1 (Option 1) — no `tb:` counterpart needed |
 | Component / Package (100%, B) | `dm:DrawingPackage` + `dm:packageName` + `dm:belongsToPackage` | 1/4 | **Already modelled** |
-| Department (5.1%, A) · Discipline (100%, B, same template field as Department) | `dcommon:Discipline` (per `titleblock-vocabulary-review.md` §2.3) | 2/4 | **Already dropped as redundant** — footer (b). Survey does not change this; 5.1% on the one heterogeneous sample confirms it, if anything |
+| Department (5.1%, A) · Discipline (100%, B, same template field as Department) | `dcommon:Discipline` (per [titleblock-vocabulary-review.md](../titleblock-vocabulary-review.md) §2.3) | 2/4 | **Already dropped as redundant** — footer (b). Survey does not change this; 5.1% on the one heterogeneous sample confirms it, if anything |
 | Client (100%, B and D) | `tb:assertsClient` | 2/4 | **Already shipped** |
 | Architect / Design Practice (95.8%, A) | `tb:assertsOriginator` | 1/4, near-universal within it | **Already shipped** |
 | Drawn / Drawn By (100% in all four) · Checked / Checked by (22.8–100%) | `dm:isAuthoredBy` / `dm:isCheckedBy` (Option 1) | 4/4 | **Already resolved, reused from `dm:`** |
@@ -245,7 +245,7 @@ standards reading rather than from drawings — exactly the basis §7.2 rejected
   wrong.**
 - **`dimensionUnits`** (DIN 1356-1, the `m,cm` in `1:50 – m,cm`) — withdrawn 2026-09-14, on the same grounds as
   `planKey` and with the same caveat. Note the vocabulary review had separately confirmed this concept is
-  genuinely **not** covered by any other module or use case (`titleblock-vocabulary-review.md` §2.3), so this is
+  genuinely **not** covered by any other module or use case ([titleblock-vocabulary-review.md](../titleblock-vocabulary-review.md) §2.3), so this is
   purely an evidence call, not a redundancy one: the concept is real, no sampled drawing printed it, and the
   sample is UK/US. It is the strongest candidate of the five withdrawals to return.
 

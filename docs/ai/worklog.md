@@ -22,6 +22,39 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-09-17 — Design-decision docs rehomed; leftover links retargeted
+
+**Issue:** docs tidy-up (no new YouTrack ticket) · **Branch:** `main`
+
+### What changed
+
+Published modelling notes moved out of `docs/contribute/design-decisions.md` and the old
+`docs/modularization/` working-notes tree into `docs/design-decisions/` (including
+`modularization/` as a *published* subsection). `mkdocs.yml` `exclude_docs` no longer lists
+`modularization/` (that pattern would have excluded the new subsection as well).
+
+Link retargets in the same change:
+
+- Contribute index, README Pages URL, changelog `KeyPlan` evidence path
+- `docs/uc-orsd/` → `docs/specification/use-cases/` in live design-decision / changelog citations
+- Cross-links between the vocabulary review and the field survey
+- `AGENTS.md` keep-in-sync note for what the docs site excludes
+
+Historical worklog paths were left as written (they record what existed at the time).
+
+### Verification
+
+- `uv run mkdocs build --strict` (or equivalent) after the retargets
+- Spot-check that Design decisions nests in the nav (index + children, including Modularization)
+
+### Next step
+
+None for links. Dropped files (`ontology-modularization-todo.md`, `titleblock-placement-option1-plan.md`,
+`aec_titleblock-build-plan.md`) were already gone or not moved; the survey now says so instead of pointing
+at a missing plan file.
+
+---
+
 ## 2026-09-14 — `hasScale` extended to `Layout`
 
 **Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **PR:** [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) · **Branch:** `res-89-aec-titleblock-tbox`

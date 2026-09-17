@@ -1,10 +1,9 @@
 # Ontology Modularization Summary
 
-## Overview
+ADIRO is now designed as a modularized set of ontologies, as a number of separate ontology files following a strict import hierarchy.
 
-The monolithic ontology `aec_drawing_ontology.ttl` has been successfully modularized into five separate ontology files following a strict import hierarchy.
+The first version of ADIRO followed these modules, to which we progressively will add more:
 
-## Module Structure
 
 ### 1. Core Ontology (`aec_core.ttl`)
 **Namespace**: `https://burohappoldmachinelearning.github.io/ADIRO/aec-core#`
@@ -98,13 +97,3 @@ All ontologies have been validated for:
 - No circular references
 - Proper import relationships
 - Valid namespace usage
-
-## Files Created
-
-- `aec_core.ttl`
-- `aec_drawing_metadata.ttl`
-- `aec_common_symbols.ttl`
-- `aec_domain_common.ttl`
-- `aec_facade_domain.ttl`
-- `versions/v01/` (directory for version backups)
-- `versions/README.md` (versioning documentation)
