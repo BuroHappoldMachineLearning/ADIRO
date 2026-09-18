@@ -41,20 +41,22 @@ def sort_by_dependency(ttl_files: list[Path]) -> list[Path]:
     Sort ontology files by their dependency hierarchy.
     
     Order:
-    1. Drawing Metadata (no ADIRO imports - core merged into it)
+    0. Provenance (foundational, no ADIRO imports - imported by the drawing modules)
+    1. Drawing Metadata (imports Provenance)
     2. Common Symbols (imports Drawing Metadata)
     3. Domain-common (imports Drawing Metadata + Common Symbols)
     4. Facade Domain (imports Drawing Metadata + Common Symbols + Domain-common)
     5. Drawing Ontology (monolith, last)
-    
+
     Args:
         ttl_files: List of TTL file paths
-        
+
     Returns:
         List of TTL files sorted by dependency order
     """
     # Define dependency order (lower number = fewer dependencies)
     dependency_order = {
+        'aec_provenance': 0,
         'aec_drawing_metadata': 1,
         'aec_common_symbols': 2,
         'aec_domain_common': 3,

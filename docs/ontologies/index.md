@@ -9,6 +9,7 @@ The ADIRO ontologies are modular and build on one another via `owl:imports`. Arr
 ```mermaid
 %%{init: {"themeCSS": ".base .nodeLabel,.base .nodeLabel p,.base text,.base tspan{fill:#9ecbff !important;color:#9ecbff !important}.current .nodeLabel,.current .nodeLabel p,.current text,.current tspan{fill:#16305f !important;color:#16305f !important}"} }%%
 graph BT
+    aec_provenance["Aec Provenance"]
     aec_drawing_metadata["Aec Drawing Metadata"]
     aec_common_symbols["Aec Common Symbols"]
     aec_domain_common["Aec Domain Common"]
@@ -19,17 +20,22 @@ graph BT
     aec_facade_domain --> aec_common_symbols
     aec_facade_domain --> aec_domain_common
     aec_facade_domain --> aec_drawing_metadata
+    click aec_provenance "aec_provenance/" "Aec Provenance reference page"
     click aec_drawing_metadata "aec_drawing_metadata/" "Aec Drawing Metadata reference page"
     click aec_common_symbols "aec_common_symbols/" "Aec Common Symbols reference page"
     click aec_domain_common "aec_domain_common/" "Aec Domain Common reference page"
     click aec_facade_domain "aec_facade_domain/" "Aec Facade Domain reference page"
     classDef base fill:#16305f,stroke:#0e2247,stroke-width:2px,color:#9ecbff;
-    class aec_drawing_metadata,aec_common_symbols,aec_domain_common,aec_facade_domain base;
+    class aec_provenance,aec_drawing_metadata,aec_common_symbols,aec_domain_common,aec_facade_domain base;
 ```
 
 ## Available ontologies
 
 <div class="grid cards" markdown>
+
+-   ### [Aec Provenance](aec_provenance.md)
+
+    Foundational, domain-neutral vocabulary for representing an inferred/extracted assertion together with its provenance and confidence. It exists so that a value read off a drawing (a title-block field, a detected symbol, ...) can be modelled as a first-class assertion carrying: which region asserted it, what produced it, from where, when, and with what confidence - independently of the value itself. Imported by the drawing modules (e.g. aec_drawing_metadata); aligned to W3C PROV-O for interoperability.
 
 -   ### [Aec Drawing Metadata](aec_drawing_metadata.md)
 
