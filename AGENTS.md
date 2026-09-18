@@ -143,9 +143,14 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   changed, how it was verified (including gates you could *not* run), decisions deferred or rejected, and the
   next step. It is the handover record between sessions; `git log` does not carry intent or open threads. Excluded
   from the built site (`exclude_docs`).
-- **Ontology ↔ docs.** The published docs are generated from `src/*.ttl`. Whenever a `.ttl` changes, regenerate
-  the docs in the same change: `uv run python scripts/generate_docs.py`,
-  and let `generate-deploy-docs.yml` publish. Do not hand-edit generated pages in `docs/` — they are overwritten.
+- **Ontology ↔ docs.** The published docs are generated from `src/*.ttl` by `scripts/generate_docs.py`, which
+  (re)creates, per module, the **per-ontology reference page `docs/ontologies/<module>.md`** (the one humans
+  read) plus the pyLODE HTML, the copied `.ttl`/`.display.json`, and the `docs/ontologies/index.md` +
+  `docs/index.md` landing pages. Whenever a `.ttl` changes — and **especially when you add a new `src/*.ttl`
+  module, which MUST get its own `docs/ontologies/<module>.md`** (and an entry in the ontologies index +
+  dependency diagram) — regenerate in the same change: `uv run python scripts/generate_docs.py`, and let
+  `generate-deploy-docs.yml` publish. Do **not** hand-edit any generated page under `docs/` (including
+  `docs/ontologies/`) — they are overwritten on the next run; change the `.ttl` (or the generator) instead.
 - **Versioning.** Record any change to a module's semantics under that module's `changelogs/<module>.md`
   `[Unreleased]` section; bump its `owl:versionIRI` / `owl:versionInfo` **only at a release cut** (tag
   `<module>-v<semver>`), per `docs/contribute/versioning/`.
