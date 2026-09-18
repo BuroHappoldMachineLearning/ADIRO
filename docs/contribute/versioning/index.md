@@ -63,7 +63,7 @@ The bump for a module is decided by classifying its change against **that module
 
 - **Internal imports default to "latest"** — modules import each other via the **unversioned** IRI (`owl:imports <…/aec_drawing_metadata>`). The working norm is to keep every module functioning against every other module's *latest*.
 - **Version-pinned imports are allowed only for WIP / specific cases**, and each pinned import **must be documented and justified**: an `rdfs:comment` on the `owl:imports` axiom **plus** a note in the module's changelog. Treat a pin as **temporary** unless the justification is permanent.
-- **External-ontology imports** (geometry, DaNO, …) follow a separate strategy — SLME extraction + version-pinning + a reasoner gate. See KB [RES-A-12](https://bhmlrnd.youtrack.cloud/articles/RES-A-12) / [RES-68](https://bhmlrnd.youtrack.cloud/issue/RES-68).
+- **External-ontology imports** (geometry, PROV-O, DAnO, …) follow a separate strategy — prefer a **local stub + alignment** with no import at all; where the source's entailments are actually needed, **SLME extraction** (`robot extract --method STAR`) from the **version-pinned core file**, with the reasoner gate as the safeguard. A pinned external source is subject to the same document-and-justify rule as above. Full rule: **[External ontology imports](../../design-decisions/external-ontology-imports.md)**; decision record in [Discussion #74](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/74); implementation in [RES-68](https://bhmlrnd.youtrack.cloud/issue/RES-68).
 
 ### Root change that could break dependents
 
