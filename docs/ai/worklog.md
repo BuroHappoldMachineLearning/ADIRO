@@ -55,6 +55,10 @@ Zaalouk resolved RES-59 on 2026-09-17 pointing at Discussions #70 and #71. The t
   reasoning. No `.pages` file in that folder, so awesome-pages picks it up automatically.
 - **`docs/contribute/versioning/index.md`** §Imports and **`versioning-vs-odk.md`** retargeted off the now-frozen
   RES-A-12 and onto the new page + #74, and updated to name the stub-alignment option.
+- **`versioning-vs-odk.md` §Import handling reassessed from "Par." to a deliberate divergence.** Adding
+  stub-alignment as the *preferred* option moves us off ODK's norm, which treats an SLME extract as the normal
+  reuse path and discourages definition-less terms. The row now says so, and names the cost, rather than
+  claiming parity — the earlier "Par." predated the third option and would have hidden the amendment.
 
 ### Substantive corrections made to #71
 
