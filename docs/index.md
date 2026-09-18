@@ -42,6 +42,8 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Sheet/layout/document structure for AEC drawings.
 
+    *Imports: aec_provenance*
+
     Source: [`aec_drawing_metadata.ttl`](aec_drawing_metadata.ttl)
 
     [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata.html){ .md-button target=_blank }

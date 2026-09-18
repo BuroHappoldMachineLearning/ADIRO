@@ -21,6 +21,7 @@ graph BT
     aec_common_symbols["Aec Common Symbols"]
     aec_domain_common["Aec Domain Common"]
     aec_facade_domain["Aec Facade Domain"]
+    aec_drawing_metadata --> aec_provenance
     aec_common_symbols --> aec_drawing_metadata
     aec_domain_common --> aec_common_symbols
     aec_domain_common --> aec_drawing_metadata
@@ -158,3 +159,17 @@ The time the inference was produced. Aligned to prov:generatedAtTime.
 - **Sub property of:** [generatedAtTime](#generatedAtTime)
 - **Domain:** [Inference Meta](#InferenceMeta)
 - **Range:** `xsd:dateTime`
+
+## Annotation Properties
+
+### expectedRange {#expectedRange}
+
+On a field-kind concept: the expected type of its asserted value - a datatype (e.g. xsd:string, xsd:date) for literal-valued fields, or a class (e.g. Person, Organisation) for object-valued fields. Signals whether an assertion of this kind uses hasLiteralValue or hasValueEntity.
+
+- **IRI:** `https://w3id.org/adiro/aec_provenance#expectedRange`
+
+### mapsToFieldProperty {#mapsToFieldProperty}
+
+On a field-kind concept: the canonical ADIRO property that a validated assertion of this field kind is promoted to (the bridge from the reified assertion to a direct statement on the subject). Annotation only - the promotion is performed by tooling on validation, not by reasoning.
+
+- **IRI:** `https://w3id.org/adiro/aec_provenance#mapsToFieldProperty`

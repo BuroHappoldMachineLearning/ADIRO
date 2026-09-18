@@ -14,6 +14,7 @@ graph BT
     aec_common_symbols["Aec Common Symbols"]
     aec_domain_common["Aec Domain Common"]
     aec_facade_domain["Aec Facade Domain"]
+    aec_drawing_metadata --> aec_provenance
     aec_common_symbols --> aec_drawing_metadata
     aec_domain_common --> aec_common_symbols
     aec_domain_common --> aec_drawing_metadata
@@ -40,6 +41,8 @@ graph BT
 -   ### [Aec Drawing Metadata](aec_drawing_metadata.md)
 
     Sheet/layout/document structure for AEC drawings.
+
+    *Imports: aec_provenance*
 
 -   ### [Aec Common Symbols](aec_common_symbols.md)
 

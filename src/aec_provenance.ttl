@@ -52,6 +52,22 @@ prov:generatedAtTime rdf:type owl:DatatypeProperty ;
     rdfs:isDefinedBy <http://www.w3.org/ns/prov#> .
 
 #################################################################
+#    Annotation Properties - field-kind metadata
+#
+#    A "field kind" is a skos:Concept in a field-kind scheme (defined by the
+#    importing module, e.g. the TitleblockFieldScheme in aec_drawing_metadata).
+#    These annotations describe such a concept; they carry no reasoning weight.
+#################################################################
+
+:expectedRange rdf:type owl:AnnotationProperty ;
+    rdfs:label "expectedRange" ;
+    rdfs:comment "On a field-kind concept: the expected type of its asserted value - a datatype (e.g. xsd:string, xsd:date) for literal-valued fields, or a class (e.g. Person, Organisation) for object-valued fields. Signals whether an assertion of this kind uses hasLiteralValue or hasValueEntity." .
+
+:mapsToFieldProperty rdf:type owl:AnnotationProperty ;
+    rdfs:label "mapsToFieldProperty" ;
+    rdfs:comment "On a field-kind concept: the canonical ADIRO property that a validated assertion of this field kind is promoted to (the bridge from the reified assertion to a direct statement on the subject). Annotation only - the promotion is performed by tooling on validation, not by reasoning." .
+
+#################################################################
 #    Classes
 #################################################################
 

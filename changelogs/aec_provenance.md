@@ -17,6 +17,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
   - **PROV-O alignment** (`inferredBy` ⊑ `prov:wasAttributedTo`, `inferredFrom` ⊑ `prov:wasDerivedFrom`,
     `inferredAt` ⊑ `prov:generatedAtTime`, model as `prov:Agent`). PROV-O terms are declared locally
     (not `owl:imports`) so reasoning stays offline via `catalog-v001.xml`. PROV-O suggested by Tianyang Huang.
+  - Annotation properties for field-kind schemes defined by importing modules: `expectedRange` (a field
+    kind's expected value type) and `mapsToFieldProperty` (the canonical property a validated assertion
+    promotes to). First consumed by `aec_drawing_metadata`'s `TitleblockFieldScheme`.
 
   `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut.
 

@@ -6,6 +6,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix aprov: <https://w3id.org/adiro/aec_provenance#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 
 #################################################################
@@ -20,6 +21,7 @@
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
+    owl:imports <https://w3id.org/adiro/aec_provenance> ;
     owl:versionIRI <https://w3id.org/adiro/aec_drawing_metadata/3.0.0> ;
     owl:versionInfo "3.0.0" .
 
@@ -509,3 +511,149 @@
     rdfs:label "DrawingPackage" ;
     rdfs:comment "A grouping of DrawingSheets within a Project, e.g. a volume or submission package." ;
     :labellableRoot "false"^^xsd:boolean .
+
+#################################################################
+#    Title-block field kinds (SKOS) - the extraction profile
+#
+#    A field kind is the stable concept behind a printed title-block field
+#    (Scale, Client, Drawn By, ...). Names and synonyms - the strings a field
+#    is printed under, per language - live HERE on the concept, not on a
+#    per-field property, so the number of relationships stays small and a new
+#    field is added as data (a concept), not schema. Membership in the
+#    TitleblockFieldScheme IS the extraction profile: the set an extraction
+#    pipeline looks for. Each concept records its expected value type
+#    (aprov:expectedRange) and the ADIRO property a validated assertion is
+#    promoted to (aprov:mapsToFieldProperty) - the hybrid bridge to the shipped
+#    asserts*/has* properties, which are left in place. See Discussion #72 and
+#    the aec_provenance module (imported above) for the assertion/provenance
+#    model that binds an extracted value to one of these kinds.
+#################################################################
+
+:TitleblockFieldScheme rdf:type skos:ConceptScheme ;
+    rdfs:label "Titleblock Field Scheme" ;
+    rdfs:comment "The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to." .
+
+:ClientField rdf:type skos:Concept ;
+    rdfs:label "Client Field" ;
+    skos:prefLabel "Client"@en , "Auftraggeber"@de ;
+    skos:altLabel "client"@en , "employer"@en , "for"@en , "Bauherr"@de ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange :Organisation ;
+    aprov:mapsToFieldProperty :assertsClient .
+
+:OriginatorField rdf:type skos:Concept ;
+    rdfs:label "Originator Field" ;
+    skos:prefLabel "Originator"@en , "Planverfasser"@de ;
+    skos:altLabel "originator"@en , "consultant"@en , "drawn by (company)"@en , "Verfasser"@de ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange :Organisation ;
+    aprov:mapsToFieldProperty :assertsOriginator .
+
+:DrawingTitleField rdf:type skos:Concept ;
+    rdfs:label "Drawing Title Field" ;
+    skos:prefLabel "Drawing Title"@en , "Zeichnungstitel"@de ;
+    skos:altLabel "Sheet Title"@en , "title"@en , "drawing title"@en , "view title"@en ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    aprov:mapsToFieldProperty :drawingTitle .
+
+:DrawingNumberField rdf:type skos:Concept ;
+    rdfs:label "Drawing Number Field" ;
+    skos:prefLabel "Drawing Number"@en , "Zeichnungsnummer"@de ;
+    skos:altLabel "Drawing No."@en , "drawing number"@en , "Dwg No."@en ;
+    skos:example "ST-201" ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    aprov:mapsToFieldProperty :drawingIdentifier .
+
+:CrossReferenceNumberField rdf:type skos:Concept ;
+    rdfs:label "Cross Reference Number Field" ;
+    skos:prefLabel "Cross-Reference Number"@en ;
+    skos:altLabel "Alternative Ref. No."@en , "Design Team Drawing Number"@en , "EDMS document number"@en , "client reference number"@en , "SA/SK No."@en ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    aprov:mapsToFieldProperty :assertsCrossReferenceNumber .
+
+:ScaleField rdf:type skos:Concept ;
+    rdfs:label "Scale Field" ;
+    skos:prefLabel "Scale"@en , "Maßstab"@de ;
+    skos:altLabel "scale"@en , "NTS"@en , "as shown"@en ;
+    skos:example "1:50" , "1:100" , "NTS" ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    aprov:mapsToFieldProperty :hasScale .
+
+:DrawnByField rdf:type skos:Concept ;
+    rdfs:label "Drawn By Field" ;
+    skos:prefLabel "Drawn By"@en , "Gezeichnet"@de ;
+    skos:altLabel "Author"@en , "drawn"@en , "Verfasser"@de , "Bearb."@de ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange :Person ;
+    aprov:mapsToFieldProperty :isAuthoredBy .
+
+:CheckedByField rdf:type skos:Concept ;
+    rdfs:label "Checked By Field" ;
+    skos:prefLabel "Checked By"@en , "Geprüft"@de ;
+    skos:altLabel "checked"@en , "Gepr."@de ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange :Person ;
+    aprov:mapsToFieldProperty :isCheckedBy .
+
+:ApprovedByField rdf:type skos:Concept ;
+    rdfs:label "Approved By Field" ;
+    skos:prefLabel "Approved By"@en , "Genehmigt"@de ;
+    skos:altLabel "approved"@en , "authorised"@en ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange :Person ;
+    aprov:mapsToFieldProperty :isApprovedBy .
+
+:RevisionCodeField rdf:type skos:Concept ;
+    rdfs:label "Revision Code Field" ;
+    skos:prefLabel "Revision Code"@en , "Revisionsstand"@de ;
+    skos:altLabel "Rev."@en , "Revision"@en , "Rev"@en , "Index"@de ;
+    skos:example "A" , "P01" , "00" ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    aprov:mapsToFieldProperty :revisionCode .
+
+:IssueDateField rdf:type skos:Concept ;
+    rdfs:label "Issue Date Field" ;
+    skos:prefLabel "Issue Date"@en , "Datum"@de ;
+    skos:altLabel "Date"@en , "date"@en , "issued"@en ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:date ;
+    aprov:mapsToFieldProperty :issueDate .
+
+:DisciplineField rdf:type skos:Concept ;
+    rdfs:label "Discipline Field" ;
+    skos:prefLabel "Discipline"@en , "Fachbereich"@de ;
+    skos:altLabel "discipline"@en , "Gewerk"@de ;
+    skos:example "A" , "S" , "M" ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    rdfs:comment "No dedicated ADIRO property yet (no mapsToFieldProperty); a candidate to model - possibly reusing aec_domain_common:Discipline - tracked with the wider title-block relationship work." .
+
+:ProjectTitleField rdf:type skos:Concept ;
+    rdfs:label "Project Title Field" ;
+    skos:prefLabel "Project Title"@en , "Bauvorhaben"@de ;
+    skos:altLabel "Project"@en , "Projekt"@de ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    aprov:mapsToFieldProperty :projectName .
+
+:DrawingPackageField rdf:type skos:Concept ;
+    rdfs:label "Drawing Package Field" ;
+    skos:prefLabel "Drawing Package"@en ;
+    skos:altLabel "Package"@en , "Component / Package"@en , "volume"@en ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    aprov:mapsToFieldProperty :packageName .
+
+:StatusField rdf:type skos:Concept ;
+    rdfs:label "Status Field" ;
+    skos:prefLabel "Status"@en ;
+    skos:altLabel "Suitability"@en , "Issue"@en , "status code"@en , "Status"@de ;
+    skos:example "IFC" , "IFR" , "AFC" ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    aprov:mapsToFieldProperty :statusLabel .
