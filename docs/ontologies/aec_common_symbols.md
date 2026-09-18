@@ -17,22 +17,25 @@ Arrows point from an ontology to the ontologies it imports; the current ontology
 ```mermaid
 %%{init: {"themeCSS": ".base .nodeLabel,.base .nodeLabel p,.base text,.base tspan{fill:#9ecbff !important;color:#9ecbff !important}.current .nodeLabel,.current .nodeLabel p,.current text,.current tspan{fill:#16305f !important;color:#16305f !important}"} }%%
 graph BT
+    aec_provenance["Aec Provenance"]
     aec_drawing_metadata["Aec Drawing Metadata"]
     aec_common_symbols["Aec Common Symbols"]
     aec_domain_common["Aec Domain Common"]
     aec_facade_domain["Aec Facade Domain"]
+    aec_drawing_metadata --> aec_provenance
     aec_common_symbols --> aec_drawing_metadata
     aec_domain_common --> aec_common_symbols
     aec_domain_common --> aec_drawing_metadata
     aec_facade_domain --> aec_common_symbols
     aec_facade_domain --> aec_domain_common
     aec_facade_domain --> aec_drawing_metadata
+    click aec_provenance "../aec_provenance/" "Aec Provenance reference page"
     click aec_drawing_metadata "../aec_drawing_metadata/" "Aec Drawing Metadata reference page"
     click aec_common_symbols "../aec_common_symbols/" "Aec Common Symbols reference page"
     click aec_domain_common "../aec_domain_common/" "Aec Domain Common reference page"
     click aec_facade_domain "../aec_facade_domain/" "Aec Facade Domain reference page"
     classDef base fill:#16305f,stroke:#0e2247,stroke-width:2px,color:#9ecbff;
-    class aec_drawing_metadata,aec_domain_common,aec_facade_domain base;
+    class aec_provenance,aec_drawing_metadata,aec_domain_common,aec_facade_domain base;
     classDef current fill:#f58a1f,stroke:#16305f,stroke-width:3px,color:#16305f;
     class aec_common_symbols current;
 ```

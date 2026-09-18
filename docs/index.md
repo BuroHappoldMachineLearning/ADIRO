@@ -30,9 +30,19 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
 <div class="grid cards" markdown>
 
+-   ### [Aec Provenance](aec_provenance.html)
+
+    Foundational, domain-neutral vocabulary for representing an inferred/extracted assertion together with its provenance and confidence. It exists so that a value read off a drawing (a title-block field, a detected symbol, ...) can be modelled as a first-class assertion carrying: which region asserted it, what produced it, from where, when, and with what confidence - independently of the value itself. Imported by the drawing modules (e.g. aec_drawing_metadata); aligned to W3C PROV-O for interoperability.
+
+    Source: [`aec_provenance.ttl`](aec_provenance.ttl)
+
+    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_provenance.html){ .md-button target=_blank }
+
 -   ### [Aec Drawing Metadata](aec_drawing_metadata.html)
 
     Sheet/layout/document structure for AEC drawings.
+
+    *Imports: aec_provenance*
 
     Source: [`aec_drawing_metadata.ttl`](aec_drawing_metadata.ttl)
 

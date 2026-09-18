@@ -13,6 +13,7 @@
   Consumed via ROBOT's catalog option (robot merge ... catalog src/catalog-v001.xml).
 -->
 <catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+  <uri name="https://w3id.org/adiro/aec_provenance" uri="aec_provenance.ttl"/>
   <uri name="https://w3id.org/adiro/aec_drawing_metadata" uri="aec_drawing_metadata.ttl"/>
   <uri name="https://w3id.org/adiro/aec_common_symbols" uri="aec_common_symbols.ttl"/>
   <uri name="https://w3id.org/adiro/aec_domain_common" uri="aec_domain_common.ttl"/>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>AEC Drawing Metadata Ontology</title>
+    <title>Titleblock Field Scheme</title>
     <style>
         #pylode {
             position: fixed;
@@ -312,6 +312,22 @@ td {
         "@value": "Buro Happold"
       }
     ]
+  },
+  {
+    "@id": "https://w3id.org/adiro/aec_drawing_metadata#TitleblockFieldScheme",
+    "@type": [
+      "https://schema.org/DefinedTermSet"
+    ],
+    "https://schema.org/description": [
+      {
+        "@value": "The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to."
+      }
+    ],
+    "https://schema.org/name": [
+      {
+        "@value": "Titleblock Field Scheme"
+      }
+    ]
   }
 ]
 	</script>
@@ -319,7 +335,7 @@ td {
   <body>
     <div id="content">
       <div class="section" id="metadata">
-        <h1>AEC Drawing Metadata Ontology</h1>
+        <h1>AEC Drawing Metadata OntologyTitleblock Field Scheme</h1>
         <h2>Metadata</h2>
         <dl>
           <div>
@@ -327,14 +343,19 @@ td {
               <strong>IRI</strong>
             </dt>
             <dd>
-              <code>https://w3id.org/adiro/aec_drawing_metadata</code>
+              <code>https://w3id.org/adiro/aec_drawing_metadata#TitleblockFieldScheme</code>
             </dd>
           </div>
           <div>
             <dt>
               <a class="hover_property" href="http://purl.org/dc/terms/title" title="A name given to the resource. Defined in DCMI Metadata Terms">Title</a>
             </dt>
-            <dd><p>AEC Drawing Metadata Ontology</p></dd>
+            <dd>
+              <ul>
+                <li><p>AEC Drawing Metadata Ontology</p></li>
+                <li><p>Titleblock Field Scheme</p></li>
+              </ul>
+            </dd>
           </div>
           <div>
             <dt>
@@ -353,7 +374,7 @@ td {
               <a class="hover_property" href="http://purl.org/dc/terms/license" title="A legal document giving official permission to do something with the resource. Defined in DCMI Metadata Terms">License</a>
             </dt>
             <dd>
-              <a href="https://www.gnu.org/licenses/gpl-3.0.html">https://www.gnu.org/licenses/gpl-3.0.html</a>
+              <a href="#gpl-3.0.html">https://www.gnu.org/licenses/gpl-3.0.html</a>
             </dd>
           </div>
           <div>
@@ -374,7 +395,12 @@ td {
             <dt>
               <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
             </dt>
-            <dd><p>Sheet/layout/document structure for AEC drawings.</p></dd>
+            <dd>
+              <ul>
+                <li><p>Sheet/layout/document structure for AEC drawings.</p></li>
+                <li><p>The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to.</p></li>
+              </ul>
+            </dd>
           </div>
         </dl>
       </div>
@@ -1876,7 +1902,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="http://www.w3.org/2002/07/owl#Thing">Thing</a>
+                  <a href="#Thing">Thing</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -1887,7 +1913,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="http://www.w3.org/2002/07/owl#Thing">Thing</a>
+                  <a href="#Thing">Thing</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -1938,7 +1964,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="http://www.w3.org/2002/07/owl#Thing">Thing</a>
+                  <a href="#Thing">Thing</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -1949,7 +1975,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="http://www.w3.org/2002/07/owl#Thing">Thing</a>
+                  <a href="#Thing">Thing</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -1979,12 +2005,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#Section">Section</a>
+                  <a href="#Detail">Detail</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#Detail">Detail</a>
+                  <a href="#Section">Section</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -2615,7 +2641,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+                <a href="#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -2653,7 +2679,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+                <a href="#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -2691,7 +2717,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+                <a href="#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -2734,7 +2760,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+                <a href="#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -2772,7 +2798,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+                <a href="#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -2810,7 +2836,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+                <a href="#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -2848,7 +2874,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+                <a href="#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -2886,7 +2912,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+                <a href="#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -2924,7 +2950,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#date">xsd:date</a>
+                <a href="#date">xsd:date</a>
               </td>
             </tr>
           </table>
@@ -2962,7 +2988,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+                <a href="#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3000,7 +3026,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+                <a href="#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3038,7 +3064,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+                <a href="#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3076,7 +3102,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+                <a href="#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3114,7 +3140,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+                <a href="#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3152,7 +3178,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+                <a href="#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3190,7 +3216,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+                <a href="#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3239,7 +3265,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#boolean">xsd:boolean</a>
+                <a href="#boolean">xsd:boolean</a>
               </td>
             </tr>
           </table>
@@ -3266,7 +3292,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#boolean">xsd:boolean</a>
+                <a href="#boolean">xsd:boolean</a>
               </td>
             </tr>
           </table>
@@ -3293,7 +3319,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+                <a href="#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3306,13 +3332,13 @@ td {
           <dd>
             <code>https://w3id.org/adiro/aec_drawing_metadata#</code>
           </dd>
+          <dt id="aprov">aprov</dt>
+          <dd>
+            <code>https://w3id.org/adiro/aec_provenance#</code>
+          </dd>
           <dt id="dcterms">dcterms</dt>
           <dd>
             <code>http://purl.org/dc/terms/</code>
-          </dd>
-          <dt id="ns1">ns1</dt>
-          <dd>
-            <code>https://w3id.org/adiro/</code>
           </dd>
           <dt id="owl">owl</dt>
           <dd>
@@ -3607,10 +3633,10 @@ td {
               <a href="#"></a>
             </li>
             <li>
-              <a href="#dcterms">dcterms</a>
+              <a href="#aprov">aprov</a>
             </li>
             <li>
-              <a href="#ns1">ns1</a>
+              <a href="#dcterms">dcterms</a>
             </li>
             <li>
               <a href="#owl">owl</a>

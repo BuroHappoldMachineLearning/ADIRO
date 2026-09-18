@@ -22,6 +22,46 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-09-18 — New foundational module: aec_provenance (reified assertions + PROV-O provenance)
+
+**Issue:** [Discussion #72](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/72) (field-kind +
+assertion/provenance model); drives the ml-drawing-assistant epic
+[MLE-364](https://bhmlrnd.youtrack.cloud/issue/MLE-364). · **Branch:** `aec-provenance-model`
+
+### What changed
+- Added `src/aec_provenance.ttl` — a new **foundational, domain-neutral** module (v1.0.0) for representing an
+  inferred/extracted value as a first-class **`FieldAssertion`** carrying its own provenance: `assertedBy`
+  (which region asserted it), `hasInferenceMeta` → `InferenceMeta` (`inferredBy`/`inferredWith`/`inferredFrom`/
+  `inferredAt`), `hasConfidence` (decimal on the individual — no RDF-star), and `hasLiteralValue` /
+  `hasValueEntity` / `capturedCaption`. **PROV-O-aligned** (`prov:wasAttributedTo` / `wasDerivedFrom` /
+  `generatedAtTime` / `Agent`), with PROV-O terms declared locally (not `owl:imports`) so reasoning stays
+  offline. PROV-O suggested by Tianyang Huang.
+- Wired plumbing: `src/catalog-v001.xml` (IRI→file mapping, forward-looking for when the drawing modules import
+  it), `scripts/generate_docs.py` `dependency_order` (`aec_provenance: 0`, sorts first), `changelogs/
+  aec_provenance.md`, and the `CHANGELOG.md` rollup (also corrected `aec_drawing_metadata` 2.0.0→3.0.0 there).
+
+### Design decisions taken (ahead of team consensus, per the epic owner's go-ahead)
+- **Field-kind + reified assertion (Option 3)** over one generic `asserts` or many `assertsX` properties:
+  synonyms live on the field-kind concept, provenance is data (per-occurrence `assertedBy`) not schema.
+- **Two-module layering**: this generic module is separate from the (title-block-specific) field-kind scheme,
+  which will live in `aec_drawing_metadata` and `owl:imports` this. Not yet done — next increment.
+- Confidence on the **assertion individual** (DANO-style `hasConfidence`), not on a triple — sidesteps the
+  RDF-star/reification question left open in Discussion #62.
+
+### Verified
+- `uv run python scripts/validate_ontology.py src/aec_provenance.ttl` → **valid** (parse + version-consistency).
+- **Not yet run:** ROBOT/HermiT DL reasoning (`scripts/run_reasoning.sh`, needs Java) and
+  `scripts/generate_docs.py` (docs regen). Additive standalone module, nothing imports it yet, so the merged
+  suite is unchanged in practice — but both gates should run before PR.
+
+### Next step
+- Increment 2: add the SKOS `TitleblockFieldScheme` (field kinds with `@en`/`@de` labels/synonyms, generic
+  public examples, `skos:closeMatch` to DANO/DiCon) to `aec_drawing_metadata`, make it `owl:imports`
+  `aec_provenance`, add `owl:hasKey` on `Person`/`Organisation` (Discussion #73), keeping the shipped
+  `asserts*` properties in place (hybrid; deprecate later). Then run docs regen + reasoning before opening a PR.
+
+---
+
 ## 2026-09-17 — Design-decision docs rehomed; leftover links retargeted
 
 **Issue:** docs tidy-up (no new YouTrack ticket) · **Branch:** `main`
