@@ -1,0 +1,93 @@
+@prefix : <https://w3id.org/adiro/aec_dano_alignment#> .
+@base <https://w3id.org/adiro/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix aprov: <https://w3id.org/adiro/aec_provenance#> .
+@prefix dm: <https://w3id.org/adiro/aec_drawing_metadata#> .
+@prefix dano: <https://w3id.org/dano#> .
+
+#################################################################
+#    Ontology
+#################################################################
+
+<https://w3id.org/adiro/aec_dano_alignment> rdf:type owl:Ontology ;
+    rdfs:label "ADIRO - DAnO compatibility layer" ;
+    rdfs:comment "OPTIONAL compatibility layer mapping ADIRO terms to the Drawing Analysis Ontology (DAnO, https://w3id.org/dano). Nothing in the ADIRO core imports this module and no ADIRO core module mentions DAnO: the core stays free of any external vocabulary, and a consumer who wants the DAnO crosswalk loads this file explicitly. Every mapping here is annotation-level (skos:closeMatch) and carries no logical force - see the DAnO section below for why a sub-property alignment is not available for any of these terms. The shape follows GeoSPARQL, which ships a core file plus a separate alignments file so that consumers can pin the core alone - the very property ADIRO's own import rule relies on when it says to extract from a pinned core rather than a merged alignment graph. ADIRO ships that way for the same reason. DAnO takes the lighter route of declaring the GeoSPARQL terms it needs inside its own core file; either way neither ontology imports the other." ;
+    dcterms:title "ADIRO - DAnO compatibility layer" ;
+    dcterms:description "Optional, annotation-level crosswalk between ADIRO and DAnO. Not imported by any ADIRO core module." ;
+    dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
+    dcterms:creator "Buro Happold - Machine Learning R&D" ;
+    dcterms:publisher "Buro Happold" ;
+    rdfs:seeAlso <https://w3id.org/dano> ;
+    owl:imports <https://w3id.org/adiro/aec_provenance> ,
+                <https://w3id.org/adiro/aec_drawing_metadata> ;
+    owl:versionIRI <https://w3id.org/adiro/aec_dano_alignment/1.0.0> ;
+    owl:versionInfo "1.0.0" .
+
+#################################################################
+#    About DAnO, and why every mapping below is annotation-level
+#
+#    DAnO (Drawing Analysis Ontology, https://w3id.org/dano, CC BY 4.0, RUB
+#    Informatik im Bauwesen) covers adjacent ground: a DrawingElementMeta object
+#    carrying inferredAt / inferredBy / inferredFrom / inferredWith, plus
+#    hasConfidence on the drawing element, and a depicts / isDepictedBy pair.
+#
+#    ADIRO supersedes those terms rather than reusing them, and asserts NO
+#    rdfs:subPropertyOf alignment to any of them, for three separate reasons:
+#
+#      - inferredBy / inferredWith / inferredFrom: DAnO's are DATATYPE
+#        properties holding strings; ADIRO's are OBJECT properties pointing at
+#        entities. A sub-property axiom across that boundary is ill-typed and
+#        outside OWL 2 DL, so the blocking reasoning gate rejects it outright.
+#
+#      - inferredAt: DAnO's range is xsd:date; ADIRO's is xsd:dateTime. The two
+#        datatypes are disjoint, so an inherited range would make every
+#        timestamp ADIRO records inconsistent.
+#
+#      - hasConfidence and depicts: DAnO asserts rdfs:domain dano:DrawingElement
+#        and rdfs:domain dano:DisplayElement respectively. In OWL a domain is an
+#        inference rule, not a constraint, so a sub-property axiom would entail
+#        that every ADIRO FieldAssertion is a drawing element, and that anything
+#        using depicts is a DAnO DisplayElement - wrong for a class that also
+#        covers dimensions and grids, which are DescriptionElements in DAnO's
+#        own scheme.
+#
+#    Only the first of those fails locally. The other two stay silent while the
+#    external terms are undeclared, and surface for a consumer who merges this
+#    graph with DAnO itself - precisely the audience an external IRI serves.
+#    The DAnO terms are therefore NOT declared here either: they appear only as
+#    annotation values, so nothing about them enters any ADIRO signature.
+#
+#    Full comparison, per-term verdicts and evidence:
+#    https://burohappoldmachinelearning.github.io/ADIRO/design-decisions/dano-comparison/
+#################################################################
+
+#################################################################
+#    Provenance and confidence
+#################################################################
+
+aprov:InferenceMeta skos:closeMatch dano:DrawingElementMeta .
+
+aprov:inferredBy skos:closeMatch dano:inferredBy .
+
+aprov:inferredWith skos:closeMatch dano:inferredWith .
+
+aprov:inferredFrom skos:closeMatch dano:inferredFrom .
+
+aprov:inferredAt skos:closeMatch dano:inferredAt .
+
+aprov:hasConfidence skos:closeMatch dano:hasConfidence .
+
+#################################################################
+#    Depiction
+#
+#    dano:isDepictedBy is deliberately not mapped: ADIRO has not minted an
+#    inverse yet, and the name is UC-06's call (its ORSD proposes
+#    isDepictedOn). Add the mapping when that term exists.
+#################################################################
+
+dm:depicts skos:closeMatch dano:depicts .

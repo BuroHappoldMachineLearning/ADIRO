@@ -23,6 +23,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
   `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut.
 
+### Notes
+- This module deliberately mentions **no** external vocabulary other than PROV-O, which it aligns to
+  directly. The crosswalk to DAnO's equivalent provenance terms lives in the optional
+  `aec_dano_alignment` module - see [DAnO comparison](../docs/design-decisions/dano-comparison.md)
+  for why those mappings are annotation-level only.
+
 ## [1.0.0]
 
 Initial in-repo baseline (not yet cut as a GitHub release). No earlier released version to diff against.

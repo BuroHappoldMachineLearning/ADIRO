@@ -18,4 +18,5 @@
   <uri name="https://w3id.org/adiro/aec_common_symbols" uri="aec_common_symbols.ttl"/>
   <uri name="https://w3id.org/adiro/aec_domain_common" uri="aec_domain_common.ttl"/>
   <uri name="https://w3id.org/adiro/aec_facade_domain" uri="aec_facade_domain.ttl"/>
+  <uri name="https://w3id.org/adiro/aec_dano_alignment" uri="aec_dano_alignment.ttl"/>
 </catalog>
