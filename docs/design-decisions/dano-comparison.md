@@ -176,7 +176,8 @@ IRIs are **not declared anywhere in ADIRO** - they appear only as annotation val
 ## 8. Open: `aec_common_symbols`, and what this strategy does and does not constrain
 
 `aec_common_symbols` is the one module where ADIRO and DAnO compete, and it is next in line for work. Nothing
-on this page decides it. What follows is the decision procedure it inherits.
+on this page decides it; the decision is tracked in [#79](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/79). What follows is the procedure it
+inherits.
 
 **When may a core module reference an external vocabulary directly?** The test is not "external or not" -
 `aec_provenance` references PROV-O in the core and should. The test is:
@@ -215,7 +216,8 @@ design unaided - and if it is, to adopt the *shape* and mint the terms, which is
 twice with DAnO (see §9).
 
 One hygiene point the compatibility layer introduces: a mapping whose ADIRO-side subject is later renamed
-becomes a dangling annotation that no reasoner will flag. That wants a cheap staleness check.
+becomes a dangling annotation that no reasoner will flag, because annotations carry no logical force. A cheap
+staleness check is tracked in [#81](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/81).
 
 ## 9. What DAnO contributed anyway
 
@@ -243,9 +245,9 @@ This is the pattern worth keeping: **adopt the shape, mint the terms, map the na
 | `dano:hasConfidence` | Superseded by `aprov:hasConfidence`; `skos:closeMatch` | Domain leakage; ADIRO's is per-assertion |
 | `dano:DrawingElementMeta` | Superseded by `aprov:InferenceMeta`; `skos:closeMatch` | Same pattern, PROV-aligned |
 | `dano:depicts` | ADIRO mints `metadata:depicts`; `skos:closeMatch` | Domain `dano:DisplayElement` is wrong for a class that also covers dimensions and grids |
-| `dano:isDepictedBy` | Not minted yet | Inverse naming is UC-06's call (`isDepictedOn`) |
-| `dano:Dimension`, `DimensionChain`, `DimensionLine`, `AxisLine`, `Terminator`, `SectionSymbol` | **Open** | `aec_common_symbols` / UC-03 / UC-07 - see §8 |
-| `dano:DisplayElement` vs `DescriptionElement` | **Open** | The split may be worth minting as ADIRO's own; ADIRO's `DrawingElement` currently spans both |
+| `dano:isDepictedBy` | Not minted yet | Inverse naming is UC-06's call (`isDepictedOn`) - [#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80) |
+| `dano:Dimension`, `DimensionChain`, `DimensionLine`, `AxisLine`, `Terminator`, `SectionSymbol` | **Open** | `aec_common_symbols` / UC-03 / UC-07 - see §8 and [#79](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/79) |
+| `dano:DisplayElement` vs `DescriptionElement` | **Open** | The split may be worth minting as ADIRO's own; ADIRO's `DrawingElement` currently spans both - [#83](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/83) |
 | `dano:hasGeometry`, `defaultGeometry` | Deferred | Gated on the GeoSPARQL decision, [#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36) |
 | `dano:hasIfcRepresentation` | Not assessed | Possible cheap alternative to IFC alignment axioms |
 
