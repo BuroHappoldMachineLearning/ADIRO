@@ -119,6 +119,12 @@ vocabulary DAnO has no counterpart for:
 - Document structure, parties, revisions, projects and discipline taxonomies, so an extracted value can be
   placed in a real engineering context.
 
+And one characteristic that is not vocabulary at all but shapes every modelling choice: **ADIRO individuals
+are detections, not idealised drawing constructs.** ADIRO targets historical drawings as well as modern ones,
+and a scanned historical sheet is routinely cut at the edge, torn, faded or partially legible. What ADIRO
+records is what a detector actually found, with confidence and with gaps. DAnO describes drawings as they are
+meant to be. That difference has teeth - see §8.
+
 DAnO describes what is on a drawing. ADIRO describes what a drawing *means*, and how a model is trained,
 evaluated and held accountable for extracting it. That is a difference in purpose, not a score.
 
@@ -206,6 +212,30 @@ it carries no logical force and consumers opt in.*
   needs it imports it explicitly. Adding one would not contradict this page; it would need its own decision
   under the same test above.
 
+**A further argument for minting, specific to ADIRO's data.** `dano:Dimension` is not just a label, it is a
+composite definition with **exact qualified cardinalities**:
+
+```turtle
+dano:Dimension ⊑ dano:Composite
+  ⊓ =1 contains.DimensionLine
+  ⊓ =2 contains.Terminator
+  ⊓ =1 contains.TextElement
+```
+
+On a clipped, torn or partially legible historical sheet - ADIRO's routine input - a detected dimension may be
+missing a terminator, its text, or the line itself. Under OWL's open-world assumption those axioms do **not**
+reject such a dimension. They **infer the missing parts into existence**. Ask a reasoner afterwards which
+dimensions are incomplete and it answers "none", having already supplied what the detector never saw.
+
+That directly undermines a competency question ADIRO already holds: **CQ 2.1** asks whether an extracted graph
+*lacks any mandatory functional sub-components required to form a semantically complete assembly*. Adopting an
+exact-cardinality axiom makes missing sub-components unfindable by reasoning. Completeness is a **validation**
+question - a SHACL shape over a finished extraction, under closed-world semantics - not an entailment over
+detections. Tracked in [#84](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/84), with a worked note in UC-07 §7.5.
+
+The axioms would not fail the reasoning gate. They would quietly give wrong answers, which is worse, and it is
+the same failure mode as the domain leakage in §7: an adopted axiom that entails something ADIRO does not mean.
+
 **What it rules out:** declaring DAnO IRIs inside a core module and building axioms on them (move A for DAnO),
 because DAnO fails the first two conditions of the test.
 
@@ -246,7 +276,7 @@ This is the pattern worth keeping: **adopt the shape, mint the terms, map the na
 | `dano:DrawingElementMeta` | Superseded by `aprov:InferenceMeta`; `skos:closeMatch` | Same pattern, PROV-aligned |
 | `dano:depicts` | ADIRO mints `metadata:depicts`; `skos:closeMatch` | Domain `dano:DisplayElement` is wrong for a class that also covers dimensions and grids |
 | `dano:isDepictedBy` | Not minted yet | Inverse naming is UC-06's call (`isDepictedOn`) - [#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80) |
-| `dano:Dimension`, `DimensionChain`, `DimensionLine`, `AxisLine`, `Terminator`, `SectionSymbol` | **Open** | `aec_common_symbols` / UC-03 / UC-07 - see §8 and [#79](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/79) |
+| `dano:Dimension`, `DimensionChain`, `DimensionLine`, `AxisLine`, `Terminator`, `SectionSymbol` | **Open**, but reuse of the IRIs is disfavoured | `aec_common_symbols` / UC-03 / UC-07 - see §8, [#79](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/79). `dano:Dimension`'s exact cardinalities would infer undetected parts into existence on clipped drawings - [#84](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/84) |
 | `dano:DisplayElement` vs `DescriptionElement` | **Open** | The split may be worth minting as ADIRO's own; ADIRO's `DrawingElement` currently spans both - [#83](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/83) |
 | `dano:hasGeometry`, `defaultGeometry` | Deferred | Gated on the GeoSPARQL decision, [#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36) |
 | `dano:hasIfcRepresentation` | Not assessed | Possible cheap alternative to IFC alignment axioms |
