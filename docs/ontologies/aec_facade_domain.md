@@ -22,6 +22,7 @@ graph BT
     aec_common_symbols["Aec Common Symbols"]
     aec_domain_common["Aec Domain Common"]
     aec_facade_domain["Aec Facade Domain"]
+    aec_dano_alignment["Aec Dano Alignment"]
     aec_drawing_metadata --> aec_provenance
     aec_common_symbols --> aec_drawing_metadata
     aec_domain_common --> aec_common_symbols
@@ -29,13 +30,16 @@ graph BT
     aec_facade_domain --> aec_common_symbols
     aec_facade_domain --> aec_domain_common
     aec_facade_domain --> aec_drawing_metadata
+    aec_dano_alignment --> aec_drawing_metadata
+    aec_dano_alignment --> aec_provenance
     click aec_provenance "../aec_provenance/" "Aec Provenance reference page"
     click aec_drawing_metadata "../aec_drawing_metadata/" "Aec Drawing Metadata reference page"
     click aec_common_symbols "../aec_common_symbols/" "Aec Common Symbols reference page"
     click aec_domain_common "../aec_domain_common/" "Aec Domain Common reference page"
     click aec_facade_domain "../aec_facade_domain/" "Aec Facade Domain reference page"
+    click aec_dano_alignment "../aec_dano_alignment/" "Aec Dano Alignment reference page"
     classDef base fill:#16305f,stroke:#0e2247,stroke-width:2px,color:#9ecbff;
-    class aec_provenance,aec_drawing_metadata,aec_common_symbols,aec_domain_common base;
+    class aec_provenance,aec_drawing_metadata,aec_common_symbols,aec_domain_common,aec_dano_alignment base;
     classDef current fill:#f58a1f,stroke:#16305f,stroke-width:3px,color:#16305f;
     class aec_facade_domain current;
 ```
