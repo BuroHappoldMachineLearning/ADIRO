@@ -22,6 +22,95 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-09-18 — External-import strategy clarified, ported to GitHub, and made normative in the repo
+
+**Issue:** [RES-68](https://bhmlrnd.youtrack.cloud/issue/RES-68) / [RES-59](https://bhmlrnd.youtrack.cloud/issue/RES-59) · **Branch:** `docs/external-import-strategy`
+
+### Why
+
+Discussion [#71](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/71) ("External import strategy
+discussion (MIREOT vs SLME)") read as if the MIREOT-vs-SLME question were still open. It is not — it was decided
+on 2026-08-03 in KB RES-A-12 and has been normative in `docs/contribute/versioning/` since. #71 is in fact the
+**review deliverable for RES-59**, answering the four open questions that the decision deliberately left open;
+Zaalouk resolved RES-59 on 2026-09-17 pointing at Discussions #70 and #71. The title caused the confusion.
+
+### What changed
+
+**Off-repo (done first, because the repo docs cite them):**
+
+- **KB RES-A-12 ported to [Discussion #74](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/74)**
+  and closed as *resolved* (it records a decision, not an open question). Per MAN-8, GitHub is the source of
+  truth for ADIRO decisions; the note contained no client/project/security-classification detail, so it could be
+  published as-is. The ported version is **more current than the original**: decision marked ratified, the four
+  open questions answered, the `BOT`/`STAR` correction folded in, and a third option added (below).
+- **RES-A-12 frozen** in YouTrack with a pointer stub, matching the RES-A-9/21/22/23 precedent. *The YouTrack MCP
+  exposes no delete operation, so the article is frozen rather than deleted* — flag if actual deletion is wanted.
+- **Clarifying comment posted on #71** covering the three corrections below.
+- **[#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77) opened** — DAnO import-vs-align.
+- **RES-68 unblocked**: `Backlog` → `Open`, description rewritten with the ratified rule and the cleared blockers.
+
+**In-repo:**
+
+- **New `docs/design-decisions/external-ontology-imports.md`** — the short normative rule, pointing at #74 for the
+  reasoning. No `.pages` file in that folder, so awesome-pages picks it up automatically.
+- **`docs/contribute/versioning/index.md`** §Imports and **`versioning-vs-odk.md`** retargeted off the now-frozen
+  RES-A-12 and onto the new page + #74, and updated to name the stub-alignment option.
+- **`versioning-vs-odk.md` §Import handling reassessed from "Par." to a deliberate divergence.** Adding
+  stub-alignment as the *preferred* option moves us off ODK's norm, which treats an SLME extract as the normal
+  reuse path and discourages definition-less terms. The row now says so, and names the cost, rather than
+  claiming parity — the earlier "Par." predated the third option and would have hidden the amendment.
+
+### Substantive corrections made to #71
+
+1. **`BOT`/`STAR` were inverted.** #71 recommended `BOT` to avoid pulling BFO/PROV/CCO in behind a GeoSPARQL term.
+   Per the ROBOT docs, `BOT` is the method that includes the seed's *super-classes*; `STAR` is the minimal one
+   that does not. `STAR` is the mitigation, `BOT` is the risk. The `STAR` default therefore stands unchanged.
+2. **SLME is not non-deterministic.** It is deterministic for a fixed input; the variable is *which graph you feed
+   it*. Verified that **GeoSPARQL core (v1.1.1) has no `owl:imports` and none of the BFO/PROV/CCO/`locn:`/`schema:`
+   alignment axioms** — those sit in a separate, non-imported file. The whole re-homing hazard in #71 §4 is
+   conditional on merging a file we have no reason to merge. Encoded as "pin the core file, not a merged graph".
+   Nuance retained: upward `subClassOf`/`subPropertyOf` alignments are ⊤-local and dropped by `STAR`, but
+   `owl:equivalentClass` alignments are neither ⊥- nor ⊤-local and *would* survive `STAR`.
+3. **MIREOT cannot fix a domain mismatch.** Its third URI asserts a local *superclass* only. The DAnO cases are
+   therefore mint-and-align cases, not MIREOT cases.
+
+### New: a third option that the original MIREOT-vs-SLME framing missed
+
+The WIP `aec_provenance` module (branch `aec-provenance-model`) already uses **local typing stubs +
+`rdfs:isDefinedBy`, with no `owl:imports` and no extraction**, so the module stays self-contained and the
+reasoning CI resolves offline via `catalog-v001.xml`. This is the same conclusion the title-block review reached
+independently for DAnO — *"align to `dano:`, do not import it"*. Added to #74 and the new docs page as **option 1**,
+ahead of SLME and MIREOT.
+
+### Verified
+
+- `dano.ttl` fetched directly: `hasConfidence rdfs:domain dano:DrawingElement` (while `DrawingElementMeta`'s
+  comment claims confidence) and `depicts rdfs:domain dano:DisplayElement` with no range — both #71 claims hold.
+  This also closes the stated method caveat in `titleblock-vocabulary-review.md`, which read DAnO from its
+  generated specification rather than its raw TTL.
+- GeoSPARQL core fetched from `http://www.opengis.net/ont/geosparql` and checked for `owl:imports` and
+  alignment terms — none present.
+- `BOT`/`TOP`/`STAR` semantics taken from the ROBOT `extract` documentation, not from memory.
+
+**Not run:** no `.ttl` changed, so `validate_ontology.py`, `generate_docs.py` and the reasoning gate were not
+exercised. This is a docs-only change. The `aec_provenance` WIP on the other branch was **read but not touched**.
+
+### Deferred / rejected
+
+- **DATA-A-10 not ported.** It is an ABox-versioning proposal covering DVC, CVAT schemas and project datasets —
+  private-pipeline material, and partly superseded by RES-27. Note that `AGENTS.md` cites it as the versioning
+  "rationale", which is a questionable citation now; left alone as out of scope.
+- **RES-A-13 / RES-A-17 / DATA-A-9 not ported.** Pipeline- and CVAT-internal; DATA-A-9 specifically documents how
+  the private ml-pipeline parses ADIRO, which `AGENTS.md` keeps internal by design.
+- Did **not** edit `docs/design-decisions/index.md` to list the new page — awesome-pages generates that nav.
+
+### Next step
+
+1. Merge this branch (docs-only).
+2. Settle [#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77): does `aec_provenance` supersede
+   DAnO's provenance terms outright, reducing the DAnO question to `depicts`/`isDepictedBy` only?
+3. RES-68 is now unblocked but has no external term to import yet — it stays `Open` until #77 lands or GeoSPARQL
+   is un-deferred ([#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36)).
 ## 2026-09-18 — New foundational module: aec_provenance (reified assertions + PROV-O provenance)
 
 **Issue:** [Discussion #72](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/72) (field-kind +
