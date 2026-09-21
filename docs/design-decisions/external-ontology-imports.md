@@ -96,9 +96,23 @@ the worked example: seven `skos:closeMatch` mappings, no logical force, and no D
 core. This keeps core release cycles independent of an unreleased third-party vocabulary and lets a mapping be
 deprecated wholesale without touching a core module.
 
-It also keeps ADIRO consistent with its own advice. The rule above tells others to extract from a **pinned core
-file, not a merged alignment graph** — advice that only works when vocabularies ship the two separately, as
-GeoSPARQL does. ADIRO ships that way for the same reason.
+The load-bearing reason is **lifecycle**. A core module should not take version churn from a third-party
+vocabulary, least of all an unreleased one: with the mappings inline, a rename in DAnO would mean cutting a new
+`aec_provenance` — a module downstream consumers pin — for a reason that has nothing to do with its content.
+The second reason is **scale**: crosswalks to DiCon, ifcOWL, BOT and GeoSPARQL would otherwise accumulate inside
+two core modules.
+
+!!! note "What is *not* a reason"
+    Annotation-only mappings pose no hazard to an SLME extractor: locality is defined over logical axioms, and
+    `skos:closeMatch` is not one. Inlining them would **not** have created the merged-alignment-graph problem
+    this page warns about, and it is worth not overstating the case. What the separation does buy on that front
+    is future-proofing: it makes it safe to add a *logical* alignment later — to a source that passes the test
+    above — without contaminating the core for anyone extracting from it.
+
+The separation has one cost worth naming: a mapping whose ADIRO-side term is later renamed becomes a dangling
+annotation that no reasoner will flag, precisely because it carries no logical force. Inline mappings would
+have been renamed alongside their subject. That trade is accepted deliberately, and wants a cheap staleness
+check.
 
 A compatibility layer is **not** a substitute for options 2 and 3. If a future module genuinely needs to reason
 with an external vocabulary's axioms, a pinned SLME extract remains available and is a different artefact,

@@ -274,9 +274,13 @@ That is ADIRO's option 1, move A, arrived at independently by another group - ex
 import rule, and a reason to read ADIRO's treatment of DAnO as the same courtesy rather than a criticism.
 
 ADIRO goes one step further by putting its crosswalk in a *separate* file, the shape GeoSPARQL itself uses
-(core plus `alignments.ttl`). That is not fastidiousness: ADIRO's own import rule tells others to extract from
-a **pinned core file, not a merged alignment graph**, and that advice only works if vocabularies ship the two
-separately. Shipping alignments inside the core would have meant advising a discipline ADIRO did not practise.
+(core plus `alignments.ttl`). The reason is lifecycle rather than logic: an unreleased third-party vocabulary
+should not be able to force a version bump on a core module that downstream consumers pin, and crosswalks to
+DiCon, ifcOWL, BOT and GeoSPARQL would otherwise pile up inside two core files. It is worth being precise that
+annotation-only mappings would **not** have endangered an SLME extraction if left inline — locality is defined
+over logical axioms and `skos:closeMatch` is not one — so this is not the merged-alignment-graph hazard the
+import rule warns about. The separation does make it safe to add a *logical* alignment later without
+contaminating the core for extractors.
 
 It also retires an argument made earlier in ADIRO's own review, that importing DAnO would *"drag its 16
 drawing-element classes"* into the suite. True as far as it goes, but DAnO imports nothing, so bloat was never
