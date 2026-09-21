@@ -22,6 +22,88 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-09-21 — DAnO settled: no import, an optional compatibility layer, and `metadata:depicts`
+
+**Issue:** [#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77) (mirrored to
+[RES-110](https://bhmlrnd.youtrack.cloud/issue/RES-110)) · **PR:** #76 · **Branch:** `aec-provenance-model`
+
+### Why
+
+The published external-import rule listed DAnO as undecided, and
+`docs/design-decisions/titleblock-vocabulary-review.md` recommended **aligning** ADIRO's provenance properties
+to `dano:`. Meanwhile `aec_provenance` on this branch had **minted parallel terms** — the opposite. A published
+page and a module in flight disagreed, and the review that made the recommendation had read DAnO from its
+generated specification, explicitly flagging that domains and ranges needed confirming first.
+
+### What changed
+
+- **Verified against the raw `dano.ttl`** (fetched from `https://w3id.org/dano`, HTTP 200). The recommendation
+  does not survive: no `rdfs:subPropertyOf` alignment to any DAnO provenance term is available. DAnO's
+  `inferred*` are **datatype** properties while ADIRO's are **object** properties (ill-typed, non-DL, the gate
+  rejects it); `dano:inferredAt` ranges over `xsd:date`, disjoint from ADIRO's `xsd:dateTime` (inconsistency);
+  `dano:hasConfidence` carries `rdfs:domain dano:DrawingElement` (would entail every `FieldAssertion` is a
+  drawing mark). Only the first fails locally — the other two are silent behind an undeclared stub and surface
+  for anyone merging ADIRO with DAnO, which is the audience an external IRI serves.
+- **New `src/aec_dano_alignment.ttl`** — an optional compatibility layer, seven `skos:closeMatch` mappings,
+  imports the core, **nothing imports it**. No ADIRO core module mentions DAnO. Reason is lifecycle and scale,
+  not logic (see the correction below).
+- **Minted `metadata:depicts`** — resolves ORSD open issue **OI-1** / CQ 5.2. No asserted domain or range: UC-03
+  places the subject on a reference symbol, UC-06 on a whole drawing, so a narrower domain would entail those
+  subjects are of a type they are not. Inverse deferred to UC-06's naming (#80).
+- **New `docs/design-decisions/dano-comparison.md`** — per-term verdicts plus the reasoning, stated **per ADIRO
+  module** rather than in the aggregate.
+- **Corrected `external-ontology-imports.md`**: split option 1 into 1A (reuse the external IRI as a stub) and
+  1B (mint our own and relate); fixed advice that re-imposed the problem it described (the MIREOT section told
+  readers to escape a too-narrow domain with `rdfs:subPropertyOf`, which inherits that very domain); added the
+  test for when a core module may reference an external vocabulary at all.
+- **Corrected `titleblock-vocabulary-review.md`** — superseded-in-part banner and the three places its
+  recommendation is reversed.
+- **ORSD edited in place** (NFR 2, NFR 3, CQ 5.2) and **UC-07 gains §7.5**.
+
+### Decisions taken
+
+- **Mint, do not align.** Every DAnO mapping is annotation-level; the DAnO IRIs are declared nowhere in ADIRO
+  and appear only as annotation values.
+- **Crosswalks live in an optional layer, not the core.** Because an unreleased third-party vocabulary should
+  not force a version bump on a module downstream consumers pin, and because crosswalks to DiCon, ifcOWL, BOT
+  and GeoSPARQL would otherwise accumulate in two core files.
+- **ADIRO individuals are detections, not idealised drawing constructs** (#84). `dano:Dimension`'s exact
+  cardinalities would infer undetected parts into existence on clipped historical sheets, making CQ 2.1
+  unanswerable. Completeness belongs in SHACL over a finished extraction, not in OWL over detections.
+
+### Corrected mid-flight (recorded because the wrong version was briefly committed)
+
+- **Two claims were overstated and then fixed.** The compatibility layer was justified partly by ADIRO's own
+  "pin the core, not a merged alignment graph" advice. That does not hold for annotation-only mappings: SLME
+  locality is defined over logical axioms and `skos:closeMatch` is not one, so inlining them would have
+  endangered nobody. The honest reasons are lifecycle and scale. Separately, the layer was described as
+  matching "the shape DAnO uses for GeoSPARQL" — DAnO *inlines* its GeoSPARQL stubs; GeoSPARQL is the one
+  shipping core plus alignments.
+- **An earlier framing of ADIRO and DAnO as occupying "different layers" was wrong for the suite.** It holds
+  for the title-block vocabulary it was written about. `aec_common_symbols` sits squarely in DAnO's layer and
+  is currently the **thinner** of the two (3 classes against 8). The comparison page says so.
+
+### Verified
+
+- `uv run python scripts/validate_ontology.py` — **all 6 modules valid**.
+- `ENFORCE=1 bash scripts/run_reasoning.sh` — HermiT **consistent + satisfiable, exit 0**; ROBOT `report`
+  **ERROR 0**, WARN 242, INFO 23. Identical to the pre-change run but for one new `missing_definition` row on
+  `:depicts` (the repo-wide advisory). **No report row mentions `skos:closeMatch` or any `dano:` IRI** — the
+  undeclared external IRIs are absorbed as annotation values exactly as intended.
+- `uv run mkdocs build --strict` — passes, so every new cross-reference resolves.
+- `uv run python scripts/generate_docs.py` — run; regenerated artefacts committed separately.
+
+### Next step
+
+Issues filed for everything deliberately not solved here: **#79** (does `aec_common_symbols` adopt a
+drawing-mark decomposition, for UC-03/UC-07), **#80** (`depicts` inverse + UC-06 domain reconciliation),
+**#81** (staleness check for compatibility-layer mappings — a hazard the separation introduces), **#82**
+(ORSD v1.2 reuse-justification section), **#83** (DisplayElement/DescriptionElement split), **#84**
+(detections-not-drawings). [RES-68](https://bhmlrnd.youtrack.cloud/issue/RES-68) needs a note that its
+SLME-extraction premise does not apply to DAnO.
+
+---
+
 ## 2026-09-18 — External-import strategy clarified, ported to GitHub, and made normative in the repo
 
 **Issue:** [RES-68](https://bhmlrnd.youtrack.cloud/issue/RES-68) / [RES-59](https://bhmlrnd.youtrack.cloud/issue/RES-59) · **Branch:** `docs/external-import-strategy`
