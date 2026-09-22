@@ -11,6 +11,14 @@ _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumpe
 - **Title-block field-kind vocabulary (`TitleblockFieldScheme`, SKOS)** ([Discussion #72](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/72)). ~15 field kinds (Client, Originator, Drawing Title, Drawing Number, Cross-Reference Number, Scale, Drawn By, Checked By, Approved By, Revision Code, Issue Date, Discipline, Project Title, Drawing Package, Status), each carrying per-language (`@en`/`@de`) `skos:prefLabel`/`skos:altLabel` synonyms, generic **public** `skos:example` values where useful, `aprov:expectedRange` (expected value type) and `aprov:mapsToFieldProperty` (the shipped property a validated assertion promotes to). **Membership in the scheme is the extraction profile** — the set an extraction pipeline looks for. Additive: the shipped `asserts*`/`has*` properties are unchanged (hybrid bridge).
 - **`owl:imports <https://w3id.org/adiro/aec_provenance>`** — the new foundational assertion/provenance module, so an extracted title-block value can be modelled as a provenance- and confidence-bearing `FieldAssertion` bound to one of these field kinds.
 
+### Changed
+- **`isCVATProperty` definition de-branded** — its `rdfs:comment` named a specific internal, closed-source
+  annotation tool and described that tool's UI. ADIRO is a public ontology served from `w3id.org`, so the
+  definition now states the behaviour generically: a presentation hint for downstream annotation tooling.
+  The **property name still carries the tool name**; renaming a published term is breaking and has a live
+  downstream consumer, so it is tracked in
+  [#89](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/89). Annotation-only change, non-breaking.
+
 ### Removed (BREAKING)
 - **`isRevisionOf`** — the declared inverse of `hasRevision`, together with the `owl:inverseOf` axiom on
   `hasRevision`. [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21) decided project-wide that ADIRO declares no named inverse properties and no

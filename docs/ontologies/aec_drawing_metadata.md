@@ -591,7 +591,7 @@ Free-text guidance for an information-extraction model on where and how a field 
 
 ### isCVATProperty {#isCVATProperty}
 
-When true, the label is displayed on the right side of the CVAT annotation panel instead of the default left side.
+Presentation hint for downstream annotation tooling: when true, the label should be displayed on the trailing side of the tool's label panel rather than the default leading side. Carries no reasoning weight. The property name still carries a tool name and is due to be renamed - see GitHub issue #89.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isCVATProperty`
 - **Range:** `xsd:boolean`
