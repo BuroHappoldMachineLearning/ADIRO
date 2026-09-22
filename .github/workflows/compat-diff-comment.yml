@@ -1,10 +1,17 @@
 name: Compat-diff PR comment
 
-# RES-67. On a PR that changes an ontology (`src/**.ttl`), upsert a single sticky
+# RES-67. On a PR that changes an ontology (`src/**.ttl`), maintain a single sticky
 # comment with (1) the changes this PR makes (diffed against the base branch) and
 # (2) the prospective next version (cumulative — each module's `src/` vs its last
 # released snapshot). Report-only; the required-bump *gate* lives in
 # validate-ontology.yml (warn mode). Keep both in sync if the script CLI changes.
+#
+# Comment placement: when the report CHANGES, the old comment is deleted and a new
+# one posted, so it lands at the bottom of the thread with a current timestamp - an
+# in-place edit leaves it stranded at its original position, where on a long PR it
+# reads as stale even when it is not. When the report is UNCHANGED the comment is
+# edited in place instead, refreshing only its footer: that keeps the thread quiet
+# and avoids notifying every subscriber on a push that changed nothing.
 #
 # Triggers only on `src/**.ttl` changes — NOT on classifier/script edits — so a
 # PR that doesn't touch an ontology never gets a (confusing) version comment.
@@ -17,6 +24,7 @@ on:
 
 permissions:
   contents: read
+  issues: write          # deleting/creating the sticky comment goes via the issues API
   pull-requests: write
 
 concurrency:
@@ -58,7 +66,7 @@ jobs:
       - name: Compute comment (this-PR changes + prospective versions)
         run: uv run --python 3.12 --no-project python scripts/compat_diff.py --markdown --base-dir .tools/base-src > compat-diff.md
 
-      - name: Upsert sticky PR comment
+      - name: Post or refresh the sticky PR comment
         # Fork PRs get a read-only token (comment API 403s), so only post for
         # same-repo PRs; the computation above still runs either way.
         if: github.event.pull_request.head.repo.full_name == github.repository
@@ -67,15 +75,35 @@ jobs:
           script: |
             const fs = require('fs');
             const marker = '<!-- compat-diff-report -->';
-            const body = marker + '\n' + fs.readFileSync('compat-diff.md', 'utf8');
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
+
+            const report = marker + '\n' + fs.readFileSync('compat-diff.md', 'utf8').trimEnd();
+
+            // Footer carries the head SHA and the time, so a reader can tell the
+            // report is current whichever branch below was taken.
+            const head = context.payload.pull_request.head.sha.substring(0, 7);
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            const stamp = new Date().toISOString().replace('T', ' ').substring(0, 16);
+            const footer = '\n\n<sub>Recomputed for `' + head + '` at ' + stamp + ' UTC — [workflow run](' + runUrl + ')</sub>';
+            const body = report + footer;
+
             const comments = await github.paginate(github.rest.issues.listComments, {
               owner, repo, issue_number, per_page: 100,
             });
             const existing = comments.find(c => c.body && c.body.includes(marker));
-            if (existing) {
-              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
-            } else {
+
+            // Compare the report only - the footer changes on every run by design.
+            const stripFooter = (s) => s.split('<sub>Recomputed for')[0].trimEnd();
+
+            if (!existing) {
               await github.rest.issues.createComment({ owner, repo, issue_number, body });
+              core.info('Posted the first version-impact comment.');
+            } else if (stripFooter(existing.body) === stripFooter(body)) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+              core.info('Version impact unchanged - refreshed the footer in place, no notification.');
+            } else {
+              await github.rest.issues.deleteComment({ owner, repo, comment_id: existing.id });
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+              core.info('Version impact changed - reposted at the bottom of the thread.');
             }
