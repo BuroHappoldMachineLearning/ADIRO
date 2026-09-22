@@ -67,8 +67,10 @@ case. It is an **option 1B** case: mint an ADIRO property and relate it.
 !!! warning "And relate it with an *annotation*, not `rdfs:subPropertyOf`"
     When the objection to an external term is its **domain or range**, `rdfs:subPropertyOf` does not escape the
     problem — it re-imposes it. A sub-property inherits its parent's domain and range, so
-    `:depicts rdfs:subPropertyOf dano:depicts` would entail that every subject of `:depicts` is a
-    `dano:DisplayElement`, which is precisely what minting our own term was meant to avoid. Remember that in OWL
+    an ADIRO `:depicts rdfs:subPropertyOf dano:depicts` would entail that every subject of the ADIRO property
+    is a `dano:DisplayElement`, which is precisely what minting our own term was meant to avoid. (ADIRO has
+    not in fact minted such a property - the example is the general shape of the trap, not a description of
+    the suite.) Remember that in OWL
     a domain is an *inference rule*, not a constraint: nothing is rejected, a wrong type is concluded.
     Use `rdfs:subPropertyOf` only when the parent's own axioms are ones we actively want; otherwise use
     `skos:closeMatch`. Worked through in full in the [DAnO comparison](dano-comparison.md).

@@ -35,7 +35,8 @@
 #    DAnO (Drawing Analysis Ontology, https://w3id.org/dano, CC BY 4.0, RUB
 #    Informatik im Bauwesen) covers adjacent ground: a DrawingElementMeta object
 #    carrying inferredAt / inferredBy / inferredFrom / inferredWith, plus
-#    hasConfidence on the drawing element, and a depicts / isDepictedBy pair.
+#    hasConfidence on the drawing element, plus a depicts / isDepictedBy pair
+#    that ADIRO does not currently mirror.
 #
 #    ADIRO supersedes those terms rather than reusing them, and asserts NO
 #    rdfs:subPropertyOf alignment to any of them, for three separate reasons:
@@ -49,13 +50,13 @@
 #        datatypes are disjoint, so an inherited range would make every
 #        timestamp ADIRO records inconsistent.
 #
-#      - hasConfidence and depicts: DAnO asserts rdfs:domain dano:DrawingElement
-#        and rdfs:domain dano:DisplayElement respectively. In OWL a domain is an
-#        inference rule, not a constraint, so a sub-property axiom would entail
-#        that every ADIRO FieldAssertion is a drawing element, and that anything
-#        using depicts is a DAnO DisplayElement - wrong for a class that also
-#        covers dimensions and grids, which are DescriptionElements in DAnO's
-#        own scheme.
+#      - hasConfidence: DAnO asserts rdfs:domain dano:DrawingElement. In OWL a
+#        domain is an inference rule, not a constraint, so a sub-property axiom
+#        would entail that every ADIRO FieldAssertion is a drawing element -
+#        filing a claim ABOUT a drawing mark under the class of drawing marks.
+#        The same hazard applies to dano:depicts (rdfs:domain
+#        dano:DisplayElement), which is one reason ADIRO has not minted a
+#        counterpart for it.
 #
 #    Only the first of those fails locally. The other two stay silent while the
 #    external terms are undeclared, and surface for a consumer who merges this
@@ -84,11 +85,12 @@ aprov:inferredAt skos:closeMatch dano:inferredAt .
 aprov:hasConfidence skos:closeMatch dano:hasConfidence .
 
 #################################################################
-#    Depiction
+#    Depiction - deliberately unmapped
 #
-#    dano:isDepictedBy is deliberately not mapped: ADIRO has not minted an
-#    inverse yet, and the name is UC-06's call (its ORSD proposes
-#    isDepictedOn). Add the mapping when that term exists.
+#    dano:depicts and dano:isDepictedBy have no ADIRO counterpart yet. The
+#    linking property that ORSD CQ 5.2 asks for (open issue OI-1) has not been
+#    minted, because the use cases that need it specify their own with a
+#    different subject: UC-06 proposes depictsMaterial and UC-07 depictsElement,
+#    both with domain Drawing rather than DrawingElement. Whoever settles that
+#    shape adds the mapping here. See issue #80.
 #################################################################
-
-dm:depicts skos:closeMatch dano:depicts .

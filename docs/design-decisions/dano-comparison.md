@@ -57,9 +57,10 @@ An earlier framing described the two as occupying different layers - DAnO for wh
 means. That holds for the title-block vocabulary it was written about, and it does **not** generalise to the
 suite: `aec_common_symbols` sits squarely in DAnO's layer and models the same objects.
 
-The contents of the compatibility layer are the best measurement of the overlap. It carries **seven** mappings,
-all of them provenance plus `depicts`. Nothing maps to sheets, layouts, revisions or parties, because DAnO has
-no counterpart. Nothing maps to symbols, because that question is open rather than settled.
+The contents of the compatibility layer are the best measurement of the overlap. It carries **six** mappings,
+every one of them provenance. Nothing maps to sheets, layouts, revisions or parties, because DAnO has no
+counterpart. Nothing maps to symbols, because that question is open rather than settled. Nothing maps to
+depiction either, because the linking property ORSD CQ 5.2 asks for is not minted - see §10.
 
 ## 3. Where ADIRO goes further: provenance
 
@@ -274,17 +275,19 @@ This is the pattern worth keeping: **adopt the shape, mint the terms, map the na
 | `dano:inferredAt` | Superseded by `aprov:inferredAt`; `skos:closeMatch` | `xsd:date` disjoint from ADIRO's `xsd:dateTime` |
 | `dano:hasConfidence` | Superseded by `aprov:hasConfidence`; `skos:closeMatch` | Domain leakage; ADIRO's is per-assertion |
 | `dano:DrawingElementMeta` | Superseded by `aprov:InferenceMeta`; `skos:closeMatch` | Same pattern, PROV-aligned |
-| `dano:depicts` | ADIRO mints `metadata:depicts`; `skos:closeMatch` | Domain `dano:DisplayElement` is wrong for a class that also covers dimensions and grids |
-| `dano:isDepictedBy` | Not minted yet | Inverse naming is UC-06's call (`isDepictedOn`) - [#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80) |
+| `dano:depicts` | **Not reused, and no ADIRO counterpart minted yet** | Domain `dano:DisplayElement` is wrong for a class that also covers dimensions and grids. The ADIRO term is unminted because its consumers specify their own - [#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80) |
+| `dano:isDepictedBy` | Not reused | Same as `dano:depicts` - [#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80) |
 | `dano:Dimension`, `DimensionChain`, `DimensionLine`, `AxisLine`, `Terminator`, `SectionSymbol` | **Open**, but reuse of the IRIs is disfavoured | `aec_common_symbols` / UC-03 / UC-07 - see §8, [#79](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/79). `dano:Dimension`'s exact cardinalities would infer undetected parts into existence on clipped drawings - [#84](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/84) |
 | `dano:DisplayElement` vs `DescriptionElement` | **Open** | The split may be worth minting as ADIRO's own; ADIRO's `DrawingElement` currently spans both - [#83](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/83) |
 | `dano:hasGeometry`, `defaultGeometry` | Deferred | Gated on the GeoSPARQL decision, [#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36) |
 | `dano:hasIfcRepresentation` | Not assessed | Possible cheap alternative to IFC alignment axioms |
 
-`metadata:depicts` answers **ORSD CQ 5.2** and closes its open issue OI-1. It asserts no domain or range: UC-03
-would place the subject on a reference symbol and UC-06 on a whole drawing, so committing to a narrower domain
-would entail those subjects are of a type they are not - the same error this page rejects in DAnO's axioms.
-The principle is general, not a criticism of DAnO.
+**ORSD CQ 5.2 and its open issue OI-1 remain open.** An earlier revision of this work minted a generic
+`metadata:depicts` here; it was withdrawn, because the use cases that need depiction have each already
+specified their own - UC-06's `depictsMaterial` and UC-07's `depictsElement`, both with domain `Drawing`
+rather than the `metadata:DrawingElement` that CQ 5.2 frames. Minting a parent ahead of them would have
+pre-empted a decision belonging to those use cases, in a PR scoped to UC-01 and UC-03. Tracked in
+[#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80).
 
 ## 11. Precedent: neither ontology imports the other's source
 
