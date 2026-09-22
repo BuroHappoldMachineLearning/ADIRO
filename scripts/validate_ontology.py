@@ -12,7 +12,8 @@ This script parses ontology files and checks for:
 import os
 import sys
 from pathlib import Path
-from rdflib import Graph, URIRef
+import re
+from rdflib import Graph, URIRef, Literal
 from rdflib.namespace import RDF, RDFS, OWL, SKOS, DCTERMS
 from rdflib.term import BNode
 from collections import defaultdict, deque
@@ -206,6 +207,14 @@ def validate_ontology(ttl_file: Path) -> tuple[bool, list[str], list[str]]:
         # Advisory by default so the existing backlog does not block CI; set
         # ENFORCE_DESCRIPTIONS=1 to promote it to an error once that backlog is
         # cleared, which is the point at which this becomes a real gate.
+        unused_pfx = find_unused_prefixes(graph, ttl_file.read_text(encoding="utf-8"))
+        if unused_pfx:
+            warnings.append("unused @prefix declaration(s): " + ", ".join(unused_pfx))
+
+        unused_imp = find_unused_imports(graph)
+        if unused_imp:
+            warnings.append("owl:imports never referenced in this file: " + ", ".join(unused_imp))
+
         undescribed = find_undescribed_terms(graph)
         if undescribed:
             head = ", ".join(undescribed[:8])
@@ -224,6 +233,53 @@ def validate_ontology(ttl_file: Path) -> tuple[bool, list[str], list[str]]:
     except Exception as e:
         errors.append(f"Parse error: {str(e)}")
         return False, errors, []
+
+
+def find_unused_prefixes(graph, ttl_text: str) -> list[str]:
+    """
+    @prefix declarations the file never uses.
+
+    Harmless to a reasoner, but they are the fossil record of a removed term:
+    the alignment layer kept a `dm:` prefix for months of PR review after the
+    mapping that used it was withdrawn. Checked against the parsed graph rather
+    than the text, so a prefix used only in a literal's datatype still counts.
+    """
+    declared = dict(re.findall(r"@prefix[ \t]+([A-Za-z0-9_-]*):[ \t]+<([^>]*)>", ttl_text))
+    if not declared:
+        return []
+
+    used = set()
+    for s_, p_, o_ in graph:
+        for term in (s_, p_, o_):
+            if isinstance(term, URIRef):
+                used.add(str(term))
+            elif isinstance(term, Literal) and term.datatype:
+                used.add(str(term.datatype))
+
+    unused = []
+    for pfx, ns in sorted(declared.items()):
+        if not any(iri.startswith(ns) for iri in used):
+            unused.append(f"{pfx or '(default)'}: <{ns}>")
+    return unused
+
+
+def find_unused_imports(graph) -> list[str]:
+    """
+    owl:imports of a module whose terms the file never references.
+
+    Redundant rather than wrong, but it overstates the dependency: a consumer
+    reading the header cannot tell which imports the module actually needs.
+    """
+    unused = []
+    for imported in sorted(graph.objects(None, OWL.imports)):
+        prefix = str(imported) + "#"
+        referenced = any(
+            isinstance(t, URIRef) and str(t).startswith(prefix)
+            for triple in graph for t in triple
+        )
+        if not referenced:
+            unused.append(str(imported))
+    return unused
 
 
 def write_markdown(results: list[tuple[str, list[str], list[str]]], out_path: Path) -> None:
