@@ -308,7 +308,19 @@ gh api graphql -f query='query($o:String!,$n:String!,$pr:Int!){repository(owner:
 
 GitHub's link index lags the edit by a few seconds, so wait before querying.
 
-**2. An OntoCanvas preview link per modified module.** A reviewer should be able to *see* the ontology, not
+**2. Keep side-effects out of the reviewer's way.** A PR that fixes something adjacent while doing its main
+job should not give that fix a top-level section competing with the work under review. Group them under a
+single `## Details` heading, one `<details><summary>` block each — verification output, conventions added to
+this file, versioning bookkeeping, a term minted and withdrawn. The reviewer opens what they care about.
+Reserve top-level sections for: what the PR closes, the ontology previews, the decisions being asked for,
+what changed, and anything that **corrects published material**, which must never be collapsed.
+
+**3. Name the issue sections for what they are.** A `## Related issues` section with two subsections —
+*created by this PR's work* (with one line each on why the finding deserved tracking rather than scope creep)
+and *deliberately not solved here* (with one line each on why not). "Deliberately not solved here" alone hides
+the fact that most of the list did not exist before the PR started.
+
+**4. An OntoCanvas preview link per modified module.** A reviewer should be able to *see* the ontology, not
 only read a diff of Turtle. One row per `.ttl` this PR adds or changes, pointing at the published copy under
 `docs/` through raw GitHub:
 
