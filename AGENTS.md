@@ -323,7 +323,16 @@ https://raw.githubusercontent.com/BuroHappoldMachineLearning/ADIRO/<branch>/docs
 
 Use the **branch** in the raw URL, not a commit SHA: the link then follows the branch and always shows the
 latest push, so it never needs re-pinning as the PR evolves. `delete_branch_on_merge` is **false** on this
-repo, so branch links keep working after merge. Point at `docs/<module>.ttl` rather than `src/` — that is the
+repo, so branch links keep working after merge.
+
+!!! warning "The opposite rule applies to a bug report"
+    A branch link is right for a **living preview** and wrong for a **reproduction**. If you are linking a
+    file as evidence — a bug report against a viewer, a question about why a term renders a certain way,
+    anything where the reader must see *what you saw* — pin the **full commit SHA**:
+    `.../ADIRO/<40-char-sha>/docs/<module>.ttl`. A branch link silently repoints the moment anyone pushes,
+    and the reader then cannot reproduce the thing you asked them to look at. Verify the pinned URL returns
+    the content the report depends on before sending it. Branch ref for what is current; SHA for what
+    happened. Point at `docs/<module>.ttl` rather than `src/` — that is the
 copy `generate_docs.py` publishes, and it is what the site serves.
 
 Issue-first: propose additions/changes as an issue before coding. **ADIRO is open-source, so file issues on
