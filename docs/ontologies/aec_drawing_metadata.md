@@ -365,14 +365,6 @@ Direct containment: indicates physical containment of something within a parent 
 - **Domain:** `owl:Thing`
 - **Range:** `owl:Thing`
 
-### depicts {#depicts}
-
-Links something drawn to the real-world thing it graphically represents - including a term from an external vocabulary such as ifcOWL, BOT or a material taxonomy. This is the cross-domain interoperability hook asked for by ORSD CQ 5.2 (open issue OI-1). Domain and range are deliberately left unconstrained (owl:Thing): use cases place the subject differently - a reference symbol in UC-03, a whole drawing in UC-06 - and asserting a narrower domain here would entail that those subjects are of a type they are not. Narrower named subproperties (e.g. a material-specific one) should be minted by the use case that needs them, carrying their own domain.
-
-- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#depicts`
-- **Domain:** `owl:Thing`
-- **Range:** `owl:Thing`
-
 ### hasLayout {#hasLayout}
 
 Named containment: a DrawingSheet contains one or more Layouts.

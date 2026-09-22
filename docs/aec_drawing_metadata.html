@@ -283,6 +283,22 @@ td {
     <script id="schema.org" type="application/ld+json">
 [
   {
+    "@id": "https://w3id.org/adiro/aec_drawing_metadata#TitleblockFieldScheme",
+    "@type": [
+      "https://schema.org/DefinedTermSet"
+    ],
+    "https://schema.org/description": [
+      {
+        "@value": "The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to."
+      }
+    ],
+    "https://schema.org/name": [
+      {
+        "@value": "Titleblock Field Scheme"
+      }
+    ]
+  },
+  {
     "@id": "https://w3id.org/adiro/aec_drawing_metadata",
     "@type": [
       "https://schema.org/DefinedTermSet"
@@ -310,22 +326,6 @@ td {
     "https://schema.org/publisher": [
       {
         "@value": "Buro Happold"
-      }
-    ]
-  },
-  {
-    "@id": "https://w3id.org/adiro/aec_drawing_metadata#TitleblockFieldScheme",
-    "@type": [
-      "https://schema.org/DefinedTermSet"
-    ],
-    "https://schema.org/description": [
-      {
-        "@value": "The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to."
-      }
-    ],
-    "https://schema.org/name": [
-      {
-        "@value": "Titleblock Field Scheme"
       }
     ]
   }
@@ -2028,47 +2028,6 @@ td {
             </tr>
           </table>
         </div>
-        <div class="property entity" id="depicts">
-          <h3>depicts
-            <sup class="sup-op" title="OWL Object Property">op</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_drawing_metadata#depicts</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>Links something drawn to the real-world thing it graphically represents - including a term from an external vocabulary such as ifcOWL, BOT or a material taxonomy. This is the cross-domain interoperability hook asked for by ORSD CQ 5.2 (open issue OI-1). Domain and range are deliberately left unconstrained (owl:Thing): use cases place the subject differently - a reference symbol in UC-03, a whole drawing in UC-06 - and asserting a narrower domain here would entail that those subjects are of a type they are not. Narrower named subproperties (e.g. a material-specific one) should be minted by the use case that needs them, carrying their own domain.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#Thing">Thing</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#Thing">Thing</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-          </table>
-        </div>
         <div class="property entity" id="hasLayout">
           <h3>hasLayout
             <sup class="sup-op" title="OWL Object Property">op</sup>
@@ -2786,12 +2745,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#Layout">Layout</a>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <a href="#Layout">Layout</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -3549,9 +3508,6 @@ td {
             </li>
             <li>
               <a href="#hasOrientation">hasOrientation</a>
-            </li>
-            <li>
-              <a href="#depicts">depicts</a>
             </li>
             <li>
               <a href="#hasLayout">hasLayout</a>

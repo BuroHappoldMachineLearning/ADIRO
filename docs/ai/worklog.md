@@ -22,7 +22,7 @@ threads*, which commits do not carry.
 
 ---
 
-## 2026-09-21 — DAnO settled: no import, an optional compatibility layer, and `metadata:depicts`
+## 2026-09-21/22 — DAnO settled: no import, an optional compatibility layer; specification realigned
 
 **Issue:** [#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77) (mirrored to
 [RES-110](https://bhmlrnd.youtrack.cloud/issue/RES-110)) · **PR:** #76 · **Branch:** `aec-provenance-model`
@@ -47,9 +47,11 @@ generated specification, explicitly flagging that domains and ranges needed conf
 - **New `src/aec_dano_alignment.ttl`** — an optional compatibility layer, seven `skos:closeMatch` mappings,
   imports the core, **nothing imports it**. No ADIRO core module mentions DAnO. Reason is lifecycle and scale,
   not logic (see the correction below).
-- **Minted `metadata:depicts`** — resolves ORSD open issue **OI-1** / CQ 5.2. No asserted domain or range: UC-03
-  places the subject on a reference symbol, UC-06 on a whole drawing, so a narrower domain would entail those
-  subjects are of a type they are not. Inverse deferred to UC-06's naming (#80).
+- **Minted `metadata:depicts`, then withdrew it on 2026-09-22.** It was justified by suite ORSD CQ 5.2 /
+  OI-1, which sits in CQG 5 and is traced to neither UC-01 nor UC-03, the two use cases this PR is scoped to.
+  It also had no consumer and pre-empted two that exist: UC-06 specifies `depictsMaterial` and UC-07
+  `depictsElement`, both with domain `Drawing` rather than the `DrawingElement` CQ 5.2 frames. OI-1 is open
+  again. The conflation of the suite's CQ numbering with the use cases' own is what let it in - see #86.
 - **New `docs/design-decisions/dano-comparison.md`** — per-term verdicts plus the reasoning, stated **per ADIRO
   module** rather than in the aggregate.
 - **Corrected `external-ontology-imports.md`**: split option 1 into 1A (reuse the external IRI as a stub) and
@@ -58,7 +60,18 @@ generated specification, explicitly flagging that domains and ranges needed conf
   test for when a core module may reference an external vocabulary at all.
 - **Corrected `titleblock-vocabulary-review.md`** — superseded-in-part banner and the three places its
   recommendation is reversed.
-- **ORSD edited in place** (NFR 2, NFR 3, CQ 5.2) and **UC-07 gains §7.5**.
+- **ORSD edited in place** (NFR 2, NFR 3) and **UC-07 gains §7.5**.
+- **Specification realigned (2026-09-22).** Three documents contradicted or omitted what ships. **UC-03 design
+  decision 1** said provenance lives "upstream/elsewhere" — a statement about one query-layer module read as
+  though it settled the matter for the suite; amended, with the parsing/OCR half intact. **UC-01** described
+  only one of the two ways a title-block value can now be carried; gained a design note, an `aec_provenance`
+  row in §7 and open issue G11. **Both use-case module-hierarchy diagrams** were labelled "unchanged" and
+  showed four modules. **ORSD** now records that CQG 2/3/4 are what justify `aec_provenance`, and the
+  structural gap that the suite CQGs and per-use-case CQs never reference each other (#86).
+- **`AGENTS.md`** gains the two conventions whose absence caused all of the above: **ADIRO is a suite** (with
+  the module list corrected from "four"), and **Ontology ↔ specification** — the existing docs rule only ever
+  covered *generated* pages, which is why pyLODE output was regenerated diligently while the ORSD and use
+  cases went stale.
 
 ### Decisions taken
 
@@ -96,7 +109,9 @@ generated specification, explicitly flagging that domains and ranges needed conf
 ### Next step
 
 Issues filed for everything deliberately not solved here: **#79** (does `aec_common_symbols` adopt a
-drawing-mark decomposition, for UC-03/UC-07), **#80** (`depicts` inverse + UC-06 domain reconciliation),
+drawing-mark decomposition, for UC-03/UC-07), **#80** (define the CQ 5.2 / OI-1 linking property when a
+consumer needs it), **#85** (direct properties vs `FieldAssertion` — when is a value promoted, do the direct
+properties deprecate), **#86** (suite ORSD and use-case ORSDs do not reference each other),
 **#81** (staleness check for compatibility-layer mappings — a hazard the separation introduces), **#82**
 (ORSD v1.2 reuse-justification section), **#83** (DisplayElement/DescriptionElement split), **#84**
 (detections-not-drawings). [RES-68](https://bhmlrnd.youtrack.cloud/issue/RES-68) needs a note that its
