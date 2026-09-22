@@ -27,10 +27,12 @@ on:
       - 'src/**/*.ttl'
       - 'src/catalog-v001.xml'
       - 'scripts/run_reasoning.sh'
+      - 'scripts/validate_ontology.py'
       - '.github/workflows/ontology-reasoning.yml'
 
 permissions:
   contents: read
+  issues: write          # deleting/creating the sticky comment goes via the issues API
   pull-requests: write
 
 concurrency:
@@ -62,6 +64,29 @@ jobs:
 
       - name: Reason (HermiT) + report — warn only
         run: bash scripts/run_reasoning.sh
+
+      # validate_ontology.py needs Python; the reasoning itself is JVM-only, so
+      # this toolchain exists solely to fold the repo-specific checks into the
+      # same comment rather than leaving them buried in another job's log.
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --python 3.12 --no-install-project
+
+      # Repo-specific checks live in validate_ontology.py, and their findings are
+      # folded into the same comment below. Adding a check there needs no change
+      # here: --markdown renders whatever the script reports. Warnings must not
+      # fail this job (they are advisory and the reasoner is the gate), so the
+      # exit code is swallowed - validate-ontology.yml is where it blocks.
+      - name: Repo-specific checks — markdown section
+        run: |
+          uv run --python 3.12 --no-project python scripts/validate_ontology.py             --markdown .tools/reasoning-out/validate.md || true
 
       - name: Compose comment
         run: |
@@ -114,6 +139,10 @@ jobs:
               echo "</details>"
             fi
             echo ""
+            if [ -f "$OUT/validate.md" ]; then
+              cat "$OUT/validate.md"
+              echo ""
+            fi
             echo "<sub>RES-36 · the reasoner blocks (consistency / unsatisfiable / OWL 2 DL — incl. the root-bump-breaks-dependents check); ROBOT \`report\` stays advisory.</sub>"
           } > reasoning-comment.md
 
@@ -128,25 +157,40 @@ jobs:
           script: |
             const fs = require('fs');
             const marker = '<!-- ontology-reasoning-report -->';
-            const body = marker + '\n' + fs.readFileSync('reasoning-comment.md', 'utf8');
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
+
+            const report = marker + '\n' + fs.readFileSync('reasoning-comment.md', 'utf8').trimEnd();
+
+            const head = context.payload.pull_request.head.sha.substring(0, 7);
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            const stamp = new Date().toISOString().replace('T', ' ').substring(0, 16);
+            const footer = '\n\n<sub>Recomputed for `' + head + '` at ' + stamp + ' UTC — [workflow run](' + runUrl + ')</sub>';
+            const body = report + footer;
+
             const comments = await github.paginate(github.rest.issues.listComments, {
               owner, repo, issue_number, per_page: 100,
             });
             const existing = comments.find(c => c.body && c.body.includes(marker));
-            if (existing) {
-              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
-            } else {
+
+            // Same rule as compat-diff-comment.yml (#88): repost when the report
+            // changes so it lands at the bottom where it is read, edit in place
+            // when it does not so the thread stays quiet. The footer always
+            // differs, so it is stripped before comparing.
+            const stripFooter = (s) => s.split('<sub>Recomputed for')[0].trimEnd();
+
+            if (!existing) {
               await github.rest.issues.createComment({ owner, repo, issue_number, body });
+              core.info('Posted the first reasoning comment.');
+            } else if (stripFooter(existing.body) === stripFooter(body)) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+              core.info('Report unchanged - refreshed the footer in place, no notification.');
+            } else {
+              await github.rest.issues.deleteComment({ owner, repo, comment_id: existing.id });
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+              core.info('Report changed - reposted at the bottom of the thread.');
             }
 
-      # ENFORCE (RES-36): fail the check on a reasoner problem — inconsistency,
-      # an unsatisfiable class, or not-valid-OWL-2-DL. Runs AFTER the sticky
-      # comment so the ⛔ explanation still posts, and reuses reason.rc from the
-      # warn run above (no second reasoning pass). ROBOT `report` stays advisory —
-      # only the reasoner blocks. (A rare ROBOT-download/setup failure also yields
-      # a non-zero rc; just re-run the job to clear an infra flake.)
       - name: Fail on inconsistency / unsatisfiable classes
         run: |
           RC="$(cat .tools/reasoning-out/reason.rc 2>/dev/null || echo 1)"

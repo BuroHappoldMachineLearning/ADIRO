@@ -226,11 +226,57 @@ def validate_ontology(ttl_file: Path) -> tuple[bool, list[str], list[str]]:
         return False, errors, []
 
 
+def write_markdown(results: list[tuple[str, list[str], list[str]]], out_path: Path) -> None:
+    """
+    Render this script's findings as a markdown section for the PR comment.
+
+    Every check in this script surfaces here automatically: the table is built
+    from the errors/warnings each check appends, so adding a check needs no change
+    to this function or to the workflow that embeds it. See AGENTS.md, "Adding a
+    quality check".
+    """
+    OK, WARN, ERR = "\u2705", "\u26a0\ufe0f", "\u26d4"
+    lines = ["### \U0001f9ea Repo-specific checks (`scripts/validate_ontology.py`)", ""]
+    total_err = sum(len(e) for _, e, _ in results)
+    total_warn = sum(len(w) for _, _, w in results)
+
+    if not total_err and not total_warn:
+        lines += [OK + " All %d module(s) pass: parse, circular-subclass, version "
+                  "consistency, and term descriptions." % len(results), ""]
+    else:
+        lines += ["| Module | Errors | Warnings |", "|---|--:|--:|"]
+        for name, errs, warns in results:
+            mark = ERR if errs else (WARN if warns else OK)
+            lines.append("| %s `%s` | %d | %d |" % (mark, name, len(errs), len(warns)))
+        lines += ["", "**%d error(s), %d warning(s).** Errors block; warnings are advisory."
+                  % (total_err, total_warn), ""]
+        lines += ["<details><summary>Details</summary>", ""]
+        for name, errs, warns in results:
+            if not errs and not warns:
+                continue
+            lines.append("**`%s`**" % name)
+            lines += ["- " + ERR + " " + e for e in errs]
+            lines += ["- " + WARN + " " + w for w in warns]
+            lines.append("")
+        lines += ["</details>", ""]
+
+    out_path.write_text("\n".join(lines), encoding="utf-8")
+
+
 def main():
     """Main function to validate ontology files."""
     repo_root = Path(__file__).parent.parent
     ttl_files = []
-    
+
+    # --markdown <path> emits a PR-comment section alongside the console output.
+    argv = sys.argv[1:]
+    markdown_path = None
+    if "--markdown" in argv:
+        i = argv.index("--markdown")
+        markdown_path = Path(argv[i + 1])
+        del argv[i:i + 2]
+    sys.argv = [sys.argv[0]] + argv
+
     if len(sys.argv) < 2:
         # If no files specified, validate all .ttl files in the src directory
         print("No files specified. Validating all .ttl files in src/ directory...")
@@ -252,7 +298,8 @@ def main():
             ttl_files.append(ttl_file)
     
     all_valid = True
-    
+    results: list[tuple[str, list[str], list[str]]] = []
+
     for ttl_file in ttl_files:
         if not ttl_file.exists():
             print(f"Error: File not found: {ttl_file}", file=sys.stderr)
@@ -272,7 +319,13 @@ def main():
 
         for warning in warnings:
             print(f"  [WARN] {warning}")
-    
+
+        results.append((ttl_file.stem, errors, warnings))
+
+    if markdown_path is not None:
+        write_markdown(results, markdown_path)
+        print(f"Wrote markdown summary to {markdown_path}")
+
     if not all_valid:
         sys.exit(1)
 

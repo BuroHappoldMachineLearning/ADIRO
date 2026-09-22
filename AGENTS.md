@@ -230,6 +230,22 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
     a comment rather than by closing the issue.
   - **Do not add terms no in-scope use case needs.** A public `w3id.org` IRI is hard to withdraw; an issue is
     cheap. PR #76 minted and then withdrew `metadata:depicts` for exactly this reason.
+- **Adding a quality check? It must surface in the PR comment.** A check whose output only reaches a CI job
+  log is a check nobody reads — we already had 130 undescribed terms sitting invisibly in one while a
+  different job's comment showed 23 rows of something else. There is **one** sticky comment for ontology QC,
+  posted by `ontology-reasoning.yml`, and it carries both the ROBOT/HermiT results and the repo-specific
+  checks.
+  - **Put the check in `scripts/validate_ontology.py`**, appending to that file's `errors` (blocking) or
+    `warnings` (advisory) list. Nothing else is needed: `--markdown` renders whatever the script reports, the
+    workflow embeds it, and the new check appears in the comment automatically. Do not add a second script,
+    a second workflow or a second comment.
+  - **Blocking or advisory?** Advisory while a backlog is being cleared, gated behind an env var that flips it
+    to blocking (`ENFORCE_DESCRIPTIONS=1` is the worked example). A check that fails on day one for
+    pre-existing reasons gets disabled, not fixed.
+  - **Do not add a rule to `config/robot_report_profile.txt`** for something ADIRO-specific. That profile
+    selects from ROBOT's OBO-oriented built-ins; our own rules belong in our own script, where they can be
+    namespace-aware and can exempt external stubs. The profile format is strict TSV and rejects comment
+    lines, so it cannot even explain itself.
 - **Every ADIRO term needs an `rdfs:comment`.** That is ADIRO's definition vocabulary — deliberately
   **not** the OBO `IAO:0000115` that ROBOT's `missing_definition` rule looks for, which is why that rule is
   **absent** from `config/robot_report_profile.txt` (a profile lists the checks that run; omitting one
