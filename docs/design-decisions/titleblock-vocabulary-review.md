@@ -155,16 +155,10 @@ Minor, but worth noting since the review runs both ways:
 
 ## 3. Part B — against DANO
 
-!!! warning "Partly superseded (2026-09-21)"
-    This part was written from DANO's **generated specification**, and §6 flagged that domains and ranges
-    should be confirmed against the source before any alignment axiom was written. They have now been
-    confirmed against the raw `dano.ttl`, and the recommendation to **align ADIRO's provenance properties
-    to `dano:`** does not survive the check: the alignment is not available at any logical level.
-    ADIRO mints its own terms and maps them by annotation only, in an optional compatibility layer.
-    The findings below stand; the recommendations drawn from them in §3.2, §4 and §5 are superseded by
-    the **[DAnO comparison](dano-comparison.md)** ([#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77)).
-    §3.4's note that the two are *"complementary, not competing"* is also narrower than it reads: it holds
-    for the title block, not for `aec_common_symbols`, where the two model the same objects.
+!!! warning "Partly superseded"
+    The **findings** in this part stand. The **recommendations** drawn from them in §3.2, §4 and §5 do not,
+    and §3.4's "complementary, not competing" is narrower than it reads. What replaced them, and why, is in
+    the **[DAnO comparison](dano-comparison.md)**.
 
 ### 3.1 What DANO is
 
@@ -183,7 +177,7 @@ This is the real find. ADIRO §10 proposes six provenance terms; DANO already ha
 
 | ADIRO §10 proposal | DANO equivalent | Assessment |
 | --- | --- | --- |
-| `extractionConfidence` (`xsd:float`) | `dano:hasConfidence` (`xsd:decimal`, on `DrawingElement`) | ~~**Direct equivalent.** Align or reuse~~ → **superseded**: `aprov:hasConfidence`, `skos:closeMatch` only. DANO's `rdfs:domain dano:DrawingElement` would entail every assertion is a drawing mark |
+| `extractionConfidence` (`xsd:float`) | `dano:hasConfidence` (`xsd:decimal`, on `DrawingElement`) | ~~**Direct equivalent.** Align or reuse~~ → **superseded** — minted as `aprov:hasConfidence`; see the [DAnO comparison](dano-comparison.md) |
 | `extractedFrom` → `SourceFile` (object) | `dano:inferredFrom` (`xsd:string`, "the origin file") | DANO uses a **string**. Corroborates that `SourceFile`-as-a-class may be over-modelled for current needs |
 | `extractedByModel` → `MLModel` (object) | `dano:inferredBy` (`xsd:string`, actor/company/software) **+** `dano:inferredWith` (`xsd:string`, algorithm) | DANO **splits actor from algorithm**, which is a better decomposition than ADIRO's single property — and both are strings, independently corroborating the #61 verdict that `MLModel` is over-modelled |
 | *(nothing proposed)* | `dano:inferredAt` (`xsd:date`) | **🔴 GAP IN ADIRO.** No extraction timestamp is proposed anywhere. Re-extraction comparison is impossible without one. Add it |
@@ -214,10 +208,8 @@ Note DANO's asymmetry: `hasConfidence` sits on the **element**, not on the meta-
 is per-assertion, whereas the inference metadata is often shared across every element from one run, so putting
 them in different places is arguably correct rather than sloppy.
 
-**Recommendation: use DANO as evidence in the pass-5 decision.** *(Superseded in part: the companion
-recommendation to align `tb:` provenance properties to `dano:` rather than minting parallel ones was withdrawn
-on 2026-09-21 — see the [DAnO comparison](dano-comparison.md). Using DANO as **evidence** is exactly what
-happened, and stands.)* Do not import DANO — it would drag its 16 drawing-element classes
+**Recommendation: use DANO as evidence in the pass-5 decision.** *(The companion recommendation to align
+`tb:` provenance to `dano:` was withdrawn — see the [DAnO comparison](dano-comparison.md).)* Do not import DANO — it would drag its 16 drawing-element classes
 into a suite with a blocking DL reasoner for the sake of seven datatype properties.
 
 ### 3.4 DANO is relevant beyond the title block — flag to other use-case owners
@@ -247,7 +239,7 @@ this review. **#61 has not yet been updated** — apply these before it is used 
 | `MLModel` | 🟠 Over-modelled | 🟠 **Confirmed** — drop to a literal | DANO uses strings (§3.2) |
 | `SourceFile` | 🟢 Core | 🟡 Useful — consider a literal | `dano:inferredFrom` is a string (§3.2) |
 | `BoundingBox` | 🟢 Core | 🟡 Useful — consider a geometry | `dano:hasGeometry` (§3.2) |
-| `extractionConfidence` | 🟡 Needed, blocked | ~~🟡 Align to `dano:hasConfidence`~~ → 🟢 **Minted as `aprov:hasConfidence`**; `skos:closeMatch` only | §3.2, superseded by the [DAnO comparison](dano-comparison.md) |
+| `extractionConfidence` | 🟡 Needed, blocked | ~~🟡 Align to `dano:hasConfidence`~~ → 🟢 **Minted as `aprov:hasConfidence`** | §3.2; see the [DAnO comparison](dano-comparison.md) |
 | `extractedByModel` | 🟡 Useful | 🟡 **Split** into actor + algorithm | `dano:inferredBy` / `inferredWith` (§3.2) |
 | **NEW — extraction timestamp** | *(absent)* | 🟢 **Core — add it** | `dano:inferredAt`; re-extraction comparison needs it (§3.2) |
 | `DocumentType` | 🟢 Core | 🟢 Core **+ comment required** | Must state it is not `LayoutContentType` (§2.3) |
@@ -266,7 +258,7 @@ change shape. The mint shrinks from ~48 to roughly **44**, and gains a timestamp
 | 2 | **Write an extraction ORSD, or cut to use-case demand** (§2.4) | Alessio | the legitimacy of ~40 terms |
 | 3 | Confirm `dcommon:Discipline` reuse and drop the SKOS `Discipline` | — | pass 3 |
 | 4 | Drop `scale`, `hasNorthPointOrientation`; bind to `dm:hasScale` / UC-07 `northArrowAngle` | — | pass 2 |
-| 5 | ~~**Align provenance to `dano:` rather than minting parallel terms**~~; add the timestamp | — | **Resolved 2026-09-21.** The timestamp was added (`aprov:inferredAt`). The alignment half is **reversed**: ADIRO mints its own provenance terms and maps them to `dano:` by annotation only — see the [DAnO comparison](dano-comparison.md) and [#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77) |
+| 5 | ~~**Align provenance to `dano:` rather than minting parallel terms**~~; add the timestamp | — | **Resolved.** Timestamp added as `aprov:inferredAt`; the alignment half is **reversed** — see the [DAnO comparison](dano-comparison.md) |
 | 6 | Use DANO's `DrawingElementMeta` as evidence in the RDF-star vs reification decision | — | pass 5 |
 | 7 | Flag DANO to the UC-03 / UC-06 / UC-07 owners (§3.4) | — | nothing here |
 

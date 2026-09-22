@@ -185,6 +185,33 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   - **Which competency question does the change serve?** Name it. If none does, say so explicitly rather than
     silently adding untraceable terms — see `titleblock-vocabulary-review.md` §2.4.
   - **Do the module-hierarchy diagrams still hold?** UC-01 §7 and UC-03 §7 each embed one.
+  - **Version the document you edited.** The specification documents are versioned in their own text, and a
+    change that is not versioned is invisible to anyone reading the published site:
+      - **ORSD** — bump the semantic version and **rename the file to match** (`ORSD_v<major>.<minor>.md`;
+        the version is part of the filename, and renaming on a bump is the established convention). Update the
+        `# …  — vX.Y` heading and the `**Version:**` line, add an entry to its **Version history** section
+        saying what changed and why, and fix every reference to the old filename —
+        `scripts/generate_docs.py` (it writes the landing-page link), `README.md`, and any doc that links it.
+      - **Use-case ORSDs** (`UC-*/UC-*.md`) — bump **both** places: the `**Version:**` field in the header
+        line at the top of the file, **and** a new entry in the final *Version History* section listing the
+        changes and stating whether the revision is MAJOR or MINOR. Then update that use case's row in
+        `docs/specification/use-cases/README.md` — both the **ORSD Status** cell and the milestone table in
+        its Current Progress section, which each carry the version.
+      - MAJOR when an entity, attribute, relation or competency question is added, removed, renamed or
+        re-scoped; MINOR for clarifications, design notes, corrections and new open issues.
+      - **Keep the amendment story OUT of the body.** The body of a specification page must stay readable as
+        a statement of what is true *now*. Where a passage changed, leave a **short marker only** —
+        `*(Amended in [v0.3](#10-version-history).)*` or `*(Added in [v0.4](#9-version-history).)*` — and put
+        the full explanation (what it said before, what changed, why) in that version's entry in the version
+        history. Never inline a dated paragraph, a "superseded" essay or a quoted previous wording into the
+        body. For a page with no version history (e.g. `docs/design-decisions/`), the marker links to the
+        document that supersedes it instead. Rewrite the surrounding prose so it reads as current fact, not as
+        a diff: "a second parallel path exists", not "PR #NN adds a second path".
+      - **Mind the Markdown when you add a marker.** A blockquote or admonition indented inside a numbered
+        list item breaks Material for MkDocs rendering — it swallows the rest of the list into one quote. Keep
+        an in-list marker to inline italics on the same line, and **check the built page**, not just that
+        `mkdocs build --strict` exits 0: strict mode validates links, not layout. `uv run mkdocs serve` and
+        look at it.
   - **Do not add terms no in-scope use case needs.** A public `w3id.org` IRI is hard to withdraw; an issue is
     cheap. PR #76 minted and then withdrew `metadata:depicts` for exactly this reason.
 - **Versioning.** Record any change to a module's semantics under that module's `changelogs/<module>.md`

@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.3 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.4 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -46,7 +46,7 @@ Things that exist independently and will become OWL Classes.
 
 > **Design note — Discipline reuse:** UC-01 v0.2 introduced `:Discipline` plus a `:disciplineCode` string property. The existing `dcommon:Discipline` is already a full class hierarchy (`Structural`, `MEP > Mechanical / Electrical > Lighting / Plumbing`, `Architectural > Facade / FireLifeSafety`, `Masterplan`). v0.3 reuses it and drops `:disciplineCode` — discipline filtering uses `rdf:type` checks against the class hierarchy (e.g. `?disc a dcommon:MEP`), which automatically rolls up sub-disciplines via `rdfs:subClassOf` reasoning.
 
-> **Design note — curated values vs extracted assertions:** UC-01 attaches title-block information as datatype properties **directly on `DrawingSheet`** (`drawingIdentifier`, `drawingTitle`, …). That remains correct for a *validated* value. [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76) adds a second, parallel path for values that have been **machine-extracted and not yet validated**: an `aprov:FieldAssertion` reifies the claim - what was read, from which region (`assertedBy`), by what (`hasInferenceMeta`), with what confidence, and with the caption exactly as printed (`capturedCaption`) - bound to a field kind in the `TitleblockFieldScheme`. `aprov:mapsToFieldProperty` names the UC-01 property a validated assertion is promoted to. The two coexist: UC-01's properties are the query surface, the assertion layer is the extraction and provenance record. **When a value moves from one to the other, and whether the direct properties eventually deprecate, is open - see §8.**
+> **Design note — curated values vs extracted assertions:** UC-01 attaches title-block information as datatype properties **directly on `DrawingSheet`** (`drawingIdentifier`, `drawingTitle`, …). That remains correct for a *validated* value. A second, parallel path exists for values that have been **machine-extracted and not yet validated**: an `aprov:FieldAssertion` reifies the claim - what was read, from which region (`assertedBy`), by what (`hasInferenceMeta`), with what confidence, and with the caption exactly as printed (`capturedCaption`) - bound to a field kind in the `TitleblockFieldScheme`. `aprov:mapsToFieldProperty` names the UC-01 property a validated assertion is promoted to. The two coexist: UC-01's properties are the query surface, the assertion layer is the extraction and provenance record. **When a value moves from one to the other, and whether the direct properties eventually deprecate, is open — see §8 (G11).** *(Added in [v0.4](#9-version-history).)*
 
 > **Design note — Person vs Role:** `Person` models what an individual *is*, not the role they play. Roles (Author, Checker, Approver) are expressed as distinct Object Properties on `DrawingRevision`, not as subclasses of `Person`. This keeps `Person` reusable across roles and binds each role assignment to its specific revision context.
 
@@ -340,7 +340,7 @@ The query is fully expressible, confirming that CQ-I 1 is covered by the current
 
 This section makes the placement of every UC-01 term in the existing module hierarchy explicit, per [PR #15](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/15) review point #2 (@alelom).
 
-**Module hierarchy** (updated in [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76), which added `aec_provenance` as a new foundational root and the optional `aec_dano_alignment` layer):
+**Module hierarchy** *(updated in [v0.4](#9-version-history))*:
 
 ```
 aec_provenance                      (NEW - foundational, domain-neutral)
@@ -389,7 +389,7 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | G5  | Should `hasDiscipline` domain move from `LayoutContentType` to `Layout`? v0.3 proposes yes — discipline characterises the layout, not its content type.            |
 | G5b | Should `DrawingSheet` itself carry a `hasDiscipline` (a "primary discipline" for the whole sheet) in addition to Layout-level discipline?                          |
-| G11 | **Direct properties vs `FieldAssertion`.** [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76) adds an assertion layer for extracted, unvalidated title-block values alongside UC-01's direct datatype properties on `DrawingSheet`. Open: at what point does a value get promoted, who performs the promotion, must both representations be kept, and do the direct properties eventually deprecate? Tracked in [#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85). |
+| G11 | **Direct properties vs `FieldAssertion`.** The assertion layer carries extracted, unvalidated title-block values alongside UC-01's direct datatype properties on `DrawingSheet`. Open: at what point does a value get promoted, who performs the promotion, must both representations be kept, and do the direct properties eventually deprecate? Tracked in [#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85). |
 | G10 | ~~`:Metadata` class name misleading~~ — **resolved**: renamed to `:MetadataContainer` (team decision). The class models visual supporting regions (titleblock, legend, etc.), not semantic metadata. |
 | —   | Project-wide convention for `owl:inverseOf` — when to materialise vs rely on reasoner? v0.3 only materialises `isRevisionOf`.                                      |
 | —   | ~~"Civil" discipline~~ — **resolved**: `Civil` to be added as a direct subclass of `dcommon:Discipline` (team decision).                                           |
@@ -398,7 +398,24 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.3 (current)
+### v0.4 (current — draft)
+
+Changes from v0.3, made in [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76) when `aec_provenance` was added to the suite:
+
+- **New design note in §2.1, "curated values vs extracted assertions."** UC-01's datatype properties on
+  `DrawingSheet` remain the query surface for a *validated* value; a machine-extracted, not-yet-validated
+  value now travels as an `aprov:FieldAssertion` carrying `capturedCaption`, `assertedBy`,
+  `hasInferenceMeta` and `hasConfidence`, and is promoted via `aprov:mapsToFieldProperty`.
+- **`aec_provenance` row added to the §7 term-placement table.**
+- **§7 module hierarchy updated** — `aec_provenance` is a new foundational root above
+  `aec_drawing_metadata`, and the optional `aec_dano_alignment` layer sits outside the import chain.
+- **New open issue G11** — when a value is promoted from an assertion to a direct property, and whether the
+  direct properties eventually deprecate
+  ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)).
+
+No entity, attribute, relation or competency question changed, so this is a MINOR revision.
+
+### v0.3
 
 Aligned with the existing ontology modules (`aec_drawing_metadata`, `aec_domain_common`) per [PR #15](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/15) review (@alelom):
 

@@ -2,7 +2,7 @@
 
 > **⚠️ Draft v0.2 — not yet aligned with the current ontology. This use case will be revised in a follow-up PR.**
 >
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-07 · **Version:** 0.2 (draft) — see [§8 Version History](#8-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-07 · **Version:** 0.3 (draft) — see [§8 Version History](#8-version-history)
 
 ---
 
@@ -395,7 +395,22 @@ This generalises beyond dimensions: **ADIRO individuals are detections, not idea
 
 ## 8. Version History
 
-### v0.2 (current — draft)
+### v0.3 (current — draft)
+
+Changes from v0.2, made in [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76):
+
+- **New §7.5, "Partial, Clipped and Incompletely Detected Dimensions."** ADIRO targets historical drawings,
+  which are routinely cut at the sheet edge, torn or partially legible, so a detected dimension may be missing
+  a terminator, its text, or the line itself. Records why a published composite definition with exact
+  cardinalities (such as `dano:Dimension`) must not be reused as-is — under the open-world assumption it
+  **infers the missing parts into existence**, which would make CQ Groups 4 and 5 aggregate measurements that
+  were never read — and what to do instead (`min 0` cardinality, well-formedness as a SHACL shape over a
+  finished extraction, a completeness flag).
+  Tracked in [#84](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/84).
+
+Documentation only; no entity, attribute, relation or competency question changed. MINOR revision.
+
+### v0.2 (draft)
 
 Changes from v0.1:
 

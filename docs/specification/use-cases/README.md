@@ -32,7 +32,7 @@ This pipeline enforces **forward traceability** (every OWL term traces back to a
 | **Actor**       | Engineer                                                                                                  |
 | **Goal**        | Search drawings based on titleblock information                                                          |
 | **Description** | As an engineer, I want to search easily a number of drawings based on the information in the titleblock. |
-| **ORSD Status** | ✅ [Completed (v0.3)](<UC-01/UC-01-Titleblock-Based Drawing Search.md>) |
+| **ORSD Status** | ✅ [Completed (v0.4)](<UC-01/UC-01-Titleblock-Based Drawing Search.md>) |
 
 ### UC-02: Facade Performance Lines
 
@@ -50,7 +50,7 @@ This pipeline enforces **forward traceability** (every OWL term traces back to a
 | **Actor**       | Designer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | **Goal**        | Navigate across sheets via reference symbols                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | **Description** | As a designer, I want to understand how a certain building element or parts are designed, so I want to find all the drawings that are connected to a drawing. In engineering drawings, there are typically Reference Symbols such as Detail Markers, Section Markers, and Elevation Markers. By recognising these Reference Symbols, we can automatically match and link the Sections, Details, and Elevations they reference -- enabling navigation across sheets and even across drawing sets. |
-| **ORSD Status** | ✅ [Completed (v0.2)](<UC-03/UC-03-Reference Symbol Cross-Sheet Linking.md>) — 3 open issues remaining |
+| **ORSD Status** | ✅ [Completed (v0.3)](<UC-03/UC-03-Reference Symbol Cross-Sheet Linking.md>) — 3 open issues remaining |
 
 ### UC-04: Element Similarity Search
 
@@ -86,7 +86,7 @@ This pipeline enforces **forward traceability** (every OWL term traces back to a
 | **Actor** | Engineer |
 | **Goal** | Measure all walls facing a specific cardinal direction in a plan drawing |
 | **Description** | As an engineer, I want to measure all walls that are facing north or east in a plan drawing. |
-| **ORSD Status** | ⚠️ [Draft (v0.2)](<UC-07/UC-07 Wall Orientation Identification & Measurement in Plan Drawings.md>) — not yet aligned with the current ontology |
+| **ORSD Status** | ⚠️ [Draft (v0.3)](<UC-07/UC-07 Wall Orientation Identification & Measurement in Plan Drawings.md>) — not yet aligned with the current ontology |
 
 ---
 
@@ -124,7 +124,7 @@ Following the LOT pipeline (`Use Case → Information Needs → Functional Requi
 
 | Milestone | UC-01 | UC-03 |
 |---|:---:|:---:|
-| ORSD (Use Case → CQs) | ✅ v0.3 | ✅ v0.2 |
+| ORSD (Use Case → CQs) | ✅ v0.4 | ✅ v0.3 |
 | OWL Terms Specification | ✅ | ✅ |
 | ORSD Review & Alignment | ✅ | ✅ (3 open issues) |
 | T-Box Implementation (.owl/.ttl) | ✅ | ✅ |

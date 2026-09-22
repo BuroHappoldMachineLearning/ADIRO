@@ -1,7 +1,7 @@
-# ADIRO Ontology Requirements Specification — v1.1
+# ADIRO Ontology Requirements Specification — v1.2
 
 **Author:** ADIRO project team
-**Version:** 1.1 (July 2026)
+**Version:** 1.2 (September 2026) — see [Version history](#version-history)
 
 ---
 
@@ -121,3 +121,35 @@ What is the complete set of drawings reachable from a given drawing through refe
 
 - **CQ 5.1:** Which DrawingElement types are consistently identified across different engineering drawing sets?
 - **CQ 5.2:** Which external ontology classes are linked to a given metadata:DrawingElement for cross-domain interoperability?  *(the linking property itself — working name `depicts` — is not yet defined in the ontology, so let's treat it as a proposed pending Open Issue **OI-1**. Note that UC-06 and UC-07 each specify their own (`depictsMaterial`, `depictsElement`), both with domain `Drawing` rather than `DrawingElement`; reconciling that is part of OI-1. See [#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80).)*
+
+---
+
+## Version history
+
+### v1.2 (September 2026)
+
+Changed in [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76), alongside the first
+provenance module in the suite:
+
+- **NFR 2 (Consistency)** now records that ADIRO individuals are **detections, not idealised drawing
+  constructs** — historical sheets are routinely clipped, torn or partially legible — so structural axioms
+  must not assert a completeness the extraction cannot guarantee, and closed-world completeness checks belong
+  in SHACL rather than in OWL cardinality ([#84](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/84)).
+- **NFR 3 (Extendability)** rewritten. It previously said external reuse "is a target for future alignment";
+  it now points at the normative
+  [External ontology imports](../design-decisions/external-ontology-imports.md) rule and records where each
+  candidate stands (PROV-O reused in the core, DAnO annotation-level only in an optional compatibility layer,
+  GeoSPARQL deferred).
+- **CQG section** gains a note recording that **CQG 2, 3 and 4 are what justify the `aec_provenance` module**,
+  and that the CQGs on this page and the per-use-case competency questions are separate systems that never
+  reference each other and whose numbering collides
+  ([#86](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/86)).
+- **CQ 5.2** annotated: open issue OI-1 remains open, and reconciling UC-06's `depictsMaterial` and UC-07's
+  `depictsElement` (both with domain `Drawing` rather than `DrawingElement`) is part of it
+  ([#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80)).
+
+No competency question was added, removed or re-numbered, so this is a MINOR revision.
+
+### v1.1 (July 2026)
+
+Predates this changelog.
