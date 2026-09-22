@@ -73,6 +73,20 @@ The ontology is implemented using RDF and OWL to establish a standardized and in
 
 ### b. Functional Requirements: Competency Question Groups (CQGs)
 
+!!! note "Which module answers these, and a known traceability gap"
+    **CQG 2, 3 and 4 depend on extraction provenance** and are served by the `aec_provenance` module
+    (`FieldAssertion`, `InferenceMeta`, `hasConfidence`, `capturedCaption`, `assertedBy`): **CQ 3.1** needs a
+    confidence score, **CQ 3.2** needs predicted and ground-truth claims to be distinct individuals, **CQ 2.4**
+    needs a per-claim validation status, and **CQ 4.4** needs each result attributed to the service that
+    produced it. This is the requirement that justifies the module.
+
+    **The gap:** the CQGs on this page and the competency questions in the per-use-case ORSDs are two separate
+    systems that do not reference each other, and their numbering collides (this page's CQ 5.2 is about
+    external ontology links; UC-01's is about disciplines; UC-07's is about wall lengths). **No written
+    use-case ORSD currently claims CQG 2, 3 or 4.** Tracked in [#86](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/86), with the underlying
+    question - write an extraction ORSD, or cut to use-case demand - in the title-block vocabulary review's
+    Decision 2. Cite a CQ from this page as *ORSD CQ n.n* to avoid the collision.
+
 #### CQG 1. Data Extraction and Organisation
 
 - **CQ 1.1:** Which types of descriptive elements (e.g., project name, sheet number) have been extracted from the title block?

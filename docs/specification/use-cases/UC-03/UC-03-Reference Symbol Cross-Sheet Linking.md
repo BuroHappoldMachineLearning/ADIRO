@@ -247,16 +247,21 @@ This demonstrates FR 5: composite labels are parsed at query time, not stored on
 
 Per the project's import hierarchy and [PR #15](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/15) review point #2 (@alelom), every UC-03 term is placed in its proper module.
 
-**Module hierarchy** (unchanged):
+**Module hierarchy** (updated in [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76), which added `aec_provenance` as a new foundational root and the optional `aec_dano_alignment` layer):
 
 ```
-aec_drawing_metadata
+aec_provenance                      (NEW - foundational, domain-neutral)
         |
-        +---- aec_common_symbols
+        +---- aec_drawing_metadata
                 |
-                +---- aec_domain_common
+                +---- aec_common_symbols
                         |
-                        +---- aec_facade_domain
+                        +---- aec_domain_common
+                                |
+                                +---- aec_facade_domain
+
+aec_dano_alignment                  (NEW - optional compatibility layer;
+                                     imports the core, nothing imports it)
 ```
 
 **UC-03 term placement:**
@@ -298,7 +303,9 @@ These items were raised during UC-03 drafting. **UC03-1 and UC03-2 are now resol
 
 For the full design-debate reasoning behind the v0.2 modelling choices, see the accompanying *UC-03 Design Debate* note. The key decisions, in summary:
 
-1. **§1 — Ontology role:** This ontology is a **query layer**, not a raw-storage layer. Parsing, OCR clean-up, and provenance live upstream/elsewhere.
+1. **§1 — Ontology role:** This module is a **query layer**, not a raw-storage layer. Parsing and OCR clean-up live upstream/elsewhere.
+
+    > **Amended 2026-09-22 ([PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76)).** As originally written this decision also placed **provenance** upstream/elsewhere. That was a statement about one module read as though it were a statement about ADIRO, which is a **suite**: a decision that a query-layer module should not store OCR intermediates says nothing about whether the suite models provenance at all. ADIRO now does, in the foundational `aec_provenance` module - reified assertions carrying `assertedBy`, `hasInferenceMeta`, `hasConfidence` and `capturedCaption` - which serves suite-level ORSD **CQ 2.4, 3.1, 3.2 and 4.4**. The parsing / OCR-clean-up half of this decision stands unchanged. Whether `ReferenceSymbol` specifically should carry as-extracted text and provenance is the open question in [#20](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/20); `aprov:capturedCaption` is the pattern that answers "where does the raw value live" - on the assertion, not on the semantic property.
 2. **§2 — Layout-level mounting:** Both ends of a ReferenceSymbol link `Layout → Layout`, not `Sheet → Sheet`. Better precision; aligns with the existing DrawingElement architecture.
 3. **§3 — No `SymbolType`:** Marker type (Detail / Section / Elevation) is derivable from the target Layout's `LayoutContentType`. FR 2 from v0.1 removed.
 4. **§4 — No `symbolLabel`:** The composite label "2/ST-201" is derivable via `CONCAT(symbolNumber, "/", targetSheet.drawingIdentifier)`.

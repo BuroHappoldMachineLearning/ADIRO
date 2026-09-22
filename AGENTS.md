@@ -17,11 +17,29 @@ in particular information-extraction workflows. It defines concepts for drawing 
 domain-common symbols, and domain-specific symbols so AEC drawings can be made machine-readable and drive
 graph databases / knowledge graphs.
 
-Ontology sources live in `src/` as four independently versioned modules (dependency order):
-1. `aec_drawing_metadata` — sheet/layout/document structure (titleblock, legend, revision table, drawing types…).
-2. `aec_common_symbols` — cross-discipline reusable symbols (dimensions, callouts, grids, levels…).
-3. `aec_domain_common` — concepts shared across a set of domains.
-4. `aec_facade_domain` — facade-engineering discipline-specific concepts (`:FacadeComponent`, `:DGU`, …).
+**ADIRO is a SUITE of ontologies, not one ontology.** Every module has its own scope, its own version and
+its own competency questions, and a statement that is true of one is routinely false of another. Read the
+whole `src/` listing before generalising, and say *which module* you mean.
+
+Ontology sources live in `src/` as independently versioned modules (dependency order):
+1. `aec_provenance` — foundational, domain-neutral: reified `FieldAssertion` + `InferenceMeta` carrying
+   extraction provenance and confidence; PROV-O-aligned. Imported by the drawing modules.
+2. `aec_drawing_metadata` — sheet/layout/document structure (titleblock, legend, revision table, drawing types…).
+3. `aec_common_symbols` — cross-discipline reusable symbols (dimensions, callouts, grids, levels…).
+4. `aec_domain_common` — concepts shared across a set of domains.
+5. `aec_facade_domain` — facade-engineering discipline-specific concepts (`:FacadeComponent`, `:DGU`, …).
+
+Plus an **optional compatibility layer**, which imports the core and which **nothing imports**:
+- `aec_dano_alignment` — annotation-level `skos:closeMatch` crosswalk to DAnO; consumers opt in by loading
+  it. See `docs/design-decisions/dano-comparison.md` and `external-ontology-imports.md` for when an external
+  reference may sit in a core module at all.
+
+**Reasoning rule that follows.** A claim about "ADIRO" is a claim about the suite. Before writing one — in a
+doc, a PR description, a comparison with another ontology, or an answer to a question — check it against
+**every** module, not the one in front of you. Two real errors came from ignoring this: a DAnO comparison
+asserted that ADIRO and DAnO occupy "different layers", true of the title-block vocabulary it was written
+about but false for `aec_common_symbols`; and UC-03's design decision 1 placed provenance "upstream/elsewhere",
+a correct statement about one query-layer module read as though it settled the matter for the whole suite.
 
 ## Stack
 - **Python** (3.10–3.13; CI runs 3.12), managed with **uv** (single root `pyproject.toml`).
@@ -143,7 +161,11 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   changed, how it was verified (including gates you could *not* run), decisions deferred or rejected, and the
   next step. It is the handover record between sessions; `git log` does not carry intent or open threads. Excluded
   from the built site (`exclude_docs`).
-- **Ontology ↔ docs.** The published docs are generated from `src/*.ttl` by `scripts/generate_docs.py`, which
+- **Ontology ↔ docs (generated pages).** Docs under `docs/` come in two kinds, maintained differently:
+  **generated** pages, which you regenerate and never hand-edit (this rule), and **hand-written**
+  specification pages, which you edit deliberately (next rule). Confusing the two is how a `.ttl` change
+  ends up with perfectly regenerated reference pages and a stale ORSD.
+  The published docs are generated from `src/*.ttl` by `scripts/generate_docs.py`, which
   (re)creates, per module, the **per-ontology reference page `docs/ontologies/<module>.md`** (the one humans
   read) plus the pyLODE HTML, the copied `.ttl`/`.display.json`, and the `docs/ontologies/index.md` +
   `docs/index.md` landing pages. Whenever a `.ttl` changes — and **especially when you add a new `src/*.ttl`
@@ -151,6 +173,20 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   dependency diagram) — regenerate in the same change: `uv run python scripts/generate_docs.py`, and let
   `generate-deploy-docs.yml` publish. Do **not** hand-edit any generated page under `docs/` (including
   `docs/ontologies/`) — they are overwritten on the next run; change the `.ttl` (or the generator) instead.
+- **Ontology ↔ specification (hand-written docs).** The rule above covers *generated* pages. The
+  **hand-written** specification does not regenerate and is the one people forget: `docs/specification/ORSD_*.md`,
+  the per-use-case ORSDs under `docs/specification/use-cases/UC-*/`, and `docs/design-decisions/*.md`. When a
+  `.ttl` change alters what the suite can represent, bring them into line **in the same PR**:
+  - **Does a use-case ORSD now describe only part of the picture?** A new mechanism sitting alongside an
+    existing one must be recorded where the existing one is documented, or a reader will not know it exists.
+  - **Does a published statement now contradict the code?** Amend it in place with a dated note saying what
+    changed and why — never leave a page asserting the opposite of what ships. Worked examples:
+    `titleblock-vocabulary-review.md` Decision 5 and UC-03 Design Decision 1, both amended in PR #76.
+  - **Which competency question does the change serve?** Name it. If none does, say so explicitly rather than
+    silently adding untraceable terms — see `titleblock-vocabulary-review.md` §2.4.
+  - **Do the module-hierarchy diagrams still hold?** UC-01 §7 and UC-03 §7 each embed one.
+  - **Do not add terms no in-scope use case needs.** A public `w3id.org` IRI is hard to withdraw; an issue is
+    cheap. PR #76 minted and then withdrew `metadata:depicts` for exactly this reason.
 - **Versioning.** Record any change to a module's semantics under that module's `changelogs/<module>.md`
   `[Unreleased]` section; bump its `owl:versionIRI` / `owl:versionInfo` **only at a release cut** (tag
   `<module>-v<semver>`), per `docs/contribute/versioning/`.

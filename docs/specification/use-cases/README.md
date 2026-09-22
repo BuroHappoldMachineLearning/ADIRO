@@ -139,6 +139,7 @@ Populate the ontology with sample instance data (Named Individuals) based on rea
 
 - Creating RDF individuals for `DrawingSheet`, `Project`, `Person`, `Discipline`, `DrawingRevision`, etc. (UC-01)
 - Creating RDF individuals for `ReferenceSymbol` and cross-sheet linking relationships (UC-03)
+- Covering **both** ways a title-block value can be carried: validated values as direct datatype properties on `DrawingSheet`, and machine-extracted values as `aprov:FieldAssertion` individuals with provenance and confidence. A CQ that only queries the direct properties will return empty against extraction output until a value is promoted — see [#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)
 - Ensuring test data covers edge cases identified in the Competency Questions (e.g. multi-revision drawings, cross-discipline queries)
 
 **Step 2 — SPARQL Competency Question Validation**
