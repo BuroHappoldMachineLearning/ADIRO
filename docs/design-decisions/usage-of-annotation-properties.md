@@ -17,10 +17,13 @@ Other annotation properties (e.g. `rdfs:label`, `rdfs:comment`) follow standard 
 
 Every ADIRO term carries its human-readable definition in **`rdfs:comment`**. ADIRO deliberately does **not**
 use `IAO:0000115`, the OBO Foundry definition annotation that ROBOT's `report` command looks for in its
-built-in `missing_definition` rule. That rule is therefore set to `INFO` in
-[`config/robot_report_profile.txt`](https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/config/robot_report_profile.txt)
-— it is measuring conformance to a convention ADIRO has not adopted, and left at `WARN` it fired on every
-term in the suite.
+built-in `missing_definition` rule. That rule is therefore **not listed** in
+[`config/robot_report_profile.txt`](https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/config/robot_report_profile.txt),
+so ROBOT does not run it: a profile lists the checks that run, and omitting one disables it. Downgrading it to
+`INFO` was tried first and rejected — the rows stayed, still naming `IAO:0000115` on every term, and a check
+whose output you have to learn to ignore is worse than no check. ADIRO's own description check replaces it.
+(The profile format is strict TSV and does not accept comment lines, so this note cannot live in the file
+itself.)
 
 **Why not `IAO:0000115`:**
 

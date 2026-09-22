@@ -112,8 +112,8 @@ Orientation and Measurement) needs exactly the dimension and axis-line territory
 Not expressivity in the abstract. ADIRO is built for the **machine-learning loop**, and that shows up as
 vocabulary DAnO has no counterpart for:
 
-- `labellableRoot`, `isCVATProperty`, `exampleImage`, `extractionHint` - annotations that tell an annotation
-  tool and an extraction pipeline what to label and how, carried by the ontology itself.
+- `labellableRoot`, `exampleImage`, `extractionHint` and related annotations - they tell an annotation tool
+  and an extraction pipeline what to label and how, carried by the ontology itself.
 - `expectedRange`, `mapsToFieldProperty` - the bridge from a reified assertion to a validated, promoted
   statement.
 - A field-kind scheme whose *membership is the extraction profile*, with per-language synonyms.
@@ -204,8 +204,8 @@ it carries no logical force and consumers opt in.*
 
 - **Minting ADIRO terms that parallel DAnO's decomposition** - `DimensionLine`, `Terminator`, `AxisLine` and
   so on - and mapping them in the compatibility layer. Fully compatible with this strategy, and the likely
-  answer, because ADIRO symbol classes are also **labelling targets**: they carry `labellableRoot` and
-  `isCVATProperty` annotations for the extraction pipeline. Annotating an external IRI with ADIRO's own
+  answer, because ADIRO symbol classes are also **labelling targets**: they carry the suite's own labelling
+  annotations, which downstream annotation tooling reads. Annotating an external IRI with ADIRO's own
   annotation properties would couple the core to DAnO through the back door.
 - **A pinned SLME `STAR` extract**, if a future use case genuinely needs to *reason with* DAnO's axioms. The
   published rule's options 2 and 3 remain open. Such an extract is a **different artefact** from the

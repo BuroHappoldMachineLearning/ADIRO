@@ -231,8 +231,9 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   - **Do not add terms no in-scope use case needs.** A public `w3id.org` IRI is hard to withdraw; an issue is
     cheap. PR #76 minted and then withdrew `metadata:depicts` for exactly this reason.
 - **Every ADIRO term needs an `rdfs:comment`.** That is ADIRO's definition vocabulary — deliberately
-  **not** the OBO `IAO:0000115` that ROBOT's `missing_definition` rule looks for, which is why that rule sits
-  at `INFO` in `config/robot_report_profile.txt`. Reasons in
+  **not** the OBO `IAO:0000115` that ROBOT's `missing_definition` rule looks for, which is why that rule is
+  **absent** from `config/robot_report_profile.txt` (a profile lists the checks that run; omitting one
+  disables it, and the file format accepts no comments to say so). Reasons in
   `docs/design-decisions/usage-of-annotation-properties.md`. `scripts/validate_ontology.py` reports
   ADIRO-namespace terms that lack one (external stubs exempt — their definitions live at the source). It is
   advisory while the backlog in [#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87) is
