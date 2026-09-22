@@ -9,12 +9,27 @@ This script parses ontology files and checks for:
 - Other structural issues
 """
 
+import os
 import sys
 from pathlib import Path
-from rdflib import Graph
-from rdflib.namespace import RDF, RDFS, OWL
+from rdflib import Graph, URIRef
+from rdflib.namespace import RDF, RDFS, OWL, SKOS, DCTERMS
 from rdflib.term import BNode
 from collections import defaultdict, deque
+
+
+# Every ADIRO term must carry a human-readable description. ADIRO's definition
+# vocabulary is rdfs:comment - NOT the OBO convention IAO:0000115 that ROBOT's
+# built-in `missing_definition` rule looks for. See
+# docs/design-decisions/usage-of-annotation-properties.md for why.
+#
+# skos:definition and dcterms:description are accepted too: those are the other
+# properties pyLODE normalises into a rendered description, so a term carrying
+# one of them still documents itself on the published site.
+ADIRO_NS = "https://w3id.org/adiro/"
+DESCRIPTION_PROPS = (RDFS.comment, SKOS.definition, DCTERMS.description)
+TERM_TYPES = (OWL.Class, OWL.ObjectProperty, OWL.DatatypeProperty,
+              OWL.AnnotationProperty, OWL.NamedIndividual)
 
 
 def find_circular_references(graph):
@@ -134,14 +149,37 @@ def find_version_inconsistencies(graph) -> list[str]:
     return errors
 
 
-def validate_ontology(ttl_file: Path) -> tuple[bool, list[str]]:
+def find_undescribed_terms(graph) -> list[str]:
+    """
+    ADIRO-namespace terms with no human-readable description.
+
+    Terms from other namespaces are exempt by design: an external term declared
+    as a local stub is a name, not a definition - the definition lives at the
+    source, which is what its rdfs:isDefinedBy points at. Describing it here
+    would be asserting someone else's definition.
+    """
+    undescribed = []
+    for term_type in TERM_TYPES:
+        for term in graph.subjects(RDF.type, term_type):
+            if not isinstance(term, URIRef) or not str(term).startswith(ADIRO_NS):
+                continue
+            if any((term, prop, None) in graph for prop in DESCRIPTION_PROPS):
+                continue
+            label = graph.value(term, RDFS.label)
+            name = str(term).split("#")[-1]
+            undescribed.append(f"{name} ({label})" if label else name)
+    return sorted(set(undescribed))
+
+
+def validate_ontology(ttl_file: Path) -> tuple[bool, list[str], list[str]]:
     """
     Validate an ontology file.
     
     Returns:
-        (is_valid, list_of_errors)
+        (is_valid, list_of_errors, list_of_warnings)
     """
     errors = []
+    warnings = []
     
     try:
         # Parse the ontology
@@ -164,11 +202,28 @@ def validate_ontology(ttl_file: Path) -> tuple[bool, list[str]]:
         # Check per-module version metadata consistency (RES-66)
         errors.extend(find_version_inconsistencies(graph))
 
-        return len(errors) == 0, errors
-        
+        # Every ADIRO term needs a human-readable description (#87).
+        # Advisory by default so the existing backlog does not block CI; set
+        # ENFORCE_DESCRIPTIONS=1 to promote it to an error once that backlog is
+        # cleared, which is the point at which this becomes a real gate.
+        undescribed = find_undescribed_terms(graph)
+        if undescribed:
+            head = ", ".join(undescribed[:8])
+            more = f" ... and {len(undescribed) - 8} more" if len(undescribed) > 8 else ""
+            msg = (f"{len(undescribed)} term(s) have no rdfs:comment "
+                   f"(nor skos:definition / dcterms:description): {head}{more}")
+            if os.environ.get("ENFORCE_DESCRIPTIONS") == "1":
+                errors.append(msg)
+            else:
+                warnings.append(msg)
+                if os.environ.get("LIST_UNDESCRIBED") == "1":
+                    warnings.extend(f"  undescribed: {t}" for t in undescribed)
+
+        return len(errors) == 0, errors, warnings
+
     except Exception as e:
         errors.append(f"Parse error: {str(e)}")
-        return False, errors
+        return False, errors, []
 
 
 def main():
@@ -205,8 +260,8 @@ def main():
             continue
         
         print(f"Validating {ttl_file.name}...")
-        is_valid, errors = validate_ontology(ttl_file)
-        
+        is_valid, errors, warnings = validate_ontology(ttl_file)
+
         if is_valid:
             print(f"  [OK] {ttl_file.name} is valid")
         else:
@@ -214,6 +269,9 @@ def main():
             for error in errors:
                 print(f"    • {error}")
             all_valid = False
+
+        for warning in warnings:
+            print(f"  [WARN] {warning}")
     
     if not all_valid:
         sys.exit(1)
