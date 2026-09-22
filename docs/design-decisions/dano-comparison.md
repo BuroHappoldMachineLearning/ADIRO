@@ -169,9 +169,66 @@ A local stub carries none of the source's axioms, so the second and third failur
 audience an external IRI exists to serve. An alignment that works only for consumers who ignore it is not an
 alignment.
 
-`skos:closeMatch` is annotation-level: a reasoner concludes nothing from it, no domain, range or type is
-inherited, and a human or a crosswalk tool still learns that two terms mean nearly the same thing. The DAnO
+The link therefore has to be an **annotation**: a reasoner concludes nothing from it, no domain, range or type
+is inherited, and a human or a crosswalk tool still learns that two terms mean nearly the same thing. The DAnO
 IRIs are **not declared anywhere in ADIRO** - they appear only as annotation values.
+
+### Why not `skos:closeMatch`
+
+The obvious choice for "these two terms mean nearly the same thing" is `skos:closeMatch`, and this module used
+it first. It was withdrawn, because it carries the very defect this page rejects DAnO's properties for.
+
+SKOS declares a sub-property chain with a domain at the top of it:
+
+```turtle
+skos:closeMatch       rdfs:subPropertyOf  skos:mappingRelation .
+skos:mappingRelation  rdfs:subPropertyOf  skos:semanticRelation .
+skos:semanticRelation rdfs:domain skos:Concept ; rdfs:range skos:Concept .
+```
+
+A sub-property inherits its parent's domain and range, so `skos:closeMatch` has both. A consumer who loads
+ADIRO **and SKOS** therefore derives:
+
+```turtle
+aprov:inferredBy    rdf:type skos:Concept .   # an object property, typed as a concept
+aprov:InferenceMeta rdf:type skos:Concept .   # a class, typed as a concept
+dano:inferredBy     rdf:type skos:Concept .   # and someone else's property too
+```
+
+Those statements are false: these are properties and classes, not concepts. Nothing *errors* - OWL 2 DL
+permits punning a property IRI as an individual, so the graph stays consistent - which is word for word what
+this page says about `dano:hasConfidence` in §7. **It is the same silent domain leakage, and ADIRO had shipped
+it.**
+
+It is also worse here than in the DAnO case, in one respect: it lands on precisely the people the module
+exists for. Anyone deliberately loading a crosswalk layer is likely to have SKOS in their graph, and
+`aec_drawing_metadata` is now itself a SKOS vocabulary, so the collision is routine rather than hypothetical.
+
+Four options were weighed:
+
+| Option | Assessment |
+|---|---|
+| Drop the mappings entirely | Nothing to leak, but the crosswalk stops being machine-readable and nothing checks it against reality |
+| Keep `skos:closeMatch`, qualify the claim | Zero work, and keeps the vocabulary crosswalk tools recognise - but ships the defect this page condemns, inside the document asking reviewers to ratify the rule against it |
+| Use `rdfs:seeAlso` | Genuinely inert and universally understood, but says only "related", losing the precision that made the mapping worth writing |
+| **Mint an ADIRO annotation property** | Precise *and* inert: an `owl:AnnotationProperty` has no domain to inherit and carries no logical force in OWL 2 DL by construction |
+
+The last was chosen. `aec_dano_alignment` declares its own `:closeMatch`, carrying the intent of
+`skos:closeMatch` without `skos:semanticRelation`'s domain.
+
+The cost is real and worth stating plainly: **no external tool recognises an ADIRO-specific property**, so a
+crosswalk consumer has to read this page rather than discovering the mapping generically. That is the price of
+not asserting something false, and it is cheap today because no such consumer exists - the mappings are a
+record of a decision before they are an integration feature.
+
+One route was rejected outright: declaring `skos:closeMatch` locally as an `owl:AnnotationProperty` to
+neutralise its domain. That contradicts SKOS's own `owl:ObjectProperty` declaration and produces illegal
+punning for anyone merging real SKOS - trading a false statement for a broken graph.
+
+**The general lesson, which outlives DAnO:** a property is not annotation-level because it is *used* as an
+annotation. It is annotation-level because it is *declared* as one. Every other mapping vocabulary worth
+reaching for - SKOS, and the OBO `oboInOwl:has*Xref` family - carries axioms of its own, and those axioms
+arrive with the vocabulary whether or not the person who wrote the mapping expected them.
 
 !!! note "Option 1 is really two moves"
     The published rule folds both under "local stub + alignment", but they differ in which IRI is the subject.
@@ -269,12 +326,12 @@ This is the pattern worth keeping: **adopt the shape, mint the terms, map the na
 
 | DAnO term | Verdict | Reason |
 |---|---|---|
-| `dano:inferredBy` | Superseded by `aprov:inferredBy`; `skos:closeMatch` | Object/datatype type mismatch; ADIRO's resolves an agent |
-| `dano:inferredWith` | Superseded by `aprov:inferredWith`; `skos:closeMatch` | As above |
-| `dano:inferredFrom` | Superseded by `aprov:inferredFrom`; `skos:closeMatch` | As above; ADIRO's is PROV-aligned |
-| `dano:inferredAt` | Superseded by `aprov:inferredAt`; `skos:closeMatch` | `xsd:date` disjoint from ADIRO's `xsd:dateTime` |
-| `dano:hasConfidence` | Superseded by `aprov:hasConfidence`; `skos:closeMatch` | Domain leakage; ADIRO's is per-assertion |
-| `dano:DrawingElementMeta` | Superseded by `aprov:InferenceMeta`; `skos:closeMatch` | Same pattern, PROV-aligned |
+| `dano:inferredBy` | Superseded by `aprov:inferredBy`; `:closeMatch` | Object/datatype type mismatch; ADIRO's resolves an agent |
+| `dano:inferredWith` | Superseded by `aprov:inferredWith`; `:closeMatch` | As above |
+| `dano:inferredFrom` | Superseded by `aprov:inferredFrom`; `:closeMatch` | As above; ADIRO's is PROV-aligned |
+| `dano:inferredAt` | Superseded by `aprov:inferredAt`; `:closeMatch` | `xsd:date` disjoint from ADIRO's `xsd:dateTime` |
+| `dano:hasConfidence` | Superseded by `aprov:hasConfidence`; `:closeMatch` | Domain leakage; ADIRO's is per-assertion |
+| `dano:DrawingElementMeta` | Superseded by `aprov:InferenceMeta`; `:closeMatch` | Same pattern, PROV-aligned |
 | `dano:depicts` | **Not reused, and no ADIRO counterpart minted yet** | Domain `dano:DisplayElement` is wrong for a class that also covers dimensions and grids. The ADIRO term is unminted because its consumers specify their own - [#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80) |
 | `dano:isDepictedBy` | Not reused | Same as `dano:depicts` - [#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80) |
 | `dano:Dimension`, `DimensionChain`, `DimensionLine`, `AxisLine`, `Terminator`, `SectionSymbol` | **Open**, but reuse of the IRIs is disfavoured | `aec_common_symbols` / UC-03 / UC-07 - see §8, [#79](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/79). `dano:Dimension`'s exact cardinalities would infer undetected parts into existence on clipped drawings - [#84](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/84) |

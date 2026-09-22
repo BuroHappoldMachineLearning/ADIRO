@@ -10,7 +10,9 @@ _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumpe
 ### Added
 - **New optional compatibility layer** mapping ADIRO to the Drawing Analysis Ontology
   ([DAnO](https://w3id.org/dano)), settling [#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77).
-  `skos:closeMatch` from `aprov:InferenceMeta`, `aprov:inferredBy`, `aprov:inferredWith`, `aprov:inferredFrom`,
+  `:closeMatch` (this module's own annotation property — **not** `skos:closeMatch`, which inherits
+  `rdfs:domain skos:Concept` from `skos:semanticRelation` and would type the mapped properties and classes as
+  concepts) from `aprov:InferenceMeta`, `aprov:inferredBy`, `aprov:inferredWith`, `aprov:inferredFrom`,
   `aprov:inferredAt` and `aprov:hasConfidence` to their `dano:` counterparts.
 - **No ADIRO core module references DAnO.** The crosswalk lives here and nothing imports this file, so a
   consumer opts in by loading it. This module `owl:imports` `aec_provenance` (only — the module whose terms it

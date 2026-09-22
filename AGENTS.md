@@ -30,7 +30,8 @@ Ontology sources live in `src/` as independently versioned modules (dependency o
 5. `aec_facade_domain` — facade-engineering discipline-specific concepts (`:FacadeComponent`, `:DGU`, …).
 
 Plus an **optional compatibility layer**, which imports the core and which **nothing imports**:
-- `aec_dano_alignment` — annotation-level `skos:closeMatch` crosswalk to DAnO; consumers opt in by loading
+- `aec_dano_alignment` — annotation-level crosswalk to DAnO, using its own `:closeMatch` annotation
+  property rather than `skos:closeMatch`, which would leak `rdfs:domain skos:Concept`; consumers opt in by loading
   it. See `docs/design-decisions/dano-comparison.md` and `external-ontology-imports.md` for when an external
   reference may sit in a core module at all.
 

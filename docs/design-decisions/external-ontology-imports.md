@@ -72,8 +72,9 @@ case. It is an **option 1B** case: mint an ADIRO property and relate it.
     not in fact minted such a property - the example is the general shape of the trap, not a description of
     the suite.) Remember that in OWL
     a domain is an *inference rule*, not a constraint: nothing is rejected, a wrong type is concluded.
-    Use `rdfs:subPropertyOf` only when the parent's own axioms are ones we actively want; otherwise use
-    `skos:closeMatch`. Worked through in full in the [DAnO comparison](dano-comparison.md).
+    Use `rdfs:subPropertyOf` only when the parent's own axioms are ones we actively want; otherwise use an
+    annotation. Check the annotation vocabulary too: `skos:closeMatch` inherits `rdfs:domain skos:Concept`
+    from `skos:semanticRelation`, which is why ADIRO declares its own instead. Worked through in full in the [DAnO comparison](dano-comparison.md).
 
 ## Where the reference lives: core module or compatibility layer
 
@@ -94,7 +95,7 @@ sub-property relationship, and PROV-awareness is exactly the intent.
 
 Otherwise the reference goes in an **optional compatibility layer** — a module carrying annotation-level
 mappings only, which **nothing in the core imports** and a consumer loads explicitly. `aec_dano_alignment` is
-the worked example: six `skos:closeMatch` mappings, no logical force, and no DAnO IRI anywhere in the ADIRO
+the worked example: six annotation-level mappings, no logical force, and no DAnO IRI anywhere in the ADIRO
 core. This keeps core release cycles independent of an unreleased third-party vocabulary and lets a mapping be
 deprecated wholesale without touching a core module.
 

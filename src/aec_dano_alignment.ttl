@@ -1,8 +1,8 @@
 @base <https://w3id.org/adiro/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix : <https://w3id.org/adiro/aec_dano_alignment#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix aprov: <https://w3id.org/adiro/aec_provenance#> .
 @prefix dano: <https://w3id.org/dano#> .
@@ -13,7 +13,7 @@
 
 <https://w3id.org/adiro/aec_dano_alignment> rdf:type owl:Ontology ;
     rdfs:label "ADIRO - DAnO compatibility layer" ;
-    rdfs:comment "OPTIONAL compatibility layer mapping ADIRO terms to the Drawing Analysis Ontology (DAnO, https://w3id.org/dano). Nothing in the ADIRO core imports this module and no ADIRO core module mentions DAnO, so a consumer who wants the DAnO crosswalk loads this file explicitly and everyone else never sees it. Every mapping is annotation-level (skos:closeMatch) and carries no logical force: no rdfs:subPropertyOf alignment to a DAnO term is available, and the DAnO IRIs are not declared here or anywhere else in ADIRO. Kept separate from the core for lifecycle reasons - DAnO has no releases, and an unreleased third-party vocabulary should not force a version bump on a module downstream consumers pin. Full rationale and per-term verdicts: https://burohappoldmachinelearning.github.io/ADIRO/design-decisions/dano-comparison/" ;
+    rdfs:comment "OPTIONAL compatibility layer mapping ADIRO terms to the Drawing Analysis Ontology (DAnO, https://w3id.org/dano). Nothing in the ADIRO core imports this module and no ADIRO core module mentions DAnO, so a consumer who wants the DAnO crosswalk loads this file explicitly and everyone else never sees it. Every mapping uses ADIRO's own :closeMatch annotation property and carries no logical force: no rdfs:subPropertyOf alignment to a DAnO term is available, and the DAnO IRIs are not declared here or anywhere else in ADIRO. Kept separate from the core for lifecycle reasons - DAnO has no releases, and an unreleased third-party vocabulary should not force a version bump on a module downstream consumers pin. Full rationale and per-term verdicts: https://burohappoldmachinelearning.github.io/ADIRO/design-decisions/dano-comparison/" ;
 
     dcterms:title "ADIRO - DAnO compatibility layer" ;
     dcterms:description "Optional, annotation-level crosswalk between ADIRO and DAnO. Not imported by any ADIRO core module." ;
@@ -65,20 +65,50 @@
 #################################################################
 
 #################################################################
+#    The mapping property
+#
+#    ADIRO does NOT use skos:closeMatch for these mappings, although that is the
+#    obvious choice and was used here first. SKOS declares
+#
+#        skos:closeMatch  rdfs:subPropertyOf  skos:mappingRelation
+#        skos:mappingRelation rdfs:subPropertyOf skos:semanticRelation
+#        skos:semanticRelation  rdfs:domain skos:Concept ; rdfs:range skos:Concept
+#
+#    so a consumer who loads SKOS alongside this file derives that every mapped
+#    term - ours AND DAnO's - is a skos:Concept. They are object properties and
+#    classes, not concepts. That is the same silent domain leakage this suite
+#    refused to accept from dano:hasConfidence, and it lands on exactly the
+#    consumers this module is for: anyone loading a crosswalk is likely to have
+#    SKOS in their graph, and aec_drawing_metadata is itself a SKOS vocabulary.
+#
+#    An owl:AnnotationProperty has no domain to inherit and carries no logical
+#    force in OWL 2 DL by construction, so ADIRO declares its own. Declaring
+#    skos:closeMatch locally as an annotation property was rejected: it would
+#    contradict SKOS's own owl:ObjectProperty declaration and produce illegal
+#    punning on merge - a broken graph in place of a false statement.
+#
+#    Full reasoning: docs/design-decisions/dano-comparison.md
+#################################################################
+
+:closeMatch rdf:type owl:AnnotationProperty ;
+    rdfs:label "closeMatch" ;
+    rdfs:comment "Asserts that an ADIRO term and an external term mean nearly the same thing: close enough that a reader or a crosswalk tool should treat them as corresponding, not close enough to assert any logical relationship. Carries the intent of skos:closeMatch without inheriting skos:semanticRelation's rdfs:domain skos:Concept, which would type the mapped terms as concepts when they are properties and classes. Annotation only: a reasoner derives nothing from it, by construction rather than by convention. If a second crosswalk module is ever added, move this declaration to a shared home - it is here only because this is its sole consumer." .
+
+#################################################################
 #    Provenance and confidence
 #################################################################
 
-aprov:InferenceMeta skos:closeMatch dano:DrawingElementMeta .
+aprov:InferenceMeta :closeMatch dano:DrawingElementMeta .
 
-aprov:inferredBy skos:closeMatch dano:inferredBy .
+aprov:inferredBy :closeMatch dano:inferredBy .
 
-aprov:inferredWith skos:closeMatch dano:inferredWith .
+aprov:inferredWith :closeMatch dano:inferredWith .
 
-aprov:inferredFrom skos:closeMatch dano:inferredFrom .
+aprov:inferredFrom :closeMatch dano:inferredFrom .
 
-aprov:inferredAt skos:closeMatch dano:inferredAt .
+aprov:inferredAt :closeMatch dano:inferredAt .
 
-aprov:hasConfidence skos:closeMatch dano:hasConfidence .
+aprov:hasConfidence :closeMatch dano:hasConfidence .
 
 #################################################################
 #    Depiction - deliberately unmapped

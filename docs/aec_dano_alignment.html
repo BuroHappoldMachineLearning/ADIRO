@@ -297,7 +297,7 @@ td {
         "@value": "Optional, annotation-level crosswalk between ADIRO and DAnO. Not imported by any ADIRO core module."
       },
       {
-        "@value": "OPTIONAL compatibility layer mapping ADIRO terms to the Drawing Analysis Ontology (DAnO, https://w3id.org/dano). Nothing in the ADIRO core imports this module and no ADIRO core module mentions DAnO, so a consumer who wants the DAnO crosswalk loads this file explicitly and everyone else never sees it. Every mapping is annotation-level (skos:closeMatch) and carries no logical force: no rdfs:subPropertyOf alignment to a DAnO term is available, and the DAnO IRIs are not declared here or anywhere else in ADIRO. Kept separate from the core for lifecycle reasons - DAnO has no releases, and an unreleased third-party vocabulary should not force a version bump on a module downstream consumers pin. Full rationale and per-term verdicts: https://burohappoldmachinelearning.github.io/ADIRO/design-decisions/dano-comparison/"
+        "@value": "OPTIONAL compatibility layer mapping ADIRO terms to the Drawing Analysis Ontology (DAnO, https://w3id.org/dano). Nothing in the ADIRO core imports this module and no ADIRO core module mentions DAnO, so a consumer who wants the DAnO crosswalk loads this file explicitly and everyone else never sees it. Every mapping uses ADIRO's own :closeMatch annotation property and carries no logical force: no rdfs:subPropertyOf alignment to a DAnO term is available, and the DAnO IRIs are not declared here or anywhere else in ADIRO. Kept separate from the core for lifecycle reasons - DAnO has no releases, and an unreleased third-party vocabulary should not force a version bump on a module downstream consumers pin. Full rationale and per-term verdicts: https://burohappoldmachinelearning.github.io/ADIRO/design-decisions/dano-comparison/"
       }
     ],
     "https://schema.org/license": [
@@ -380,15 +380,41 @@ td {
             <dd>
               <ul>
                 <li><p>Optional, annotation-level crosswalk between ADIRO and DAnO. Not imported by any ADIRO core module.</p></li>
-                <li><p>OPTIONAL compatibility layer mapping ADIRO terms to the Drawing Analysis Ontology (DAnO, https://w3id.org/dano). Nothing in the ADIRO core imports this module and no ADIRO core module mentions DAnO, so a consumer who wants the DAnO crosswalk loads this file explicitly and everyone else never sees it. Every mapping is annotation-level (skos:closeMatch) and carries no logical force: no rdfs:subPropertyOf alignment to a DAnO term is available, and the DAnO IRIs are not declared here or anywhere else in ADIRO. Kept separate from the core for lifecycle reasons - DAnO has no releases, and an unreleased third-party vocabulary should not force a version bump on a module downstream consumers pin. Full rationale and per-term verdicts: https://burohappoldmachinelearning.github.io/ADIRO/design-decisions/dano-comparison/</p></li>
+                <li><p>OPTIONAL compatibility layer mapping ADIRO terms to the Drawing Analysis Ontology (DAnO, https://w3id.org/dano). Nothing in the ADIRO core imports this module and no ADIRO core module mentions DAnO, so a consumer who wants the DAnO crosswalk loads this file explicitly and everyone else never sees it. Every mapping uses ADIRO's own :closeMatch annotation property and carries no logical force: no rdfs:subPropertyOf alignment to a DAnO term is available, and the DAnO IRIs are not declared here or anywhere else in ADIRO. Kept separate from the core for lifecycle reasons - DAnO has no releases, and an unreleased third-party vocabulary should not force a version bump on a module downstream consumers pin. Full rationale and per-term verdicts: https://burohappoldmachinelearning.github.io/ADIRO/design-decisions/dano-comparison/</p></li>
               </ul>
             </dd>
           </div>
         </dl>
       </div>
+      <div class="section" id="annotationproperties">
+        <h2>Annotation Properties</h2>
+        <div class="property entity" id="closeMatch">
+          <h3>closeMatch
+            <sup class="sup-ap" title="OWL Annotation Property">ap</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_dano_alignment#closeMatch</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Asserts that an ADIRO term and an external term mean nearly the same thing: close enough that a reader or a crosswalk tool should treat them as corresponding, not close enough to assert any logical relationship. Carries the intent of skos:closeMatch without inheriting skos:semanticRelation's rdfs:domain skos:Concept, which would type the mapped terms as concepts when they are properties and classes. Annotation only: a reasoner derives nothing from it, by construction rather than by convention. If a second crosswalk module is ever added, move this declaration to a shared home - it is here only because this is its sole consumer.</p></td>
+            </tr>
+          </table>
+        </div>
+      </div>
       <div id="namespaces">
         <h2>Namespaces</h2>
         <dl>
+          <dt id=":">:</dt>
+          <dd>
+            <code>https://w3id.org/adiro/aec_dano_alignment#</code>
+          </dd>
           <dt id="aprov">aprov</dt>
           <dd>
             <code>https://w3id.org/adiro/aec_provenance#</code>
@@ -417,15 +443,18 @@ td {
           <dd>
             <code>http://www.w3.org/2000/01/rdf-schema#</code>
           </dd>
-          <dt id="skos">skos</dt>
-          <dd>
-            <code>http://www.w3.org/2004/02/skos/core#</code>
-          </dd>
         </dl>
       </div>
       <div id="legend">
         <h2>Legend</h2>
-        <table class="entity"></table>
+        <table class="entity">
+          <tr>
+            <td>
+              <sup class="sup-ap" title="OWL Annotation Property">ap</sup>
+            </td>
+            <td>Annotation Properties</td>
+          </tr>
+        </table>
       </div>
     </div>
     <div id="pylode">
@@ -451,9 +480,22 @@ td {
         </li>
         <li>
           <h4>
+            <a href="#annotationproperties">Annotation Properties</a>
+          </h4>
+          <ul class="second">
+            <li>
+              <a href="#closeMatch">closeMatch</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <h4>
             <a href="#namespaces">Namespaces</a>
           </h4>
           <ul class="second">
+            <li>
+              <a href="#"></a>
+            </li>
             <li>
               <a href="#aprov">aprov</a>
             </li>
@@ -474,9 +516,6 @@ td {
             </li>
             <li>
               <a href="#rdfs">rdfs</a>
-            </li>
-            <li>
-              <a href="#skos">skos</a>
             </li>
           </ul>
         </li>
