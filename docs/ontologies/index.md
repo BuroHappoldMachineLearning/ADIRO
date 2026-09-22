@@ -22,7 +22,6 @@ graph BT
     aec_facade_domain --> aec_common_symbols
     aec_facade_domain --> aec_domain_common
     aec_facade_domain --> aec_drawing_metadata
-    aec_dano_alignment --> aec_drawing_metadata
     aec_dano_alignment --> aec_provenance
     click aec_provenance "aec_provenance/" "Aec Provenance reference page"
     click aec_drawing_metadata "aec_drawing_metadata/" "Aec Drawing Metadata reference page"
@@ -70,6 +69,6 @@ graph BT
 
     OPTIONAL compatibility layer mapping ADIRO terms to the Drawing Analysis Ontology (DAnO, https://w3id.org/dano). Nothing in the ADIRO core imports this module and no ADIRO core module mentions DAnO, so a consumer who wants the DAnO crosswalk loads this file explicitly and everyone else never sees it. Every mapping is annotation-level (skos:closeMatch) and carries no logical force: no rdfs:subPropertyOf alignment to a DAnO term is available, and the DAnO IRIs are not declared here or anywhere else in ADIRO. Kept separate from the core for lifecycle reasons - DAnO has no releases, and an unreleased third-party vocabulary should not force a version bump on a module downstream consumers pin. Full rationale and per-term verdicts: https://burohappoldmachinelearning.github.io/ADIRO/design-decisions/dano-comparison/
 
-    *Imports: aec_drawing_metadata, aec_provenance*
+    *Imports: aec_provenance*
 
 </div>

@@ -13,8 +13,8 @@ _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumpe
   `skos:closeMatch` from `aprov:InferenceMeta`, `aprov:inferredBy`, `aprov:inferredWith`, `aprov:inferredFrom`,
   `aprov:inferredAt` and `aprov:hasConfidence` to their `dano:` counterparts.
 - **No ADIRO core module references DAnO.** The crosswalk lives here and nothing imports this file, so a
-  consumer opts in by loading it. This module `owl:imports` `aec_provenance` and `aec_drawing_metadata`, not
-  the other way round.
+  consumer opts in by loading it. This module `owl:imports` `aec_provenance` (only — the module whose terms it
+  maps), not the other way round.
 - **All mappings are annotation-level.** No `rdfs:subPropertyOf` alignment is asserted to any DAnO term:
   DAnO's `inferred*` are datatype properties while ADIRO's are object properties (a sub-property axiom across
   that boundary is ill-typed and outside OWL 2 DL), `dano:inferredAt` ranges over `xsd:date` which is disjoint

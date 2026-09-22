@@ -29,7 +29,6 @@ graph BT
     aec_facade_domain --> aec_common_symbols
     aec_facade_domain --> aec_domain_common
     aec_facade_domain --> aec_drawing_metadata
-    aec_dano_alignment --> aec_drawing_metadata
     aec_dano_alignment --> aec_provenance
     click aec_provenance "../aec_provenance/" "Aec Provenance reference page"
     click aec_drawing_metadata "../aec_drawing_metadata/" "Aec Drawing Metadata reference page"

@@ -7,7 +7,6 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix aprov: <https://w3id.org/adiro/aec_provenance#> .
-@prefix dm: <https://w3id.org/adiro/aec_drawing_metadata#> .
 @prefix dano: <https://w3id.org/dano#> .
 
 #################################################################
@@ -24,8 +23,7 @@
     dcterms:creator "Buro Happold - Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
     rdfs:seeAlso <https://w3id.org/dano> ;
-    owl:imports <https://w3id.org/adiro/aec_provenance> ,
-                <https://w3id.org/adiro/aec_drawing_metadata> ;
+    owl:imports <https://w3id.org/adiro/aec_provenance> ;
     owl:versionIRI <https://w3id.org/adiro/aec_dano_alignment/1.0.0> ;
     owl:versionInfo "1.0.0" .
 
@@ -92,5 +90,7 @@ aprov:hasConfidence skos:closeMatch dano:hasConfidence .
 #    minted, because the use cases that need it specify their own with a
 #    different subject: UC-06 proposes depictsMaterial and UC-07 depictsElement,
 #    both with domain Drawing rather than DrawingElement. Whoever settles that
-#    shape adds the mapping here. See issue #80.
+#    shape adds the mapping here, and re-adds the aec_drawing_metadata prefix and
+#    owl:imports that this module dropped once it had nothing left to reference
+#    there. See issue #80.
 #################################################################

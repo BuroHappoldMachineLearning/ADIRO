@@ -319,6 +319,8 @@ https://alelom.github.io/OntoCanvas/?onto=<url-encoded raw URL>
 https://raw.githubusercontent.com/BuroHappoldMachineLearning/ADIRO/<branch>/docs/<module>.ttl
 ```
 
+**Only link OntoCanvas for a module that declares classes.** An annotation-only module (`aec_dano_alignment` maps terms with `skos:closeMatch` and declares nothing) renders as an empty canvas, which looks like a broken link. Link its Turtle on GitHub instead and say why in the row.
+
 Use the **branch** in the raw URL, not a commit SHA: the link then follows the branch and always shows the
 latest push, so it never needs re-pinning as the PR evolves. `delete_branch_on_merge` is **false** on this
 repo, so branch links keep working after merge. Point at `docs/<module>.ttl` rather than `src/` — that is the
