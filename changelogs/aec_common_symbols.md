@@ -7,6 +7,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+### Removed (BREAKING)
+- **`appearsOn` and `isReferencedBy`** — the declared inverses of `hasReferenceSymbol` and
+  `referencesLayout`, together with both `owl:inverseOf` axioms. [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21) decided project-wide that ADIRO
+  declares no named inverse properties and no `owl:inverseOf` axioms. Only the forward direction of each pair
+  survives: `hasReferenceSymbol` (Layout → ReferenceSymbol, ⊂ `metadata:contains`) and `referencesLayout`
+  (ReferenceSymbol → Layout); reverse navigation uses SPARQL inverse paths. UC-03's CQ 3.3 validation query is
+  rewritten accordingly. **MAJOR bump (3.0.0) at the next release cut.**
+
 ## [2.0.0] — 2026-08-10
 
 ### Changed (BREAKING)

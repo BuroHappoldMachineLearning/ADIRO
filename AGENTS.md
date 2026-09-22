@@ -212,6 +212,22 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
         an in-list marker to inline italics on the same line, and **check the built page**, not just that
         `mkdocs build --strict` exits 0: strict mode validates links, not layout. `uv run mkdocs serve` and
         look at it.
+  - **Re-read the whole page you are editing, not just the passage you came for.** A change that lands in
+    one section routinely invalidates another on the same page: an open-issues table listing something that is
+    now decided, a "(unchanged)" diagram that changed, a status or version column that moved, a rollup table
+    whose other rows went stale. Before committing an edit to any page, check every list, table and status
+    marker on it and fix what no longer holds. Two found this way in PR #76: UC-03's open-issues table still
+    listed the inverse-property convention as pending months after it was decided, and the root `CHANGELOG.md`
+    rollup showed `1.0.0` for three modules whose `.ttl` had said `2.0.0` since the w3id migration.
+  - **Link every issue and article you mention.** A bare `#21` or `RES-46` is dead text on the published site
+    and in anything copied out of it. Write GitHub issues as
+    `[#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21)` and YouTrack items as
+    `[RES-46](https://bhmlrnd.youtrack.cloud/issue/RES-46)` (articles: `/articles/<ID>`). This holds
+    everywhere — use-case ORSDs, the ORSD, design decisions, changelogs and the worklog. If you are not
+    certain an ID is correct, look it up before linking rather than constructing a URL from memory.
+  - **An issue reference is a claim about current state — verify it.** When a page says an issue is open,
+    tracked or pending, check the issue before leaving the sentence in place; decisions are often recorded in
+    a comment rather than by closing the issue.
   - **Do not add terms no in-scope use case needs.** A public `w3id.org` IRI is hard to withdraw; an issue is
     cheap. PR #76 minted and then withdrew `metadata:depicts` for exactly this reason.
 - **Versioning.** Record any change to a module's semantics under that module's `changelogs/<module>.md`

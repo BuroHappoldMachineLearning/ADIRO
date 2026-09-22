@@ -69,37 +69,19 @@ A symbol drawn on a Layout that references another Layout (on the same or a diff
 
 ## Object Properties
 
-### appearsOn {#appearsOn}
-
-Source Layout — the Layout on which this ReferenceSymbol is drawn.
-
-- **IRI:** `https://w3id.org/adiro/aec_common_symbols#appearsOn`
-- **Domain:** [ReferenceSymbol](#ReferenceSymbol)
-- **Range:** `metadata:Layout`
-- **Inverse of:** [hasReferenceSymbol](#hasReferenceSymbol)
-
 ### hasReferenceSymbol {#hasReferenceSymbol}
 
-Inverse of appearsOn. A Layout contains one or more ReferenceSymbols.
+A Layout contains one or more ReferenceSymbols. To navigate from a symbol back to the Layout it is drawn on, use the SPARQL inverse path ^csymbol:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
 
 - **IRI:** `https://w3id.org/adiro/aec_common_symbols#hasReferenceSymbol`
 - **Sub property of:** `metadata:contains`
 - **Domain:** `metadata:Layout`
 - **Range:** [ReferenceSymbol](#ReferenceSymbol)
 
-### isReferencedBy {#isReferencedBy}
-
-Inverse of referencesLayout. A Layout that is the target of one or more ReferenceSymbols.
-
-- **IRI:** `https://w3id.org/adiro/aec_common_symbols#isReferencedBy`
-- **Domain:** `metadata:Layout`
-- **Range:** [ReferenceSymbol](#ReferenceSymbol)
-
 ### referencesLayout {#referencesLayout}
 
-Target Layout — the Layout this ReferenceSymbol points to. The target is Layout-level, not DrawingSheet-level.
+Target Layout — the Layout this ReferenceSymbol points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^csymbol:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
 
 - **IRI:** `https://w3id.org/adiro/aec_common_symbols#referencesLayout`
 - **Domain:** [ReferenceSymbol](#ReferenceSymbol)
 - **Range:** `metadata:Layout`
-- **Inverse of:** [isReferencedBy](#isReferencedBy)

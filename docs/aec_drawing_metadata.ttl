@@ -91,17 +91,10 @@
 
 :hasRevision rdf:type owl:ObjectProperty ;
     rdfs:label "hasRevision" ;
-    rdfs:comment "A DrawingSheet compositionally contains its DrawingRevisions." ;
+    rdfs:comment "A DrawingSheet compositionally contains its DrawingRevisions. To navigate from a revision back to its sheet, use the SPARQL inverse path ^metadata:hasRevision - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21)." ;
     rdfs:subPropertyOf :contains ;
-    owl:inverseOf :isRevisionOf ;
     rdfs:domain :DrawingSheet ;
     rdfs:range :DrawingRevision .
-
-:isRevisionOf rdf:type owl:ObjectProperty ;
-    rdfs:label "isRevisionOf" ;
-    rdfs:comment "Inverse of hasRevision. Navigates from a DrawingRevision back to its DrawingSheet." ;
-    rdfs:domain :DrawingRevision ;
-    rdfs:range :DrawingSheet .
 
 :belongsToProject rdf:type owl:ObjectProperty ;
     rdfs:label "belongsToProject" ;

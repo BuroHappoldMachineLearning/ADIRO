@@ -283,22 +283,6 @@ td {
     <script id="schema.org" type="application/ld+json">
 [
   {
-    "@id": "https://w3id.org/adiro/aec_drawing_metadata#TitleblockFieldScheme",
-    "@type": [
-      "https://schema.org/DefinedTermSet"
-    ],
-    "https://schema.org/description": [
-      {
-        "@value": "The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to."
-      }
-    ],
-    "https://schema.org/name": [
-      {
-        "@value": "Titleblock Field Scheme"
-      }
-    ]
-  },
-  {
     "@id": "https://w3id.org/adiro/aec_drawing_metadata",
     "@type": [
       "https://schema.org/DefinedTermSet"
@@ -326,6 +310,22 @@ td {
     "https://schema.org/publisher": [
       {
         "@value": "Buro Happold"
+      }
+    ]
+  },
+  {
+    "@id": "https://w3id.org/adiro/aec_drawing_metadata#TitleblockFieldScheme",
+    "@type": [
+      "https://schema.org/DefinedTermSet"
+    ],
+    "https://schema.org/description": [
+      {
+        "@value": "The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to."
+      }
+    ],
+    "https://schema.org/name": [
+      {
+        "@value": "Titleblock Field Scheme"
       }
     ]
   }
@@ -921,20 +921,10 @@ td {
                 <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
               </th>
               <td>
-                <ul>
-                  <li>
-                    <span>
-                      <a href="#isRevisionOf">isRevisionOf</a>
-                      <sup class="sup-op" title="OWL Object Property">op</sup>
-                    </span>
-                  </li>
-                  <li>
-                    <span>
-                      <a href="#assertsMetadataFor">asserts metadata for</a>
-                      <sup class="sup-op" title="OWL Object Property">op</sup>
-                    </span>
-                  </li>
-                </ul>
+                <span>
+                  <a href="#assertsMetadataFor">asserts metadata for</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
               </td>
             </tr>
             <tr>
@@ -1558,12 +1548,6 @@ td {
                 <ul>
                   <li>
                     <span>
-                      <a href="#isRevisionOf">isRevisionOf</a>
-                      <sup class="sup-op" title="OWL Object Property">op</sup>
-                    </span>
-                  </li>
-                  <li>
-                    <span>
                       <a href="#isAuthoredBy">isAuthoredBy</a>
                       <sup class="sup-op" title="OWL Object Property">op</sup>
                     </span>
@@ -2147,7 +2131,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A DrawingSheet compositionally contains its DrawingRevisions.</p></td>
+              <td><p>A DrawingSheet compositionally contains its DrawingRevisions. To navigate from a revision back to its sheet, use the SPARQL inverse path ^metadata:hasRevision - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).</p></td>
             </tr>
             <tr>
               <th>
@@ -2178,47 +2162,6 @@ td {
               <td>
                 <span>
                   <a href="#DrawingRevision">DrawingRevision</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="isRevisionOf">
-          <h3>isRevisionOf
-            <sup class="sup-op" title="OWL Object Property">op</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_drawing_metadata#isRevisionOf</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>Inverse of hasRevision. Navigates from a DrawingRevision back to its DrawingSheet.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#DrawingRevision">DrawingRevision</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#DrawingSheet">Drawing Sheet</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -3517,9 +3460,6 @@ td {
             </li>
             <li>
               <a href="#hasRevision">hasRevision</a>
-            </li>
-            <li>
-              <a href="#isRevisionOf">isRevisionOf</a>
             </li>
             <li>
               <a href="#belongsToProject">belongsToProject</a>

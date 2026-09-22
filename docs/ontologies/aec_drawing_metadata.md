@@ -401,13 +401,12 @@ Subject is characterised by a property, or quality. Used for example to indicate
 
 ### hasRevision {#hasRevision}
 
-A DrawingSheet compositionally contains its DrawingRevisions.
+A DrawingSheet compositionally contains its DrawingRevisions. To navigate from a revision back to its sheet, use the SPARQL inverse path ^metadata:hasRevision - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#hasRevision`
 - **Sub property of:** [contains](#contains)
 - **Domain:** [Drawing Sheet](#DrawingSheet)
 - **Range:** [DrawingRevision](#DrawingRevision)
-- **Inverse of:** [isRevisionOf](#isRevisionOf)
 
 ### hasStatusCode {#hasStatusCode}
 
@@ -441,14 +440,6 @@ The Person who checked this DrawingRevision.
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isCheckedBy`
 - **Domain:** [DrawingRevision](#DrawingRevision)
 - **Range:** [Person](#Person)
-
-### isRevisionOf {#isRevisionOf}
-
-Inverse of hasRevision. Navigates from a DrawingRevision back to its DrawingSheet.
-
-- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isRevisionOf`
-- **Domain:** [DrawingRevision](#DrawingRevision)
-- **Range:** [Drawing Sheet](#DrawingSheet)
 
 ## Datatype Properties
 

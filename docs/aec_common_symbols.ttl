@@ -49,29 +49,15 @@
 #    Object Properties — UC-03 Reference Symbol relations
 #################################################################
 
-:appearsOn rdf:type owl:ObjectProperty ;
-    rdfs:label "appearsOn" ;
-    rdfs:comment "Source Layout — the Layout on which this ReferenceSymbol is drawn." ;
-    owl:inverseOf :hasReferenceSymbol ;
-    rdfs:domain :ReferenceSymbol ;
-    rdfs:range metadata:Layout .
-
 :hasReferenceSymbol rdf:type owl:ObjectProperty ;
     rdfs:label "hasReferenceSymbol" ;
-    rdfs:comment "Inverse of appearsOn. A Layout contains one or more ReferenceSymbols." ;
+    rdfs:comment "A Layout contains one or more ReferenceSymbols. To navigate from a symbol back to the Layout it is drawn on, use the SPARQL inverse path ^csymbol:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21)." ;
     rdfs:subPropertyOf metadata:contains ;
     rdfs:domain metadata:Layout ;
     rdfs:range :ReferenceSymbol .
 
 :referencesLayout rdf:type owl:ObjectProperty ;
     rdfs:label "referencesLayout" ;
-    rdfs:comment "Target Layout — the Layout this ReferenceSymbol points to. The target is Layout-level, not DrawingSheet-level." ;
-    owl:inverseOf :isReferencedBy ;
+    rdfs:comment "Target Layout — the Layout this ReferenceSymbol points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^csymbol:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21)." ;
     rdfs:domain :ReferenceSymbol ;
     rdfs:range metadata:Layout .
-
-:isReferencedBy rdf:type owl:ObjectProperty ;
-    rdfs:label "isReferencedBy" ;
-    rdfs:comment "Inverse of referencesLayout. A Layout that is the target of one or more ReferenceSymbols." ;
-    rdfs:domain metadata:Layout ;
-    rdfs:range :ReferenceSymbol .

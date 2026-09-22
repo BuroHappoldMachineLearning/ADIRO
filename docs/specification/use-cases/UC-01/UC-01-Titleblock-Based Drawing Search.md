@@ -78,7 +78,6 @@ Links between two entities. New properties are wired into the existing generic t
 | `hasProperty`         | `Layout`          | `LayoutContentType` | `aec_drawing_metadata` | REUSE  | —                       |
 | `hasDiscipline` ⚠️    | `Layout`          | `Discipline` (min 1)| `aec_domain_common`    | REUSE¹ | —                       |
 | `hasRevision`         | `DrawingSheet`    | `DrawingRevision`   | `aec_drawing_metadata` | NEW    | `metadata:contains`     |
-| `isRevisionOf`        | `DrawingRevision` | `DrawingSheet`      | `aec_drawing_metadata` | NEW    | (inverse of hasRevision)|
 | `belongsToProject`    | `DrawingSheet`    | `Project`           | `aec_drawing_metadata` | NEW    | (top-level)             |
 | `belongsToPackage`    | `DrawingSheet`    | `DrawingPackage`    | `aec_drawing_metadata` | NEW    | (top-level)             |
 | `isAuthoredBy`           | `DrawingRevision` | `Person`            | `aec_drawing_metadata` | NEW    | (top-level)             |
@@ -131,7 +130,7 @@ Each FR describes one representational capability the ontology must have, in imp
 > The ontology MUST represent multiple revisions of the same drawing sheet as distinct entities, each carrying a revision code, issue date, and status code, such that both the current state and the full revision history of a sheet can be queried.
 
 - Source: UC-01
-- Derived terms: `metadata:DrawingRevision` (NEW), `metadata:hasRevision` (NEW, `subPropertyOf metadata:contains`), `metadata:isRevisionOf` (NEW, inverse of `hasRevision` — materialised because CQ 3.x needs reverse navigation), `metadata:revisionCode`, `metadata:issueDate` (NEW)
+- Derived terms: `metadata:DrawingRevision` (NEW), `metadata:hasRevision` (NEW, `subPropertyOf metadata:contains`), `metadata:revisionCode`, `metadata:issueDate` (NEW)
 
 ---
 
@@ -142,7 +141,7 @@ Each FR describes one representational capability the ontology must have, in imp
 - Source: UC-01
 - Derived terms: `metadata:Person` (NEW), `metadata:isAuthoredBy`, `metadata:isCheckedBy`, `metadata:isApprovedBy` (NEW, top-level), `metadata:personName` (NEW)
 
-> **Design note — inverse properties:** Only `isRevisionOf` is materialised as `owl:inverseOf` (CQ 3.x requires the reverse direction). For role-based relations, `isAuthoredBy` / `isCheckedBy` / `isApprovedBy` are *not* declared in v0.3 — forward properties are sufficient for SPARQL. ⚠️ **Open issue:** project-wide convention for `owl:inverseOf` vs reasoner-derived inverses — flagged for separate discussion.
+> **Design note — inverse properties:** ADIRO declares **no** named inverse properties and no `owl:inverseOf` axioms. Only forward properties are modelled; reverse navigation uses the SPARQL inverse path, e.g. `?rev ^metadata:hasRevision ?sheet`. Decided project-wide in [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21). *(Changed in [v0.4](#9-version-history).)*
 
 ---
 
@@ -313,7 +312,6 @@ The query is fully expressible, confirming that CQ-I 1 is covered by the current
 | `metadata:DrawingPackage`      | `aec_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
 | `metadata:contains`            | `aec_drawing_metadata` | REUSE  | CQ-I 1, CQ-I 2, CQ-I 3                         | (structural)                       |
 | `metadata:hasRevision`         | `aec_drawing_metadata` | NEW    | CQ 3.x                                         | FR 3                               |
-| `metadata:isRevisionOf`        | `aec_drawing_metadata` | NEW    | CQ 3.x (reverse navigation)                    | FR 3                               |
 | `metadata:isAuthoredBy`           | `aec_drawing_metadata` | NEW    | CQ 4.1                                         | FR 4                               |
 | `metadata:isCheckedBy`          | `aec_drawing_metadata` | NEW    | CQ 4.2                                         | FR 4                               |
 | `metadata:isApprovedBy`         | `aec_drawing_metadata` | NEW    | CQ 4.3, CQ-I 1                                 | FR 4                               |
@@ -361,7 +359,7 @@ aec_dano_alignment                  (NEW - optional compatibility layer;
 
 | Module                 | UC-01 contribution                                                                                                                                                          |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `aec_drawing_metadata` | **New classes:** `DrawingRevision`, `Project`, `Person`, `StatusCode`, `DrawingPackage`. **New properties:** all UC-01 datatype properties; `hasRevision` (⊂ `contains`), `isRevisionOf`, `hasStatusCode` (⊂ `hasProperty`), `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`. |
+| `aec_drawing_metadata` | **New classes:** `DrawingRevision`, `Project`, `Person`, `StatusCode`, `DrawingPackage`. **New properties:** all UC-01 datatype properties; `hasRevision` (⊂ `contains`), `hasStatusCode` (⊂ `hasProperty`), `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`. |
 | `aec_provenance`       | **Reused (new module):** `FieldAssertion`, `InferenceMeta`, `hasConfidence`, `capturedCaption`, `assertedBy`, `inferredBy`/`inferredWith`/`inferredFrom`/`inferredAt`, and the `TitleblockFieldScheme` binding via `assertsFieldKind`. Carries **extracted** title-block values before validation - see the design note in §2.1. |
 | `aec_common_symbols`   | No UC-01 contribution.                                                                                                                                                      |
 | `aec_domain_common`    | **Reused:** `Discipline` and its subclasses; `hasDiscipline` (with proposed domain change from `LayoutContentType` to `Layout` — see G5).                                   |
@@ -391,7 +389,7 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 | G5b | Should `DrawingSheet` itself carry a `hasDiscipline` (a "primary discipline" for the whole sheet) in addition to Layout-level discipline?                          |
 | G11 | **Direct properties vs `FieldAssertion`.** The assertion layer carries extracted, unvalidated title-block values alongside UC-01's direct datatype properties on `DrawingSheet`. Open: at what point does a value get promoted, who performs the promotion, must both representations be kept, and do the direct properties eventually deprecate? Tracked in [#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85). |
 | G10 | ~~`:Metadata` class name misleading~~ — **resolved**: renamed to `:MetadataContainer` (team decision). The class models visual supporting regions (titleblock, legend, etc.), not semantic metadata. |
-| —   | Project-wide convention for `owl:inverseOf` — when to materialise vs rely on reasoner? v0.3 only materialises `isRevisionOf`.                                      |
+| —   | ~~Project-wide convention for `owl:inverseOf`~~ — **resolved** in [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21): ADIRO does not declare inverse properties. `isRevisionOf` removed; use `^metadata:hasRevision`. |
 | —   | ~~"Civil" discipline~~ — **resolved**: `Civil` to be added as a direct subclass of `dcommon:Discipline` (team decision).                                           |
 
 ---
@@ -413,7 +411,14 @@ Changes from v0.3, made in [PR #76](https://github.com/BuroHappoldMachineLearnin
   direct properties eventually deprecate
   ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)).
 
-No entity, attribute, relation or competency question changed, so this is a MINOR revision.
+- **BREAKING — `metadata:isRevisionOf` removed.** [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21) decided project-wide that ADIRO declares no
+  named inverse properties and no `owl:inverseOf` axioms. Navigate from a revision to its sheet with the
+  SPARQL inverse path `^metadata:hasRevision`. The §2.3 relations table, the FR 3 derived terms, the
+  traceability matrix and the §7 module table are updated; no competency question changed, and no SPARQL
+  validation query in this document used the removed property.
+
+A relation was removed, so this is a **MAJOR** revision in substance; the number stays in the 0.x series
+because the document is still a draft and v0.4 was never released.
 
 ### v0.3
 
@@ -426,7 +431,7 @@ Aligned with the existing ontology modules (`aec_drawing_metadata`, `aec_domain_
 - Datatype properties (`drawingIdentifier`, `drawingTitle`, `hasScale`, `sheetSize`) attached directly to `DrawingSheet` — no intermediate entity (G2).
 - New object properties wired into `metadata:contains` / `metadata:hasProperty` via `rdfs:subPropertyOf` (G6).
 - SPARQL placeholder namespace replaced with real module prefixes (G8).
-- Only `isRevisionOf` materialised as `owl:inverseOf`; other inverses deferred (G9).
+- Only `isRevisionOf` materialised as `owl:inverseOf`; other inverses deferred (G9). *(Reversed in v0.4 — no inverse properties are declared at all.)*
 - Stray editing artifact on FR 4 removed.
 - New §7 Module Alignment Summary added.
 
