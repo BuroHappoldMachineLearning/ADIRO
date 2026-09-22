@@ -90,7 +90,7 @@ Consolidating the four ORSD traceability matrices, the terms with a CQ behind th
 | Use case | Status | Terms it needs (all already in `aec_drawing_metadata` / `aec_domain_common` / `aec_common_symbols`) |
 | --- | --- | --- |
 | **UC-01** Titleblock search | ✅ implemented | `DrawingSheet`, `Layout`, `LayoutContentType`, `DrawingRevision`, `Project`, `Person`, `StatusCode`, `DrawingPackage`, `dcommon:Discipline`; `drawingIdentifier`, `drawingTitle`, `hasScale`, `sheetSize`, `revisionCode`, `issueDate`, `personName`, `projectName`, `projectNumber`, `packageName`, `statusLabel`; `contains`, `hasProperty`, `hasDiscipline`, `hasRevision`, `isRevisionOf`, `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `hasStatusCode` |
-| **UC-03** Cross-sheet linking | ✅ implemented | `csymbol:ReferenceSymbol`, `hasReferenceSymbol`, `appearsOn`, `referencesLayout`, `isReferencedBy`, `layoutIdentifier` |
+| **UC-03** Cross-sheet linking | ✅ implemented | `csymbol:ReferenceSymbol`, `hasReferenceSymbol`, `referencesLayout`, `layoutIdentifier` |
 | **UC-06** Content aggregation | ⚠️ draft | `Material`, `HazardClassification`, `depictsMaterial`, `isDepictedOn`, `hasHazardClassification`, `materialName`, `materialSymbol`, `hazardLabel` — **none of them title-block terms** |
 | **UC-07** Wall orientation | ⚠️ draft | `BuildingElement`, `Wall`, `FacingDirection`, `northArrowAngle`, `scaleRatio`, wall dimension properties — **one overlap: the north arrow** |
 
@@ -218,7 +218,7 @@ Out of scope for RES-89, but this review found it and it should not be lost:
 
 | DANO terms | Relevant to | Note |
 | --- | --- | --- |
-| `SectionSymbol`, `Terminator`, `refersTo`, `isReferredToBy` | **UC-03** cross-sheet linking | UC-03 mints `csymbol:ReferenceSymbol`, `referencesLayout`, `isReferencedBy`. DANO has a published equivalent pattern. UC-03 is already implemented, so this is an alignment question, not a rebuild — but worth knowing before UC-03 v0.3 |
+| `SectionSymbol`, `Terminator`, `refersTo`, `isReferredToBy` | **UC-03** cross-sheet linking | UC-03 mints `csymbol:ReferenceSymbol` and `referencesLayout` (no inverse — see [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21)). DANO has a published equivalent pattern. UC-03 is already implemented, so this is an alignment question, not a rebuild — but worth knowing before UC-03 v0.3 |
 | `Dimension`, `DimensionChain`, `DimensionLine`, `AxisLine`, `hasGeometry` | **UC-07** wall measurement | UC-07 needs on-drawing lengths and angles. DANO models dimension lines and geometry natively |
 | `depicts`, `isDepictedBy` | **UC-06** materials | UC-06 mints `depictsMaterial` / `isDepictedOn`. DANO's generic `depicts` / `isDepictedBy` could be the parent property |
 | `TextField`, `TextElement`, `isText` | The title block itself | A title block *is* a `dano:TextField` (a composite of `min 2` `TextElement`s). This is **complementary, not competing**: DANO gives the CV layer (here is a text region, here is its string), `tb:` gives the semantic layer (this string means "checked by"). The clean division is `dano:` for what was seen, `tb:` for what it means |

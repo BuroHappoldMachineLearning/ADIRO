@@ -1,7 +1,7 @@
-@prefix : <https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols#> .
-@base <https://burohappoldmachinelearning.github.io/ADIRO/> .
-@prefix metadata: <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#> .
-@prefix csymbol: <https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols#> .
+@prefix : <https://w3id.org/adiro/aec_common_symbols#> .
+@base <https://w3id.org/adiro/> .
+@prefix metadata: <https://w3id.org/adiro/aec_drawing_metadata#> .
+@prefix csymbol: <https://w3id.org/adiro/aec_common_symbols#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -26,7 +26,7 @@
 #    - ReferenceSymbol REPLACES the original csymbol:Callout
 #      (subclass of metadata:DrawingElement).
 #    - ReferenceSymbol mounts on Layout, not on DrawingSheet.
-#      Both source (appearsOn) and target (referencesLayout)
+#      Both source (hasReferenceSymbol) and target (referencesLayout)
 #      are Layout-level.
 #    - SymbolType / hasSymbolType / typeLabel are NOT modelled.
 #      Type derivable from the target Layout's LayoutContentType.
@@ -185,16 +185,9 @@ csymbol:ReferenceSymbol rdf:type owl:Class ;
 
 ###  Object properties — Source side (where the symbol is drawn)
 
-csymbol:appearsOn rdf:type owl:ObjectProperty ;
-    rdfs:label "appearsOn" ;
-    rdfs:comment "Source Layout — the Layout on which this ReferenceSymbol is drawn." ;
-    owl:inverseOf csymbol:hasReferenceSymbol ;
-    rdfs:domain csymbol:ReferenceSymbol ;
-    rdfs:range metadata:Layout .
-
 csymbol:hasReferenceSymbol rdf:type owl:ObjectProperty ;
     rdfs:label "hasReferenceSymbol" ;
-    rdfs:comment "Inverse of appearsOn. A Layout contains one or more ReferenceSymbols." ;
+    rdfs:comment "A Layout contains one or more ReferenceSymbols. Navigate from a symbol back to its Layout with ^csymbol:hasReferenceSymbol - ADIRO declares no inverse properties (GitHub issue #21)." ;
     rdfs:subPropertyOf metadata:contains ;
     rdfs:domain metadata:Layout ;
     rdfs:range csymbol:ReferenceSymbol .
@@ -205,12 +198,5 @@ csymbol:hasReferenceSymbol rdf:type owl:ObjectProperty ;
 csymbol:referencesLayout rdf:type owl:ObjectProperty ;
     rdfs:label "referencesLayout" ;
     rdfs:comment "Target Layout — the Layout this ReferenceSymbol points to. Note: target is Layout-level, not DrawingSheet-level — the marker resolves to a specific view (e.g. 'Section 2' on sheet ST-201), not just the sheet as a whole." ;
-    owl:inverseOf csymbol:isReferencedBy ;
     rdfs:domain csymbol:ReferenceSymbol ;
     rdfs:range metadata:Layout .
-
-csymbol:isReferencedBy rdf:type owl:ObjectProperty ;
-    rdfs:label "isReferencedBy" ;
-    rdfs:comment "Inverse of referencesLayout. A Layout that is the target of one or more ReferenceSymbols." ;
-    rdfs:domain metadata:Layout ;
-    rdfs:range csymbol:ReferenceSymbol .

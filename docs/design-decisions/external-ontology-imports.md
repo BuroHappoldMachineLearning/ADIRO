@@ -94,7 +94,7 @@ sub-property relationship, and PROV-awareness is exactly the intent.
 
 Otherwise the reference goes in an **optional compatibility layer** — a module carrying annotation-level
 mappings only, which **nothing in the core imports** and a consumer loads explicitly. `aec_dano_alignment` is
-the worked example: seven `skos:closeMatch` mappings, no logical force, and no DAnO IRI anywhere in the ADIRO
+the worked example: six `skos:closeMatch` mappings, no logical force, and no DAnO IRI anywhere in the ADIRO
 core. This keeps core release cycles independent of an unreleased third-party vocabulary and lets a mapping be
 deprecated wholesale without touching a core module.
 

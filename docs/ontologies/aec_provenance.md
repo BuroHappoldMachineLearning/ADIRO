@@ -177,11 +177,11 @@ Typing stub for the PROV-O term of the same name, declared locally so this modul
 
 ### hasConfidence {#hasConfidence}
 
-Confidence of the inference behind this assertion, as a decimal in [0,1]. Carried on the assertion (an individual) rather than on a triple, which keeps confidence in the graph without requiring RDF-star or statement reification.
+Confidence of the inference behind this assertion, as a decimal in [0,1]. Carried on the assertion (an individual) rather than on a triple, which keeps confidence in the graph without requiring RDF-star or statement reification. The range is an OWL 2 datatype restriction on xsd:decimal with minInclusive 0 and maxInclusive 1, so the [0,1] bound is asserted rather than only described in prose. Note this cannot fire in CI today: the reasoning gate runs over the T-Box in src/ and the repository holds no instance data, so the bound becomes enforceable when an A-Box exists (GitHub issue #22).
 
 - **IRI:** `https://w3id.org/adiro/aec_provenance#hasConfidence`
 - **Domain:** [Field Assertion](#FieldAssertion)
-- **Range:** `xsd:decimal`
+- **Range:** _anonymous class_
 
 ### hasLiteralValue {#hasLiteralValue}
 

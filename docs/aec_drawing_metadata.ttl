@@ -623,7 +623,7 @@
     skos:example "A" , "S" , "M" ;
     skos:inScheme :TitleblockFieldScheme ;
     aprov:expectedRange xsd:string ;
-    rdfs:comment "No dedicated ADIRO property yet (no mapsToFieldProperty); a candidate to model - possibly reusing aec_domain_common:Discipline - tracked with the wider title-block relationship work." .
+    rdfs:comment "No dedicated ADIRO property yet (no mapsToFieldProperty); a candidate to model - possibly reusing aec_domain_common:Discipline - tracked with the wider title-block relationship work (GitHub issue #69)." .
 
 :ProjectTitleField rdf:type skos:Concept ;
     rdfs:label "Project Title Field" ;

@@ -191,6 +191,12 @@ jobs:
               core.info('Report changed - reposted at the bottom of the thread.');
             }
 
+      # ENFORCE (RES-36): fail the check on a reasoner problem — inconsistency,
+      # an unsatisfiable class, or not-valid-OWL-2-DL. Runs AFTER the sticky
+      # comment so the ⛔ explanation still posts, and reuses reason.rc from the
+      # warn run above (no second reasoning pass). ROBOT `report` stays advisory —
+      # only the reasoner blocks. (A rare ROBOT-download/setup failure also yields
+      # a non-zero rc; just re-run the job to clear an infra flake.)
       - name: Fail on inconsistency / unsatisfiable classes
         run: |
           RC="$(cat .tools/reasoning-out/reason.rc 2>/dev/null || echo 1)"

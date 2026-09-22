@@ -30,7 +30,10 @@ from collections import defaultdict, deque
 ADIRO_NS = "https://w3id.org/adiro/"
 DESCRIPTION_PROPS = (RDFS.comment, SKOS.definition, DCTERMS.description)
 TERM_TYPES = (OWL.Class, OWL.ObjectProperty, OWL.DatatypeProperty,
-              OWL.AnnotationProperty, OWL.NamedIndividual)
+              OWL.AnnotationProperty, OWL.NamedIndividual,
+              # a field-kind vocabulary is SKOS, and its concepts are terms a
+              # reader has to understand just as much as a class is
+              SKOS.Concept, SKOS.ConceptScheme)
 
 
 def find_circular_references(graph):

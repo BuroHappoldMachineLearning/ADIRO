@@ -117,7 +117,8 @@ commands directly, but Git Bash is simpler.
 
 ## Versioning
 **Per-module SemVer** — each `src/*.ttl` is versioned independently via its own `owl:versionIRI` +
-`owl:versionInfo` (currently `aec_drawing_metadata` 2.0.0; the other three 1.0.0). The full scheme — IRI
+`owl:versionInfo` (currently `aec_drawing_metadata` 3.0.0; `aec_common_symbols`, `aec_domain_common` and
+`aec_facade_domain` 2.0.0; `aec_provenance` and `aec_dano_alignment` 1.0.0, both unreleased). The full scheme — IRI
 strategy, bump rules (compatibility-diff spec), imports policy, deprecation, the tag-driven release flow, and
 changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
 [DATA-A-10](https://bhmlrnd.youtrack.cloud/articles/DATA-A-10); plan/decisions in
