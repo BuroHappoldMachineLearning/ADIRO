@@ -279,6 +279,51 @@ numbers and reproduce **field names and obligation status** where that is the mi
 maps to a standard, under an explicit licensing notice — but **never** normative text, definitions, figures,
 dimensions or layouts. `rdfs:comment` in the TTL still paraphrases and cites; it does not quote.
 
+### Pull-request description
+
+Two things every ADIRO PR description carries, both at the **top**, before the narrative.
+
+**1. One table of the issues it closes** — not a closing block *and* a summary table further down, which is
+what this repo drifted into. The **first column must contain the closing keyword and the reference**, because
+that is what GitHub's automation parses:
+
+```markdown
+## Issues closed by this PR
+
+| | |
+|---|---|
+| Closes #77 | **Decide DAnO import-vs-align.** Settled: no import, no extraction... |
+| Closes #21 | **Establish the `owl:inverseOf` convention.** Decided in September, applied here. |
+```
+
+Keywords in a table cell **do** register — verified against the API, not assumed. One keyword per row, one
+issue per row: `Closes #1, #2` links only `#1`. Only `close`/`fix`/`resolve` and their forms close anything;
+`Implements #75` reads as though it finishes the issue and leaves it open. Check afterwards rather than
+trusting it:
+
+```bash
+gh api graphql -f query='query($o:String!,$n:String!,$pr:Int!){repository(owner:$o,name:$n){
+  pullRequest(number:$pr){closingIssuesReferences(first:20){nodes{number title}}}}}'   -f o=BuroHappoldMachineLearning -f n=ADIRO -F pr=<number>
+```
+
+GitHub's link index lags the edit by a few seconds, so wait before querying.
+
+**2. An OntoCanvas preview link per modified module.** A reviewer should be able to *see* the ontology, not
+only read a diff of Turtle. One row per `.ttl` this PR adds or changes, pointing at the published copy under
+`docs/` through raw GitHub:
+
+```
+https://alelom.github.io/OntoCanvas/?onto=<url-encoded raw URL>
+```
+```
+https://raw.githubusercontent.com/BuroHappoldMachineLearning/ADIRO/<branch>/docs/<module>.ttl
+```
+
+Use the **branch** in the raw URL, not a commit SHA: the link then follows the branch and always shows the
+latest push, so it never needs re-pinning as the PR evolves. `delete_branch_on_merge` is **false** on this
+repo, so branch links keep working after merge. Point at `docs/<module>.ttl` rather than `src/` — that is the
+copy `generate_docs.py` publishes, and it is what the site serves.
+
 Issue-first: propose additions/changes as an issue before coding. **ADIRO is open-source, so file issues on
 GitHub — _not_ directly in YouTrack.** A one-way GitHub→YouTrack automation mirrors each ADIRO GitHub issue
 into RES (closing the GitHub issue resolves its mirror), and filing on GitHub keeps the activity on the public
