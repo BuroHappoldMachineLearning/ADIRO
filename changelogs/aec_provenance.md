@@ -23,6 +23,23 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
   `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut.
 
+### Changed
+- **PROV-O alignment re-seated across two classes.** It previously hung entirely off `InferenceMeta`
+  (`inferredBy` ⊆ `prov:wasAttributedTo`, `inferredFrom` ⊆ `prov:wasDerivedFrom`, `inferredAt` ⊆
+  `prov:generatedAtTime`). All three of those PROV-O properties carry `rdfs:domain prov:Entity`, so the
+  alignment entailed that the *metadata record* was the thing attributed, derived and generated — and
+  PROV-O declares `prov:Entity` **`owl:disjointWith`** `prov:Activity`, so it typed `InferenceMeta` as
+  the opposite of what it is. Now: `FieldAssertion` ⊆ `prov:Entity`, `InferenceMeta` ⊆ `prov:Activity`,
+  `hasInferenceMeta` ⊆ `prov:wasGeneratedBy`, `inferredBy` ⊆ `prov:wasAssociatedWith`, `inferredWith`
+  and `inferredFrom` ⊆ `prov:used`, `inferredAt` ⊆ `prov:endedAtTime`. Verified by reasoning over the
+  module merged with the real PROV-O vocabulary. Stub set changed accordingly.
+
+### Added
+- **`assertedAbout`** — the subject a claim is *about*, as distinct from `assertedBy`, the region it was
+  *read from*. Without it `mapsToFieldProperty` named a property but nothing named the individual to hang
+  it on, and promotion was not expressible: targets span `Titleblock`, `DrawingSheet`, `DrawingRevision`
+  and `DrawingPackage`, and a sheet has many revisions. No `rdfs:range` asserted, deliberately.
+
 ### Notes
 - This module deliberately mentions **no** external vocabulary other than PROV-O, which it aligns to
   directly. The crosswalk to DAnO's equivalent provenance terms lives in the optional

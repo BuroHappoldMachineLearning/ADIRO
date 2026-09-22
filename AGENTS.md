@@ -308,19 +308,35 @@ gh api graphql -f query='query($o:String!,$n:String!,$pr:Int!){repository(owner:
 
 GitHub's link index lags the edit by a few seconds, so wait before querying.
 
-**2. Keep side-effects out of the reviewer's way.** A PR that fixes something adjacent while doing its main
+**2. Never restate what a bot already posts.** Two sticky comments are maintained automatically on every
+ontology PR: the **version-impact** report (`compat-diff-comment.yml`) and the **reasoning + QC** report
+(`ontology-reasoning.yml`, which also carries the `validate_ontology.py` findings). Reasoner status, ROBOT
+counts, per-module warning counts and prospective version bumps therefore belong **only** there. Do not paste
+them into the description.
+
+They are not merely redundant — they are *wrong by default*. A bot comment is recomputed on every push; a
+number typed into the body is frozen at the moment someone typed it. This PR shipped a verification table
+claiming `WARN 241` that had been accurate for about an hour, having invalidated its own figure by changing
+the ROBOT profile in a later commit. The reviewer then has two sources disagreeing and no way to tell which is
+current.
+
+The rule generalises: **if something in the description is produced by a machine somewhere else, link to it
+rather than copying it.** The description is for what a machine cannot say — why the change was made, what
+is being asked of the reviewer, and what was decided.
+
+**3. Keep side-effects out of the reviewer's way.** A PR that fixes something adjacent while doing its main
 job should not give that fix a top-level section competing with the work under review. Group them under a
 single `## Details` heading, one `<details><summary>` block each — verification output, conventions added to
 this file, versioning bookkeeping, a term minted and withdrawn. The reviewer opens what they care about.
 Reserve top-level sections for: what the PR closes, the ontology previews, the decisions being asked for,
 what changed, and anything that **corrects published material**, which must never be collapsed.
 
-**3. Name the issue sections for what they are.** A `## Related issues` section with two subsections —
+**4. Name the issue sections for what they are.** A `## Related issues` section with two subsections —
 *created by this PR's work* (with one line each on why the finding deserved tracking rather than scope creep)
 and *deliberately not solved here* (with one line each on why not). "Deliberately not solved here" alone hides
 the fact that most of the list did not exist before the PR started.
 
-**4. An OntoCanvas preview link per modified module.** A reviewer should be able to *see* the ontology, not
+**5. An OntoCanvas preview link per modified module.** A reviewer should be able to *see* the ontology, not
 only read a diff of Turtle. One row per `.ttl` this PR adds or changes, pointing at the published copy under
 `docs/` through raw GitHub:
 
