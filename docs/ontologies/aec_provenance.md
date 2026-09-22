@@ -46,6 +46,8 @@ graph BT
 
 ### Agent {#Agent}
 
+Typing stub for the PROV-O class of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative definition lives at the source that rdfs:isDefinedBy points at.
+
 - **IRI:** `http://www.w3.org/ns/prov#Agent`
 
 ### Field Assertion {#FieldAssertion}
@@ -118,9 +120,13 @@ The algorithm or model (ideally with version) used to produce this inference. Di
 
 ### wasAttributedTo {#wasAttributedTo}
 
+Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. It carries NO domain or range on purpose: a stub is a name, not a definition, and the authoritative axioms (rdfs:domain prov:Entity, rdfs:range prov:Agent) live at the source that rdfs:isDefinedBy points at. A viewer that shows an untyped datatype property as a string is reporting its own default, not an ADIRO assertion.
+
 - **IRI:** `http://www.w3.org/ns/prov#wasAttributedTo`
 
 ### wasDerivedFrom {#wasDerivedFrom}
+
+Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. It carries NO domain or range on purpose: a stub is a name, not a definition, and the authoritative axioms (rdfs:domain and rdfs:range prov:Entity) live at the source that rdfs:isDefinedBy points at. A viewer that shows an untyped datatype property as a string is reporting its own default, not an ADIRO assertion.
 
 - **IRI:** `http://www.w3.org/ns/prov#wasDerivedFrom`
 
@@ -135,6 +141,8 @@ The caption/label text exactly as printed on the drawing for this assertion (e.g
 - **Range:** `xsd:string`
 
 ### generatedAtTime {#generatedAtTime}
+
+Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. It carries NO domain or range on purpose: a stub is a name, not a definition, and the authoritative axioms (rdfs:domain prov:Entity, rdfs:range xsd:dateTime) live at the source that rdfs:isDefinedBy points at. A viewer that shows an untyped datatype property as a string is reporting its own default, not an ADIRO assertion. ADIRO's own :inferredAt declares rdfs:range xsd:dateTime, so the precision is asserted where it belongs - on the term this suite owns.
 
 - **IRI:** `http://www.w3.org/ns/prov#generatedAtTime`
 

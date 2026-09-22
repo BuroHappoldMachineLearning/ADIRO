@@ -283,6 +283,22 @@ td {
     <script id="schema.org" type="application/ld+json">
 [
   {
+    "@id": "https://w3id.org/adiro/aec_drawing_metadata#TitleblockFieldScheme",
+    "@type": [
+      "https://schema.org/DefinedTermSet"
+    ],
+    "https://schema.org/description": [
+      {
+        "@value": "The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to."
+      }
+    ],
+    "https://schema.org/name": [
+      {
+        "@value": "Titleblock Field Scheme"
+      }
+    ]
+  },
+  {
     "@id": "https://w3id.org/adiro/aec_drawing_metadata",
     "@type": [
       "https://schema.org/DefinedTermSet"
@@ -310,22 +326,6 @@ td {
     "https://schema.org/publisher": [
       {
         "@value": "Buro Happold"
-      }
-    ]
-  },
-  {
-    "@id": "https://w3id.org/adiro/aec_drawing_metadata#TitleblockFieldScheme",
-    "@type": [
-      "https://schema.org/DefinedTermSet"
-    ],
-    "https://schema.org/description": [
-      {
-        "@value": "The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to."
-      }
-    ],
-    "https://schema.org/name": [
-      {
-        "@value": "Titleblock Field Scheme"
       }
     ]
   }
@@ -1989,12 +1989,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#Section">Section</a>
+                  <a href="#Detail">Detail</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#Detail">Detail</a>
+                  <a href="#Section">Section</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -2688,12 +2688,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <a href="#Layout">Layout</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#Layout">Layout</a>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
