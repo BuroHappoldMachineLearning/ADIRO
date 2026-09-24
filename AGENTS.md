@@ -365,6 +365,18 @@ repo, so branch links keep working after merge.
     happened. Point at `docs/<module>.ttl` rather than `src/` — that is the
 copy `generate_docs.py` publishes, and it is what the site serves.
 
+**6. Keep YouTrack out of the public PR body — and out of published artifacts generally.** ADIRO is a public
+repo, and its tracker mirrors **one way**: every GitHub issue is copied into YouTrack **RES**, but YouTrack also
+holds items that exist *only* there — internal tooling, and work that is merely **planned** (`RES-*` / `MLE-*`
+epics and their sub-tasks). A PR description is public, so reference only **public GitHub issues and
+Discussions** in it; do **not** cite YouTrack IDs or describe YouTrack-only / not-yet-public plans. The same
+restraint applies to anything the site publishes — the TTL (`rdfs:comment`, `skos:note`…), changelogs, docs:
+point at the public Discussion/issue, not the YouTrack mirror. In particular, **record which sub-tasks a PR
+advances, and what it leaves for later, on the relevant YouTrack issue/epic — not in the PR body** (prefer
+editing the issue body with a follow-up note over a comment). The PR body says what the *code* change is and
+what it asks of the reviewer; the *programme* it belongs to is tracked YouTrack-side. (The `docs/ai/worklog.md`
+handover log is exempt — it is excluded from the built site, so it may reference YouTrack freely.)
+
 Issue-first: propose additions/changes as an issue before coding. **ADIRO is open-source, so file issues on
 GitHub — _not_ directly in YouTrack.** A one-way GitHub→YouTrack automation mirrors each ADIRO GitHub issue
 into RES (closing the GitHub issue resolves its mirror), and filing on GitHub keeps the activity on the public

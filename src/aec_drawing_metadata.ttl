@@ -524,7 +524,7 @@
 :TitleblockFieldScheme rdf:type skos:ConceptScheme ;
     rdfs:label "Titleblock Field Scheme" ;
     rdfs:comment "The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to." ;
-    skos:scopeNote "Content provenance (public/private policy). Every skos:prefLabel, skos:altLabel and skos:example in this scheme is generic and public: standard AEC field names, their common German equivalents, and non-identifying example values (scales, status/revision/discipline codes). No project-specific name, synonym or value appears here - project-specific keys stay in the per-project titleblock_keys_to_ensure.json overlay and are joined to these concepts by IRI (aprov:mapsToFieldProperty / the concept's own IRI as adiro_uri). Per-item dcterms:source citations to a published source dataset will be added when the anonymised title-block dataset is public. The private key inventory and its per-item public/vs/project-specific classification are tracked off-repo (RES-108); the modelling rationale is in field-kind Discussion #72." ;
+    skos:scopeNote "Content provenance (public/private policy). Every skos:prefLabel, skos:altLabel and skos:example in this scheme is generic and public: standard AEC field names, their common German equivalents, and non-identifying example values (scales, status/revision/discipline codes). No project-specific name, synonym or value appears here - project-specific keys stay in the per-project titleblock_keys_to_ensure.json overlay and are joined to these concepts by IRI (aprov:mapsToFieldProperty / the concept's own IRI as adiro_uri). Per-item dcterms:source citations to a published source dataset will be added when the anonymised title-block dataset is public. The private key inventory and its per-item public/vs/project-specific classification are tracked off-repo, internally; the modelling rationale is in field-kind Discussion #72." ;
     skos:note "Synonym-uniqueness contract (for the JSON-vs-ADIRO consistency check): within this scheme a given skos:altLabel string, in a given language, denotes at most one field kind. A per-project synonym that collides with an altLabel of a different field kind is therefore a genuine conflict, not an ADIRO-internal ambiguity. Note the sentinel :UnidentifiedField below is intentionally NOT a member of this scheme, so it is never itself searched for." .
 
 :ClientField rdf:type skos:Concept ;
@@ -668,13 +668,14 @@
     aprov:mapsToFieldProperty :statusLabel .
 
 #################################################################
-#    Unidentified-field sentinel (G1 / MLE-377 B5)
+#    Unidentified-field sentinel
 #
 #    The field kind an extracted title-block field is bound to when its kind
 #    cannot be matched to any member of the TitleblockFieldScheme. It is a
 #    skos:Concept (so it is a valid aprov:assertsFieldKind target) but is
 #    DELIBERATELY NOT skos:inScheme :TitleblockFieldScheme - it is an output
-#    sentinel, never a field an extraction pipeline searches for. See MLE-364.
+#    sentinel, never a field an extraction pipeline searches for. See the
+#    field-kind assertion/provenance model in Discussion #72.
 #################################################################
 
 :UnidentifiedField rdf:type skos:Concept ;
