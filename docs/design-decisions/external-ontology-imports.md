@@ -15,7 +15,8 @@ Pick the **lightest option that meets the need**, in this order:
 
 | # | Option | Use when | Cost |
 |---|---|---|---|
-| 1 | **Local stub + alignment** — declare the external term locally (`rdf:type` + `rdfs:label` + `rdfs:isDefinedBy <source>`) and align to it. No `owl:imports`, no extraction. | We want the external IRI for *interoperability signalling*, and our own axioms carry all the logic we need. | Inherits **none** of the source's entailments. The stub is a name, not a definition. |
+| 1A | **Reuse the external IRI as a local stub** — declare the external term locally (`rdf:type` + `rdfs:label` + `rdfs:isDefinedBy <source>`) and point our axioms at it. No `owl:imports`, no extraction. | We want the external IRI for *interoperability signalling*, our own axioms carry all the logic we need, and the external term's own axioms are compatible with ours. | Inherits **none** of the source's entailments. The stub is a name, not a definition. |
+| 1B | **Mint our own term and relate it** — declare an ADIRO term and link it to the external one, by `rdfs:subPropertyOf` / `rdfs:subClassOf` if the alignment is logically sound, otherwise by an annotation such as `skos:closeMatch`. | The external term's domain, range or property type is incompatible with what we need — so reusing its IRI would import a wrong commitment. | An annotation link carries **no** logical force. That is the point: nothing is inherited, including the parts we did not want. |
 | 2 | **SLME extraction** — `robot extract --method STAR` from the **version-pinned core file**. | We genuinely want to *reason with* the source's axioms. | Larger module; must be pinned, justified and reasoner-checked. |
 | 3 | **MIREOT** — `robot extract --method MIREOT`, asserting an ADIRO-local superclass. | We deliberately want to **re-home** an external term under ADIRO's own taxonomy. | Preserves no entailments; the local placement is a manual commitment. |
 | 4 | ~~`owl:imports` of a whole external ontology~~ | **Never.** | Drags the entire source (and its imports) under our blocking DL gate. |
@@ -61,8 +62,64 @@ MIREOT's third URI asserts a **local superclass**. It does **not** rewrite an ex
 
 So if an external property's domain is too narrow for us — for example `dano:depicts` is asserted with
 `rdfs:domain dano:DisplayElement`, narrower than ADIRO's `metadata:DrawingElement` — that is **not** a MIREOT
-case. It is a *mint our own term and relate it* case: declare an ADIRO property and link it with
-`rdfs:subPropertyOf` or `skos:closeMatch` (option 1 above).
+case. It is an **option 1B** case: mint an ADIRO property and relate it.
+
+!!! warning "And relate it with an *annotation*, not `rdfs:subPropertyOf`"
+    When the objection to an external term is its **domain or range**, `rdfs:subPropertyOf` does not escape the
+    problem — it re-imposes it. A sub-property inherits its parent's domain and range, so
+    an ADIRO `:depicts rdfs:subPropertyOf dano:depicts` would entail that every subject of the ADIRO property
+    is a `dano:DisplayElement`, which is precisely what minting our own term was meant to avoid. (ADIRO has
+    not in fact minted such a property - the example is the general shape of the trap, not a description of
+    the suite.) Remember that in OWL
+    a domain is an *inference rule*, not a constraint: nothing is rejected, a wrong type is concluded.
+    Use `rdfs:subPropertyOf` only when the parent's own axioms are ones we actively want; otherwise use an
+    annotation. Check the annotation vocabulary too: `skos:closeMatch` inherits `rdfs:domain skos:Concept`
+    from `skos:semanticRelation`, which is why ADIRO declares its own instead. Worked through in full in the [DAnO comparison](dano-comparison.md).
+
+## Where the reference lives: core module or compatibility layer
+
+Choosing option 1 settles *how* to relate to an external term. A second question is *where the reference may
+sit*. An external IRI in a core module couples that module's release to the external vocabulary; an external
+IRI in an optional layer does not.
+
+A core module may reference an external vocabulary directly only when **all three** hold:
+
+1. **The source is stable, versioned and maintained.** A permanent IRI is not enough; look for releases.
+2. **The alignment is logically sound.** Compatible property types, compatible ranges, and a domain we are
+   willing to inherit.
+3. **The entailments it carries are ones we want.** An alignment we would rather a reasoner ignored is not a
+   core concern.
+
+`aec_provenance` references PROV-O in the core and passes all three: a W3C Recommendation, a genuine
+sub-property relationship, and PROV-awareness is exactly the intent.
+
+Otherwise the reference goes in an **optional compatibility layer** — a module carrying annotation-level
+mappings only, which **nothing in the core imports** and a consumer loads explicitly. `aec_dano_alignment` is
+the worked example: six annotation-level mappings, no logical force, and no DAnO IRI anywhere in the ADIRO
+core. This keeps core release cycles independent of an unreleased third-party vocabulary and lets a mapping be
+deprecated wholesale without touching a core module.
+
+The load-bearing reason is **lifecycle**. A core module should not take version churn from a third-party
+vocabulary, least of all an unreleased one: with the mappings inline, a rename in DAnO would mean cutting a new
+`aec_provenance` — a module downstream consumers pin — for a reason that has nothing to do with its content.
+The second reason is **scale**: crosswalks to DiCon, ifcOWL, BOT and GeoSPARQL would otherwise accumulate inside
+two core modules.
+
+!!! note "What is *not* a reason"
+    Annotation-only mappings pose no hazard to an SLME extractor: locality is defined over logical axioms, and
+    `skos:closeMatch` is not one. Inlining them would **not** have created the merged-alignment-graph problem
+    this page warns about, and it is worth not overstating the case. What the separation does buy on that front
+    is future-proofing: it makes it safe to add a *logical* alignment later — to a source that passes the test
+    above — without contaminating the core for anyone extracting from it.
+
+The separation has one cost worth naming: a mapping whose ADIRO-side term is later renamed becomes a dangling
+annotation that no reasoner will flag, precisely because it carries no logical force. Inline mappings would
+have been renamed alongside their subject. That trade is accepted deliberately, and wants a cheap staleness
+check.
+
+A compatibility layer is **not** a substitute for options 2 and 3. If a future module genuinely needs to reason
+with an external vocabulary's axioms, a pinned SLME extract remains available and is a different artefact,
+imported by whatever needs it and justified under the test above.
 
 ## The safeguard that applies to every option
 
@@ -97,7 +154,7 @@ PROV-O IRI.
 
 | Vocabulary | Status |
 |---|---|
-| **PROV-O** | Option 1 (local stub + alignment) in `aec_provenance`. |
+| **PROV-O** | Option 1A (external IRI reused as a local stub) in `aec_provenance`, referenced from the core. |
 | **GeoSPARQL** | Chosen vocabulary; adoption still deferred — see [#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36). If adopted, extract `STAR` from the pinned core. |
-| **DAnO** | Import-vs-align undecided — see [#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77). Prior review recommends aligning, not importing. |
+| **DAnO** | **Decided: no import, no extraction.** ADIRO mints its own terms; the crosswalk is annotation-level in the optional `aec_dano_alignment` module. Coverage of `aec_common_symbols` is still open. See the [DAnO comparison](dano-comparison.md) and [#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77). |
 | **ifcOWL / BEO** | Surveyed only — see [Discussion #70](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/70). |

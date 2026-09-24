@@ -17,22 +17,28 @@ Arrows point from an ontology to the ontologies it imports; the current ontology
 ```mermaid
 %%{init: {"themeCSS": ".base .nodeLabel,.base .nodeLabel p,.base text,.base tspan{fill:#9ecbff !important;color:#9ecbff !important}.current .nodeLabel,.current .nodeLabel p,.current text,.current tspan{fill:#16305f !important;color:#16305f !important}"} }%%
 graph BT
+    aec_provenance["Aec Provenance"]
     aec_drawing_metadata["Aec Drawing Metadata"]
     aec_common_symbols["Aec Common Symbols"]
     aec_domain_common["Aec Domain Common"]
     aec_facade_domain["Aec Facade Domain"]
+    aec_dano_alignment["Aec Dano Alignment"]
+    aec_drawing_metadata --> aec_provenance
     aec_common_symbols --> aec_drawing_metadata
     aec_domain_common --> aec_common_symbols
     aec_domain_common --> aec_drawing_metadata
     aec_facade_domain --> aec_common_symbols
     aec_facade_domain --> aec_domain_common
     aec_facade_domain --> aec_drawing_metadata
+    aec_dano_alignment --> aec_provenance
+    click aec_provenance "../aec_provenance/" "Aec Provenance reference page"
     click aec_drawing_metadata "../aec_drawing_metadata/" "Aec Drawing Metadata reference page"
     click aec_common_symbols "../aec_common_symbols/" "Aec Common Symbols reference page"
     click aec_domain_common "../aec_domain_common/" "Aec Domain Common reference page"
     click aec_facade_domain "../aec_facade_domain/" "Aec Facade Domain reference page"
+    click aec_dano_alignment "../aec_dano_alignment/" "Aec Dano Alignment reference page"
     classDef base fill:#16305f,stroke:#0e2247,stroke-width:2px,color:#9ecbff;
-    class aec_drawing_metadata,aec_domain_common,aec_facade_domain base;
+    class aec_provenance,aec_drawing_metadata,aec_domain_common,aec_facade_domain,aec_dano_alignment base;
     classDef current fill:#f58a1f,stroke:#16305f,stroke-width:3px,color:#16305f;
     class aec_common_symbols current;
 ```
@@ -62,37 +68,19 @@ A symbol drawn on a Layout that references another Layout (on the same or a diff
 
 ## Object Properties
 
-### appearsOn {#appearsOn}
-
-Source Layout — the Layout on which this ReferenceSymbol is drawn.
-
-- **IRI:** `https://w3id.org/adiro/aec_common_symbols#appearsOn`
-- **Domain:** [ReferenceSymbol](#ReferenceSymbol)
-- **Range:** `metadata:Layout`
-- **Inverse of:** [hasReferenceSymbol](#hasReferenceSymbol)
-
 ### hasReferenceSymbol {#hasReferenceSymbol}
 
-Inverse of appearsOn. A Layout contains one or more ReferenceSymbols.
+A Layout contains one or more ReferenceSymbols. To navigate from a symbol back to the Layout it is drawn on, use the SPARQL inverse path ^csymbol:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
 
 - **IRI:** `https://w3id.org/adiro/aec_common_symbols#hasReferenceSymbol`
 - **Sub property of:** `metadata:contains`
 - **Domain:** `metadata:Layout`
 - **Range:** [ReferenceSymbol](#ReferenceSymbol)
 
-### isReferencedBy {#isReferencedBy}
-
-Inverse of referencesLayout. A Layout that is the target of one or more ReferenceSymbols.
-
-- **IRI:** `https://w3id.org/adiro/aec_common_symbols#isReferencedBy`
-- **Domain:** `metadata:Layout`
-- **Range:** [ReferenceSymbol](#ReferenceSymbol)
-
 ### referencesLayout {#referencesLayout}
 
-Target Layout — the Layout this ReferenceSymbol points to. The target is Layout-level, not DrawingSheet-level.
+Target Layout — the Layout this ReferenceSymbol points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^csymbol:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
 
 - **IRI:** `https://w3id.org/adiro/aec_common_symbols#referencesLayout`
 - **Domain:** [ReferenceSymbol](#ReferenceSymbol)
 - **Range:** `metadata:Layout`
-- **Inverse of:** [isReferencedBy](#isReferencedBy)

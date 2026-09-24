@@ -2,10 +2,10 @@
 @base <https://w3id.org/adiro/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix xml: <http://www.w3.org/XML/1998/namespace#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix aprov: <https://w3id.org/adiro/aec_provenance#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 
 #################################################################
@@ -20,6 +20,7 @@
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
+    owl:imports <https://w3id.org/adiro/aec_provenance> ;
     owl:versionIRI <https://w3id.org/adiro/aec_drawing_metadata/3.0.0> ;
     owl:versionInfo "3.0.0" .
 
@@ -34,7 +35,7 @@
 
 :isCVATProperty rdf:type owl:AnnotationProperty ;
     rdfs:label "isCVATProperty" ;
-    rdfs:comment "When true, the label is displayed on the right side of the CVAT annotation panel instead of the default left side." ;
+    rdfs:comment "Presentation hint for downstream annotation tooling: when true, the label should be displayed on the trailing side of the tool's label panel rather than the default leading side. Carries no reasoning weight. The property name still carries a tool name and is due to be renamed - see GitHub issue #89." ;
     rdfs:range xsd:boolean .
 
 :labellableRoot rdf:type owl:AnnotationProperty;
@@ -89,17 +90,10 @@
 
 :hasRevision rdf:type owl:ObjectProperty ;
     rdfs:label "hasRevision" ;
-    rdfs:comment "A DrawingSheet compositionally contains its DrawingRevisions." ;
+    rdfs:comment "A DrawingSheet compositionally contains its DrawingRevisions. To navigate from a revision back to its sheet, use the SPARQL inverse path ^metadata:hasRevision - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21)." ;
     rdfs:subPropertyOf :contains ;
-    owl:inverseOf :isRevisionOf ;
     rdfs:domain :DrawingSheet ;
     rdfs:range :DrawingRevision .
-
-:isRevisionOf rdf:type owl:ObjectProperty ;
-    rdfs:label "isRevisionOf" ;
-    rdfs:comment "Inverse of hasRevision. Navigates from a DrawingRevision back to its DrawingSheet." ;
-    rdfs:domain :DrawingRevision ;
-    rdfs:range :DrawingSheet .
 
 :belongsToProject rdf:type owl:ObjectProperty ;
     rdfs:label "belongsToProject" ;
@@ -476,7 +470,7 @@
     :labellableRoot "false"^^xsd:boolean.
 
 #################################################################
-#    Classes — UC-01 extension (semantic entities, not CVAT-labellable)
+#    Classes — UC-01 extension (semantic entities, not labellable)
 #################################################################
 
 :DrawingRevision rdf:type owl:Class ;
@@ -509,3 +503,181 @@
     rdfs:label "DrawingPackage" ;
     rdfs:comment "A grouping of DrawingSheets within a Project, e.g. a volume or submission package." ;
     :labellableRoot "false"^^xsd:boolean .
+
+#################################################################
+#    Title-block field kinds (SKOS) - the extraction profile
+#
+#    A field kind is the stable concept behind a printed title-block field
+#    (Scale, Client, Drawn By, ...). Names and synonyms - the strings a field
+#    is printed under, per language - live HERE on the concept, not on a
+#    per-field property, so the number of relationships stays small and a new
+#    field is added as data (a concept), not schema. Membership in the
+#    TitleblockFieldScheme IS the extraction profile: the set an extraction
+#    pipeline looks for. Each concept records its expected value type
+#    (aprov:expectedRange) and the ADIRO property a validated assertion is
+#    promoted to (aprov:mapsToFieldProperty) - the hybrid bridge to the shipped
+#    asserts*/has* properties, which are left in place. See Discussion #72 and
+#    the aec_provenance module (imported above) for the assertion/provenance
+#    model that binds an extracted value to one of these kinds.
+#################################################################
+
+:TitleblockFieldScheme rdf:type skos:ConceptScheme ;
+    rdfs:label "Titleblock Field Scheme" ;
+    rdfs:comment "The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to." ;
+    skos:scopeNote "Content provenance (public/private policy). Every skos:prefLabel, skos:altLabel and skos:example in this scheme is generic and public: standard AEC field names, their common German equivalents, and non-identifying example values (scales, status/revision/discipline codes). No project-specific name, synonym or value appears here - project-specific keys stay in the per-project titleblock_keys_to_ensure.json overlay and are joined to these concepts by IRI (aprov:mapsToFieldProperty / the concept's own IRI as adiro_uri). Per-item dcterms:source citations to a published source dataset will be added when the anonymised title-block dataset is public. The private key inventory and its per-item public/vs/project-specific classification are tracked off-repo, internally; the modelling rationale is in field-kind Discussion #72." ;
+    skos:note "Synonym-uniqueness contract (for the JSON-vs-ADIRO consistency check): within this scheme a given skos:altLabel string, in a given language, denotes at most one field kind. A per-project synonym that collides with an altLabel of a different field kind is therefore a genuine conflict, not an ADIRO-internal ambiguity. Note the sentinel :UnidentifiedField below is intentionally NOT a member of this scheme, so it is never itself searched for." .
+
+:ClientField rdf:type skos:Concept ;
+    rdfs:label "Client Field" ;
+    skos:definition "The party commissioning the works - the organisation the drawing is produced for."@en ;
+    skos:prefLabel "Client"@en , "Auftraggeber"@de ;
+    skos:altLabel "client"@en , "employer"@en , "for"@en , "Bauherr"@de ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange :Organisation ;
+    aprov:mapsToFieldProperty :assertsClient .
+
+:OriginatorField rdf:type skos:Concept ;
+    rdfs:label "Originator Field" ;
+    skos:definition "The organisation that authored/produced the drawing (the consultant or design practice), as distinct from the individual who drew it (see Drawn By Field)."@en ;
+    skos:prefLabel "Originator"@en , "Planverfasser"@de ;
+    skos:altLabel "originator"@en , "consultant"@en , "drawn by (company)"@en ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange :Organisation ;
+    aprov:mapsToFieldProperty :assertsOriginator .
+
+:DrawingTitleField rdf:type skos:Concept ;
+    rdfs:label "Drawing Title Field" ;
+    skos:definition "The descriptive title of the individual drawing or sheet."@en ;
+    skos:prefLabel "Drawing Title"@en , "Zeichnungstitel"@de ;
+    skos:altLabel "Sheet Title"@en , "title"@en , "drawing title"@en , "view title"@en ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    aprov:mapsToFieldProperty :drawingTitle .
+
+:DrawingNumberField rdf:type skos:Concept ;
+    rdfs:label "Drawing Number Field" ;
+    skos:definition "The identifier assigned to the drawing sheet within its numbering system."@en ;
+    skos:prefLabel "Drawing Number"@en , "Zeichnungsnummer"@de ;
+    skos:altLabel "Drawing No."@en , "drawing number"@en , "Dwg No."@en ;
+    skos:example "ST-201" ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    aprov:mapsToFieldProperty :drawingIdentifier .
+
+:CrossReferenceNumberField rdf:type skos:Concept ;
+    rdfs:label "Cross Reference Number Field" ;
+    skos:definition "An alternative or external identifier for the drawing - e.g. a client, design-team or document-management-system (EDMS) reference number, distinct from the drawing's own number."@en ;
+    skos:prefLabel "Cross-Reference Number"@en ;
+    skos:altLabel "Alternative Ref. No."@en , "Design Team Drawing Number"@en , "EDMS document number"@en , "client reference number"@en , "SA/SK No."@en ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    aprov:mapsToFieldProperty :assertsCrossReferenceNumber .
+
+:ScaleField rdf:type skos:Concept ;
+    rdfs:label "Scale Field" ;
+    skos:definition "The drawing scale - a ratio such as 1:50, or a note such as NTS ('not to scale') or 'as shown'."@en ;
+    skos:prefLabel "Scale"@en , "Maßstab"@de ;
+    skos:altLabel "scale"@en , "NTS"@en , "as shown"@en ;
+    skos:example "1:50" , "1:100" , "NTS" ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    aprov:mapsToFieldProperty :hasScale .
+
+:DrawnByField rdf:type skos:Concept ;
+    rdfs:label "Drawn By Field" ;
+    skos:definition "The individual who drew/authored the drawing, as distinct from the originating organisation (see Originator Field)."@en ;
+    skos:prefLabel "Drawn By"@en , "Gezeichnet"@de ;
+    skos:altLabel "Author"@en , "drawn"@en , "Verfasser"@de , "Bearb."@de ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange :Person ;
+    aprov:mapsToFieldProperty :isAuthoredBy .
+
+:CheckedByField rdf:type skos:Concept ;
+    rdfs:label "Checked By Field" ;
+    skos:definition "The individual who checked the drawing."@en ;
+    skos:prefLabel "Checked By"@en , "Geprüft"@de ;
+    skos:altLabel "checked"@en , "Gepr."@de ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange :Person ;
+    aprov:mapsToFieldProperty :isCheckedBy .
+
+:ApprovedByField rdf:type skos:Concept ;
+    rdfs:label "Approved By Field" ;
+    skos:definition "The individual who approved/authorised the drawing for issue."@en ;
+    skos:prefLabel "Approved By"@en , "Genehmigt"@de ;
+    skos:altLabel "approved"@en , "authorised"@en ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange :Person ;
+    aprov:mapsToFieldProperty :isApprovedBy .
+
+:RevisionCodeField rdf:type skos:Concept ;
+    rdfs:label "Revision Code Field" ;
+    skos:definition "The revision identifier of the drawing (or its current revision), e.g. 'A', 'P01', '00'."@en ;
+    skos:prefLabel "Revision Code"@en , "Revisionsstand"@de ;
+    skos:altLabel "Rev."@en , "Revision"@en , "Rev"@en , "Index"@de ;
+    skos:example "A" , "P01" , "00" ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    aprov:mapsToFieldProperty :revisionCode .
+
+:IssueDateField rdf:type skos:Concept ;
+    rdfs:label "Issue Date Field" ;
+    skos:definition "The date the drawing (or its current revision) was issued."@en ;
+    skos:prefLabel "Issue Date"@en , "Datum"@de ;
+    skos:altLabel "Date"@en , "date"@en , "issued"@en ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:date ;
+    aprov:mapsToFieldProperty :issueDate .
+
+:DisciplineField rdf:type skos:Concept ;
+    rdfs:label "Discipline Field" ;
+    skos:definition "The engineering/design discipline the drawing belongs to, e.g. Architecture, Structures, Mechanical."@en ;
+    skos:prefLabel "Discipline"@en , "Fachbereich"@de ;
+    skos:altLabel "discipline"@en , "Gewerk"@de ;
+    skos:example "A" , "S" , "M" ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    rdfs:comment "No dedicated ADIRO property yet (no mapsToFieldProperty); a candidate to model - possibly reusing aec_domain_common:Discipline - tracked with the wider title-block relationship work (GitHub issue #69)." .
+
+:ProjectTitleField rdf:type skos:Concept ;
+    rdfs:label "Project Title Field" ;
+    skos:definition "The name of the project the drawing belongs to."@en ;
+    skos:prefLabel "Project Title"@en , "Bauvorhaben"@de ;
+    skos:altLabel "Project"@en , "Projekt"@de ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    aprov:mapsToFieldProperty :projectName .
+
+:DrawingPackageField rdf:type skos:Concept ;
+    rdfs:label "Drawing Package Field" ;
+    skos:definition "The package, volume or submission grouping the drawing belongs to."@en ;
+    skos:prefLabel "Drawing Package"@en ;
+    skos:altLabel "Package"@en , "Component / Package"@en , "volume"@en ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    aprov:mapsToFieldProperty :packageName .
+
+:StatusField rdf:type skos:Concept ;
+    rdfs:label "Status Field" ;
+    skos:definition "The issue status / suitability of the drawing, e.g. IFC (Issued for Construction), IFR (Issued for Review), AFC (Approved for Construction)."@en ;
+    skos:prefLabel "Status"@en ;
+    skos:altLabel "Suitability"@en , "Issue"@en , "status code"@en , "Status"@de ;
+    skos:example "IFC" , "IFR" , "AFC" ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    aprov:mapsToFieldProperty :statusLabel .
+
+#################################################################
+#    Unidentified-field sentinel
+#
+#    The field kind an extracted title-block field is bound to when its kind
+#    cannot be matched to any member of the TitleblockFieldScheme. It is a
+#    skos:Concept (so it is a valid aprov:assertsFieldKind target) but is
+#    DELIBERATELY NOT skos:inScheme :TitleblockFieldScheme - it is an output
+#    sentinel, never a field an extraction pipeline searches for. See the
+#    field-kind assertion/provenance model in Discussion #72.
+#################################################################
+
+:UnidentifiedField rdf:type skos:Concept ;
+    rdfs:label "Unidentified Field" ;
+    skos:definition "Sentinel field kind for an extracted title-block field whose kind could not be matched to any member of the TitleblockFieldScheme. A FieldAssertion asserting this kind keeps the printed caption (aprov:capturedCaption) and the raw value so nothing is lost, and is deliberately not promoted to a direct property (it carries no aprov:mapsToFieldProperty). The proportion of assertions bound to it is a red-flag / coverage metric: a high rate signals either missing ADIRO coverage for a real field or a failure upstream in extraction. Not a member of any field-kind scheme, so it is never itself a field the pipeline searches for."@en .

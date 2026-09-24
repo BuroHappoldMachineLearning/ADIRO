@@ -16,7 +16,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Ontology Requirements Specification Document: purpose, scope, intended users and uses, and the functional/non-functional requirements.
 
-    [:octicons-arrow-right-24: ORSD](specification/ORSD_v1.1.md)
+    [:octicons-arrow-right-24: ORSD](specification/ORSD_v1.2.md)
 
 -   :material-clipboard-list-outline: __Use Cases__
 
@@ -30,9 +30,19 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
 <div class="grid cards" markdown>
 
+-   ### [Aec Provenance](aec_provenance.html)
+
+    Foundational, domain-neutral vocabulary for representing an inferred/extracted assertion together with its provenance and confidence. It exists so that a value read off a drawing (a title-block field, a detected symbol, ...) can be modelled as a first-class assertion carrying: which region asserted it, what produced it, from where, when, and with what confidence - independently of the value itself. Imported by the drawing modules (e.g. aec_drawing_metadata); aligned to W3C PROV-O for interoperability.
+
+    Source: [`aec_provenance.ttl`](aec_provenance.ttl)
+
+    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_provenance.html){ .md-button target=_blank }
+
 -   ### [Aec Drawing Metadata](aec_drawing_metadata.html)
 
     Sheet/layout/document structure for AEC drawings.
+
+    *Imports: aec_provenance*
 
     Source: [`aec_drawing_metadata.ttl`](aec_drawing_metadata.ttl)
 
@@ -67,5 +77,15 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
     Source: [`aec_facade_domain.ttl`](aec_facade_domain.ttl)
 
     [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain.html){ .md-button target=_blank }
+
+-   ### [Aec Dano Alignment](aec_dano_alignment.html)
+
+    OPTIONAL compatibility layer mapping ADIRO terms to the Drawing Analysis Ontology (DAnO, https://w3id.org/dano). Nothing in the ADIRO core imports this module and no ADIRO core module mentions DAnO, so a consumer who wants the DAnO crosswalk loads this file explicitly and everyone else never sees it. Every mapping uses ADIRO's own :closeMatch annotation property and carries no logical force: no rdfs:subPropertyOf alignment to a DAnO term is available, and the DAnO IRIs are not declared here or anywhere else in ADIRO. Kept separate from the core for lifecycle reasons - DAnO has no releases, and an unreleased third-party vocabulary should not force a version bump on a module downstream consumers pin. Full rationale and per-term verdicts: https://burohappoldmachinelearning.github.io/ADIRO/design-decisions/dano-comparison/
+
+    *Imports: aec_provenance*
+
+    Source: [`aec_dano_alignment.ttl`](aec_dano_alignment.ttl)
+
+    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_dano_alignment.html){ .md-button target=_blank }
 
 </div>

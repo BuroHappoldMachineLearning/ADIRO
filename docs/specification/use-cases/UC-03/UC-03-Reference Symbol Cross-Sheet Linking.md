@@ -1,6 +1,6 @@
 # UC-03: Reference Symbol Cross-Sheet Linking
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-03 · **Version:** 0.2 (reviewed & implemented — see [§8](#8-open-issues-pending-team-discussion) for resolved / deferred items, [§10](#10-version-history) for changelog)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-03 · **Version:** 0.3 (reviewed & implemented — see [§8](#8-open-issues-pending-team-discussion) for resolved / deferred items, [§10](#10-version-history) for changelog)
 
 ---
 
@@ -54,11 +54,9 @@
 | --------------------- | ----------------- | ----------------- | ---------------------- | ------ | ----------------------- |
 | `contains` (sheet)    | `DrawingSheet`    | `Layout`          | `aec_drawing_metadata` | REUSE  | —                       |
 | `hasReferenceSymbol`  | `Layout`          | `ReferenceSymbol` | `aec_common_symbols`   | NEW    | `metadata:contains`     |
-| `appearsOn`           | `ReferenceSymbol` | `Layout`          | `aec_common_symbols`   | NEW    | (inverse of `hasReferenceSymbol`) |
 | `referencesLayout`    | `ReferenceSymbol` | `Layout`          | `aec_common_symbols`   | NEW    | (top-level)             |
-| `isReferencedBy`      | `Layout`          | `ReferenceSymbol` | `aec_common_symbols`   | NEW    | (inverse of `referencesLayout`) |
 
-> **Design note — inverse properties.** `owl:inverseOf` is declared for both forward/reverse pairs (`hasReferenceSymbol`/`appearsOn` and `referencesLayout`/`isReferencedBy`). Instance data asserts only one direction; the inverse direction is available via reasoner or SPARQL property-path expansion. This matches the project's tentative convention (cf. UC-01's open issue on inverse-property declaration).
+> **Design note — inverse properties.** ADIRO declares **no** named inverse properties and no `owl:inverseOf` axioms. Only the forward direction of each pair is modelled: `hasReferenceSymbol` (Layout → ReferenceSymbol, ⊂ `metadata:contains`) and `referencesLayout` (ReferenceSymbol → Layout). Reverse navigation uses the SPARQL inverse path, e.g. `?sym ^csymbol:hasReferenceSymbol ?layout`, or simply reads the forward triple in the other direction. Decided project-wide in [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21). *(Changed in [v0.3](#10-version-history).)*
 
 ---
 
@@ -83,7 +81,7 @@
 > The ontology MUST represent the relationship between a Reference Symbol and the Layout on which it is drawn, such that all reference symbols present on a given Layout (and, transitively, on a given DrawingSheet) can be retrieved.
 
 - Source: UC-03
-- Derived terms: `csymbol:appearsOn`, `csymbol:hasReferenceSymbol` (NEW; `hasReferenceSymbol ⊂ metadata:contains`)
+- Derived terms: `csymbol:hasReferenceSymbol` (NEW; ⊂ `metadata:contains`)
 
 ---
 
@@ -92,7 +90,7 @@
 > The ontology MUST represent the relationship between a Reference Symbol and the Layout it references, such that the target Layout (and, transitively, the target Sheet) can be identified from any given Reference Symbol.
 
 - Source: UC-03
-- Derived terms: `csymbol:referencesLayout`, `csymbol:isReferencedBy` (NEW)
+- Derived terms: `csymbol:referencesLayout` (NEW)
 
 ---
 
@@ -101,7 +99,7 @@
 > The ontology MUST support navigation in both directions: from a source Layout/Sheet to all Layouts it references through its symbols, and from a referenced Layout/Sheet back to all source Layouts/Sheets that contain a symbol pointing to it.
 
 - Source: UC-03
-- Derived terms: `owl:inverseOf` declarations linking `hasReferenceSymbol`/`appearsOn` and `referencesLayout`/`isReferencedBy`
+- Derived terms: none — reverse navigation uses SPARQL inverse paths rather than declared inverse properties ([#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21))
 
 ---
 
@@ -193,9 +191,9 @@ SELECT DISTINCT ?connectedSheet WHERE {
   UNION
   {
     # Incoming: someone else's layout has a symbol pointing into GA-001
-    ?sourceLayout csymbol:isReferencedBy ?sym .
-    ?sym          csymbol:appearsOn      ?otherLayout .
-    ?connectedSheet metadata:contains    ?otherLayout .
+    ?sym          csymbol:referencesLayout   ?sourceLayout .
+    ?otherLayout  csymbol:hasReferenceSymbol ?sym .
+    ?connectedSheet metadata:contains        ?otherLayout .
   }
 
   FILTER(?connectedSheet != ?GA001)
@@ -235,9 +233,7 @@ This demonstrates FR 5: composite labels are parsed at query time, not stored on
 | `csymbol:ReferenceSymbol`      | `aec_common_symbols`   | NEW    | CQ 1.x, CQ 2.x, CQ 3.x, CQ-I 1, CQ-I 2 | FR 1             |
 | `metadata:contains`            | `aec_drawing_metadata` | REUSE  | CQ 1.x, CQ 3.x, CQ-I 1, CQ-I 2       | (structural)     |
 | `csymbol:hasReferenceSymbol`   | `aec_common_symbols`   | NEW    | CQ 1.x, CQ 3.x                       | FR 2             |
-| `csymbol:appearsOn`            | `aec_common_symbols`   | NEW    | CQ 3.2, CQ 3.3                       | FR 2             |
 | `csymbol:referencesLayout`    | `aec_common_symbols`   | NEW    | CQ 2.x, CQ 3.x, CQ-I 1, CQ-I 2       | FR 3             |
-| `csymbol:isReferencedBy`       | `aec_common_symbols`   | NEW    | CQ 3.2, CQ 3.3                       | FR 4             |
 | `metadata:drawingIdentifier`       | `aec_drawing_metadata` | REUSE  | CQ 2.x                               | FR 5 (UC-01 v0.3) |
 | `metadata:layoutIdentifier`        | `aec_drawing_metadata` | NEW¹   | CQ 2.x                               | FR 5 (pending UC-01 v0.4) |
 
@@ -247,16 +243,21 @@ This demonstrates FR 5: composite labels are parsed at query time, not stored on
 
 Per the project's import hierarchy and [PR #15](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/15) review point #2 (@alelom), every UC-03 term is placed in its proper module.
 
-**Module hierarchy** (unchanged):
+**Module hierarchy** *(updated in [v0.3](#10-version-history))*:
 
 ```
-aec_drawing_metadata
+aec_provenance                      (NEW - foundational, domain-neutral)
         |
-        +---- aec_common_symbols
+        +---- aec_drawing_metadata
                 |
-                +---- aec_domain_common
+                +---- aec_common_symbols
                         |
-                        +---- aec_facade_domain
+                        +---- aec_domain_common
+                                |
+                                +---- aec_facade_domain
+
+aec_dano_alignment                  (NEW - optional compatibility layer;
+                                     imports the core, nothing imports it)
 ```
 
 **UC-03 term placement:**
@@ -264,7 +265,7 @@ aec_drawing_metadata
 | Module                 | UC-03 contribution                                                                                                                                                  |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `aec_drawing_metadata` | **New (cross-UC dependency):** `layoutIdentifier` — properly belongs to UC-01 v0.4. **Reused:** `DrawingSheet`, `Layout`, `LayoutContentType`, `contains`, `drawingIdentifier`. |
-| `aec_common_symbols`   | **New classes:** `ReferenceSymbol` (replaces `Callout`). **New properties:** `hasReferenceSymbol` (⊂ `metadata:contains`), `appearsOn`, `referencesLayout`, `isReferencedBy`. |
+| `aec_common_symbols`   | **New classes:** `ReferenceSymbol` (replaces `Callout`). **New properties:** `hasReferenceSymbol` (⊂ `metadata:contains`), `referencesLayout`. |
 | `aec_domain_common`    | No UC-03 contribution.                                                                                                                                              |
 | `aec_facade_domain`    | No UC-03 contribution.                                                                                                                                              |
 
@@ -275,22 +276,22 @@ metadata:contains (existing)
   └── csymbol:hasReferenceSymbol (NEW)
 ```
 
-`appearsOn`, `referencesLayout`, and `isReferencedBy` remain top-level — they are navigational/relational, not "containment-like".
+`referencesLayout` remains top-level — it is navigational/relational, not "containment-like".
 
 ---
 
 ## 8. Open Issues — Pending Team Discussion
 
-These items were raised during UC-03 drafting. **UC03-1 and UC03-2 are now resolved** (implemented in `src/`). **UC03-3, UC03-4, UC03-5, and the inverse-property convention are out of UC-03 core scope and tracked as separate GitHub issues** for later.
+These items were raised during UC-03 drafting. **UC03-1 and UC03-2 are now resolved** (implemented in `src/`). **UC03-3, UC03-4 and UC03-5 are out of UC-03 core scope and tracked as separate GitHub issues** for later. The inverse-property convention is now **decided**.
 
 | ID    | Issue                                                                                                                                                                                                                                       |
 | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | UC03-1 | **✅ RESOLVED (implemented).** Adopted `ReferenceSymbol` and removed the earlier `Callout` class (option b) — see `src/aec_common_symbols.ttl`. *(Original question: name/relationship of the cross-sheet linking class vs `Callout`; scope was agreed, name was open.)* |
 | UC03-2 | **✅ RESOLVED (implemented).** `metadata:layoutIdentifier` is now declared in `aec_drawing_metadata` (`src/`). *(Original: UC-03 introduced it provisionally, pending UC-01 formally adopting it as an identity field.)* |
-| UC03-3 | **→ Tracked as #36 (deferred; out of UC-03 core scope).** Optional geometric-layer extension (GeoSPARQL). If a CQ ever demands distinguishing multiple identical markers at different positions on the same source Layout, or precise spatial queries over Layout bounds, the preferred approach is a GeoSPARQL extension: add `geo:hasGeometry` to both `ReferenceSymbol` (point — symbol centre on its source Layout) and `Layout` (polygon — bounding rectangle on the DrawingSheet), using a drawing-local coordinate CRS. This is a better long-term option than a custom `LayoutRegion` class: standard OGC vocabulary, built-in spatial SPARQL functions (`geof:sfWithin` etc.), and interoperability with BIM/IFC spatial data. *Subject* of `hasLocation`-style triples would be `ReferenceSymbol`. Prerequisite: verify the target SPARQL engine's support for custom (non-geographic) CRS. No current CQ requires this; defer until a geometric use case is confirmed. |
-| UC03-4 | **→ Tracked as #37 (backlog; out of UC-03 core scope).** Match Lines and other reference symbol types. Industry usage extends beyond Detail/Section/Elevation markers (Match Lines for split-sheet continuation, Schedule references, Key Plan references, etc.). UC-03's current scope covers the three primary types; broader coverage may need additional modelling if a CQ requires it. |
-| UC03-5 | **→ Tracked as #38 (backlog; out of UC-03 core scope).** Sheet-level references. UC-03's `referencesLayout` only covers graphical markers (Detail / Section / Elevation Markers), which by definition point to a specific Layout. If a future case arises where a graphical marker refers to an entire DrawingSheet rather than a specific Layout, the ontology may need a `referencesSheet` property or equivalent. Note: textual whole-sheet references ("See drawing ST-201") are already covered by the existing `metadata:TextualNote.refersToDrawingId` and are outside UC-03's scope. |
-| —     | **→ Tracked as #21 (project-wide).** Inverse-property convention (not UC-03-specific): when to declare `owl:inverseOf` vs rely on a reasoner? UC-03 declares inverses for both forward/reverse pairs. UC-01 v0.3 only materialises `isRevisionOf`. The two should be reconciled. |
+| UC03-3 | **→ Tracked as [#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36) (deferred; out of UC-03 core scope).** Optional geometric-layer extension (GeoSPARQL). If a CQ ever demands distinguishing multiple identical markers at different positions on the same source Layout, or precise spatial queries over Layout bounds, the preferred approach is a GeoSPARQL extension: add `geo:hasGeometry` to both `ReferenceSymbol` (point — symbol centre on its source Layout) and `Layout` (polygon — bounding rectangle on the DrawingSheet), using a drawing-local coordinate CRS. This is a better long-term option than a custom `LayoutRegion` class: standard OGC vocabulary, built-in spatial SPARQL functions (`geof:sfWithin` etc.), and interoperability with BIM/IFC spatial data. *Subject* of `hasLocation`-style triples would be `ReferenceSymbol`. Prerequisite: verify the target SPARQL engine's support for custom (non-geographic) CRS. No current CQ requires this; defer until a geometric use case is confirmed. |
+| UC03-4 | **→ Tracked as [#37](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/37) (backlog; out of UC-03 core scope).** Match Lines and other reference symbol types. Industry usage extends beyond Detail/Section/Elevation markers (Match Lines for split-sheet continuation, Schedule references, Key Plan references, etc.). UC-03's current scope covers the three primary types; broader coverage may need additional modelling if a CQ requires it. |
+| UC03-5 | **→ Tracked as [#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38) (backlog; out of UC-03 core scope).** Sheet-level references. UC-03's `referencesLayout` only covers graphical markers (Detail / Section / Elevation Markers), which by definition point to a specific Layout. If a future case arises where a graphical marker refers to an entire DrawingSheet rather than a specific Layout, the ontology may need a `referencesSheet` property or equivalent. Note: textual whole-sheet references ("See drawing ST-201") are already covered by the existing `metadata:TextualNote.refersToDrawingId` and are outside UC-03's scope. |
+| —     | **✅ RESOLVED — [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21).** Inverse-property convention (project-wide, not UC-03-specific). Decided: ADIRO declares **no** named inverse properties and no `owl:inverseOf` axioms; reverse navigation uses SPARQL inverse paths. `appearsOn` and `isReferencedBy` removed from `aec_common_symbols`; `isRevisionOf` removed from `aec_drawing_metadata`. *(Applied in [v0.3](#10-version-history).)* |
 
 ---
 
@@ -298,7 +299,7 @@ These items were raised during UC-03 drafting. **UC03-1 and UC03-2 are now resol
 
 For the full design-debate reasoning behind the v0.2 modelling choices, see the accompanying *UC-03 Design Debate* note. The key decisions, in summary:
 
-1. **§1 — Ontology role:** This ontology is a **query layer**, not a raw-storage layer. Parsing, OCR clean-up, and provenance live upstream/elsewhere.
+1. **§1 — Ontology role:** This module is a **query layer**, not a raw-storage layer. Parsing and OCR clean-up live upstream/elsewhere. *(Amended in [v0.3](#10-version-history).)*
 2. **§2 — Layout-level mounting:** Both ends of a ReferenceSymbol link `Layout → Layout`, not `Sheet → Sheet`. Better precision; aligns with the existing DrawingElement architecture.
 3. **§3 — No `SymbolType`:** Marker type (Detail / Section / Elevation) is derivable from the target Layout's `LayoutContentType`. FR 2 from v0.1 removed.
 4. **§4 — No `symbolLabel`:** The composite label "2/ST-201" is derivable via `CONCAT(symbolNumber, "/", targetSheet.drawingIdentifier)`.
@@ -310,7 +311,38 @@ For the full design-debate reasoning behind the v0.2 modelling choices, see the 
 
 ## 10. Version History
 
-### v0.2 (current — reviewed & implemented)
+### v0.3 (current — reviewed & implemented)
+
+Changes from v0.2, made in [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76) when `aec_provenance` was added to the suite:
+
+- **§9 Design Decision 1 amended — provenance removed from the exclusion.** The decision previously read
+  *"this ontology is a query layer, not a raw-storage layer. Parsing, OCR clean-up, **and provenance** live
+  upstream/elsewhere."* The parsing and OCR-clean-up half stands unchanged. The provenance half was a
+  statement about **one module** read as though it settled the matter for **ADIRO, which is a suite**: a
+  decision that a query-layer module should not store OCR intermediates says nothing about whether the suite
+  models provenance at all. ADIRO now does, in the foundational `aec_provenance` module — reified
+  assertions carrying `assertedBy`, `hasInferenceMeta`, `hasConfidence` and `capturedCaption` — which serves
+  suite ORSD **CQ 2.4, 3.1, 3.2 and 4.4**. Whether `ReferenceSymbol` specifically should carry as-extracted
+  text and provenance remains open in
+  [#20](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/20); `aprov:capturedCaption` is the pattern
+  that answers *where* the raw value lives — on the assertion, not on the semantic property.
+- **§7 module hierarchy updated** — `aec_provenance` is a new foundational root, and the optional
+  `aec_dano_alignment` layer sits outside the import chain.
+
+- **BREAKING — `csymbol:appearsOn` and `csymbol:isReferencedBy` removed.** [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21) decided project-wide
+  that ADIRO declares no named inverse properties and no `owl:inverseOf` axioms. Only the forward direction
+  of each pair survives: `hasReferenceSymbol` (Layout → ReferenceSymbol, ⊂ `metadata:contains`) and
+  `referencesLayout` (ReferenceSymbol → Layout). The §2.3 relations table, the FR 2 / FR 4 derived terms, the
+  §6 traceability matrix and the §7 module table are updated, and **the CQ 3.3 SPARQL query is rewritten** to
+  read the two surviving properties in the other direction. No competency question changed — CQ 3.1, 3.2 and
+  3.3 are direction-agnostic and remain answerable.
+- **§8 open issues revised**: every GitHub issue reference is now a link, and the inverse-property row is
+  marked resolved. UC03-3 / UC03-4 / UC03-5 were re-checked against their issues and still stand.
+
+A relation was removed, so this is a **MAJOR** revision in substance; the number stays in the 0.x series
+because v0.3 was never released.
+
+### v0.2 (reviewed & implemented)
 
 Aligned with the existing ontology modules (`aec_drawing_metadata`, `aec_common_symbols`) per [PR #15](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/15) review (@alelom, @AhmedElnagar1):
 

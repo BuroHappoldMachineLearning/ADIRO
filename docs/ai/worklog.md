@@ -22,6 +22,150 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-09-24 — Close the inference-consumption gaps on the field scheme (G1–G3)
+
+**Issue:** [MLE-364](https://bhmlrnd.youtrack.cloud/issue/MLE-364) epic (sub-tasks B4/MLE-376, B5/MLE-377; RES-108) · **PR:** #76 · **Branch:** `aec-provenance-model`
+
+### Why
+
+A review of PR #76 against the MLE-364 inference sub-tasks found the ontology core (`aec_provenance` +
+`TitleblockFieldScheme`) directly consumable — concept IRI = `adiro_uri`, `prefLabel`/`altLabel`(`@en`/`@de`) =
+`key_name`/`key_synonyms`, `skos:example` = `example_values`, `FieldAssertion` = the ABox target; all 14
+`mapsToFieldProperty` targets and both `expectedRange` classes exist — but with three gaps that would have
+forced a second ADIRO round-trip mid-inference:
+- **G1** — B5 (MLE-377) binds unmatched keys to a `UnidentifiedField` red-flag kind that did not exist.
+- **G2** — B4 (MLE-376) HALTs on a synonym colliding with an altLabel of a *different* field kind, but the
+  scheme itself shipped a collision: `"Verfasser"@de` on both `:OriginatorField` and `:DrawnByField`.
+- **G3** — MLE-364/RES-108 asks the public source basis of each synonym/example to be recorded; the TTL had none.
+
+### What changed (`src/aec_drawing_metadata.ttl`, additive)
+
+- **G1** — added `:UnidentifiedField` (`skos:Concept`, with `skos:definition`), deliberately **not**
+  `skos:inScheme :TitleblockFieldScheme` so it is a valid `aprov:assertsFieldKind` target but never a field the
+  pipeline searches for. It carries no `mapsToFieldProperty` (no promotion).
+- **G2** — dropped `"Verfasser"@de` from `:OriginatorField` (kept `Planverfasser`@de there); `Verfasser` now
+  denotes only `:DrawnByField`. Added a `skos:note` on the scheme stating the uniqueness contract B4 relies on.
+- **G3** — added a `skos:scopeNote` on the scheme recording the public/private content policy and that per-item
+  `dcterms:source` follows once the anonymised dataset (RES-108/RES-104) is public.
+- Also added a one-line `skos:definition` to **every** field-kind concept (feeds B3's prompt `description`;
+  clears them from the `#87` undescribed-terms backlog).
+- Changelog `[Unreleased]` updated; still a **MINOR** (additive) bump on top of the pending 3.x line, except the
+  breaking inverse removal already recorded (MAJOR 4.0.0 at the cut).
+
+### Verified
+
+- `validate_ontology.py` — all 6 modules OK; metadata now down to the 3 pre-existing enum individuals
+  (`Horizontal`/`Undefined`/`Vertical`) as the only undescribed terms.
+- `generate_docs.py` — 6/6 regenerated.
+- `ENFORCE=1 run_reasoning.sh` (HermiT 17) — consistent + satisfiable, exit 0; ROBOT report ERROR 0 / WARN 0 /
+  INFO 23 (advisory, unchanged).
+
+### Next step
+
+Re-anchor the PR #76 body to the MLE-364 epic and note advancement of #65/#67/#69 + the RES-108 classification
+still owed off-repo. Then the inference side (ml-cad-assistant) can start B1 against the shipped scheme: `adiro_uri`
+= the concept IRI, unmatched → `:UnidentifiedField`, confidence written directly to `aprov:hasConfidence`
+(the interim JSON-envelope step in MLE-377 is now obsolete since the provenance module lands in this PR).
+
+---
+
+## 2026-09-21/22 — DAnO settled: no import, an optional compatibility layer; specification realigned
+
+**Issue:** [#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77) (mirrored to
+[RES-110](https://bhmlrnd.youtrack.cloud/issue/RES-110)) · **PR:** #76 · **Branch:** `aec-provenance-model`
+
+### Why
+
+The published external-import rule listed DAnO as undecided, and
+`docs/design-decisions/titleblock-vocabulary-review.md` recommended **aligning** ADIRO's provenance properties
+to `dano:`. Meanwhile `aec_provenance` on this branch had **minted parallel terms** — the opposite. A published
+page and a module in flight disagreed, and the review that made the recommendation had read DAnO from its
+generated specification, explicitly flagging that domains and ranges needed confirming first.
+
+### What changed
+
+- **Verified against the raw `dano.ttl`** (fetched from `https://w3id.org/dano`, HTTP 200). The recommendation
+  does not survive: no `rdfs:subPropertyOf` alignment to any DAnO provenance term is available. DAnO's
+  `inferred*` are **datatype** properties while ADIRO's are **object** properties (ill-typed, non-DL, the gate
+  rejects it); `dano:inferredAt` ranges over `xsd:date`, disjoint from ADIRO's `xsd:dateTime` (inconsistency);
+  `dano:hasConfidence` carries `rdfs:domain dano:DrawingElement` (would entail every `FieldAssertion` is a
+  drawing mark). Only the first fails locally — the other two are silent behind an undeclared stub and surface
+  for anyone merging ADIRO with DAnO, which is the audience an external IRI serves.
+- **New `src/aec_dano_alignment.ttl`** — an optional compatibility layer, seven `skos:closeMatch` mappings,
+  imports the core, **nothing imports it**. No ADIRO core module mentions DAnO. Reason is lifecycle and scale,
+  not logic (see the correction below).
+- **Minted `metadata:depicts`, then withdrew it on 2026-09-22.** It was justified by suite ORSD CQ 5.2 /
+  OI-1, which sits in CQG 5 and is traced to neither UC-01 nor UC-03, the two use cases this PR is scoped to.
+  It also had no consumer and pre-empted two that exist: UC-06 specifies `depictsMaterial` and UC-07
+  `depictsElement`, both with domain `Drawing` rather than the `DrawingElement` CQ 5.2 frames. OI-1 is open
+  again. The conflation of the suite's CQ numbering with the use cases' own is what let it in - see #86.
+- **New `docs/design-decisions/dano-comparison.md`** — per-term verdicts plus the reasoning, stated **per ADIRO
+  module** rather than in the aggregate.
+- **Corrected `external-ontology-imports.md`**: split option 1 into 1A (reuse the external IRI as a stub) and
+  1B (mint our own and relate); fixed advice that re-imposed the problem it described (the MIREOT section told
+  readers to escape a too-narrow domain with `rdfs:subPropertyOf`, which inherits that very domain); added the
+  test for when a core module may reference an external vocabulary at all.
+- **Corrected `titleblock-vocabulary-review.md`** — superseded-in-part banner and the three places its
+  recommendation is reversed.
+- **ORSD edited in place** (NFR 2, NFR 3) and **UC-07 gains §7.5**.
+- **Specification realigned (2026-09-22).** Three documents contradicted or omitted what ships. **UC-03 design
+  decision 1** said provenance lives "upstream/elsewhere" — a statement about one query-layer module read as
+  though it settled the matter for the suite; amended, with the parsing/OCR half intact. **UC-01** described
+  only one of the two ways a title-block value can now be carried; gained a design note, an `aec_provenance`
+  row in §7 and open issue G11. **Both use-case module-hierarchy diagrams** were labelled "unchanged" and
+  showed four modules. **ORSD** now records that CQG 2/3/4 are what justify `aec_provenance`, and the
+  structural gap that the suite CQGs and per-use-case CQs never reference each other (#86).
+- **`AGENTS.md`** gains the two conventions whose absence caused all of the above: **ADIRO is a suite** (with
+  the module list corrected from "four"), and **Ontology ↔ specification** — the existing docs rule only ever
+  covered *generated* pages, which is why pyLODE output was regenerated diligently while the ORSD and use
+  cases went stale.
+
+### Decisions taken
+
+- **Mint, do not align.** Every DAnO mapping is annotation-level; the DAnO IRIs are declared nowhere in ADIRO
+  and appear only as annotation values.
+- **Crosswalks live in an optional layer, not the core.** Because an unreleased third-party vocabulary should
+  not force a version bump on a module downstream consumers pin, and because crosswalks to DiCon, ifcOWL, BOT
+  and GeoSPARQL would otherwise accumulate in two core files.
+- **ADIRO individuals are detections, not idealised drawing constructs** (#84). `dano:Dimension`'s exact
+  cardinalities would infer undetected parts into existence on clipped historical sheets, making CQ 2.1
+  unanswerable. Completeness belongs in SHACL over a finished extraction, not in OWL over detections.
+
+### Corrected mid-flight (recorded because the wrong version was briefly committed)
+
+- **Two claims were overstated and then fixed.** The compatibility layer was justified partly by ADIRO's own
+  "pin the core, not a merged alignment graph" advice. That does not hold for annotation-only mappings: SLME
+  locality is defined over logical axioms and `skos:closeMatch` is not one, so inlining them would have
+  endangered nobody. The honest reasons are lifecycle and scale. Separately, the layer was described as
+  matching "the shape DAnO uses for GeoSPARQL" — DAnO *inlines* its GeoSPARQL stubs; GeoSPARQL is the one
+  shipping core plus alignments.
+- **An earlier framing of ADIRO and DAnO as occupying "different layers" was wrong for the suite.** It holds
+  for the title-block vocabulary it was written about. `aec_common_symbols` sits squarely in DAnO's layer and
+  is currently the **thinner** of the two (3 classes against 8). The comparison page says so.
+
+### Verified
+
+- `uv run python scripts/validate_ontology.py` — **all 6 modules valid**.
+- `ENFORCE=1 bash scripts/run_reasoning.sh` — HermiT **consistent + satisfiable, exit 0**; ROBOT `report`
+  **ERROR 0**, WARN 242, INFO 23. Identical to the pre-change run but for one new `missing_definition` row on
+  `:depicts` (the repo-wide advisory). **No report row mentions `skos:closeMatch` or any `dano:` IRI** — the
+  undeclared external IRIs are absorbed as annotation values exactly as intended.
+- `uv run mkdocs build --strict` — passes, so every new cross-reference resolves.
+- `uv run python scripts/generate_docs.py` — run; regenerated artefacts committed separately.
+
+### Next step
+
+Issues filed for everything deliberately not solved here: **#79** (does `aec_common_symbols` adopt a
+drawing-mark decomposition, for UC-03/UC-07), **#80** (define the CQ 5.2 / OI-1 linking property when a
+consumer needs it), **#85** (direct properties vs `FieldAssertion` — when is a value promoted, do the direct
+properties deprecate), **#86** (suite ORSD and use-case ORSDs do not reference each other),
+**#81** (staleness check for compatibility-layer mappings — a hazard the separation introduces), **#82**
+(ORSD v1.2 reuse-justification section), **#83** (DisplayElement/DescriptionElement split), **#84**
+(detections-not-drawings). [RES-68](https://bhmlrnd.youtrack.cloud/issue/RES-68) needs a note that its
+SLME-extraction premise does not apply to DAnO.
+
+---
+
 ## 2026-09-18 — External-import strategy clarified, ported to GitHub, and made normative in the repo
 
 **Issue:** [RES-68](https://bhmlrnd.youtrack.cloud/issue/RES-68) / [RES-59](https://bhmlrnd.youtrack.cloud/issue/RES-59) · **Branch:** `docs/external-import-strategy`
@@ -111,6 +255,43 @@ exercised. This is a docs-only change. The `aec_provenance` WIP on the other bra
    DAnO's provenance terms outright, reducing the DAnO question to `depicts`/`isDepictedBy` only?
 3. RES-68 is now unblocked but has no external term to import yet — it stays `Open` until #77 lands or GeoSPARQL
    is un-deferred ([#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36)).
+## 2026-09-18 — New foundational module: aec_provenance (reified assertions + PROV-O provenance)
+
+**Issue:** [Discussion #72](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/72) (field-kind +
+assertion/provenance model); drives the ml-drawing-assistant epic
+[MLE-364](https://bhmlrnd.youtrack.cloud/issue/MLE-364). · **Branch:** `aec-provenance-model`
+
+### What changed
+- Added `src/aec_provenance.ttl` — a new **foundational, domain-neutral** module (v1.0.0) for representing an
+  inferred/extracted value as a first-class **`FieldAssertion`** carrying its own provenance: `assertedBy`
+  (which region asserted it), `hasInferenceMeta` → `InferenceMeta` (`inferredBy`/`inferredWith`/`inferredFrom`/
+  `inferredAt`), `hasConfidence` (decimal on the individual — no RDF-star), and `hasLiteralValue` /
+  `hasValueEntity` / `capturedCaption`. **PROV-O-aligned** (`prov:wasAttributedTo` / `wasDerivedFrom` /
+  `generatedAtTime` / `Agent`), with PROV-O terms declared locally (not `owl:imports`) so reasoning stays
+  offline. PROV-O suggested by Tianyang Huang.
+- Wired plumbing: `src/catalog-v001.xml` (IRI→file mapping, forward-looking for when the drawing modules import
+  it), `scripts/generate_docs.py` `dependency_order` (`aec_provenance: 0`, sorts first), `changelogs/
+  aec_provenance.md`, and the `CHANGELOG.md` rollup (also corrected `aec_drawing_metadata` 2.0.0→3.0.0 there).
+
+### Design decisions taken (ahead of team consensus, per the epic owner's go-ahead)
+- **Field-kind + reified assertion (Option 3)** over one generic `asserts` or many `assertsX` properties:
+  synonyms live on the field-kind concept, provenance is data (per-occurrence `assertedBy`) not schema.
+- **Two-module layering**: this generic module is separate from the (title-block-specific) field-kind scheme,
+  which will live in `aec_drawing_metadata` and `owl:imports` this. Not yet done — next increment.
+- Confidence on the **assertion individual** (DANO-style `hasConfidence`), not on a triple — sidesteps the
+  RDF-star/reification question left open in Discussion #62.
+
+### Verified
+- `uv run python scripts/validate_ontology.py src/aec_provenance.ttl` → **valid** (parse + version-consistency).
+- **Not yet run:** ROBOT/HermiT DL reasoning (`scripts/run_reasoning.sh`, needs Java) and
+  `scripts/generate_docs.py` (docs regen). Additive standalone module, nothing imports it yet, so the merged
+  suite is unchanged in practice — but both gates should run before PR.
+
+### Next step
+- Increment 2: add the SKOS `TitleblockFieldScheme` (field kinds with `@en`/`@de` labels/synonyms, generic
+  public examples, `skos:closeMatch` to DANO/DiCon) to `aec_drawing_metadata`, make it `owl:imports`
+  `aec_provenance`, add `owl:hasKey` on `Person`/`Organisation` (Discussion #73), keeping the shipped
+  `asserts*` properties in place (hybrid; deprecate later). Then run docs regen + reasoning before opening a PR.
 
 ---
 

@@ -2,7 +2,7 @@
 
 > **⚠️ Draft v0.2 — not yet aligned with the current ontology. This use case will be revised in a follow-up PR.**
 >
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-07 · **Version:** 0.2 (draft) — see [§8 Version History](#8-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-07 · **Version:** 0.3 (draft) — see [§8 Version History](#8-version-history)
 
 ---
 
@@ -374,11 +374,43 @@ The `BuildingElement` superclass provides an extension point for `:Column`, `:Be
 
 Currently uses `xsd:decimal` (mm by convention). A future extension may integrate QUDT / OM for multi-unit support and unit-conversion reasoning.
 
+### 7.5 Partial, Clipped and Incompletely Detected Dimensions
+
+ADIRO is intended for historical drawings as well as modern ones, and a scanned historical sheet is routinely **cut at the sheet edge, torn, faded or partially legible**. A dimension read off such a sheet may be missing a terminator, its text, or the line itself. The same is true of any modern drawing where the detector simply did not find every part.
+
+This constrains how a dimension may be modelled. It is tempting to reuse a published composite definition such as `dano:Dimension`, which asserts exact qualified cardinalities: `=1 contains.DimensionLine`, `=2 contains.Terminator`, `=1 contains.TextElement`. Under OWL's open-world assumption those axioms do not reject an incomplete dimension - they **infer the missing parts into existence**. A reasoner asked afterwards which dimensions are incomplete would answer "none", because it has already supplied what the detector never saw.
+
+That is the wrong behaviour for this use case, whose CQ Groups 4 and 5 aggregate measured lengths and would silently include dimensions whose measurement was never actually read.
+
+**Potential implementation when this use case is picked up:**
+
+- Model a dimension's parts with **`min 0`** cardinality, or none at all, so that absence is recorded rather than repaired.
+- Keep well-formedness (*"a complete dimension has exactly two terminators"*) as a **SHACL shape** evaluated over a finished extraction under closed-world semantics, not as an OWL axiom over detections. Completeness is a validation question, not an entailment.
+- Consider an explicit completeness or legibility flag on the extracted dimension, so that a partially-read dimension can be excluded from aggregation by query rather than by inference.
+- Mint ADIRO's own terms rather than reusing `dano:` IRIs, so that these cardinality choices are ADIRO's to make. See [#79](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/79) and the [DAnO comparison](../../../design-decisions/dano-comparison.md).
+
+This generalises beyond dimensions: **ADIRO individuals are detections, not idealised drawing constructs**, and structural axioms that are true of a well-formed drawing can be false of what was actually found on a damaged one.
+
 ---
 
 ## 8. Version History
 
-### v0.2 (current — draft)
+### v0.3 (current — draft)
+
+Changes from v0.2, made in [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76):
+
+- **New §7.5, "Partial, Clipped and Incompletely Detected Dimensions."** ADIRO targets historical drawings,
+  which are routinely cut at the sheet edge, torn or partially legible, so a detected dimension may be missing
+  a terminator, its text, or the line itself. Records why a published composite definition with exact
+  cardinalities (such as `dano:Dimension`) must not be reused as-is — under the open-world assumption it
+  **infers the missing parts into existence**, which would make CQ Groups 4 and 5 aggregate measurements that
+  were never read — and what to do instead (`min 0` cardinality, well-formedness as a SHACL shape over a
+  finished extraction, a completeness flag).
+  Tracked in [#84](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/84).
+
+Documentation only; no entity, attribute, relation or competency question changed. MINOR revision.
+
+### v0.2 (draft)
 
 Changes from v0.1:
 

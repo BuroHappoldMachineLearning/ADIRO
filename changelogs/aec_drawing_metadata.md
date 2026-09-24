@@ -7,6 +7,32 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+### Added
+- **Title-block field-kind vocabulary (`TitleblockFieldScheme`, SKOS)** ([Discussion #72](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/72)). ~15 field kinds (Client, Originator, Drawing Title, Drawing Number, Cross-Reference Number, Scale, Drawn By, Checked By, Approved By, Revision Code, Issue Date, Discipline, Project Title, Drawing Package, Status), each carrying a `skos:definition`, per-language (`@en`/`@de`) `skos:prefLabel`/`skos:altLabel` synonyms, generic **public** `skos:example` values where useful, `aprov:expectedRange` (expected value type) and `aprov:mapsToFieldProperty` (the shipped property a validated assertion promotes to). **Membership in the scheme is the extraction profile** — the set an extraction pipeline looks for. Additive: the shipped `asserts*`/`has*` properties are unchanged (hybrid bridge).
+- **`owl:imports <https://w3id.org/adiro/aec_provenance>`** — the new foundational assertion/provenance module, so an extracted title-block value can be modelled as a provenance- and confidence-bearing `FieldAssertion` bound to one of these field kinds.
+- **`:UnidentifiedField` sentinel** ([Discussion #72](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/72)). The `skos:Concept` a `FieldAssertion` is bound to (`aprov:assertsFieldKind`) when an extracted field cannot be matched to any scheme member: the caption (`aprov:capturedCaption`) and value are kept, no promotion happens (no `aprov:mapsToFieldProperty`), and the proportion bound to it is a red-flag / coverage metric. **Deliberately NOT `skos:inScheme` `TitleblockFieldScheme`**, so it is never itself a field an extraction pipeline searches for.
+- **Content-provenance & synonym-uniqueness policy on `TitleblockFieldScheme`** — a `skos:scopeNote` records the public/private basis of the vocabulary (all labels/synonyms/examples are generic and public; project-specific keys stay in the per-project JSON overlay; per-item `dcterms:source` to follow when an anonymised source dataset is public; the private key inventory is tracked off-repo, internally), and a `skos:note` states the synonym-uniqueness contract a JSON-vs-ADIRO consistency check relies on: within the scheme a given `skos:altLabel` string, per language, denotes at most one field kind. See [Discussion #72](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/72).
+
+### Changed
+- **`Verfasser`@de made unambiguous across field kinds** — the German synonym `"Verfasser"@de` was on both `:OriginatorField` and `:DrawnByField`, so the string resolved to two field kinds and violated the scheme's synonym-uniqueness contract (above). Kept on `:DrawnByField` (the individual who drew it); `:OriginatorField` retains `Planverfasser`@de for the originating organisation. Refines vocabulary added earlier in this same unreleased cycle — no released IRI affected.
+- **`isCVATProperty` definition de-branded** — its `rdfs:comment` named a specific internal, closed-source
+  annotation tool and described that tool's UI. ADIRO is a public ontology served from `w3id.org`, so the
+  definition now states the behaviour generically: a presentation hint for downstream annotation tooling.
+  The **property name still carries the tool name**; renaming a published term is breaking and has a live
+  downstream consumer, so it is tracked in
+  [#89](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/89). Annotation-only change, non-breaking.
+
+### Removed (BREAKING)
+- **`isRevisionOf`** — the declared inverse of `hasRevision`, together with the `owl:inverseOf` axiom on
+  `hasRevision`. [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21) decided project-wide that ADIRO declares no named inverse properties and no
+  `owl:inverseOf` axioms; reverse navigation uses the SPARQL inverse path `^metadata:hasRevision`. The
+  OntoCanvas `edgeStyleConfig` entry for the removed property is dropped from
+  `aec_drawing_metadata.display.json`. **MAJOR bump (4.0.0) at the next release cut.**
+
+### Notes
+- `DisciplineField` has no `mapsToFieldProperty` yet (no dedicated ADIRO property); candidate to model later, possibly reusing `aec_domain_common:Discipline`.
+- All additive → a **MINOR** bump (3.1.0) at the next release cut.
+
 ## [3.0.0] — 2026-08-10
 
 ### Changed (BREAKING)

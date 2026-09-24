@@ -9,12 +9,31 @@ This script parses ontology files and checks for:
 - Other structural issues
 """
 
+import os
 import sys
 from pathlib import Path
-from rdflib import Graph
-from rdflib.namespace import RDF, RDFS, OWL
+import re
+from rdflib import Graph, URIRef, Literal
+from rdflib.namespace import RDF, RDFS, OWL, SKOS, DCTERMS
 from rdflib.term import BNode
 from collections import defaultdict, deque
+
+
+# Every ADIRO term must carry a human-readable description. ADIRO's definition
+# vocabulary is rdfs:comment - NOT the OBO convention IAO:0000115 that ROBOT's
+# built-in `missing_definition` rule looks for. See
+# docs/design-decisions/usage-of-annotation-properties.md for why.
+#
+# skos:definition and dcterms:description are accepted too: those are the other
+# properties pyLODE normalises into a rendered description, so a term carrying
+# one of them still documents itself on the published site.
+ADIRO_NS = "https://w3id.org/adiro/"
+DESCRIPTION_PROPS = (RDFS.comment, SKOS.definition, DCTERMS.description)
+TERM_TYPES = (OWL.Class, OWL.ObjectProperty, OWL.DatatypeProperty,
+              OWL.AnnotationProperty, OWL.NamedIndividual,
+              # a field-kind vocabulary is SKOS, and its concepts are terms a
+              # reader has to understand just as much as a class is
+              SKOS.Concept, SKOS.ConceptScheme)
 
 
 def find_circular_references(graph):
@@ -134,14 +153,37 @@ def find_version_inconsistencies(graph) -> list[str]:
     return errors
 
 
-def validate_ontology(ttl_file: Path) -> tuple[bool, list[str]]:
+def find_undescribed_terms(graph) -> list[str]:
+    """
+    ADIRO-namespace terms with no human-readable description.
+
+    Terms from other namespaces are exempt by design: an external term declared
+    as a local stub is a name, not a definition - the definition lives at the
+    source, which is what its rdfs:isDefinedBy points at. Describing it here
+    would be asserting someone else's definition.
+    """
+    undescribed = []
+    for term_type in TERM_TYPES:
+        for term in graph.subjects(RDF.type, term_type):
+            if not isinstance(term, URIRef) or not str(term).startswith(ADIRO_NS):
+                continue
+            if any((term, prop, None) in graph for prop in DESCRIPTION_PROPS):
+                continue
+            label = graph.value(term, RDFS.label)
+            name = str(term).split("#")[-1]
+            undescribed.append(f"{name} ({label})" if label else name)
+    return sorted(set(undescribed))
+
+
+def validate_ontology(ttl_file: Path) -> tuple[bool, list[str], list[str]]:
     """
     Validate an ontology file.
     
     Returns:
-        (is_valid, list_of_errors)
+        (is_valid, list_of_errors, list_of_warnings)
     """
     errors = []
+    warnings = []
     
     try:
         # Parse the ontology
@@ -164,18 +206,136 @@ def validate_ontology(ttl_file: Path) -> tuple[bool, list[str]]:
         # Check per-module version metadata consistency (RES-66)
         errors.extend(find_version_inconsistencies(graph))
 
-        return len(errors) == 0, errors
-        
+        # Every ADIRO term needs a human-readable description (#87).
+        # Advisory by default so the existing backlog does not block CI; set
+        # ENFORCE_DESCRIPTIONS=1 to promote it to an error once that backlog is
+        # cleared, which is the point at which this becomes a real gate.
+        unused_pfx = find_unused_prefixes(graph, ttl_file.read_text(encoding="utf-8"))
+        if unused_pfx:
+            warnings.append("unused @prefix declaration(s): " + ", ".join(unused_pfx))
+
+        unused_imp = find_unused_imports(graph)
+        if unused_imp:
+            warnings.append("owl:imports never referenced in this file: " + ", ".join(unused_imp))
+
+        undescribed = find_undescribed_terms(graph)
+        if undescribed:
+            head = ", ".join(undescribed[:8])
+            more = f" ... and {len(undescribed) - 8} more" if len(undescribed) > 8 else ""
+            msg = (f"{len(undescribed)} term(s) have no rdfs:comment "
+                   f"(nor skos:definition / dcterms:description): {head}{more}")
+            if os.environ.get("ENFORCE_DESCRIPTIONS") == "1":
+                errors.append(msg)
+            else:
+                warnings.append(msg)
+                if os.environ.get("LIST_UNDESCRIBED") == "1":
+                    warnings.extend(f"  undescribed: {t}" for t in undescribed)
+
+        return len(errors) == 0, errors, warnings
+
     except Exception as e:
         errors.append(f"Parse error: {str(e)}")
-        return False, errors
+        return False, errors, []
+
+
+def find_unused_prefixes(graph, ttl_text: str) -> list[str]:
+    """
+    @prefix declarations the file never uses.
+
+    Harmless to a reasoner, but they are the fossil record of a removed term:
+    the alignment layer kept a `dm:` prefix for months of PR review after the
+    mapping that used it was withdrawn. Checked against the parsed graph rather
+    than the text, so a prefix used only in a literal's datatype still counts.
+    """
+    declared = dict(re.findall(r"@prefix[ \t]+([A-Za-z0-9_-]*):[ \t]+<([^>]*)>", ttl_text))
+    if not declared:
+        return []
+
+    used = set()
+    for s_, p_, o_ in graph:
+        for term in (s_, p_, o_):
+            if isinstance(term, URIRef):
+                used.add(str(term))
+            elif isinstance(term, Literal) and term.datatype:
+                used.add(str(term.datatype))
+
+    unused = []
+    for pfx, ns in sorted(declared.items()):
+        if not any(iri.startswith(ns) for iri in used):
+            unused.append(f"{pfx or '(default)'}: <{ns}>")
+    return unused
+
+
+def find_unused_imports(graph) -> list[str]:
+    """
+    owl:imports of a module whose terms the file never references.
+
+    Redundant rather than wrong, but it overstates the dependency: a consumer
+    reading the header cannot tell which imports the module actually needs.
+    """
+    unused = []
+    for imported in sorted(graph.objects(None, OWL.imports)):
+        prefix = str(imported) + "#"
+        referenced = any(
+            isinstance(t, URIRef) and str(t).startswith(prefix)
+            for triple in graph for t in triple
+        )
+        if not referenced:
+            unused.append(str(imported))
+    return unused
+
+
+def write_markdown(results: list[tuple[str, list[str], list[str]]], out_path: Path) -> None:
+    """
+    Render this script's findings as a markdown section for the PR comment.
+
+    Every check in this script surfaces here automatically: the table is built
+    from the errors/warnings each check appends, so adding a check needs no change
+    to this function or to the workflow that embeds it. See AGENTS.md, "Adding a
+    quality check".
+    """
+    OK, WARN, ERR = "\u2705", "\u26a0\ufe0f", "\u26d4"
+    lines = ["### \U0001f9ea Repo-specific checks (`scripts/validate_ontology.py`)", ""]
+    total_err = sum(len(e) for _, e, _ in results)
+    total_warn = sum(len(w) for _, _, w in results)
+
+    if not total_err and not total_warn:
+        lines += [OK + " All %d module(s) pass: parse, circular-subclass, version "
+                  "consistency, and term descriptions." % len(results), ""]
+    else:
+        lines += ["| Module | Errors | Warnings |", "|---|--:|--:|"]
+        for name, errs, warns in results:
+            mark = ERR if errs else (WARN if warns else OK)
+            lines.append("| %s `%s` | %d | %d |" % (mark, name, len(errs), len(warns)))
+        lines += ["", "**%d error(s), %d warning(s).** Errors block; warnings are advisory."
+                  % (total_err, total_warn), ""]
+        lines += ["<details><summary>Details</summary>", ""]
+        for name, errs, warns in results:
+            if not errs and not warns:
+                continue
+            lines.append("**`%s`**" % name)
+            lines += ["- " + ERR + " " + e for e in errs]
+            lines += ["- " + WARN + " " + w for w in warns]
+            lines.append("")
+        lines += ["</details>", ""]
+
+    out_path.write_text("\n".join(lines), encoding="utf-8")
 
 
 def main():
     """Main function to validate ontology files."""
     repo_root = Path(__file__).parent.parent
     ttl_files = []
-    
+
+    # --markdown <path> emits a PR-comment section alongside the console output.
+    argv = sys.argv[1:]
+    markdown_path = None
+    if "--markdown" in argv:
+        i = argv.index("--markdown")
+        markdown_path = Path(argv[i + 1])
+        del argv[i:i + 2]
+    sys.argv = [sys.argv[0]] + argv
+
     if len(sys.argv) < 2:
         # If no files specified, validate all .ttl files in the src directory
         print("No files specified. Validating all .ttl files in src/ directory...")
@@ -197,7 +357,8 @@ def main():
             ttl_files.append(ttl_file)
     
     all_valid = True
-    
+    results: list[tuple[str, list[str], list[str]]] = []
+
     for ttl_file in ttl_files:
         if not ttl_file.exists():
             print(f"Error: File not found: {ttl_file}", file=sys.stderr)
@@ -205,8 +366,8 @@ def main():
             continue
         
         print(f"Validating {ttl_file.name}...")
-        is_valid, errors = validate_ontology(ttl_file)
-        
+        is_valid, errors, warnings = validate_ontology(ttl_file)
+
         if is_valid:
             print(f"  [OK] {ttl_file.name} is valid")
         else:
@@ -214,7 +375,16 @@ def main():
             for error in errors:
                 print(f"    • {error}")
             all_valid = False
-    
+
+        for warning in warnings:
+            print(f"  [WARN] {warning}")
+
+        results.append((ttl_file.stem, errors, warnings))
+
+    if markdown_path is not None:
+        write_markdown(results, markdown_path)
+        print(f"Wrote markdown summary to {markdown_path}")
+
     if not all_valid:
         sys.exit(1)
 

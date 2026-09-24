@@ -8,6 +8,7 @@ Sheet/layout/document structure for AEC drawings.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata`
 - **Version:** 3.0.0
+- **Imports:** `aec_provenance`
 
 ## Dependencies
 
@@ -16,22 +17,28 @@ Arrows point from an ontology to the ontologies it imports; the current ontology
 ```mermaid
 %%{init: {"themeCSS": ".base .nodeLabel,.base .nodeLabel p,.base text,.base tspan{fill:#9ecbff !important;color:#9ecbff !important}.current .nodeLabel,.current .nodeLabel p,.current text,.current tspan{fill:#16305f !important;color:#16305f !important}"} }%%
 graph BT
+    aec_provenance["Aec Provenance"]
     aec_drawing_metadata["Aec Drawing Metadata"]
     aec_common_symbols["Aec Common Symbols"]
     aec_domain_common["Aec Domain Common"]
     aec_facade_domain["Aec Facade Domain"]
+    aec_dano_alignment["Aec Dano Alignment"]
+    aec_drawing_metadata --> aec_provenance
     aec_common_symbols --> aec_drawing_metadata
     aec_domain_common --> aec_common_symbols
     aec_domain_common --> aec_drawing_metadata
     aec_facade_domain --> aec_common_symbols
     aec_facade_domain --> aec_domain_common
     aec_facade_domain --> aec_drawing_metadata
+    aec_dano_alignment --> aec_provenance
+    click aec_provenance "../aec_provenance/" "Aec Provenance reference page"
     click aec_drawing_metadata "../aec_drawing_metadata/" "Aec Drawing Metadata reference page"
     click aec_common_symbols "../aec_common_symbols/" "Aec Common Symbols reference page"
     click aec_domain_common "../aec_domain_common/" "Aec Domain Common reference page"
     click aec_facade_domain "../aec_facade_domain/" "Aec Facade Domain reference page"
+    click aec_dano_alignment "../aec_dano_alignment/" "Aec Dano Alignment reference page"
     classDef base fill:#16305f,stroke:#0e2247,stroke-width:2px,color:#9ecbff;
-    class aec_common_symbols,aec_domain_common,aec_facade_domain base;
+    class aec_provenance,aec_common_symbols,aec_domain_common,aec_facade_domain,aec_dano_alignment base;
     classDef current fill:#f58a1f,stroke:#16305f,stroke-width:3px,color:#16305f;
     class aec_drawing_metadata current;
 ```
@@ -393,13 +400,12 @@ Subject is characterised by a property, or quality. Used for example to indicate
 
 ### hasRevision {#hasRevision}
 
-A DrawingSheet compositionally contains its DrawingRevisions.
+A DrawingSheet compositionally contains its DrawingRevisions. To navigate from a revision back to its sheet, use the SPARQL inverse path ^metadata:hasRevision - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#hasRevision`
 - **Sub property of:** [contains](#contains)
 - **Domain:** [Drawing Sheet](#DrawingSheet)
 - **Range:** [DrawingRevision](#DrawingRevision)
-- **Inverse of:** [isRevisionOf](#isRevisionOf)
 
 ### hasStatusCode {#hasStatusCode}
 
@@ -433,14 +439,6 @@ The Person who checked this DrawingRevision.
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isCheckedBy`
 - **Domain:** [DrawingRevision](#DrawingRevision)
 - **Range:** [Person](#Person)
-
-### isRevisionOf {#isRevisionOf}
-
-Inverse of hasRevision. Navigates from a DrawingRevision back to its DrawingSheet.
-
-- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isRevisionOf`
-- **Domain:** [DrawingRevision](#DrawingRevision)
-- **Range:** [Drawing Sheet](#DrawingSheet)
 
 ## Datatype Properties
 
@@ -592,7 +590,7 @@ Free-text guidance for an information-extraction model on where and how a field 
 
 ### isCVATProperty {#isCVATProperty}
 
-When true, the label is displayed on the right side of the CVAT annotation panel instead of the default left side.
+Presentation hint for downstream annotation tooling: when true, the label should be displayed on the trailing side of the tool's label panel rather than the default leading side. Carries no reasoning weight. The property name still carries a tool name and is due to be renamed - see GitHub issue #89.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isCVATProperty`
 - **Range:** `xsd:boolean`

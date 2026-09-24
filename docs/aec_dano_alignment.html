@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>AEC Common Symbols Ontology</title>
+    <title>ADIRO - DAnO compatibility layer</title>
     <style>
         #pylode {
             position: fixed;
@@ -283,18 +283,21 @@ td {
     <script id="schema.org" type="application/ld+json">
 [
   {
-    "@id": "https://w3id.org/adiro/aec_common_symbols",
+    "@id": "https://w3id.org/adiro/aec_dano_alignment",
     "@type": [
       "https://schema.org/DefinedTermSet"
     ],
     "https://schema.org/creator": [
       {
-        "@value": "Buro Happold — Machine Learning R&D"
+        "@value": "Buro Happold - Machine Learning R&D"
       }
     ],
     "https://schema.org/description": [
       {
-        "@value": "Cross-discipline layout content. Generic symbol classes like dimensions, reference symbols, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology."
+        "@value": "Optional, annotation-level crosswalk between ADIRO and DAnO. Not imported by any ADIRO core module."
+      },
+      {
+        "@value": "OPTIONAL compatibility layer mapping ADIRO terms to the Drawing Analysis Ontology (DAnO, https://w3id.org/dano). Nothing in the ADIRO core imports this module and no ADIRO core module mentions DAnO, so a consumer who wants the DAnO crosswalk loads this file explicitly and everyone else never sees it. Every mapping uses ADIRO's own :closeMatch annotation property and carries no logical force: no rdfs:subPropertyOf alignment to a DAnO term is available, and the DAnO IRIs are not declared here or anywhere else in ADIRO. Kept separate from the core for lifecycle reasons - DAnO has no releases, and an unreleased third-party vocabulary should not force a version bump on a module downstream consumers pin. Full rationale and per-term verdicts: https://burohappoldmachinelearning.github.io/ADIRO/design-decisions/dano-comparison/"
       }
     ],
     "https://schema.org/license": [
@@ -304,7 +307,7 @@ td {
     ],
     "https://schema.org/name": [
       {
-        "@value": "AEC Common Symbols Ontology"
+        "@value": "ADIRO - DAnO compatibility layer"
       }
     ],
     "https://schema.org/publisher": [
@@ -319,7 +322,7 @@ td {
   <body>
     <div id="content">
       <div class="section" id="metadata">
-        <h1>AEC Common Symbols Ontology</h1>
+        <h1>ADIRO - DAnO compatibility layer</h1>
         <h2>Metadata</h2>
         <dl>
           <div>
@@ -327,14 +330,14 @@ td {
               <strong>IRI</strong>
             </dt>
             <dd>
-              <code>https://w3id.org/adiro/aec_common_symbols</code>
+              <code>https://w3id.org/adiro/aec_dano_alignment</code>
             </dd>
           </div>
           <div>
             <dt>
               <a class="hover_property" href="http://purl.org/dc/terms/title" title="A name given to the resource. Defined in DCMI Metadata Terms">Title</a>
             </dt>
-            <dd><p>AEC Common Symbols Ontology</p></dd>
+            <dd><p>ADIRO - DAnO compatibility layer</p></dd>
           </div>
           <div>
             <dt>
@@ -346,7 +349,7 @@ td {
             <dt>
               <a class="hover_property" href="http://purl.org/dc/terms/creator" title="An entity responsible for making the resource. Defined in DCMI Metadata Terms">Creator</a>
             </dt>
-            <dd><p>Buro Happold — Machine Learning R&amp;D</p></dd>
+            <dd><p>Buro Happold - Machine Learning R&amp;D</p></dd>
           </div>
           <div>
             <dt>
@@ -361,212 +364,46 @@ td {
               <a class="hover_property" href="http://www.w3.org/2002/07/owl#versionIRI" title="The property that identifies the version IRI of an ontology. Defined in The OWL 2 Schema vocabulary (OWL 2)">Version Iri</a>
             </dt>
             <dd>
-              <a href="#2.0.0">https://w3id.org/adiro/aec_common_symbols/2.0.0</a>
+              <a href="#1.0.0">https://w3id.org/adiro/aec_dano_alignment/1.0.0</a>
             </dd>
           </div>
           <div>
             <dt>
               <a class="hover_property" href="http://www.w3.org/2002/07/owl#versionInfo" title="The annotation property that provides version information for an ontology or another OWL construct. Defined in The OWL 2 Schema vocabulary (OWL 2)">Version Info</a>
             </dt>
-            <dd><p>2.0.0</p></dd>
+            <dd><p>1.0.0</p></dd>
           </div>
           <div>
             <dt>
               <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
             </dt>
-            <dd><p>Cross-discipline layout content. Generic symbol classes like dimensions, reference symbols, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology.</p></dd>
+            <dd>
+              <ul>
+                <li><p>Optional, annotation-level crosswalk between ADIRO and DAnO. Not imported by any ADIRO core module.</p></li>
+                <li><p>OPTIONAL compatibility layer mapping ADIRO terms to the Drawing Analysis Ontology (DAnO, https://w3id.org/dano). Nothing in the ADIRO core imports this module and no ADIRO core module mentions DAnO, so a consumer who wants the DAnO crosswalk loads this file explicitly and everyone else never sees it. Every mapping uses ADIRO's own :closeMatch annotation property and carries no logical force: no rdfs:subPropertyOf alignment to a DAnO term is available, and the DAnO IRIs are not declared here or anywhere else in ADIRO. Kept separate from the core for lifecycle reasons - DAnO has no releases, and an unreleased third-party vocabulary should not force a version bump on a module downstream consumers pin. Full rationale and per-term verdicts: https://burohappoldmachinelearning.github.io/ADIRO/design-decisions/dano-comparison/</p></li>
+              </ul>
+            </dd>
           </div>
         </dl>
       </div>
-      <div class="section" id="classes">
-        <h2>Classes</h2>
-        <div class="property entity" id="Dimension">
-          <h3>Dimension
-            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+      <div class="section" id="annotationproperties">
+        <h2>Annotation Properties</h2>
+        <div class="property entity" id="closeMatch">
+          <h3>closeMatch
+            <sup class="sup-ap" title="OWL Annotation Property">ap</sup>
           </h3>
           <table>
             <tr>
               <th>IRI</th>
               <td>
-                <code>https://w3id.org/adiro/aec_common_symbols#Dimension</code>
+                <code>https://w3id.org/adiro/aec_dano_alignment#closeMatch</code>
               </td>
             </tr>
             <tr>
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A dimension line or dimension annotation on a drawing, indicating measurements or distances.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
-              </th>
-              <td>
-                <a href="https://w3id.org/adiro/aec_drawing_metadata#DrawingElement">metadata:DrawingElement</a>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="Grid">
-          <h3>Grid
-            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_common_symbols#Grid</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>A grid line or grid system used for alignment and reference in architectural drawings.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
-              </th>
-              <td>
-                <a href="https://w3id.org/adiro/aec_drawing_metadata#DrawingElement">metadata:DrawingElement</a>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="ReferenceSymbol">
-          <h3>ReferenceSymbol
-            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_common_symbols#ReferenceSymbol</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>A symbol drawn on a Layout that references another Layout (on the same or a different DrawingSheet). Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target Layout's LayoutContentType.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
-              </th>
-              <td>
-                <a href="https://w3id.org/adiro/aec_drawing_metadata#DrawingElement">metadata:DrawingElement</a>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#referencesLayout">referencesLayout</a>
-                  <sup class="sup-op" title="OWL Object Property">op</sup>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#hasReferenceSymbol">hasReferenceSymbol</a>
-                  <sup class="sup-op" title="OWL Object Property">op</sup>
-                </span>
-              </td>
-            </tr>
-          </table>
-        </div>
-      </div>
-      <div class="section" id="objectproperties">
-        <h2>Object Properties</h2>
-        <div class="property entity" id="hasReferenceSymbol">
-          <h3>hasReferenceSymbol
-            <sup class="sup-op" title="OWL Object Property">op</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_common_symbols#hasReferenceSymbol</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>A Layout contains one or more ReferenceSymbols. To navigate from a symbol back to the Layout it is drawn on, use the SPARQL inverse path ^csymbol:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subPropertyOf" title="The subject is a subproperty of a property. Defined in The RDF Schema vocabulary (RDFS)">Sub Property Of</a>
-              </th>
-              <td>
-                <a href="https://w3id.org/adiro/aec_drawing_metadata#contains">metadata:contains</a>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <a href="https://w3id.org/adiro/aec_drawing_metadata#Layout">metadata:Layout</a>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#ReferenceSymbol">ReferenceSymbol</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="referencesLayout">
-          <h3>referencesLayout
-            <sup class="sup-op" title="OWL Object Property">op</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_common_symbols#referencesLayout</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>Target Layout — the Layout this ReferenceSymbol points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^csymbol:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#ReferenceSymbol">ReferenceSymbol</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <a href="https://w3id.org/adiro/aec_drawing_metadata#Layout">metadata:Layout</a>
-              </td>
+              <td><p>Asserts that an ADIRO term and an external term mean nearly the same thing: close enough that a reader or a crosswalk tool should treat them as corresponding, not close enough to assert any logical relationship. Carries the intent of skos:closeMatch without inheriting skos:semanticRelation's rdfs:domain skos:Concept, which would type the mapped terms as concepts when they are properties and classes. Annotation only: a reasoner derives nothing from it, by construction rather than by convention. If a second crosswalk module is ever added, move this declaration to a shared home - it is here only because this is its sole consumer.</p></td>
             </tr>
           </table>
         </div>
@@ -576,15 +413,19 @@ td {
         <dl>
           <dt id=":">:</dt>
           <dd>
-            <code>https://w3id.org/adiro/aec_common_symbols#</code>
+            <code>https://w3id.org/adiro/aec_dano_alignment#</code>
+          </dd>
+          <dt id="aprov">aprov</dt>
+          <dd>
+            <code>https://w3id.org/adiro/aec_provenance#</code>
+          </dd>
+          <dt id="dano">dano</dt>
+          <dd>
+            <code>https://w3id.org/dano#</code>
           </dd>
           <dt id="dcterms">dcterms</dt>
           <dd>
             <code>http://purl.org/dc/terms/</code>
-          </dd>
-          <dt id="metadata">metadata</dt>
-          <dd>
-            <code>https://w3id.org/adiro/aec_drawing_metadata#</code>
           </dd>
           <dt id="ns1">ns1</dt>
           <dd>
@@ -609,15 +450,9 @@ td {
         <table class="entity">
           <tr>
             <td>
-              <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+              <sup class="sup-ap" title="OWL Annotation Property">ap</sup>
             </td>
-            <td>Classes</td>
-          </tr>
-          <tr>
-            <td>
-              <sup class="sup-op" title="OWL Object Property">op</sup>
-            </td>
-            <td>Object Properties</td>
+            <td>Annotation Properties</td>
           </tr>
         </table>
       </div>
@@ -645,30 +480,11 @@ td {
         </li>
         <li>
           <h4>
-            <a href="#classes">Classes</a>
+            <a href="#annotationproperties">Annotation Properties</a>
           </h4>
           <ul class="second">
             <li>
-              <a href="#Dimension">Dimension</a>
-            </li>
-            <li>
-              <a href="#Grid">Grid</a>
-            </li>
-            <li>
-              <a href="#ReferenceSymbol">ReferenceSymbol</a>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <h4>
-            <a href="#objectproperties">Object Properties</a>
-          </h4>
-          <ul class="second">
-            <li>
-              <a href="#hasReferenceSymbol">hasReferenceSymbol</a>
-            </li>
-            <li>
-              <a href="#referencesLayout">referencesLayout</a>
+              <a href="#closeMatch">closeMatch</a>
             </li>
           </ul>
         </li>
@@ -681,10 +497,13 @@ td {
               <a href="#"></a>
             </li>
             <li>
-              <a href="#dcterms">dcterms</a>
+              <a href="#aprov">aprov</a>
             </li>
             <li>
-              <a href="#metadata">metadata</a>
+              <a href="#dano">dano</a>
+            </li>
+            <li>
+              <a href="#dcterms">dcterms</a>
             </li>
             <li>
               <a href="#ns1">ns1</a>

@@ -1,7 +1,7 @@
-# ADIRO Ontology Requirements Specification — v1.1
+# ADIRO Ontology Requirements Specification — v1.2
 
 **Author:** ADIRO project team
-**Version:** 1.1 (July 2026)
+**Version:** 1.2 (September 2026) — see [Version history](#version-history)
 
 ---
 
@@ -63,8 +63,8 @@ The ontology is implemented using RDF and OWL to establish a standardized and in
 | ID | Requirement | Description |
 |----|-------------|-------------|
 | NFR 1 | **Concise terminology** | The ontology shall use precise, domain-appropriate terms aligned with international standards and established engineering vocabulary. |
-| NFR 2 | **Consistency** | The model shall avoid contradictory assertions and redundant modelling to support the logical interpretation of classes and properties. |
-| NFR 3 | **Extendability** | The ontology shall be built to accommodate new AEC disciplines (e.g., Facade, MEP) without restructuring the core model, primarily through the reuse of established ontologies like BOT, ifcOWL, and GeoSPARQL. ( Extendability is achieved today through the modular internal package structure (e.g. aec_domain_common, aec_facade_domain). Reuse of established external ontologies is a target for future alignment and currently ADIRO doesn't import them. ) |
+| NFR 2 | **Consistency** | The model shall avoid contradictory assertions and redundant modelling to support the logical interpretation of classes and properties. ADIRO individuals are **detections, not idealised drawing constructs** - historical sheets are routinely clipped, torn or partially legible - so structural axioms must not assert a completeness the extraction cannot guarantee. Closed-world completeness checks belong in SHACL over a finished extraction, not in OWL cardinality over detections ([#84](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/84)). |
+| NFR 3 | **Extendability** | The ontology shall be built to accommodate new AEC disciplines (e.g., Facade, MEP) without restructuring the core model, and shall reuse established external ontologies where doing so is sound. Extendability is achieved today through the modular internal package structure (e.g. `aec_domain_common`, `aec_facade_domain`). ADIRO imports no external ontology: how external terms may be reused is governed by [External ontology imports](../design-decisions/external-ontology-imports.md), which prefers the lightest option that meets the need and sets a test for when a core module may reference an external vocabulary at all. PROV-O is reused directly in `aec_provenance`; DAnO is mapped at annotation level only in the optional `aec_dano_alignment` layer ([DAnO comparison](../design-decisions/dano-comparison.md)); GeoSPARQL remains deferred ([#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36)). A per-vocabulary reuse justification is being added to the ORSD ([#82](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/82)). |
 | NFR 4 | **Reliability** | The ontology and its metadata shall be structured to ensure sustained availability and traceability for long-term use in the AECO industry. |
 | NFR 5 | **FAIR principles** | The ontology shall be developed, documented, and published to ensure it is Findable, Accessible, Interoperable, and Reusable. |
 | NFR 6 | **Modularity and Scalability** | The ontology shall support a modular framework where different aspects of a drawing can be processed by independent extraction services and subsequently aggregated without loss of semantic integrity or performance degradation when scaled to multi-document collections. |
@@ -72,6 +72,20 @@ The ontology is implemented using RDF and OWL to establish a standardized and in
 ---
 
 ### b. Functional Requirements: Competency Question Groups (CQGs)
+
+!!! note "Which module answers these, and a known traceability gap"
+    **CQG 2, 3 and 4 depend on extraction provenance** and are served by the `aec_provenance` module
+    (`FieldAssertion`, `InferenceMeta`, `hasConfidence`, `capturedCaption`, `assertedBy`): **CQ 3.1** needs a
+    confidence score, **CQ 3.2** needs predicted and ground-truth claims to be distinct individuals, **CQ 2.4**
+    needs a per-claim validation status, and **CQ 4.4** needs each result attributed to the service that
+    produced it. This is the requirement that justifies the module.
+
+    **The gap:** the CQGs on this page and the competency questions in the per-use-case ORSDs are two separate
+    systems that do not reference each other, and their numbering collides (this page's CQ 5.2 is about
+    external ontology links; UC-01's is about disciplines; UC-07's is about wall lengths). **No written
+    use-case ORSD currently claims CQG 2, 3 or 4.** Tracked in [#86](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/86), with the underlying
+    question - write an extraction ORSD, or cut to use-case demand - in the title-block vocabulary review's
+    Decision 2. Cite a CQ from this page as *ORSD CQ n.n* to avoid the collision.
 
 #### CQG 1. Data Extraction and Organisation
 
@@ -106,4 +120,36 @@ What is the complete set of drawings reachable from a given drawing through refe
 #### CQG 5. Discipline and Data Interoperability
 
 - **CQ 5.1:** Which DrawingElement types are consistently identified across different engineering drawing sets?
-- **CQ 5.2:** Which external ontology classes are linked to a given metadata:DrawingElement for cross-domain interoperability?  *(the linking property itself — working name `depicts` — is not yet defined in the ontology, so lets to treat it as a proposed pending Open Issue OI-1)*
+- **CQ 5.2:** Which external ontology classes are linked to a given metadata:DrawingElement for cross-domain interoperability?  *(the linking property itself — working name `depicts` — is not yet defined in the ontology, so let's treat it as a proposed pending Open Issue **OI-1**. Note that UC-06 and UC-07 each specify their own (`depictsMaterial`, `depictsElement`), both with domain `Drawing` rather than `DrawingElement`; reconciling that is part of OI-1. See [#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80).)*
+
+---
+
+## Version history
+
+### v1.2 (September 2026)
+
+Changed in [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76), alongside the first
+provenance module in the suite:
+
+- **NFR 2 (Consistency)** now records that ADIRO individuals are **detections, not idealised drawing
+  constructs** — historical sheets are routinely clipped, torn or partially legible — so structural axioms
+  must not assert a completeness the extraction cannot guarantee, and closed-world completeness checks belong
+  in SHACL rather than in OWL cardinality ([#84](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/84)).
+- **NFR 3 (Extendability)** rewritten. It previously said external reuse "is a target for future alignment";
+  it now points at the normative
+  [External ontology imports](../design-decisions/external-ontology-imports.md) rule and records where each
+  candidate stands (PROV-O reused in the core, DAnO annotation-level only in an optional compatibility layer,
+  GeoSPARQL deferred).
+- **CQG section** gains a note recording that **CQG 2, 3 and 4 are what justify the `aec_provenance` module**,
+  and that the CQGs on this page and the per-use-case competency questions are separate systems that never
+  reference each other and whose numbering collides
+  ([#86](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/86)).
+- **CQ 5.2** annotated: open issue OI-1 remains open, and reconciling UC-06's `depictsMaterial` and UC-07's
+  `depictsElement` (both with domain `Drawing` rather than `DrawingElement`) is part of it
+  ([#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80)).
+
+No competency question was added, removed or re-numbered, so this is a MINOR revision.
+
+### v1.1 (July 2026)
+
+Predates this changelog.
