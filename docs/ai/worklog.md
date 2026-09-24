@@ -22,6 +22,53 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-09-24 — Close the inference-consumption gaps on the field scheme (G1–G3)
+
+**Issue:** [MLE-364](https://bhmlrnd.youtrack.cloud/issue/MLE-364) epic (sub-tasks B4/MLE-376, B5/MLE-377; RES-108) · **PR:** #76 · **Branch:** `aec-provenance-model`
+
+### Why
+
+A review of PR #76 against the MLE-364 inference sub-tasks found the ontology core (`aec_provenance` +
+`TitleblockFieldScheme`) directly consumable — concept IRI = `adiro_uri`, `prefLabel`/`altLabel`(`@en`/`@de`) =
+`key_name`/`key_synonyms`, `skos:example` = `example_values`, `FieldAssertion` = the ABox target; all 14
+`mapsToFieldProperty` targets and both `expectedRange` classes exist — but with three gaps that would have
+forced a second ADIRO round-trip mid-inference:
+- **G1** — B5 (MLE-377) binds unmatched keys to a `UnidentifiedField` red-flag kind that did not exist.
+- **G2** — B4 (MLE-376) HALTs on a synonym colliding with an altLabel of a *different* field kind, but the
+  scheme itself shipped a collision: `"Verfasser"@de` on both `:OriginatorField` and `:DrawnByField`.
+- **G3** — MLE-364/RES-108 asks the public source basis of each synonym/example to be recorded; the TTL had none.
+
+### What changed (`src/aec_drawing_metadata.ttl`, additive)
+
+- **G1** — added `:UnidentifiedField` (`skos:Concept`, with `skos:definition`), deliberately **not**
+  `skos:inScheme :TitleblockFieldScheme` so it is a valid `aprov:assertsFieldKind` target but never a field the
+  pipeline searches for. It carries no `mapsToFieldProperty` (no promotion).
+- **G2** — dropped `"Verfasser"@de` from `:OriginatorField` (kept `Planverfasser`@de there); `Verfasser` now
+  denotes only `:DrawnByField`. Added a `skos:note` on the scheme stating the uniqueness contract B4 relies on.
+- **G3** — added a `skos:scopeNote` on the scheme recording the public/private content policy and that per-item
+  `dcterms:source` follows once the anonymised dataset (RES-108/RES-104) is public.
+- Also added a one-line `skos:definition` to **every** field-kind concept (feeds B3's prompt `description`;
+  clears them from the `#87` undescribed-terms backlog).
+- Changelog `[Unreleased]` updated; still a **MINOR** (additive) bump on top of the pending 3.x line, except the
+  breaking inverse removal already recorded (MAJOR 4.0.0 at the cut).
+
+### Verified
+
+- `validate_ontology.py` — all 6 modules OK; metadata now down to the 3 pre-existing enum individuals
+  (`Horizontal`/`Undefined`/`Vertical`) as the only undescribed terms.
+- `generate_docs.py` — 6/6 regenerated.
+- `ENFORCE=1 run_reasoning.sh` (HermiT 17) — consistent + satisfiable, exit 0; ROBOT report ERROR 0 / WARN 0 /
+  INFO 23 (advisory, unchanged).
+
+### Next step
+
+Re-anchor the PR #76 body to the MLE-364 epic and note advancement of #65/#67/#69 + the RES-108 classification
+still owed off-repo. Then the inference side (ml-cad-assistant) can start B1 against the shipped scheme: `adiro_uri`
+= the concept IRI, unmatched → `:UnidentifiedField`, confidence written directly to `aprov:hasConfidence`
+(the interim JSON-envelope step in MLE-377 is now obsolete since the provenance module lands in this PR).
+
+---
+
 ## 2026-09-21/22 — DAnO settled: no import, an optional compatibility layer; specification realigned
 
 **Issue:** [#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77) (mirrored to
