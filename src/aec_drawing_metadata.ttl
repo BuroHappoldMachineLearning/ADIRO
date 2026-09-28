@@ -6,6 +6,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix aprov: <https://w3id.org/adiro/aec_provenance#> .
+@prefix geom: <https://w3id.org/adiro/aec_geometry#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 
 #################################################################
@@ -21,6 +22,7 @@
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
     owl:imports <https://w3id.org/adiro/aec_provenance> ;
+    owl:imports <https://w3id.org/adiro/aec_geometry> ;
     owl:versionIRI <https://w3id.org/adiro/aec_drawing_metadata/3.0.0> ;
     owl:versionInfo "3.0.0" .
 
@@ -372,6 +374,12 @@
     rdfs:label "Drawing Sheet" ;
     rdfs:comment "Top-level container for a drawing. Contains Layout(s)." ;
     :labellableRoot false.
+
+:hasCoordinateFrame rdf:type owl:ObjectProperty ;
+    rdfs:label "hasCoordinateFrame" ;
+    rdfs:comment "The coordinate frame (aec_geometry:CoordinateFrame) that a drawing sheet's page geometry is expressed in - the exact PDF/page, unit and named coordinate space its bounding boxes are relative to. Owned by the sheet and shared by the geometries on that page; a sheet may carry different frames for different file versions or output PDFs." ;
+    rdfs:domain :DrawingSheet ;
+    rdfs:range geom:CoordinateFrame .
 
 :Layout rdf:type owl:Class ;
     rdfs:subClassOf

@@ -8,7 +8,7 @@ Sheet/layout/document structure for AEC drawings.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata`
 - **Version:** 3.0.0
-- **Imports:** `aec_provenance`
+- **Imports:** `aec_geometry`, `aec_provenance`
 
 ## Dependencies
 
@@ -18,10 +18,13 @@ Arrows point from an ontology to the ontologies it imports; the current ontology
 %%{init: {"themeCSS": ".base .nodeLabel,.base .nodeLabel p,.base text,.base tspan{fill:#9ecbff !important;color:#9ecbff !important}.current .nodeLabel,.current .nodeLabel p,.current text,.current tspan{fill:#16305f !important;color:#16305f !important}"} }%%
 graph BT
     aec_provenance["Aec Provenance"]
+    aec_geometry["Aec Geometry"]
     aec_drawing_metadata["Aec Drawing Metadata"]
     aec_common_symbols["Aec Common Symbols"]
     aec_domain_common["Aec Domain Common"]
     aec_facade_domain["Aec Facade Domain"]
+    aec_geometry --> aec_provenance
+    aec_drawing_metadata --> aec_geometry
     aec_drawing_metadata --> aec_provenance
     aec_common_symbols --> aec_drawing_metadata
     aec_domain_common --> aec_common_symbols
@@ -30,12 +33,13 @@ graph BT
     aec_facade_domain --> aec_domain_common
     aec_facade_domain --> aec_drawing_metadata
     click aec_provenance "../aec_provenance/" "Aec Provenance reference page"
+    click aec_geometry "../aec_geometry/" "Aec Geometry reference page"
     click aec_drawing_metadata "../aec_drawing_metadata/" "Aec Drawing Metadata reference page"
     click aec_common_symbols "../aec_common_symbols/" "Aec Common Symbols reference page"
     click aec_domain_common "../aec_domain_common/" "Aec Domain Common reference page"
     click aec_facade_domain "../aec_facade_domain/" "Aec Facade Domain reference page"
     classDef base fill:#16305f,stroke:#0e2247,stroke-width:2px,color:#9ecbff;
-    class aec_provenance,aec_common_symbols,aec_domain_common,aec_facade_domain base;
+    class aec_provenance,aec_geometry,aec_common_symbols,aec_domain_common,aec_facade_domain base;
     classDef current fill:#f58a1f,stroke:#16305f,stroke-width:3px,color:#16305f;
     class aec_drawing_metadata current;
 ```
@@ -360,6 +364,14 @@ Direct containment: indicates physical containment of something within a parent 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#contains`
 - **Domain:** `owl:Thing`
 - **Range:** `owl:Thing`
+
+### hasCoordinateFrame {#hasCoordinateFrame}
+
+The coordinate frame (aec_geometry:CoordinateFrame) that a drawing sheet's page geometry is expressed in - the exact PDF/page, unit and named coordinate space its bounding boxes are relative to. Owned by the sheet and shared by the geometries on that page; a sheet may carry different frames for different file versions or output PDFs.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#hasCoordinateFrame`
+- **Domain:** [Drawing Sheet](#DrawingSheet)
+- **Range:** `geom:CoordinateFrame`
 
 ### hasLayout {#hasLayout}
 

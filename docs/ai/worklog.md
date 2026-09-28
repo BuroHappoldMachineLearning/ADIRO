@@ -22,6 +22,49 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-09-28 — New `aec_geometry` module (bounding boxes + coordinate frames); Croissant evaluation
+
+**Issue:** [#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90), [#91](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/91) · **PR:** #76 · **Branch:** `aec-provenance-model`
+
+### Why
+
+MLE-364 needs title-block field **localisation** (bounding boxes), and the review of Tianyang's UC-03 three-layer
+design (MLE-A-7: Semantic/Geometry/Provenance, GeoSPARQL-aligned geometry, `aec_provenance`-reusing provenance)
+showed a clean shared model. Plus the Croissant evaluation (#91) concluded Croissant is dataset-level metadata
+(complementary to per-assertion `aec_provenance`), with one near-term impact: borrow its bounding-box `format`
+convention. The workshop decisions: new `aec_geometry` module; the bbox is a **provenance-bearing class** (who
+made it — model vs human — and with what confidence, separate from the value's confidence).
+
+### What changed
+
+- **New `src/aec_geometry.ttl` (v1.0.0)** — `BoundingBox` (`⊑ geo:Geometry` and `aprov:InferredEntity`; shape as
+  `bboxXYXY` string, `XYXY` aligned to Croissant), `CoordinateFrame` (unit, `coordinateSpace` = `page_display_pt`
+  fixing origin/axes, artifact/page, rotation, profile), `inCoordinateFrame`, `hasBoundingBox`. GeoSPARQL reused
+  as a local stub (option 1A; WKT/spatial queries deferred, #36). Imports `aec_provenance`.
+- **`aec_provenance`** — added `:InferredEntity` (⊑ `prov:Entity`); `FieldAssertion ⊑ InferredEntity`; re-homed
+  the domains of `hasInferenceMeta` and `hasConfidence` from `FieldAssertion` to `InferredEntity` so a bounding
+  box carries the same provenance/confidence. Fixes the confidence-on-geometry domain concern UC-03 flagged.
+- **`aec_drawing_metadata`** — imports `aec_geometry`; adds `hasCoordinateFrame` (`DrawingSheet` →
+  `CoordinateFrame`). A field assertion links to its box via `aec_geometry:hasBoundingBox`.
+- **Plumbing:** `catalog-v001.xml`, `generate_docs.py` sort order (geometry=1), `CHANGELOG.md` rollup, new
+  `changelogs/aec_geometry.md`, `AGENTS.md` module + version lists.
+- **New design doc** `docs/design-decisions/croissant-comparison.md` (#91) committed earlier this session and
+  linked in the PR body.
+- **Scope:** UC-01 only. UC-03-specific geometry (CoordinateTransform, crop/symbol metrics, clickable/navigation
+  geometry) deliberately left out; the module is named so UC-03 slots in without conflict.
+
+### Verified
+
+- `validate_ontology.py` → 6/6 valid (only pre-existing warnings). `generate_docs.py` → 6/6.
+  `ENFORCE=1 run_reasoning.sh` (HermiT 17, 6 modules) → consistent + satisfiable, exit 0; ROBOT ERROR 0 / WARN 0
+  / INFO 25.
+
+### Next step
+
+Update the PR body (add `aec_geometry` to the ontology changes + an OntoCanvas preview row). Then the inference
+side can localise title-block fields; and the UC-03 work extends `aec_geometry` with its transform/navigation
+geometry.
+
 ## 2026-09-25 — Reverse the DAnO decision: remove the compatibility layer; comparison stays documentation-only
 
 **Issue:** [#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77) · **PR:** #76 · **Branch:** `aec-provenance-model`

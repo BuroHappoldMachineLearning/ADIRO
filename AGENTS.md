@@ -23,11 +23,15 @@ whole `src/` listing before generalising, and say *which module* you mean.
 
 Ontology sources live in `src/` as independently versioned modules (dependency order):
 1. `aec_provenance` — foundational, domain-neutral: reified `FieldAssertion` + `InferenceMeta` carrying
-   extraction provenance and confidence; PROV-O-aligned. Imported by the drawing modules.
-2. `aec_drawing_metadata` — sheet/layout/document structure (titleblock, legend, revision table, drawing types…).
-3. `aec_common_symbols` — cross-discipline reusable symbols (dimensions, callouts, grids, levels…).
-4. `aec_domain_common` — concepts shared across a set of domains.
-5. `aec_facade_domain` — facade-engineering discipline-specific concepts (`:FacadeComponent`, `:DGU`, …).
+   extraction provenance and confidence; PROV-O-aligned. Also defines `InferredEntity`, the superclass of
+   anything ADIRO infers that bears provenance/confidence. Imported by the drawing modules.
+2. `aec_geometry` — foundational, domain-neutral: `BoundingBox` (a provenance-bearing `InferredEntity`, and a
+   GeoSPARQL `geo:Geometry`) + `CoordinateFrame` (unit, named coordinate space, page/artifact). Imports
+   `aec_provenance`; shared by UC-01 and UC-03.
+3. `aec_drawing_metadata` — sheet/layout/document structure (titleblock, legend, revision table, drawing types…).
+4. `aec_common_symbols` — cross-discipline reusable symbols (dimensions, callouts, grids, levels…).
+5. `aec_domain_common` — concepts shared across a set of domains.
+6. `aec_facade_domain` — facade-engineering discipline-specific concepts (`:FacadeComponent`, `:DGU`, …).
 
 DAnO is **not** part of the suite: ADIRO ships no DAnO artifact — no module, no import, no annotation-level
 crosswalk. The comparison with DAnO, and the reasons ADIRO mints its own terms rather than importing or aligning
@@ -119,7 +123,7 @@ commands directly, but Git Bash is simpler.
 ## Versioning
 **Per-module SemVer** — each `src/*.ttl` is versioned independently via its own `owl:versionIRI` +
 `owl:versionInfo` (currently `aec_drawing_metadata` 3.0.0; `aec_common_symbols`, `aec_domain_common` and
-`aec_facade_domain` 2.0.0; `aec_provenance` 1.0.0, unreleased). The full scheme — IRI
+`aec_facade_domain` 2.0.0; `aec_provenance` and `aec_geometry` 1.0.0, both unreleased). The full scheme — IRI
 strategy, bump rules (compatibility-diff spec), imports policy, deprecation, the tag-driven release flow, and
 changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
 [DATA-A-10](https://bhmlrnd.youtrack.cloud/articles/DATA-A-10); plan/decisions in

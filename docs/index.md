@@ -38,11 +38,21 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_provenance.html){ .md-button target=_blank }
 
+-   ### [Aec Geometry](aec_geometry.html)
+
+    Foundational, domain-neutral vocabulary for locating a detection on a drawing page: a BoundingBox (the shape) interpreted against a CoordinateFrame (which PDF/page, units, origin and axes). A bounding box is modelled as a first-class, provenance-bearing individual - an aec_provenance:InferredEntity - so a box records what produced it (a detector or a human) and with what confidence, independently of the confidence in any value read at that box. GeoSPARQL's geo:Geometry is reused as the shape supertype. Imported by the drawing modules (e.g. aec_drawing_metadata), which attach frames to sheets and boxes to assertions. Shared across use cases: UC-01 (title-block field regions) and UC-03 (reference-symbol geometry) use the same BoundingBox / CoordinateFrame model.
+
+    *Imports: aec_provenance*
+
+    Source: [`aec_geometry.ttl`](aec_geometry.ttl)
+
+    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_geometry.html){ .md-button target=_blank }
+
 -   ### [Aec Drawing Metadata](aec_drawing_metadata.html)
 
     Sheet/layout/document structure for AEC drawings.
 
-    *Imports: aec_provenance*
+    *Imports: aec_geometry, aec_provenance*
 
     Source: [`aec_drawing_metadata.ttl`](aec_drawing_metadata.ttl)
 

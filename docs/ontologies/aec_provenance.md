@@ -17,10 +17,13 @@ Arrows point from an ontology to the ontologies it imports; the current ontology
 %%{init: {"themeCSS": ".base .nodeLabel,.base .nodeLabel p,.base text,.base tspan{fill:#9ecbff !important;color:#9ecbff !important}.current .nodeLabel,.current .nodeLabel p,.current text,.current tspan{fill:#16305f !important;color:#16305f !important}"} }%%
 graph BT
     aec_provenance["Aec Provenance"]
+    aec_geometry["Aec Geometry"]
     aec_drawing_metadata["Aec Drawing Metadata"]
     aec_common_symbols["Aec Common Symbols"]
     aec_domain_common["Aec Domain Common"]
     aec_facade_domain["Aec Facade Domain"]
+    aec_geometry --> aec_provenance
+    aec_drawing_metadata --> aec_geometry
     aec_drawing_metadata --> aec_provenance
     aec_common_symbols --> aec_drawing_metadata
     aec_domain_common --> aec_common_symbols
@@ -29,12 +32,13 @@ graph BT
     aec_facade_domain --> aec_domain_common
     aec_facade_domain --> aec_drawing_metadata
     click aec_provenance "../aec_provenance/" "Aec Provenance reference page"
+    click aec_geometry "../aec_geometry/" "Aec Geometry reference page"
     click aec_drawing_metadata "../aec_drawing_metadata/" "Aec Drawing Metadata reference page"
     click aec_common_symbols "../aec_common_symbols/" "Aec Common Symbols reference page"
     click aec_domain_common "../aec_domain_common/" "Aec Domain Common reference page"
     click aec_facade_domain "../aec_facade_domain/" "Aec Facade Domain reference page"
     classDef base fill:#16305f,stroke:#0e2247,stroke-width:2px,color:#9ecbff;
-    class aec_drawing_metadata,aec_common_symbols,aec_domain_common,aec_facade_domain base;
+    class aec_geometry,aec_drawing_metadata,aec_common_symbols,aec_domain_common,aec_facade_domain base;
     classDef current fill:#f58a1f,stroke:#16305f,stroke-width:3px,color:#16305f;
     class aec_provenance current;
 ```
@@ -61,10 +65,10 @@ Typing stub for the PROV-O term of the same name, declared locally so this modul
 
 ### Field Assertion {#FieldAssertion}
 
-A single reified assertion that some source makes a value-claim about a field kind. Reifying the claim (rather than attaching the value straight to a subject) lets each printed occurrence carry its own provenance - which region asserted it (assertedBy), what produced it (hasInferenceMeta), and with what confidence (hasConfidence) - independently of the value it states. The value is a literal (hasLiteralValue) for datatype-valued fields or an entity (hasValueEntity) for object-valued fields. Validated assertions are promoted to direct statements on the subject downstream; conflicting assertions across sources are surfaced, not silently merged. In PROV-O terms this is the prov:Entity an extraction produced, which is why the PROV alignment is seated across two classes rather than all on one.
+A single reified assertion that some source makes a value-claim about a field kind. Reifying the claim (rather than attaching the value straight to a subject) lets each printed occurrence carry its own provenance - which region asserted it (assertedBy), what produced it (hasInferenceMeta), and with what confidence (hasConfidence) - independently of the value it states. The value is a literal (hasLiteralValue) for datatype-valued fields or an entity (hasValueEntity) for object-valued fields. Validated assertions are promoted to direct statements on the subject downstream; conflicting assertions across sources are surfaced, not silently merged. A kind of InferredEntity, so it carries the shared provenance/confidence; in PROV-O terms the prov:Entity an extraction produced, which is why the PROV alignment is seated across two classes rather than all on one.
 
 - **IRI:** `https://w3id.org/adiro/aec_provenance#FieldAssertion`
-- **Sub class of:** [Entity](#Entity)
+- **Sub class of:** [Inferred Entity](#InferredEntity)
 
 ### Inference Meta {#InferenceMeta}
 
@@ -72,6 +76,13 @@ Provenance metadata for an inferred or extracted assertion: what produced it (in
 
 - **IRI:** `https://w3id.org/adiro/aec_provenance#InferenceMeta`
 - **Sub class of:** [Activity](#Activity)
+
+### Inferred Entity {#InferredEntity}
+
+Anything ADIRO infers or extracts that carries its own provenance and confidence - the shared superclass of everything an inference/extraction step produces as a first-class, provenance-bearing individual. A field-value claim (FieldAssertion, here) is one; a spatial localisation (a BoundingBox, in aec_geometry) is another. It exists so that hasInferenceMeta and hasConfidence apply uniformly to any such product, not only to a field-value claim: a detected box is an inferred entity with its own producer and score, distinct from the confidence in the value read at that box. In PROV-O terms this is the prov:Entity an inference activity generated.
+
+- **IRI:** `https://w3id.org/adiro/aec_provenance#InferredEntity`
+- **Sub class of:** [Entity](#Entity)
 
 ## Object Properties
 
@@ -99,11 +110,11 @@ The field kind (a SKOS concept in a field-kind scheme, e.g. a title-block field 
 
 ### hasInferenceMeta {#hasInferenceMeta}
 
-Links an assertion to the InferenceMeta describing what produced it, from where, and when. Aligned to prov:wasGeneratedBy: the assertion (a prov:Entity) was generated by the inference (a prov:Activity).
+Links an inferred entity (a FieldAssertion, a BoundingBox, ...) to the InferenceMeta describing what produced it, from where, and when. Aligned to prov:wasGeneratedBy: the entity (a prov:Entity) was generated by the inference (a prov:Activity).
 
 - **IRI:** `https://w3id.org/adiro/aec_provenance#hasInferenceMeta`
 - **Sub property of:** [wasGeneratedBy](#wasGeneratedBy)
-- **Domain:** [Field Assertion](#FieldAssertion)
+- **Domain:** [Inferred Entity](#InferredEntity)
 - **Range:** [Inference Meta](#InferenceMeta)
 
 ### hasValueEntity {#hasValueEntity}
@@ -174,10 +185,10 @@ Typing stub for the PROV-O term of the same name, declared locally so this modul
 
 ### hasConfidence {#hasConfidence}
 
-Confidence of the inference behind this assertion, as a decimal in [0,1]. Carried on the assertion (an individual) rather than on a triple, which keeps confidence in the graph without requiring RDF-star or statement reification. The range is an OWL 2 datatype restriction on xsd:decimal with minInclusive 0 and maxInclusive 1, so the [0,1] bound is asserted rather than only described in prose. Note this cannot fire in CI today: the reasoning gate runs over the T-Box in src/ and the repository holds no instance data, so the bound becomes enforceable when an A-Box exists (GitHub issue #22).
+Confidence of the inference behind an inferred entity, as a decimal in [0,1]. Applies to any InferredEntity - the confidence in a field-value claim (FieldAssertion) and the confidence in a detected localisation (a BoundingBox in aec_geometry) are separate values, each carried on the individual it belongs to. Carried on the individual rather than on a triple, which keeps confidence in the graph without requiring RDF-star or statement reification. The range is an OWL 2 datatype restriction on xsd:decimal with minInclusive 0 and maxInclusive 1, so the [0,1] bound is asserted rather than only described in prose. Note this cannot fire in CI today: the reasoning gate runs over the T-Box in src/ and the repository holds no instance data, so the bound becomes enforceable when an A-Box exists (GitHub issue #22).
 
 - **IRI:** `https://w3id.org/adiro/aec_provenance#hasConfidence`
-- **Domain:** [Field Assertion](#FieldAssertion)
+- **Domain:** [Inferred Entity](#InferredEntity)
 - **Range:** _anonymous class_
 
 ### hasLiteralValue {#hasLiteralValue}

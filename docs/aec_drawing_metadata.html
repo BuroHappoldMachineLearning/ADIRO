@@ -925,6 +925,12 @@ td {
                       <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
                     </span>
                   </li>
+                  <li>
+                    <span>
+                      <a href="#hasCoordinateFrame">hasCoordinateFrame</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
                 </ul>
               </td>
             </tr>
@@ -2560,6 +2566,44 @@ td {
             </tr>
           </table>
         </div>
+        <div class="property entity" id="hasCoordinateFrame">
+          <h3>hasCoordinateFrame
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#hasCoordinateFrame</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>The coordinate frame (aec_geometry:CoordinateFrame) that a drawing sheet's page geometry is expressed in - the exact PDF/page, unit and named coordinate space its bounding boxes are relative to. Owned by the sheet and shared by the geometries on that page; a sheet may carry different frames for different file versions or output PDFs.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="#CoordinateFrame">geom:CoordinateFrame</a>
+              </td>
+            </tr>
+          </table>
+        </div>
       </div>
       <div class="section" id="datatypeproperties">
         <h2>Datatype Properties</h2>
@@ -2700,12 +2744,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#Layout">Layout</a>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <a href="#Layout">Layout</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -3295,6 +3339,10 @@ td {
           <dd>
             <code>http://purl.org/dc/terms/</code>
           </dd>
+          <dt id="geom">geom</dt>
+          <dd>
+            <code>https://w3id.org/adiro/aec_geometry#</code>
+          </dd>
           <dt id="owl">owl</dt>
           <dd>
             <code>http://www.w3.org/2002/07/owl#</code>
@@ -3500,6 +3548,9 @@ td {
             <li>
               <a href="#assertsOriginator">asserts originator</a>
             </li>
+            <li>
+              <a href="#hasCoordinateFrame">hasCoordinateFrame</a>
+            </li>
           </ul>
         </li>
         <li>
@@ -3589,6 +3640,9 @@ td {
             </li>
             <li>
               <a href="#dcterms">dcterms</a>
+            </li>
+            <li>
+              <a href="#geom">geom</a>
             </li>
             <li>
               <a href="#owl">owl</a>

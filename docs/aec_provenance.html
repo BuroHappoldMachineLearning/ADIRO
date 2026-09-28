@@ -419,7 +419,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#FieldAssertion">Field Assertion</a>
+                  <a href="#InferredEntity">Inferred Entity</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -502,6 +502,68 @@ td {
             </tr>
           </table>
         </div>
+        <div class="property entity" id="InferredEntity">
+          <h3>Inferred Entity
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_provenance#InferredEntity</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Anything ADIRO infers or extracts that carries its own provenance and confidence - the shared superclass of everything an inference/extraction step produces as a first-class, provenance-bearing individual. A field-value claim (FieldAssertion, here) is one; a spatial localisation (a BoundingBox, in aec_geometry) is another. It exists so that hasInferenceMeta and hasConfidence apply uniformly to any such product, not only to a field-value claim: a detected box is an inferred entity with its own producer and score, distinct from the confidence in the value read at that box. In PROV-O terms this is the prov:Entity an inference activity generated.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="http://www.w3.org/ns/prov#Entity">Entity</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
+              </th>
+              <td>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#hasInferenceMeta">hasInferenceMeta</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#hasConfidence">hasConfidence</a>
+                      <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+                    </span>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/superClassOf" title="Inverse of RDFS' subClassOf. Defined in Ontology Documentation Profile">Super Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#FieldAssertion">Field Assertion</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
         <div class="property entity" id="FieldAssertion">
           <h3>Field Assertion
             <sup class="sup-c" title="OWL/RDFS Class">c</sup>
@@ -517,7 +579,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A single reified assertion that some source makes a value-claim about a field kind. Reifying the claim (rather than attaching the value straight to a subject) lets each printed occurrence carry its own provenance - which region asserted it (assertedBy), what produced it (hasInferenceMeta), and with what confidence (hasConfidence) - independently of the value it states. The value is a literal (hasLiteralValue) for datatype-valued fields or an entity (hasValueEntity) for object-valued fields. Validated assertions are promoted to direct statements on the subject downstream; conflicting assertions across sources are surfaced, not silently merged. In PROV-O terms this is the prov:Entity an extraction produced, which is why the PROV alignment is seated across two classes rather than all on one.</p></td>
+              <td><p>A single reified assertion that some source makes a value-claim about a field kind. Reifying the claim (rather than attaching the value straight to a subject) lets each printed occurrence carry its own provenance - which region asserted it (assertedBy), what produced it (hasInferenceMeta), and with what confidence (hasConfidence) - independently of the value it states. The value is a literal (hasLiteralValue) for datatype-valued fields or an entity (hasValueEntity) for object-valued fields. Validated assertions are promoted to direct statements on the subject downstream; conflicting assertions across sources are surfaced, not silently merged. A kind of InferredEntity, so it carries the shared provenance/confidence; in PROV-O terms the prov:Entity an extraction produced, which is why the PROV alignment is seated across two classes rather than all on one.</p></td>
             </tr>
             <tr>
               <th>
@@ -525,7 +587,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="http://www.w3.org/ns/prov#Entity">Entity</a>
+                  <a href="#InferredEntity">Inferred Entity</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -562,12 +624,6 @@ td {
                   </li>
                   <li>
                     <span>
-                      <a href="#hasInferenceMeta">hasInferenceMeta</a>
-                      <sup class="sup-op" title="OWL Object Property">op</sup>
-                    </span>
-                  </li>
-                  <li>
-                    <span>
                       <a href="#hasLiteralValue">hasLiteralValue</a>
                       <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
                     </span>
@@ -575,12 +631,6 @@ td {
                   <li>
                     <span>
                       <a href="#capturedCaption">capturedCaption</a>
-                      <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
-                    </span>
-                  </li>
-                  <li>
-                    <span>
-                      <a href="#hasConfidence">hasConfidence</a>
                       <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
                     </span>
                   </li>
@@ -936,7 +986,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Links an assertion to the InferenceMeta describing what produced it, from where, and when. Aligned to prov:wasGeneratedBy: the assertion (a prov:Entity) was generated by the inference (a prov:Activity).</p></td>
+              <td><p>Links an inferred entity (a FieldAssertion, a BoundingBox, ...) to the InferenceMeta describing what produced it, from where, and when. Aligned to prov:wasGeneratedBy: the entity (a prov:Entity) was generated by the inference (a prov:Activity).</p></td>
             </tr>
             <tr>
               <th>
@@ -955,7 +1005,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#FieldAssertion">Field Assertion</a>
+                  <a href="#InferredEntity">Inferred Entity</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -1239,7 +1289,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Confidence of the inference behind this assertion, as a decimal in [0,1]. Carried on the assertion (an individual) rather than on a triple, which keeps confidence in the graph without requiring RDF-star or statement reification. The range is an OWL 2 datatype restriction on xsd:decimal with minInclusive 0 and maxInclusive 1, so the [0,1] bound is asserted rather than only described in prose. Note this cannot fire in CI today: the reasoning gate runs over the T-Box in src/ and the repository holds no instance data, so the bound becomes enforceable when an A-Box exists (GitHub issue #22).</p></td>
+              <td><p>Confidence of the inference behind an inferred entity, as a decimal in [0,1]. Applies to any InferredEntity - the confidence in a field-value claim (FieldAssertion) and the confidence in a detected localisation (a BoundingBox in aec_geometry) are separate values, each carried on the individual it belongs to. Carried on the individual rather than on a triple, which keeps confidence in the graph without requiring RDF-star or statement reification. The range is an OWL 2 datatype restriction on xsd:decimal with minInclusive 0 and maxInclusive 1, so the [0,1] bound is asserted rather than only described in prose. Note this cannot fire in CI today: the reasoning gate runs over the T-Box in src/ and the repository holds no instance data, so the bound becomes enforceable when an A-Box exists (GitHub issue #22).</p></td>
             </tr>
             <tr>
               <th>
@@ -1247,7 +1297,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#FieldAssertion">Field Assertion</a>
+                  <a href="#InferredEntity">Inferred Entity</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -1457,6 +1507,9 @@ td {
             </li>
             <li>
               <a href="#Agent">Agent</a>
+            </li>
+            <li>
+              <a href="#InferredEntity">Inferred Entity</a>
             </li>
             <li>
               <a href="#FieldAssertion">Field Assertion</a>

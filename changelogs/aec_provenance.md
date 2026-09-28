@@ -20,6 +20,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
   - Annotation properties for field-kind schemes defined by importing modules: `expectedRange` (a field
     kind's expected value type) and `mapsToFieldProperty` (the canonical property a validated assertion
     promotes to). First consumed by `aec_drawing_metadata`'s `TitleblockFieldScheme`.
+  - **`InferredEntity`** — a superclass of `FieldAssertion` for anything ADIRO infers or extracts that carries
+    its own provenance and confidence. `hasInferenceMeta` and `hasConfidence` now take it as their `rdfs:domain`
+    (previously `FieldAssertion`), so a spatial localisation (`aec_geometry:BoundingBox`,
+    [#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90)) can carry the same provenance/confidence
+    machinery as a value claim. This also resolves the confidence-on-geometry domain concern raised in the UC-03
+    review. Refines terms added earlier in this same unreleased cycle.
 
   `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut.
 
