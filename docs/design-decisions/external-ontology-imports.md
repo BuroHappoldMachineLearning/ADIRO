@@ -94,10 +94,11 @@ A core module may reference an external vocabulary directly only when **all thre
 sub-property relationship, and PROV-awareness is exactly the intent.
 
 Otherwise the reference goes in an **optional compatibility layer** — a module carrying annotation-level
-mappings only, which **nothing in the core imports** and a consumer loads explicitly. `aec_dano_alignment` is
-the worked example: six annotation-level mappings, no logical force, and no DAnO IRI anywhere in the ADIRO
-core. This keeps core release cycles independent of an unreleased third-party vocabulary and lets a mapping be
-deprecated wholesale without touching a core module.
+mappings only, which **nothing in the core imports** and a consumer loads explicitly. ADIRO **currently ships
+no such layer**: its one candidate, a DAnO crosswalk, was kept as a documentation-only comparison instead (see
+the [DAnO comparison](dano-comparison.md)), so the pattern is a documented option rather than a shipped
+artifact. The pattern keeps core release cycles independent of an unreleased third-party vocabulary and lets a
+mapping be deprecated wholesale without touching a core module.
 
 The load-bearing reason is **lifecycle**. A core module should not take version churn from a third-party
 vocabulary, least of all an unreleased one: with the mappings inline, a rename in DAnO would mean cutting a new
@@ -156,5 +157,5 @@ PROV-O IRI.
 |---|---|
 | **PROV-O** | Option 1A (external IRI reused as a local stub) in `aec_provenance`, referenced from the core. |
 | **GeoSPARQL** | Chosen vocabulary; adoption still deferred — see [#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36). If adopted, extract `STAR` from the pinned core. |
-| **DAnO** | **Decided: no import, no extraction.** ADIRO mints its own terms; the crosswalk is annotation-level in the optional `aec_dano_alignment` module. Coverage of `aec_common_symbols` is still open. See the [DAnO comparison](dano-comparison.md) and [#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77). |
+| **DAnO** | **Decided: no import, no extraction, and no compatibility layer.** ADIRO mints its own terms; the comparison is documentation-only. Coverage of `aec_common_symbols` is still open. See the [DAnO comparison](dano-comparison.md) and [#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77). |
 | **ifcOWL / BEO** | Surveyed only — see [Discussion #70](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/70). |

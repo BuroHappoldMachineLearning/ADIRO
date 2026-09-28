@@ -42,9 +42,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ### Notes
 - This module deliberately mentions **no** external vocabulary other than PROV-O, which it aligns to
-  directly. The crosswalk to DAnO's equivalent provenance terms lives in the optional
-  `aec_dano_alignment` module - see [DAnO comparison](../docs/design-decisions/dano-comparison.md)
-  for why those mappings are annotation-level only.
+  directly. ADIRO ships **no** DAnO crosswalk; the correspondence with DAnO's equivalent provenance terms is
+  documentation only - see the [DAnO comparison](../docs/design-decisions/dano-comparison.md).
 
 ## [1.0.0]
 

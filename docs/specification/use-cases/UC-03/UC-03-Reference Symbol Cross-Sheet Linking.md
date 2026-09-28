@@ -255,9 +255,6 @@ aec_provenance                      (NEW - foundational, domain-neutral)
                         +---- aec_domain_common
                                 |
                                 +---- aec_facade_domain
-
-aec_dano_alignment                  (NEW - optional compatibility layer;
-                                     imports the core, nothing imports it)
 ```
 
 **UC-03 term placement:**
@@ -326,8 +323,7 @@ Changes from v0.2, made in [PR #76](https://github.com/BuroHappoldMachineLearnin
   text and provenance remains open in
   [#20](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/20); `aprov:capturedCaption` is the pattern
   that answers *where* the raw value lives — on the assertion, not on the semantic property.
-- **§7 module hierarchy updated** — `aec_provenance` is a new foundational root, and the optional
-  `aec_dano_alignment` layer sits outside the import chain.
+- **§7 module hierarchy updated** — `aec_provenance` is a new foundational root.
 
 - **BREAKING — `csymbol:appearsOn` and `csymbol:isReferencedBy` removed.** [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21) decided project-wide
   that ADIRO declares no named inverse properties and no `owl:inverseOf` axioms. Only the forward direction

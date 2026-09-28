@@ -29,11 +29,11 @@ Ontology sources live in `src/` as independently versioned modules (dependency o
 4. `aec_domain_common` — concepts shared across a set of domains.
 5. `aec_facade_domain` — facade-engineering discipline-specific concepts (`:FacadeComponent`, `:DGU`, …).
 
-Plus an **optional compatibility layer**, which imports the core and which **nothing imports**:
-- `aec_dano_alignment` — annotation-level crosswalk to DAnO, using its own `:closeMatch` annotation
-  property rather than `skos:closeMatch`, which would leak `rdfs:domain skos:Concept`; consumers opt in by loading
-  it. See `docs/design-decisions/dano-comparison.md` and `external-ontology-imports.md` for when an external
-  reference may sit in a core module at all.
+DAnO is **not** part of the suite: ADIRO ships no DAnO artifact — no module, no import, no annotation-level
+crosswalk. The comparison with DAnO, and the reasons ADIRO mints its own terms rather than importing or aligning
+to it, are **documentation only** — see `docs/design-decisions/dano-comparison.md` and
+`external-ontology-imports.md` (the latter also states when an external reference may sit in a core module at
+all, and the optional-compatibility-layer pattern ADIRO does not currently use).
 
 **Reasoning rule that follows.** A claim about "ADIRO" is a claim about the suite. Before writing one — in a
 doc, a PR description, a comparison with another ontology, or an answer to a question — check it against
@@ -119,7 +119,7 @@ commands directly, but Git Bash is simpler.
 ## Versioning
 **Per-module SemVer** — each `src/*.ttl` is versioned independently via its own `owl:versionIRI` +
 `owl:versionInfo` (currently `aec_drawing_metadata` 3.0.0; `aec_common_symbols`, `aec_domain_common` and
-`aec_facade_domain` 2.0.0; `aec_provenance` and `aec_dano_alignment` 1.0.0, both unreleased). The full scheme — IRI
+`aec_facade_domain` 2.0.0; `aec_provenance` 1.0.0, unreleased). The full scheme — IRI
 strategy, bump rules (compatibility-diff spec), imports policy, deprecation, the tag-driven release flow, and
 changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
 [DATA-A-10](https://bhmlrnd.youtrack.cloud/articles/DATA-A-10); plan/decisions in
@@ -349,7 +349,7 @@ https://alelom.github.io/OntoCanvas/?onto=<url-encoded raw URL>
 https://raw.githubusercontent.com/BuroHappoldMachineLearning/ADIRO/<branch>/docs/<module>.ttl
 ```
 
-**Only link OntoCanvas for a module that declares classes.** An annotation-only module (`aec_dano_alignment` maps terms with `skos:closeMatch` and declares nothing) renders as an empty canvas, which looks like a broken link. Link its Turtle on GitHub instead and say why in the row.
+**Only link OntoCanvas for a module that declares classes.** A module that declares no classes (e.g. an annotation-only crosswalk) renders as an empty canvas, which looks like a broken link. Link its Turtle on GitHub instead and say why in the row.
 
 Use the **branch** in the raw URL, not a commit SHA: the link then follows the branch and always shows the
 latest push, so it never needs re-pinning as the PR evolves. `delete_branch_on_merge` is **false** on this

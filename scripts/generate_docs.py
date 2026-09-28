@@ -61,7 +61,6 @@ def sort_by_dependency(ttl_files: list[Path]) -> list[Path]:
         'aec_common_symbols': 2,
         'aec_domain_common': 3,
         'aec_facade_domain': 4,
-        'aec_dano_alignment': 5,  # Optional compatibility layer, imports the core
         'aec_drawing_ontology': 6,  # Monolith, put last
     }
     

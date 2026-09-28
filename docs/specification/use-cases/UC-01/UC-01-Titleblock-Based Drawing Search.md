@@ -350,9 +350,6 @@ aec_provenance                      (NEW - foundational, domain-neutral)
                         +---- aec_domain_common
                                 |
                                 +---- aec_facade_domain
-
-aec_dano_alignment                  (NEW - optional compatibility layer;
-                                     imports the core, nothing imports it)
 ```
 
 **Term placement:**
@@ -406,7 +403,7 @@ Changes from v0.3, made in [PR #76](https://github.com/BuroHappoldMachineLearnin
   `hasInferenceMeta` and `hasConfidence`, and is promoted via `aprov:mapsToFieldProperty`.
 - **`aec_provenance` row added to the §7 term-placement table.**
 - **§7 module hierarchy updated** — `aec_provenance` is a new foundational root above
-  `aec_drawing_metadata`, and the optional `aec_dano_alignment` layer sits outside the import chain.
+  `aec_drawing_metadata`.
 - **New open issue G11** — when a value is promoted from an assertion to a direct property, and whether the
   direct properties eventually deprecate
   ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)).

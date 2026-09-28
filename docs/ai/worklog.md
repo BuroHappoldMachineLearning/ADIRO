@@ -22,6 +22,44 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-09-25 — Reverse the DAnO decision: remove the compatibility layer; comparison stays documentation-only
+
+**Issue:** [#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77) · **PR:** #76 · **Branch:** `aec-provenance-model`
+
+### Why
+
+At the 2026-09-25 BH/BCU workshop, Mohamed Ragab (@MohamedRagabAnas) argued that embedding a DAnO crosswalk
+*in the ontology* risks confusing users, and that the comparison is better kept as GitHub documentation only.
+@alelom agreed. This **reverses** the decision this PR had recorded (an optional `aec_dano_alignment.ttl`
+annotation-level compatibility layer). Decision re-recorded on #77 and on the PR.
+
+### What changed
+
+- **Removed** `src/aec_dano_alignment.ttl` and its generated docs (`docs/aec_dano_alignment.{ttl,html}`,
+  `docs/ontologies/aec_dano_alignment.md`) and `changelogs/aec_dano_alignment.md`.
+- **Config:** dropped the module from `src/catalog-v001.xml`, the sort-order map in `scripts/generate_docs.py`,
+  and the `CHANGELOG.md` rollup row. Regenerated docs (now 5 modules; mermaid diagrams + indexes no longer
+  mention it).
+- **Hand-written docs brought in line** (documentation-only comparison; no shipped artifact / module / minted
+  `:closeMatch`): `docs/design-decisions/dano-comparison.md`, `external-ontology-imports.md`,
+  `changelogs/aec_provenance.md`, `AGENTS.md`, `docs/specification/ORSD_v1.2.md`, and the UC-01/UC-03 module
+  hierarchy diagrams + version-history entries. Spec-doc versions were **not** re-bumped — these are edits within
+  the same unreleased PR, so the existing version-history entries were corrected in place. `#81` (staleness check
+  for compatibility-layer mappings) is now **moot** → to be closed.
+
+### Verified
+
+- `validate_ontology.py` → 5/5 valid (only pre-existing warnings: an unused import and the #87 undescribed
+  enums). `mkdocs build --strict` → clean. `ENFORCE=1 run_reasoning.sh` (HermiT 17, 5 modules) → consistent +
+  satisfiable, exit 0; ROBOT report ERROR 0 / WARN 0 / INFO 23. Residual grep → no remaining claim that a
+  layer/module/minted property ships.
+
+### Next step
+
+Continue the remaining PR #76 items. Then: the in-depth Croissant-vs-PROV-O comparison (#91) and reviewing
+Tianyang's UC-03 three-layer overview (MLE-A-7) — several of its provenance ideas (bounding boxes, #90) are
+shared with UC-01 and should be folded in before merge.
+
 ## 2026-09-24 — Close the inference-consumption gaps on the field scheme (G1–G3)
 
 **Issue:** [MLE-364](https://bhmlrnd.youtrack.cloud/issue/MLE-364) epic (sub-tasks B4/MLE-376, B5/MLE-377; RES-108) · **PR:** #76 · **Branch:** `aec-provenance-model`
