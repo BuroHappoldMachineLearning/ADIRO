@@ -50,6 +50,12 @@ made it — model vs human — and with what confidence, separate from the value
   `changelogs/aec_geometry.md`, `AGENTS.md` module + version lists.
 - **New design doc** `docs/design-decisions/croissant-comparison.md` (#91) committed earlier this session and
   linked in the PR body.
+- **New design doc** `docs/design-decisions/geometry-coordinate-frames.md` — a worked ABox example (title-block
+  region → `BoundingBox` → `CoordinateFrame`; a `FieldAssertion` with its own confidence) plus a coordinate-frame
+  explainer (page_display_pt vs native-PDF vs raster, origin/axes, rotation/DPI). Inspired by the presentation in
+  Tianyang's UC-03 HTML (MLE-A-7). `mkdocs build --strict` clean. The idea of embedding an OntoCanvas iframe on
+  every module page, and enriching the ontologies index with a responsibilities narrative, are filed as a docs
+  follow-up rather than done here.
 - **Scope:** UC-01 only. UC-03-specific geometry (CoordinateTransform, crop/symbol metrics, clickable/navigation
   geometry) deliberately left out; the module is named so UC-03 slots in without conflict.
 
