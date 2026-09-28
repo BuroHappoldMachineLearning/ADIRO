@@ -15,7 +15,7 @@ documentation, only.
 
 ## Summary
 
-DAnO is a well-shaped vocabulary that overlaps ADIRO on **one module out of five**. Outside that module the two
+DAnO is a well-shaped vocabulary that overlaps ADIRO on **one module out of six**. Outside that module the two
 do different jobs; inside it they are genuine alternatives, and there DAnO is currently the richer of the two.
 
 ADIRO treats DAnO as **evidence rather than as a dependency**. It corroborated two ADIRO design decisions,

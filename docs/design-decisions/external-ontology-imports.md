@@ -156,6 +156,6 @@ PROV-O IRI.
 | Vocabulary | Status |
 |---|---|
 | **PROV-O** | Option 1A (external IRI reused as a local stub) in `aec_provenance`, referenced from the core. |
-| **GeoSPARQL** | Chosen vocabulary; adoption still deferred — see [#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36). If adopted, extract `STAR` from the pinned core. |
+| **GeoSPARQL** | **Reused as a local stub (option 1A)** in `aec_geometry`: `geo:Geometry` is the supertype of `aec_geometry:BoundingBox`. No `owl:imports` — declared locally, resolved offline via `catalog-v001.xml` (the same pattern as PROV-O). WKT serialisation and spatial queries remain deferred ([#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36)). |
 | **DAnO** | **Decided: no import, no extraction, and no compatibility layer.** ADIRO mints its own terms; the comparison is documentation-only. Coverage of `aec_common_symbols` is still open. See the [DAnO comparison](dano-comparison.md) and [#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77). |
 | **ifcOWL / BEO** | Surveyed only — see [Discussion #70](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/70). |

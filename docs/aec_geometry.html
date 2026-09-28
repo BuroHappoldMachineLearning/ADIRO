@@ -642,15 +642,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The bounding box a field assertion was localised to - the precise page region the claim was read from, as distinct from aprov:assertedBy, which names the containing region (e.g. a Titleblock). Lets a title-block value carry both what it says and exactly where on the page it was found.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <a href="https://w3id.org/adiro/aec_provenance#FieldAssertion">aprov:FieldAssertion</a>
-              </td>
+              <td><p>The bounding box that locates a region on a drawing page. In UC-01 this is the title block's own region (aec_drawing_metadata:Titleblock hasBoundingBox ...): the field values are read from within that single region and are not themselves individually localised. No rdfs:domain is asserted, so the same property serves any locatable region or element - e.g. UC-03 reference symbols, when that work extends this module.</p></td>
             </tr>
             <tr>
               <th>

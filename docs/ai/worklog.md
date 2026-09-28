@@ -62,7 +62,7 @@ made it — model vs human — and with what confidence, separate from the value
 ### Next step
 
 Update the PR body (add `aec_geometry` to the ontology changes + an OntoCanvas preview row). Then the inference
-side can localise title-block fields; and the UC-03 work extends `aec_geometry` with its transform/navigation
+side can localise the title-block region (its bbox); and the UC-03 work extends `aec_geometry` with its transform/navigation
 geometry.
 
 ## 2026-09-25 — Reverse the DAnO decision: remove the compatibility layer; comparison stays documentation-only

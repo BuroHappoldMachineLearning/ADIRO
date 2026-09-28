@@ -19,7 +19,8 @@ _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumpe
     (primary `page_display_pt` — top-left origin, x-right, y-down), `unit`, `frameArtifactRef`, `pageIndex`
     (0-based), `displayWidthPt`/`displayHeightPt`, `pdfRotationDeg`, `profileRef`.
   - Object properties: `inCoordinateFrame` (`geo:Geometry` → `CoordinateFrame`) and `hasBoundingBox`
-    (`aprov:FieldAssertion` → `BoundingBox`).
+    (→ `BoundingBox`; domain-neutral, used on the `Titleblock` region — title-block **fields are not**
+    individually localised, only the title block itself carries a box).
   - **GeoSPARQL `geo:Geometry` reused as a local typing stub** (option 1A per
     `external-ontology-imports.md`); no `owl:imports`, resolved offline via `catalog-v001.xml`. WKT
     serialisation and spatial queries are **deferred** ([#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36)).

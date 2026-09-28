@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.4 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.5 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -338,18 +338,20 @@ The query is fully expressible, confirming that CQ-I 1 is covered by the current
 
 This section makes the placement of every UC-01 term in the existing module hierarchy explicit, per [PR #15](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/15) review point #2 (@alelom).
 
-**Module hierarchy** *(updated in [v0.4](#9-version-history))*:
+**Module hierarchy** *(updated in [v0.5](#9-version-history))*:
 
 ```
 aec_provenance                      (NEW - foundational, domain-neutral)
         |
-        +---- aec_drawing_metadata
+        +---- aec_geometry          (NEW - foundational: BoundingBox + CoordinateFrame; imports aec_provenance)
                 |
-                +---- aec_common_symbols
+                +---- aec_drawing_metadata
                         |
-                        +---- aec_domain_common
+                        +---- aec_common_symbols
                                 |
-                                +---- aec_facade_domain
+                                +---- aec_domain_common
+                                        |
+                                        +---- aec_facade_domain
 ```
 
 **Term placement:**
@@ -358,6 +360,7 @@ aec_provenance                      (NEW - foundational, domain-neutral)
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `aec_drawing_metadata` | **New classes:** `DrawingRevision`, `Project`, `Person`, `StatusCode`, `DrawingPackage`. **New properties:** all UC-01 datatype properties; `hasRevision` (⊂ `contains`), `hasStatusCode` (⊂ `hasProperty`), `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`. |
 | `aec_provenance`       | **Reused (new module):** `FieldAssertion`, `InferenceMeta`, `hasConfidence`, `capturedCaption`, `assertedBy`, `inferredBy`/`inferredWith`/`inferredFrom`/`inferredAt`, and the `TitleblockFieldScheme` binding via `assertsFieldKind`. Carries **extracted** title-block values before validation - see the design note in §2.1. |
+| `aec_geometry`         | **Reused (new module):** the `Titleblock` region may carry a `BoundingBox` (via `hasBoundingBox`) interpreted by a `CoordinateFrame` (owned by the sheet via `hasCoordinateFrame`) — i.e. *where the title block sits on the page*. The extracted field values are read from within that one region and are **not** individually localised. *(Added in [v0.5](#9-version-history).)* |
 | `aec_common_symbols`   | No UC-01 contribution.                                                                                                                                                      |
 | `aec_domain_common`    | **Reused:** `Discipline` and its subclasses; `hasDiscipline` (with proposed domain change from `LayoutContentType` to `Layout` — see G5).                                   |
 | `aec_facade_domain`    | No UC-01 contribution.                                                                                                                                                      |
@@ -393,7 +396,18 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.4 (current — draft)
+### v0.5 (current — draft)
+
+Changes from v0.4, made in [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76) when the `aec_geometry` module was added ([#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90)). MINOR:
+
+- **New foundational module `aec_geometry` added to the §7 module hierarchy** — a second foundational root
+  (imports `aec_provenance`), which `aec_drawing_metadata` now imports.
+- **`aec_geometry` row added to the §7 term-placement table:** the `Titleblock` region may carry a page
+  `BoundingBox` (via `hasBoundingBox`) interpreted by a `CoordinateFrame` (owned by the sheet via
+  `hasCoordinateFrame`). Title-block **fields are not individually localised** — only the title block itself
+  carries a box.
+
+### v0.4 (draft)
 
 Changes from v0.3, made in [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76) when `aec_provenance` was added to the suite:
 

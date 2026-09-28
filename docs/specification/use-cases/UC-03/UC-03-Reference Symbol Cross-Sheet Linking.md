@@ -1,6 +1,6 @@
 # UC-03: Reference Symbol Cross-Sheet Linking
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-03 · **Version:** 0.3 (reviewed & implemented — see [§8](#8-open-issues-pending-team-discussion) for resolved / deferred items, [§10](#10-version-history) for changelog)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-03 · **Version:** 0.4 (reviewed & implemented — see [§8](#8-open-issues-pending-team-discussion) for resolved / deferred items, [§10](#10-version-history) for changelog)
 
 ---
 
@@ -243,18 +243,20 @@ This demonstrates FR 5: composite labels are parsed at query time, not stored on
 
 Per the project's import hierarchy and [PR #15](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/15) review point #2 (@alelom), every UC-03 term is placed in its proper module.
 
-**Module hierarchy** *(updated in [v0.3](#10-version-history))*:
+**Module hierarchy** *(updated in [v0.4](#10-version-history))*:
 
 ```
 aec_provenance                      (NEW - foundational, domain-neutral)
         |
-        +---- aec_drawing_metadata
+        +---- aec_geometry          (NEW - foundational: BoundingBox + CoordinateFrame; imports aec_provenance)
                 |
-                +---- aec_common_symbols
+                +---- aec_drawing_metadata
                         |
-                        +---- aec_domain_common
+                        +---- aec_common_symbols
                                 |
-                                +---- aec_facade_domain
+                                +---- aec_domain_common
+                                        |
+                                        +---- aec_facade_domain
 ```
 
 **UC-03 term placement:**
@@ -308,7 +310,16 @@ For the full design-debate reasoning behind the v0.2 modelling choices, see the 
 
 ## 10. Version History
 
-### v0.3 (current — reviewed & implemented)
+### v0.4 (current — reviewed & implemented)
+
+Changes from v0.3, made in [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76) when the `aec_geometry` module was added ([#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90)). MINOR — suite-accuracy only, no UC-03 term change:
+
+- **§7 module hierarchy updated** — the new foundational `aec_geometry` module (bounding boxes + coordinate
+  frames; imports `aec_provenance`) is shown as a second foundational root that `aec_drawing_metadata` imports.
+  UC-03 gains no geometry terms here; its own geometry extension (reference-symbol boxes, coordinate transforms,
+  clickable/navigation geometry) remains future work on `aec_geometry`.
+
+### v0.3 (reviewed & implemented)
 
 Changes from v0.2, made in [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76) when `aec_provenance` was added to the suite:
 

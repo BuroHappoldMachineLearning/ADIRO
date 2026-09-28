@@ -71,10 +71,9 @@ Typing stub for the GeoSPARQL term of the same name, declared locally so this mo
 
 ### hasBoundingBox {#hasBoundingBox}
 
-The bounding box a field assertion was localised to - the precise page region the claim was read from, as distinct from aprov:assertedBy, which names the containing region (e.g. a Titleblock). Lets a title-block value carry both what it says and exactly where on the page it was found.
+The bounding box that locates a region on a drawing page. In UC-01 this is the title block's own region (aec_drawing_metadata:Titleblock hasBoundingBox ...): the field values are read from within that single region and are not themselves individually localised. No rdfs:domain is asserted, so the same property serves any locatable region or element - e.g. UC-03 reference symbols, when that work extends this module.
 
 - **IRI:** `https://w3id.org/adiro/aec_geometry#hasBoundingBox`
-- **Domain:** `aprov:FieldAssertion`
 - **Range:** [Bounding Box](#BoundingBox)
 
 ### inCoordinateFrame {#inCoordinateFrame}
