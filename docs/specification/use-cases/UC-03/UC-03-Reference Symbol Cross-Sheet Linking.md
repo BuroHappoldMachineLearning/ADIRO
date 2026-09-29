@@ -175,8 +175,8 @@ Bidirectional reachability around a given Sheet or Layout.
 **CQ 3.3:** *What is the complete set of sheets connected to sheet "GA-001" through reference symbols in either direction?*
 
 ```sparql
-PREFIX metadata: <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#>
-PREFIX csymbol:  <https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols#>
+PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+PREFIX csymbol:  <https://w3id.org/adiro/aec_common_symbols#>
 
 SELECT DISTINCT ?connectedSheet WHERE {
   ?GA001 metadata:drawingIdentifier "GA-001" ;
@@ -202,14 +202,14 @@ SELECT DISTINCT ?connectedSheet WHERE {
 
 Notes:
 - The placeholder `https://example.org/aec-ontology#` from v0.1 is retired in favour of the real module namespaces.
-- Both directions are expressible using the defined properties. Inverse properties are exercised symmetrically.
+- Both directions are expressible from the defined properties: the query uses a `UNION` over `hasReferenceSymbol` / `referencesLayout` rather than any named inverse property (ADIRO declares none — [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21)); reverse traversal, where needed, uses a SPARQL inverse path (`^…`).
 - The query traverses Sheet → Layout → ReferenceSymbol → Layout → Sheet at both ends, demonstrating that Layout-level mounting (decision §2) does not obstruct sheet-level user queries — sheet-level results emerge from a single extra hop.
 
 **CQ 2.1 (composite-label resolution) example:**
 
 ```sparql
-PREFIX metadata: <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#>
-PREFIX csymbol:  <https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols#>
+PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+PREFIX csymbol:  <https://w3id.org/adiro/aec_common_symbols#>
 
 # Given composite label "2/ST-201":
 SELECT ?targetLayout WHERE {

@@ -20,7 +20,7 @@ from inside it. In ADIRO that is:
 
 ex:sheet-A101 a md:DrawingSheet ;
     md:contains ex:tb-A101 ;
-    geom:hasCoordinateFrame ex:frame-A101 .          # the sheet owns its page frame
+    md:hasCoordinateFrame ex:frame-A101 .            # the sheet owns its page frame
 
 ex:frame-A101 a geom:CoordinateFrame ;
     geom:coordinateSpace "page_display_pt" ;         # top-left origin, x right, y down, points

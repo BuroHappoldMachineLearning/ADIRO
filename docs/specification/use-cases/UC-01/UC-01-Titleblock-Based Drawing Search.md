@@ -264,8 +264,8 @@ The following example demonstrates that the term inventory is sufficient to answ
 **CQ-I 1:** *What sheets in project "X" contain a MEP Layout and were approved by "R. Jones" after March 2024?*
 
 ```sparql
-PREFIX metadata: <https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#>
-PREFIX dcommon:  <https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common#>
+PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+PREFIX dcommon:  <https://w3id.org/adiro/aec_domain_common#>
 PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
 
 SELECT ?sheet ?drawingIdentifier WHERE {

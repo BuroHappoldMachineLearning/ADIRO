@@ -63,7 +63,7 @@ The coordinate context that makes a geometry's numbers interpretable: which exac
 
 ### Geometry {#Geometry}
 
-Typing stub for the GeoSPARQL term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. Here it is the supertype of BoundingBox, so an ADIRO box is recognised as a spatial shape; ADIRO does not adopt a GeoSPARQL CRS or spatial-query profile by declaring it (WKT serialisation and spatial queries are deferred - GitHub issue #36).
+Local typing stub for GeoSPARQL's Geometry class (authoritative definition at the rdfs:isDefinedBy IRI), declared here so reasoning stays offline. Used as the supertype of BoundingBox so an ADIRO box is recognised as a spatial shape; ADIRO adopts no GeoSPARQL CRS or spatial-query profile (deferred, GitHub issue #36).
 
 - **IRI:** `http://www.opengis.net/ont/geosparql#Geometry`
 
@@ -88,7 +88,7 @@ The CoordinateFrame that interprets this geometry's coordinates. Required for a 
 
 ### bboxXYXY {#bboxXYXY}
 
-The rectangle as a string "[xmin, ymin, xmax, ymax]" in the coordinate frame's convention (xmin/ymin the top-left corner, xmax/ymax the bottom-right, under page_display_pt). The xyxy convention is aligned to the Croissant cr:BoundingBox 'XYXY' format token, so a box ADIRO records maps directly onto ML/CV tooling that consumes Croissant (see docs/design-decisions/croissant-comparison.md). Interpret only together with inCoordinateFrame.
+The rectangle as a string "[xmin, ymin, xmax, ymax]" in the coordinate frame's convention (xmin/ymin the top-left corner, xmax/ymax the bottom-right, under page_display_pt). The xyxy ordering is aligned to the Croissant cr:BoundingBox 'XYXY' format token, so an ADIRO box can be mapped to Croissant/CV formats by an exporter - ADIRO stores a page-point xyxy string, whereas Croissant expects a four-number array with a format declaration (see docs/design-decisions/croissant-comparison.md). Interpret only together with inCoordinateFrame.
 
 - **IRI:** `https://w3id.org/adiro/aec_geometry#bboxXYXY`
 - **Domain:** [Bounding Box](#BoundingBox)

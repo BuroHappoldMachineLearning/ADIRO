@@ -66,7 +66,8 @@ It says nothing about drawings or datasets; it is the shared shape any domain sp
 `aec_provenance` aligns to it at the **assertion** level: a `FieldAssertion` **is** a `prov:Entity`, an
 `InferenceMeta` **is** the `prov:Activity` that generated it (`inferredBy`/`inferredWith`/`inferredFrom`/
 `inferredAt`), and confidence lives per-assertion as `hasConfidence`. This is the finest granularity of the
-three — one printed field, one claim, its own provenance.
+three — one printed field, one claim, its own confidence (the `InferenceMeta` activity may be shared by several
+claims).
 
 ## 3. What DAnO does
 
@@ -113,8 +114,9 @@ and borrow one useful convention.
 1. **A provenance-bearing `BoundingBox` in a new `aec_geometry` module — borrowing Croissant's `format`
    convention — for [#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90).** Croissant standardises
    *how a box is written* — `cr:BoundingBox` with a `format` token such as `CENTER_XYWH`, `XYWH` or `XYXY`. That
-   convention is worth borrowing so an ADIRO box is directly consumable by CV tooling; but Croissant carries only
-   the shape, and a title-block box needs two things Croissant does not model:
+   convention is worth borrowing so an ADIRO box can be mapped to CV tooling's formats by an exporter (ADIRO
+   stores a page-point xyxy *string*; Croissant expects a four-number array with a format declaration); but
+   Croissant carries only the shape, and a title-block box needs two things Croissant does not model:
    - a **coordinate frame** — which PDF/page/units/origin the coordinates are relative to; and
    - its **own provenance** — a box is itself an inferred claim (a detector localised it, with a confidence) or a
      human annotation, and that is *distinct* from how confident we are of the field's *value*.
@@ -133,8 +135,9 @@ and borrow one useful convention.
    publication step.
 3. **Use the RAI extension to document the extraction pipeline at corpus level.** How the ML pipeline collected
    and produced the ABox (data-collection, annotation protocol) is exactly what RAI is for, and it complements
-   — does not duplicate — the per-assertion `InferenceMeta`. `InferenceMeta` says how *one value* was inferred;
-   RAI says how *the corpus* was built.
+   — does not duplicate — the `InferenceMeta` model. `InferenceMeta` describes the inference *activity* that
+   produced a result (and may be shared by several results — a result's own confidence is carried separately, per
+   result); RAI says how *the corpus* was built.
 4. **Reuse the dataset-level vocabulary we already partly use.** ADIRO module headers already carry
    `dcterms:` (title, licence, creator, publisher). A published-dataset Croissant manifest can carry the same
    schema.org/Dublin-Core fields (`license`, `version`, `citeAs`, `datePublished`), keeping the metadata story
