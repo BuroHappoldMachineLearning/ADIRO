@@ -385,17 +385,17 @@
       "x": 16164,
       "y": 247
     },
-    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#DrawingElement": {
+    "https://w3id.org/adiro/aec_drawing_metadata#DrawingElement": {
       "x": 7540,
       "y": -682
     },
-    "https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common#GeometricProperties": {
+    "https://w3id.org/adiro/aec_domain_common#GeometricProperties": {
       "x": 15468,
       "y": -541
     }
   },
   "edgeStyleConfig": {
-    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#contains": {
+    "https://w3id.org/adiro/aec_drawing_metadata#contains": {
       "show": true,
       "showLabel": true,
       "color": "#8000ff",

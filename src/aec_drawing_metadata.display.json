@@ -353,12 +353,6 @@
       "color": "#d94a26",
       "lineType": "solid"
     },
-    "https://w3id.org/adiro/aec_drawing_metadata#isRevisionOf": {
-      "show": true,
-      "showLabel": true,
-      "color": "#d92626",
-      "lineType": "solid"
-    },
     "subClassOf": {
       "show": true,
       "showLabel": false,

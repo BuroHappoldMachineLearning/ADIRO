@@ -201,7 +201,7 @@ jobs:
           # of our control). `--exclude-path site/404.html` skips the Material 404
           # page, whose root-absolute /ADIRO/... links can't be resolved locally.
           # Together these avoid the /ADIRO/ project-subpath false positives that
-          # `--base-url` produced (it rewrote `ORSD_v1.1/` to `github.io/ORSD_v1.1/`,
+          # `--base-url` produced (it rewrote e.g. `ORSD_v1.2/` to `github.io/ORSD_v1.2/`,
           # dropping the /ADIRO/ prefix).
           args: >-
             --no-progress

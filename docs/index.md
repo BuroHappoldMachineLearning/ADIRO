@@ -16,7 +16,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Ontology Requirements Specification Document: purpose, scope, intended users and uses, and the functional/non-functional requirements.
 
-    [:octicons-arrow-right-24: ORSD](specification/ORSD_v1.1.md)
+    [:octicons-arrow-right-24: ORSD](specification/ORSD_v1.2.md)
 
 -   :material-clipboard-list-outline: __Use Cases__
 
@@ -30,9 +30,29 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
 <div class="grid cards" markdown>
 
+-   ### [Aec Provenance](aec_provenance.html)
+
+    Foundational, domain-neutral vocabulary for representing an inferred/extracted assertion together with its provenance and confidence. It exists so that a value read off a drawing (a title-block field, a detected symbol, ...) can be modelled as a first-class assertion carrying: which region asserted it, what produced it, from where, when, and with what confidence - independently of the value itself. Imported by the drawing modules (e.g. aec_drawing_metadata); aligned to W3C PROV-O for interoperability.
+
+    Source: [`aec_provenance.ttl`](aec_provenance.ttl)
+
+    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_provenance.html){ .md-button target=_blank }
+
+-   ### [Aec Geometry](aec_geometry.html)
+
+    Foundational, domain-neutral vocabulary for locating a detection on a drawing page: a BoundingBox (the shape) interpreted against a CoordinateFrame (which PDF/page, units, origin and axes). A bounding box is modelled as a first-class, provenance-bearing individual - an aec_provenance:InferredEntity - so a box records what produced it (a detector or a human) and with what confidence, independently of the confidence in any value read at that box. GeoSPARQL's geo:Geometry is reused as the shape supertype. Imported by the drawing modules (e.g. aec_drawing_metadata), which attach frames to sheets and boxes to assertions. Shared across use cases: UC-01 (title-block field regions) and UC-03 (reference-symbol geometry) use the same BoundingBox / CoordinateFrame model.
+
+    *Imports: aec_provenance*
+
+    Source: [`aec_geometry.ttl`](aec_geometry.ttl)
+
+    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_geometry.html){ .md-button target=_blank }
+
 -   ### [Aec Drawing Metadata](aec_drawing_metadata.html)
 
     Sheet/layout/document structure for AEC drawings.
+
+    *Imports: aec_geometry, aec_provenance*
 
     Source: [`aec_drawing_metadata.ttl`](aec_drawing_metadata.ttl)
 

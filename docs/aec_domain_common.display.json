@@ -229,7 +229,7 @@
       "x": 7924,
       "y": 443
     },
-    "https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata#Layout": {
+    "https://w3id.org/adiro/aec_drawing_metadata#Layout": {
       "x": 8214,
       "y": -379
     }
@@ -247,7 +247,7 @@
       "color": "#000000",
       "lineType": "solid"
     },
-    "https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common#hasDiscipline": {
+    "https://w3id.org/adiro/aec_domain_common#hasDiscipline": {
       "show": true,
       "showLabel": true,
       "color": "#8000ff",

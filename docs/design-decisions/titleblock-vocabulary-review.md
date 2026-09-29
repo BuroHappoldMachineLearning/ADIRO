@@ -90,7 +90,7 @@ Consolidating the four ORSD traceability matrices, the terms with a CQ behind th
 | Use case | Status | Terms it needs (all already in `aec_drawing_metadata` / `aec_domain_common` / `aec_common_symbols`) |
 | --- | --- | --- |
 | **UC-01** Titleblock search | ✅ implemented | `DrawingSheet`, `Layout`, `LayoutContentType`, `DrawingRevision`, `Project`, `Person`, `StatusCode`, `DrawingPackage`, `dcommon:Discipline`; `drawingIdentifier`, `drawingTitle`, `hasScale`, `sheetSize`, `revisionCode`, `issueDate`, `personName`, `projectName`, `projectNumber`, `packageName`, `statusLabel`; `contains`, `hasProperty`, `hasDiscipline`, `hasRevision`, `isRevisionOf`, `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `hasStatusCode` |
-| **UC-03** Cross-sheet linking | ✅ implemented | `csymbol:ReferenceSymbol`, `hasReferenceSymbol`, `appearsOn`, `referencesLayout`, `isReferencedBy`, `layoutIdentifier` |
+| **UC-03** Cross-sheet linking | ✅ implemented | `csymbol:ReferenceSymbol`, `hasReferenceSymbol`, `referencesLayout`, `layoutIdentifier` |
 | **UC-06** Content aggregation | ⚠️ draft | `Material`, `HazardClassification`, `depictsMaterial`, `isDepictedOn`, `hasHazardClassification`, `materialName`, `materialSymbol`, `hazardLabel` — **none of them title-block terms** |
 | **UC-07** Wall orientation | ⚠️ draft | `BuildingElement`, `Wall`, `FacingDirection`, `northArrowAngle`, `scaleRatio`, wall dimension properties — **one overlap: the north arrow** |
 
@@ -155,6 +155,11 @@ Minor, but worth noting since the review runs both ways:
 
 ## 3. Part B — against DANO
 
+!!! warning "Partly superseded"
+    The **findings** in this part stand. The **recommendations** drawn from them in §3.2, §4 and §5 do not,
+    and §3.4's "complementary, not competing" is narrower than it reads. What replaced them, and why, is in
+    the **[DAnO comparison](dano-comparison.md)**.
+
 ### 3.1 What DANO is
 
 **Drawing Analysis Ontology** — `https://w3id.org/dano`, prefix `dano:`, CC BY 4.0, from RUB
@@ -172,7 +177,7 @@ This is the real find. ADIRO §10 proposes six provenance terms; DANO already ha
 
 | ADIRO §10 proposal | DANO equivalent | Assessment |
 | --- | --- | --- |
-| `extractionConfidence` (`xsd:float`) | `dano:hasConfidence` (`xsd:decimal`, on `DrawingElement`) | **Direct equivalent.** Align or reuse |
+| `extractionConfidence` (`xsd:float`) | `dano:hasConfidence` (`xsd:decimal`, on `DrawingElement`) | ~~**Direct equivalent.** Align or reuse~~ → **superseded** — minted as `aprov:hasConfidence`; see the [DAnO comparison](dano-comparison.md) |
 | `extractedFrom` → `SourceFile` (object) | `dano:inferredFrom` (`xsd:string`, "the origin file") | DANO uses a **string**. Corroborates that `SourceFile`-as-a-class may be over-modelled for current needs |
 | `extractedByModel` → `MLModel` (object) | `dano:inferredBy` (`xsd:string`, actor/company/software) **+** `dano:inferredWith` (`xsd:string`, algorithm) | DANO **splits actor from algorithm**, which is a better decomposition than ADIRO's single property — and both are strings, independently corroborating the #61 verdict that `MLModel` is over-modelled |
 | *(nothing proposed)* | `dano:inferredAt` (`xsd:date`) | **🔴 GAP IN ADIRO.** No extraction timestamp is proposed anywhere. Re-extraction comparison is impossible without one. Add it |
@@ -203,8 +208,8 @@ Note DANO's asymmetry: `hasConfidence` sits on the **element**, not on the meta-
 is per-assertion, whereas the inference metadata is often shared across every element from one run, so putting
 them in different places is arguably correct rather than sloppy.
 
-**Recommendation: use DANO as evidence in the pass-5 decision, and consider aligning `tb:` provenance properties
-to `dano:` rather than minting parallel ones.** Do not import DANO — it would drag its 16 drawing-element classes
+**Recommendation: use DANO as evidence in the pass-5 decision.** *(The companion recommendation to align
+`tb:` provenance to `dano:` was withdrawn — see the [DAnO comparison](dano-comparison.md).)* Do not import DANO — it would drag its 16 drawing-element classes
 into a suite with a blocking DL reasoner for the sake of seven datatype properties.
 
 ### 3.4 DANO is relevant beyond the title block — flag to other use-case owners
@@ -213,7 +218,7 @@ Out of scope for RES-89, but this review found it and it should not be lost:
 
 | DANO terms | Relevant to | Note |
 | --- | --- | --- |
-| `SectionSymbol`, `Terminator`, `refersTo`, `isReferredToBy` | **UC-03** cross-sheet linking | UC-03 mints `csymbol:ReferenceSymbol`, `referencesLayout`, `isReferencedBy`. DANO has a published equivalent pattern. UC-03 is already implemented, so this is an alignment question, not a rebuild — but worth knowing before UC-03 v0.3 |
+| `SectionSymbol`, `Terminator`, `refersTo`, `isReferredToBy` | **UC-03** cross-sheet linking | UC-03 mints `csymbol:ReferenceSymbol` and `referencesLayout` (no inverse — see [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21)). DANO has a published equivalent pattern. UC-03 is already implemented, so this is an alignment question, not a rebuild — but worth knowing before UC-03 v0.3 |
 | `Dimension`, `DimensionChain`, `DimensionLine`, `AxisLine`, `hasGeometry` | **UC-07** wall measurement | UC-07 needs on-drawing lengths and angles. DANO models dimension lines and geometry natively |
 | `depicts`, `isDepictedBy` | **UC-06** materials | UC-06 mints `depictsMaterial` / `isDepictedOn`. DANO's generic `depicts` / `isDepictedBy` could be the parent property |
 | `TextField`, `TextElement`, `isText` | The title block itself | A title block *is* a `dano:TextField` (a composite of `min 2` `TextElement`s). This is **complementary, not competing**: DANO gives the CV layer (here is a text region, here is its string), `tb:` gives the semantic layer (this string means "checked by"). The clean division is `dano:` for what was seen, `tb:` for what it means |
@@ -234,7 +239,7 @@ this review. **#61 has not yet been updated** — apply these before it is used 
 | `MLModel` | 🟠 Over-modelled | 🟠 **Confirmed** — drop to a literal | DANO uses strings (§3.2) |
 | `SourceFile` | 🟢 Core | 🟡 Useful — consider a literal | `dano:inferredFrom` is a string (§3.2) |
 | `BoundingBox` | 🟢 Core | 🟡 Useful — consider a geometry | `dano:hasGeometry` (§3.2) |
-| `extractionConfidence` | 🟡 Needed, blocked | 🟡 **Align to `dano:hasConfidence`** | §3.2 |
+| `extractionConfidence` | 🟡 Needed, blocked | ~~🟡 Align to `dano:hasConfidence`~~ → 🟢 **Minted as `aprov:hasConfidence`** | §3.2; see the [DAnO comparison](dano-comparison.md) |
 | `extractedByModel` | 🟡 Useful | 🟡 **Split** into actor + algorithm | `dano:inferredBy` / `inferredWith` (§3.2) |
 | **NEW — extraction timestamp** | *(absent)* | 🟢 **Core — add it** | `dano:inferredAt`; re-extraction comparison needs it (§3.2) |
 | `DocumentType` | 🟢 Core | 🟢 Core **+ comment required** | Must state it is not `LayoutContentType` (§2.3) |
@@ -253,7 +258,7 @@ change shape. The mint shrinks from ~48 to roughly **44**, and gains a timestamp
 | 2 | **Write an extraction ORSD, or cut to use-case demand** (§2.4) | Alessio | the legitimacy of ~40 terms |
 | 3 | Confirm `dcommon:Discipline` reuse and drop the SKOS `Discipline` | — | pass 3 |
 | 4 | Drop `scale`, `hasNorthPointOrientation`; bind to `dm:hasScale` / UC-07 `northArrowAngle` | — | pass 2 |
-| 5 | **Align provenance to `dano:` rather than minting parallel terms**; add the timestamp | — | pass 5 |
+| 5 | ~~**Align provenance to `dano:` rather than minting parallel terms**~~; add the timestamp | — | **Resolved.** Timestamp added as `aprov:inferredAt`; the alignment half is **reversed** — see the [DAnO comparison](dano-comparison.md) |
 | 6 | Use DANO's `DrawingElementMeta` as evidence in the RDF-star vs reification decision | — | pass 5 |
 | 7 | Flag DANO to the UC-03 / UC-06 / UC-07 owners (§3.4) | — | nothing here |
 
