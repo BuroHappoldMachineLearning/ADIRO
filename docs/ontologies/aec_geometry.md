@@ -57,7 +57,7 @@ A rectangular region on a drawing page that locates something detected there - e
 
 ### Coordinate Frame {#CoordinateFrame}
 
-The coordinate context that makes a geometry's numbers interpretable: which exact PDF and page they are relative to, in what unit, and under which named coordinate space. The named space fixes the reference point (origin) and axis directions - the primary space page_display_pt means a top-left origin with x increasing rightwards and y increasing downwards, in points - so origin and axes are carried by coordinateSpace/profileRef rather than as loose fields. A frame is normally owned by a DrawingSheet (aec_drawing_metadata:hasCoordinateFrame) and shared by all geometries on that page; a sheet may have different frames in different file versions. Not an InferredEntity: a frame is a declared coordinate context, not a detection carrying its own confidence.
+The coordinate context that makes a geometry's numbers interpretable - the exact PDF/page, unit and named coordinate space its coordinates are relative to (detailed by the datatype properties below). Normally owned by a DrawingSheet (aec_drawing_metadata:hasCoordinateFrame) and shared by the geometries on that page; a sheet may have different frames for different file versions. Not an InferredEntity: a declared coordinate context, not a detection with its own confidence.
 
 - **IRI:** `https://w3id.org/adiro/aec_geometry#CoordinateFrame`
 
