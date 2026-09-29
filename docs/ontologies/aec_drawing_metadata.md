@@ -118,6 +118,13 @@ An image embedded within a note region on a drawing sheet.
 - **Sub class of:** [Note](#Note)
 - **Labellable root:** true
 
+### Inline layout and sheet reference {#InlineLayoutSheetReference}
+
+A complete inline textual expression relating layout number(s) to a sheet number, such as '1, 3, 5 & 7/S601'. The component mentions retain their own identities; accepted Layout targets are connected separately by inlineReferencesLayout.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#InlineLayoutSheetReference`
+- **Sub class of:** [Reference expression](#ReferenceExpression)
+
 ### Key Plan {#KeyPlan}
 
 A small locator diagram on a drawing sheet showing where the sheet's subject sits within the wider building or site, typically with the relevant area hatched or outlined. A graphical region rather than a text field: its value is the diagram, so it is modelled here as a detectable region alongside Legend and RevisionTable, not as an asserted title-block property. Contained either by a Titleblock, where it is printed inside the title-block strip, or directly by a DrawingSheet where it stands alone on the page; both placements occur and both are optional.
@@ -142,6 +149,13 @@ Type of content included in a layout.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#LayoutContentType`
 - **Labellable root:** false
+
+### Layout number mention {#LayoutNoMention}
+
+One evidenced occurrence of layout-number text, distinct from a target Layout. A complete inline reference may contain several such occurrences; no target is inferred from matching text alone.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#LayoutNoMention`
+- **Sub class of:** [Drawing element](#DrawingElement)
 
 ### Legend {#Legend}
 
@@ -226,6 +240,13 @@ A project under which DrawingSheets are grouped.
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Project`
 - **Labellable root:** false
 
+### Reference expression {#ReferenceExpression}
+
+A complete source reference expression, whether graphical, inline or a standalone sheet-number reference. This superclass groups those forms for queries; it does not require a second individual around any of them.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#ReferenceExpression`
+- **Sub class of:** [Drawing element](#DrawingElement)
+
 ### Revision table {#RevisionTable}
 
 A table recording the documented change history of the drawing sheet, with columns for revision number, date, and description of each amendment.
@@ -254,6 +275,22 @@ Section drawing. Has a required property of orientation, which can be vertical o
 ![Section — example](https://w3id.org/adiro/img/aec_drawing_ontology/section_01.png)
 
 ![Section — example](https://w3id.org/adiro/img/aec_drawing_ontology/section_02.png)
+
+### Sheet number mention {#SheetNoMention}
+
+One evidenced occurrence of sheet-number text on a source drawing, distinct from the DrawingSheet that the text may denote. Localisation and source-text evidence are admission requirements for exported UC-03 mentions, not OWL cardinality axioms; unresolved candidates remain in extraction evidence.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#SheetNoMention`
+- **Sub class of:** [Drawing element](#DrawingElement)
+
+### Standalone sheet reference {#StandaloneSheetReference}
+
+A sheet-number occurrence that itself constitutes a complete reference. One individual is both the SheetNoMention and the ReferenceExpression: no duplicate wrapper, self-directed hasSheetNoMention edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#StandaloneSheetReference`
+- **Sub class of:**
+    - [Reference expression](#ReferenceExpression)
+    - [Sheet number mention](#SheetNoMention)
 
 ### StatusCode {#StatusCode}
 
@@ -365,6 +402,14 @@ Direct containment: indicates physical containment of something within a parent 
 - **Domain:** `owl:Thing`
 - **Range:** `owl:Thing`
 
+### denotesDrawingSheet {#denotesDrawingSheet}
+
+The accepted DrawingSheet identity denoted by one sheet-number occurrence. It does not assert that a Layout target or an output-PDF navigation link was resolved.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#denotesDrawingSheet`
+- **Domain:** [Sheet number mention](#SheetNoMention)
+- **Range:** [Drawing Sheet](#DrawingSheet)
+
 ### hasCoordinateFrame {#hasCoordinateFrame}
 
 The coordinate frame (aec_geometry:CoordinateFrame) that a drawing sheet's page geometry is expressed in - the exact PDF/page, unit and named coordinate space its bounding boxes are relative to. Owned by the sheet and shared by the geometries on that page; a sheet may carry different frames for different file versions or output PDFs.
@@ -391,6 +436,15 @@ Named characterisation: a Layout has exactly one LayoutContentType.
 - **Domain:** [Layout](#Layout)
 - **Range:** [Layout content type](#LayoutContentType)
 
+### hasLayoutNoMention {#hasLayoutNoMention}
+
+Connects a complete reference expression to an evidenced layout-number text occurrence, independently of whether a target Layout has been resolved.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#hasLayoutNoMention`
+- **Sub property of:** [contains](#contains)
+- **Domain:** [Reference expression](#ReferenceExpression)
+- **Range:** [Layout number mention](#LayoutNoMention)
+
 ### hasOrientation {#hasOrientation}
 
 Orientation value for layouts where orientation is applicable.
@@ -416,6 +470,15 @@ A DrawingSheet compositionally contains its DrawingRevisions. To navigate from a
 - **Domain:** [Drawing Sheet](#DrawingSheet)
 - **Range:** [DrawingRevision](#DrawingRevision)
 
+### hasSheetNoMention {#hasSheetNoMention}
+
+Connects a complete reference expression to an embedded sheet-number occurrence. A standalone sheet reference is itself that occurrence and does not need a self-link.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#hasSheetNoMention`
+- **Sub property of:** [contains](#contains)
+- **Domain:** [Reference expression](#ReferenceExpression)
+- **Range:** [Sheet number mention](#SheetNoMention)
+
 ### hasStatusCode {#hasStatusCode}
 
 The controlled-vocabulary StatusCode assigned to a DrawingRevision.
@@ -424,6 +487,22 @@ The controlled-vocabulary StatusCode assigned to a DrawingRevision.
 - **Sub property of:** [hasProperty](#hasProperty)
 - **Domain:** [DrawingRevision](#DrawingRevision)
 - **Range:** [StatusCode](#StatusCode)
+
+### inlineAppearsOn {#inlineAppearsOn}
+
+Source Layout on which an inline layout/sheet reference occurs, when membership is supported by evidence. Kept separate from the symbol-specific hasReferenceSymbol property.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#inlineAppearsOn`
+- **Domain:** [Inline layout and sheet reference](#InlineLayoutSheetReference)
+- **Range:** [Layout](#Layout)
+
+### inlineReferencesLayout {#inlineReferencesLayout}
+
+An accepted target Layout of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#inlineReferencesLayout`
+- **Domain:** [Inline layout and sheet reference](#InlineLayoutSheetReference)
+- **Range:** [Layout](#Layout)
 
 ### isApprovedBy {#isApprovedBy}
 

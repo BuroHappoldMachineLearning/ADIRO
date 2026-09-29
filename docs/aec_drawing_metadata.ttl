@@ -135,6 +135,42 @@
     rdfs:range :StatusCode .
 
 #################################################################
+#    Object Properties — UC-03 reference occurrences
+#################################################################
+
+:hasSheetNoMention rdf:type owl:ObjectProperty ;
+    rdfs:label "hasSheetNoMention" ;
+    rdfs:comment "Connects a complete reference expression to an embedded sheet-number occurrence. A standalone sheet reference is itself that occurrence and does not need a self-link." ;
+    rdfs:subPropertyOf :contains ;
+    rdfs:domain :ReferenceExpression ;
+    rdfs:range :SheetNoMention .
+
+:hasLayoutNoMention rdf:type owl:ObjectProperty ;
+    rdfs:label "hasLayoutNoMention" ;
+    rdfs:comment "Connects a complete reference expression to an evidenced layout-number text occurrence, independently of whether a target Layout has been resolved." ;
+    rdfs:subPropertyOf :contains ;
+    rdfs:domain :ReferenceExpression ;
+    rdfs:range :LayoutNoMention .
+
+:denotesDrawingSheet rdf:type owl:ObjectProperty ;
+    rdfs:label "denotesDrawingSheet" ;
+    rdfs:comment "The accepted DrawingSheet identity denoted by one sheet-number occurrence. It does not assert that a Layout target or an output-PDF navigation link was resolved." ;
+    rdfs:domain :SheetNoMention ;
+    rdfs:range :DrawingSheet .
+
+:inlineAppearsOn rdf:type owl:ObjectProperty ;
+    rdfs:label "inlineAppearsOn" ;
+    rdfs:comment "Source Layout on which an inline layout/sheet reference occurs, when membership is supported by evidence. Kept separate from the symbol-specific hasReferenceSymbol property." ;
+    rdfs:domain :InlineLayoutSheetReference ;
+    rdfs:range :Layout .
+
+:inlineReferencesLayout rdf:type owl:ObjectProperty ;
+    rdfs:label "inlineReferencesLayout" ;
+    rdfs:comment "An accepted target Layout of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges." ;
+    rdfs:domain :InlineLayoutSheetReference ;
+    rdfs:range :Layout .
+
+#################################################################
 #    Object Properties — title-block assertions
 #
 #    NAMING — asserts<Thing>, not has<Thing>. A title block states a
@@ -476,6 +512,35 @@
     rdfs:comment "Element depicted on a drawing. Contained by Layout. Can be a Facade system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc.";
     rdfs:label "Drawing element";
     :labellableRoot "false"^^xsd:boolean.
+
+#################################################################
+#    Classes — UC-03 reference expressions and text occurrences
+#################################################################
+
+:ReferenceExpression rdf:type owl:Class ;
+    rdfs:subClassOf :DrawingElement ;
+    rdfs:label "Reference expression" ;
+    rdfs:comment "A complete source reference expression, whether graphical, inline or a standalone sheet-number reference. This superclass groups those forms for queries; it does not require a second individual around any of them." .
+
+:SheetNoMention rdf:type owl:Class ;
+    rdfs:subClassOf :DrawingElement ;
+    rdfs:label "Sheet number mention" ;
+    rdfs:comment "One evidenced occurrence of sheet-number text on a source drawing, distinct from the DrawingSheet that the text may denote. Localisation and source-text evidence are admission requirements for exported UC-03 mentions, not OWL cardinality axioms; unresolved candidates remain in extraction evidence." .
+
+:LayoutNoMention rdf:type owl:Class ;
+    rdfs:subClassOf :DrawingElement ;
+    rdfs:label "Layout number mention" ;
+    rdfs:comment "One evidenced occurrence of layout-number text, distinct from a target Layout. A complete inline reference may contain several such occurrences; no target is inferred from matching text alone." .
+
+:InlineLayoutSheetReference rdf:type owl:Class ;
+    rdfs:subClassOf :ReferenceExpression ;
+    rdfs:label "Inline layout and sheet reference" ;
+    rdfs:comment "A complete inline textual expression relating layout number(s) to a sheet number, such as '1, 3, 5 & 7/S601'. The component mentions retain their own identities; accepted Layout targets are connected separately by inlineReferencesLayout." .
+
+:StandaloneSheetReference rdf:type owl:Class ;
+    rdfs:subClassOf :SheetNoMention , :ReferenceExpression ;
+    rdfs:label "Standalone sheet reference" ;
+    rdfs:comment "A sheet-number occurrence that itself constitutes a complete reference. One individual is both the SheetNoMention and the ReferenceExpression: no duplicate wrapper, self-directed hasSheetNoMention edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified." .
 
 #################################################################
 #    Classes — UC-01 extension (semantic entities, not labellable)

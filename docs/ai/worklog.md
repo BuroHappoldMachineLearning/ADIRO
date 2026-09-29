@@ -22,6 +22,43 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-09-29 — UC-03 semantic reference occurrences and accepted targets
+
+**Issue:** [#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95) · **Branch:**
+`codex/uc03-three-layer-ontology` (based on the current head of [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76))
+
+### What changed
+
+- Added `ReferenceExpression`, `SheetNoMention`, `LayoutNoMention`, `InlineLayoutSheetReference` and
+  `StandaloneSheetReference` to `aec_drawing_metadata`, with composition, source-layout and accepted-target
+  properties. `ReferenceSymbol` in `aec_common_symbols` now subclasses `ReferenceExpression`.
+- Added a UC-03 three-layer overview and a Semantic design page. Updated the UC-03 ORSD to v0.5, the suite
+  ORSD to v1.3, the use-case summary, both module changelogs and generated ontology pages.
+- Kept one individual for a standalone sheet-number reference. Existing `TextualNote.refersToDrawingId` remains
+  a note-level string property; accepted occurrence-to-sheet identity uses `denotesDrawingSheet`.
+
+### Verified and open
+
+- Both changed TTL files and all six modules passed `validate_ontology.py` (existing description warnings
+  remain). `generate_docs.py` processed six modules; `mkdocs build --strict` passed. Three UC-03 SPARQL examples
+  returned the expected rows on a small synthetic graph; the superclass relationships were checked.
+- Added two regression checks for the class/domain boundary and accepted-only inline SPARQL query.
+  `uv run --with pytest python -m pytest -q`: 46 passed, 3 skipped. The bare `uv run pytest -q` command selected
+  a system pytest without the project's dependencies, so it was not used as the final test result.
+- Reproduced a separate existing docs-workflow dependency gap: the exact `test-docs` CI command uses
+  `--no-project` with pytest/Pillow/rdflib but imports `generate_docs.py`, which requires `pylode`; it fails
+  test collection before these ontology checks. No workflow change was made in this semantic change.
+- `ENFORCE=1 bash scripts/run_reasoning.sh` could not run HermiT or ROBOT: this machine has no Java Runtime.
+  No consistency result is claimed; run the CI reasoning gate or repeat locally with Java available.
+- Deferred: graphical whole-sheet references ([#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38)),
+  raw-text placement on symbols ([#20](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/20)),
+  navigation-link ontology, and UC-03 Geometry/Provenance profiles
+  ([#93](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/93),
+  [#96](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/96)).
+
+**Next:** Review the semantic names and axioms against #95, then extend the same branch with UC-03 geometry
+and provenance. The branch has not been pushed and no PR has been opened.
+
 ## 2026-09-28 — New `aec_geometry` module (bounding boxes + coordinate frames); Croissant evaluation
 
 **Issue:** [#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90), [#91](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/91) · **PR:** #76 · **Branch:** `aec-provenance-model`

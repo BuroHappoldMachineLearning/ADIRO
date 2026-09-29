@@ -12,13 +12,13 @@ Use Case → Information Needs → Functional Requirements → Competency Questi
 
 This pipeline enforces **forward traceability** (every OWL term traces back to a use case need) and **backward testability** (every competency question can be validated via SPARQL).
 
-**Current Status (as of 2026-07-08):**
+**Current Status (as of 2026-09-29):**
 
 - **7 use cases** defined, covering search, linking, comparison, aggregation, and measurement.
 - **4 of 7 ORSDs completed** (UC-01, UC-03, UC-06, UC-07).
 - **3 ORSDs not yet written** (UC-02 Facade, UC-04, UC-05).
 - UC-01 ORSD has been reviewed and alignment decisions made with the existing ontology.
-- UC-03 ORSD review completed with 3 open issues remaining.
+- UC-03's graphical-symbol baseline is implemented; its v0.5 textual-reference extension is pending review.
 - Ontology versioning plan established (V1 through V4.x).
 
 ---
@@ -50,7 +50,7 @@ This pipeline enforces **forward traceability** (every OWL term traces back to a
 | **Actor**       | Designer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | **Goal**        | Navigate across sheets via reference symbols                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | **Description** | As a designer, I want to understand how a certain building element or parts are designed, so I want to find all the drawings that are connected to a drawing. In engineering drawings, there are typically Reference Symbols such as Detail Markers, Section Markers, and Elevation Markers. By recognising these Reference Symbols, we can automatically match and link the Sections, Details, and Elevations they reference -- enabling navigation across sheets and even across drawing sets. |
-| **ORSD Status** | ✅ [Completed (v0.4)](<UC-03/UC-03-Reference Symbol Cross-Sheet Linking.md>) — 3 open issues remaining |
+| **ORSD Status** | ⚠️ [v0.5 semantic extension pending review](<UC-03/UC-03-Reference Symbol Cross-Sheet Linking.md>) — geometry and provenance extensions tracked separately |
 
 ### UC-04: Element Similarity Search
 
@@ -124,10 +124,10 @@ Following the LOT pipeline (`Use Case → Information Needs → Functional Requi
 
 | Milestone | UC-01 | UC-03 |
 |---|:---:|:---:|
-| ORSD (Use Case → CQs) | ✅ v0.5 | ✅ v0.4 |
+| ORSD (Use Case → CQs) | ✅ v0.5 | ⚠️ v0.5 pending review |
 | OWL Terms Specification | ✅ | ✅ |
 | ORSD Review & Alignment | ✅ | ✅ (3 open issues) |
-| T-Box Implementation (.owl/.ttl) | ✅ | ✅ |
+| T-Box Implementation (.owl/.ttl) | ✅ | ⚠️ v0.5 pending review |
 
 ### Next Steps
 
@@ -157,6 +157,6 @@ Execute the SPARQL queries defined in each ORSD against the populated A-Box to v
 | Use case | ORSD | Visualization TTL |
 |---|---|---|
 | UC-01 | [UC-01-Titleblock-Based Drawing Search.md](<UC-01/UC-01-Titleblock-Based Drawing Search.md>) | [uc01-merged-for-visualization.ttl](UC-01/uc01-merged-for-visualization.ttl) |
-| UC-03 | [UC-03-Reference Symbol Cross-Sheet Linking.md](<UC-03/UC-03-Reference Symbol Cross-Sheet Linking.md>) | [uc03-core-for-visualization.ttl](UC-03/uc03-core-for-visualization.ttl) |
+| UC-03 | [UC-03-Reference Symbol Cross-Sheet Linking.md](<UC-03/UC-03-Reference Symbol Cross-Sheet Linking.md>) | [Historical graphical-symbol core](UC-03/uc03-core-for-visualization.ttl); current terms are in the generated ontology pages |
 | UC-06 | [UC-06-Drawing Content Aggregation and Hazardous Material Identification.md](<UC-06/UC-06-Drawing Content Aggregation and Hazardous Material Identification.md>) | — |
 | UC-07 | [UC-07 Wall Orientation Identification & Measurement in Plan Drawings.md](<UC-07/UC-07 Wall Orientation Identification & Measurement in Plan Drawings.md>) | — |

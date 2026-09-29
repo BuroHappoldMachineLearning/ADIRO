@@ -39,9 +39,9 @@
 #################################################################
 
 :ReferenceSymbol rdf:type owl:Class;
-    rdfs:subClassOf metadata:DrawingElement;
+    rdfs:subClassOf metadata:ReferenceExpression;
     rdfs:label "ReferenceSymbol";
-    rdfs:comment "A symbol drawn on a Layout that references another Layout (on the same or a different DrawingSheet). Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target Layout's LayoutContentType.";
+    rdfs:comment "A graphical reference expression drawn on a Layout that may have an accepted target Layout on the same or a different DrawingSheet. Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it can be derived from an accepted target Layout's LayoutContentType when one is known.";
     metadata:labellableRoot "true"^^xsd:boolean.
 
 #################################################################

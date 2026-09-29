@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+- `ReferenceSymbol` is now also a `metadata:ReferenceExpression`, enabling one query across graphical,
+  inline and standalone UC-03 references without a duplicate symbol individual
+  ([#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95)).
+
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
 ### Removed (BREAKING)

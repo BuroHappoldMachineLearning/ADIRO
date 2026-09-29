@@ -1,7 +1,7 @@
-# ADIRO Ontology Requirements Specification — v1.2
+# ADIRO Ontology Requirements Specification — v1.3
 
 **Author:** ADIRO project team
-**Version:** 1.2 (September 2026) — see [Version history](#version-history)
+**Version:** 1.3 (September 2026) — see [Version history](#version-history)
 
 ---
 
@@ -43,7 +43,7 @@ The ontology is implemented using RDF and OWL to establish a standardized and in
 | Use 1 | **Automated content retrieval and regulatory reporting** | Aggregating title block metadata for drawing searches and summarizing cross-document content for compliance requirements, such as the Building Safety Act. |
 | Use 2 | **Design validation and data integrity checks** | Detect spatial gaps in facade performance lines, identify discrepancies between different drawing versions (e.g., design intent vs. contractor submissions) through comparative analysis, and automatically resolve extraction conflicts using logical rules, while flagging high-uncertainty results for human-in-the-loop verification and manual correction when autonomous rectification is insufficient. |
 | Use 3 | **Learning-based reasoning** | Perform context-aware label refinement, where ontological knowledge is used to validate and correct uncertain machine-learning predictions based on their spatial and semantic context. |
-| Use 4 | **Inter-drawing connectivity** | Enable navigation across sheets and drawing sets by automatically matching and linking reference symbols, including detail, section, and elevation markers. |
+| Use 4 | **Inter-drawing connectivity** | Discover accepted connections across sheets and drawing sets through graphical reference symbols and evidenced inline or standalone sheet references. Resolution of a target is distinct from writing a clickable PDF link. |
 | Use 5 | **Spatial reasoning and similarity analysis** | Identify repeated occurrences of building elements and quantify components based on geometric attributes such as orientation or location. |
 
 > | ORSD v1 label | Corresponding UC ORSD |
@@ -125,6 +125,15 @@ What is the complete set of drawings reachable from a given drawing through refe
 ---
 
 ## Version history
+
+### v1.3 (September 2026)
+
+Use 4 now includes source-reference occurrences and accepted textual target relations, alongside the existing
+graphical `ReferenceSymbol` path. This reflects the UC-03 semantic extension in
+[#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95) without changing a suite competency
+question. **MINOR**: clarification of the use-case scope; navigation-link delivery remains separate and the
+graphical whole-sheet case remains open in
+[#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38).
 
 ### v1.2 (September 2026)
 

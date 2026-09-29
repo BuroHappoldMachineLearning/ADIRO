@@ -89,8 +89,8 @@ Consolidating the four ORSD traceability matrices, the terms with a CQ behind th
 
 | Use case | Status | Terms it needs (all already in `aec_drawing_metadata` / `aec_domain_common` / `aec_common_symbols`) |
 | --- | --- | --- |
-| **UC-01** Titleblock search | ✅ implemented | `DrawingSheet`, `Layout`, `LayoutContentType`, `DrawingRevision`, `Project`, `Person`, `StatusCode`, `DrawingPackage`, `dcommon:Discipline`; `drawingIdentifier`, `drawingTitle`, `hasScale`, `sheetSize`, `revisionCode`, `issueDate`, `personName`, `projectName`, `projectNumber`, `packageName`, `statusLabel`; `contains`, `hasProperty`, `hasDiscipline`, `hasRevision`, `isRevisionOf`, `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `hasStatusCode` |
-| **UC-03** Cross-sheet linking | ✅ implemented | `csymbol:ReferenceSymbol`, `hasReferenceSymbol`, `referencesLayout`, `layoutIdentifier` |
+| **UC-01** Titleblock search | ✅ implemented | `DrawingSheet`, `Layout`, `LayoutContentType`, `DrawingRevision`, `Project`, `Person`, `StatusCode`, `DrawingPackage`, `dcommon:Discipline`; `drawingIdentifier`, `drawingTitle`, `hasScale`, `sheetSize`, `revisionCode`, `issueDate`, `personName`, `projectName`, `projectNumber`, `packageName`, `statusLabel`; `contains`, `hasProperty`, `hasDiscipline`, `hasRevision`, `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `hasStatusCode` |
+| **UC-03** Cross-sheet linking | Graphical core implemented; textual extension pending review | `csymbol:ReferenceSymbol`, `hasReferenceSymbol`, `referencesLayout`, `layoutIdentifier`; `metadata:ReferenceExpression`, number mentions, inline/standalone reference classes and accepted target properties — see the [source-reference extension](uc03-semantic-references.md) |
 | **UC-06** Content aggregation | ⚠️ draft | `Material`, `HazardClassification`, `depictsMaterial`, `isDepictedOn`, `hasHazardClassification`, `materialName`, `materialSymbol`, `hazardLabel` — **none of them title-block terms** |
 | **UC-07** Wall orientation | ⚠️ draft | `BuildingElement`, `Wall`, `FacingDirection`, `northArrowAngle`, `scaleRatio`, wall dimension properties — **one overlap: the north arrow** |
 
@@ -147,7 +147,7 @@ Minor, but worth noting since the review runs both ways:
 - **`DrawingPackage` / `packageName`** (UC-01 FR 8) — volume/package grouping. Title blocks *do* often print a
   volume or package reference, and the proposed vocabulary has no term for it. `dm:` covers it; the extraction
   profile should include it.
-- **`layoutIdentifier`** (UC-03, pending UC-01 v0.4) — a layout number within a sheet. Printed near views rather
+- **`layoutIdentifier`** (UC-03, already present in `aec_drawing_metadata`) — a layout number within a sheet. Printed near views rather
   than in the title block, so probably correctly absent, but it interacts with `sheetNumber`.
 - **No gap on the 17 core extraction fields** — all are covered by the proposal or by `dm:`.
 

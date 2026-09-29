@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+- UC-03 reference expression and occurrence classes (`ReferenceExpression`, `SheetNoMention`,
+  `LayoutNoMention`, `InlineLayoutSheetReference`, `StandaloneSheetReference`) and their composition,
+  source-layout and accepted-target properties ([#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95)).
+
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
 ### Added
