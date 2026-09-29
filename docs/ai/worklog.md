@@ -45,9 +45,9 @@ threads*, which commits do not carry.
 - Added two regression checks for the class/domain boundary and accepted-only inline SPARQL query.
   `uv run --with pytest python -m pytest -q`: 46 passed, 3 skipped. The bare `uv run pytest -q` command selected
   a system pytest without the project's dependencies, so it was not used as the final test result.
-- Reproduced a separate existing docs-workflow dependency gap: the exact `test-docs` CI command uses
-  `--no-project` with pytest/Pillow/rdflib but imports `generate_docs.py`, which requires `pylode`; it fails
-  test collection before these ontology checks. No workflow change was made in this semantic change.
+- Reproduced and repaired a docs-workflow dependency gap: the `test-docs` CI command uses `--no-project` but
+  imports `generate_docs.py`, which requires `pylode`. The workflow now includes `--with pylode==3.2.3`;
+  the exact isolated command passed locally (20 tests, 3 Pillow deprecation warnings).
 - `ENFORCE=1 bash scripts/run_reasoning.sh` could not run HermiT or ROBOT: this machine has no Java Runtime.
   No consistency result is claimed; run the CI reasoning gate or repeat locally with Java available.
 - Deferred: graphical whole-sheet references ([#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38)),
