@@ -14,7 +14,7 @@
 
 <https://w3id.org/adiro/aec_geometry> rdf:type owl:Ontology ;
     rdfs:label "AEC Geometry Ontology" ;
-    rdfs:comment "Foundational, domain-neutral vocabulary for locating a detection on a drawing page: a BoundingBox (the shape) interpreted against a CoordinateFrame (which PDF/page, units, origin and axes). A bounding box is modelled as a first-class, provenance-bearing individual - an aec_provenance:InferredEntity - so a box records what produced it (a detector or a human) and with what confidence, independently of the confidence in any value read at that box. GeoSPARQL's geo:Geometry is reused as the shape supertype. Imported by the drawing modules (e.g. aec_drawing_metadata), which attach frames to sheets and boxes to assertions. Shared across use cases: UC-01 (title-block field regions) and UC-03 (reference-symbol geometry) use the same BoundingBox / CoordinateFrame model." ;
+    rdfs:comment "Foundational, domain-neutral module for geometry. It records where something sits on a drawing page as a bounding box, read against an explicit coordinate frame. Each box carries its own provenance and confidence. It reuses GeoSPARQL, is imported by the drawing modules, and is shared across use cases." ;
     dcterms:title "AEC Geometry Ontology" ;
     dcterms:description "Bounding boxes + coordinate frames for AEC drawing extraction. Domain-neutral; provenance-bearing; GeoSPARQL-aligned." ;
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;

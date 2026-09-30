@@ -14,7 +14,7 @@
 
 <https://w3id.org/adiro/aec_provenance> rdf:type owl:Ontology ;
     rdfs:label "AEC Provenance Ontology" ;
-    rdfs:comment "Foundational, domain-neutral vocabulary for representing an inferred/extracted assertion together with its provenance and confidence. It exists so that a value read off a drawing (a title-block field, a detected symbol, ...) can be modelled as a first-class assertion carrying: which region asserted it, what produced it, from where, when, and with what confidence - independently of the value itself. Imported by the drawing modules (e.g. aec_drawing_metadata); aligned to W3C PROV-O for interoperability." ;
+    rdfs:comment "Foundational, domain-neutral module for provenance. It lets any value inferred from a drawing be recorded as an assertion that carries its own source, confidence, and how it was produced, aligned to W3C PROV-O. The drawing modules import it." ;
     dcterms:title "AEC Provenance Ontology" ;
     dcterms:description "Reified assertion + inference provenance + confidence for AEC drawing extraction. Domain-neutral; PROV-O-aligned." ;
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;

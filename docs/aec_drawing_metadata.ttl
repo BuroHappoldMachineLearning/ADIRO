@@ -15,7 +15,7 @@
 
 <https://w3id.org/adiro/aec_drawing_metadata> rdf:type owl:Ontology ;
     rdfs:label "AEC Drawing Metadata Ontology" ;
-    rdfs:comment "Sheet/layout/document structure for AEC drawings." ;
+    rdfs:comment "The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance and geometry modules, and the discipline modules build on it." ;
     dcterms:title "AEC Drawing Metadata Ontology" ;
     dcterms:description "Sheet/layout/document structure for AEC drawings." ;
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;

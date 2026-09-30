@@ -8,7 +8,7 @@
 
 <https://w3id.org/adiro/aec_common_symbols> rdf:type owl:Ontology ;
     rdfs:label "AEC Common Symbols Ontology" ;
-    rdfs:comment "Cross-discipline layout content. Generic symbol classes like dimensions, reference symbols, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology." ;
+    rdfs:comment "Reusable symbols that appear across disciplines, such as dimensions, grids, levels, and reference symbols. Every symbol is a kind of drawing element from the drawing-metadata module. The discipline modules build on these shared symbols." ;
     dcterms:title "AEC Common Symbols Ontology" ;
     dcterms:description "Cross-discipline layout content. Generic symbol classes like dimensions, reference symbols, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology." ;
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;

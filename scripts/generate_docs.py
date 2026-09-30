@@ -582,6 +582,16 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path) ->
         # Insert a dependency diagram (with the current ontology highlighted)
         # after the ontology description/metadata and before the first term
         # section (## …).
+        # Embedded interactive OntoCanvas view of this module (full page width,
+        # kept short). Placed just after the intro and before the dependencies.
+        iframe_section = [
+            "## Interactive view",
+            "",
+            f'<iframe src="{ontocanvas_url}" title="{title} in OntoCanvas" '
+            'loading="lazy" style="width: 100%; height: 480px; border: 1px solid '
+            'var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>',
+            "",
+        ]
         dep_section = [
             "## Dependencies",
             "",
@@ -591,10 +601,12 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path) ->
             *build_dependency_mermaid(ttl_files, highlight=stem, link_prefix="../"),
             "",
         ]
+        # Insert the interactive view, then the dependency diagram, after the
+        # ontology description and before the first term section (## …).
         insert_at = next(
             (i for i, line in enumerate(rest) if line.startswith("## ")), len(rest)
         )
-        rest = rest[:insert_at] + dep_section + rest[insert_at:]
+        rest = rest[:insert_at] + iframe_section + dep_section + rest[insert_at:]
 
         page = "\n".join([body_lines[0], "", links_block, ""] + rest).rstrip() + "\n"
 
@@ -619,6 +631,17 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path) ->
     index_file = ontologies_dir / "index.md"
     index_file.write_text("\n".join(index_lines), encoding="utf-8")
     print(f"  [OK] Generated ontologies index: {index_file}")
+
+    # Order the left-nav sidebar (awesome-pages `.pages`) to follow the module
+    # dependency chain — aec_provenance, aec_geometry, aec_drawing_metadata,
+    # aec_common_symbols, aec_domain_common, aec_facade_domain — rather than the
+    # default alphabetical order, so the nav mirrors the `owl:imports` graph.
+    # ttl_files is already dependency-sorted. See AGENTS.md / the deploy skill.
+    pages_lines = ["nav:", "  - index.md"]
+    pages_lines += [f"  - {ttl_file.stem}.md" for ttl_file in ttl_files]
+    pages_file = ontologies_dir / ".pages"
+    pages_file.write_text("\n".join(pages_lines) + "\n", encoding="utf-8")
+    print(f"  [OK] Generated ontologies nav order: {pages_file}")
 
 
 def main():

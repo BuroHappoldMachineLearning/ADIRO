@@ -8,7 +8,7 @@
 
 <https://w3id.org/adiro/aec_domain_common> rdf:type owl:Ontology ;
     rdfs:label "AEC Domain Common Ontology" ;
-    rdfs:comment "Shared domain abstractions reused across multiple domain ontologies (e.g., facade+structural)." ;
+    rdfs:comment "Concepts shared by several engineering domains. It sits between the common symbols and the discipline-specific modules, holding abstractions that more than one domain reuses, so they are defined once." ;
     dcterms:title "AEC Domain Common Ontology" ;
     dcterms:description "Shared domain abstractions reused across multiple domain ontologies (e.g., facade+structural)." ;
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;

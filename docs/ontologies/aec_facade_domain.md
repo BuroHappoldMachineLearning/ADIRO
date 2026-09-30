@@ -4,11 +4,15 @@
 [:material-file-document-outline: TTL source](https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain.ttl){ .md-button }
 [:material-file-code: pyLODE HTML](https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain.html){ .md-button }
 
-Facade-specific concepts and symbols for facade engineering drawings.
+Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbol, and domain vocabularies.
 
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain`
 - **Version:** 2.0.0
 - **Imports:** `aec_common_symbols`, `aec_domain_common`, `aec_drawing_metadata`
+
+## Interactive view
+
+<iframe src="https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain.html" title="Aec Facade Domain in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
 
 ## Dependencies
 

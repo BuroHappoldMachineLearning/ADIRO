@@ -60,8 +60,13 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
 - **Doc generation:** `scripts/generate_docs.py` reads every `src/*.ttl`, emits a pyLODE HTML reference page
   per ontology, emits native Markdown pages (via `ttl2md/`) into `docs/ontologies/`, copies the `.ttl` and
   `*.display.json` sources into `docs/`, and regenerates the MkDocs landing page `docs/index.md` (including
-  the auto-discovered ontology list). It hard-codes a dependency sort order for the modules. CI commits the
-  regenerated `docs/` back, then runs `mkdocs build` (output `site/`, git-ignored) and deploys the artifact.
+  the auto-discovered ontology list). It hard-codes a dependency sort order for the modules, and that same order
+  drives: the landing/index listings, the per-page dependency diagrams, **and the left-nav sidebar** — it writes
+  `docs/ontologies/.pages` (for the `awesome-pages` plugin) so the nav follows the `owl:imports` chain rather
+  than alphabetical order. Each ontology page also embeds an **OntoCanvas `<iframe>`** (`## Interactive view`,
+  after the intro, before `## Dependencies`); the page's intro is the module's `owl:Ontology` `rdfs:comment`,
+  which should be a short, plain-language paragraph about the module's *role* (not a list of its classes). CI
+  commits the regenerated `docs/` back, then runs `mkdocs build` (output `site/`, git-ignored) and deploys the artifact.
 - **Local preview (uses `uv`):**
   ```bash
   uv sync                                    # install deps (once)

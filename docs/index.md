@@ -32,7 +32,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
 -   ### [Aec Provenance](aec_provenance.html)
 
-    Foundational, domain-neutral vocabulary for representing an inferred/extracted assertion together with its provenance and confidence. It exists so that a value read off a drawing (a title-block field, a detected symbol, ...) can be modelled as a first-class assertion carrying: which region asserted it, what produced it, from where, when, and with what confidence - independently of the value itself. Imported by the drawing modules (e.g. aec_drawing_metadata); aligned to W3C PROV-O for interoperability.
+    Foundational, domain-neutral module for provenance. It lets any value inferred from a drawing be recorded as an assertion that carries its own source, confidence, and how it was produced, aligned to W3C PROV-O. The drawing modules import it.
 
     Source: [`aec_provenance.ttl`](aec_provenance.ttl)
 
@@ -40,7 +40,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
 -   ### [Aec Geometry](aec_geometry.html)
 
-    Foundational, domain-neutral vocabulary for locating a detection on a drawing page: a BoundingBox (the shape) interpreted against a CoordinateFrame (which PDF/page, units, origin and axes). A bounding box is modelled as a first-class, provenance-bearing individual - an aec_provenance:InferredEntity - so a box records what produced it (a detector or a human) and with what confidence, independently of the confidence in any value read at that box. GeoSPARQL's geo:Geometry is reused as the shape supertype. Imported by the drawing modules (e.g. aec_drawing_metadata), which attach frames to sheets and boxes to assertions. Shared across use cases: UC-01 (title-block field regions) and UC-03 (reference-symbol geometry) use the same BoundingBox / CoordinateFrame model.
+    Foundational, domain-neutral module for geometry. It records where something sits on a drawing page as a bounding box, read against an explicit coordinate frame. Each box carries its own provenance and confidence. It reuses GeoSPARQL, is imported by the drawing modules, and is shared across use cases.
 
     *Imports: aec_provenance*
 
@@ -50,7 +50,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
 -   ### [Aec Drawing Metadata](aec_drawing_metadata.html)
 
-    Sheet/layout/document structure for AEC drawings.
+    The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance and geometry modules, and the discipline modules build on it.
 
     *Imports: aec_geometry, aec_provenance*
 
@@ -60,7 +60,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
 -   ### [Aec Common Symbols](aec_common_symbols.html)
 
-    Cross-discipline layout content. Generic symbol classes like dimensions, reference symbols, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology.
+    Reusable symbols that appear across disciplines, such as dimensions, grids, levels, and reference symbols. Every symbol is a kind of drawing element from the drawing-metadata module. The discipline modules build on these shared symbols.
 
     *Imports: aec_drawing_metadata*
 
@@ -70,7 +70,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
 -   ### [Aec Domain Common](aec_domain_common.html)
 
-    Shared domain abstractions reused across multiple domain ontologies (e.g., facade+structural).
+    Concepts shared by several engineering domains. It sits between the common symbols and the discipline-specific modules, holding abstractions that more than one domain reuses, so they are defined once.
 
     *Imports: aec_common_symbols, aec_drawing_metadata*
 
@@ -80,7 +80,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
 -   ### [Aec Facade Domain](aec_facade_domain.html)
 
-    Facade-specific concepts and symbols for facade engineering drawings.
+    Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbol, and domain vocabularies.
 
     *Imports: aec_common_symbols, aec_domain_common, aec_drawing_metadata*
 

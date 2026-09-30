@@ -1,6 +1,8 @@
 nav:
   - index.md
+  - aec_provenance.md
+  - aec_geometry.md
   - aec_drawing_metadata.md
   - aec_common_symbols.md
   - aec_domain_common.md
-  - ...
+  - aec_facade_domain.md

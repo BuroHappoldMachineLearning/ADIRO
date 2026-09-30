@@ -13,7 +13,7 @@
 
 <https://w3id.org/adiro/aec_facade_domain> rdf:type owl:Ontology ;
     rdfs:label "AEC Facade Domain Ontology" ;
-    rdfs:comment "Facade-specific concepts and symbols for facade engineering drawings." ;
+    rdfs:comment "Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbol, and domain vocabularies." ;
     dcterms:title "AEC Facade Domain Ontology" ;
     dcterms:description "Facade-specific concepts and symbols for facade engineering drawings." ;
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;

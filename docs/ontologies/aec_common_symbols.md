@@ -4,11 +4,15 @@
 [:material-file-document-outline: TTL source](https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols.ttl){ .md-button }
 [:material-file-code: pyLODE HTML](https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols.html){ .md-button }
 
-Cross-discipline layout content. Generic symbol classes like dimensions, reference symbols, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology.
+Reusable symbols that appear across disciplines, such as dimensions, grids, levels, and reference symbols. Every symbol is a kind of drawing element from the drawing-metadata module. The discipline modules build on these shared symbols.
 
 - **IRI:** `https://w3id.org/adiro/aec_common_symbols`
 - **Version:** 2.0.0
 - **Imports:** `aec_drawing_metadata`
+
+## Interactive view
+
+<iframe src="https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols.html" title="Aec Common Symbols in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
 
 ## Dependencies
 

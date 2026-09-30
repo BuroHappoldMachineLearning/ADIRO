@@ -4,11 +4,15 @@
 [:material-file-document-outline: TTL source](https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common.ttl){ .md-button }
 [:material-file-code: pyLODE HTML](https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common.html){ .md-button }
 
-Shared domain abstractions reused across multiple domain ontologies (e.g., facade+structural).
+Concepts shared by several engineering domains. It sits between the common symbols and the discipline-specific modules, holding abstractions that more than one domain reuses, so they are defined once.
 
 - **IRI:** `https://w3id.org/adiro/aec_domain_common`
 - **Version:** 2.0.0
 - **Imports:** `aec_common_symbols`, `aec_drawing_metadata`
+
+## Interactive view
+
+<iframe src="https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common.html" title="Aec Domain Common in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
 
 ## Dependencies
 
