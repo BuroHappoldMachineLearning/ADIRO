@@ -1,8 +1,8 @@
 # Aec Drawing Metadata
 
-[![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata.html){ .md-button target=_blank }
-[:material-file-document-outline: TTL source](https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata.ttl){ .md-button }
-[:material-file-code: pyLODE HTML](https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata.html){ .md-button }
+[![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_drawing_metadata.html){ .md-button target=_blank }
+[:material-file-document-outline: TTL source](https://w3id.org/adiro/aec_drawing_metadata.ttl){ .md-button }
+[:material-file-code: pyLODE HTML](https://w3id.org/adiro/aec_drawing_metadata.html){ .md-button }
 
 The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance and geometry modules, and the discipline modules build on it.
 
@@ -12,7 +12,7 @@ The core drawing vocabulary. It describes the structure of a drawing sheet: its 
 
 ## Interactive view
 
-<iframe src="https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata.html" title="Aec Drawing Metadata in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
+<iframe src="https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_drawing_metadata.html" title="Aec Drawing Metadata in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
 
 ## Dependencies
 

@@ -36,7 +36,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Source: [`aec_provenance.ttl`](aec_provenance.ttl)
 
-    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_provenance.html){ .md-button target=_blank }
+    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_provenance.html){ .md-button target=_blank }
 
 -   ### [Aec Geometry](aec_geometry.html)
 
@@ -46,7 +46,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Source: [`aec_geometry.ttl`](aec_geometry.ttl)
 
-    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_geometry.html){ .md-button target=_blank }
+    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_geometry.html){ .md-button target=_blank }
 
 -   ### [Aec Drawing Metadata](aec_drawing_metadata.html)
 
@@ -56,7 +56,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Source: [`aec_drawing_metadata.ttl`](aec_drawing_metadata.ttl)
 
-    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_drawing_metadata.html){ .md-button target=_blank }
+    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_drawing_metadata.html){ .md-button target=_blank }
 
 -   ### [Aec Common Symbols](aec_common_symbols.html)
 
@@ -66,7 +66,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Source: [`aec_common_symbols.ttl`](aec_common_symbols.ttl)
 
-    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_common_symbols.html){ .md-button target=_blank }
+    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_common_symbols.html){ .md-button target=_blank }
 
 -   ### [Aec Domain Common](aec_domain_common.html)
 
@@ -76,7 +76,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Source: [`aec_domain_common.ttl`](aec_domain_common.ttl)
 
-    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_domain_common.html){ .md-button target=_blank }
+    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_domain_common.html){ .md-button target=_blank }
 
 -   ### [Aec Facade Domain](aec_facade_domain.html)
 
@@ -86,6 +86,6 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Source: [`aec_facade_domain.ttl`](aec_facade_domain.ttl)
 
-    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_facade_domain.html){ .md-button target=_blank }
+    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_facade_domain.html){ .md-button target=_blank }
 
 </div>

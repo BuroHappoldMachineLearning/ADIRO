@@ -65,7 +65,9 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
   `docs/ontologies/.pages` (for the `awesome-pages` plugin) so the nav follows the `owl:imports` chain rather
   than alphabetical order. Each ontology page also embeds an **OntoCanvas `<iframe>`** (`## Interactive view`,
   after the intro, before `## Dependencies`); the page's intro is the module's `owl:Ontology` `rdfs:comment`,
-  which should be a short, plain-language paragraph about the module's *role* (not a list of its classes). CI
+  which should be a short, plain-language paragraph about the module's *role* (not a list of its classes). The
+  external resource links (TTL source, pyLODE HTML, OntoCanvas) point at the permanent **`w3id.org/adiro`** front
+  door — which 302-redirects to the Pages host with permissive CORS — not the `github.io` host directly. CI
   commits the regenerated `docs/` back, then runs `mkdocs build` (output `site/`, git-ignored) and deploys the artifact.
 - **Local preview (uses `uv`):**
   ```bash

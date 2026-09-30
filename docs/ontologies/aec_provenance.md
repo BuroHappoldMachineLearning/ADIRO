@@ -1,8 +1,8 @@
 # Aec Provenance
 
-[![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_provenance.html){ .md-button target=_blank }
-[:material-file-document-outline: TTL source](https://burohappoldmachinelearning.github.io/ADIRO/aec_provenance.ttl){ .md-button }
-[:material-file-code: pyLODE HTML](https://burohappoldmachinelearning.github.io/ADIRO/aec_provenance.html){ .md-button }
+[![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_provenance.html){ .md-button target=_blank }
+[:material-file-document-outline: TTL source](https://w3id.org/adiro/aec_provenance.ttl){ .md-button }
+[:material-file-code: pyLODE HTML](https://w3id.org/adiro/aec_provenance.html){ .md-button }
 
 Foundational, domain-neutral module for provenance. It lets any value inferred from a drawing be recorded as an assertion that carries its own source, confidence, and how it was produced, aligned to W3C PROV-O. The drawing modules import it.
 
@@ -11,7 +11,7 @@ Foundational, domain-neutral module for provenance. It lets any value inferred f
 
 ## Interactive view
 
-<iframe src="https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_provenance.html" title="Aec Provenance in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
+<iframe src="https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_provenance.html" title="Aec Provenance in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
 
 ## Dependencies
 

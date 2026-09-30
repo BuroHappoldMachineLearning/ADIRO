@@ -1,8 +1,8 @@
 # Aec Geometry
 
-[![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_geometry.html){ .md-button target=_blank }
-[:material-file-document-outline: TTL source](https://burohappoldmachinelearning.github.io/ADIRO/aec_geometry.ttl){ .md-button }
-[:material-file-code: pyLODE HTML](https://burohappoldmachinelearning.github.io/ADIRO/aec_geometry.html){ .md-button }
+[![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_geometry.html){ .md-button target=_blank }
+[:material-file-document-outline: TTL source](https://w3id.org/adiro/aec_geometry.ttl){ .md-button }
+[:material-file-code: pyLODE HTML](https://w3id.org/adiro/aec_geometry.html){ .md-button }
 
 Foundational, domain-neutral module for geometry. It records where something sits on a drawing page as a bounding box, read against an explicit coordinate frame. Each box carries its own provenance and confidence. It reuses GeoSPARQL, is imported by the drawing modules, and is shared across use cases.
 
@@ -12,7 +12,7 @@ Foundational, domain-neutral module for geometry. It records where something sit
 
 ## Interactive view
 
-<iframe src="https://alelom.github.io/OntoCanvas/?onto=https://burohappoldmachinelearning.github.io/ADIRO/aec_geometry.html" title="Aec Geometry in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
+<iframe src="https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_geometry.html" title="Aec Geometry in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
 
 ## Dependencies
 

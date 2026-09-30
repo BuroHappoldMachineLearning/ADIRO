@@ -318,6 +318,12 @@ def extract_adiro_dependencies(ttl_file: Path) -> list[str]:
 # external tools (e.g. OntoCanvas) that need the full URL of an ontology page.
 SITE_BASE_URL = "https://burohappoldmachinelearning.github.io/ADIRO"
 
+# Permanent w3id.org front door for ADIRO. It 302-redirects <module>.ttl,
+# <module>.html and the versioned IRIs to the GitHub Pages host today (with
+# permissive CORS on every hop), so links stay valid if hosting ever moves.
+# Prefer this over SITE_BASE_URL for the published TTL / HTML / OntoCanvas links.
+W3ID_BASE_URL = "https://w3id.org/adiro"
+
 # OntoCanvas branding icon, reused from the previous HTML landing page.
 ONTOCANVAS_ICON_URL = "https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png"
 
@@ -422,7 +428,7 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
         title = ttl_file.stem.replace("_", " ").title()
         comment = extract_ontology_comment(ttl_file)
         dependencies = extract_adiro_dependencies(ttl_file)
-        ontocanvas_url = f"https://alelom.github.io/OntoCanvas/?onto={SITE_BASE_URL}/{html_filename}"
+        ontocanvas_url = f"https://alelom.github.io/OntoCanvas/?onto={W3ID_BASE_URL}/{html_filename}"
 
         lines.append(f"-   ### [{title}]({html_filename})")
         lines.append("")
@@ -558,7 +564,7 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path) ->
         title = stem.replace("_", " ").title()
         html_filename = f"{stem}.html"
         ontocanvas_url = (
-            f"https://alelom.github.io/OntoCanvas/?onto={SITE_BASE_URL}/{html_filename}"
+            f"https://alelom.github.io/OntoCanvas/?onto={W3ID_BASE_URL}/{html_filename}"
         )
 
         # Pages live in docs/ontologies/, one level below docs/img/, so relative
@@ -569,8 +575,8 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path) ->
         links_block = (
             f"[![OntoCanvas]({ONTOCANVAS_ICON_URL}){{ .ontocanvas-icon }} Open in OntoCanvas]"
             f"({ontocanvas_url}){{ .md-button target=_blank }}\n"
-            f"[:material-file-document-outline: TTL source]({SITE_BASE_URL}/{ttl_file.name}){{ .md-button }}\n"
-            f"[:material-file-code: pyLODE HTML]({SITE_BASE_URL}/{html_filename}){{ .md-button }}"
+            f"[:material-file-document-outline: TTL source]({W3ID_BASE_URL}/{ttl_file.name}){{ .md-button }}\n"
+            f"[:material-file-code: pyLODE HTML]({W3ID_BASE_URL}/{html_filename}){{ .md-button }}"
         )
 
         # Insert the links row directly under the H1 emitted by ttl2md.
