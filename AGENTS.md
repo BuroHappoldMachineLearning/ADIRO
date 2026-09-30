@@ -232,6 +232,13 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
     marker on it and fix what no longer holds. Two found this way in PR #76: UC-03's open-issues table still
     listed the inverse-property convention as pending months after it was decided, and the root `CHANGELOG.md`
     rollup showed `1.0.0` for three modules whose `.ttl` had said `2.0.0` since the w3id migration.
+  - **Write in ADIRO's own voice — authored, present-tense, current state.** Published docs state what ADIRO
+    *is* and *does*; they are not an agent's analysis of it. Write a settled choice as fact ("ADIRO uses X"),
+    not as advice ("we recommend X"): no "recommendation" / "implementation ideas" / "what not to do" framing,
+    no first-person ("I", "let me"), no meta-commentary about the writing process, and no stale "proposed"/"idea"
+    wording once the thing has shipped. Genuinely open items go in a short neutral "Open points" list or an
+    issue. Dated surveys/reviews may keep review framing but must be marked as such. (Full guidance: the `deploy`
+    skill, "Documentation voice".)
   - **Link every issue and article you mention.** A bare `#21` or `RES-46` is dead text on the published site
     and in anything copied out of it. Write GitHub issues as
     `[#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21)` and YouTrack items as

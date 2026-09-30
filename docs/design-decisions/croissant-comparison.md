@@ -1,12 +1,12 @@
 # Croissant, PROV-O and DAnO: what each does, and where Croissant fits ADIRO
 
-> Recorded evaluation for [#91](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/91): an in-depth look at
-> the [Croissant](https://mlcommons.org/working-groups/data/croissant/) metadata format, compared with what PROV-O
-> and DAnO do, and the resulting direction for ADIRO. The geometry conclusion is developed further in the new
-> `aec_geometry` module and [#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90).
+> How ADIRO relates to the [Croissant](https://mlcommons.org/working-groups/data/croissant/) metadata format,
+> set against PROV-O and DAnO. Background: [#91](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/91).
+> The geometry point is carried further by the `aec_geometry` module and
+> [#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90).
 
 !!! info "Where the decision lives"
-    Evaluation: [#91](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/91). Related design pages:
+    Background: [#91](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/91). Related design pages:
     [External ontology imports](external-ontology-imports.md), [DAnO comparison](dano-comparison.md),
     [Usage of annotation properties](usage-of-annotation-properties.md). Sources are linked inline and collected
     at the end.
@@ -20,10 +20,10 @@ inferred this value, from where, when, and with what confidence. A Croissant fil
 and how do I load it"; an `aec_provenance` `FieldAssertion` answers "how sure are we that *this* title block
 says *this* client, and what produced that reading". Both are useful, and they do not overlap where it matters.
 
-The recommendation, in one line: **keep `aec_provenance` (PROV-O-aligned) for in-graph, per-assertion
-provenance; adopt Croissant at the dataset-publication/discovery layer; and borrow Croissant's bounding-box
-`format` convention for the geometry work in [#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90)
-so ADIRO's boxes are recognised by mainstream ML tooling.**
+In short: **`aec_provenance` (PROV-O-aligned) carries in-graph, per-assertion provenance; Croissant is used at
+the dataset-publication and discovery layer; and `aec_geometry`'s bounding box borrows Croissant's `format`
+convention ([#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90)) so ADIRO's boxes are
+recognised by mainstream ML tooling.**
 
 ## 1. What Croissant is
 
@@ -86,7 +86,7 @@ between Croissant's per-dataset and `aec_provenance`'s per-assertion.
 | Encoding | JSON-LD on schema.org | OWL/RDF | OWL/RDF | OWL/RDF (Turtle) |
 | Provenance depth | Coarse: field←file/column/`extract`/`transform`; `version`; `sha256`; `citeAs`; RAI lifecycle | Full activity/agent model | `inferredBy/With/From/At`, `hasConfidence` | `inferredBy/With/From/At`, `hasConfidence`, `capturedCaption`, per-value |
 | Confidence | No per-value confidence | Not built-in | Per element | **Per assertion**, `xsd:decimal [0,1]` |
-| Geometry / bbox | **`cr:BoundingBox` + `format` (e.g. `CENTER_XYWH`)** | None | (geometry not its focus) | Proposed in [#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90) |
+| Geometry / bbox | **`cr:BoundingBox` + `format` (e.g. `CENTER_XYWH`)** | None | (geometry not its focus) | `aec_geometry:BoundingBox` ([#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90)) |
 | Tool recognition | Wide (HF, Kaggle, TFDS, Google Dataset Search) | Wide (semantic web) | Niche | ADIRO-specific |
 | Role for ADIRO | **Publish/discover the annotated dataset** | **Aligned to, in the core** | Compared, not reused | **The in-graph provenance model** |
 
@@ -97,73 +97,49 @@ reverse mistake.
 
 ## 5. Where each fits ADIRO
 
-- **`aec_provenance` (PROV-O-aligned) stays the in-graph provenance model.** Unchanged by this evaluation. It
-  is the right tool for the per-assertion confidence/agent/activity that UC-01 (and later UC-03) need, and
-  Croissant offers no equivalent.
+- **`aec_provenance` (PROV-O-aligned) is the in-graph provenance model.** It carries the per-assertion
+  confidence/agent/activity that UC-01 (and later UC-03) need, and Croissant offers no equivalent.
 - **Croissant fits at the dataset-publication layer**, not in the ontology. When an ADIRO-annotated corpus of
   drawings is published (for internal discovery/retrieval, or as a public evaluation dataset for the SPARQL
   competency-question work), a Croissant manifest is how it becomes findable and loadable by standard tooling.
   This is an *application of* ADIRO, not a change *to* it.
 - **DAnO stays a documented comparison**, not reused (see the [DAnO comparison](dano-comparison.md)).
 
-## 6. Implementation ideas for ADIRO
+## 6. How ADIRO uses Croissant
 
-Concrete, in rough priority order. None of these change the assertion model; they add a dataset-facing surface
-and borrow one useful convention.
+**In the ontology — the bounding-box `format` convention.** `aec_geometry:BoundingBox` records its rectangle as
+an `XYXY` string aligned to Croissant's `cr:BoundingBox` `XYXY` token, so an exporter can map an ADIRO box to
+Croissant/CV formats. ADIRO adds what Croissant leaves out: a `CoordinateFrame` (which PDF/page, units and
+origin the coordinates use) and the box's own provenance and confidence — a detection or a human annotation,
+distinct from confidence in the field *value*. See
+[#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90) and
+[Bounding boxes and coordinate frames](geometry-coordinate-frames.md).
 
-1. **A provenance-bearing `BoundingBox` in a new `aec_geometry` module — borrowing Croissant's `format`
-   convention — for [#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90).** Croissant standardises
-   *how a box is written* — `cr:BoundingBox` with a `format` token such as `CENTER_XYWH`, `XYWH` or `XYXY`. That
-   convention is worth borrowing so an ADIRO box can be mapped to CV tooling's formats by an exporter (ADIRO
-   stores a page-point xyxy *string*; Croissant expects a four-number array with a format declaration); but
-   Croissant carries only the shape, and a title-block box needs two things Croissant does not model:
-   - a **coordinate frame** — which PDF/page/units/origin the coordinates are relative to; and
-   - its **own provenance** — a box is itself an inferred claim (a detector localised it, with a confidence) or a
-     human annotation, and that is *distinct* from how confident we are of the field's *value*.
+**For dataset publication — outside the TBox.** When an ADIRO-annotated corpus is published, Croissant makes it
+findable and loadable by standard tooling without changing the ontology:
 
-   So ADIRO promotes the box to a **class**: `aec_geometry:BoundingBox`, a subclass of GeoSPARQL's `geo:Geometry`
-   (so UC-01 and UC-03 boxes reduce to the same spatial type), carrying its coordinates in an `XYXY` convention
-   aligned to Croissant's token, an `inCoordinateFrame` link to a `CoordinateFrame` (the PDF-page context), and —
-   by being an inferred entity — its own `hasInferenceMeta` / `hasConfidence` from `aec_provenance` (who/what/when
-   produced it, model-vs-human, and with what score). This unifies with the UC-03 geometry design (`geo:Geometry`
-   + `CoordinateFrame`, primary space `page_display_pt`) so the module is shared, and it fixes the confidence-on-
-   geometry problem UC-03 flagged (see item 2). Detail in [#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90).
-2. **Emit a Croissant manifest for a published ADIRO dataset.** Model the extracted graph as a `cr:RecordSet`
-   whose `cr:Field`s are semantically typed to ADIRO field-kinds/properties via `dataType` /
-   `equivalentProperty` (the hook from §1). The Croissant file describes *the dataset*; the semantic types point
-   *into ADIRO*. This is the clean bridge and needs no ontology change — it is a serialisation concern for the
-   publication step.
-3. **Use the RAI extension to document the extraction pipeline at corpus level.** How the ML pipeline collected
-   and produced the ABox (data-collection, annotation protocol) is exactly what RAI is for, and it complements
-   — does not duplicate — the `InferenceMeta` model. `InferenceMeta` describes the inference *activity* that
-   produced a result (and may be shared by several results — a result's own confidence is carried separately, per
-   result); RAI says how *the corpus* was built.
-4. **Reuse the dataset-level vocabulary we already partly use.** ADIRO module headers already carry
-   `dcterms:` (title, licence, creator, publisher). A published-dataset Croissant manifest can carry the same
-   schema.org/Dublin-Core fields (`license`, `version`, `citeAs`, `datePublished`), keeping the metadata story
-   consistent from ontology to dataset.
+- A **Croissant manifest** models the corpus as a `cr:RecordSet` whose `cr:Field`s are semantically typed back
+  into ADIRO field-kinds/properties via `dataType` / `equivalentProperty` (§1). The manifest describes the
+  dataset; the semantic types point into ADIRO.
+- The **RAI extension** documents the extraction pipeline at corpus level (data collection, labelling protocol).
+  It complements the `InferenceMeta` model rather than duplicating it: `InferenceMeta` describes the inference
+  *activity* behind a result (and may be shared by several results, with confidence carried per result), while
+  RAI describes how the whole corpus was built.
+- The **dataset-level vocabulary** ADIRO already uses in its module headers (`dcterms:` title, licence, creator,
+  publisher) carries over to a manifest's schema.org / Dublin-Core fields (`license`, `version`, `citeAs`,
+  `datePublished`), keeping the metadata consistent from ontology to dataset.
 
-**What not to do:**
+Croissant does not replace `aec_provenance` — it has no per-assertion confidence, agent or activity for an
+individual field value — and its terms do not enter the ADIRO TBox: the two meet only at publication time,
+through semantic typing that points into ADIRO.
 
-- **Do not replace `aec_provenance` with Croissant.** Wrong granularity — Croissant has no per-assertion
-  confidence, agent or activity for an individual field value.
-- **Do not put Croissant terms in the ADIRO TBox.** Croissant describes datasets, not the ontology; the two
-  meet only at publication time, through semantic typing that points into ADIRO.
+## Open points
 
-## 7. Recommendation
+For the future dataset-publication work:
 
-Croissant is **complementary and adopted at the dataset layer**, PROV-O stays **aligned-to in the core**, DAnO
-stays a **documented comparison**. The one place Croissant changes near-term ADIRO work is geometry: its
-bounding-box `format` convention should shape [#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90)
-so ADIRO's boxes — shared by UC-01 and UC-03 — are standards-aligned rather than bespoke.
-
-## Open questions
-
-- Should the ADIRO `BoundingBox` `format` values be *exactly* Croissant's tokens, or a superset (adding a
-  reference-frame token Croissant lacks)?
-- Where does the Croissant manifest for a published dataset live — generated by the inference/publication
-  pipeline, or checked in alongside a public evaluation dataset?
-- Does the RAI lifecycle documentation belong with the dataset, or cross-referenced from a design page here?
+- Where a published dataset's Croissant manifest lives — generated by the inference/publication pipeline, or
+  checked in alongside a public evaluation dataset.
+- Whether the RAI lifecycle documentation sits with the dataset or is cross-referenced from a design page here.
 
 ## Sources
 

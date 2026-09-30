@@ -33,6 +33,20 @@ keep-in-sync rules are in `AGENTS.md`.
   paragraph that generalises the module's *role* in the suite (what it is for, where it sits in the import
   chain) — not a verbose list of its classes. Simple, short sentences; consistent style across modules.
 
+## Documentation voice
+Published docs must read as **ADIRO's own, authored, current state** — not as an agent's analysis of it.
+- **State what ADIRO *is* and *does***, in plain, declarative prose. Reference pages (design-decisions,
+  specification, the ontology `rdfs:comment` descriptions) describe the current design, not a process of
+  arriving at it.
+- **No recommendation / deliberation framing:** avoid "recommendation", "implementation ideas", "what not to
+  do", "we should", "proposal", and first-person ("I", "let me", "want me to"). Where ADIRO made a choice,
+  write the choice as fact ("ADIRO uses X"), not as advice ("we recommend X").
+- **No meta-commentary** about the writing/agent process, and **no stale "proposed"/"idea" wording** once the
+  thing has shipped (e.g. a module that now exists is described in the present tense, not "proposed").
+- **Genuinely open items** go in a short, neutral "Open points" list (or an issue), not as recommendations.
+- **Dated research artifacts** (surveys, reviews) may keep review framing, but must be clearly marked as such
+  (dated, and superseded-in-part where relevant).
+
 ## Related
 - KB: DATA-A-10 (ADIRO versioning), MAN-A-13 (team KB).
 - Shared: the `orientation` skill and `tools:youtrack`.
