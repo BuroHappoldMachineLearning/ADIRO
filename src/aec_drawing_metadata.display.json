@@ -30,12 +30,12 @@
       "y": -124
     },
     "Project": {
-      "x": -2754,
-      "y": 26
+      "x": -3006,
+      "y": -20
     },
     "DrawingPackage": {
-      "x": -2586,
-      "y": -126
+      "x": -2835,
+      "y": -181
     },
     "Person": {
       "x": -4895,
@@ -54,8 +54,8 @@
       "y": 1068
     },
     "TextualNote": {
-      "x": -3880,
-      "y": 857
+      "x": -3958,
+      "y": 862
     },
     "MetadataContainer": {
       "x": -3741,
@@ -101,165 +101,77 @@
       "x": -4764,
       "y": 1130
     },
-    "__dataprop__Titleblock__assertsCrossReferenceNumber": {
-      "x": -3515,
-      "y": 848
+    "https://w3id.org/adiro/aec_geometry#CoordinateFrame": {
+      "x": -3708,
+      "y": -498
     },
-    "__dataprop__Titleblock__hasScale": {
-      "x": -3332,
-      "y": 848
+    "__dataprop__Titleblock__assertsCrossReferenceNumber": {
+      "x": -3459,
+      "y": 845
     },
     "__dataprop__DrawingSheet__drawingIdentifier": {
-      "x": -3896,
-      "y": -102
+      "x": -3880,
+      "y": -110
     },
     "__dataprop__DrawingSheet__drawingTitle": {
-      "x": -3735,
-      "y": -102
+      "x": -3675,
+      "y": -116
     },
     "__dataprop__DrawingSheet__hasScale": {
-      "x": -3608,
-      "y": -102
+      "x": -3548,
+      "y": -116
     },
     "__dataprop__DrawingSheet__sheetSize": {
-      "x": -3491,
-      "y": -102
-    },
-    "__dataprop__OrientationValue__hasScale": {
-      "x": -5490,
-      "y": 1490
-    },
-    "__dataprop__Section__hasScale": {
-      "x": -5373,
-      "y": 1187
-    },
-    "__dataprop__Detail__hasScale": {
-      "x": -5614,
-      "y": 1187
+      "x": -3776,
+      "y": -107
     },
     "__dataprop__Layout__hasScale": {
       "x": -5013,
-      "y": 572
+      "y": 569
     },
     "__dataprop__Layout__layoutIdentifier": {
       "x": -4870,
-      "y": 572
+      "y": 569
     },
     "__dataprop__Layout__layoutTitle": {
       "x": -4927,
-      "y": 647
-    },
-    "__dataprop__LayoutContentType__hasScale": {
-      "x": -4961,
-      "y": 1034
-    },
-    "__dataprop__DrawingRevision__hasScale": {
-      "x": -4756,
-      "y": -50
+      "y": 644
     },
     "__dataprop__DrawingRevision__issueDate": {
-      "x": -4639,
-      "y": -50
+      "x": -4694,
+      "y": -53
     },
     "__dataprop__DrawingRevision__revisionCode": {
-      "x": -4508,
-      "y": -50
-    },
-    "__dataprop__Project__hasScale": {
-      "x": -2896,
-      "y": 97
-    },
-    "__dataprop__Project__projectName": {
-      "x": -2772,
-      "y": 97
-    },
-    "__dataprop__Project__projectNumber": {
-      "x": -2630,
-      "y": 97
-    },
-    "__dataprop__DrawingPackage__hasScale": {
-      "x": -2649,
-      "y": -54
-    },
-    "__dataprop__DrawingPackage__packageName": {
-      "x": -2525,
-      "y": -54
-    },
-    "__dataprop__Person__hasScale": {
-      "x": -4958,
-      "y": 232
-    },
-    "__dataprop__Person__personName": {
-      "x": -4838,
-      "y": 232
-    },
-    "__dataprop__StatusCode__hasScale": {
-      "x": -4511,
-      "y": 226
-    },
-    "__dataprop__StatusCode__statusLabel": {
-      "x": -4387,
-      "y": 226
-    },
-    "__dataprop__Organisation__hasScale": {
-      "x": -3491,
-      "y": 1145
+      "x": -4563,
+      "y": -53
     },
     "__dataprop__Organisation__organisationName": {
-      "x": -3348,
-      "y": 1145
+      "x": -3402,
+      "y": 1138
     },
-    "__dataprop__TextualNote__hasScale": {
-      "x": -3880,
-      "y": 900
+    "__dataprop__DrawingPackage__packageName": {
+      "x": -2835,
+      "y": -110
+    },
+    "__dataprop__Person__personName": {
+      "x": -4895,
+      "y": 225
+    },
+    "__dataprop__Project__projectName": {
+      "x": -3080,
+      "y": 50
+    },
+    "__dataprop__Project__projectNumber": {
+      "x": -2938,
+      "y": 50
     },
     "__dataprop__TextualNote__refersToDrawingId": {
-      "x": -3880,
-      "y": 975
+      "x": -3958,
+      "y": 933
     },
-    "__dataprop__MetadataContainer__hasScale": {
-      "x": -3741,
-      "y": 484
-    },
-    "__dataprop__KeyPlan__hasScale": {
-      "x": -3246,
-      "y": 729
-    },
-    "__dataprop__Legend__hasScale": {
-      "x": -4263,
-      "y": 855
-    },
-    "__dataprop__RevisionTable__hasScale": {
-      "x": -3756,
-      "y": 728
-    },
-    "__dataprop__Note__hasScale": {
-      "x": -4012,
-      "y": 737
-    },
-    "__dataprop__Image__hasScale": {
-      "x": -4061,
-      "y": 905
-    },
-    "__dataprop__DrawingElement__hasScale": {
-      "x": -5224,
-      "y": 574
-    },
-    "__dataprop__Plan__hasScale": {
-      "x": -4482,
-      "y": 1187
-    },
-    "__dataprop__Elevation__hasScale": {
-      "x": -5090,
-      "y": 1187
-    },
-    "__dataprop__Table__hasScale": {
-      "x": -4296,
-      "y": 1187
-    },
-    "__dataprop__Perspective__hasScale": {
-      "x": -4751,
-      "y": 1187
+    "__dataprop__StatusCode__statusLabel": {
+      "x": -4444,
+      "y": 219
     }
   },
   "edgeStyleConfig": {
@@ -267,6 +179,12 @@
       "show": true,
       "showLabel": true,
       "color": "#8026d9",
+      "lineType": "solid"
+    },
+    "hasCoordinateFrame": {
+      "show": true,
+      "showLabel": true,
+      "color": "#5c26d9",
       "lineType": "solid"
     },
     "hasOrientation": {
@@ -365,6 +283,12 @@
       "color": "#8026d9",
       "lineType": "solid"
     },
+    "https://w3id.org/adiro/aec_drawing_metadata#hasCoordinateFrame": {
+      "show": true,
+      "showLabel": true,
+      "color": "#5c26d9",
+      "lineType": "solid"
+    },
     "https://w3id.org/adiro/aec_drawing_metadata#hasOrientation": {
       "show": true,
       "showLabel": true,
@@ -380,7 +304,7 @@
   },
   "wrapChars": 12,
   "minFontSize": 20,
-  "maxFontSize": 70,
+  "maxFontSize": 60,
   "relationshipFontSize": 18,
   "dataPropertyFontSize": 12,
   "layoutMode": "hierarchical-dag",
@@ -460,6 +384,30 @@
       },
       "extractionHint": {
         "rules": []
+      },
+      "definition": {
+        "rules": []
+      },
+      "example": {
+        "rules": []
+      },
+      "expectedRange": {
+        "rules": []
+      },
+      "inScheme": {
+        "rules": []
+      },
+      "mapsToFieldProperty": {
+        "rules": []
+      },
+      "note": {
+        "rules": []
+      },
+      "prefLabel": {
+        "rules": []
+      },
+      "scopeNote": {
+        "rules": []
       }
     },
     "defaultStyle": {
@@ -478,13 +426,21 @@
     "publisher",
     "title",
     "altLabel",
-    "extractionHint"
+    "extractionHint",
+    "definition",
+    "example",
+    "expectedRange",
+    "inScheme",
+    "mapsToFieldProperty",
+    "note",
+    "prefLabel",
+    "scopeNote"
   ],
   "viewState": {
-    "scale": 0.385658531078231,
+    "scale": 0.5772351860134053,
     "position": {
-      "x": -3423.1569938435077,
-      "y": 319.82825181155846
+      "x": -4066.9888889973304,
+      "y": 143.93665141646238
     }
   },
   "displayExternalReferences": true,
