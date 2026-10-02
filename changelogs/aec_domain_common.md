@@ -7,6 +7,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+### Added
+- **`rdfs:comment` descriptions for the 47 previously-undescribed terms** — the shared materials and facing
+  materials, section shapes, generic shapes and symmetry, structural properties, structural
+  components/members, and disciplines. Each is a short plain-language definition consistent with the term's
+  place in the taxonomy. Clears this module from the `#87` undescribed-terms backlog. Annotation-only,
+  non-breaking.
+
 ## [2.0.0] — 2026-08-10
 
 ### Changed (BREAKING)

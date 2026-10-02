@@ -22,6 +22,36 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-02 — Describe the generic undescribed terms (#87, partial)
+
+**Branch:** `describe-easy-terms` · **PR:** (draft) · partial progress on [#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87)
+
+### What changed
+
+Added `rdfs:comment` to the **50 generic undescribed terms** the validator flags — the 47 in
+`aec_domain_common` (materials, facing materials, section shapes, generic shapes, symmetry, structural
+properties/components/members, disciplines) and the 3 `OrientationValue` individuals in
+`aec_drawing_metadata` (`Horizontal`/`Vertical`/`Undefined`). Each is a short plain-language definition
+consistent with the term's place in the taxonomy. Inserted by a one-off script (each label matched exactly
+once). Changelogs updated.
+
+**Deliberately skipped:** the **80 specialised facade terms** (`aec_facade_domain`) — curtain-wall systems,
+glazing units, framing members, etc. — which need domain knowledge to define accurately. Left for a facade
+expert / a later pass.
+
+Opened as a **draft** PR for review: some of the softer domain_common guesses (`Function`, `Restraint`,
+`Chord/bracing`, `Upstand`, `Masterplan`) may want tweaking or removing.
+
+### Verified
+
+- `validate_ontology.py` → `aec_common_symbols`, `aec_domain_common`, `aec_drawing_metadata` now at **0**
+  undescribed; only `aec_facade_domain` (80) remains. `generate_docs.py` → 6/6. `ENFORCE=1 run_reasoning.sh`
+  → consistent + satisfiable, ERROR 0 / WARN 0 / INFO 25 (unchanged — annotation-only).
+
+### Next step
+
+Review the draft; adjust/remove any definitions; decide whether/when to tackle the facade terms.
+
 ## 2026-10-01 — Add `:ProjectNumberField` and `:SheetSizeField` to the title-block scheme
 
 **Branch:** `add-projectnumber-sheetsize-fields` · **PR:** (open) · post-merge follow-up to #76

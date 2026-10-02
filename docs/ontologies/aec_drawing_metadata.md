@@ -619,17 +619,23 @@ When true, this class can be used as a label by annotators (solid contour in dia
 
 ### Horizontal {#Horizontal}
 
+Horizontal orientation.
+
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Horizontal`
 - **Type:** [Orientation](#OrientationValue)
 - **Labellable root:** true
 
 ### Undefined {#Undefined}
 
+Orientation not specified.
+
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Undefined`
 - **Type:** [Orientation](#OrientationValue)
 - **Labellable root:** true
 
 ### Vertical {#Vertical}
+
+Vertical orientation.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Vertical`
 - **Type:** [Orientation](#OrientationValue)

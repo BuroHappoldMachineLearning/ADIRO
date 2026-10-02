@@ -458,14 +458,17 @@
 
 :Undefined rdf:type owl:NamedIndividual, :OrientationValue ;
     rdfs:label "Undefined" ;
+    rdfs:comment "Orientation not specified." ;
     :labellableRoot "true"^^xsd:boolean.
 
 :Horizontal rdf:type owl:NamedIndividual, :OrientationValue ;
     rdfs:label "Horizontal" ;
+    rdfs:comment "Horizontal orientation." ;
     :labellableRoot "true"^^xsd:boolean.
 
 :Vertical rdf:type owl:NamedIndividual, :OrientationValue ;
     rdfs:label "Vertical" ;
+    rdfs:comment "Vertical orientation." ;
     :labellableRoot "true"^^xsd:boolean.
 
 #################################################################
