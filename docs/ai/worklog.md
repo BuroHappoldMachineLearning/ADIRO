@@ -22,6 +22,35 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-01 — Add `:ProjectNumberField` and `:SheetSizeField` to the title-block scheme
+
+**Branch:** `add-projectnumber-sheetsize-fields` · **PR:** (open) · post-merge follow-up to #76
+
+### Why
+
+`aec_drawing_metadata` already declared `:projectNumber` and `:sheetSize` as datatype properties, but neither
+had a `TitleblockFieldScheme` concept pointing at it (no `aprov:mapsToFieldProperty`), so an extraction pipeline
+had no way to discover them. Both are common printed title-block fields (Project No. pairs with Project Title;
+sheet size is a standard `A1`/`A0` field).
+
+### What changed (`src/aec_drawing_metadata.ttl`, additive)
+
+- Added `:ProjectNumberField` (→ `:projectNumber`) and `:SheetSizeField` (→ `:sheetSize`), following the exact
+  pattern of the existing field concepts (`skos:definition`, `@en`/`@de` `prefLabel`/`altLabel`, `inScheme`,
+  `expectedRange xsd:string`, `mapsToFieldProperty`; `skos:example` `A1`/`A0` for sheet size). Changelog updated.
+- German synonyms (`Projektnummer`, `Blattgröße`, `Format`) are **provisional** — not verified against real
+  sheets the way the existing ones are; flagged in the PR for review.
+
+### Verified
+
+- `validate_ontology.py` → metadata OK (only the pre-existing `Horizontal`/`Undefined`/`Vertical` enum
+  warnings). `generate_docs.py` → 6/6. `ENFORCE=1 run_reasoning.sh` → consistent + satisfiable, ERROR 0 / WARN 0
+  / INFO 25 (unchanged — the two new SKOS concepts add no violations). No altLabel collisions.
+
+### Next step
+
+Open the PR; it runs clean through `validate-ontology.yml` and the reasoner gate.
+
 ## 2026-09-28 — New `aec_geometry` module (bounding boxes + coordinate frames); Croissant evaluation
 
 **Issue:** [#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90), [#91](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/91) · **PR:** #76 · **Branch:** `aec-provenance-model`

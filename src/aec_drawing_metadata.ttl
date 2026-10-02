@@ -656,6 +656,25 @@
     aprov:expectedRange xsd:string ;
     aprov:mapsToFieldProperty :projectName .
 
+:ProjectNumberField rdf:type skos:Concept ;
+    rdfs:label "Project Number Field" ;
+    skos:definition "The number assigned to the project the drawing belongs to."@en ;
+    skos:prefLabel "Project Number"@en , "Projektnummer"@de ;
+    skos:altLabel "Project No."@en , "Proj. No."@en ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    aprov:mapsToFieldProperty :projectNumber .
+
+:SheetSizeField rdf:type skos:Concept ;
+    rdfs:label "Sheet Size Field" ;
+    skos:definition "The paper/sheet size designation of the drawing."@en ;
+    skos:prefLabel "Sheet Size"@en , "Blattgröße"@de ;
+    skos:altLabel "Size"@en , "Format"@en ;
+    skos:example "A1" , "A0" ;
+    skos:inScheme :TitleblockFieldScheme ;
+    aprov:expectedRange xsd:string ;
+    aprov:mapsToFieldProperty :sheetSize .
+
 :DrawingPackageField rdf:type skos:Concept ;
     rdfs:label "Drawing Package Field" ;
     skos:definition "The package, volume or submission grouping the drawing belongs to."@en ;
