@@ -1,0 +1,133 @@
+{
+  "version": 1,
+  "nodePositions": {
+    "Geometry": {
+      "x": -1073,
+      "y": 195
+    },
+    "BoundingBox": {
+      "x": -721,
+      "y": 369
+    },
+    "CoordinateFrame": {
+      "x": -1072,
+      "y": 369
+    },
+    "https://w3id.org/adiro/aec_provenance#InferredEntity": {
+      "x": -721,
+      "y": 189
+    },
+    "__dataprop__BoundingBox__bboxXYXY": {
+      "x": -720,
+      "y": 446
+    },
+    "__dataprop__CoordinateFrame__coordinateSpace": {
+      "x": -1256,
+      "y": 420
+    },
+    "__dataprop__CoordinateFrame__displayHeightPt": {
+      "x": -1255,
+      "y": 470
+    },
+    "__dataprop__CoordinateFrame__displayWidthPt": {
+      "x": -911,
+      "y": 415
+    },
+    "__dataprop__CoordinateFrame__frameArtifactRef": {
+      "x": -1199,
+      "y": 527
+    },
+    "__dataprop__CoordinateFrame__pageIndex": {
+      "x": -904,
+      "y": 464
+    },
+    "__dataprop__CoordinateFrame__pdfRotationDeg": {
+      "x": -1110,
+      "y": 486
+    },
+    "__dataprop__CoordinateFrame__profileRef": {
+      "x": -971,
+      "y": 519
+    },
+    "__dataprop__CoordinateFrame__unit": {
+      "x": -1048,
+      "y": 550
+    }
+  },
+  "edgeStyleConfig": {
+    "hasBoundingBox": {
+      "show": true,
+      "showLabel": true,
+      "color": "#8026d9",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/aec_geometry#inCoordinateFrame": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d92626",
+      "lineType": "solid"
+    },
+    "subClassOf": {
+      "show": true,
+      "showLabel": false,
+      "color": "#000000",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/aec_geometry#hasBoundingBox": {
+      "show": true,
+      "showLabel": true,
+      "color": "#8026d9",
+      "lineType": "solid"
+    }
+  },
+  "wrapChars": 12,
+  "minFontSize": 20,
+  "maxFontSize": 20,
+  "relationshipFontSize": 18,
+  "dataPropertyFontSize": 12,
+  "layoutMode": "hierarchical-dag",
+  "searchQuery": "",
+  "includeNeighbors": false,
+  "exactMatch": true,
+  "annotationStyleConfig": {
+    "booleanProps": {},
+    "textProps": {
+      "creator": {
+        "rules": []
+      },
+      "description": {
+        "rules": []
+      },
+      "license": {
+        "rules": []
+      },
+      "publisher": {
+        "rules": []
+      },
+      "title": {
+        "rules": []
+      }
+    },
+    "defaultStyle": {
+      "fillColor": "#bdc3c7",
+      "borderColor": "#000000",
+      "borderLineType": "solid"
+    }
+  },
+  "annotationPropertyOrder": [
+    "creator",
+    "description",
+    "license",
+    "publisher",
+    "title"
+  ],
+  "viewState": {
+    "scale": 1,
+    "position": {
+      "x": -854.20947265625,
+      "y": 325
+    }
+  },
+  "displayExternalReferences": true,
+  "externalNodeLayout": "auto"
+}
