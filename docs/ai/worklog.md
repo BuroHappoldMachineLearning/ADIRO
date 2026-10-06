@@ -22,6 +22,21 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-06 — Fix the two failing "Generate and Deploy Documentation" runs
+
+- **Issue:** none filed (CI maintenance). **Branch:** `main` (uncommitted at time of writing).
+- **Failures:** run 37488574638 (`generate-docs`) — bot's `git push` rejected non-fast-forward because a second
+  push to `main` (`a2ee7dc`) landed ~40 s after the first (`4884917`) while it was generating; deploy and
+  check-links were skipped. Run 37488671653 (`check-links`) — lychee exit 2 solely from 5 timeouts on
+  `https://www.gnu.org/licenses/gpl-3.0.html` (pyLODE footer on every page); 0 real errors.
+- **Changed:** `generate-deploy-docs.yml` — added a `concurrency` group (no cancel) so runs serialise, and
+  `git pull --rebase` before the bot push; lychee gets `--max-retries 3 --retry-wait-time 5 --timeout 30`;
+  `.lycheeignore` excludes `www.gnu.org/licenses/` (flaky from runners, pyLODE-generated, not ours).
+- **Verified:** diagnosis from run logs only; fixes **not** exercised — needs a push to `main` to confirm.
+- **Next step:** after merging, confirm the next two back-to-back pushes both go green.
+
+---
+
 ## 2026-10-02 — Describe the generic undescribed terms (#87, partial)
 
 **Branch:** `describe-easy-terms` · **PR:** (draft) · partial progress on [#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87)
