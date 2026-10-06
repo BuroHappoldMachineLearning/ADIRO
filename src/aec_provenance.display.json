@@ -1,0 +1,247 @@
+{
+  "version": 1,
+  "nodePositions": {
+    "Entity": {
+      "x": 368,
+      "y": 236
+    },
+    "Activity": {
+      "x": 6,
+      "y": 240
+    },
+    "Agent": {
+      "x": 12,
+      "y": 879
+    },
+    "InferredEntity": {
+      "x": 366,
+      "y": 415
+    },
+    "FieldAssertion": {
+      "x": 435,
+      "y": 626
+    },
+    "InferenceMeta": {
+      "x": 8,
+      "y": 619
+    },
+    "http://www.w3.org/2004/02/skos/core#Concept": {
+      "x": 435,
+      "y": 904
+    },
+    "__dataprop__FieldAssertion__capturedCaption": {
+      "x": 329,
+      "y": 709
+    },
+    "__dataprop__FieldAssertion__hasLiteralValue": {
+      "x": 528,
+      "y": 706
+    },
+    "__dataprop__InferredEntity__hasConfidence": {
+      "x": 364,
+      "y": 540
+    },
+    "__dataprop__InferenceMeta__inferredAt": {
+      "x": 8,
+      "y": 744
+    },
+    "__dataprop__unattached__endedAtTime": {
+      "x": 220,
+      "y": 1024
+    }
+  },
+  "edgeStyleConfig": {
+    "assertedAbout": {
+      "show": true,
+      "showLabel": true,
+      "color": "#8026d9",
+      "lineType": "solid"
+    },
+    "assertedBy": {
+      "show": true,
+      "showLabel": true,
+      "color": "#4a26d9",
+      "lineType": "solid"
+    },
+    "assertsFieldKind": {
+      "show": true,
+      "showLabel": true,
+      "color": "#264ad9",
+      "lineType": "solid"
+    },
+    "hasValueEntity": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26b5d9",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/aec_provenance#hasInferenceMeta": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26d991",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/aec_provenance#inferredBy": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26d926",
+      "lineType": "solid"
+    },
+    "inferredFrom": {
+      "show": true,
+      "showLabel": true,
+      "color": "#91d926",
+      "lineType": "solid"
+    },
+    "inferredWith": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d9c726",
+      "lineType": "solid"
+    },
+    "subClassOf": {
+      "show": true,
+      "showLabel": false,
+      "color": "#000000",
+      "lineType": "solid"
+    },
+    "used": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d99126",
+      "lineType": "solid"
+    },
+    "wasAssociatedWith": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d95c26",
+      "lineType": "solid"
+    },
+    "wasGeneratedBy": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d92626",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/aec_provenance#assertedAbout": {
+      "show": true,
+      "showLabel": true,
+      "color": "#8026d9",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/aec_provenance#assertedBy": {
+      "show": true,
+      "showLabel": true,
+      "color": "#4a26d9",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/aec_provenance#assertsFieldKind": {
+      "show": true,
+      "showLabel": true,
+      "color": "#264ad9",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/aec_provenance#hasValueEntity": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26b5d9",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/aec_provenance#inferredFrom": {
+      "show": true,
+      "showLabel": true,
+      "color": "#91d926",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/aec_provenance#inferredWith": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d9c726",
+      "lineType": "solid"
+    },
+    "http://www.w3.org/ns/prov#used": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d99126",
+      "lineType": "solid"
+    },
+    "http://www.w3.org/ns/prov#wasAssociatedWith": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d95c26",
+      "lineType": "solid"
+    },
+    "http://www.w3.org/ns/prov#wasGeneratedBy": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d92626",
+      "lineType": "solid"
+    }
+  },
+  "wrapChars": 12,
+  "minFontSize": 20,
+  "maxFontSize": 70,
+  "relationshipFontSize": 18,
+  "dataPropertyFontSize": 12,
+  "layoutMode": "hierarchical-dag",
+  "searchQuery": "",
+  "includeNeighbors": false,
+  "exactMatch": true,
+  "annotationStyleConfig": {
+    "booleanProps": {},
+    "textProps": {
+      "creator": {
+        "rules": []
+      },
+      "description": {
+        "rules": []
+      },
+      "expectedRange": {
+        "rules": []
+      },
+      "license": {
+        "rules": []
+      },
+      "mapsToFieldProperty": {
+        "rules": []
+      },
+      "maxInclusive": {
+        "rules": []
+      },
+      "minInclusive": {
+        "rules": []
+      },
+      "publisher": {
+        "rules": []
+      },
+      "title": {
+        "rules": []
+      }
+    },
+    "defaultStyle": {
+      "fillColor": "#bdc3c7",
+      "borderColor": "#000000",
+      "borderLineType": "solid"
+    }
+  },
+  "annotationPropertyOrder": [
+    "creator",
+    "description",
+    "expectedRange",
+    "license",
+    "mapsToFieldProperty",
+    "maxInclusive",
+    "minInclusive",
+    "publisher",
+    "title"
+  ],
+  "viewState": {
+    "scale": 0.724986386004515,
+    "position": {
+      "x": 192.3580944967448,
+      "y": 565.8645981003849
+    }
+  },
+  "displayExternalReferences": true,
+  "externalNodeLayout": "auto"
+}
