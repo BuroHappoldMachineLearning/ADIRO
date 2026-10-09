@@ -527,3 +527,5 @@
     rdfs:label "Zig-zag";
     metadata:labellableRoot "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeShape.
+:ZzGuidanceTestTerm a owl:Class ;
+    rdfs:label "Zz guidance test term" .
