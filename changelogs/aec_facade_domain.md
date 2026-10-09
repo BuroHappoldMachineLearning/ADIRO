@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+### Changed
+- Scratch change used to test the Release PR bot (not a real release).
+
 ## [2.0.0] — 2026-08-10
 
 ### Changed (BREAKING)
