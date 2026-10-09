@@ -33,6 +33,19 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-09 — Bot work closed out: fork path verified, #106 closed, ideas moved to a Discussion
+
+After [#111](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/111) merged, the fork workflow was tested on a real fork
+(`alelom/ADIRO`, two throwaway PRs, both closed unmerged, fork branches deleted; the fork repo itself still exists under the
+maintainer's account): a normal fork PR got the version-impact and "Required improvements" comments from the bot with the preview
+link on the fork's branch, and the reasoner's report went to the job summary; a PR carrying a symlink as `src/x.ttl` was refused
+at the data step and posted nothing. Result recorded on [#113](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/113)
+(closed). Not exercised on GitHub: a fork that deletes a module (unit tests only), and removal of a legacy `github-actions[bot]`
+comment. [#106](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/106) was closed with its body rewritten to state what
+shipped; the remaining ideas are in [Discussion #116](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/116) for
+public input. Guidance comment later changed to: title "Required improvements", plain bullets, no intro paragraph, and it exists
+only while something needs fixing (previews ride along with the improvements).
+
 ## 2026-10-09 — ADIRO Bot posts all PR comments; new PR guidance comment ([#106](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/106))
 
 Agreed with the maintainer: all three PR comments are authored by the ADIRO Bot, the guidance comment is one
