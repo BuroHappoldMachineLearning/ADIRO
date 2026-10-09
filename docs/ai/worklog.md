@@ -51,8 +51,11 @@ alone but conflict together are caught. Design choices: a separate small workflo
 where "blocking" can only mean a red run plus the failure notification, since the merge has happened; no comment (no PR), the result
 goes to the job summary; `cancel-in-progress` because only the latest `main` matters. Verified locally (`ENFORCE=1` run, rc 0) and on
 GitHub through a scratch branch that also triggers the workflow: a clean suite passes, and a deliberately unsatisfiable class fails
-the run (HermiT named `ZzUnsat`, exit 1, summary step still wrote). Not done: automatic issue creation on failure (a failed run notifies the merger; add if that proves
-too quiet). `AGENTS.md` and `release-process.md` updated.
+the run (HermiT named `ZzUnsat`, exit 1, summary step still wrote). Added at the maintainer's request: a failing run opens one tracking issue ("Ontology reasoning fails on
+main", created with the ADIRO Bot token so the one-way issue mirror picks it up; falls back to `GITHUB_TOKEN` if the app token
+cannot be created), comments on it while later runs keep failing, and closes it when a run passes; a cancelled run leaves it alone.
+Verified end to end on a scratch branch (open on the first failure, comment on the second, closed as completed by the passing run;
+the test issue was mirrored to the tracker and resolved on close). `AGENTS.md` and `release-process.md` updated.
 
 ## 2026-10-09 — Bot work closed out: fork path verified, #106 closed, ideas moved to a Discussion
 

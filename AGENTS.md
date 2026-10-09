@@ -102,7 +102,9 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
   `main` itself with `ENFORCE=1`. The PR check reasons over a PR merged into the base **as it was at the PR's last
   push**, so two PRs that each pass can still conflict once both are in; this run catches that. A merge cannot be blocked
   after the fact, so a failure is a red run on `main` (and a notification to whoever merged): fix forward in a PR. No
-  comment is posted; the result is in the job summary.
+  comment is posted; the result is in the job summary. A failure also opens **one** issue, "Ontology reasoning fails on
+  main" (as the ADIRO Bot, so the issue mirror sees it), comments on it while later runs keep failing, and closes it when
+  a run passes.
 
 **After any `.ttl` edit, validate immediately:**
 `uv run python scripts/validate_ontology.py src/<file>.ttl` (or with no arg to validate all of `src/`).
