@@ -25,7 +25,7 @@ threads*, which commits do not carry.
 ## 2026-10-09 — Fix snapshot → Pages deploy in `backup-version.yml` ([#100](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/100))
 
 - **Changed:** `backup-version.yml` now dispatches `generate-deploy-docs.yml` after pushing a snapshot (a `GITHUB_TOKEN` push does not trigger it); `git pull --rebase` before the snapshot push; new `workflow_dispatch` trigger with a `tag` input so the job can be started for an existing tag (needed by the Release PR bot, [#99](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/99)); `actions: write` permission; tag read via `env` instead of inline expression. `release-process.md` updated to match.
-- **Verified:** see the follow-up line below once the dispatch run has been checked.
+- **Verified (partly):** `workflow_dispatch -f tag=aec_domain_common-v2.0.1` ran green end to end (tag parse, tag/version check, snapshot, release-notes edit). The snapshot already existed, so nothing was pushed and the new "Publish the snapshot to GitHub Pages" step was **skipped** — the `GITHUB_TOKEN` dispatch of `generate-deploy-docs.yml` is **not yet exercised**. [#100](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/100) stays open until the next real release shows a deploy run started by the snapshot job.
 - **Next step:** Release PR bot ([#99](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/99)).
 
 ---
