@@ -118,7 +118,7 @@ def render(modules, unregistered, repo):
     previews = [(m["name"], m["preview"]) for m in modules if m["preview"]]
     if not fixes and not unregistered and not previews:
         return ""
-    out = [MARKER, "## 🤖 ADIRO Bot: what to do on this PR", "",
+    out = [MARKER, "## PR checklist: what to fix before review, and where to preview your changes", "",
            "Guidance on **this PR's own changes**; the machine report is the QC comment. "
            "The bot recomputes on every push, so a tick is only a reminder for you.", ""]
     if fixes or unregistered:
