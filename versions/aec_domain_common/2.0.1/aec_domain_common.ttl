@@ -1,0 +1,406 @@
+@prefix : <https://w3id.org/adiro/aec_domain_common#> .
+@prefix metadata: <https://w3id.org/adiro/aec_drawing_metadata#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<https://w3id.org/adiro/aec_domain_common> rdf:type owl:Ontology ;
+    rdfs:label "AEC Domain Common Ontology" ;
+    rdfs:comment "Concepts shared by several engineering domains. It sits between the common symbols and the discipline-specific modules, holding abstractions that more than one domain reuses, so they are defined once." ;
+    dcterms:title "AEC Domain Common Ontology" ;
+    dcterms:description "Shared domain abstractions reused across multiple domain ontologies (e.g., facade+structural)." ;
+    dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
+    dcterms:creator "Buro Happold — Machine Learning R&D" ;
+    dcterms:publisher "Buro Happold" ;
+    owl:versionIRI <https://w3id.org/adiro/aec_domain_common/2.0.1> ;
+    owl:versionInfo "2.0.1" ;
+    owl:imports <https://w3id.org/adiro/aec_drawing_metadata>,
+                <https://w3id.org/adiro/aec_common_symbols> .
+
+#################################################################
+#    Property Classes
+#################################################################
+
+:MaterialProperties rdf:type owl:Class ;
+    rdfs:comment "General property category" ;
+    rdfs:label "Material properties" ;
+    metadata:labellableRoot "false"^^xsd:boolean .
+
+:Material rdf:type owl:Class ;
+    rdfs:label "Material" ;
+    rdfs:comment "A construction material a drawing element is made of." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :MaterialProperties .
+
+:FunctionalProperties rdf:type owl:Class ;
+    rdfs:comment "General property category" ;
+    rdfs:label "Functional properties" ;
+    metadata:labellableRoot "false"^^xsd:boolean .
+
+:Function rdf:type owl:Class ;
+    rdfs:label "Function" ;
+    rdfs:comment "The functional role of a drawing element." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :FunctionalProperties .
+
+:GeometricProperties rdf:type owl:Class ;
+    rdfs:comment "General property category" ;
+    rdfs:label "Geometric properties" ;
+    metadata:labellableRoot "false"^^xsd:boolean .
+
+:SectionProperties rdf:type owl:Class ;
+    rdfs:comment "General property category" ;
+    rdfs:label "Section properties" ;
+    metadata:labellableRoot "false"^^xsd:boolean .
+
+:StructuralProperties rdf:type owl:Class ;
+    rdfs:comment "General property category" ;
+    rdfs:label "Structural properties" ;
+    metadata:labellableRoot "false"^^xsd:boolean .
+
+#################################################################
+#    Material Subclasses
+#################################################################
+
+:Aluminium rdf:type owl:Class ;
+    rdfs:label "Aluminium" ;
+    rdfs:comment "Aluminium as a construction material." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Material .
+
+:Concrete rdf:type owl:Class ;
+    rdfs:label "Concrete" ;
+    rdfs:comment "Concrete as a construction material." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Material .
+
+:Glass rdf:type owl:Class ;
+    rdfs:label "Glass" ;
+    rdfs:comment "Glass as a construction material." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Material .
+
+:Metal rdf:type owl:Class ;
+    rdfs:label "Metal" ;
+    rdfs:comment "Metal as a construction material, such as steel or aluminium." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Material .
+
+:Timber rdf:type owl:Class ;
+    rdfs:label "Timber" ;
+    rdfs:comment "Timber (wood) as a construction material." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Material .
+
+:Polycarbonate rdf:type owl:Class ;
+    rdfs:label "Polycarbonate" ;
+    rdfs:comment "Polycarbonate, a transparent plastic used as a glazing material." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Material .
+
+:Precast rdf:type owl:Class ;
+    rdfs:label "Precast" ;
+    rdfs:comment "Precast concrete, cast off-site in reusable moulds before installation." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Material .
+
+:Clay rdf:type owl:Class ;
+    rdfs:label "Clay" ;
+    rdfs:comment "Clay as a construction material, e.g. for bricks or tiles." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Material .
+
+#################################################################
+#    Facing Material
+#################################################################
+
+:FacingMaterial rdf:type owl:Class ;
+    rdfs:comment "Can be standalone label - material used for facing" ;
+    rdfs:label "Facing material" ;
+    metadata:labellableRoot "false"^^xsd:boolean .
+
+:Brick rdf:type owl:Class ;
+    rdfs:label "Brick" ;
+    rdfs:comment "Brick used as a facing material." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :FacingMaterial .
+
+:Stone rdf:type owl:Class ;
+    rdfs:label "Stone" ;
+    rdfs:comment "Stone used as a facing material." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :FacingMaterial .
+
+:Terracotta rdf:type owl:Class ;
+    rdfs:label "Terracotta" ;
+    rdfs:comment "Terracotta (fired clay) used as a facing material." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :FacingMaterial .
+
+#################################################################
+#    Section/Shape Properties
+#################################################################
+
+:SectionShape rdf:type owl:Class ;
+    rdfs:label "Section shape" ;
+    rdfs:comment "The cross-sectional profile of a structural section, such as an I-section, CHS or RHS." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :SectionProperties .
+
+:GenericShapeProperty rdf:type owl:Class ;
+    rdfs:label "Generic shape property" ;
+    rdfs:comment "A generic shape descriptor, such as circular, rectangular or square." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :SectionProperties .
+
+:Symmetry rdf:type owl:Class ;
+    rdfs:label "Symmetry" ;
+    rdfs:comment "Whether a section or shape is symmetrical or asymmetrical." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :SectionProperties .
+
+:CHS rdf:type owl:Class ;
+    rdfs:label "CHS" ;
+    rdfs:comment "Circular hollow section - a hollow structural section with a circular profile." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :SectionShape .
+
+:ISection rdf:type owl:Class ;
+    rdfs:label "I-section" ;
+    rdfs:comment "I-section - a structural section with an I- or H-shaped profile, such as a universal beam or column." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :SectionShape .
+
+:RHS rdf:type owl:Class ;
+    rdfs:label "RHS" ;
+    rdfs:comment "Rectangular hollow section - a hollow structural section with a rectangular profile." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :SectionShape .
+
+:SectionChannel rdf:type owl:Class ;
+    rdfs:label "Channel (section)" ;
+    rdfs:comment "Channel section - a structural section with a C-shaped (channel) profile." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :SectionShape .
+
+:TopHat rdf:type owl:Class ;
+    rdfs:label "Top hat" ;
+    rdfs:comment "Top-hat section - a cold-formed section with a top-hat-shaped profile." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :SectionShape .
+
+:Circular rdf:type owl:Class ;
+    rdfs:label "Circular" ;
+    rdfs:comment "A circular shape." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :GenericShapeProperty .
+
+:Rectangular rdf:type owl:Class ;
+    rdfs:label "Rectangular" ;
+    rdfs:comment "A rectangular shape." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :GenericShapeProperty .
+
+:Square rdf:type owl:Class ;
+    rdfs:label "Square" ;
+    rdfs:comment "A square shape." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :GenericShapeProperty .
+
+:Asymmetrical rdf:type owl:Class ;
+    rdfs:label "Asymmetrical" ;
+    rdfs:comment "An asymmetrical section or shape, without an axis of symmetry." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Symmetry .
+
+:Symmetrical rdf:type owl:Class ;
+    rdfs:label "Symmetrical" ;
+    rdfs:comment "A symmetrical section or shape, with an axis of symmetry." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :Symmetry .
+
+#################################################################
+#    Structural Properties
+#################################################################
+
+:DeadLoad rdf:type owl:Class ;
+    rdfs:label "Dead Load" ;
+    rdfs:comment "Dead load - the permanent, static load of a structure's own weight and fixed components." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :StructuralProperties .
+
+:Restraint rdf:type owl:Class ;
+    rdfs:label "Restraint" ;
+    rdfs:comment "A structural restraint - a support that limits the movement of a member." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :StructuralProperties .
+
+#################################################################
+#    Structural Components
+#################################################################
+
+:StructuralComponent rdf:type owl:Class ;
+    rdfs:comment "Structural component - part of support type" ;
+    rdfs:label "Structural component" ;
+    metadata:labellableRoot "false"^^xsd:boolean .
+
+:LinearStructuralComponent rdf:type owl:Class ;
+    rdfs:label "Linear structural component" ;
+    rdfs:comment "A structural component that is essentially linear, such as a beam, column or cable." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :StructuralComponent .
+
+:PanelStructuralComponent rdf:type owl:Class ;
+    rdfs:label "Panel structural component" ;
+    rdfs:comment "A structural component that is essentially a panel or plate, such as a slab or wall." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :StructuralComponent .
+
+:StructuralMember rdf:type owl:Class ;
+    rdfs:label "Structural member" ;
+    rdfs:comment "A linear structural member, such as a beam or column." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :LinearStructuralComponent .
+
+:Beam rdf:type owl:Class ;
+    rdfs:label "Beam" ;
+    rdfs:comment "A beam - a structural member that carries load across a span, usually horizontally." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :StructuralMember .
+
+:Column rdf:type owl:Class ;
+    rdfs:label "Column" ;
+    rdfs:comment "A column - a vertical structural member that carries load in compression." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :StructuralMember .
+
+:ChordBracing rdf:type owl:Class ;
+    rdfs:label "Chord/bracing" ;
+    rdfs:comment "A chord or bracing member of a truss or braced frame." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :StructuralMember .
+
+:Cable rdf:type owl:Class ;
+    rdfs:label "Cable" ;
+    rdfs:comment "A cable - a structural member that carries load in tension." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :LinearStructuralComponent .
+
+:Slab rdf:type owl:Class ;
+    rdfs:label "Slab" ;
+    rdfs:comment "A slab - a flat horizontal structural panel, such as a floor or roof slab." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :PanelStructuralComponent .
+
+:Wall rdf:type owl:Class ;
+    rdfs:label "Wall" ;
+    rdfs:comment "A wall - a vertical structural panel." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :PanelStructuralComponent .
+
+:Upstand rdf:type owl:Class ;
+    rdfs:label "Upstand" ;
+    rdfs:comment "An upstand - an upward projection at the edge of a slab or panel, such as a parapet." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    rdfs:subClassOf :PanelStructuralComponent .
+
+###  hasDiscipline
+
+:hasDiscipline rdf:type owl:ObjectProperty ;
+    rdfs:label "hasDiscipline" ;
+    rdfs:comment "Links a Layout to an AEC discipline. Discipline characterises the Layout itself, not its content type — the two are orthogonal axes." ;
+    rdfs:domain metadata:Layout ;
+    rdfs:range :Discipline .
+
+###  Discipline
+
+:Discipline rdf:type owl:Class ;
+    rdfs:label "Discipline" ;
+    rdfs:comment "The engineering or architectural discipline associated with a Layout." ;
+    metadata:labellableRoot "false"^^xsd:boolean .
+
+metadata:Layout rdfs:subClassOf [
+    rdf:type owl:Restriction ;
+    owl:onProperty :hasDiscipline ;
+    owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+    owl:onClass :Discipline
+] .
+
+:Architectural rdf:type owl:Class ;
+    rdfs:label "Architectural" ;
+    rdfs:comment "The architectural discipline." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :Discipline .
+
+:Facade rdf:type owl:Class ;
+    rdfs:label "Facade" ;
+    rdfs:comment "The facade-engineering discipline." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :Architectural .
+
+:Structural rdf:type owl:Class ;
+    rdfs:label "Structural" ;
+    rdfs:comment "The structural-engineering discipline." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :Discipline .
+
+:MEP rdf:type owl:Class ;
+    rdfs:label "MEP" ;
+    rdfs:comment "Mechanical, Electrical, and Plumbing." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :Discipline .
+
+:Mechanical rdf:type owl:Class ;
+    rdfs:label "Mechanical" ;
+    rdfs:comment "The mechanical-engineering discipline, part of MEP." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :MEP .
+
+:Electrical rdf:type owl:Class ;
+    rdfs:label "Electrical" ;
+    rdfs:comment "The electrical-engineering discipline, part of MEP." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :MEP .
+
+:Plumbing rdf:type owl:Class ;
+    rdfs:label "Plumbing" ;
+    rdfs:comment "The plumbing discipline, part of MEP." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :MEP .
+
+:Lighting rdf:type owl:Class ;
+    rdfs:label "Lighting" ;
+    rdfs:comment "The lighting discipline, a specialisation of electrical." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :Electrical .
+
+:FireLifeSafety rdf:type owl:Class ;
+    rdfs:label "Fire life safety" ;
+    rdfs:comment "The fire and life-safety discipline." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :Architectural .
+
+:Masterplan rdf:type owl:Class ;
+    rdfs:label "Masterplan" ;
+    rdfs:comment "The masterplanning discipline, covering site-wide planning." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :Discipline .
+
+:Civil rdf:type owl:Class ;
+    rdfs:label "Civil" ;
+    rdfs:comment "Civil engineering discipline." ;
+    metadata:labellableRoot "false"^^xsd:boolean ;
+    metadata:isCVATProperty "true"^^xsd:boolean ;
+    rdfs:subClassOf :Discipline .
