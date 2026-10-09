@@ -32,7 +32,7 @@
 
 :FacadeComponent rdf:type owl:Class;
     rdfs:label "Facade component";
-    rdfs:comment "Component of a facade system; a type of drawing element";
+    rdfs:comment "Component of a facade system; a type of drawing element (e2e test)";
     metadata:labellableRoot "false"^^xsd:boolean;
     rdfs:subClassOf metadata:DrawingElement.
 
