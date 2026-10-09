@@ -21,8 +21,8 @@ keep-in-sync rules are in `AGENTS.md`.
 
 **Contributing an ontology change?** Follow `AGENTS.md` → "Contributor workflow": validate, add the `[Unreleased]`
 changelog entry and an `rdfs:comment` for every new term, then read the ADIRO Bot's comments on the PR and fix its
-"Required improvements". Do not bump versions or touch `config/release_overrides.json` unless a maintainer asks: the
-Release PR does the release cut.
+"Required improvements". By default do not bump versions or touch `config/release_overrides.json`: the Release PR does
+the release cut. Do it only for a good reason that follows clearly from your change, and state that reason in the PR.
 
 **Keep in sync:** if you change CI/docs/versioning, update `AGENTS.md` in the same PR. CI wins on conflicts.
 

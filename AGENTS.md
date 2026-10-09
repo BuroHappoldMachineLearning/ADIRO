@@ -211,10 +211,11 @@ For anyone changing an ontology, agent or person. The sections below give the de
    improvements" lists what to fix in this PR's own changes (a missing definition, a missing changelog change, a
    `Closes #N` that did not register) and disappears when nothing is left; the version-impact and QC comments report
    what the change does. Do not copy those comments into the description.
-6. **Leave releasing to the Release PR.** Do not bump `owl:versionInfo` / `owl:versionIRI`, move changelog entries under
-   a version heading, edit the `release/next` branch or edit `config/release_overrides.json` unless a maintainer asks.
-   An override is rarely needed; `docs/contribute/versioning/release-process.md` ("When to use an override") lists the
-   few cases.
+6. **Leave releasing to the Release PR by default.** Do not edit the `release/next` branch (it is regenerated), and do not
+   bump `owl:versionInfo` / `owl:versionIRI`, move changelog entries under a version heading or edit
+   `config/release_overrides.json`, unless there is a good reason that follows clearly from the change you are making. In
+   that case, state the reason explicitly in the PR description and explain why the default does not fit. An override is
+   rarely needed; `docs/contribute/versioning/release-process.md` ("When to use an override") lists the few cases.
 
 ## Keep in sync (mandatory)
 - **Worklog.** Record any non-trivial change you make in **`docs/ai/worklog.md`** (newest entry first) — what
