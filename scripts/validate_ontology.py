@@ -10,6 +10,7 @@ This script parses ontology files and checks for:
 """
 
 import os
+import subprocess
 import sys
 from pathlib import Path
 import re
@@ -173,6 +174,28 @@ def find_undescribed_terms(graph) -> list[str]:
             name = str(term).split("#")[-1]
             undescribed.append(f"{name} ({label})" if label else name)
     return sorted(set(undescribed))
+
+
+def missing_changelog_modules(changed_paths) -> list[str]:
+    """
+    Modules whose `src/<module>.ttl` changed (added, edited or deleted) while
+    `changelogs/<module>.md` did not (#105).
+
+    Each module's `[Unreleased]` section is its release notes, written by whoever
+    changes the module; nothing else checks that it was written, and the omission
+    otherwise surfaces at release time. The release cut passes, because it moves the
+    changelog in the same commit as it bumps the TTL.
+    """
+    changed = set(changed_paths)
+    modules = sorted(Path(p).stem for p in changed if re.fullmatch(r"src/[^/]+\.ttl", p))
+    return [m for m in modules if f"changelogs/{m}.md" not in changed]
+
+
+def changed_paths_vs_base(base_ref: str, repo_root: Path) -> list[str] | None:
+    """Paths under src/ and changelogs/ that differ from `base_ref` (merge-base), or None if git cannot say."""
+    r = subprocess.run(["git", "diff", "--name-only", "--no-renames", f"{base_ref}...HEAD", "--", "src", "changelogs"],
+                       capture_output=True, text=True, cwd=repo_root)
+    return r.stdout.split() if r.returncode == 0 else None
 
 
 def validate_ontology(ttl_file: Path) -> tuple[bool, list[str], list[str]]:
@@ -380,6 +403,30 @@ def main():
             print(f"  [WARN] {warning}")
 
         results.append((ttl_file.stem, errors, warnings))
+
+    # PR-time changelog check (#105). Needs the PR's base ref (BASE_REF, e.g. origin/main); without it
+    # (local runs, the deploy workflow) the check is skipped. Advisory until ENFORCE_CHANGELOG=1.
+    base_ref = os.environ.get("BASE_REF")
+    if base_ref:
+        changed = changed_paths_vs_base(base_ref, repo_root)
+        enforce = os.environ.get("ENFORCE_CHANGELOG") == "1"
+        if changed is None:
+            # Surface it in the results (and so the PR comment), and do not fail open under enforcement.
+            msg = f"could not diff against {base_ref}, so the changelog check did not run"
+            results.append(("changelog check", [msg] if enforce else [], [] if enforce else [msg]))
+            print(f"  [{'ERROR' if enforce else 'WARN'}] {msg}")
+            all_valid = all_valid and not enforce
+        else:
+            for module in missing_changelog_modules(changed):
+                msg = (f"changelogs/{module}.md was not changed, but src/{module}.ttl was: add an entry under "
+                       "[Unreleased] (it becomes the release notes)")
+                row = next((r for r in results if r[0] == module), None)
+                if row is None:
+                    row = (module, [], [])
+                    results.append(row)
+                (row[1] if enforce else row[2]).append(msg)
+                print(f"  [{'ERROR' if enforce else 'WARN'}] {module}: {msg}")
+                all_valid = all_valid and not enforce
 
     if markdown_path is not None:
         write_markdown(results, markdown_path)

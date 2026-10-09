@@ -33,6 +33,47 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-09 — ADIRO Bot posts all PR comments; new PR guidance comment ([#106](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/106))
+
+Agreed with the maintainer: all three PR comments are authored by the ADIRO Bot, the guidance comment is one
+summary comment (no inline threads yet), and the first slice includes preview links, the closing-reference check and
+the changelog check ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)).
+
+- `scripts/pr_guidance.py` + `.github/workflows/pr-guidance.yml`: flags only what the PR itself touches (graph diff
+  against the base), so it never repeats the [#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87) backlog;
+  skips the Release PR (`release/next`). Checks: no `rdfs:comment` (with a line link), duplicate `rdfs:label`, no
+  `[Unreleased]` entry, newly unused `@prefix`/`owl:imports`, unregistered `Closes #N` (GraphQL, after a 10 s wait for
+  GitHub's index), OntoCanvas link per touched module that declares classes.
+- `.github/actions/sticky-comment`: the repost-on-change / edit-in-place logic that the two existing workflows each
+  carried, now shared. Matches the comment by hidden marker and author; removes older `github-actions[bot]` copies
+  best-effort so no duplicate remains. `compat-diff-comment.yml` and `ontology-reasoning.yml` now mint the app token
+  (`continue-on-error`, so a token failure never fails the reasoner gate) and use it.
+- `AGENTS.md`: new workflow bullet; the "one sticky QC comment" rule gets the guidance comment as an explicit exception.
+- Fork PRs: `.github/workflows/pr-comments-fork.yml` (`pull_request_target`, forks only) posts the version-impact and
+  guidance comments. Safety rules are in the file header: base-branch code only, fork `src/` + `changelogs/` taken as data
+  after refusing symlinks, merge-base comparison, untrusted text only via env vars. The QC comment is not repeated for
+  forks (Java reasoner on untrusted input in a privileged context was judged not worth it): the `reason` job still gates
+  and its report goes to the job summary. `pr_guidance.py` gained `--head-repo` and `--worktree`; the sticky action
+  gained `pr-number` / `head-sha` inputs. **Untestable before merge** (`pull_request_target` runs the base branch's copy):
+  needs a real fork PR.
+- Review round on PR #111 (Copilot, 8 findings, all valid): the sticky action now deletes only this bot's duplicates and
+  the legacy `github-actions[bot]` copy (never another user's comment that quotes the marker); every app token is
+  down-scoped (`permission-pull-requests: write`); `pr-guidance.yml` checks out the PR head, not the merge commit;
+  touched-term detection now includes blank-node (restriction/list) subgraphs; deleted or renamed modules are no longer
+  skipped; and the changelog check moved into `validate_ontology.py` as [#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)
+  specifies (advisory, `ENFORCE_CHANGELOG=1` blocks, shown in the QC comment), with the guidance comment only rendering it.
+  `validate-ontology.yml` / `ontology-reasoning.yml` now fetch full history and pass `BASE_REF`.
+- Second review round on #111 (4 more, all valid): `compat-diff-comment.yml` / `ontology-reasoning.yml` now keep `GITHUB_TOKEN` read-only (the app token owns commenting); the fork workflow makes `src/` + `changelogs/` exactly the fork's trees (a path checkout only overlays, hiding deleted modules); the `release/next` skip applies only to this repository's branch, not a fork's.
+- Third review round on #111 (2 more, both valid): a failed base diff in the changelog check is now a row in the QC results and an error under `ENFORCE_CHANGELOG=1` (it no longer fails open); `compat_diff.py` analyses a module the PR deleted or renamed as all-removed (MAJOR, verdict `MODULE_REMOVED`) and builds its module list from the base as well, and both comment workflows now list the BASE's `src/*.ttl` for the snapshot, so a deletion is no longer invisible (this also fixes the same gap in the same-repo version-impact comment).
+- Fourth review round on #111 (1, valid): `pr_guidance.py` loaded the base content from the branch tip while listing changed files
+  by merge-base, so edits that landed on the base after the PR branched were treated as the PR's own. It now resolves the merge base
+  once and uses it for both (regression test with a real two-branch history).
+- Verified: 61 unit tests pass; the script ran against a real past diff; all workflow/action YAML parses. **Not
+  verified until the PR runs:** the app token's comment permission on PRs, deleting the old `github-actions` comments, the
+  fork skip.
+- Deferred (kept in #106): inline review comments/suggestions, specification-sync reminder, public-repo hygiene, stale
+  Release PR nudge, plain-language version impact, LLM-drafted definitions.
+
 ## 2026-10-09 — Release notes: summary line first, link bullets straight after (no header)
 
 Requested by the maintainer: the "PATCH release · 2.0.0 → 2.0.1 · Compare" line (or "First release") is now the

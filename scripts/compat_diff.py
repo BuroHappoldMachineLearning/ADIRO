@@ -268,14 +268,18 @@ def analyze_module(repo_root, module):
 
     old_g, new_g = Graph(), Graph()
     old_g.parse(str(old_file), format="turtle")
-    new_g.parse(str(new_file), format="turtle")
+    removed = not new_file.is_file()  # the module was deleted or renamed: every released term is gone
+    if not removed:
+        new_g.parse(str(new_file), format="turtle")
 
     deltas = compute_deltas(build_symbols(old_g), build_symbols(new_g))
     req = required_bump(deltas)
     old_v, new_v = version_of(old_g), version_of(new_g)
-    decl = declared_bump(old_v, new_v)
+    decl = None if removed else declared_bump(old_v, new_v)
 
-    if decl == "decreased":
+    if removed:
+        verdict = "MODULE_REMOVED"
+    elif decl == "decreased":
         verdict = "VERSION_DECREASED"
     elif req == BUMP_NONE:
         verdict = "OK"
@@ -310,21 +314,26 @@ def analyze_module(repo_root, module):
 def analyze_pr_change(repo_root, base_dir, module):
     """Deltas introduced by THIS PR: base-branch `src/<module>.ttl` vs working `src/<module>.ttl`.
 
-    Returns {module, deltas, required_bump}, or None if the module has no working
-    file. A module absent from base_dir (new in this PR) diffs as all-added.
+    Returns {module, deltas, required_bump}, or None if the module is in neither place. A module
+    absent from base_dir (new in this PR) diffs as all-added; one absent from `src/` (deleted or
+    renamed) diffs as all-removed.
     """
     new_file = repo_root / "src" / f"{module}.ttl"
-    if not new_file.is_file():
-        return None
-    new_g = Graph()
-    new_g.parse(str(new_file), format="turtle")
-    old_syms = {}
     old_file = Path(base_dir) / f"{module}.ttl"
+    if not new_file.is_file() and not old_file.is_file():
+        return None
+    new_syms = {}
+    if new_file.is_file():
+        new_g = Graph()
+        new_g.parse(str(new_file), format="turtle")
+        new_syms = build_symbols(new_g)
+    old_syms = {}
     if old_file.is_file():
         old_g = Graph()
         old_g.parse(str(old_file), format="turtle")
         old_syms = build_symbols(old_g)
-    deltas = compute_deltas(old_syms, build_symbols(new_g))
+    # a module present in the base but not in the PR is deleted/renamed: every term diffs as removed
+    deltas = compute_deltas(old_syms, new_syms)
     return {"module": module, "deltas": deltas, "required_bump": required_bump(deltas)}
 
 
@@ -448,7 +457,11 @@ def main():
         base_dir = argv[i + 1] if i + 1 < len(argv) else None
     # Positional args = modules; exclude flags and the --base-dir value.
     modules = [a for a in argv if not a.startswith("-") and a != base_dir]
-    modules = modules or sorted(p.stem for p in (repo_root / "src").glob("*.ttl"))
+    if not modules:
+        found = {p.stem for p in (repo_root / "src").glob("*.ttl")}
+        if base_dir is not None:  # also modules the PR deleted: they exist in the base only
+            found |= {p.stem for p in Path(base_dir).glob("*.ttl")}
+        modules = sorted(found)
 
     results = [analyze_module(repo_root, module) for module in modules]
 

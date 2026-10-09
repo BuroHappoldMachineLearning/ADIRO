@@ -107,3 +107,23 @@ def test_two_section_markdown_this_pr_vs_cumulative():
 
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__, "-q"]))
+
+
+def test_a_module_deleted_by_the_pr_diffs_as_all_removed(tmp_path):
+    (tmp_path / "src").mkdir()
+    base_dir = tmp_path / "base"
+    base_dir.mkdir()
+    (base_dir / "m.ttl").write_text(BASE, encoding="utf-8")  # in the base, gone from src/
+    res = cd.analyze_pr_change(tmp_path, base_dir, "m")
+    assert res["required_bump"] == cd.BUMP_MAJOR
+    assert {d for d, _ in res["deltas"]} == {"TERM_REMOVED"}
+    assert cd.analyze_pr_change(tmp_path, base_dir, "never_existed") is None
+
+
+def test_a_deleted_module_is_reported_as_removed_against_its_snapshot(tmp_path):
+    (tmp_path / "src").mkdir()
+    snap = tmp_path / "versions" / "m" / "1.0.0"
+    snap.mkdir(parents=True)
+    (snap / "m.ttl").write_text(BASE, encoding="utf-8")
+    res = cd.analyze_module(tmp_path, "m")
+    assert (res["verdict"], res["required_bump"], res["prospective_version"]) == ("MODULE_REMOVED", cd.BUMP_MAJOR, "2.0.0")

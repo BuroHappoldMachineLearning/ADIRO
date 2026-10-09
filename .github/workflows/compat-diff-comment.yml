@@ -23,9 +23,7 @@ on:
       - 'src/**/*.ttl'
 
 permissions:
-  contents: read
-  issues: write          # deleting/creating the sticky comment goes via the issues API
-  pull-requests: write
+  contents: read   # commenting uses the ADIRO Bot token, so GITHUB_TOKEN stays read-only
 
 concurrency:
   group: compat-diff-comment-${{ github.event.pull_request.number }}
@@ -57,53 +55,31 @@ jobs:
           BASE="${{ github.base_ref }}"
           git fetch --no-tags origin "$BASE"
           mkdir -p .tools/base-src
-          for f in src/*.ttl; do
-            name="$(basename "$f")"
-            git show "origin/$BASE:src/$name" > ".tools/base-src/$name" 2>/dev/null \
-              || echo "  ($name is new in this PR — no base version)"
+          # list the modules in the BASE, so one this PR deleted is still diffed (as all-removed)
+          for f in $(git ls-tree -r --name-only "origin/$BASE" -- src | grep '^src/[^/]*\.ttl$'); do
+            git show "origin/$BASE:$f" > ".tools/base-src/$(basename "$f")"
           done
 
       - name: Compute comment (this-PR changes + prospective versions)
         run: uv run --python 3.12 --no-project python scripts/compat_diff.py --markdown --base-dir .tools/base-src > compat-diff.md
 
-      - name: Post or refresh the sticky PR comment
-        # Fork PRs get a read-only token (comment API 403s), so only post for
-        # same-repo PRs; the computation above still runs either way.
+      - name: Create ADIRO Bot token
+        id: app-token
         if: github.event.pull_request.head.repo.full_name == github.repository
-        uses: actions/github-script@v7
+        continue-on-error: true   # a token failure must never fail the check
+        uses: actions/create-github-app-token@v2
         with:
-          script: |
-            const fs = require('fs');
-            const marker = '<!-- compat-diff-report -->';
-            const { owner, repo } = context.repo;
-            const issue_number = context.issue.number;
+          app-id: ${{ secrets.ADIRO_BOT_APP_ID }}
+          private-key: ${{ secrets.ADIRO_BOT_PRIVATE_KEY }}
+          permission-pull-requests: write   # only what commenting needs, not the app's full grant
 
-            const report = marker + '\n' + fs.readFileSync('compat-diff.md', 'utf8').trimEnd();
-
-            // Footer carries the head SHA and the time, so a reader can tell the
-            // report is current whichever branch below was taken.
-            const head = context.payload.pull_request.head.sha.substring(0, 7);
-            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
-            const stamp = new Date().toISOString().replace('T', ' ').substring(0, 16);
-            const footer = '\n\n<sub>Recomputed for `' + head + '` at ' + stamp + ' UTC — [workflow run](' + runUrl + ')</sub>';
-            const body = report + footer;
-
-            const comments = await github.paginate(github.rest.issues.listComments, {
-              owner, repo, issue_number, per_page: 100,
-            });
-            const existing = comments.find(c => c.body && c.body.includes(marker));
-
-            // Compare the report only - the footer changes on every run by design.
-            const stripFooter = (s) => s.split('<sub>Recomputed for')[0].trimEnd();
-
-            if (!existing) {
-              await github.rest.issues.createComment({ owner, repo, issue_number, body });
-              core.info('Posted the first version-impact comment.');
-            } else if (stripFooter(existing.body) === stripFooter(body)) {
-              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
-              core.info('Version impact unchanged - refreshed the footer in place, no notification.');
-            } else {
-              await github.rest.issues.deleteComment({ owner, repo, comment_id: existing.id });
-              await github.rest.issues.createComment({ owner, repo, issue_number, body });
-              core.info('Version impact changed - reposted at the bottom of the thread.');
-            }
+      - name: Post or refresh the sticky PR comment
+        # Fork PRs cannot read the app secrets (nor post with the read-only token), so only post for
+        # same-repo PRs; the computation above still runs either way.
+        if: github.event.pull_request.head.repo.full_name == github.repository && steps.app-token.outcome == 'success'
+        continue-on-error: true
+        uses: ./.github/actions/sticky-comment
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          marker: "<!-- compat-diff-report -->"
+          file: compat-diff.md
