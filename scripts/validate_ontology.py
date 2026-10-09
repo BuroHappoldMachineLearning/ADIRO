@@ -409,10 +409,14 @@ def main():
     base_ref = os.environ.get("BASE_REF")
     if base_ref:
         changed = changed_paths_vs_base(base_ref, repo_root)
+        enforce = os.environ.get("ENFORCE_CHANGELOG") == "1"
         if changed is None:
-            print(f"  [WARN] could not diff against {base_ref}; skipped the changelog check")
+            # Surface it in the results (and so the PR comment), and do not fail open under enforcement.
+            msg = f"could not diff against {base_ref}, so the changelog check did not run"
+            results.append(("changelog check", [msg] if enforce else [], [] if enforce else [msg]))
+            print(f"  [{'ERROR' if enforce else 'WARN'}] {msg}")
+            all_valid = all_valid and not enforce
         else:
-            enforce = os.environ.get("ENFORCE_CHANGELOG") == "1"
             for module in missing_changelog_modules(changed):
                 msg = (f"changelogs/{module}.md was not changed, but src/{module}.ttl was: add an entry under "
                        "[Unreleased] (it becomes the release notes)")

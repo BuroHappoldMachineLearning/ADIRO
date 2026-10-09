@@ -64,6 +64,7 @@ the changelog check ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/
   specifies (advisory, `ENFORCE_CHANGELOG=1` blocks, shown in the QC comment), with the guidance comment only rendering it.
   `validate-ontology.yml` / `ontology-reasoning.yml` now fetch full history and pass `BASE_REF`.
 - Second review round on #111 (4 more, all valid): `compat-diff-comment.yml` / `ontology-reasoning.yml` now keep `GITHUB_TOKEN` read-only (the app token owns commenting); the fork workflow makes `src/` + `changelogs/` exactly the fork's trees (a path checkout only overlays, hiding deleted modules); the `release/next` skip applies only to this repository's branch, not a fork's.
+- Third review round on #111 (2 more, both valid): a failed base diff in the changelog check is now a row in the QC results and an error under `ENFORCE_CHANGELOG=1` (it no longer fails open); `compat_diff.py` analyses a module the PR deleted or renamed as all-removed (MAJOR, verdict `MODULE_REMOVED`) and builds its module list from the base as well, and both comment workflows now list the BASE's `src/*.ttl` for the snapshot, so a deletion is no longer invisible (this also fixes the same gap in the same-repo version-impact comment).
 - Verified: 61 unit tests pass; the script ran against a real past diff; all workflow/action YAML parses. **Not
   verified until the PR runs:** the app token's comment permission on PRs, deleting the old `github-actions` comments, the
   fork skip.

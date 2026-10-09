@@ -97,3 +97,21 @@ def test_render_with_only_a_preview_says_nothing_to_fix():
 def test_declares_classes_is_false_for_an_annotation_only_module():
     assert pg.declares_classes(g(HEAD))
     assert not pg.declares_classes(g(PREFIXES + ":p a owl:AnnotationProperty .\n"))
+
+
+def test_a_failed_base_diff_is_reported_and_blocks_under_enforcement(tmp_path):
+    import os
+    import subprocess
+
+    script = Path(__file__).resolve().parent.parent / "scripts" / "validate_ontology.py"
+    md = tmp_path / "out.md"
+
+    def run(enforce):
+        env = {**os.environ, "BASE_REF": "origin/definitely-not-a-ref"}
+        if enforce:
+            env["ENFORCE_CHANGELOG"] = "1"
+        return subprocess.run([sys.executable, str(script), "--markdown", str(md)], env=env, capture_output=True, text=True)
+
+    advisory = run(False)
+    assert advisory.returncode == 0 and "changelog check did not run" in md.read_text(encoding="utf-8")
+    assert run(True).returncode != 0  # the future gate must not fail open

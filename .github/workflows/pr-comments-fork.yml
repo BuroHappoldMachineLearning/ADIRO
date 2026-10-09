@@ -83,8 +83,9 @@ jobs:
           : > compat-diff.md
           if [ "$TTL_CHANGED" = "true" ]; then
             mkdir -p .tools/base-src
-            for f in src/*.ttl; do
-              git show "$MB:$f" > ".tools/base-src/$(basename "$f")" 2>/dev/null || true
+            # list the modules in the BASE, so one the fork deleted is still diffed (as all-removed)
+            for f in $(git ls-tree -r --name-only "$MB" -- src | grep '^src/[^/]*\.ttl$'); do
+              git show "$MB:$f" > ".tools/base-src/$(basename "$f")"
             done
             uv run --python 3.12 --no-project python scripts/compat_diff.py --markdown --base-dir .tools/base-src > compat-diff.md
           fi

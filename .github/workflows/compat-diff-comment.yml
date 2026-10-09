@@ -55,10 +55,9 @@ jobs:
           BASE="${{ github.base_ref }}"
           git fetch --no-tags origin "$BASE"
           mkdir -p .tools/base-src
-          for f in src/*.ttl; do
-            name="$(basename "$f")"
-            git show "origin/$BASE:src/$name" > ".tools/base-src/$name" 2>/dev/null \
-              || echo "  ($name is new in this PR — no base version)"
+          # list the modules in the BASE, so one this PR deleted is still diffed (as all-removed)
+          for f in $(git ls-tree -r --name-only "origin/$BASE" -- src | grep '^src/[^/]*\.ttl$'); do
+            git show "origin/$BASE:$f" > ".tools/base-src/$(basename "$f")"
           done
 
       - name: Compute comment (this-PR changes + prospective versions)
