@@ -22,6 +22,14 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-09 — Fix snapshot → Pages deploy in `backup-version.yml` ([#100](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/100))
+
+- **Changed:** `backup-version.yml` now dispatches `generate-deploy-docs.yml` after pushing a snapshot (a `GITHUB_TOKEN` push does not trigger it); `git pull --rebase` before the snapshot push; new `workflow_dispatch` trigger with a `tag` input so the job can be started for an existing tag (needed by the Release PR bot, [#99](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/99)); `actions: write` permission; tag read via `env` instead of inline expression. `release-process.md` updated to match.
+- **Verified:** see the follow-up line below once the dispatch run has been checked.
+- **Next step:** Release PR bot ([#99](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/99)).
+
+---
+
 ## 2026-10-09 — Cut the backlog release (metadata 4.0.0, common_symbols 3.0.0, domain_common 2.0.1, provenance/geometry 1.0.0)
 
 - **Why:** a UC-03 consumer (CVAT import) needed `layoutTitle` and `hasScale` on `Layout`, merged on `main` but never tagged; `main` still declared `aec_drawing_metadata` 3.0.0, so two different files shared one version label. Tracked for automation in [#99](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/99); a related snapshot-deploy bug in [#100](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/100).

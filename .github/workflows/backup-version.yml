@@ -3,14 +3,23 @@ name: Backup Ontology Version
 on:
   release:
     types: [published]  # Only when a release is published (a draft's "created" event must not snapshot)
+  # A Release published with the default GITHUB_TOKEN (e.g. by the release automation)
+  # does not fire the `release` event, so the same job can be started by hand or by
+  # another workflow: `gh workflow run backup-version.yml -f tag=<module>-v<semver>`.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing release tag to snapshot, e.g. aec_common_symbols-v1.2.0"
+        required: true
 
 permissions:
   contents: write
+  actions: write   # dispatch generate-deploy-docs.yml after the snapshot lands
 
 concurrency:
   # One snapshot at a time per release tag, to avoid a commit/push race if the
   # event fires more than once.
-  group: backup-version-${{ github.event.release.tag_name }}
+  group: backup-version-${{ inputs.tag || github.event.release.tag_name }}
   cancel-in-progress: false
 
 jobs:
@@ -32,8 +41,9 @@ jobs:
 
       - name: Parse module + version from tag
         id: parse
+        env:
+          TAG: ${{ inputs.tag || github.event.release.tag_name }}
         run: |
-          TAG="${{ github.event.release.tag_name }}"
           echo "Release tag: $TAG"
           # Per-module tag convention: <module>-v<semver>, e.g. aec_common_symbols-v1.2.0
           # (module names use '_' and never contain '-v', so this parses unambiguously).
@@ -78,6 +88,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Commit and push snapshot
+        id: push
         run: |
           MODULE="${{ steps.parse.outputs.module }}"
           VERSION="${{ steps.parse.outputs.version }}"
@@ -85,11 +96,22 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit (snapshot already exists)."
           else
-            # No [skip actions]: this push should trigger generate-deploy-docs so the
-            # new versioned snapshot is published to GitHub Pages and becomes resolvable.
             git commit -m "chore: snapshot ${MODULE} ${VERSION}"
+            # Rebase first: releases for several modules are published back to back,
+            # and a snapshot push must not be rejected because another landed meanwhile.
+            git pull --rebase origin "${{ github.event.repository.default_branch }}"
             git push
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Publish the snapshot to GitHub Pages
+        # A push made with GITHUB_TOKEN does not trigger other workflows, so the push
+        # above never starts generate-deploy-docs.yml (#100). Dispatch it explicitly;
+        # without this the versioned URL only appears if some later push redeploys.
+        if: steps.push.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run generate-deploy-docs.yml --repo "${{ github.repository }}" --ref "${{ github.event.repository.default_branch }}"
 
       - name: Publish changelog to the GitHub Release notes
         # RES-82 / #49: set the Release body from changelogs/<module>.md so the
