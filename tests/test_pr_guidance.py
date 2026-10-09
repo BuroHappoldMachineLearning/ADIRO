@@ -90,9 +90,14 @@ def test_render_lists_todos_and_previews():
     assert "https://alelom.github.io/OntoCanvas/?onto=https%3A%2F%2Fraw.githubusercontent.com%2Fo%2Fr%2Ffeat%2Fx%2Fdocs%2Faec_x.ttl" in text
 
 
-def test_render_with_only_a_preview_says_nothing_to_fix():
-    text = pg.render([{"name": "aec_x", "fixes": [], "preview": "https://example.org/p"}], [], "o/r")
-    assert "Nothing to fix" in text and "### To do" not in text and "### Previews" in text
+def test_render_with_only_a_preview_posts_no_comment():
+    assert pg.render([{"name": "aec_x", "fixes": [], "preview": "https://example.org/p"}], [], "o/r") == ""
+
+
+def test_render_with_a_fix_lists_it_under_the_title_and_keeps_the_previews():
+    text = pg.render([{"name": "aec_x", "fixes": ["`B` has no `rdfs:comment`."], "preview": "https://example.org/p"}], [], "o/r")
+    assert text.index("## Required improvements") < text.index("- `aec_x`:") < text.index("### Previews")
+    assert "### To do" not in text
 
 
 def test_declares_classes_is_false_for_an_annotation_only_module():

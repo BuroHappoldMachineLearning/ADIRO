@@ -128,8 +128,10 @@ commands directly, but Git Bash is simpler.
   built by `scripts/pr_guidance.py`: a bulleted to-do list for **this PR's own changes** (a touched term with no
   `rdfs:comment`, a label shared with another term, a `.ttl` change with no changelog change (the
   `validate_ontology.py` check below, rendered in plain language), an unused `@prefix`/`owl:imports` the PR
-  introduced, a `Closes #N` GitHub did not register) and an OntoCanvas preview link per touched module that declares
-  classes. It never lists the standing backlog. All three PR comments (version impact, QC, guidance) are posted as the
+  introduced, a `Closes #N` GitHub did not register), titled "Required improvements", with an OntoCanvas preview link
+  per touched module that declares classes listed beneath it. **The comment exists only while something needs fixing**
+  (it is removed when nothing does, so the preview links go with it: the PR description still carries them). It never
+  lists the standing backlog. All three PR comments (version impact, QC, guidance) are posted as the
   ADIRO Bot through `.github/actions/sticky-comment`; a same-repo PR is handled by each workflow itself; a **fork PR** (no access to the app secrets) is handled by
   `.github/workflows/pr-comments-fork.yml` (`pull_request_target`), which posts the version-impact and guidance
   comments from **base-branch code only**, reading the fork's `src/` and `changelogs/` as data (never run

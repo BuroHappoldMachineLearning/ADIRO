@@ -116,19 +116,15 @@ def render(modules, unregistered, repo):
     """`modules`: dicts with name, fixes (list of Markdown strings) and preview (URL or None)."""
     fixes = [(m["name"], f) for m in modules for f in m["fixes"]]
     previews = [(m["name"], m["preview"]) for m in modules if m["preview"]]
-    if not fixes and not unregistered and not previews:
+    if not fixes and not unregistered:  # nothing to improve: no comment at all (previews alone are not worth one)
         return ""
     out = [MARKER, "## Required improvements", ""]
-    if fixes or unregistered:
-        out += ["### To do", ""]
-        out += [f"- `{name}`: {f}" for name, f in fixes]
-        for n in unregistered:
-            out.append(f"- The description says it closes [#{n}](https://github.com/{repo}/issues/{n}), but GitHub did "
-                       "not link it. Put the keyword at the start of a table row or line, one issue per keyword "
-                       "(`Closes #1, #2` links only `#1`).")
-        out.append("")
-    else:
-        out += ["Nothing to fix. 🎉", ""]
+    out += [f"- `{name}`: {f}" for name, f in fixes]
+    for n in unregistered:
+        out.append(f"- The description says it closes [#{n}](https://github.com/{repo}/issues/{n}), but GitHub did "
+                   "not link it. Put the keyword at the start of a table row or line, one issue per keyword "
+                   "(`Closes #1, #2` links only `#1`).")
+    out.append("")
     if previews:
         out += ["### Previews", "", "| Module | OntoCanvas |", "|---|---|"]
         out += [f"| `{n}` | [open]({u}) |" for n, u in previews]
