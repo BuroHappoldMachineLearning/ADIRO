@@ -118,14 +118,12 @@ def render(modules, unregistered, repo):
     previews = [(m["name"], m["preview"]) for m in modules if m["preview"]]
     if not fixes and not unregistered and not previews:
         return ""
-    out = [MARKER, "## PR checklist: what to fix before review, and where to preview your changes", "",
-           "Guidance on **this PR's own changes**; the machine report is the QC comment. "
-           "The bot recomputes on every push, so a tick is only a reminder for you.", ""]
+    out = [MARKER, "## What to fix before review, and where to preview your changes", ""]
     if fixes or unregistered:
         out += ["### To do", ""]
-        out += [f"- [ ] `{name}`: {f}" for name, f in fixes]
+        out += [f"- `{name}`: {f}" for name, f in fixes]
         for n in unregistered:
-            out.append(f"- [ ] The description says it closes [#{n}](https://github.com/{repo}/issues/{n}), but GitHub did "
+            out.append(f"- The description says it closes [#{n}](https://github.com/{repo}/issues/{n}), but GitHub did "
                        "not link it. Put the keyword at the start of a table row or line, one issue per keyword "
                        "(`Closes #1, #2` links only `#1`).")
         out.append("")

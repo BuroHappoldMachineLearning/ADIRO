@@ -84,7 +84,8 @@ def test_render_lists_todos_and_previews():
     mods = [{"name": "aec_x", "fixes": ["`B` has no `rdfs:comment`."], "preview": pg.preview_url("o/r", "feat/x", "aec_x")}]
     text = pg.render(mods, [7], "o/r")
     assert text.startswith(pg.MARKER)
-    assert "- [ ] `aec_x`: `B` has no `rdfs:comment`." in text
+    assert "- `aec_x`: `B` has no `rdfs:comment`." in text
+    assert "[ ]" not in text and "recomputes" not in text
     assert "[#7](https://github.com/o/r/issues/7)" in text
     assert "https://alelom.github.io/OntoCanvas/?onto=https%3A%2F%2Fraw.githubusercontent.com%2Fo%2Fr%2Ffeat%2Fx%2Fdocs%2Faec_x.ttl" in text
 

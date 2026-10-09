@@ -125,7 +125,7 @@ who won't use bash can instead run the two underlying `java -jar robot.jar merge
 commands directly, but Git Bash is simpler.
 - **`.github/workflows/pr-guidance.yml`** — on every same-repo PR (opened/edited/pushed), the **ADIRO Bot** posts a
   separate, human-readable sticky comment ([#106](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/106)),
-  built by `scripts/pr_guidance.py`: a tickable to-do list for **this PR's own changes** (a touched term with no
+  built by `scripts/pr_guidance.py`: a bulleted to-do list for **this PR's own changes** (a touched term with no
   `rdfs:comment`, a label shared with another term, a `.ttl` change with no changelog change (the
   `validate_ontology.py` check below, rendered in plain language), an unused `@prefix`/`owl:imports` the PR
   introduced, a `Closes #N` GitHub did not register) and an OntoCanvas preview link per touched module that declares
