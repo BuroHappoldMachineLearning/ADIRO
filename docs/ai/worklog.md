@@ -22,6 +22,16 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-09 — Describe four facade terms; first real run of the Release PR bot ([#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87), partial)
+
+- **Branch:** `describe-facade-terms`.
+- **Changed:** added `rdfs:comment` to `Gasket`, `Firestop`, `CavityBarrier` and `Louvre` in `aec_facade_domain` (plain-language, consistent with their place in the taxonomy; no standards text), with a changelog entry; regenerated `docs/`. Annotation-only → PATCH (2.0.1). Leaves 76 undescribed terms in this module.
+- **Why now:** an innocuous real change to exercise the Release PR bot end to end ([#99](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/99)): after merge `release-pr.yml` should open "Release cut: aec_facade_domain 2.0.1" (ready, not draft, because the changelog entry exists); merging that PR should publish the Release, start `backup-version.yml` from the `release` event, push the snapshot and dispatch the Pages deploy ([#100](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/100)).
+- **Verified:** `validate_ontology.py` valid (pre-existing warnings only); `compat_diff.py` requires PATCH and `prepare_release.py plan` shows `aec_facade_domain` 2.0.0 → 2.0.1. Reasoner/ROBOT not run locally (CI runs them on the PR).
+- **Next step:** watch the bot run after merge; record what each step did, and close #100 if the deploy dispatch fires.
+
+---
+
 ## 2026-10-09 — Release PR bot ([#99](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/99))
 
 - **Branch:** `release-pr-bot`.

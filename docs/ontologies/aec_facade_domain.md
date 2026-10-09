@@ -97,6 +97,8 @@ graph BT
 
 ### Cavity barrier {#CavityBarrier}
 
+Barrier fitted in a ventilated cavity to limit the spread of fire and smoke through the cavity; modelled here as a kind of gasket.
+
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain#CavityBarrier`
 - **Sub class of:** [Gasket](#Gasket)
 
@@ -222,6 +224,8 @@ Facade system - part of support type; a type of drawing element
 
 ### Firestop {#Firestop}
 
+Linear seal that closes a gap in a fire-rated construction, such as the joint between a facade and a floor slab, to slow the passage of fire and smoke; a type of linear component.
+
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain#Firestop`
 - **Sub class of:** [Linear component](#LinearComponent)
 
@@ -241,6 +245,8 @@ Facade system - part of support type; a type of drawing element
 - **Sub class of:** [CW frame member properties](#CWFrameMemberProperties)
 
 ### Gasket {#Gasket}
+
+Compressible strip, typically elastomeric, fitted between facade parts to seal the joint against air and water; a type of linear component.
 
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain#Gasket`
 - **Sub class of:** [Linear component](#LinearComponent)
@@ -296,6 +302,8 @@ Element category - linear facade component
 - **Sub class of:** [Point component](#PointComponent)
 
 ### Louvre {#Louvre}
+
+Fixed or adjustable slatted opening that lets air pass while keeping out rain and direct view; a type of linear component.
 
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain#Louvre`
 - **Sub class of:** [Linear component](#LinearComponent)

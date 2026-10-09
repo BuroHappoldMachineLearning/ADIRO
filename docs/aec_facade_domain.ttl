@@ -130,16 +130,19 @@
 
 :Firestop rdf:type owl:Class;
     rdfs:label "Firestop";
+    rdfs:comment "Linear seal that closes a gap in a fire-rated construction, such as the joint between a facade and a floor slab, to slow the passage of fire and smoke; a type of linear component.";
     metadata:labellableRoot "false"^^xsd:boolean;
     rdfs:subClassOf :LinearComponent.
 
 :Gasket rdf:type owl:Class;
     rdfs:label "Gasket";
+    rdfs:comment "Compressible strip, typically elastomeric, fitted between facade parts to seal the joint against air and water; a type of linear component.";
     metadata:labellableRoot "false"^^xsd:boolean;
     rdfs:subClassOf :LinearComponent.
 
 :Louvre rdf:type owl:Class;
     rdfs:label "Louvre";
+    rdfs:comment "Fixed or adjustable slatted opening that lets air pass while keeping out rain and direct view; a type of linear component.";
     metadata:labellableRoot "false"^^xsd:boolean;
     rdfs:subClassOf :LinearComponent.
 
@@ -220,6 +223,7 @@
 
 :CavityBarrier rdf:type owl:Class;
     rdfs:label "Cavity barrier";
+    rdfs:comment "Barrier fitted in a ventilated cavity to limit the spread of fire and smoke through the cavity; modelled here as a kind of gasket.";
     metadata:labellableRoot "false"^^xsd:boolean;
     rdfs:subClassOf :Gasket.
 
