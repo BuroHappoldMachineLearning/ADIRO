@@ -6,12 +6,12 @@
 <img src="docs/img/adiro_banner.png" alt="ADIRO" width="320" align="left">
 
 <b>Latest releases</b><br>
-<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_provenance"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_provenance.json" alt="aec_provenance"></a><br>
-<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_geometry"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_geometry.json" alt="aec_geometry"></a><br>
-<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_drawing_metadata"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_drawing_metadata.json" alt="aec_drawing_metadata"></a><br>
-<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_common_symbols"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_common_symbols.json" alt="aec_common_symbols"></a><br>
-<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_domain_common"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_domain_common.json" alt="aec_domain_common"></a><br>
-<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_facade_domain"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_facade_domain.json" alt="aec_facade_domain"></a><br>
+<a href="https://burohappoldmachinelearning.github.io/ADIRO/ontologies/aec_provenance/"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_provenance.json" alt="aec_provenance"></a><br>
+<a href="https://burohappoldmachinelearning.github.io/ADIRO/ontologies/aec_geometry/"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_geometry.json" alt="aec_geometry"></a><br>
+<a href="https://burohappoldmachinelearning.github.io/ADIRO/ontologies/aec_drawing_metadata/"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_drawing_metadata.json" alt="aec_drawing_metadata"></a><br>
+<a href="https://burohappoldmachinelearning.github.io/ADIRO/ontologies/aec_common_symbols/"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_common_symbols.json" alt="aec_common_symbols"></a><br>
+<a href="https://burohappoldmachinelearning.github.io/ADIRO/ontologies/aec_domain_common/"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_domain_common.json" alt="aec_domain_common"></a><br>
+<a href="https://burohappoldmachinelearning.github.io/ADIRO/ontologies/aec_facade_domain/"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_facade_domain.json" alt="aec_facade_domain"></a><br>
 
 <br clear="left">
 

@@ -57,7 +57,11 @@ Everything after step 4 is automatic.
 
 - Verifies the tag's module/version match what `src/<module>.ttl` declares at that tag.
 - Snapshots `src/<module>.ttl` to `versions/<module>/<semver>/` and pushes the commit to `main`.
-- Sets the Release notes from `changelogs/<module>.md` plus the resolvable `w3id.org/adiro` URLs for that version.
+- Sets the Release notes (`scripts/release_notes.py`): a summary line with the SemVer bump (MAJOR / MINOR / PATCH, or first release), the previous → this version, a link to the module's [published documentation page](https://burohappoldmachinelearning.github.io/ADIRO/ontologies/aec_common_symbols/) and a compare link; the module's `changelogs/<module>.md` section; the pull requests that changed `src/<module>.ttl` since the previous release (a bare commit is listed where there was no PR); and the resolvable `w3id.org/adiro` URLs for that version.
+
+## Release badges
+
+The README shows the latest released version of every module as a badge beside the banner. Each badge reads `badges/<module>.json` from the published site; `scripts/release_badges.py` (called by `generate_docs.py`) writes those files from the highest SemVer under `versions/<module>/`, so they refresh on every docs deploy, including the one dispatched after a release. They follow the shields.io endpoint schema (`schemaVersion`, `label`, `message`, `color`) and can feed anything else that needs the latest version of each module. A badge links to the module's documentation page. A new module needs its badge in `README.md` (`tests/test_readme_badges.py` enforces it).
 
 The job then dispatches **`generate-deploy-docs.yml`** explicitly (a push made with the default `GITHUB_TOKEN` does not start other workflows, so the snapshot push cannot trigger it). That workflow regenerates the docs, builds the MkDocs site (`--strict`, so a broken link would fail the build here), and deploys to GitHub Pages — publishing both the unversioned "latest" `…/<module>.ttl` and the new versioned snapshot `…/<module>/<semver>/<module>.ttl` as resolvable URLs.
 
