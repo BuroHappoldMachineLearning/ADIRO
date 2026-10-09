@@ -115,3 +115,31 @@ def test_a_failed_base_diff_is_reported_and_blocks_under_enforcement(tmp_path):
     advisory = run(False)
     assert advisory.returncode == 0 and "changelog check did not run" in md.read_text(encoding="utf-8")
     assert run(True).returncode != 0  # the future gate must not fail open
+
+
+def test_base_edits_made_after_the_branch_point_are_not_attributed_to_the_pr(tmp_path):
+    import subprocess
+
+    def git(*args):
+        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.org", *args], cwd=tmp_path, check=True,
+                       capture_output=True)
+
+    (tmp_path / "src").mkdir()
+    ttl = tmp_path / "src" / "aec_x.ttl"
+    legacy = ':Legacy a owl:Class ; rdfs:label "Legacy" .\n'  # undescribed backlog the PR does not touch
+    ttl.write_text(BASE + legacy, encoding="utf-8")
+    git("init", "-q", "-b", "main")
+    git("add", "-A")
+    git("commit", "-q", "-m", "base")
+    git("checkout", "-q", "-b", "pr")
+    ttl.write_text(BASE + legacy + ':PrTerm a owl:Class ; rdfs:label "Pr term" .\n', encoding="utf-8")
+    git("commit", "-q", "-am", "pr adds a term")
+    git("checkout", "-q", "main")  # the base moves on after the PR branched
+    ttl.write_text(BASE + legacy.replace('"Legacy"', '"Legacy renamed"'), encoding="utf-8")
+    git("commit", "-q", "-am", "main adds another term")
+    git("checkout", "-q", "pr")
+
+    script = Path(__file__).resolve().parent.parent / "scripts" / "pr_guidance.py"
+    out = subprocess.run([sys.executable, str(script), "--root", str(tmp_path), "--base-ref", "main", "--repo", "o/r",
+                          "--head-ref", "pr", "--head-sha", "abc"], capture_output=True, text=True, encoding="utf-8").stdout
+    assert "PrTerm" in out and "Legacy" not in out  # the base's rename of Legacy is not the PR's change

@@ -183,6 +183,12 @@ def main(argv=None):
     # to be called release/next is an ordinary PR.
     if args.head_ref == RELEASE_BRANCH and (args.head_repo or args.repo) == args.repo:
         return
+    # The comparison point is the merge base, so edits that landed on the base branch after this PR branched
+    # are not mistaken for the PR's own (--worktree callers already pass a merge-base SHA).
+    base_commit = args.base_ref
+    if not args.worktree:
+        mb = subprocess.run(["git", "merge-base", args.base_ref, "HEAD"], capture_output=True, text=True, cwd=root)
+        base_commit = mb.stdout.strip() or args.base_ref
     spec = args.base_ref if args.worktree else f"{args.base_ref}...HEAD"
     changed = subprocess.run(["git", "diff", "--name-only", "--no-renames", spec, "--", "src", "changelogs"],
                              capture_output=True, text=True, cwd=root).stdout.split()
@@ -196,7 +202,7 @@ def main(argv=None):
     for path in (p for p in changed if re.fullmatch(r"src/[^/]+\.ttl", p)):  # includes deleted modules
         module = Path(path).stem
         head = _load(texts.get(path))
-        base = _load(_git_show(args.base_ref, path, root))
+        base = _load(_git_show(base_commit, path, root))
         if isomorphic(base, head):
             continue
         touched = touched_terms(base, head)
@@ -216,7 +222,7 @@ def main(argv=None):
             fixes.append(f"this PR changes the ontology but not `changelogs/{module}.md`. Add an entry under `[Unreleased]`; "
                          f"it becomes the release notes ([#105](https://github.com/{args.repo}/issues/105)).")
         # only what this PR introduces: a module's standing leftovers are not the author's to fix here
-        base_text = _git_show(args.base_ref, path, root) or ""
+        base_text = _git_show(base_commit, path, root) or ""
         if path in texts:
             fixes += [f"unused `@prefix` {pfx}: delete the declaration."
                       for pfx in sorted(set(find_unused_prefixes(head, texts[path])) - set(find_unused_prefixes(base, base_text)))]
