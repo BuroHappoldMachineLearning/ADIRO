@@ -22,6 +22,15 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-09 — README: latest-release badge per module
+
+- **Branch:** `readme-release-badges`.
+- **Changed:** the README header now shows the ADIRO banner on the left (`<img align="left">`, no table) and one badge per module on the right, each reading the latest GitHub Release for that module (`img.shields.io/github/v/release/…?filter=<module>-v*&sort=semver`), so they update themselves when a release is published. `tests/test_readme_badges.py` fails if a module in `src/` has no badge or a badge names a module that no longer exists; `AGENTS.md` lists the badge among the things a new module needs.
+- **Decision:** dynamic shields.io badges over generated static ones — nothing to maintain on release. Trade-off: shields prints the whole tag (`aec_provenance-v1.0.0`) as the pill text, because the tags are prefixed; the label is omitted to avoid repeating the module name. The alternative (a generated JSON per module behind a shields "endpoint" badge, giving a clean `aec_provenance | 1.0.0`) was not built.
+- **Verified:** tests pass (38). Each filter returns the expected module and version from shields.io. **Not verified:** how GitHub renders the layout — checked only by reading the HTML; the PR branch's README is the preview.
+
+---
+
 ## 2026-10-09 — Releases: let "Latest" follow the newest release
 
 - **Changed:** removed `--latest=false` from `gh release create` in `release-pr.yml`, and marked `aec_facade_domain-v2.0.1` as Latest by hand. With one "Latest" slot for several independent module streams, `--latest=false` left the badge (and the repo front-page Releases box) stuck on `aec_facade_domain-v2.0.0` from August; it now means "most recent release". Pushed directly to `main` at the maintainer's explicit request (a one-flag change), not via a PR. Not yet seen in a real release: the next Release PR merge is the first run without the flag.

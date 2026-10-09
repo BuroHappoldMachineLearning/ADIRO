@@ -1,8 +1,18 @@
 # AEC Drawing Ontologies
 
-<p align="center">
-  <img src="docs/img/adiro_banner.png" alt="ADIRO" width="320">
-</p>
+<!-- Latest-release badges: one per module in src/ (checked by tests/test_readme_badges.py). They read the
+     GitHub Releases, so they update themselves when a release is published. -->
+<img src="docs/img/adiro_banner.png" alt="ADIRO" width="320" align="left">
+
+<b>Latest releases</b><br>
+<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_provenance"><img src="https://img.shields.io/github/v/release/BuroHappoldMachineLearning/ADIRO?filter=aec_provenance-v*&sort=semver&label=&color=16305f" alt="aec_provenance"></a><br>
+<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_geometry"><img src="https://img.shields.io/github/v/release/BuroHappoldMachineLearning/ADIRO?filter=aec_geometry-v*&sort=semver&label=&color=16305f" alt="aec_geometry"></a><br>
+<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_drawing_metadata"><img src="https://img.shields.io/github/v/release/BuroHappoldMachineLearning/ADIRO?filter=aec_drawing_metadata-v*&sort=semver&label=&color=16305f" alt="aec_drawing_metadata"></a><br>
+<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_common_symbols"><img src="https://img.shields.io/github/v/release/BuroHappoldMachineLearning/ADIRO?filter=aec_common_symbols-v*&sort=semver&label=&color=16305f" alt="aec_common_symbols"></a><br>
+<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_domain_common"><img src="https://img.shields.io/github/v/release/BuroHappoldMachineLearning/ADIRO?filter=aec_domain_common-v*&sort=semver&label=&color=16305f" alt="aec_domain_common"></a><br>
+<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_facade_domain"><img src="https://img.shields.io/github/v/release/BuroHappoldMachineLearning/ADIRO?filter=aec_facade_domain-v*&sort=semver&label=&color=16305f" alt="aec_facade_domain"></a><br>
+
+<br clear="left">
 
 ADIRO (*AEC Drawing Information Representation Ontologies*) is a set of ontologies for AEC (*Architecture, Engineering, and Construction*) drawing representation, designed to support machine learning tasks, in particular information extraction workflows.
 

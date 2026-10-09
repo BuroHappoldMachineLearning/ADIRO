@@ -197,7 +197,8 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   read) plus the pyLODE HTML, the copied `.ttl`/`.display.json`, and the `docs/ontologies/index.md` +
   `docs/index.md` landing pages. Whenever a `.ttl` changes — and **especially when you add a new `src/*.ttl`
   module, which MUST get its own `docs/ontologies/<module>.md`** (and an entry in the ontologies index +
-  dependency diagram) — regenerate in the same change: `uv run python scripts/generate_docs.py`, and let
+  dependency diagram, **and a latest-release badge in `README.md`** — `tests/test_readme_badges.py` fails without
+  it) — regenerate in the same change: `uv run python scripts/generate_docs.py`, and let
   `generate-deploy-docs.yml` publish. Do **not** hand-edit any generated page under `docs/` (including
   `docs/ontologies/`) — they are overwritten on the next run; change the `.ttl` (or the generator) instead.
 - **Ontology ↔ specification (hand-written docs).** The rule above covers *generated* pages. The
