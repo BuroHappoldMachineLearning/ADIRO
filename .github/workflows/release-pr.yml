@@ -1,0 +1,146 @@
+name: Release PR
+
+# #99. Releases are cut deliberately, but nothing used to say one was overdue. After every
+# push to `main` this workflow:
+#
+#   1. `tag`        - tags and publishes each module whose release cut has just been merged
+#                     (declared version has a dated changelog heading but no tag yet);
+#   2. `release-pr` - rebuilds ONE pull request, `release/next`, containing the release cut
+#                     for everything still unreleased (version bumps + changelog moves), or
+#                     closes it when nothing is pending.
+#
+# The branch is regenerated from `main` every time, so later merges update the same PR and an
+# open Release PR is the signal that a release is pending. Bumps come from scripts/compat_diff.py
+# (see scripts/prepare_release.py).
+#
+# Everything uses the default GITHUB_TOKEN, so by GitHub's rule none of the events it creates
+# start other workflows: the PR gets no PR-triggered checks (validation runs inside this job
+# instead), and a Release it publishes does not fire `backup-version.yml` - that one is
+# dispatched explicitly below. Repo setting required: Actions may create pull requests.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write   # dispatch backup-version.yml
+
+concurrency:
+  group: release-pr
+  cancel-in-progress: false
+
+env:
+  RELEASE_BRANCH: release/next
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python and dependencies
+        run: |
+          uv python install 3.12
+          uv sync --python 3.12 --no-install-project
+
+      - name: Tag and publish merged release cuts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tags="$(uv run --python 3.12 --no-project python scripts/prepare_release.py tags)"
+          if [ -z "$tags" ]; then echo "No merged release cut to tag."; exit 0; fi
+          for tag in $tags; do
+            echo "::group::$tag"
+            gh release create "$tag" --target "$GITHUB_SHA" --title "${tag/-v/ }" --latest=false \
+              --notes "Release $tag. Notes are published from the module changelog by the snapshot workflow."
+            # A Release created with GITHUB_TOKEN does not fire the `release` event.
+            gh workflow run backup-version.yml --ref "${{ github.event.repository.default_branch }}" -f tag="$tag"
+            echo "::endgroup::"
+          done
+
+  release-pr:
+    needs: tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the triggering ref (main on push)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python and dependencies
+        run: |
+          uv python install 3.12
+          uv sync --python 3.12 --no-install-project
+
+      - name: Plan the next release
+        id: plan
+        run: |
+          uv run --python 3.12 --no-project python scripts/prepare_release.py plan --json > plan.json
+          uv run --python 3.12 --no-project python scripts/prepare_release.py body > body.md
+          echo "count=$(jq length plan.json)" >> "$GITHUB_OUTPUT"
+          echo "draft=$(jq 'any(.[]; .changelog_empty)' plan.json)" >> "$GITHUB_OUTPUT"
+          echo "title=Release cut: $(jq -r '[.[] | "\(.module) \(.next)"] | join(", ")' plan.json)" >> "$GITHUB_OUTPUT"
+          uv run --python 3.12 --no-project python scripts/prepare_release.py plan
+
+      - name: Close the Release PR when nothing is pending
+        if: steps.plan.outputs.count == '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          num="$(gh pr list --head "$RELEASE_BRANCH" --state open --json number --jq '.[0].number // empty')"
+          if [ -n "$num" ]; then
+            gh pr close "$num" --delete-branch --comment "No release is pending on \`main\` any more, so this PR is closed."
+          else
+            echo "No release pending and no open Release PR."
+          fi
+
+      - name: Build the release cut on release/next
+        if: steps.plan.outputs.count != '0'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$RELEASE_BRANCH"
+          uv run --python 3.12 --no-project python scripts/prepare_release.py apply --date "$(date -u +%F)"
+          # Validate here: a PR opened with GITHUB_TOKEN does not trigger the PR checks.
+          uv run --python 3.12 --no-project python scripts/validate_ontology.py
+          uv run --python 3.12 --no-project python scripts/compat_diff.py --enforce
+          git add -A src changelogs CHANGELOG.md AGENTS.md
+          git commit -m "release: ${{ steps.plan.outputs.title }}"
+          git push --force origin "$RELEASE_BRANCH"
+
+      - name: Open or update the Release PR
+        if: steps.plan.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TITLE: ${{ steps.plan.outputs.title }}
+          DRAFT: ${{ steps.plan.outputs.draft }}
+        run: |
+          num="$(gh pr list --head "$RELEASE_BRANCH" --state open --json number --jq '.[0].number // empty')"
+          if [ -z "$num" ]; then
+            flag=""; [ "$DRAFT" = "true" ] && flag="--draft"
+            gh pr create --base main --head "$RELEASE_BRANCH" --title "$TITLE" --body-file body.md $flag
+          else
+            gh pr edit "$num" --title "$TITLE" --body-file body.md
+            is_draft="$(gh pr view "$num" --json isDraft --jq .isDraft)"
+            if [ "$DRAFT" = "true" ] && [ "$is_draft" = "false" ]; then gh pr ready "$num" --undo
+            elif [ "$DRAFT" = "false" ] && [ "$is_draft" = "true" ]; then gh pr ready "$num"
+            fi
+          fi

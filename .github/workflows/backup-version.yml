@@ -98,8 +98,13 @@ jobs:
             git commit -m "chore: snapshot ${MODULE} ${VERSION}"
             # Rebase first: releases for several modules are published back to back,
             # and a snapshot push must not be rejected because another landed meanwhile.
-            git pull --rebase origin "${{ github.event.repository.default_branch }}"
-            git push
+            # Several tags can be dispatched together (release automation), so retry
+            # if another snapshot push wins the race.
+            for attempt in 1 2 3; do
+              git pull --rebase origin "${{ github.event.repository.default_branch }}" && git push && break
+              [ "$attempt" = 3 ] && { echo "::error::could not push the snapshot after 3 attempts"; exit 1; }
+              sleep $((attempt * 5))
+            done
           fi
 
       - name: Publish the snapshot to GitHub Pages

@@ -22,6 +22,16 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-09 — Release PR bot ([#99](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/99))
+
+- **Branch:** `release-pr-bot`.
+- **Added:** `scripts/prepare_release.py` (`plan` / `apply` / `body` / `tags`, reusing `compat_diff.analyze_module`), `tests/test_prepare_release.py` (8 tests), `.github/workflows/release-pr.yml` (job `tag` publishes merged release cuts and dispatches `backup-version.yml`; job `release-pr` rebuilds `release/next` and opens/updates/closes the PR, as a draft while a pending module's `[Unreleased]` is empty). `backup-version.yml` now retries the snapshot push up to 3 times (several tags are dispatched together). `release-process.md` and `AGENTS.md` describe the flow.
+- **Decisions:** `GITHUB_TOKEN` only (no PAT) — validation runs inside the job because the bot PR starts no PR checks, and `backup-version.yml` is dispatched explicitly. PATCH-only changes also open the PR. Empty changelog → draft, not a failure. The `AGENTS.md` versions line and the `CHANGELOG.md` rollup are rewritten by the script, not left as a checklist item.
+- **Deferred:** a per-release bump override (the branch is regenerated, so hand edits are lost) — recorded on #99 as an open point.
+- **Verified:** unit tests pass; `plan` and `tags` report nothing pending on current `main`. See the end-to-end line below once the scratch-branch run has been checked.
+
+---
+
 ## 2026-10-09 — Fix snapshot → Pages deploy in `backup-version.yml` ([#100](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/100))
 
 - **Changed:** `backup-version.yml` now dispatches `generate-deploy-docs.yml` after pushing a snapshot (a `GITHUB_TOKEN` push does not trigger it); `git pull --rebase` before the snapshot push; new `workflow_dispatch` trigger with a `tag` input so the job can be started for an existing tag (needed by the Release PR bot, [#99](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/99)); `actions: write` permission; tag read via `env` instead of inline expression. `release-process.md` updated to match.

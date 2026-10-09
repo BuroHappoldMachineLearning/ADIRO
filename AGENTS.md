@@ -135,6 +135,14 @@ strategy, bump rules (compatibility-diff spec), imports policy, deprecation, the
 changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
 [DATA-A-10](https://bhmlrnd.youtrack.cloud/articles/DATA-A-10); plan/decisions in
 [RES-27](https://bhmlrnd.youtrack.cloud/issue/RES-27).
+- **Release PR (`.github/workflows/release-pr.yml`, [#99](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/99)):**
+  after every push to `main` it rebuilds one PR, `release/next` ("Release cut: …"), holding the release cut for
+  everything unreleased — bumps from `scripts/compat_diff.py`, `owl:versionInfo`/`owl:versionIRI`, changelog
+  moves, the `CHANGELOG.md` rollup and the versions line below, all done by `scripts/prepare_release.py`. **An
+  open Release PR means a release is pending**; merging it releases (the workflow then tags each module and
+  dispatches `backup-version.yml`). It is a draft while a pending module's `[Unreleased]` is empty. It uses only
+  `GITHUB_TOKEN`, so no PR-triggered checks run on it — validation runs inside the workflow. Do not hand-edit the
+  branch (it is regenerated); do not bump versions by hand except in a manual cut.
 - **Releases are per-module:** tag `<module>-v<semver>` (e.g. `aec_common_symbols-v1.2.0`) →
   `.github/workflows/backup-version.yml` snapshots that module to `versions/<module>/<semver>/`, then
   **dispatches** `generate-deploy-docs.yml` (a push made with `GITHUB_TOKEN` does not trigger other workflows),

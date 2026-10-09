@@ -2,7 +2,21 @@
 
 How a [Versioning](index.md) bump becomes a published, resolvable ontology release.
 
-## Steps
+## The Release PR
+
+An open pull request titled **Release cut: …** (branch `release/next`) means a release is pending. `release-pr.yml` maintains it:
+
+- After every push to `main` it rebuilds the branch from `main` and updates the PR, so it always covers everything unreleased. When nothing is pending it closes the PR.
+- Each module's next version is its last released version plus the bump `scripts/compat_diff.py` requires (a module never released keeps its declared version). The PR bumps `owl:versionInfo` and `owl:versionIRI`, moves `[Unreleased]` under a dated version heading in `changelogs/<module>.md`, and updates the `CHANGELOG.md` rollup and the versions line in `AGENTS.md`.
+- The PR is a **draft** while any pending module has an empty `[Unreleased]` section: its release notes would be empty. Add the changelog entry on `main`; the PR updates itself.
+- Validation (`validate_ontology.py`, `compat_diff.py --enforce`) runs inside the workflow, because a PR opened with the default `GITHUB_TOKEN` does not start the PR-triggered workflows.
+- The bump is the classifier's minimum. The branch is rebuilt on every merge, so a hand edit to it is overwritten; there is no override mechanism yet ([#99](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/99)).
+
+**Merging the Release PR is the release.** The next run of `release-pr.yml` tags each module whose declared version has a dated changelog heading but no tag, publishes a GitHub Release for it, and dispatches `backup-version.yml` (a Release created with `GITHUB_TOKEN` does not fire the `release` event). Everything below then runs as before.
+
+## Manual cut
+
+The same cut can still be made by hand, for example when the bot is unavailable:
 
 1. **Determine the bump** — classify the change per the [compatibility-diff spec](compatibility-diff-algorithm-spec.md) → MAJOR / MINOR / PATCH.
 2. **Bump** `owl:versionInfo` **and** `owl:versionIRI` in that module's `src/<module>.ttl` on `main` (CI enforces tag == `versionInfo` == `versionIRI` tail).
