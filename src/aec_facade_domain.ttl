@@ -528,4 +528,5 @@
     metadata:labellableRoot "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeShape.
 :ZzGuidanceTestTerm a owl:Class ;
-    rdfs:label "Zz guidance test term" .
+    rdfs:label "Zz guidance test term" ;
+    rdfs:comment "Throwaway term used to test the PR guidance comment." .
