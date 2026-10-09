@@ -22,6 +22,40 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-09 — Agent guidance: contributor workflow in AGENTS.md; stale Cursor hold removed
+
+**Issue:** none (requested by the maintainer while preparing the team announcement of the release process and the ADIRO Bot).
+**Branch:** `docs/agent-contributor-workflow`.
+
+A review of what the repo tells agents found: only two Claude Code skills exist (`deploy`, `pr-review-feedback`), the conventions
+live in `AGENTS.md` (read by Claude Code through `CLAUDE.md` and by Cursor through its rule), neither skill mentioned the Release PR
+bot, the PR comments or the override file, nothing told an agent to act on the bot's "Required improvements" or to leave versions and
+overrides alone, and `.cursor/rules/general.mdc` still said TBox edits were on hold pending RES-27 although `AGENTS.md` lifted that hold.
+Changed: a short "Contributor workflow" section in `AGENTS.md` (the order of work, including reading and acting on the bot's comments
+and not touching versions or overrides by default, with an exception only for a good reason that follows clearly from the change and is
+stated in the PR description, as the maintainer decided); a pointer to it in the `deploy` skill; the stale hold removed from the
+Cursor rule. Follow-up in the same PR, after asking how the Cursor hold went stale: it was a summary copied into the Cursor rule on
+2026-08-04 (the commit that made `AGENTS.md` canonical), not updated when the hold was lifted on 2026-08-06; and
+`.cursor/rules/description.mdc` (March, always on) still described a pre-`AGENTS.md` five-layer structure. Now `general.mdc` is an
+import plus one sentence, `description.mdc` is deleted (superseded by `AGENTS.md` "Purpose"; history keeps it), the `deploy` skill's
+"In brief" paragraph is replaced by links to the `AGENTS.md` sections, the one Cursor-only rule (helper scripts under `scripts/`
+with tests, `uv`) moved into `AGENTS.md`, and `tests/test_agent_adapters.py` fails if `CLAUDE.md` or a Cursor rule grows past 25 lines
+or loses its `@AGENTS.md` import. Also, at the maintainer's request, the PR-description rules were deduplicated against the
+shared team skills (`tools:pr-descriptions`, `tools:pr-issue-links`): `AGENTS.md` keeps the closing-keyword essentials (the repo is public
+and the plugin is private, so outside contributors cannot read the skills) and every ADIRO-specific rule (bot comments, now three;
+OntoCanvas preview link; keeping tracker IDs out of public text), and drops the generic style items; the `w3id.org/adiro` rule moved here
+from the shared `youtrack` skill, whose repo-specific bullets were removed in the `ai-plugins` PR
+([#14](https://github.com/BuroHappoldMachineLearning/ai-plugins/pull/14)), which now also fails CI if a shared skill names a repo.
+Review fixes: the `w3id.org/adiro` rule keeps an explicit exception for a branch preview (which must use the raw branch URL);
+the adapter test now requires every Cursor rule to import `AGENTS.md`; the `deploy` skill's restated steps (which had already drifted:
+"new" terms where `AGENTS.md` says "new or edited") became a bare pointer; and `validate-ontology.yml` now runs `tests/` on the PR,
+because they ran only on a push to `main` (a failing test, including the new guard, could merge first). **Verified:** the test suite with the
+CI command (72 passed, including the 3 that need pillow); no gate covers the prose, and an agent's behaviour
+was not tested. **Not done /
+deferred:** a dedicated Claude Code skill for the contributor workflow (a section in `AGENTS.md` reaches every tool; add a skill only
+if Claude Code agents still miss it). **Next step:** none planned; the maintainer decided not to trial an agent against the new section
+and to trust it. If an agent is later seen skipping the changelog entry, the definition or the bot comments, add a dedicated skill.
+
 ## 2026-10-09 — README: latest-release badge per module
 
 - **Branch:** `readme-release-badges`.

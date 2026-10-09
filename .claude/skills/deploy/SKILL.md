@@ -10,14 +10,13 @@ description: >-
 **The authority for this is the root [`AGENTS.md`](../../../AGENTS.md) — read it.** That file is tool-neutral
 (shared with Cursor and humans); this skill is just the Claude Code trigger for it.
 
-In brief: a Material-for-MkDocs site is generated from `src/*.ttl` by `scripts/generate_docs.py` (pyLODE HTML
-+ `ttl2md` Markdown) and deployed to GitHub Pages by `.github/workflows/generate-deploy-docs.yml`. PRs run
-`validate-ontology.yml` (`scripts/validate_ontology.py`); GitHub issues mirror to YouTrack RES via
-`sync-issues-to-youtrack.yml`. Versioning is per-module SemVer (scheme in `docs/contribute/versioning/`,
-[RES-27](https://bhmlrnd.youtrack.cloud/issue/RES-27)) — additive TBox `.ttl` edits go under the module's
-`changelogs/<module>.md` `[Unreleased]` section, with `owl:versionInfo`/`owl:versionIRI` bumped only at a
-release cut (KB [DATA-A-10](https://bhmlrnd.youtrack.cloud/articles/DATA-A-10)). Full workflow names, commands, gotchas, and the mandatory
-keep-in-sync rules are in `AGENTS.md`.
+The docs pipeline, the validation and mirror CI, and the versioning scheme are described in `AGENTS.md` ("Docs build &
+publish", "Validation & YouTrack-sync CI", "Versioning"). Read them there: this skill deliberately holds no copy, so
+there is one place to keep current.
+
+**Contributing an ontology change?** Follow `AGENTS.md` → "Contributor workflow". It holds the ordered steps, including
+what to do with the ADIRO Bot's comments and when versions and overrides may be touched; this skill deliberately repeats
+none of them, so there is one list to keep current.
 
 **Keep in sync:** if you change CI/docs/versioning, update `AGENTS.md` in the same PR. CI wins on conflicts.
 
