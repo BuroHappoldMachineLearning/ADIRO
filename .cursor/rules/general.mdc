@@ -4,22 +4,8 @@ globs:
 alwaysApply: true
 ---
 
-The shared, tool-agnostic conventions for this repo live in **[AGENTS.md](../../AGENTS.md)** — purpose and
-module structure, the docs build & publish pipeline (MkDocs → GitHub Pages), validation & YouTrack-sync CI,
-per-module SemVer versioning, the contributor workflow, and the mandatory keep-in-sync rules.
-Follow it. Keep general conventions in `AGENTS.md`, not here, so Claude/Cursor/others share one source of
-truth; this file adds only the **Cursor-specific** rule below.
+The conventions for this repo, including how to validate an ontology after every `.ttl` edit, live in
+**[AGENTS.md](../../AGENTS.md)**: the single source of truth shared with Claude Code and other tools. Follow it, and do
+not restate it here, so there is one place to keep current.
 
 @AGENTS.md
-
-## Ontology validation (Cursor tooling)
-Always parse ontology files for correctness after authoring/modifying them. Write any required Python (with
-tests) under `/scripts`, using `uv` for dependencies.
-
-**CRITICAL: after ANY modification to a `.ttl` file, validate it immediately** (do not rely on editor lints):
-```bash
-uv run python scripts/validate_ontology.py src/<modified_file>.ttl   # single file
-uv run python scripts/validate_ontology.py                          # all of src/
-```
-Never skip validation — missing periods, incomplete statements, or malformed RDF cause parse failures that
-must be caught at once.

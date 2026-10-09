@@ -2,7 +2,7 @@
 
 Shared, **tool-agnostic** working guide for AI assistants (Claude Code, Cursor, and any other agent) and
 humans. This is the **single source of truth** for how to work in this repo; each tool's native entry file
-points here instead of restating it:
+points here instead of restating it, and a skill links to the relevant section instead of summarising it:
 - **Claude Code** → `CLAUDE.md` imports this file; the `deploy` skill (`.claude/skills/deploy/`) points here.
 - **Cursor** → `.cursor/rules/general.mdc` references this file and adds only Cursor-specific rules.
 
@@ -50,7 +50,7 @@ a correct statement about one query-layer module read as though it settled the m
 - **Python** (3.10–3.13; CI runs 3.12), managed with **uv** (single root `pyproject.toml`).
 - **pyLODE** (`pylode==3.2.3`), **rdflib** (`>=6.0.0`), **Material for MkDocs** (`mkdocs-material>=9.5.0`).
 - In-repo **`ttl2md/`** package (separate `src/` tree + own tests) renders native Markdown from the TTL.
-- **pytest** for tests.
+- **pytest** for tests. Write any helper script (with tests) under `scripts/`, with `uv` for dependencies.
 
 ## Docs build & publish
 Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachinelearning.github.io/ADIRO/**.

@@ -34,7 +34,14 @@ overrides alone, and `.cursor/rules/general.mdc` still said TBox edits were on h
 Changed: a short "Contributor workflow" section in `AGENTS.md` (the order of work, including reading and acting on the bot's comments
 and not touching versions or overrides by default, with an exception only for a good reason that follows clearly from the change and is
 stated in the PR description, as the maintainer decided); a pointer to it in the `deploy` skill; the stale hold removed from the
-Cursor rule. **Verified:** read-through only; no gate applies to these files, and an agent's behaviour was not tested. **Not done /
+Cursor rule. Follow-up in the same PR, after asking how the Cursor hold went stale: it was a summary copied into the Cursor rule on
+2026-08-04 (the commit that made `AGENTS.md` canonical), not updated when the hold was lifted on 2026-08-06; and
+`.cursor/rules/description.mdc` (March, always on) still described a pre-`AGENTS.md` five-layer structure. Now `general.mdc` is an
+import plus one sentence, `description.mdc` is deleted (superseded by `AGENTS.md` "Purpose"; history keeps it), the `deploy` skill's
+"In brief" paragraph is replaced by links to the `AGENTS.md` sections, the one Cursor-only rule (helper scripts under `scripts/`
+with tests, `uv`) moved into `AGENTS.md`, and `tests/test_agent_adapters.py` fails if `CLAUDE.md` or a Cursor rule grows past 25 lines
+or loses its `@AGENTS.md` import. **Verified:** the test suite (69 passed, 3 skipped); no gate covers the prose, and an agent's behaviour
+was not tested. **Not done /
 deferred:** a dedicated Claude Code skill for the contributor workflow (a section in `AGENTS.md` reaches every tool; add a skill only
 if Claude Code agents still miss it). **Next step:** none planned; the maintainer decided not to trial an agent against the new section
 and to trust it. If an agent is later seen skipping the changelog entry, the definition or the bot comments, add a dedicated skill.
