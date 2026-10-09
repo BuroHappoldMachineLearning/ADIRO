@@ -19,6 +19,9 @@ inputs:
   author:
     description: Login of the identity that owns the comment.
     default: adiro-bot[bot]
+  legacy-author:
+    description: Identity whose older copies of the comment are removed (the pre-ADIRO-Bot CI identity).
+    default: github-actions[bot]
   pr-number:
     description: PR to comment on; default is the PR of the triggering event.
     default: ""
@@ -34,6 +37,7 @@ runs:
         STICKY_MARKER: ${{ inputs.marker }}
         STICKY_FILE: ${{ inputs.file }}
         STICKY_AUTHOR: ${{ inputs.author }}
+        STICKY_LEGACY: ${{ inputs.legacy-author }}
         STICKY_PR: ${{ inputs.pr-number }}
         STICKY_SHA: ${{ inputs.head-sha }}
       with:
@@ -49,10 +53,14 @@ runs:
             owner, repo, issue_number, per_page: 100,
           });
           const withMarker = comments.filter(c => c.body && c.body.includes(marker));
-          const existing = withMarker.find(c => c.user && c.user.login === author);
+          const mine = withMarker.filter(c => c.user && c.user.login === author);
+          const existing = mine[0];
 
-          // Older copies written by another identity: remove them so there is only one.
-          for (const old of withMarker.filter(c => c !== existing)) {
+          // Duplicates of this identity, and older copies from the legacy CI identity, are removed so there is
+          // only one. A comment from anyone else that merely contains the marker is never touched.
+          const legacy = process.env.STICKY_LEGACY;
+          const stale = mine.slice(1).concat(withMarker.filter(c => c.user && c.user.login === legacy));
+          for (const old of stale) {
             try {
               await github.rest.issues.deleteComment({ owner, repo, comment_id: old.id });
               core.info(`Removed a ${old.user && old.user.login} copy of the comment.`);

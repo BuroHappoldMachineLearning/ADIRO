@@ -32,9 +32,8 @@ from rdflib.namespace import OWL, RDF, RDFS
 from rdflib.term import BNode
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from prepare_release import unreleased_body  # noqa: E402
 from validate_ontology import (  # noqa: E402
-    ADIRO_NS, DESCRIPTION_PROPS, TERM_TYPES, find_unused_imports, find_unused_prefixes)
+    ADIRO_NS, DESCRIPTION_PROPS, TERM_TYPES, find_unused_imports, find_unused_prefixes, missing_changelog_modules)
 
 MARKER = "<!-- adiro-pr-guidance -->"
 RELEASE_BRANCH = "release/next"
@@ -47,8 +46,18 @@ def adiro_terms(graph):
             if isinstance(t, URIRef) and str(t).startswith(ADIRO_NS)}
 
 
+def _node(graph, node, seen=()):
+    """A comparable form of an object: IRIs and literals as they are, a blank node as the (recursive) set of its
+    own triples, so an edit inside an OWL restriction or list changes the term that owns it."""
+    if not isinstance(node, BNode):
+        return node
+    if node in seen:  # a cycle through blank nodes
+        return "_:cycle"
+    return frozenset((p, _node(graph, o, seen + (node,))) for p, o in graph.predicate_objects(node))
+
+
 def _signature(graph, term):
-    return {(p, o) for p, o in graph.predicate_objects(term) if not isinstance(o, BNode)}
+    return {(p, _node(graph, o)) for p, o in graph.predicate_objects(term)}
 
 
 def touched_terms(base, head):
@@ -90,12 +99,6 @@ def definition_line(ttl_text, term):
 
 def declares_classes(graph):
     return any(isinstance(c, URIRef) and str(c).startswith(ADIRO_NS) for c in graph.subjects(RDF.type, OWL.Class))
-
-
-def changelog_missing(base_changelog, head_changelog):
-    """True when [Unreleased] is empty or identical to the base: this PR added no entry."""
-    head = unreleased_body(head_changelog or "")
-    return not head or head == unreleased_body(base_changelog or "")
 
 
 def unregistered_closing(body, registered):
@@ -179,17 +182,18 @@ def main(argv=None):
     if args.head_ref == RELEASE_BRANCH:  # the bot's own cut: nothing for a person to do here
         return
     spec = args.base_ref if args.worktree else f"{args.base_ref}...HEAD"
-    changed = subprocess.run(["git", "diff", "--name-only", spec, "--", "src"],
+    changed = subprocess.run(["git", "diff", "--name-only", "--no-renames", spec, "--", "src", "changelogs"],
                              capture_output=True, text=True, cwd=root).stdout.split()
+    no_changelog = set(missing_changelog_modules(changed))  # the same check as validate_ontology.py (#105)
     texts = {f"src/{p.name}": p.read_text(encoding="utf-8") for p in sorted((root / "src").glob("*.ttl"))}
     suite = Graph()
     for text in texts.values():
         suite.parse(data=text, format="turtle")
 
     modules = []
-    for path in (p for p in changed if p in texts):
+    for path in (p for p in changed if re.fullmatch(r"src/[^/]+\.ttl", p)):  # includes deleted modules
         module = Path(path).stem
-        head = _load(texts[path])
+        head = _load(texts.get(path))
         base = _load(_git_show(args.base_ref, path, root))
         if isomorphic(base, head):
             continue
@@ -203,19 +207,21 @@ def main(argv=None):
         for t, others in label_clashes(suite, touched).items():
             fixes.append(f"`{local_name(t)}` shares its `rdfs:label` with " + ", ".join(f"`{local_name(o)}`" for o in others)
                          + ". Labels are unique across classes so the docs and label search are not ambiguous.")
-        cl_path = f"changelogs/{module}.md"
-        head_cl = (root / cl_path).read_text(encoding="utf-8") if (root / cl_path).is_file() else ""
-        if changelog_missing(_git_show(args.base_ref, cl_path, root), head_cl):
-            fixes.append(f"this PR changes the ontology but adds no entry under `[Unreleased]` in `{cl_path}`. "
-                         f"Record the change there; the next release cut reads it ([#105](https://github.com/{args.repo}/issues/105)).")
+        if path not in texts:
+            fixes.append(f"`{path}` is removed or renamed. That is a breaking change: say so in the changelog "
+                         "and check the dependent modules.")
+        if module in no_changelog:
+            fixes.append(f"this PR changes the ontology but not `changelogs/{module}.md`. Add an entry under `[Unreleased]`; "
+                         f"it becomes the release notes ([#105](https://github.com/{args.repo}/issues/105)).")
         # only what this PR introduces: a module's standing leftovers are not the author's to fix here
         base_text = _git_show(args.base_ref, path, root) or ""
-        fixes += [f"unused `@prefix` {pfx}: delete the declaration."
-                  for pfx in sorted(set(find_unused_prefixes(head, texts[path])) - set(find_unused_prefixes(base, base_text)))]
-        fixes += [f"`owl:imports <{imp}>` but no term of it is used: drop the import or use it."
-                  for imp in sorted(set(find_unused_imports(head)) - set(find_unused_imports(base)))]
+        if path in texts:
+            fixes += [f"unused `@prefix` {pfx}: delete the declaration."
+                      for pfx in sorted(set(find_unused_prefixes(head, texts[path])) - set(find_unused_prefixes(base, base_text)))]
+            fixes += [f"`owl:imports <{imp}>` but no term of it is used: drop the import or use it."
+                      for imp in sorted(set(find_unused_imports(head)) - set(find_unused_imports(base)))]
         modules.append({"name": module, "fixes": fixes,
-                        "preview": preview_url(args.head_repo or args.repo, args.head_ref, module) if declares_classes(head) else None})
+                        "preview": preview_url(args.head_repo or args.repo, args.head_ref, module) if path in texts and declares_classes(head) else None})
 
     unregistered = []
     if args.pr and args.body_file and Path(args.body_file).is_file():

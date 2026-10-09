@@ -56,6 +56,13 @@ the changelog check ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/
   and its report goes to the job summary. `pr_guidance.py` gained `--head-repo` and `--worktree`; the sticky action
   gained `pr-number` / `head-sha` inputs. **Untestable before merge** (`pull_request_target` runs the base branch's copy):
   needs a real fork PR.
+- Review round on PR #111 (Copilot, 8 findings, all valid): the sticky action now deletes only this bot's duplicates and
+  the legacy `github-actions[bot]` copy (never another user's comment that quotes the marker); every app token is
+  down-scoped (`permission-pull-requests: write`); `pr-guidance.yml` checks out the PR head, not the merge commit;
+  touched-term detection now includes blank-node (restriction/list) subgraphs; deleted or renamed modules are no longer
+  skipped; and the changelog check moved into `validate_ontology.py` as [#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)
+  specifies (advisory, `ENFORCE_CHANGELOG=1` blocks, shown in the QC comment), with the guidance comment only rendering it.
+  `validate-ontology.yml` / `ontology-reasoning.yml` now fetch full history and pass `BASE_REF`.
 - Verified: 61 unit tests pass; the script ran against a real past diff; all workflow/action YAML parses. **Not
   verified until the PR runs:** the app token's comment permission on PRs, deleting the old `github-actions` comments, the
   fork skip.

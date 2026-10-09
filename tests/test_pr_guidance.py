@@ -53,13 +53,21 @@ def test_definition_line_finds_the_term_block():
     assert pg.definition_line(HEAD, URIRef("https://w3id.org/adiro/aec_x#Missing")) is None
 
 
-def test_changelog_missing_when_empty_or_unchanged():
-    empty = "## [Unreleased]\n\n_Pending changes accumulate here._\n\n## [1.0.0]\n"
-    filled = empty.replace("\n## [1.0.0]", "\n### Added\n- B.\n\n## [1.0.0]")
-    assert pg.changelog_missing(empty, empty)
-    assert pg.changelog_missing(filled, filled)  # entry already on main: this PR added none
-    assert not pg.changelog_missing(empty, filled)
-    assert pg.changelog_missing(None, "")  # no changelog at all
+def test_an_edit_inside_a_blank_node_restriction_touches_the_owning_class():
+    base = PREFIXES + (':A a owl:Class ; rdfs:comment "d" ; rdfs:subClassOf [ a owl:Restriction ; '
+                       'owl:onProperty :p ; owl:maxCardinality 1 ] .\n')
+    head = base.replace("maxCardinality 1", "maxCardinality 2")
+    assert name(pg.touched_terms(g(base), g(head))) == ["A"]
+    assert pg.touched_terms(g(base), g(base)) == []  # same restriction, different blank-node ids: untouched
+
+
+def test_missing_changelog_modules_flags_edits_additions_and_deletions():
+    from validate_ontology import missing_changelog_modules as missing
+    assert missing(["src/aec_x.ttl"]) == ["aec_x"]
+    assert missing(["src/aec_x.ttl", "changelogs/aec_x.md"]) == []  # the release cut moves both together
+    assert missing(["src/aec_x.ttl", "changelogs/aec_y.md"]) == ["aec_x"]  # another module's changelog does not count
+    assert missing(["changelogs/aec_x.md", "src/aec_x.display.json"]) == []  # not a .ttl change
+    assert missing([]) == []
 
 
 def test_unregistered_closing_only_reports_what_github_missed():

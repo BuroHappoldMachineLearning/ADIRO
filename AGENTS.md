@@ -85,7 +85,10 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
   over `src/*.ttl` (parse check, circular-subclass detection, ensures an `owl:Ontology` declaration, and
   per-module version consistency — `owl:versionInfo` == `owl:versionIRI` tail == ontology IRI + version), plus
   `scripts/compat_diff.py` (RES-67, *warn* mode) which flags when a module's declared SemVer bump is smaller
-  than its change requires. The same validate step gates the deploy workflow.
+  than its change requires. The same validate step gates the deploy workflow. On a PR (`BASE_REF` set) it also
+  warns when `src/<module>.ttl` changed but `changelogs/<module>.md` did not
+  ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)); advisory, and `ENFORCE_CHANGELOG=1`
+  makes it blocking. The warning appears in the QC comment (`ontology-reasoning.yml`).
 - **`.github/workflows/compat-diff-comment.yml`** — on PRs touching `src/**.ttl` (RES-67), posts a sticky
   comment with each changed module's **prospective next version** (`compat_diff.py --markdown`). Report-only;
   the gate is the warn step above.
@@ -123,8 +126,8 @@ commands directly, but Git Bash is simpler.
 - **`.github/workflows/pr-guidance.yml`** — on every same-repo PR (opened/edited/pushed), the **ADIRO Bot** posts a
   separate, human-readable sticky comment ([#106](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/106)),
   built by `scripts/pr_guidance.py`: a tickable to-do list for **this PR's own changes** (a touched term with no
-  `rdfs:comment`, a label shared with another term, a `.ttl` change with no `[Unreleased]` changelog entry
-  ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)), an unused `@prefix`/`owl:imports` the PR
+  `rdfs:comment`, a label shared with another term, a `.ttl` change with no changelog change (the
+  `validate_ontology.py` check below, rendered in plain language), an unused `@prefix`/`owl:imports` the PR
   introduced, a `Closes #N` GitHub did not register) and an OntoCanvas preview link per touched module that declares
   classes. It never lists the standing backlog. All three PR comments (version impact, QC, guidance) are posted as the
   ADIRO Bot through `.github/actions/sticky-comment`; a same-repo PR is handled by each workflow itself; a **fork PR** (no access to the app secrets) is handled by

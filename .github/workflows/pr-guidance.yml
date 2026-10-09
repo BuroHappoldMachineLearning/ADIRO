@@ -31,10 +31,14 @@ jobs:
         with:
           app-id: ${{ secrets.ADIRO_BOT_APP_ID }}
           private-key: ${{ secrets.ADIRO_BOT_PRIVATE_KEY }}
+          permission-pull-requests: write   # only what commenting needs, not the app's full grant
 
-      - name: Checkout repository
+      - name: Checkout the PR head
         uses: actions/checkout@v4
         with:
+          # The PR head, not the synthetic merge commit: line numbers, SHA links and previews must all
+          # describe the same content.
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0   # the base branch is needed to tell what this PR changed
 
       - name: Install uv
