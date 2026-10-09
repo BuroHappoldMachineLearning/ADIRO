@@ -127,7 +127,10 @@ commands directly, but Git Bash is simpler.
   ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)), an unused `@prefix`/`owl:imports` the PR
   introduced, a `Closes #N` GitHub did not register) and an OntoCanvas preview link per touched module that declares
   classes. It never lists the standing backlog. All three PR comments (version impact, QC, guidance) are posted as the
-  ADIRO Bot through `.github/actions/sticky-comment`; fork PRs get none of them (no access to the app secrets).
+  ADIRO Bot through `.github/actions/sticky-comment`; a same-repo PR is handled by each workflow itself; a **fork PR** (no access to the app secrets) is handled by
+  `.github/workflows/pr-comments-fork.yml` (`pull_request_target`), which posts the version-impact and guidance
+  comments from **base-branch code only**, reading the fork's `src/` and `changelogs/` as data (never run
+  anything from the fork there). The QC report for a fork PR is in the `reason` job's summary; the reasoner still gates.
 - **`.github/workflows/sync-issues-to-youtrack.yml`** — one-way mirror of GitHub issue events → YouTrack
   **RES** project via `scripts/sync_issue_to_youtrack.py` (inbox model; YouTrack is never pushed back).
 - **`.github/workflows/backfill-issues-to-youtrack.yml`** — manual one-shot backfill (`dry_run` defaults

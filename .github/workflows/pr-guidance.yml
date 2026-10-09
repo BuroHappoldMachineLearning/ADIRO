@@ -7,7 +7,7 @@ name: PR guidance
 # All logic is scripts/pr_guidance.py; this file only runs it and posts the result.
 #
 # It comments as the ADIRO Bot GitHub App. Fork PRs cannot read secrets (and have a read-only
-# GITHUB_TOKEN), so the job only runs for same-repo PRs.
+# GITHUB_TOKEN), so the job only runs for same-repo PRs; pr-comments-fork.yml covers fork PRs.
 
 on:
   pull_request:

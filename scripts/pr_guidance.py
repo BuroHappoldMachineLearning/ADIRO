@@ -14,7 +14,7 @@ Sections (each appears only when it has something to say):
 
 Usage:
     pr_guidance.py --base-ref origin/main --repo OWNER/NAME --head-ref BRANCH --head-sha SHA
-                   [--pr N] [--body-file FILE] > guidance.md
+                   [--head-repo OWNER/NAME] [--worktree] [--pr N] [--body-file FILE] > guidance.md
 
 Prints the Markdown (empty output = nothing to say). The pure parts are unit-tested.
 """
@@ -165,6 +165,10 @@ def main(argv=None):
     ap.add_argument("--base-ref", required=True)
     ap.add_argument("--repo", required=True)
     ap.add_argument("--head-ref", required=True)
+    ap.add_argument("--head-repo", help="repository holding the head branch (a fork); default: --repo")
+    ap.add_argument("--worktree", action="store_true",
+                    help="the working tree already holds the PR's src/ and changelogs/ over the base (fork PRs, "
+                         "pull_request_target): diff the working tree against --base-ref instead of HEAD")
     ap.add_argument("--head-sha", required=True)
     ap.add_argument("--pr", type=int)
     ap.add_argument("--body-file")
@@ -174,7 +178,8 @@ def main(argv=None):
 
     if args.head_ref == RELEASE_BRANCH:  # the bot's own cut: nothing for a person to do here
         return
-    changed = subprocess.run(["git", "diff", "--name-only", f"{args.base_ref}...HEAD", "--", "src"],
+    spec = args.base_ref if args.worktree else f"{args.base_ref}...HEAD"
+    changed = subprocess.run(["git", "diff", "--name-only", spec, "--", "src"],
                              capture_output=True, text=True, cwd=root).stdout.split()
     texts = {f"src/{p.name}": p.read_text(encoding="utf-8") for p in sorted((root / "src").glob("*.ttl"))}
     suite = Graph()
@@ -210,7 +215,7 @@ def main(argv=None):
         fixes += [f"`owl:imports <{imp}>` but no term of it is used: drop the import or use it."
                   for imp in sorted(set(find_unused_imports(head)) - set(find_unused_imports(base)))]
         modules.append({"name": module, "fixes": fixes,
-                        "preview": preview_url(args.repo, args.head_ref, module) if declares_classes(head) else None})
+                        "preview": preview_url(args.head_repo or args.repo, args.head_ref, module) if declares_classes(head) else None})
 
     unregistered = []
     if args.pr and args.body_file and Path(args.body_file).is_file():

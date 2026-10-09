@@ -49,6 +49,13 @@ the changelog check ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/
   best-effort so no duplicate remains. `compat-diff-comment.yml` and `ontology-reasoning.yml` now mint the app token
   (`continue-on-error`, so a token failure never fails the reasoner gate) and use it.
 - `AGENTS.md`: new workflow bullet; the "one sticky QC comment" rule gets the guidance comment as an explicit exception.
+- Fork PRs: `.github/workflows/pr-comments-fork.yml` (`pull_request_target`, forks only) posts the version-impact and
+  guidance comments. Safety rules are in the file header: base-branch code only, fork `src/` + `changelogs/` taken as data
+  after refusing symlinks, merge-base comparison, untrusted text only via env vars. The QC comment is not repeated for
+  forks (Java reasoner on untrusted input in a privileged context was judged not worth it): the `reason` job still gates
+  and its report goes to the job summary. `pr_guidance.py` gained `--head-repo` and `--worktree`; the sticky action
+  gained `pr-number` / `head-sha` inputs. **Untestable before merge** (`pull_request_target` runs the base branch's copy):
+  needs a real fork PR.
 - Verified: 61 unit tests pass; the script ran against a real past diff; all workflow/action YAML parses. **Not
   verified until the PR runs:** the app token's comment permission on PRs, deleting the old `github-actions` comments, the
   fork skip.

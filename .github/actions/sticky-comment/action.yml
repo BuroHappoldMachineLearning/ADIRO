@@ -19,6 +19,12 @@ inputs:
   author:
     description: Login of the identity that owns the comment.
     default: adiro-bot[bot]
+  pr-number:
+    description: PR to comment on; default is the PR of the triggering event.
+    default: ""
+  head-sha:
+    description: Commit the report was computed for; default is the head of the triggering PR event.
+    default: ""
 
 runs:
   using: composite
@@ -28,6 +34,8 @@ runs:
         STICKY_MARKER: ${{ inputs.marker }}
         STICKY_FILE: ${{ inputs.file }}
         STICKY_AUTHOR: ${{ inputs.author }}
+        STICKY_PR: ${{ inputs.pr-number }}
+        STICKY_SHA: ${{ inputs.head-sha }}
       with:
         github-token: ${{ inputs.token }}
         script: |
@@ -35,7 +43,7 @@ runs:
           const marker = process.env.STICKY_MARKER;
           const author = process.env.STICKY_AUTHOR;
           const { owner, repo } = context.repo;
-          const issue_number = context.issue.number;
+          const issue_number = Number(process.env.STICKY_PR) || context.issue.number;
 
           const comments = await github.paginate(github.rest.issues.listComments, {
             owner, repo, issue_number, per_page: 100,
@@ -64,7 +72,7 @@ runs:
           }
 
           // The footer carries the head SHA and the time, so a reader can tell the report is current.
-          const head = context.payload.pull_request.head.sha.substring(0, 7);
+          const head = (process.env.STICKY_SHA || context.payload.pull_request.head.sha).substring(0, 7);
           const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
           const stamp = new Date().toISOString().replace('T', ' ').substring(0, 16);
           const footer = '\n\n<sub>Recomputed for `' + head + '` at ' + stamp + ' UTC - [workflow run](' + runUrl + ')</sub>';

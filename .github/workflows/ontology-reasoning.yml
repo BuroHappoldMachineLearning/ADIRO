@@ -168,6 +168,11 @@ jobs:
           marker: "<!-- ontology-reasoning-report -->"
           file: reasoning-comment.md
 
+      - name: Show the report in the job summary (fork PRs get no comment)
+        # The comment above needs the app token, which a fork PR cannot read; the gate below still runs.
+        if: github.event.pull_request.head.repo.full_name != github.repository
+        run: cat reasoning-comment.md >> "$GITHUB_STEP_SUMMARY"
+
       # ENFORCE (RES-36): fail the check on a reasoner problem — inconsistency,
       # an unsatisfiable class, or not-valid-OWL-2-DL. Runs AFTER the sticky
       # comment so the ⛔ explanation still posts, and reuses reason.rc from the

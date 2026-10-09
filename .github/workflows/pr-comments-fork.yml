@@ -1,0 +1,122 @@
+name: PR comments for forks
+
+# Backup path for PRs from FORKS. A `pull_request` run from a fork has no secrets, so pr-guidance.yml and
+# compat-diff-comment.yml cannot mint the ADIRO Bot token and skip those PRs. This workflow posts the same
+# two comments for them, and ONLY for them.
+#
+# It uses `pull_request_target`, which runs with secrets, so it is written to be safe against hostile PRs:
+#   - it checks out and runs code from the BASE branch only, never the fork's scripts or workflows;
+#   - from the fork it takes DATA only (src/ and changelogs/), after refusing any symlink, and only parses it;
+#   - PR title, body and branch name reach the shell through env vars, never interpolated into a script;
+#   - the bot token is created with the app's own limited permissions and is never given to fork-controlled code.
+# Do not add a step that executes anything from the fork's checkout.
+#
+# The ontology-reasoning QC comment is not repeated here: its job still runs and GATES for fork PRs, and its
+# report is written to that run's job summary (see ontology-reasoning.yml).
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read   # the app token, not GITHUB_TOKEN, does the commenting
+
+concurrency:
+  group: pr-comments-fork-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  comments:
+    if: github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create ADIRO Bot token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ADIRO_BOT_APP_ID }}
+          private-key: ${{ secrets.ADIRO_BOT_PRIVATE_KEY }}
+
+      - name: Checkout the BASE branch (trusted code)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python and dependencies
+        run: |
+          uv python install 3.12
+          uv sync --python 3.12 --no-install-project
+
+      - name: Bring in the fork's ontology and changelog files (data only)
+        id: data
+        env:
+          PR: ${{ github.event.pull_request.number }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          git fetch --no-tags origin "pull/$PR/head:refs/remotes/pr/head" "$BASE_REF"
+          # A symlink would make a script read a file on this runner, so refuse any.
+          if git ls-tree -r refs/remotes/pr/head -- src changelogs | grep -q '^120000'; then
+            echo "::error::src/ or changelogs/ contains a symlink; refusing to read it."
+            exit 1
+          fi
+          mb="$(git merge-base "origin/$BASE_REF" refs/remotes/pr/head)"
+          echo "merge_base=$mb" >> "$GITHUB_OUTPUT"
+          git checkout refs/remotes/pr/head -- src changelogs
+          if git diff --quiet "$mb" -- 'src/*.ttl'; then echo "ttl_changed=false" >> "$GITHUB_OUTPUT"; else echo "ttl_changed=true" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Compute the version-impact report
+        env:
+          MB: ${{ steps.data.outputs.merge_base }}
+          TTL_CHANGED: ${{ steps.data.outputs.ttl_changed }}
+        run: |
+          : > compat-diff.md
+          if [ "$TTL_CHANGED" = "true" ]; then
+            mkdir -p .tools/base-src
+            for f in src/*.ttl; do
+              git show "$MB:$f" > ".tools/base-src/$(basename "$f")" 2>/dev/null || true
+            done
+            uv run --python 3.12 --no-project python scripts/compat_diff.py --markdown --base-dir .tools/base-src > compat-diff.md
+          fi
+
+      - name: Compute the guidance
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          HEAD_REF: ${{ github.head_ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          MB: ${{ steps.data.outputs.merge_base }}
+        run: |
+          printf '%s' "$PR_BODY" > pr-body.md
+          sleep 10   # GitHub's link index lags an edit by a few seconds
+          uv run --python 3.12 --no-project python scripts/pr_guidance.py \
+            --base-ref "$MB" --worktree \
+            --repo "${{ github.repository }}" \
+            --head-repo "$HEAD_REPO" \
+            --head-ref "$HEAD_REF" \
+            --head-sha "${{ github.event.pull_request.head.sha }}" \
+            --pr "${{ github.event.pull_request.number }}" \
+            --body-file pr-body.md > guidance.md
+          cat guidance.md
+
+      - name: Post the version-impact comment
+        uses: ./.github/actions/sticky-comment
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          marker: "<!-- compat-diff-report -->"
+          file: compat-diff.md
+          pr-number: ${{ github.event.pull_request.number }}
+          head-sha: ${{ github.event.pull_request.head.sha }}
+
+      - name: Post the guidance comment
+        uses: ./.github/actions/sticky-comment
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          marker: "<!-- adiro-pr-guidance -->"
+          file: guidance.md
+          pr-number: ${{ github.event.pull_request.number }}
+          head-sha: ${{ github.event.pull_request.head.sha }}
