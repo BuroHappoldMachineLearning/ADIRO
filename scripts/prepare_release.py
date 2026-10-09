@@ -10,8 +10,10 @@ does the mechanical part so a reviewer only has to approve it:
                       owl:versionIRI, move each [Unreleased] changelog section under a dated
                       heading, update the root CHANGELOG.md rollup and the AGENTS.md versions line
     body              the Release PR description (Markdown) for the current plan
-    tags              modules whose declared version has a dated changelog heading but no
-                      git tag yet, i.e. a merged release cut that still has to be tagged
+    tags              releases still to be completed: modules whose declared version has a
+                      dated changelog heading (a merged release cut) but no snapshot under
+                      versions/ yet. Idempotent: a release stays listed until its snapshot
+                      lands, so a run that failed half way is picked up by the next run.
 
 config/release_overrides.json maps a module to ONE value: a bump level ("patch" | "minor" |
 "major") that raises that module's bump (never lowers it below what compat_diff requires), or
@@ -24,7 +26,6 @@ bump the changes require. A module never released before keeps its declared vers
 import argparse
 import json
 import re
-import subprocess
 import sys
 from datetime import date as _date
 from pathlib import Path
@@ -206,21 +207,21 @@ def apply_plan(root, entries, day):
         _write(agents, AGENTS_VERSIONS_RE.sub(lambda _: f"(currently {listing}).", text, count=1))
 
 
-def existing_tags(root=ROOT):
-    out = subprocess.run(["git", "tag", "--list"], cwd=root, capture_output=True, text=True, check=True)
-    return set(out.stdout.split())
+def releases_to_complete(root=ROOT):
+    """`<module>-v<ver>` for each merged release cut whose snapshot is not in versions/ yet.
 
-
-def tags_to_create(root=ROOT, tags=None):
-    """`<module>-v<ver>` for each module whose declared version has a dated changelog heading but no tag."""
+    The snapshot is the last artefact the release chain writes (tag -> Release -> backup-version.yml
+    -> versions/<module>/<ver>/), so "no snapshot" means the release is not finished, whether it was
+    never started or failed part-way. The caller decides what is missing: create the Release, or
+    re-dispatch the snapshot job for a tag/Release that already exists.
+    """
     root = Path(root)
-    tags = existing_tags(root) if tags is None else tags
     out = []
     for module in modules(root):
         ver = src_version(root, module)
-        tag = f"{module}-v{ver}"
-        if ver and tag not in tags and has_dated_heading(_read(root / "changelogs" / f"{module}.md"), ver):
-            out.append(tag)
+        snapshot = root / "versions" / module / ver / f"{module}.ttl" if ver else None
+        if ver and not snapshot.is_file() and has_dated_heading(_read(root / "changelogs" / f"{module}.md"), ver):
+            out.append(f"{module}-v{ver}")
     return out
 
 
@@ -290,7 +291,7 @@ def main(argv=None):
     args = ap.parse_args(argv)
 
     if args.cmd == "tags":
-        for t in tags_to_create():
+        for t in releases_to_complete():
             print(t)
         return
     try:

@@ -3,8 +3,10 @@ name: Release PR
 # #99. Releases are cut deliberately, but nothing used to say one was overdue. After every
 # push to `main` this workflow:
 #
-#   1. `tag`        - tags and publishes each module whose release cut has just been merged
-#                     (declared version has a dated changelog heading but no tag yet);
+#   1. `tag`        - completes each release whose cut has been merged (declared version has a
+#                     dated changelog heading but no snapshot under versions/ yet): publishes
+#                     the GitHub Release, or re-dispatches the snapshot job if the Release is
+#                     already there, so a run that failed half way is picked up by the next one;
 #   2. `release-pr` - rebuilds ONE pull request, `release/next`, containing the release cut
 #                     for everything still unreleased (version bumps + changelog moves), or
 #                     closes it when nothing is pending.
@@ -61,17 +63,23 @@ jobs:
           uv python install 3.12
           uv sync --python 3.12 --no-install-project
 
-      - name: Tag and publish merged release cuts
+      - name: Complete merged release cuts
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           tags="$(uv run --python 3.12 --no-project python scripts/prepare_release.py tags)"
-          if [ -z "$tags" ]; then echo "No merged release cut to tag."; exit 0; fi
+          if [ -z "$tags" ]; then echo "No release to complete."; exit 0; fi
           for tag in $tags; do
             echo "::group::$tag"
-            # Publishing fires the `release` event, which starts backup-version.yml.
-            gh release create "$tag" --target "$GITHUB_SHA" --title "${tag/-v/ }" --latest=false \
-              --notes "Release $tag. Notes are published from the module changelog by the snapshot workflow."
+            if gh release view "$tag" >/dev/null 2>&1; then
+              # The Release exists but its snapshot never landed: run the snapshot job again.
+              echo "Release exists without a snapshot; re-dispatching backup-version.yml"
+              gh workflow run backup-version.yml --ref "${{ github.event.repository.default_branch }}" -f tag="$tag"
+            else
+              # Publishing fires the `release` event, which starts backup-version.yml.
+              gh release create "$tag" --target "$GITHUB_SHA" --title "${tag/-v/ }" --latest=false \
+                --notes "Release $tag. Notes are published from the module changelog by the snapshot workflow."
+            fi
             echo "::endgroup::"
           done
 
@@ -113,16 +121,21 @@ jobs:
           echo "title=Release cut: $(jq -r '[.[] | "\(.module) \(.next)"] | join(", ")' plan.json)" >> "$GITHUB_OUTPUT"
           uv run --python 3.12 --no-project python scripts/prepare_release.py plan
 
-      - name: Close the Release PR when nothing is pending
+      - name: Close the Release PR and delete its branch when nothing is pending
         if: steps.plan.outputs.count == '0'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           num="$(gh pr list --head "$RELEASE_BRANCH" --state open --json number --jq '.[0].number // empty')"
           if [ -n "$num" ]; then
-            gh pr close "$num" --delete-branch --comment "No release is pending on \`main\` any more, so this PR is closed."
+            gh pr close "$num" --comment "No release is pending on \`main\` any more, so this PR is closed."
+          fi
+          # After a normal merge the PR is already merged (not open), but the branch is still
+          # there (delete_branch_on_merge is off), so delete it whether or not a PR was open.
+          if git ls-remote --exit-code --heads origin "$RELEASE_BRANCH" >/dev/null 2>&1; then
+            git push origin --delete "$RELEASE_BRANCH"
           else
-            echo "No release pending and no open Release PR."
+            echo "No $RELEASE_BRANCH branch to delete."
           fi
 
       - name: Build the release cut on release/next

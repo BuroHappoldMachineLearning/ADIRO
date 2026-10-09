@@ -81,8 +81,11 @@ def test_apply_cuts_the_release_and_is_idempotent(tmp_path):
     assert "(currently `aec_x` 1.1.0)." in (repo / "AGENTS.md").read_text(encoding="utf-8")
 
     assert pr.plan(repo) == []  # nothing left pending once the cut is in
-    assert pr.tags_to_create(repo, tags=set()) == ["aec_x-v1.1.0"]
-    assert pr.tags_to_create(repo, tags={"aec_x-v1.1.0"}) == []
+    assert pr.releases_to_complete(repo) == ["aec_x-v1.1.0"]  # cut merged, snapshot not there yet
+    snap = repo / "versions" / "aec_x" / "1.1.0"
+    snap.mkdir(parents=True)
+    (snap / "aec_x.ttl").write_text("# snapshot", encoding="utf-8")
+    assert pr.releases_to_complete(repo) == []  # snapshot landed: the release is complete
 
 
 def test_first_release_keeps_declared_version(tmp_path):
@@ -92,7 +95,7 @@ def test_first_release_keeps_declared_version(tmp_path):
     pr.apply_plan(repo, [e], "2026-10-09")
     assert 'owl:versionInfo "1.0.0"' in (repo / "src" / "aec_x.ttl").read_text(encoding="utf-8")
     assert pr.plan(repo) == []
-    assert pr.tags_to_create(repo, tags=set()) == ["aec_x-v1.0.0"]
+    assert pr.releases_to_complete(repo) == ["aec_x-v1.0.0"]
 
 
 def test_crlf_changelog_keeps_its_line_endings(tmp_path):
@@ -173,3 +176,17 @@ def test_invalid_overrides_fail_loudly(tmp_path, bad):
     set_overrides(repo, bad)
     with pytest.raises(ValueError, match="release_overrides.json"):
         pr.plan(repo)
+
+
+def test_a_release_stays_incomplete_until_its_snapshot_exists(tmp_path):
+    # A cut whose Release/tag may already exist but whose snapshot never landed is listed again,
+    # so a run that failed half way is recovered by the next run (idempotent completion).
+    repo = make_repo(tmp_path, ":B a owl:Class .\n", ENTRY)
+    pr.apply_plan(repo, pr.plan(repo), "2026-10-09")
+    assert pr.releases_to_complete(repo) == ["aec_x-v1.1.0"]
+    assert pr.releases_to_complete(repo) == ["aec_x-v1.1.0"]  # asking twice changes nothing
+
+
+def test_a_complete_old_release_is_not_listed(tmp_path):
+    assert pr.releases_to_complete(make_repo(tmp_path)) == []  # 1.0.0: dated heading and snapshot both present
+
