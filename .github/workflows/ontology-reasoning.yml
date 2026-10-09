@@ -31,9 +31,7 @@ on:
       - '.github/workflows/ontology-reasoning.yml'
 
 permissions:
-  contents: read
-  issues: write          # deleting/creating the sticky comment goes via the issues API
-  pull-requests: write
+  contents: read   # commenting uses the ADIRO Bot token, so GITHUB_TOKEN stays read-only
 
 concurrency:
   group: ontology-reasoning-${{ github.event.pull_request.number }}

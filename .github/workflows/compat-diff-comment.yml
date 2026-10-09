@@ -23,9 +23,7 @@ on:
       - 'src/**/*.ttl'
 
 permissions:
-  contents: read
-  issues: write          # deleting/creating the sticky comment goes via the issues API
-  pull-requests: write
+  contents: read   # commenting uses the ADIRO Bot token, so GITHUB_TOKEN stays read-only
 
 concurrency:
   group: compat-diff-comment-${{ github.event.pull_request.number }}

@@ -179,7 +179,9 @@ def main(argv=None):
     args = ap.parse_args(argv)
     root = Path(args.root)
 
-    if args.head_ref == RELEASE_BRANCH:  # the bot's own cut: nothing for a person to do here
+    # The bot's own cut (a branch of THIS repository) needs nothing from a person; a fork's branch that happens
+    # to be called release/next is an ordinary PR.
+    if args.head_ref == RELEASE_BRANCH and (args.head_repo or args.repo) == args.repo:
         return
     spec = args.base_ref if args.worktree else f"{args.base_ref}...HEAD"
     changed = subprocess.run(["git", "diff", "--name-only", "--no-renames", spec, "--", "src", "changelogs"],

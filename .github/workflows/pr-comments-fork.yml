@@ -67,7 +67,12 @@ jobs:
           fi
           mb="$(git merge-base "origin/$BASE_REF" refs/remotes/pr/head)"
           echo "merge_base=$mb" >> "$GITHUB_OUTPUT"
-          git checkout refs/remotes/pr/head -- src changelogs
+          # Make src/ and changelogs/ EXACTLY the fork's trees: a plain path checkout only overlays, and would
+          # leave a file the fork deleted in place (hiding a removed module from the checks).
+          for d in src changelogs; do
+            rm -rf "$d"
+            if git cat-file -e "refs/remotes/pr/head:$d" 2>/dev/null; then git checkout refs/remotes/pr/head -- "$d"; fi
+          done
           if git diff --quiet "$mb" -- 'src/*.ttl'; then echo "ttl_changed=false" >> "$GITHUB_OUTPUT"; else echo "ttl_changed=true" >> "$GITHUB_OUTPUT"; fi
 
       - name: Compute the version-impact report
