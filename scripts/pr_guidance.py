@@ -118,7 +118,7 @@ def render(modules, unregistered, repo):
     previews = [(m["name"], m["preview"]) for m in modules if m["preview"]]
     if not fixes and not unregistered and not previews:
         return ""
-    out = [MARKER, "## What to fix before review, and where to preview your changes", ""]
+    out = [MARKER, "## Required improvements", ""]
     if fixes or unregistered:
         out += ["### To do", ""]
         out += [f"- `{name}`: {f}" for name, f in fixes]
