@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+
+## [2.0.1] — 2026-10-09
+
 ### Added
 - **`rdfs:comment` descriptions for four previously-undescribed terms** — `Gasket`, `Firestop`, `CavityBarrier` and `Louvre`. Each is a short plain-language definition consistent with the term's place in the taxonomy. Partly clears this module from the [#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87) undescribed-terms backlog. Annotation-only, non-breaking.
 
