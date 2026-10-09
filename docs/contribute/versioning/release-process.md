@@ -36,7 +36,7 @@ How the Release PR evolves as changes reach `main`:
 | You merge the Release PR | Both modules are tagged and released; the PR is closed |
 | The next ontology change reaches `main` | A new Release PR opens |
 
-**Merging the Release PR is the release.** The next run of `release-pr.yml` tags each module whose declared version has a dated changelog heading but no tag, and publishes a GitHub Release for it. Publishing the Release (as the ADIRO Bot) fires the `release` event, which starts `backup-version.yml`; everything below then runs as before.
+**Merging the Release PR is the release.** The next run of `release-pr.yml` completes each release whose cut has been merged (declared version has a dated changelog heading, but no snapshot under `versions/` yet): it publishes the GitHub Release, or re-dispatches `backup-version.yml` if the Release already exists. Because a release stays pending until its snapshot lands, a run that failed half way is picked up by the next push to `main`. Once nothing is pending, the run also deletes the `release/next` branch left behind by the merge. Publishing the Release (as the ADIRO Bot) fires the `release` event, which starts `backup-version.yml`; everything below then runs as before.
 
 ## Manual cut
 
