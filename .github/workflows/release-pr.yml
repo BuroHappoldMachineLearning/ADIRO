@@ -1,0 +1,176 @@
+name: Release PR
+
+# #99. Releases are cut deliberately, but nothing used to say one was overdue. After every
+# push to `main` this workflow:
+#
+#   1. `tag`        - completes each release whose cut has been merged (declared version has a
+#                     dated changelog heading but no snapshot under versions/ yet): publishes
+#                     the GitHub Release, or re-dispatches the snapshot job if the Release is
+#                     already there, so a run that failed half way is picked up by the next one;
+#   2. `release-pr` - rebuilds ONE pull request, `release/next`, containing the release cut
+#                     for everything still unreleased (version bumps + changelog moves), or
+#                     closes it when nothing is pending.
+#
+# The branch is regenerated from `main` every time, so later merges update the same PR and an
+# open Release PR is the signal that a release is pending. Bumps come from scripts/compat_diff.py
+# (see scripts/prepare_release.py).
+#
+# It acts as the ADIRO Bot GitHub App (secrets ADIRO_BOT_APP_ID / ADIRO_BOT_PRIVATE_KEY), not
+# as GITHUB_TOKEN: events created with an app token DO start other workflows, so the Release PR
+# gets the normal PR checks and a published Release fires `backup-version.yml` by itself. The
+# validation run in the build step is a fail-fast sanity check on the bot's own output.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read   # the app token, not GITHUB_TOKEN, does the writing
+
+concurrency:
+  group: release-pr
+  cancel-in-progress: false
+
+env:
+  RELEASE_BRANCH: release/next
+
+jobs:
+  tag:
+    # A manual dispatch may name any branch; only the default branch may publish or rewrite release/next.
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create ADIRO Bot token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ADIRO_BOT_APP_ID }}
+          private-key: ${{ secrets.ADIRO_BOT_PRIVATE_KEY }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python and dependencies
+        run: |
+          uv python install 3.12
+          uv sync --python 3.12 --no-install-project
+
+      - name: Complete merged release cuts
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          tags="$(uv run --python 3.12 --no-project python scripts/prepare_release.py tags)"
+          if [ -z "$tags" ]; then echo "No release to complete."; exit 0; fi
+          for tag in $tags; do
+            echo "::group::$tag"
+            if gh release view "$tag" >/dev/null 2>&1; then
+              # The Release exists but its snapshot never landed: run the snapshot job again.
+              echo "Release exists without a snapshot; re-dispatching backup-version.yml"
+              gh workflow run backup-version.yml --ref "${{ github.event.repository.default_branch }}" -f tag="$tag"
+            else
+              # Publishing fires the `release` event, which starts backup-version.yml.
+              gh release create "$tag" --target "$GITHUB_SHA" --title "${tag/-v/ }" --latest=false \
+                --notes "Release $tag. Notes are published from the module changelog by the snapshot workflow."
+            fi
+            echo "::endgroup::"
+          done
+
+  release-pr:
+    needs: tag
+    # A manual dispatch may name any branch; only the default branch may publish or rewrite release/next.
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create ADIRO Bot token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ADIRO_BOT_APP_ID }}
+          private-key: ${{ secrets.ADIRO_BOT_PRIVATE_KEY }}
+
+      - name: Checkout the triggering ref (main on push)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python and dependencies
+        run: |
+          uv python install 3.12
+          uv sync --python 3.12 --no-install-project
+
+      - name: Plan the next release
+        id: plan
+        run: |
+          uv run --python 3.12 --no-project python scripts/prepare_release.py plan --json > plan.json
+          uv run --python 3.12 --no-project python scripts/prepare_release.py body > body.md
+          echo "count=$(jq length plan.json)" >> "$GITHUB_OUTPUT"
+          echo "draft=$(jq 'any(.[]; .changelog_empty)' plan.json)" >> "$GITHUB_OUTPUT"
+          echo "title=Release cut: $(jq -r '[.[] | "\(.module) \(.next)"] | join(", ")' plan.json)" >> "$GITHUB_OUTPUT"
+          uv run --python 3.12 --no-project python scripts/prepare_release.py plan
+
+      - name: Close the Release PR and delete its branch when nothing is pending
+        if: steps.plan.outputs.count == '0'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          num="$(gh pr list --head "$RELEASE_BRANCH" --state open --json number --jq '.[0].number // empty')"
+          if [ -n "$num" ]; then
+            gh pr close "$num" --comment "No release is pending on \`main\` any more, so this PR is closed."
+          fi
+          # After a normal merge the PR is already merged (not open), but the branch is still
+          # there (delete_branch_on_merge is off), so delete it whether or not a PR was open.
+          if git ls-remote --exit-code --heads origin "$RELEASE_BRANCH" >/dev/null 2>&1; then
+            git push origin --delete "$RELEASE_BRANCH"
+          else
+            echo "No $RELEASE_BRANCH branch to delete."
+          fi
+
+      - name: Build the release cut on release/next
+        if: steps.plan.outputs.count != '0'
+        run: |
+          git config user.name "adiro-bot[bot]"
+          git config user.email "340218862+adiro-bot[bot]@users.noreply.github.com"
+          git checkout -B "$RELEASE_BRANCH"
+          uv run --python 3.12 --no-project python scripts/prepare_release.py apply --date "$(date -u +%F)"
+          # Fail fast, before pushing, if the bot's own output is invalid.
+          uv run --python 3.12 --no-project python scripts/validate_ontology.py
+          uv run --python 3.12 --no-project python scripts/compat_diff.py --enforce
+          git add -A src changelogs CHANGELOG.md AGENTS.md config/release_overrides.json
+          git commit -m "release: ${{ steps.plan.outputs.title }}"
+          git push --force origin "$RELEASE_BRANCH"
+
+      - name: Open or update the Release PR
+        if: steps.plan.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          TITLE: ${{ steps.plan.outputs.title }}
+          DRAFT: ${{ steps.plan.outputs.draft }}
+        run: |
+          num="$(gh pr list --head "$RELEASE_BRANCH" --state open --json number --jq '.[0].number // empty')"
+          if [ -z "$num" ]; then
+            flag=""; [ "$DRAFT" = "true" ] && flag="--draft"
+            gh pr create --base main --head "$RELEASE_BRANCH" --title "$TITLE" --body-file body.md $flag
+          else
+            gh pr edit "$num" --title "$TITLE" --body-file body.md
+            is_draft="$(gh pr view "$num" --json isDraft --jq .isDraft)"
+            if [ "$DRAFT" = "true" ] && [ "$is_draft" = "false" ]; then gh pr ready "$num" --undo
+            elif [ "$DRAFT" = "false" ] && [ "$is_draft" = "true" ]; then gh pr ready "$num"
+            fi
+          fi
