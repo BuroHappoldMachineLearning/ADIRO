@@ -42,6 +42,18 @@ Wording checked against `scripts/prepare_release.py` (the Bump / Driven-by colum
 close-when-nothing-pending comment, what the cut consumes). Pushed directly to `main` at the maintainer's request (docs only). Not yet
 exercised on GitHub: the maintainer plans to test the override file themselves.
 
+## 2026-10-09 — Reasoner now runs on `main` after every ontology push ([#104](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/104))
+
+New `.github/workflows/reasoning-main.yml`: on push to `main` touching `src/**.ttl` (or the catalog, the reasoning script, the ROBOT
+profile, itself) and on manual dispatch, it runs `ENFORCE=1 bash scripts/run_reasoning.sh` over `main`, so two PRs that each passed
+alone but conflict together are caught. Design choices: a separate small workflow rather than extending `ontology-reasoning.yml`
+(that one is built around PR comments and the base ref); blocking from the start because the suite is clean (no backlog to tolerate),
+where "blocking" can only mean a red run plus the failure notification, since the merge has happened; no comment (no PR), the result
+goes to the job summary; `cancel-in-progress` because only the latest `main` matters. Verified locally (`ENFORCE=1` run, rc 0) and on
+GitHub through a scratch branch that also triggers the workflow: a clean suite passes, and a deliberately unsatisfiable class fails
+the run (see the result below). Not done: automatic issue creation on failure (a failed run notifies the merger; add if that proves
+too quiet). `AGENTS.md` and `release-process.md` updated.
+
 ## 2026-10-09 — Bot work closed out: fork path verified, #106 closed, ideas moved to a Discussion
 
 After [#111](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/111) merged, the fork workflow was tested on a real fork
