@@ -40,7 +40,13 @@ Cursor rule. Follow-up in the same PR, after asking how the Cursor hold went sta
 import plus one sentence, `description.mdc` is deleted (superseded by `AGENTS.md` "Purpose"; history keeps it), the `deploy` skill's
 "In brief" paragraph is replaced by links to the `AGENTS.md` sections, the one Cursor-only rule (helper scripts under `scripts/`
 with tests, `uv`) moved into `AGENTS.md`, and `tests/test_agent_adapters.py` fails if `CLAUDE.md` or a Cursor rule grows past 25 lines
-or loses its `@AGENTS.md` import. **Verified:** the test suite (69 passed, 3 skipped); no gate covers the prose, and an agent's behaviour
+or loses its `@AGENTS.md` import. Also, at the maintainer's request, the PR-description rules were deduplicated against the
+shared team skills (`tools:pr-descriptions`, `tools:pr-issue-links`): `AGENTS.md` keeps the closing-keyword essentials (the repo is public
+and the plugin is private, so outside contributors cannot read the skills) and every ADIRO-specific rule (bot comments, now three;
+OntoCanvas preview link; keeping tracker IDs out of public text), and drops the generic style items; the `w3id.org/adiro` rule moved here
+from the shared `youtrack` skill, whose repo-specific bullets were removed in the `ai-plugins` PR
+([#14](https://github.com/BuroHappoldMachineLearning/ai-plugins/pull/14)), which now also fails CI if a shared skill names a repo.
+**Verified:** the test suite (69 passed, 3 skipped); no gate covers the prose, and an agent's behaviour
 was not tested. **Not done /
 deferred:** a dedicated Claude Code skill for the contributor workflow (a section in `AGENTS.md` reaches every tool; add a skill only
 if Claude Code agents still miss it). **Next step:** none planned; the maintainer decided not to trial an agent against the new section

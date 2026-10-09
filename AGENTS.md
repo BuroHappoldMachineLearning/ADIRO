@@ -67,7 +67,9 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
   after the intro, before `## Dependencies`); the page's intro is the module's `owl:Ontology` `rdfs:comment`,
   which should be a short, plain-language paragraph about the module's *role* (not a list of its classes). The
   external resource links (TTL source, pyLODE HTML, OntoCanvas) point at the permanent **`w3id.org/adiro`** front
-  door — which 302-redirects to the Pages host with permissive CORS — not the `github.io` host directly. CI
+  door — which 302-redirects to the Pages host with permissive CORS — not the `github.io` host directly. Do the same when you reference an ontology IRI, a versioned IRI (`…/adiro/<module>/<semver>`)
+or the docs in an issue, PR, changelog, release note or message: use `w3id.org/adiro`; the `github.io` host is only the
+physical fetch host. CI
   commits the regenerated `docs/` back, then runs `mkdocs build` (output `site/`, git-ignored) and deploys the artifact.
 - **Local preview (uses `uv`):**
   ```bash
@@ -361,11 +363,13 @@ declined ones open for the reviewer. Claude Code: the `pr-review-feedback` skill
 
 ### Pull-request description
 
-Two things every ADIRO PR description carries, both at the **top**, before the narrative.
+The general rules for a good PR description (what earns a top-level section, grouping side effects under a single
+`## Details` heading, naming issue sections for what they are, and the mechanics of closing keywords) are in the team
+skills `tools:pr-descriptions` and `tools:pr-issue-links`. Those skills belong to a private team plugin, so the essentials
+are repeated below for everyone else, together with what is specific to ADIRO.
 
-**1. One table of the issues it closes** — not a closing block *and* a summary table further down, which is
-what this repo drifted into. The **first column must contain the closing keyword and the reference**, because
-that is what GitHub's automation parses:
+**1. One table of the issues it closes, at the top.** The **first column must contain the closing keyword and the
+reference**, because that is what GitHub's automation parses:
 
 ```markdown
 ## Issues closed by this PR
@@ -376,47 +380,25 @@ that is what GitHub's automation parses:
 | Closes #21 | **Establish the `owl:inverseOf` convention.** Decided in September, applied here. |
 ```
 
-Keywords in a table cell **do** register — verified against the API, not assumed. One keyword per row, one
-issue per row: `Closes #1, #2` links only `#1`. Only `close`/`fix`/`resolve` and their forms close anything;
-`Implements #75` reads as though it finishes the issue and leaves it open. Check afterwards rather than
-trusting it:
+One keyword per row, one issue per row: `Closes #1, #2` links only `#1`. Only `close`/`fix`/`resolve` and their forms
+close anything; `Implements #75` leaves the issue open. The ADIRO Bot's **Required improvements** comment tells you when
+a `Closes #N` did not register; GitHub's link index lags an edit by a few seconds.
 
-```bash
-gh api graphql -f query='query($o:String!,$n:String!,$pr:Int!){repository(owner:$o,name:$n){
-  pullRequest(number:$pr){closingIssuesReferences(first:20){nodes{number title}}}}}'   -f o=BuroHappoldMachineLearning -f n=ADIRO -F pr=<number>
-```
+**2. Never restate what a bot already posts.** Three comments are maintained automatically on every ontology PR: the
+**version-impact** report (`compat-diff-comment.yml`), the **reasoning + QC** report (`ontology-reasoning.yml`, which
+also carries the `validate_ontology.py` findings) and the ADIRO Bot's **Required improvements** list
+(`pr-guidance.yml`). Reasoner status, ROBOT counts, per-module warning counts, prospective version bumps and what still
+needs fixing therefore belong **only** there. Do not paste them into the description.
 
-GitHub's link index lags the edit by a few seconds, so wait before querying.
+They are not merely redundant, they are *wrong by default*: a bot comment is recomputed on every push, while a number
+typed into the body is frozen at the moment someone typed it, so the reviewer has two sources disagreeing and no way to
+tell which is current. A verification table once claimed `WARN 241` an hour after that stopped being true.
 
-**2. Never restate what a bot already posts.** Two sticky comments are maintained automatically on every
-ontology PR: the **version-impact** report (`compat-diff-comment.yml`) and the **reasoning + QC** report
-(`ontology-reasoning.yml`, which also carries the `validate_ontology.py` findings). Reasoner status, ROBOT
-counts, per-module warning counts and prospective version bumps therefore belong **only** there. Do not paste
-them into the description.
+The rule generalises: **if something in the description is produced by a machine somewhere else, link to it rather than
+copying it.** The description is for what a machine cannot say: why the change was made, what is being asked of the
+reviewer, and what was decided.
 
-They are not merely redundant — they are *wrong by default*. A bot comment is recomputed on every push; a
-number typed into the body is frozen at the moment someone typed it. This PR shipped a verification table
-claiming `WARN 241` that had been accurate for about an hour, having invalidated its own figure by changing
-the ROBOT profile in a later commit. The reviewer then has two sources disagreeing and no way to tell which is
-current.
-
-The rule generalises: **if something in the description is produced by a machine somewhere else, link to it
-rather than copying it.** The description is for what a machine cannot say — why the change was made, what
-is being asked of the reviewer, and what was decided.
-
-**3. Keep side-effects out of the reviewer's way.** A PR that fixes something adjacent while doing its main
-job should not give that fix a top-level section competing with the work under review. Group them under a
-single `## Details` heading, one `<details><summary>` block each — verification output, conventions added to
-this file, versioning bookkeeping, a term minted and withdrawn. The reviewer opens what they care about.
-Reserve top-level sections for: what the PR closes, the ontology previews, the decisions being asked for,
-what changed, and anything that **corrects published material**, which must never be collapsed.
-
-**4. Name the issue sections for what they are.** A `## Related issues` section with two subsections —
-*created by this PR's work* (with one line each on why the finding deserved tracking rather than scope creep)
-and *deliberately not solved here* (with one line each on why not). "Deliberately not solved here" alone hides
-the fact that most of the list did not exist before the PR started.
-
-**5. An OntoCanvas preview link per modified module.** A reviewer should be able to *see* the ontology, not
+**3. An OntoCanvas preview link per modified module.** A reviewer should be able to *see* the ontology, not
 only read a diff of Turtle. One row per `.ttl` this PR adds or changes, pointing at the published copy under
 `docs/` through raw GitHub:
 
@@ -443,7 +425,7 @@ repo, so branch links keep working after merge.
     happened. Point at `docs/<module>.ttl` rather than `src/` — that is the
 copy `generate_docs.py` publishes, and it is what the site serves.
 
-**6. Keep YouTrack out of the public PR body — and out of published artifacts generally.** ADIRO is a public
+**4. Keep YouTrack out of the public PR body — and out of published artifacts generally.** ADIRO is a public
 repo, and its tracker mirrors **one way**: every GitHub issue is copied into YouTrack **RES**, but YouTrack also
 holds items that exist *only* there — internal tooling, and work that is merely **planned** (`RES-*` / `MLE-*`
 epics and their sub-tasks). A PR description is public, so reference only **public GitHub issues and
