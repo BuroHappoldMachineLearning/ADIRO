@@ -148,48 +148,25 @@ jobs:
 
           cat reasoning-comment.md
 
-      - name: Upsert sticky PR comment
-        # Fork PRs get a read-only token (comment API returns 403), so only post
-        # for same-repo PRs. The reasoning/report steps above still run for forks.
+      - name: Create ADIRO Bot token
+        id: app-token
         if: github.event.pull_request.head.repo.full_name == github.repository
-        uses: actions/github-script@v7
+        continue-on-error: true   # a token failure must never fail the check
+        uses: actions/create-github-app-token@v2
         with:
-          script: |
-            const fs = require('fs');
-            const marker = '<!-- ontology-reasoning-report -->';
-            const { owner, repo } = context.repo;
-            const issue_number = context.issue.number;
+          app-id: ${{ secrets.ADIRO_BOT_APP_ID }}
+          private-key: ${{ secrets.ADIRO_BOT_PRIVATE_KEY }}
 
-            const report = marker + '\n' + fs.readFileSync('reasoning-comment.md', 'utf8').trimEnd();
-
-            const head = context.payload.pull_request.head.sha.substring(0, 7);
-            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
-            const stamp = new Date().toISOString().replace('T', ' ').substring(0, 16);
-            const footer = '\n\n<sub>Recomputed for `' + head + '` at ' + stamp + ' UTC — [workflow run](' + runUrl + ')</sub>';
-            const body = report + footer;
-
-            const comments = await github.paginate(github.rest.issues.listComments, {
-              owner, repo, issue_number, per_page: 100,
-            });
-            const existing = comments.find(c => c.body && c.body.includes(marker));
-
-            // Same rule as compat-diff-comment.yml (#88): repost when the report
-            // changes so it lands at the bottom where it is read, edit in place
-            // when it does not so the thread stays quiet. The footer always
-            // differs, so it is stripped before comparing.
-            const stripFooter = (s) => s.split('<sub>Recomputed for')[0].trimEnd();
-
-            if (!existing) {
-              await github.rest.issues.createComment({ owner, repo, issue_number, body });
-              core.info('Posted the first reasoning comment.');
-            } else if (stripFooter(existing.body) === stripFooter(body)) {
-              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
-              core.info('Report unchanged - refreshed the footer in place, no notification.');
-            } else {
-              await github.rest.issues.deleteComment({ owner, repo, comment_id: existing.id });
-              await github.rest.issues.createComment({ owner, repo, issue_number, body });
-              core.info('Report changed - reposted at the bottom of the thread.');
-            }
+      - name: Upsert sticky PR comment
+        # Fork PRs cannot read the app secrets (nor post with the read-only token), so only post for
+        # same-repo PRs; the computation above still runs either way.
+        if: github.event.pull_request.head.repo.full_name == github.repository && steps.app-token.outcome == 'success'
+        continue-on-error: true
+        uses: ./.github/actions/sticky-comment
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          marker: "<!-- ontology-reasoning-report -->"
+          file: reasoning-comment.md
 
       # ENFORCE (RES-36): fail the check on a reasoner problem — inconsistency,
       # an unsatisfiable class, or not-valid-OWL-2-DL. Runs AFTER the sticky

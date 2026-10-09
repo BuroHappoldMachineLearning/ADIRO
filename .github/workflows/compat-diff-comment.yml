@@ -66,44 +66,22 @@ jobs:
       - name: Compute comment (this-PR changes + prospective versions)
         run: uv run --python 3.12 --no-project python scripts/compat_diff.py --markdown --base-dir .tools/base-src > compat-diff.md
 
-      - name: Post or refresh the sticky PR comment
-        # Fork PRs get a read-only token (comment API 403s), so only post for
-        # same-repo PRs; the computation above still runs either way.
+      - name: Create ADIRO Bot token
+        id: app-token
         if: github.event.pull_request.head.repo.full_name == github.repository
-        uses: actions/github-script@v7
+        continue-on-error: true   # a token failure must never fail the check
+        uses: actions/create-github-app-token@v2
         with:
-          script: |
-            const fs = require('fs');
-            const marker = '<!-- compat-diff-report -->';
-            const { owner, repo } = context.repo;
-            const issue_number = context.issue.number;
+          app-id: ${{ secrets.ADIRO_BOT_APP_ID }}
+          private-key: ${{ secrets.ADIRO_BOT_PRIVATE_KEY }}
 
-            const report = marker + '\n' + fs.readFileSync('compat-diff.md', 'utf8').trimEnd();
-
-            // Footer carries the head SHA and the time, so a reader can tell the
-            // report is current whichever branch below was taken.
-            const head = context.payload.pull_request.head.sha.substring(0, 7);
-            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
-            const stamp = new Date().toISOString().replace('T', ' ').substring(0, 16);
-            const footer = '\n\n<sub>Recomputed for `' + head + '` at ' + stamp + ' UTC — [workflow run](' + runUrl + ')</sub>';
-            const body = report + footer;
-
-            const comments = await github.paginate(github.rest.issues.listComments, {
-              owner, repo, issue_number, per_page: 100,
-            });
-            const existing = comments.find(c => c.body && c.body.includes(marker));
-
-            // Compare the report only - the footer changes on every run by design.
-            const stripFooter = (s) => s.split('<sub>Recomputed for')[0].trimEnd();
-
-            if (!existing) {
-              await github.rest.issues.createComment({ owner, repo, issue_number, body });
-              core.info('Posted the first version-impact comment.');
-            } else if (stripFooter(existing.body) === stripFooter(body)) {
-              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
-              core.info('Version impact unchanged - refreshed the footer in place, no notification.');
-            } else {
-              await github.rest.issues.deleteComment({ owner, repo, comment_id: existing.id });
-              await github.rest.issues.createComment({ owner, repo, issue_number, body });
-              core.info('Version impact changed - reposted at the bottom of the thread.');
-            }
+      - name: Post or refresh the sticky PR comment
+        # Fork PRs cannot read the app secrets (nor post with the read-only token), so only post for
+        # same-repo PRs; the computation above still runs either way.
+        if: github.event.pull_request.head.repo.full_name == github.repository && steps.app-token.outcome == 'success'
+        continue-on-error: true
+        uses: ./.github/actions/sticky-comment
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          marker: "<!-- compat-diff-report -->"
+          file: compat-diff.md

@@ -33,6 +33,28 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-09 — ADIRO Bot posts all PR comments; new PR guidance comment ([#106](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/106))
+
+Agreed with the maintainer: all three PR comments are authored by the ADIRO Bot, the guidance comment is one
+summary comment (no inline threads yet), and the first slice includes preview links, the closing-reference check and
+the changelog check ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)).
+
+- `scripts/pr_guidance.py` + `.github/workflows/pr-guidance.yml`: flags only what the PR itself touches (graph diff
+  against the base), so it never repeats the [#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87) backlog;
+  skips the Release PR (`release/next`). Checks: no `rdfs:comment` (with a line link), duplicate `rdfs:label`, no
+  `[Unreleased]` entry, newly unused `@prefix`/`owl:imports`, unregistered `Closes #N` (GraphQL, after a 10 s wait for
+  GitHub's index), OntoCanvas link per touched module that declares classes.
+- `.github/actions/sticky-comment`: the repost-on-change / edit-in-place logic that the two existing workflows each
+  carried, now shared. Matches the comment by hidden marker and author; removes older `github-actions[bot]` copies
+  best-effort so no duplicate remains. `compat-diff-comment.yml` and `ontology-reasoning.yml` now mint the app token
+  (`continue-on-error`, so a token failure never fails the reasoner gate) and use it.
+- `AGENTS.md`: new workflow bullet; the "one sticky QC comment" rule gets the guidance comment as an explicit exception.
+- Verified: 61 unit tests pass; the script ran against a real past diff; all workflow/action YAML parses. **Not
+  verified until the PR runs:** the app token's comment permission on PRs, deleting the old `github-actions` comments, the
+  fork skip.
+- Deferred (kept in #106): inline review comments/suggestions, specification-sync reminder, public-repo hygiene, stale
+  Release PR nudge, plain-language version impact, LLM-drafted definitions.
+
 ## 2026-10-09 — Release notes: summary line first, link bullets straight after (no header)
 
 Requested by the maintainer: the "PATCH release · 2.0.0 → 2.0.1 · Compare" line (or "First release") is now the

@@ -120,6 +120,14 @@ exits non-zero on inconsistency/unsatisfiable classes. Override defaults with `R
 not required** (it drives the native Windows `java.exe` fine; MSYS2 and WSL also work). Pure-PowerShell users
 who won't use bash can instead run the two underlying `java -jar robot.jar merge … reason …` / `… report …`
 commands directly, but Git Bash is simpler.
+- **`.github/workflows/pr-guidance.yml`** — on every same-repo PR (opened/edited/pushed), the **ADIRO Bot** posts a
+  separate, human-readable sticky comment ([#106](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/106)),
+  built by `scripts/pr_guidance.py`: a tickable to-do list for **this PR's own changes** (a touched term with no
+  `rdfs:comment`, a label shared with another term, a `.ttl` change with no `[Unreleased]` changelog entry
+  ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)), an unused `@prefix`/`owl:imports` the PR
+  introduced, a `Closes #N` GitHub did not register) and an OntoCanvas preview link per touched module that declares
+  classes. It never lists the standing backlog. All three PR comments (version impact, QC, guidance) are posted as the
+  ADIRO Bot through `.github/actions/sticky-comment`; fork PRs get none of them (no access to the app secrets).
 - **`.github/workflows/sync-issues-to-youtrack.yml`** — one-way mirror of GitHub issue events → YouTrack
   **RES** project via `scripts/sync_issue_to_youtrack.py` (inbox model; YouTrack is never pushed back).
 - **`.github/workflows/backfill-issues-to-youtrack.yml`** — manual one-shot backfill (`dry_run` defaults
@@ -269,7 +277,8 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   log is a check nobody reads — we already had 130 undescribed terms sitting invisibly in one while a
   different job's comment showed 23 rows of something else. There is **one** sticky comment for ontology QC,
   posted by `ontology-reasoning.yml`, and it carries both the ROBOT/HermiT results and the repo-specific
-  checks.
+  checks. (The ADIRO Bot's `pr-guidance.yml` comment is a deliberate, separate exception: it is the plain-language
+  to-do list for a PR's own changes, not a second QC report.)
   - **Put the check in `scripts/validate_ontology.py`**, appending to that file's `errors` (blocking) or
     `warnings` (advisory) list. Nothing else is needed: `--markdown` renders whatever the script reports, the
     workflow embeds it, and the new check appears in the comment automatically. Do not add a second script,
