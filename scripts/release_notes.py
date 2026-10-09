@@ -5,9 +5,10 @@ GitHub Release notes for one module release (used by .github/workflows/backup-ve
 Usage:
     release_notes.py <module> <version> [--repo OWNER/NAME] [--root DIR]
 
-Prints Markdown to stdout: a summary line (SemVer bump, previous -> this version, link to the
-published documentation page, compare link), the module's changelog section, the pull requests that
-changed the module since the previous release, and the canonical w3id.org URLs.
+Prints Markdown to stdout, starting with a "Relevant links" block (the module's published
+documentation page, then its latest and this-version w3id.org URLs), followed by a summary line
+(SemVer bump, previous -> this version, compare link), the module's changelog section, and the pull
+requests that changed the module's ontology file since the previous release.
 
 Needs `git` with tags fetched; PR lookup uses the `gh` CLI (GH_TOKEN) and degrades to commit
 subjects when it is unavailable. The pure parts (previous version, bump kind, rendering) are
@@ -56,10 +57,20 @@ def render(module, version, previous, changelog, changes, repo):
     parts = [f"**{'First release' if kind == 'FIRST' else kind + ' release'}**"]
     if previous:
         parts.append(f"{previous} → {version}")
-    parts.append(f"[Documentation]({docs})")
     if previous:
         parts.append(f"[Compare](https://github.com/{repo}/compare/{module}-v{previous}...{module}-v{version})")
-    lines = [f"## {module} {version}", "", " · ".join(parts), "", changelog, ""]
+    lines = [
+        "## Relevant links",
+        "",
+        f"- Documentation: {docs}",
+        f"- Ontology (latest): {W3ID}/{module}",
+        f"- This version ({version}): {W3ID}/{module}/{version}",
+        "",
+        " · ".join(parts),
+        "",
+        changelog,
+        "",
+    ]
     if changes:
         lines += ["### Pull requests in this release", ""]
         for ref, text in changes:
@@ -68,14 +79,7 @@ def render(module, version, previous, changelog, changes, repo):
         lines.append("")
     elif previous is None:
         lines += ["_First tagged release of this module; earlier history is in the repository log._", ""]
-    lines += [
-        "---",
-        f"**Canonical URLs** ([w3id.org/adiro]({W3ID}) — content-negotiating; redirects to GitHub Pages)",
-        f"- Documentation: {docs}",
-        f"- Ontology (latest): {W3ID}/{module}",
-        f"- This version ({version}): {W3ID}/{module}/{version}",
-    ]
-    return "\n".join(lines) + "\n"
+    return "\n".join(lines).rstrip("\n") + "\n"
 
 
 def _run(args, root):

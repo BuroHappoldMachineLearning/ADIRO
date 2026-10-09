@@ -33,6 +33,13 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-09 — Release notes start with Relevant links; badges link to the release page
+
+- **Changed (pushed directly to `main` at the maintainer's request):** each Release body now starts with a **Relevant links** block in this order — the module's documentation page (`…/ADIRO/ontologies/<module>/`), `Ontology (latest)`, `This version` (w3id) — with no "Canonical URLs" header, trailer or duplicate title; the summary line keeps the bump, previous → this and the compare link. The README badges link to the release page of the module's latest version again (reversing the earlier choice of the documentation page); `prepare_release.py` bumps those links at the release cut, and `tests/test_readme_badges.py` fails if a link does not match the module's declared version (compared with `src`, not `versions/`, so it holds in the window between merging a Release PR and the snapshot landing).
+- **Verified:** 52 tests pass; `release_notes.py` output checked locally for `aec_facade_domain` 2.0.1. Live Release notes are refreshed by re-running `backup-version.yml` for a tag.
+
+---
+
 ## 2026-10-09 — Releases: let "Latest" follow the newest release
 
 - **Changed:** removed `--latest=false` from `gh release create` in `release-pr.yml`, and marked `aec_facade_domain-v2.0.1` as Latest by hand. With one "Latest" slot for several independent module streams, `--latest=false` left the badge (and the repo front-page Releases box) stuck on `aec_facade_domain-v2.0.0` from August; it now means "most recent release". Pushed directly to `main` at the maintainer's explicit request (a one-flag change), not via a PR. Not yet seen in a real release: the next Release PR merge is the first run without the flag.

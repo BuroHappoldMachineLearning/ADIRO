@@ -23,12 +23,16 @@ def test_bump_kind():
 
 def test_render_links_docs_compare_and_prs():
     text = rn.render("aec_x", "2.0.1", "2.0.0", "### Added\n- a thing", [("#108", "Add a thing"), ("abc1234", "a direct commit")], "o/r")
-    assert text.startswith("## aec_x 2.0.1")
+    assert text.startswith("## Relevant links\n")  # the links come first, in this order
+    docs = text.index("- Documentation: https://burohappoldmachinelearning.github.io/ADIRO/ontologies/aec_x/")
+    latest = text.index("- Ontology (latest): https://w3id.org/adiro/aec_x\n")
+    this_version = text.index("- This version (2.0.1): https://w3id.org/adiro/aec_x/2.0.1")
+    assert docs < latest < this_version < text.index("**PATCH release**")
     assert "**PATCH release** · 2.0.0 → 2.0.1" in text
-    assert "[Documentation](https://burohappoldmachinelearning.github.io/ADIRO/ontologies/aec_x/)" in text
+    assert "Canonical URLs" not in text and "\n---\n" not in text
     assert "[Compare](https://github.com/o/r/compare/aec_x-v2.0.0...aec_x-v2.0.1)" in text
     assert "- [#108](https://github.com/o/r/pull/108) Add a thing" in text and "- `abc1234` a direct commit" in text
-    assert "### Added\n- a thing" in text and "https://w3id.org/adiro/aec_x/2.0.1" in text
+    assert "### Added\n- a thing" in text
 
 
 def test_render_a_first_release_has_no_compare_or_pr_list():

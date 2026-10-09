@@ -8,7 +8,7 @@ does the mechanical part so a reviewer only has to approve it:
     plan   [--json]   which modules have a release pending, and to which version
     apply  [--date D] write the release cut into the working tree: bump owl:versionInfo /
                       owl:versionIRI, move each [Unreleased] changelog section under a dated
-                      heading, update the root CHANGELOG.md rollup and the AGENTS.md versions line
+                      heading, update the root CHANGELOG.md rollup, the README release-badge links and the AGENTS.md versions line
     body              the Release PR description (Markdown) for the current plan
     tags              releases still to be completed: modules whose declared version has a
                       dated changelog heading (a merged release cut) but no snapshot under
@@ -200,6 +200,12 @@ def apply_plan(root, entries, day):
         for module, ver in versions.items():
             text = re.sub(rf"(\| `{module}` \| )[^|]*( \|)", rf"\g<1>{ver}\g<2>", text)
         _write(rollup, text)
+    readme = root / "README.md"
+    if readme.is_file():  # the badges link to each module's latest release page
+        text = _read(readme)
+        for module, ver in versions.items():
+            text = re.sub(rf"(releases/tag/{module}-v)\d+\.\d+\.\d+", rf"\g<1>{ver}", text)
+        _write(readme, text)
     agents = root / "AGENTS.md"
     if agents.is_file():
         text = _read(agents)

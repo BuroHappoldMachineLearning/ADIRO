@@ -190,3 +190,16 @@ def test_a_release_stays_incomplete_until_its_snapshot_exists(tmp_path):
 def test_a_complete_old_release_is_not_listed(tmp_path):
     assert pr.releases_to_complete(make_repo(tmp_path)) == []  # 1.0.0: dated heading and snapshot both present
 
+
+
+def test_the_cut_bumps_the_readme_release_links(tmp_path):
+    repo = make_repo(tmp_path, ":B a owl:Class .\n", ENTRY)
+    (repo / "README.md").write_text(
+        '<a href="https://github.com/o/r/releases/tag/aec_x-v1.0.0"><img alt="aec_x"></a>\n'
+        '<a href="https://github.com/o/r/releases/tag/aec_other-v9.9.9">other</a>\n',
+        encoding="utf-8",
+    )
+    pr.apply_plan(repo, pr.plan(repo), "2026-10-09")
+    text = (repo / "README.md").read_text(encoding="utf-8")
+    assert "releases/tag/aec_x-v1.1.0" in text and "aec_x-v1.0.0" not in text
+    assert "releases/tag/aec_other-v9.9.9" in text  # a module not in src/ is left alone
