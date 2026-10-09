@@ -90,11 +90,15 @@ def collect_changes(root, repo, module, previous, tag):
     seen, changes = set(), []
     for line in log.stdout.splitlines():
         sha, _, subject = line.partition("\t")
+        found = []
         try:
             prs = _run(["gh", "api", f"repos/{repo}/commits/{sha}/pulls", "--jq", r'.[] | "\(.number)\t\(.title)"'], root)
-            found = [l.split("\t", 1) for l in prs.stdout.splitlines()] if prs.returncode == 0 else []
+            if prs.returncode == 0:
+                found = [l.split("\t", 1) for l in prs.stdout.splitlines()]
+            else:  # e.g. a missing token permission: say so rather than silently degrade
+                print(f"::warning::PR lookup failed for {sha[:7]} (gh exit {prs.returncode}): listing the commit instead", file=sys.stderr)
         except FileNotFoundError:  # no gh CLI: fall back to the commit subject
-            found = []
+            print(f"::warning::gh CLI not found: listing commit {sha[:7]} instead of its PR", file=sys.stderr)
         if found:
             for number, title in found:
                 if number not in seen:

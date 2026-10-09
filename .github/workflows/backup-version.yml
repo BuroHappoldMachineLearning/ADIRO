@@ -15,6 +15,7 @@ on:
 permissions:
   contents: write
   actions: write   # dispatch generate-deploy-docs.yml after the snapshot lands
+  pull-requests: read   # release_notes.py lists the PRs behind each release (commits/<sha>/pulls)
 
 concurrency:
   # One snapshot at a time per release tag, to avoid a commit/push race if the

@@ -59,15 +59,15 @@ Everything after step 4 is automatic.
 - Snapshots `src/<module>.ttl` to `versions/<module>/<semver>/` and pushes the commit to `main`.
 - Sets the Release notes (`scripts/release_notes.py`): a summary line with the SemVer bump (MAJOR / MINOR / PATCH, or first release), the previous → this version, a link to the module's [published documentation page](https://burohappoldmachinelearning.github.io/ADIRO/ontologies/aec_common_symbols/) and a compare link; the module's `changelogs/<module>.md` section; the pull requests that changed `src/<module>.ttl` since the previous release (a bare commit is listed where there was no PR); and the resolvable `w3id.org/adiro` URLs for that version.
 
-## Release badges
-
-The README shows the latest released version of every module as a badge beside the banner. Each badge reads `badges/<module>.json` from the published site; `scripts/release_badges.py` (called by `generate_docs.py`) writes those files from the highest SemVer under `versions/<module>/`, so they refresh on every docs deploy, including the one dispatched after a release. They follow the shields.io endpoint schema (`schemaVersion`, `label`, `message`, `color`) and can feed anything else that needs the latest version of each module. A badge links to the module's documentation page. A new module needs its badge in `README.md` (`tests/test_readme_badges.py` enforces it).
-
 The job then dispatches **`generate-deploy-docs.yml`** explicitly (a push made with the default `GITHUB_TOKEN` does not start other workflows, so the snapshot push cannot trigger it). That workflow regenerates the docs, builds the MkDocs site (`--strict`, so a broken link would fail the build here), and deploys to GitHub Pages — publishing both the unversioned "latest" `…/<module>.ttl` and the new versioned snapshot `…/<module>/<semver>/<module>.ttl` as resolvable URLs.
 
 The same job can be started by hand for an existing tag — `gh workflow run backup-version.yml -f tag=<module>-v<semver>` — which is what a Release published with `GITHUB_TOKEN` (and therefore not firing the `release` event) needs. The deploy dispatch is unconditional: it runs whether or not the job pushed a new snapshot, so re-running the job for a tag whose snapshot already exists repairs a release whose Pages deploy was missed. The cost of a re-run is one extra docs build, and the deploy publishes the current state of `main` (not the tagged commit), exactly as any push to `main` does.
 
 If several modules changed together, cut **one tag per changed module** — each is an independent release, and each publishes through this same chain on its own.
+
+## Release badges
+
+The README shows the latest released version of every module as a badge beside the banner. Each badge reads `badges/<module>.json` from the published site; `scripts/release_badges.py` (called by `generate_docs.py`) writes those files from the highest SemVer under `versions/<module>/`, so they refresh on every docs deploy, including the one dispatched after a release. They follow the shields.io endpoint schema (`schemaVersion`, `label`, `message`, `color`) and can feed anything else that needs the latest version of each module. A badge links to the module's documentation page. A new module needs its badge in `README.md` (`tests/test_readme_badges.py` enforces it).
 
 ## Overriding a bump or holding a module
 
