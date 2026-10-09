@@ -7,7 +7,7 @@
 Concepts shared by several engineering domains. It sits between the common symbols and the discipline-specific modules, holding abstractions that more than one domain reuses, so they are defined once.
 
 - **IRI:** `https://w3id.org/adiro/aec_domain_common`
-- **Version:** 2.0.0
+- **Version:** 2.0.1
 - **Imports:** `aec_common_symbols`, `aec_drawing_metadata`
 
 ## Interactive view

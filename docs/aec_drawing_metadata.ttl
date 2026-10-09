@@ -23,8 +23,8 @@
     dcterms:publisher "Buro Happold" ;
     owl:imports <https://w3id.org/adiro/aec_provenance> ;
     owl:imports <https://w3id.org/adiro/aec_geometry> ;
-    owl:versionIRI <https://w3id.org/adiro/aec_drawing_metadata/3.0.0> ;
-    owl:versionInfo "3.0.0" .
+    owl:versionIRI <https://w3id.org/adiro/aec_drawing_metadata/4.0.0> ;
+    owl:versionInfo "4.0.0" .
 
 
 #################################################################

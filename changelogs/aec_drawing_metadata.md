@@ -7,6 +7,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+## [4.0.0] — 2026-10-09
+
 ### Added
 - **Title-block field-kind vocabulary (`TitleblockFieldScheme`, SKOS)** ([Discussion #72](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/72)). ~15 field kinds (Client, Originator, Drawing Title, Drawing Number, Cross-Reference Number, Scale, Drawn By, Checked By, Approved By, Revision Code, Issue Date, Discipline, Project Title, Drawing Package, Status), each carrying a `skos:definition`, per-language (`@en`/`@de`) `skos:prefLabel`/`skos:altLabel` synonyms, generic **public** `skos:example` values where useful, `aprov:expectedRange` (expected value type) and `aprov:mapsToFieldProperty` (the shipped property a validated assertion promotes to). **Membership in the scheme is the extraction profile** — the set an extraction pipeline looks for. Additive: the shipped `asserts*`/`has*` properties are unchanged (hybrid bridge).
 - **Two more title-block field kinds** — `:ProjectNumberField` (→ `:projectNumber`) and `:SheetSizeField` (→ `:sheetSize`), each with `@en`/`@de` labels and synonyms, and `skos:example` `A1`/`A0` for sheet size. Both map to datatype properties that already existed in the module but had **no `TitleblockFieldScheme` concept**, so an extraction pipeline had no way to discover them (Project No. commonly pairs with Project Title; sheet size is a standard `A1`/`A0` field). Their German synonyms (`Projektnummer`, `Blattgröße`, `Format`) are **provisional** — not yet verified against real sheets the way the others are.
@@ -30,11 +32,11 @@ _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumpe
   `hasRevision`. [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21) decided project-wide that ADIRO declares no named inverse properties and no
   `owl:inverseOf` axioms; reverse navigation uses the SPARQL inverse path `^metadata:hasRevision`. The
   OntoCanvas `edgeStyleConfig` entry for the removed property is dropped from
-  `aec_drawing_metadata.display.json`. **MAJOR bump (4.0.0) at the next release cut.**
+  `aec_drawing_metadata.display.json`. **MAJOR bump (4.0.0).**
 
 ### Notes
 - `DisciplineField` has no `mapsToFieldProperty` yet (no dedicated ADIRO property); candidate to model later, possibly reusing `aec_domain_common:Discipline`.
-- All additive → a **MINOR** bump (3.1.0) at the next release cut.
+- Includes the breaking removal of `isRevisionOf` (above), so this release is a **MAJOR** bump (4.0.0); every other change in it is additive or non-breaking.
 
 ## [3.0.0] — 2026-08-10
 

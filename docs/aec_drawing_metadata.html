@@ -283,6 +283,22 @@ td {
     <script id="schema.org" type="application/ld+json">
 [
   {
+    "@id": "https://w3id.org/adiro/aec_drawing_metadata#TitleblockFieldScheme",
+    "@type": [
+      "https://schema.org/DefinedTermSet"
+    ],
+    "https://schema.org/description": [
+      {
+        "@value": "The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to."
+      }
+    ],
+    "https://schema.org/name": [
+      {
+        "@value": "Titleblock Field Scheme"
+      }
+    ]
+  },
+  {
     "@id": "https://w3id.org/adiro/aec_drawing_metadata",
     "@type": [
       "https://schema.org/DefinedTermSet"
@@ -313,22 +329,6 @@ td {
     "https://schema.org/publisher": [
       {
         "@value": "Buro Happold"
-      }
-    ]
-  },
-  {
-    "@id": "https://w3id.org/adiro/aec_drawing_metadata#TitleblockFieldScheme",
-    "@type": [
-      "https://schema.org/DefinedTermSet"
-    ],
-    "https://schema.org/description": [
-      {
-        "@value": "The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to."
-      }
-    ],
-    "https://schema.org/name": [
-      {
-        "@value": "Titleblock Field Scheme"
       }
     ]
   }
@@ -385,14 +385,14 @@ td {
               <a class="hover_property" href="http://www.w3.org/2002/07/owl#versionIRI" title="The property that identifies the version IRI of an ontology. Defined in The OWL 2 Schema vocabulary (OWL 2)">Version Iri</a>
             </dt>
             <dd>
-              <a href="#3.0.0">https://w3id.org/adiro/aec_drawing_metadata/3.0.0</a>
+              <a href="#4.0.0">https://w3id.org/adiro/aec_drawing_metadata/4.0.0</a>
             </dd>
           </div>
           <div>
             <dt>
               <a class="hover_property" href="http://www.w3.org/2002/07/owl#versionInfo" title="The annotation property that provides version information for an ontology or another OWL construct. Defined in The OWL 2 Schema vocabulary (OWL 2)">Version Info</a>
             </dt>
-            <dd><p>3.0.0</p></dd>
+            <dd><p>4.0.0</p></dd>
           </div>
           <div>
             <dt>
@@ -2748,12 +2748,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <a href="#Layout">Layout</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#Layout">Layout</a>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>

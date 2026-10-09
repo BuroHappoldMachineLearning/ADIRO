@@ -22,6 +22,17 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-09 — Cut the backlog release (metadata 4.0.0, common_symbols 3.0.0, domain_common 2.0.1, provenance/geometry 1.0.0)
+
+- **Why:** a UC-03 consumer (CVAT import) needed `layoutTitle` and `hasScale` on `Layout`, merged on `main` but never tagged; `main` still declared `aec_drawing_metadata` 3.0.0, so two different files shared one version label. Tracked for automation in [#99](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/99); a related snapshot-deploy bug in [#100](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/100).
+- **Changed:** bumped `owl:versionInfo` / `owl:versionIRI` per the compat-diff required bump (`aec_drawing_metadata` MAJOR — `isRevisionOf` removed; `aec_common_symbols` MAJOR — `appearsOn`/`isReferencedBy` removed; `aec_domain_common` PATCH — annotation-only; `aec_provenance` and `aec_geometry` first release at their declared 1.0.0); moved each `[Unreleased]` under a dated heading; updated the root `CHANGELOG.md` rollup and the versions line in `AGENTS.md`; regenerated `docs/`. `aec_facade_domain` has no pending change (required bump NONE) and is not released.
+- **Fixed:** the stale "All additive → MINOR (3.1.0)" note in `changelogs/aec_drawing_metadata.md`, which contradicted the breaking removal recorded in the same section; reworded to MAJOR 4.0.0. Removed the "baseline, not yet cut" stub from `changelogs/aec_provenance.md`.
+- **Verified:** `validate_ontology.py` clean (pre-existing warnings only), `compat_diff.py` reports every module `OK`, `pytest tests` 18 passed. The reasoner was not re-run: no axioms changed, only version strings and changelogs.
+- **Known gap:** `backup-version.yml` pushes snapshots with `GITHUB_TOKEN`, which does not trigger the Pages deploy ([#100](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/100)); the deploy is dispatched by hand after the snapshots land.
+- **Next step:** Release PR bot ([#99](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/99)) and the `backup-version.yml` fix ([#100](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/100)). Tell the UC-03 consumer the versions to import.
+
+---
+
 ## 2026-10-06 — Fix the two failing "Generate and Deploy Documentation" runs
 
 - **Issue:** none filed (CI maintenance). **Branch:** `main` (uncommitted at time of writing).

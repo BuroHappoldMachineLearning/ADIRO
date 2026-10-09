@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+
+## [1.0.0] — 2026-10-09
+
 ### Added
 - **New foundational module `aec_geometry` (v1.0.0)** ([#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90)).
   Domain-neutral geometry for locating a detection on a drawing page:

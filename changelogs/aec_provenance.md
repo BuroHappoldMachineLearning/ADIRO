@@ -5,6 +5,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [1.0.0] — 2026-10-09
+
 ### Added
 - **New foundational, domain-neutral module** for reified assertions with provenance and confidence
   ([Discussion #72](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/72)). Introduces:
@@ -51,6 +53,3 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
   directly. ADIRO ships **no** DAnO crosswalk; the correspondence with DAnO's equivalent provenance terms is
   documentation only - see the [DAnO comparison](../docs/design-decisions/dano-comparison.md).
 
-## [1.0.0]
-
-Initial in-repo baseline (not yet cut as a GitHub release). No earlier released version to diff against.

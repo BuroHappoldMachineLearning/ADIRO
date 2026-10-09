@@ -7,7 +7,7 @@
 The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance and geometry modules, and the discipline modules build on it.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata`
-- **Version:** 3.0.0
+- **Version:** 4.0.0
 - **Imports:** `aec_geometry`, `aec_provenance`
 
 ## Interactive view

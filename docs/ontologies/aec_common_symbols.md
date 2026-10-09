@@ -7,7 +7,7 @@
 Reusable symbols that appear across disciplines, such as dimensions, grids, levels, and reference symbols. Every symbol is a kind of drawing element from the drawing-metadata module. The discipline modules build on these shared symbols.
 
 - **IRI:** `https://w3id.org/adiro/aec_common_symbols`
-- **Version:** 2.0.0
+- **Version:** 3.0.0
 - **Imports:** `aec_drawing_metadata`
 
 ## Interactive view
