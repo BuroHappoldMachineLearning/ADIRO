@@ -12,6 +12,30 @@ An open pull request titled **Release cut: …** (branch `release/next`) means a
 - Validation (`validate_ontology.py`, `compat_diff.py --enforce`) runs inside the workflow, because a PR opened with the default `GITHUB_TOKEN` does not start the PR-triggered workflows.
 - The bump is the classifier's minimum. The branch is rebuilt on every merge, so a hand edit to it is overwritten; there is no override mechanism yet ([#99](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/99)).
 
+### How the bump is chosen
+
+Each module's bump is the **highest** one required by any of its unreleased changes:
+
+| Change since the last release | Bump |
+|---|---|
+| A term is removed, or changes kind (class ↔ property) | MAJOR |
+| A domain, range, superclass, superproperty or restriction is changed or tightened | MAJOR |
+| A term is added, or a restriction is loosened or removed | MINOR |
+| Only annotations change (labels, comments, definitions) | PATCH |
+
+### Example
+
+How the Release PR evolves as changes reach `main`:
+
+| Merged to `main` | The Release PR then shows |
+|---|---|
+| A PR adds a class to `aec_common_symbols` and writes its changelog entry | Opens: `aec_common_symbols` 3.0.0 → **3.1.0** (MINOR) |
+| A PR removes a property from `aec_common_symbols` | Same PR, updated: `aec_common_symbols` → **4.0.0** (MAJOR replaces MINOR) |
+| A PR adds `rdfs:comment` text to `aec_domain_common`, with no changelog entry | Same PR now lists both modules (`aec_domain_common` 2.0.0 → **2.0.1**, PATCH) and becomes a **draft**: its release notes would be empty |
+| A PR adds the missing `aec_domain_common` changelog entry | Same PR, ready for review again |
+| You merge the Release PR | Both modules are tagged and released; the PR is closed |
+| The next ontology change reaches `main` | A new Release PR opens |
+
 **Merging the Release PR is the release.** The next run of `release-pr.yml` tags each module whose declared version has a dated changelog heading but no tag, publishes a GitHub Release for it, and dispatches `backup-version.yml` (a Release created with `GITHUB_TOKEN` does not fire the `release` event). Everything below then runs as before.
 
 ## Manual cut
