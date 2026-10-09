@@ -38,7 +38,7 @@ def test_render_links_docs_compare_and_prs():
 def test_render_a_first_release_has_no_compare_or_pr_list():
     text = rn.render("aec_x", "1.0.0", None, "notes", [], "o/r")
     assert "**First release**" in text and "Compare" not in text and "Pull requests in this release" not in text
-    assert "First tagged release of this module" in text
+    assert "was not tagged" not in text  # nothing to explain: there is no previous release
 
 
 class _Result:
@@ -93,3 +93,20 @@ def test_collect_changes_for_a_first_release_makes_no_calls(monkeypatch):
     calls = []
     monkeypatch.setattr(rn, "_run", _fake_run("", {}, calls))
     assert rn.collect_changes(".", "o/r", "aec_x", None, "aec_x-v1.0.0") == [] and calls == []
+
+
+CHANGELOG = "## [Unreleased]\n\n## [3.0.0] — 2026-08-10\n\n## [2.0.0] — 2026-02-01\n\n## [1.0.0]\n"
+
+
+def test_changelog_versions_and_previous_released_use_headings_when_there_are_no_tags():
+    assert rn.changelog_versions(CHANGELOG) == ["3.0.0", "2.0.0", "1.0.0"]
+    assert rn.previous_released([], CHANGELOG, "aec_x", "3.0.0") == "2.0.0"  # released before tagging began
+    assert rn.previous_released([], CHANGELOG, "aec_x", "1.0.0") is None
+    assert rn.previous_released(["aec_x-v3.0.0"], CHANGELOG, "aec_x", "3.0.1") == "3.0.0"  # a tag also counts
+
+
+def test_render_with_an_untagged_previous_release_has_no_compare_or_pr_list_but_says_why():
+    text = rn.render("aec_x", "3.0.0", "2.0.0", "notes", [], "o/r", previous_tagged=False)
+    assert "**MAJOR release** · 2.0.0 → 3.0.0" in text and "Compare" not in text
+    assert "previous release (2.0.0) was not tagged" in text
+    assert "First release" not in text

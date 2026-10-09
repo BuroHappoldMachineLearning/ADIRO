@@ -8,7 +8,8 @@ Usage:
 Prints Markdown to stdout, starting with a "Relevant links" block (the module's published
 documentation page, then its latest and this-version w3id.org URLs), followed by a summary line
 (SemVer bump, previous -> this version, compare link), the module's changelog section, and the pull
-requests that changed the module's ontology file since the previous release.
+requests that changed the module's ontology file since the previous release (the compare link and PR
+list need the previous release to be tagged; earlier ones were released before tagging began).
 
 Needs `git` with tags fetched; PR lookup uses the `gh` CLI (GH_TOKEN) and degrades to commit
 subjects when it is unavailable. The pure parts (previous version, bump kind, rendering) are
@@ -43,6 +44,24 @@ def previous_version(tags, module, version):
     return max(found, key=_key) if found else None
 
 
+def changelog_versions(text):
+    """Released versions named by `## [x.y.z]` headings in a Keep-a-Changelog file."""
+    return re.findall(r"^## \[(\d+\.\d+\.\d+)\]", text, re.M)
+
+
+def previous_released(tags, changelog_text, module, version):
+    """Highest version below `version` known from tags OR changelog headings, or None.
+
+    Tags alone are not enough: the earliest tagged releases (2.0.0, 3.0.0) follow versions that were
+    released before tagging began, and calling them "first release" would be wrong.
+    """
+    known = [v for v in changelog_versions(changelog_text) if _key(v) < _key(version)]
+    tagged = previous_version(tags, module, version)
+    if tagged:
+        known.append(tagged)
+    return max(known, key=_key) if known else None
+
+
 def bump_kind(previous, version):
     if previous is None:
         return "FIRST"
@@ -50,14 +69,14 @@ def bump_kind(previous, version):
     return "MAJOR" if new[0] > old[0] else "MINOR" if new[1] > old[1] else "PATCH"
 
 
-def render(module, version, previous, changelog, changes, repo):
+def render(module, version, previous, changelog, changes, repo, previous_tagged=True):
     """The Release body. `changes` is a list of (reference, text) pairs; reference is '#N' or a short SHA."""
     docs = f"{SITE}/ontologies/{module}/"
     kind = bump_kind(previous, version)
     parts = [f"**{'First release' if kind == 'FIRST' else kind + ' release'}**"]
     if previous:
         parts.append(f"{previous} → {version}")
-    if previous:
+    if previous and previous_tagged:
         parts.append(f"[Compare](https://github.com/{repo}/compare/{module}-v{previous}...{module}-v{version})")
     lines = [
         "## Relevant links",
@@ -77,8 +96,8 @@ def render(module, version, previous, changelog, changes, repo):
             link = f"[{ref}](https://github.com/{repo}/pull/{ref[1:]})" if ref.startswith("#") else f"`{ref}`"
             lines.append(f"- {link} {text}")
         lines.append("")
-    elif previous is None:
-        lines += ["_First tagged release of this module; earlier history is in the repository log._", ""]
+    elif previous and not previous_tagged:
+        lines += [f"_The previous release ({previous}) was not tagged, so there is no compare link or pull-request list; earlier history is in the repository log._", ""]
     return "\n".join(lines).rstrip("\n") + "\n"
 
 
@@ -123,12 +142,15 @@ def main(argv=None):
     root = Path(args.root)
 
     tags = _run(["git", "tag", "--list", f"{args.module}-v*"], root).stdout.split()
-    previous = previous_version(tags, args.module, args.version)
     cl = root / "changelogs" / f"{args.module}.md"
-    text = section(cl.read_text(encoding="utf-8"), args.version) if cl.is_file() else None
+    cl_text = cl.read_text(encoding="utf-8") if cl.is_file() else ""
+    previous = previous_released(tags, cl_text, args.module, args.version)
+    previous_tagged = bool(previous) and f"{args.module}-v{previous}" in tags
+    text = section(cl_text, args.version) if cl_text else None
     changelog = text or f"_No changelog entry for {args.version}._"
-    changes = collect_changes(root, args.repo, args.module, previous, f"{args.module}-v{args.version}")
-    sys.stdout.buffer.write(render(args.module, args.version, previous, changelog, changes, args.repo).encode("utf-8"))
+    changes = collect_changes(root, args.repo, args.module, previous, f"{args.module}-v{args.version}") if previous_tagged else []
+    sys.stdout.buffer.write(
+        render(args.module, args.version, previous, changelog, changes, args.repo, previous_tagged).encode("utf-8"))
 
 
 if __name__ == "__main__":
