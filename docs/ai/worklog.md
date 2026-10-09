@@ -51,7 +51,7 @@ alone but conflict together are caught. Design choices: a separate small workflo
 where "blocking" can only mean a red run plus the failure notification, since the merge has happened; no comment (no PR), the result
 goes to the job summary; `cancel-in-progress` because only the latest `main` matters. Verified locally (`ENFORCE=1` run, rc 0) and on
 GitHub through a scratch branch that also triggers the workflow: a clean suite passes, and a deliberately unsatisfiable class fails
-the run (see the result below). Not done: automatic issue creation on failure (a failed run notifies the merger; add if that proves
+the run (HermiT named `ZzUnsat`, exit 1, summary step still wrote). Not done: automatic issue creation on failure (a failed run notifies the merger; add if that proves
 too quiet). `AGENTS.md` and `release-process.md` updated.
 
 ## 2026-10-09 — Bot work closed out: fork path verified, #106 closed, ideas moved to a Discussion
