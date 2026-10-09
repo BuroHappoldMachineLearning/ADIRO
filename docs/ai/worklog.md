@@ -22,6 +22,22 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-09 — Agent guidance: contributor workflow in AGENTS.md; stale Cursor hold removed
+
+**Issue:** none (requested by the maintainer while preparing the team announcement of the release process and the ADIRO Bot).
+**Branch:** `docs/agent-contributor-workflow`.
+
+A review of what the repo tells agents found: only two Claude Code skills exist (`deploy`, `pr-review-feedback`), the conventions
+live in `AGENTS.md` (read by Claude Code through `CLAUDE.md` and by Cursor through its rule), neither skill mentioned the Release PR
+bot, the PR comments or the override file, nothing told an agent to act on the bot's "Required improvements" or to leave versions and
+overrides alone, and `.cursor/rules/general.mdc` still said TBox edits were on hold pending RES-27 although `AGENTS.md` lifted that hold.
+Changed: a short "Contributor workflow" section in `AGENTS.md` (the order of work, including reading and acting on the bot's comments
+and not touching versions or overrides unless a maintainer asks); a pointer to it in the `deploy` skill; the stale hold removed from the
+Cursor rule. **Verified:** read-through only; no gate applies to these files, and an agent's behaviour was not tested. **Not done /
+deferred:** a dedicated Claude Code skill for the contributor workflow (a section in `AGENTS.md` reaches every tool; add a skill only
+if Claude Code agents still miss it). **Next step:** give an agent (Claude Code, and Cursor if the team uses it) a trivial ontology
+change on a throwaway branch and check that it adds the changelog entry and the `rdfs:comment`, opens a PR, and reads the bot comments.
+
 ## 2026-10-09 — README: latest-release badge per module
 
 - **Branch:** `readme-release-badges`.

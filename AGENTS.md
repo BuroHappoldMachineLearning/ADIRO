@@ -199,6 +199,23 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   humans/docs, not CVAT. Verified against the pipeline; see KB
   [DATA-A-9](https://bhmlrnd.youtrack.cloud/articles/DATA-A-9).
 
+## Contributor workflow
+For anyone changing an ontology, agent or person. The sections below give the detail; this is the order of work.
+
+1. **Edit `src/<module>.ttl`** and validate it straight away (`uv run python scripts/validate_ontology.py`).
+2. **Record the change** under `[Unreleased]` in `changelogs/<module>.md`, in the same PR. That entry becomes the
+   release notes, so write it for a reader of the release.
+3. **Give every new or edited term an `rdfs:comment`**, in your own words (see "Every ADIRO term needs an `rdfs:comment`").
+4. **Regenerate the docs and bring the hand-written specification into line**, as the "Keep in sync" rules say.
+5. **Open the PR** following "Pull-request description", then **read the ADIRO Bot's comments and act on them**. "Required
+   improvements" lists what to fix in this PR's own changes (a missing definition, a missing changelog change, a
+   `Closes #N` that did not register) and disappears when nothing is left; the version-impact and QC comments report
+   what the change does. Do not copy those comments into the description.
+6. **Leave releasing to the Release PR.** Do not bump `owl:versionInfo` / `owl:versionIRI`, move changelog entries under
+   a version heading, edit the `release/next` branch or edit `config/release_overrides.json` unless a maintainer asks.
+   An override is rarely needed; `docs/contribute/versioning/release-process.md` ("When to use an override") lists the
+   few cases.
+
 ## Keep in sync (mandatory)
 - **Worklog.** Record any non-trivial change you make in **`docs/ai/worklog.md`** (newest entry first) — what
   changed, how it was verified (including gates you could *not* run), decisions deferred or rejected, and the
