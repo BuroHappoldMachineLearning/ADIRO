@@ -42,6 +42,32 @@ Wording checked against `scripts/prepare_release.py` (the Bump / Driven-by colum
 close-when-nothing-pending comment, what the cut consumes). Pushed directly to `main` at the maintainer's request (docs only). Not yet
 exercised on GitHub: the maintainer plans to test the override file themselves.
 
+## 2026-10-09 — Reasoner now runs on `main` after every ontology push ([#104](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/104))
+
+**Issue:** [#104](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/104). **Branch:** `ci/reasoner-on-main`
+([PR #118](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/118)).
+
+New `.github/workflows/reasoning-main.yml`: on push to `main` touching `src/**.ttl` (or the catalog, the reasoning script, the ROBOT
+profile, itself) and on manual dispatch, it runs `ENFORCE=1 bash scripts/run_reasoning.sh` over `main`, so two PRs that each passed
+alone but conflict together are caught. Design choices: a separate small workflow rather than extending `ontology-reasoning.yml`
+(that one is built around PR comments and the base ref); blocking from the start because the suite is clean (no backlog to tolerate),
+where "blocking" can only mean a red run plus the failure notification, since the merge has happened; no comment (no PR), the result
+goes to the job summary; `cancel-in-progress` because only the latest `main` matters. Verified locally (`ENFORCE=1` run, rc 0) and on
+GitHub through a scratch branch that also triggers the workflow: a clean suite passes, and a deliberately unsatisfiable class fails
+the run (HermiT named `ZzUnsat`, exit 1, summary step still wrote). Added at the maintainer's request: a failing run opens one tracking issue ("Ontology reasoning fails on
+main", created with the ADIRO Bot token so the one-way issue mirror picks it up; falls back to `GITHUB_TOKEN` if the app token
+cannot be created), comments on it while later runs keep failing, and closes it when a run passes; a cancelled run leaves it alone.
+Verified end to end on a scratch branch (open on the first failure, comment on the second, closed as completed by the passing run;
+the test issue was mirrored to the tracker and resolved on close). `AGENTS.md` and `release-process.md` updated. Review fixes: a manual
+run is pinned to the default branch (a dispatch could otherwise reason over a feature branch while reporting on `main`), and the
+tracking-issue steps use `!cancelled()` instead of `always()` (a run cancelled by a newer push can already have written `reason.rc` and
+would overwrite the issue after the newer run recorded the current state).
+
+**Not verified:** the `workflow_dispatch` path (it needs the workflow on `main` first), and the real `main` push path (only a scratch
+branch trigger was exercised); the cancelled-run behaviour is reasoned from the Actions semantics, not exercised.
+**Rejected:** a warn-only phase (no backlog to tolerate). **Next step:** merge #118; then watch the first push-to-`main` run, start one
+manual dispatch and confirm it reports on `main`, and revisit whether the tracking issue is too noisy only if failures turn out frequent.
+
 ## 2026-10-09 — Bot work closed out: fork path verified, #106 closed, ideas moved to a Discussion
 
 After [#111](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/111) merged, the fork workflow was tested on a real fork

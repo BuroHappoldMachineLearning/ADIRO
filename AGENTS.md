@@ -97,6 +97,14 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
   **reasoner is a blocking gate** — a PR that makes the merged suite inconsistent / unsatisfiable / non-DL
   fails the check; ROBOT `report` stays **advisory** (warn-only). It calls `scripts/run_reasoning.sh` — the
   *same* script you run locally (below) — so CI and local match. Imports resolve offline via `src/catalog-v001.xml`.
+- **`.github/workflows/reasoning-main.yml`** — on every push to `main` that touches `src/**.ttl`
+  ([#104](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/104)), runs the same `scripts/run_reasoning.sh` over
+  `main` itself with `ENFORCE=1`. The PR check reasons over a PR merged into the base **as it was at the PR's last
+  push**, so two PRs that each pass can still conflict once both are in; this run catches that. A merge cannot be blocked
+  after the fact, so a failure is a red run on `main` (and a notification to whoever merged): fix forward in a PR. No
+  comment is posted; the result is in the job summary. A failure also opens **one** issue, "Ontology reasoning fails on
+  main" (as the ADIRO Bot, so the issue mirror sees it), comments on it while later runs keep failing, and closes it when
+  a run passes.
 
 **After any `.ttl` edit, validate immediately:**
 `uv run python scripts/validate_ontology.py src/<file>.ttl` (or with no arg to validate all of `src/`).

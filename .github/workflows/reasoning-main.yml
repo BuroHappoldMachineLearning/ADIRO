@@ -1,0 +1,145 @@
+name: Ontology reasoning on main
+
+# #104. ontology-reasoning.yml reasons over a PR merged into the base branch AS IT WAS at the PR's last
+# push. If another ontology PR merges afterwards, the two changes are never reasoned over together, so two
+# PRs that each pass can leave `main` inconsistent or with an unsatisfiable class without any check
+# noticing. This workflow closes that gap: after every push to `main` that touches the ontology it reasons
+# over `main` itself, with the SAME script people run locally (scripts/run_reasoning.sh).
+#
+# A merge cannot be blocked after the fact, so "blocking" here means the run FAILS (a red mark on `main`
+# and a failure notification to whoever merged). The suite is clean today, so there is no backlog to
+# tolerate and the reasoner gates from the start, like the PR check does. ROBOT `report` stays advisory
+# and is only counted in the job summary. No comment is posted: there is no PR to comment on.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**/*.ttl'
+      - 'src/catalog-v001.xml'
+      - 'scripts/run_reasoning.sh'
+      - 'config/robot_report_profile.txt'
+      - '.github/workflows/reasoning-main.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write   # only used if the ADIRO Bot token cannot be created (fallback for the tracking issue)
+
+concurrency:
+  # Only the latest state of `main` matters, so a newer push supersedes a run still going.
+  group: reasoning-main
+  cancel-in-progress: true
+
+env:
+  ROBOT_VERSION: v1.9.10   # keep in step with ontology-reasoning.yml (it keys the shared jar cache)
+
+jobs:
+  reason:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # A push reasons over the pushed commit. A manual run may be started from any branch or tag, so it is
+          # pinned to the default branch: this workflow, its summary and its tracking issue all speak about `main`.
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.event.repository.default_branch || github.sha }}
+
+      - name: Set up Java (Temurin 17)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Cache ROBOT jar
+        uses: actions/cache@v4
+        with:
+          path: .tools/robot.jar
+          key: robot-${{ env.ROBOT_VERSION }}
+
+      - name: Reason (HermiT) over main, failing on inconsistency or unsatisfiable classes
+        run: ENFORCE=1 bash scripts/run_reasoning.sh
+
+      - name: Job summary
+        if: always()
+        run: |
+          OUT=.tools/reasoning-out
+          RC="$(cat "$OUT/reason.rc" 2>/dev/null || echo 1)"
+          {
+            echo "## Ontology reasoning on \`main\` (\`$(git rev-parse --short HEAD)\`)"
+            echo ""
+            if [ "$RC" = "0" ]; then
+              echo "✅ **Consistent**: no unsatisfiable classes (HermiT, whole suite at latest)."
+            else
+              echo "⛔ **The combined suite on \`main\` fails reasoning** (rc=$RC): it is inconsistent, has an unsatisfiable class, or is not valid OWL 2 DL. This usually means two PRs that each passed on their own conflict. Fix forward in a PR."
+              if [ -f "$OUT/reason.out" ]; then
+                echo ""
+                echo "<details open><summary>Reasoner output</summary>"
+                echo ""
+                echo '```'
+                tail -n 60 "$OUT/reason.out"
+                echo '```'
+                echo ""
+                echo "</details>"
+              fi
+            fi
+            if [ -f "$OUT/report.tsv" ]; then
+              echo ""
+              echo "ROBOT report (advisory): ERROR $(awk -F'\t' 'NR>1 && $1=="ERROR"{n++} END{print n+0}' "$OUT/report.tsv"), WARN $(awk -F'\t' 'NR>1 && $1=="WARN"{n++} END{print n+0}' "$OUT/report.tsv"), INFO $(awk -F'\t' 'NR>1 && $1=="INFO"{n++} END{print n+0}' "$OUT/report.tsv")."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # One tracking issue per breakage: opened on the first failure, commented on while it keeps failing, and
+      # closed when a later run passes. It is created as the ADIRO Bot where possible, so the one-way issue mirror
+      # to the team's tracker sees it (an issue made with GITHUB_TOKEN starts no other workflow).
+      - name: Create ADIRO Bot token for the tracking issue
+        id: app-token
+        if: ${{ !cancelled() }}
+        continue-on-error: true   # a token problem must never hide the result; GITHUB_TOKEN is the fallback below
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ADIRO_BOT_APP_ID }}
+          private-key: ${{ secrets.ADIRO_BOT_PRIVATE_KEY }}
+          permission-issues: write
+
+      - name: Track the result in one issue
+        # Not on a cancelled run: reason.rc is written before the report and summary, so a run cancelled by a newer
+        # push can already have it, and would then overwrite the issue after the newer run recorded the current state.
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token || github.token }}
+          TITLE: Ontology reasoning fails on main
+        run: |
+          OUT=.tools/reasoning-out
+          # A superseded (cancelled) run never wrote a result: leave the issue alone.
+          if [ ! -f "$OUT/reason.rc" ]; then echo "No reasoning result (cancelled run?); not touching the tracking issue."; exit 0; fi
+          RC="$(cat "$OUT/reason.rc")"
+          SHA="$(git rev-parse --short HEAD)"
+          RUN="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          num="$(gh issue list --state open --search "\"$TITLE\" in:title" --json number,title \
+                 --jq "[.[] | select(.title == \"$TITLE\")][0].number // empty")"
+          if [ "$RC" != "0" ]; then
+            if [ -n "$num" ]; then
+              gh issue comment "$num" --body "Still failing at \`$SHA\` ([run]($RUN))."
+            else
+              {
+                echo "The whole ADIRO suite no longer passes OWL 2 DL reasoning on \`main\` (HermiT, reasoner exit code $RC), at \`$SHA\` ([run]($RUN))."
+                echo ""
+                echo "It is inconsistent, has an unsatisfiable class, or is not valid OWL 2 DL. This usually means two PRs that each passed on their own conflict once both are merged. Fix forward in a PR; reproduce locally with \`ENFORCE=1 bash scripts/run_reasoning.sh\`."
+                echo ""
+                echo "<details open><summary>Reasoner output</summary>"
+                echo ""
+                echo '```'
+                tail -n 40 "$OUT/reason.out" 2>/dev/null
+                echo '```'
+                echo ""
+                echo "</details>"
+                echo ""
+                echo "This issue closes itself when a later run on \`main\` passes. See [#104](https://github.com/${{ github.repository }}/issues/104) for why this check exists."
+              } > issue.md
+              gh issue create --title "$TITLE" --body-file issue.md
+            fi
+          elif [ -n "$num" ]; then
+            gh issue comment "$num" --body "Passes again at \`$SHA\` ([run]($RUN)). Closing."
+            gh issue close "$num" --reason completed
+          fi
