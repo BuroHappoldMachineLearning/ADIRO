@@ -11,10 +11,12 @@ CURSOR_RULES = sorted((ROOT / ".cursor" / "rules").glob("*.mdc"))
 MAX_ADAPTER_LINES = 25
 
 
-def test_claude_md_and_cursor_rules_import_agents_md():
+def test_claude_md_and_every_cursor_rule_import_agents_md():
     assert "@AGENTS.md" in (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
     assert CURSOR_RULES, "expected at least one Cursor rule"
-    assert any("@AGENTS.md" in p.read_text(encoding="utf-8") for p in CURSOR_RULES)
+    for path in CURSOR_RULES:
+        assert "@AGENTS.md" in path.read_text(encoding="utf-8"), (
+            f"{path.relative_to(ROOT)} must import AGENTS.md, not carry its own conventions")
 
 
 def test_adapter_files_stay_thin():

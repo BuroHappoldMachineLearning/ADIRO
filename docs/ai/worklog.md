@@ -46,7 +46,11 @@ and the plugin is private, so outside contributors cannot read the skills) and e
 OntoCanvas preview link; keeping tracker IDs out of public text), and drops the generic style items; the `w3id.org/adiro` rule moved here
 from the shared `youtrack` skill, whose repo-specific bullets were removed in the `ai-plugins` PR
 ([#14](https://github.com/BuroHappoldMachineLearning/ai-plugins/pull/14)), which now also fails CI if a shared skill names a repo.
-**Verified:** the test suite (69 passed, 3 skipped); no gate covers the prose, and an agent's behaviour
+Review fixes: the `w3id.org/adiro` rule keeps an explicit exception for a branch preview (which must use the raw branch URL);
+the adapter test now requires every Cursor rule to import `AGENTS.md`; the `deploy` skill's restated steps (which had already drifted:
+"new" terms where `AGENTS.md` says "new or edited") became a bare pointer; and `validate-ontology.yml` now runs `tests/` on the PR,
+because they ran only on a push to `main` (a failing test, including the new guard, could merge first). **Verified:** the test suite with the
+CI command (72 passed, including the 3 that need pillow); no gate covers the prose, and an agent's behaviour
 was not tested. **Not done /
 deferred:** a dedicated Claude Code skill for the contributor workflow (a section in `AGENTS.md` reaches every tool; add a skill only
 if Claude Code agents still miss it). **Next step:** none planned; the maintainer decided not to trial an agent against the new section

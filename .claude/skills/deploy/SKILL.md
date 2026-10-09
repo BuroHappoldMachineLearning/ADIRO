@@ -14,10 +14,9 @@ The docs pipeline, the validation and mirror CI, and the versioning scheme are d
 publish", "Validation & YouTrack-sync CI", "Versioning"). Read them there: this skill deliberately holds no copy, so
 there is one place to keep current.
 
-**Contributing an ontology change?** Follow `AGENTS.md` → "Contributor workflow": validate, add the `[Unreleased]`
-changelog entry and an `rdfs:comment` for every new term, then read the ADIRO Bot's comments on the PR and fix its
-"Required improvements". By default do not bump versions or touch `config/release_overrides.json`: the Release PR does
-the release cut. Do it only for a good reason that follows clearly from your change, and state that reason in the PR.
+**Contributing an ontology change?** Follow `AGENTS.md` → "Contributor workflow". It holds the ordered steps, including
+what to do with the ADIRO Bot's comments and when versions and overrides may be touched; this skill deliberately repeats
+none of them, so there is one list to keep current.
 
 **Keep in sync:** if you change CI/docs/versioning, update `AGENTS.md` in the same PR. CI wins on conflicts.
 

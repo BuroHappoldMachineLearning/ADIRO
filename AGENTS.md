@@ -69,7 +69,8 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
   external resource links (TTL source, pyLODE HTML, OntoCanvas) point at the permanent **`w3id.org/adiro`** front
   door — which 302-redirects to the Pages host with permissive CORS — not the `github.io` host directly. Do the same when you reference an ontology IRI, a versioned IRI (`…/adiro/<module>/<semver>`)
 or the docs in an issue, PR, changelog, release note or message: use `w3id.org/adiro`; the `github.io` host is only the
-physical fetch host. CI
+physical fetch host. The one exception is the **preview of a branch** (the OntoCanvas link in the PR description, below),
+which must point at the branch's raw file, because `w3id.org/adiro` resolves to the released version. CI
   commits the regenerated `docs/` back, then runs `mkdocs build` (output `site/`, git-ignored) and deploys the artifact.
 - **Local preview (uses `uv`):**
   ```bash
@@ -87,7 +88,8 @@ physical fetch host. CI
   over `src/*.ttl` (parse check, circular-subclass detection, ensures an `owl:Ontology` declaration, and
   per-module version consistency — `owl:versionInfo` == `owl:versionIRI` tail == ontology IRI + version), plus
   `scripts/compat_diff.py` (RES-67, *warn* mode) which flags when a module's declared SemVer bump is smaller
-  than its change requires. The same validate step gates the deploy workflow. On a PR (`BASE_REF` set) it also
+  than its change requires. The same validate step gates the deploy workflow. The workflow also runs the repository's
+  `tests/` (`pytest`) on the PR; they used to run only on a push to `main`, after a failing test could already have merged. On a PR (`BASE_REF` set) it also
   warns when `src/<module>.ttl` changed but `changelogs/<module>.md` did not
   ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)); advisory, and `ENFORCE_CHANGELOG=1`
   makes it blocking. The warning appears in the QC comment (`ontology-reasoning.yml`).
