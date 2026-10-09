@@ -25,6 +25,7 @@ _TTL2MD_SRC = Path(__file__).parent.parent / "ttl2md" / "src"
 if _TTL2MD_SRC.exists() and str(_TTL2MD_SRC) not in sys.path:
     sys.path.insert(0, str(_TTL2MD_SRC))
 import ttl2md
+from release_badges import write_release_badges
 
 
 def find_ttl_files(root_dir: Path) -> list[Path]:
@@ -698,6 +699,10 @@ def main():
 
     # Generate native Markdown ontology pages (Ontologies nav section)
     generate_ontology_markdown_pages(ttl_files, output_dir)
+
+    # Latest-released-version JSON per module, read by the README's shields.io badges
+    for badge_file in write_release_badges(repo_root, output_dir):
+        print(f"  [OK] Wrote release badge data: {badge_file}")
 
     # Copy all .display.json files to docs directory for GitHub Pages publishing
     for display_json_file in display_json_files:

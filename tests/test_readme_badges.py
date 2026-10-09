@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 README = (ROOT / "README.md").read_text(encoding="utf-8")
 MODULES = sorted(p.stem for p in (ROOT / "src").glob("*.ttl"))
-BADGE_FILTER = re.compile(r"img\.shields\.io/github/v/release/[^?\"]+\?filter=([a-z0-9_]+)-v\*")
+BADGE_FILTER = re.compile(r"img\.shields\.io/endpoint\?url=[^\"]*%2Fbadges%2F([a-z0-9_]+)\.json")
 
 
 def test_every_module_has_a_release_badge():

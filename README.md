@@ -1,16 +1,17 @@
 # AEC Drawing Ontologies
 
-<!-- Latest-release badges: one per module in src/ (checked by tests/test_readme_badges.py). They read the
-     GitHub Releases, so they update themselves when a release is published. -->
+<!-- Latest-release badges: one per module in src/ (checked by tests/test_readme_badges.py). Each reads
+     badges/<module>.json from the docs site (scripts/release_badges.py), which every docs deploy refreshes
+     from versions/, so the badges update after a release is published. -->
 <img src="docs/img/adiro_banner.png" alt="ADIRO" width="320" align="left">
 
 <b>Latest releases</b><br>
-<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_provenance"><img src="https://img.shields.io/github/v/release/BuroHappoldMachineLearning/ADIRO?filter=aec_provenance-v*&sort=semver&label=&color=16305f" alt="aec_provenance"></a><br>
-<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_geometry"><img src="https://img.shields.io/github/v/release/BuroHappoldMachineLearning/ADIRO?filter=aec_geometry-v*&sort=semver&label=&color=16305f" alt="aec_geometry"></a><br>
-<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_drawing_metadata"><img src="https://img.shields.io/github/v/release/BuroHappoldMachineLearning/ADIRO?filter=aec_drawing_metadata-v*&sort=semver&label=&color=16305f" alt="aec_drawing_metadata"></a><br>
-<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_common_symbols"><img src="https://img.shields.io/github/v/release/BuroHappoldMachineLearning/ADIRO?filter=aec_common_symbols-v*&sort=semver&label=&color=16305f" alt="aec_common_symbols"></a><br>
-<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_domain_common"><img src="https://img.shields.io/github/v/release/BuroHappoldMachineLearning/ADIRO?filter=aec_domain_common-v*&sort=semver&label=&color=16305f" alt="aec_domain_common"></a><br>
-<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_facade_domain"><img src="https://img.shields.io/github/v/release/BuroHappoldMachineLearning/ADIRO?filter=aec_facade_domain-v*&sort=semver&label=&color=16305f" alt="aec_facade_domain"></a><br>
+<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_provenance"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_provenance.json" alt="aec_provenance"></a><br>
+<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_geometry"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_geometry.json" alt="aec_geometry"></a><br>
+<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_drawing_metadata"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_drawing_metadata.json" alt="aec_drawing_metadata"></a><br>
+<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_common_symbols"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_common_symbols.json" alt="aec_common_symbols"></a><br>
+<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_domain_common"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_domain_common.json" alt="aec_domain_common"></a><br>
+<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases?q=aec_facade_domain"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_facade_domain.json" alt="aec_facade_domain"></a><br>
 
 <br clear="left">
 
