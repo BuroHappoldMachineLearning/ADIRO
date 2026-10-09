@@ -22,6 +22,12 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-09 — Releases: let "Latest" follow the newest release
+
+- **Changed:** removed `--latest=false` from `gh release create` in `release-pr.yml`, and marked `aec_facade_domain-v2.0.1` as Latest by hand. With one "Latest" slot for several independent module streams, `--latest=false` left the badge (and the repo front-page Releases box) stuck on `aec_facade_domain-v2.0.0` from August; it now means "most recent release". Pushed directly to `main` at the maintainer's explicit request (a one-flag change), not via a PR. Not yet seen in a real release: the next Release PR merge is the first run without the flag.
+
+---
+
 ## 2026-10-09 — Describe four facade terms; first real run of the Release PR bot ([#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87), partial)
 
 - **Branch:** `describe-facade-terms`.
