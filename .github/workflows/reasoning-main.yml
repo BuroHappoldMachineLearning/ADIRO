@@ -94,7 +94,7 @@ jobs:
       # to the team's tracker sees it (an issue made with GITHUB_TOKEN starts no other workflow).
       - name: Create ADIRO Bot token for the tracking issue
         id: app-token
-        if: always()
+        if: ${{ !cancelled() }}
         continue-on-error: true   # a token problem must never hide the result; GITHUB_TOKEN is the fallback below
         uses: actions/create-github-app-token@v2
         with:
@@ -103,7 +103,9 @@ jobs:
           permission-issues: write
 
       - name: Track the result in one issue
-        if: always()
+        # Not on a cancelled run: reason.rc is written before the report and summary, so a run cancelled by a newer
+        # push can already have it, and would then overwrite the issue after the newer run recorded the current state.
+        if: ${{ !cancelled() }}
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token || github.token }}
           TITLE: Ontology reasoning fails on main
