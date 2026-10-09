@@ -142,7 +142,9 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   open Release PR means a release is pending**; merging it releases (the workflow then tags each module and
   dispatches `backup-version.yml`). It is a draft while a pending module's `[Unreleased]` is empty. It uses only
   `GITHUB_TOKEN`, so no PR-triggered checks run on it — validation runs inside the workflow. Do not hand-edit the
-  branch (it is regenerated); do not bump versions by hand except in a manual cut.
+  branch (it is regenerated); do not bump versions by hand except in a manual cut. To raise a module's bump or
+  leave it out of the next release, set `"minor"`/`"major"`/`"patch"` or `"hold"` for it in
+  `config/release_overrides.json` on `main` (a bump override is consumed by the cut; see `release-process.md`).
 - **Releases are per-module:** tag `<module>-v<semver>` (e.g. `aec_common_symbols-v1.2.0`) →
   `.github/workflows/backup-version.yml` snapshots that module to `versions/<module>/<semver>/`, then
   **dispatches** `generate-deploy-docs.yml` (a push made with `GITHUB_TOKEN` does not trigger other workflows),

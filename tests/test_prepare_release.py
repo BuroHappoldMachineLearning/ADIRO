@@ -114,3 +114,62 @@ def test_body_has_no_warning_when_the_changelog_is_filled_in(tmp_path):
     repo = make_repo(tmp_path, ":B a owl:Class .\n", ENTRY)
     text = pr.body(pr.plan(repo), repo)
     assert "No `[Unreleased]`" not in text and "- A new thing." in text
+
+
+def set_overrides(repo, overrides):
+    import json
+
+    (repo / "config").mkdir(exist_ok=True)
+    (repo / "config" / "release_overrides.json").write_text(json.dumps(overrides), encoding="utf-8")
+
+
+def test_override_can_raise_the_bump(tmp_path):
+    repo = make_repo(tmp_path, ":B a owl:Class .\n", ENTRY)  # classifier: MINOR
+    set_overrides(repo, {"aec_x": "major"})
+    (e,) = pr.plan(repo)
+    assert (e["next"], e["bump"], e["override"]) == ("2.0.0", "major", "raised from MINOR")
+    assert "**override:** raised from MINOR" in pr.body([e], repo)
+
+
+def test_override_cannot_lower_the_bump(tmp_path):
+    repo = make_repo(tmp_path, entry=ENTRY)
+    (repo / "src" / "aec_x.ttl").write_text(HEADER.replace(":A a owl:Class .\n", ""), encoding="utf-8")  # MAJOR
+    set_overrides(repo, {"aec_x": "patch"})
+    (e,) = pr.plan(repo)
+    assert (e["next"], e["bump"]) == ("2.0.0", "major") and "no effect" in e["override"]
+
+
+def test_hold_leaves_the_module_out_and_says_so(tmp_path):
+    repo = make_repo(tmp_path, ":B a owl:Class .\n", ENTRY)
+    set_overrides(repo, {"aec_x": "hold"})
+    assert pr.plan(repo) == []
+    (h,) = pr.held(repo)
+    assert (h["module"], h["next"]) == ("aec_x", "1.1.0")
+    assert "Held back" in pr.body([], repo, [h]) and "`aec_x` (would be 1.1.0, MINOR)" in pr.body([], repo, [h])
+
+
+def test_a_bump_override_is_consumed_by_the_cut_but_hold_stays(tmp_path):
+    import json
+
+    repo = make_repo(tmp_path, ":B a owl:Class .\n", ENTRY)
+    set_overrides(repo, {"aec_x": "major"})
+    pr.apply_plan(repo, pr.plan(repo), "2026-10-09")
+    assert json.loads((repo / "config" / "release_overrides.json").read_text(encoding="utf-8")) == {}
+    set_overrides(repo, {"aec_x": "hold"})
+    pr.apply_plan(repo, [], "2026-10-09")  # nothing released: a hold is left alone
+    assert json.loads((repo / "config" / "release_overrides.json").read_text(encoding="utf-8")) == {"aec_x": "hold"}
+
+
+def test_override_on_a_first_release_has_no_effect(tmp_path):
+    repo = make_repo(tmp_path, entry=ENTRY, released=False)
+    set_overrides(repo, {"aec_x": "major"})
+    (e,) = pr.plan(repo)
+    assert e["next"] == "1.0.0" and "no effect" in e["override"]
+
+
+@pytest.mark.parametrize("bad", [{"aec_nope": "minor"}, {"aec_x": "bogus"}, {"aec_x": True}])
+def test_invalid_overrides_fail_loudly(tmp_path, bad):
+    repo = make_repo(tmp_path)
+    set_overrides(repo, bad)
+    with pytest.raises(ValueError, match="release_overrides.json"):
+        pr.plan(repo)

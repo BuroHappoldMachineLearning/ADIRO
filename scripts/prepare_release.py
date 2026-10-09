@@ -13,6 +13,10 @@ does the mechanical part so a reviewer only has to approve it:
     tags              modules whose declared version has a dated changelog heading but no
                       git tag yet, i.e. a merged release cut that still has to be tagged
 
+config/release_overrides.json maps a module to ONE value: a bump level ("patch" | "minor" |
+"major") that raises that module's bump (never lowers it below what compat_diff requires), or
+"hold", which leaves the module out of the Release PR. A bump override is consumed by the cut.
+
 Bumps come from scripts/compat_diff.py: the next version is the last released version plus the
 bump the changes require. A module never released before keeps its declared version.
 """
@@ -40,6 +44,8 @@ MODULE_ORDER = [
     "aec_facade_domain",
 ]
 PENDING_VERDICTS = {"RELEASE_PENDING", "INSUFFICIENT_BUMP"}
+OVERRIDES_FILE = Path("config") / "release_overrides.json"
+OVERRIDE_VALUES = {cd.BUMP_PATCH, cd.BUMP_MINOR, cd.BUMP_MAJOR, "hold"}
 MARKER = "<!-- release-pr -->"
 
 UNRELEASED_RE = re.compile(r"## \[Unreleased\]([\r\n]+)(_Pending changes[^\r\n]*[\r\n]+)?")
@@ -80,8 +86,22 @@ def has_dated_heading(changelog_text, version):
     return bool(re.search(rf"^## \[{re.escape(version)}\] [—-] \d{{4}}-\d{{2}}-\d{{2}}", changelog_text, re.M))
 
 
-def plan(root=ROOT):
-    """One entry per module with a release pending, in dependency order."""
+def load_overrides(root=ROOT):
+    """`{module: "patch"|"minor"|"major"|"hold"}` from config/release_overrides.json; {} if absent."""
+    path = Path(root) / OVERRIDES_FILE
+    if not path.is_file():
+        return {}
+    data = json.loads(_read(path) or "{}")
+    known = set(modules(root))
+    problems = [f"{m!r}: not a module in src/" for m in data if m not in known]
+    problems += [f"{m!r}: {v!r} is not one of {sorted(OVERRIDE_VALUES)}" for m, v in data.items() if v not in OVERRIDE_VALUES]
+    if problems:
+        raise ValueError(f"{OVERRIDES_FILE}: " + "; ".join(problems))
+    return data
+
+
+def _pending(root):
+    """Every module with a release pending, before overrides are applied."""
     root = Path(root)
     entries = []
     for module in modules(root):
@@ -105,9 +125,35 @@ def plan(root=ROOT):
                 "bump": bump,
                 "changelog_empty": not unreleased_body(changelog),
                 "deltas": [{"type": t, "name": str(n), "severity": cd.DELTA_SEVERITY[t]} for t, n in deltas],
+                "override": None,
             }
         )
     return entries
+
+
+def _with_override(e, value):
+    """Apply a bump override to a pending entry. It can raise the bump, never lower it."""
+    if e["bump"] == "initial":
+        e["override"] = f"{value} (no effect: first release keeps its declared version)"
+    elif cd.BUMP_RANK[value] > cd.BUMP_RANK[e["bump"]]:
+        e["override"] = f"raised from {e['bump'].upper()}"
+        e["bump"], e["next"] = value, cd.apply_bump(e["released"], value)
+    else:
+        e["override"] = f"{value} (no effect: the changes already require {e['bump'].upper()})"
+    return e
+
+
+def plan(root=ROOT):
+    """One entry per module that will be released, in dependency order (overrides applied)."""
+    overrides = load_overrides(root)
+    return [_with_override(e, overrides[e["module"]]) if e["module"] in overrides else e
+            for e in _pending(root) if overrides.get(e["module"]) != "hold"]
+
+
+def held(root=ROOT):
+    """Pending modules left out of the Release PR by a `hold` override."""
+    overrides = load_overrides(root)
+    return [e for e in _pending(root) if overrides.get(e["module"]) == "hold"]
 
 
 def _move_unreleased(text, version, day):
@@ -137,6 +183,14 @@ def apply_plan(root, entries, day):
             _write(ttl, _bump_ttl(_read(ttl), module, e["declared"], e["next"]))
         cl = root / "changelogs" / f"{module}.md"
         _write(cl, _move_unreleased(_read(cl), e["next"], day))
+
+    overrides_path = root / OVERRIDES_FILE
+    if overrides_path.is_file():  # a bump override applies to one release only
+        overrides = load_overrides(root)
+        released = {e["module"] for e in entries}
+        kept = {m: v for m, v in overrides.items() if v == "hold" or m not in released}
+        if kept != overrides:
+            _write(overrides_path, json.dumps(kept, indent=2) + "\n")
 
     versions = {m: src_version(root, m) for m in modules(root)}
     rollup = root / "CHANGELOG.md"
@@ -184,7 +238,7 @@ def _delta_summary(e):
     return shown + more
 
 
-def body(entries, root=ROOT):
+def body(entries, root=ROOT, held_entries=()):
     root = Path(root)
     empty = [e["module"] for e in entries if e["changelog_empty"]]
     out = [MARKER, "## Release cut", ""]
@@ -195,8 +249,12 @@ def body(entries, root=ROOT):
     out += ["", "| Module | Released | Next | Bump | Driven by |", "|---|---|---|---|---|"]
     for e in entries:
         out.append(
-            f"| `{e['module']}` | {e['released'] or 'never'} | **{e['next']}** | {e['bump'].upper()} | {_delta_summary(e)} |"
+            f"| `{e['module']}` | {e['released'] or 'never'} | **{e['next']}** | {e['bump'].upper()} | "
+            f"{_delta_summary(e)}{' — **override:** ' + e['override'] if e['override'] else ''} |"
         )
+    if held_entries:
+        out += ["", "**Held back** by `config/release_overrides.json` (not in this release): "
+                + ", ".join(f"`{h['module']}` (would be {h['next']}, {h['bump'].upper()})" for h in held_entries) + "."]
     if empty:
         out += [
             "",
@@ -207,9 +265,9 @@ def body(entries, root=ROOT):
         ]
     out += ["", "### Before merging"]
     out += [
-        "- [ ] Each bump is at least what the changes require. The bump shown is the compat-diff **minimum**; to release a larger "
-        "one, record it on [#99](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/99): there is no override mechanism yet, and "
-        "the branch is rebuilt on every merge, so edits made directly on it are lost.",
+        "- [ ] Each bump is right. It is the compat-diff **minimum** unless an override raised it. To release a larger bump, or to "
+        "leave a module out, set it in `config/release_overrides.json` on `main` (`\"minor\"`, `\"major\"`, `\"patch\"` or `\"hold\"`); the "
+        "branch is rebuilt on every merge, so edits made directly on it are lost.",
         "- [ ] The changelog entries below read well as release notes.",
     ]
     out += ["", "### What merging does", "- Tags each module `<module>-v<semver>` and publishes a GitHub Release.",
@@ -235,7 +293,10 @@ def main(argv=None):
         for t in tags_to_create():
             print(t)
         return
-    entries = plan()
+    try:
+        entries = plan()
+    except ValueError as err:
+        sys.exit(f"error: {err}")
     if args.cmd == "plan":
         if args.json:
             print(json.dumps(entries, indent=2))
@@ -247,7 +308,7 @@ def main(argv=None):
     elif args.cmd == "apply":
         apply_plan(ROOT, entries, args.date)
     elif args.cmd == "body":
-        sys.stdout.buffer.write(body(entries).encode("utf-8"))
+        sys.stdout.buffer.write(body(entries, ROOT, held()).encode("utf-8"))
 
 
 if __name__ == "__main__":
