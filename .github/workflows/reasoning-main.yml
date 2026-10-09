@@ -1,0 +1,85 @@
+name: Ontology reasoning on main
+
+# #104. ontology-reasoning.yml reasons over a PR merged into the base branch AS IT WAS at the PR's last
+# push. If another ontology PR merges afterwards, the two changes are never reasoned over together, so two
+# PRs that each pass can leave `main` inconsistent or with an unsatisfiable class without any check
+# noticing. This workflow closes that gap: after every push to `main` that touches the ontology it reasons
+# over `main` itself, with the SAME script people run locally (scripts/run_reasoning.sh).
+#
+# A merge cannot be blocked after the fact, so "blocking" here means the run FAILS (a red mark on `main`
+# and a failure notification to whoever merged). The suite is clean today, so there is no backlog to
+# tolerate and the reasoner gates from the start, like the PR check does. ROBOT `report` stays advisory
+# and is only counted in the job summary. No comment is posted: there is no PR to comment on.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**/*.ttl'
+      - 'src/catalog-v001.xml'
+      - 'scripts/run_reasoning.sh'
+      - 'config/robot_report_profile.txt'
+      - '.github/workflows/reasoning-main.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # Only the latest state of `main` matters, so a newer push supersedes a run still going.
+  group: reasoning-main
+  cancel-in-progress: true
+
+env:
+  ROBOT_VERSION: v1.9.10   # keep in step with ontology-reasoning.yml (it keys the shared jar cache)
+
+jobs:
+  reason:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java (Temurin 17)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Cache ROBOT jar
+        uses: actions/cache@v4
+        with:
+          path: .tools/robot.jar
+          key: robot-${{ env.ROBOT_VERSION }}
+
+      - name: Reason (HermiT) over main, failing on inconsistency or unsatisfiable classes
+        run: ENFORCE=1 bash scripts/run_reasoning.sh
+
+      - name: Job summary
+        if: always()
+        run: |
+          OUT=.tools/reasoning-out
+          RC="$(cat "$OUT/reason.rc" 2>/dev/null || echo 1)"
+          {
+            echo "## Ontology reasoning on \`main\` (\`$(git rev-parse --short HEAD)\`)"
+            echo ""
+            if [ "$RC" = "0" ]; then
+              echo "✅ **Consistent**: no unsatisfiable classes (HermiT, whole suite at latest)."
+            else
+              echo "⛔ **The combined suite on \`main\` fails reasoning** (rc=$RC): it is inconsistent, has an unsatisfiable class, or is not valid OWL 2 DL. This usually means two PRs that each passed on their own conflict. Fix forward in a PR."
+              if [ -f "$OUT/reason.out" ]; then
+                echo ""
+                echo "<details open><summary>Reasoner output</summary>"
+                echo ""
+                echo '```'
+                tail -n 60 "$OUT/reason.out"
+                echo '```'
+                echo ""
+                echo "</details>"
+              fi
+            fi
+            if [ -f "$OUT/report.tsv" ]; then
+              echo ""
+              echo "ROBOT report (advisory): ERROR $(awk -F'\t' 'NR>1 && $1=="ERROR"{n++} END{print n+0}' "$OUT/report.tsv"), WARN $(awk -F'\t' 'NR>1 && $1=="WARN"{n++} END{print n+0}' "$OUT/report.tsv"), INFO $(awk -F'\t' 'NR>1 && $1=="INFO"{n++} END{print n+0}' "$OUT/report.tsv")."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
