@@ -13,10 +13,10 @@ name: Release PR
 # open Release PR is the signal that a release is pending. Bumps come from scripts/compat_diff.py
 # (see scripts/prepare_release.py).
 #
-# Everything uses the default GITHUB_TOKEN, so by GitHub's rule none of the events it creates
-# start other workflows: the PR gets no PR-triggered checks (validation runs inside this job
-# instead), and a Release it publishes does not fire `backup-version.yml` - that one is
-# dispatched explicitly below. Repo setting required: Actions may create pull requests.
+# It acts as the ADIRO Bot GitHub App (secrets ADIRO_BOT_APP_ID / ADIRO_BOT_PRIVATE_KEY), not
+# as GITHUB_TOKEN: events created with an app token DO start other workflows, so the Release PR
+# gets the normal PR checks and a published Release fires `backup-version.yml` by itself. The
+# validation run in the build step is a fail-fast sanity check on the bot's own output.
 
 on:
   push:
@@ -24,9 +24,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
-  actions: write   # dispatch backup-version.yml
+  contents: read   # the app token, not GITHUB_TOKEN, does the writing
 
 concurrency:
   group: release-pr
@@ -39,11 +37,19 @@ jobs:
   tag:
     runs-on: ubuntu-latest
     steps:
+      - name: Create ADIRO Bot token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ADIRO_BOT_APP_ID }}
+          private-key: ${{ secrets.ADIRO_BOT_PRIVATE_KEY }}
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           fetch-tags: true
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v4
@@ -57,16 +63,15 @@ jobs:
 
       - name: Tag and publish merged release cuts
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           tags="$(uv run --python 3.12 --no-project python scripts/prepare_release.py tags)"
           if [ -z "$tags" ]; then echo "No merged release cut to tag."; exit 0; fi
           for tag in $tags; do
             echo "::group::$tag"
+            # Publishing fires the `release` event, which starts backup-version.yml.
             gh release create "$tag" --target "$GITHUB_SHA" --title "${tag/-v/ }" --latest=false \
               --notes "Release $tag. Notes are published from the module changelog by the snapshot workflow."
-            # A Release created with GITHUB_TOKEN does not fire the `release` event.
-            gh workflow run backup-version.yml --ref "${{ github.event.repository.default_branch }}" -f tag="$tag"
             echo "::endgroup::"
           done
 
@@ -74,11 +79,19 @@ jobs:
     needs: tag
     runs-on: ubuntu-latest
     steps:
+      - name: Create ADIRO Bot token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ADIRO_BOT_APP_ID }}
+          private-key: ${{ secrets.ADIRO_BOT_PRIVATE_KEY }}
+
       - name: Checkout the triggering ref (main on push)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           fetch-tags: true
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v4
@@ -103,7 +116,7 @@ jobs:
       - name: Close the Release PR when nothing is pending
         if: steps.plan.outputs.count == '0'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           num="$(gh pr list --head "$RELEASE_BRANCH" --state open --json number --jq '.[0].number // empty')"
           if [ -n "$num" ]; then
@@ -115,11 +128,11 @@ jobs:
       - name: Build the release cut on release/next
         if: steps.plan.outputs.count != '0'
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "adiro-bot[bot]"
+          git config user.email "340218862+adiro-bot[bot]@users.noreply.github.com"
           git checkout -B "$RELEASE_BRANCH"
           uv run --python 3.12 --no-project python scripts/prepare_release.py apply --date "$(date -u +%F)"
-          # Validate here: a PR opened with GITHUB_TOKEN does not trigger the PR checks.
+          # Fail fast, before pushing, if the bot's own output is invalid.
           uv run --python 3.12 --no-project python scripts/validate_ontology.py
           uv run --python 3.12 --no-project python scripts/compat_diff.py --enforce
           git add -A src changelogs CHANGELOG.md AGENTS.md config/release_overrides.json
@@ -129,7 +142,7 @@ jobs:
       - name: Open or update the Release PR
         if: steps.plan.outputs.count != '0'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           TITLE: ${{ steps.plan.outputs.title }}
           DRAFT: ${{ steps.plan.outputs.draft }}
         run: |
