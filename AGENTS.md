@@ -136,8 +136,12 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
 [DATA-A-10](https://bhmlrnd.youtrack.cloud/articles/DATA-A-10); plan/decisions in
 [RES-27](https://bhmlrnd.youtrack.cloud/issue/RES-27).
 - **Releases are per-module:** tag `<module>-v<semver>` (e.g. `aec_common_symbols-v1.2.0`) →
-  `.github/workflows/backup-version.yml` snapshots that module to `versions/<module>/<semver>/`, and the deploy
-  workflow serves it at `…/ADIRO/<module>/<semver>/<module>.ttl` (alongside the latest `…/ADIRO/<module>.ttl`).
+  `.github/workflows/backup-version.yml` snapshots that module to `versions/<module>/<semver>/`, then
+  **dispatches** `generate-deploy-docs.yml` (a push made with `GITHUB_TOKEN` does not trigger other workflows),
+  which serves it at `…/ADIRO/<module>/<semver>/<module>.ttl` (alongside the latest `…/ADIRO/<module>.ttl`).
+  The dispatch is **unconditional** — it also runs when the snapshot already exists, so re-running the job for a
+  tag (`gh workflow run backup-version.yml -f tag=<module>-v<semver>`) repairs a release whose deploy was missed;
+  the cost is one extra docs build, and the deploy publishes `main`, not the tagged commit.
 - **Changelogs:** per-module `changelogs/<module>.md` (source of truth, `[Unreleased]` section) + a top-level
   `CHANGELOG.md` rollup. Bump `owl:versionInfo` / `owl:versionIRI` **only at a release cut**, not per edit.
 - **CI enforces per-module version consistency** (`scripts/validate_ontology.py`, [RES-66](https://bhmlrnd.youtrack.cloud/issue/RES-66)).
