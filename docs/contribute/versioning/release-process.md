@@ -9,7 +9,7 @@ An open pull request titled **Release cut: …** (branch `release/next`) means a
 - After every push to `main` it rebuilds the branch from `main` and updates the PR, so it always covers everything unreleased. When nothing is pending it closes the PR.
 - Each module's next version is its last released version plus the bump `scripts/compat_diff.py` requires (a module never released keeps its declared version). The PR bumps `owl:versionInfo` and `owl:versionIRI`, moves `[Unreleased]` under a dated version heading in `changelogs/<module>.md`, and updates the `CHANGELOG.md` rollup and the versions line in `AGENTS.md`.
 - The PR is a **draft** while any pending module has an empty `[Unreleased]` section: its release notes would be empty. Add the changelog entry on `main`; the PR updates itself.
-- Validation (`validate_ontology.py`, `compat_diff.py --enforce`) runs inside the workflow, because a PR opened with the default `GITHUB_TOKEN` does not start the PR-triggered workflows.
+- The PR is opened by the **ADIRO Bot** GitHub App, so it gets the normal PR checks (validation, reasoning, version-impact comment). The workflow also runs `validate_ontology.py` and `compat_diff.py --enforce` before pushing the branch, as a fail-fast check on its own output.
 - The bump is the classifier's minimum unless an [override](#overriding-a-bump-or-holding-a-module) raises it. The branch is rebuilt on every merge, so a hand edit to it is overwritten.
 
 ### How the bump is chosen
@@ -36,7 +36,7 @@ How the Release PR evolves as changes reach `main`:
 | You merge the Release PR | Both modules are tagged and released; the PR is closed |
 | The next ontology change reaches `main` | A new Release PR opens |
 
-**Merging the Release PR is the release.** The next run of `release-pr.yml` tags each module whose declared version has a dated changelog heading but no tag, publishes a GitHub Release for it, and dispatches `backup-version.yml` (a Release created with `GITHUB_TOKEN` does not fire the `release` event). Everything below then runs as before.
+**Merging the Release PR is the release.** The next run of `release-pr.yml` tags each module whose declared version has a dated changelog heading but no tag, and publishes a GitHub Release for it. Publishing the Release (as the ADIRO Bot) fires the `release` event, which starts `backup-version.yml`; everything below then runs as before.
 
 ## Manual cut
 
@@ -85,7 +85,8 @@ Examples. Ten `rdfs:comment` definitions in `aec_domain_common` are reworded and
 
 ## Design decisions
 
-- **Default `GITHUB_TOKEN`, no PAT or app secret.** Nothing created with it starts other workflows, so the Release PR gets no PR-triggered checks. The release job validates (`validate_ontology.py`, `compat_diff.py --enforce`) before pushing the branch. It does **not** re-run the reasoner (HermiT/ROBOT): that already gates every ontology PR, and a release cut changes only version strings and changelogs, so it cannot change entailments. Re-running it would reason over the same `main` and add no coverage. The one gap that exists — a PR's reasoner check is not repeated if another PR merges after its last push — is independent of releases and is tracked in [#104](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/104).
+- **The workflow acts as the ADIRO Bot GitHub App, not as `GITHUB_TOKEN`.** Events created with `GITHUB_TOKEN` start no other workflows, so a bot PR would get no PR checks and a published Release would not start `backup-version.yml`; both needed workarounds. An app installation token has neither limit, and the bot gets its own name and logo. The app is registered at organisation level and installed on this repository; its credentials are the repository secrets `ADIRO_BOT_APP_ID` and `ADIRO_BOT_PRIVATE_KEY`, and the workflow requests a short-lived token from them on each run. The same identity is meant for other bot features ([#106](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/106)).
+- **The Release PR is reasoned over like any ontology PR.** It changes `src/*.ttl` (version strings), so `ontology-reasoning.yml` runs on it. It cannot change entailments, so this adds no new coverage; the one real gap — a PR's reasoner check is not repeated if another PR merges after its last push — is independent of releases and is tracked in [#104](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/104).
 - **PATCH-only (annotation) changes also open a Release PR.** Opening a PR forces nothing; merging does. The purpose is that a pending release is always visible, and hiding PATCH changes would leave them unreleased and unseen until something larger arrived.
 - **An empty `[Unreleased]` section makes the PR a draft** rather than failing the job or only warning. A draft cannot be merged by accident with empty release notes, it still shows that a release is pending, and it becomes ready on its own once the changelog entry is added. This is the fallback: the earlier check belongs at PR time, where the author can write the entry while the change is fresh ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)).
 - **Overrides live in a file on `main`, not on the PR branch**, because the branch is regenerated from `main` on every merge. One value per module (a bump level or `hold`) keeps it to a single thing to remember, and a bump can only be raised so that a breaking change cannot be released as a PATCH.

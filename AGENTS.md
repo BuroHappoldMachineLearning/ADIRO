@@ -140,8 +140,9 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   everything unreleased — bumps from `scripts/compat_diff.py`, `owl:versionInfo`/`owl:versionIRI`, changelog
   moves, the `CHANGELOG.md` rollup and the versions line below, all done by `scripts/prepare_release.py`. **An
   open Release PR means a release is pending**; merging it releases (the workflow then tags each module and
-  dispatches `backup-version.yml`). It is a draft while a pending module's `[Unreleased]` is empty. It uses only
-  `GITHUB_TOKEN`, so no PR-triggered checks run on it — validation runs inside the workflow. Do not hand-edit the
+  publishes its GitHub Release, which starts `backup-version.yml`). It is a draft while a pending module's
+  `[Unreleased]` is empty. It runs as the **ADIRO Bot** GitHub App (secrets `ADIRO_BOT_APP_ID` /
+  `ADIRO_BOT_PRIVATE_KEY`), not `GITHUB_TOKEN`, so it gets the normal PR checks. Do not hand-edit the
   branch (it is regenerated); do not bump versions by hand except in a manual cut. To raise a module's bump or
   leave it out of the next release, set `"minor"`/`"major"`/`"patch"` or `"hold"` for it in
   `config/release_overrides.json` on `main` (a bump override is consumed by the cut; see `release-process.md`).
