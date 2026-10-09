@@ -33,6 +33,14 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-09 — Release notes: summary line first, link bullets straight after (no header)
+
+Requested by the maintainer: the "PATCH release · 2.0.0 → 2.0.1 · Compare" line (or "First release") is now the
+first text of every Release page, followed directly by the three link bullets with no "Relevant links" header.
+`scripts/release_notes.py` `render` reordered; test and `release-process.md` updated. The bot needs no workflow
+change: `backup-version.yml` already calls the script. Verified by the unit tests; all ten existing Releases were
+regenerated with `gh release edit`. Supersedes the ordering in the entry below.
+
 ## 2026-10-09 — Release notes start with Relevant links; badges link to the release page
 
 - **Changed (pushed directly to `main` at the maintainer's request):** each Release body now starts with a **Relevant links** block in this order — the module's documentation page (`…/ADIRO/ontologies/<module>/`), `Ontology (latest)`, `This version` (w3id) — with no "Canonical URLs" header, trailer or duplicate title; the summary line keeps the bump, previous → this and the compare link. The README badges link to the release page of the module's latest version again (reversing the earlier choice of the documentation page); `prepare_release.py` bumps those links at the release cut, and `tests/test_readme_badges.py` fails if a link does not match the module's declared version (compared with `src`, not `versions/`, so it holds in the window between merging a Release PR and the snapshot landing).

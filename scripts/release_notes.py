@@ -5,9 +5,9 @@ GitHub Release notes for one module release (used by .github/workflows/backup-ve
 Usage:
     release_notes.py <module> <version> [--repo OWNER/NAME] [--root DIR]
 
-Prints Markdown to stdout, starting with a "Relevant links" block (the module's published
-documentation page, then its latest and this-version w3id.org URLs), followed by a summary line
-(SemVer bump, previous -> this version, compare link), the module's changelog section, and the pull
+Prints Markdown to stdout, starting with a summary line (SemVer bump, previous -> this version,
+compare link), then the link bullets (the module's published documentation page, then its latest and
+this-version w3id.org URLs), the module's changelog section, and the pull
 requests that changed the module's ontology file since the previous release (the compare link and PR
 list need the previous release to be tagged; earlier ones were released before tagging began).
 
@@ -79,13 +79,11 @@ def render(module, version, previous, changelog, changes, repo, previous_tagged=
     if previous and previous_tagged:
         parts.append(f"[Compare](https://github.com/{repo}/compare/{module}-v{previous}...{module}-v{version})")
     lines = [
-        "## Relevant links",
+        " · ".join(parts),
         "",
         f"- Documentation: {docs}",
         f"- Ontology (latest): {W3ID}/{module}",
         f"- This version ({version}): {W3ID}/{module}/{version}",
-        "",
-        " · ".join(parts),
         "",
         changelog,
         "",

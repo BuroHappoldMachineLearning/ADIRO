@@ -23,11 +23,12 @@ def test_bump_kind():
 
 def test_render_links_docs_compare_and_prs():
     text = rn.render("aec_x", "2.0.1", "2.0.0", "### Added\n- a thing", [("#108", "Add a thing"), ("abc1234", "a direct commit")], "o/r")
-    assert text.startswith("## Relevant links\n")  # the links come first, in this order
+    assert text.startswith("**PATCH release**")  # the summary line is first, then the bullets, no header
+    assert "Relevant links" not in text
     docs = text.index("- Documentation: https://burohappoldmachinelearning.github.io/ADIRO/ontologies/aec_x/")
     latest = text.index("- Ontology (latest): https://w3id.org/adiro/aec_x\n")
     this_version = text.index("- This version (2.0.1): https://w3id.org/adiro/aec_x/2.0.1")
-    assert docs < latest < this_version < text.index("**PATCH release**")
+    assert text.index("**PATCH release**") < docs < latest < this_version < text.index("### Added")
     assert "**PATCH release** · 2.0.0 → 2.0.1" in text
     assert "Canonical URLs" not in text and "\n---\n" not in text
     assert "[Compare](https://github.com/o/r/compare/aec_x-v2.0.0...aec_x-v2.0.1)" in text
