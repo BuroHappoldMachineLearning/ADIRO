@@ -7,7 +7,7 @@
 Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbol, and domain vocabularies.
 
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain`
-- **Version:** 2.0.0
+- **Version:** 2.0.1
 - **Imports:** `aec_common_symbols`, `aec_domain_common`, `aec_drawing_metadata`
 
 ## Interactive view
