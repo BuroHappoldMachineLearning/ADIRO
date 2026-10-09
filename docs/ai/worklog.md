@@ -33,6 +33,15 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-09 — Release process docs: scenarios and step-by-step for bump overrides
+
+`docs/contribute/versioning/release-process.md`: the one-paragraph "Examples" under "Overriding a bump or holding a module" became two
+linkable subsections, "When to use an override" (a scenarios table: meaning changed with no structural footprint, release one module
+and hold another, hold everything, signal a bigger change; plus what an override is not for) and "Applying an override, step by step".
+Wording checked against `scripts/prepare_release.py` (the Bump / Driven-by columns, the Held back line, the "no effect" notes, the
+close-when-nothing-pending comment, what the cut consumes). Pushed directly to `main` at the maintainer's request (docs only). Not yet
+exercised on GitHub: the maintainer plans to test the override file themselves.
+
 ## 2026-10-09 — Bot work closed out: fork path verified, #106 closed, ideas moved to a Discussion
 
 After [#111](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/111) merged, the fork workflow was tested on a real fork

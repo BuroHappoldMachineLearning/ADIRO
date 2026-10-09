@@ -85,7 +85,33 @@ The bump is the compat-diff minimum, and that tool compares the Turtle syntactic
 | `"patch"`, `"minor"`, `"major"` | Raises the module's bump to at least that level. It never lowers it below what the changes require; a lower value has no effect, and the PR says so. Consumed by the release cut, so it applies to one release only. |
 | `"hold"` | Leaves the module out of the Release PR (listed under "Held back") until the entry is deleted. |
 
-Examples. Ten `rdfs:comment` definitions in `aec_domain_common` are reworded and one changes what `Beam` means: the classifier sees annotation changes only (PATCH), and `"minor"` records that consumers should notice. `aec_drawing_metadata` is needed now while `aec_domain_common` holds unfinished work: `"aec_domain_common": "hold"` releases the first only. An unknown module or any other value fails the workflow, so a typo cannot silently do nothing.
+An unknown module or any other value fails the workflow, so a typo cannot silently do nothing.
+
+### When to use an override
+
+The classifier reads the Turtle, not the meaning. An override is for the cases where the people making the release know something the syntax does not show, or want to release some modules and not others.
+
+| Scenario | Set | What the Release PR shows | When it goes away |
+|---|---|---|---|
+| **A meaning changed with no structural footprint.** Ten `rdfs:comment` definitions in `aec_domain_common` are reworded and one changes what `Beam` means. The classifier sees annotation edits only (PATCH), but consumers should notice. | `"aec_domain_common": "minor"` (or `"major"` if consumers must change something) | The module's "Bump" column shows the raised level (`MINOR`), and its "Driven by" column ends with **override: raised from PATCH**. | At the release cut, automatically: a bump override applies to one release only. |
+| **Release one module, keep another back.** `aec_drawing_metadata` is needed now, while `aec_domain_common` holds unfinished work already merged to `main`. | `"aec_domain_common": "hold"` | `aec_drawing_metadata` is in the table. A **Held back** line lists `aec_domain_common` with the version and bump it would get. | Never automatically. Delete the line when the module is ready; the next rebuild then includes it. |
+| **Release nothing yet.** A set of related changes should ship together, but half of it is merged. | `"hold"` on each pending module | The Release PR is closed (and its branch deleted) with "No release is pending on `main` any more". | Delete the `hold` lines; the next push to `main` opens a new Release PR. |
+| **Signal a bigger change than the classifier can see.** A class keeps its IRI but now means something different. | `"major"` for that module | **override: raised from MINOR** (or PATCH). | At the release cut. |
+
+An override is **not** the tool for:
+
+- **Lowering a bump.** A value below what the changes require has no effect; the row says **override: patch (no effect: the changes already require MAJOR)**. A breaking change cannot be released as a PATCH.
+- **A module's first release.** It keeps its declared version; the row says **no effect: first release keeps its declared version**.
+- **A missing or poor release note.** Write the entry under `[Unreleased]` in `changelogs/<module>.md` on `main` instead. A pending module with an empty entry keeps the Release PR a draft until it is filled in.
+
+### Applying an override, step by step
+
+1. **Edit `config/release_overrides.json` on `main`**, through a PR like any other change. One value per module; leave `{}` when there are none. Do not edit the `release/next` branch: it is rebuilt from `main` on every merge and the edit is lost.
+2. **Wait for the rebuild.** The merge triggers the Release PR workflow, which regenerates the PR within a minute or two. Read the table: the bump and the **override** note, or the **Held back** line.
+3. **Check the changelog entries** in the PR body read well as release notes, then merge the Release PR when ready.
+4. **Clean up.** A bump override is removed from the file by the release cut itself. A `hold` stays until it is deleted by hand, so a forgotten hold keeps a module out of every release; the **Held back** line on every Release PR is the reminder.
+
+If the Release PR workflow fails with a message naming `config/release_overrides.json`, the file holds an unknown module name or a value other than `patch`, `minor`, `major` or `hold`.
 
 ## Design decisions
 
