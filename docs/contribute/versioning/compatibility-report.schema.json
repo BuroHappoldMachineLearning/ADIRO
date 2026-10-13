@@ -76,7 +76,8 @@
               "RESTRICTION_LOOSENED",
               "ANNOTATION_CHANGED",
               "ONTOLOGY_HEADER_CHANGED",
-              "IMPORTS_CHANGED"
+              "IMPORTS_CHANGED",
+              "LABELLING_CHANGED"
             ]
           },
           "severity": {

@@ -28,7 +28,7 @@
   "includeNeighbors": true,
   "annotationStyleConfig": {
     "booleanProps": {
-      "labellableRoot": {
+      "isLabellable": {
         "whenTrue": {
           "fillColor": "#2ecc71",
           "borderColor": "#000000",

@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+### Changed (BREAKING)
+- **Uses the renamed labelling annotation** ([#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141)): `labellableRoot` becomes `isLabellable` on every term that carried it (see `aec_drawing_metadata`). The values are unchanged.
+
 
 ## [3.0.1] — 2026-10-13
 

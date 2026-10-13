@@ -66,7 +66,7 @@ A large-scale zoomed-in drawing of a specific construction assembly or connectio
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Detail`
 - **Sub class of:** [Layout content type](#LayoutContentType)
 - **Restrictions:** [hasOrientation](#hasOrientation) exactly 1 [Orientation](#OrientationValue)
-- **Labellable root:** true
+- **isLabellable:** true
 
 *Example images:*
 
@@ -79,7 +79,7 @@ A large-scale zoomed-in drawing of a specific construction assembly or connectio
 Element depicted on a drawing. Contained by Layout. Can be a Facade system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#DrawingElement`
-- **Labellable root:** false
+- **isLabellable:** false
 
 ### Drawing Sheet {#DrawingSheet}
 
@@ -93,21 +93,21 @@ Top-level container for a drawing. Contains Layout(s).
     - [contains](#contains) min 0 [Note](#Note)
     - [contains](#contains) min 0 [Revision table](#RevisionTable)
     - [contains](#contains) min 1 [Layout](#Layout)
-- **Labellable root:** false
+- **isLabellable:** false
 
 ### DrawingPackage {#DrawingPackage}
 
 A grouping of DrawingSheets within a Project, e.g. a volume or submission package.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#DrawingPackage`
-- **Labellable root:** false
+- **isLabellable:** false
 
 ### DrawingRevision {#DrawingRevision}
 
 A specific revision of a DrawingSheet. Carries revision-specific metadata: code, issue date, status, and role-differentiated person attribution.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#DrawingRevision`
-- **Labellable root:** false
+- **isLabellable:** false
 
 ### Elevation {#Elevation}
 
@@ -115,7 +115,7 @@ A flat, frontal orthographic view of a building facade or interior face, showing
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Elevation`
 - **Sub class of:** [Layout content type](#LayoutContentType)
-- **Labellable root:** true
+- **isLabellable:** true
 
 *Example images:*
 
@@ -129,7 +129,7 @@ An image embedded within a note region on a drawing sheet.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Image`
 - **Sub class of:** [Note](#Note)
-- **Labellable root:** true
+- **isLabellable:** true
 
 ### Key Plan {#KeyPlan}
 
@@ -137,7 +137,7 @@ A small locator diagram on a drawing sheet showing where the sheet's subject sit
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#KeyPlan`
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
-- **Labellable root:** true
+- **isLabellable:** true
 
 ### Layout {#Layout}
 
@@ -147,14 +147,14 @@ Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotati
 - **Restrictions:**
     - [contains](#contains) min 0 [Drawing element](#DrawingElement)
     - [hasProperty](#hasProperty) exactly 1 [Layout content type](#LayoutContentType)
-- **Labellable root:** true
+- **isLabellable:** true
 
 ### Layout content type {#LayoutContentType}
 
 Type of content included in a layout.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#LayoutContentType`
-- **Labellable root:** false
+- **isLabellable:** false
 
 ### Legend {#Legend}
 
@@ -162,7 +162,7 @@ A legend containing mapping information between symbols and a text signifier.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Legend`
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
-- **Labellable root:** true
+- **isLabellable:** true
 
 *Example images:*
 
@@ -175,7 +175,7 @@ A legend containing mapping information between symbols and a text signifier.
 Supporting visual region on a drawing sheet (titleblock, legend, etc.). Renamed from :Metadata to avoid confusion with semantic metadata properties on DrawingSheet.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#MetadataContainer`
-- **Labellable root:** false
+- **isLabellable:** false
 
 ### Note {#Note}
 
@@ -183,14 +183,14 @@ Superclass for annotations on a drawing sheet that are not part of the drawing g
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Note`
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
-- **Labellable root:** true
+- **isLabellable:** true
 
 ### Organisation {#Organisation}
 
 A legal entity named in a title block — client, originator, legal owner or responsible department. Modelled as a class rather than a string so that one organisation recurring across many sheets is a single individual, which is what makes cross-sheet questions answerable. Aligns to ct:Organisation (ISO 21597-1) and IfcActorSelect; note the ISO spelling differs.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Organisation`
-- **Labellable root:** false
+- **isLabellable:** false
 
 ### Orientation {#OrientationValue}
 
@@ -201,14 +201,14 @@ Enumerated orientation values used with hasOrientation.
     - [Undefined](#Undefined)
     - [Horizontal](#Horizontal)
     - [Vertical](#Vertical)
-- **Labellable root:** false
+- **isLabellable:** false
 
 ### Person {#Person}
 
 A named individual associated with a DrawingRevision in some role (author, checker, approver). The role is expressed by the object property, not by subclassing.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Person`
-- **Labellable root:** false
+- **isLabellable:** false
 
 ### Perspective {#Perspective}
 
@@ -216,7 +216,7 @@ A three-dimensional pictorial view of a building or assembly showing depth and s
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Perspective`
 - **Sub class of:** [Layout content type](#LayoutContentType)
-- **Labellable root:** true
+- **isLabellable:** true
 
 ### Plan {#Plan}
 
@@ -224,7 +224,7 @@ A horizontal cut through a building viewed from above, showing the arrangement o
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Plan`
 - **Sub class of:** [Layout content type](#LayoutContentType)
-- **Labellable root:** true
+- **isLabellable:** true
 
 *Example images:*
 
@@ -237,7 +237,7 @@ A horizontal cut through a building viewed from above, showing the arrangement o
 A project under which DrawingSheets are grouped.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Project`
-- **Labellable root:** false
+- **isLabellable:** false
 
 ### Revision table {#RevisionTable}
 
@@ -245,7 +245,7 @@ A table recording the documented change history of the drawing sheet, with colum
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#RevisionTable`
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
-- **Labellable root:** true
+- **isLabellable:** true
 
 *Example images:*
 
@@ -260,7 +260,7 @@ Section drawing. Has a required property of orientation, which can be vertical o
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Section`
 - **Sub class of:** [Layout content type](#LayoutContentType)
 - **Restrictions:** [hasOrientation](#hasOrientation) exactly 1 [Orientation](#OrientationValue)
-- **Labellable root:** true
+- **isLabellable:** true
 
 *Example images:*
 
@@ -273,7 +273,7 @@ Section drawing. Has a required property of orientation, which can be vertical o
 Controlled-vocabulary status assigned to a DrawingRevision, e.g. IFC (Issued for Construction), IFR (Issued for Review), AFC (Approved for Construction).
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#StatusCode`
-- **Labellable root:** false
+- **isLabellable:** false
 
 ### Table {#Table}
 
@@ -281,7 +281,7 @@ A table containing structured information, for example a schedule of elements.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Table`
 - **Sub class of:** [Layout content type](#LayoutContentType)
-- **Labellable root:** true
+- **isLabellable:** true
 
 *Example images:*
 
@@ -295,7 +295,7 @@ A free-form block of text, such as numbered lists or paragraphs, containing gene
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#TextualNote`
 - **Sub class of:** [Note](#Note)
-- **Labellable root:** true
+- **isLabellable:** true
 
 *Example images:*
 
@@ -313,7 +313,7 @@ Titleblock containing information about the drawing, for example project name, d
     - [contains](#contains) min 0 [Key Plan](#KeyPlan)
     - [contains](#contains) min 0 [Legend](#Legend)
     - [contains](#contains) min 0 [Revision table](#RevisionTable)
-- **Labellable root:** true
+- **isLabellable:** true
 
 *Example images:*
 
@@ -610,16 +610,30 @@ Free-text guidance for an information-extraction model on where and how a field 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#extractionHint`
 - **Range:** `xsd:string`
 
-### isCVATProperty {#isCVATProperty}
+### isLabellable {#isLabellable}
 
-Presentation hint for downstream annotation tooling: when true, the label should be displayed on the trailing side of the tool's label panel rather than the default leading side. Carries no reasoning weight. The property name still carries a tool name and is due to be renamed - see GitHub issue #89.
+When true, this class can be used as a label by annotators (solid contour in the diagram). When false, it cannot (dashed contour). A class marked isOptionalLabel true is labellable even when this is not stated. Carries no reasoning weight.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isLabellable`
+- **Range:** `xsd:boolean`
+
+### isOptionalLabel {#isOptionalLabel}
+
+When true, the label of this class is optional: annotators may leave it out, and annotation tooling presents it apart from the required labels (on the trailing side of the label panel rather than the default leading side). It implies isLabellable true even when that is not stated, so a class marked isOptionalLabel true must not be marked isLabellable false. Carries no reasoning weight.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isOptionalLabel`
+- **Range:** `xsd:boolean`
+
+### obsolete isCVATProperty {#isCVATProperty}
+
+Deprecated: use isOptionalLabel. No ADIRO term uses this property any more; it stays declared so that data written against an earlier release keeps its meaning. Its name carries the name of a tool and cannot be withdrawn once published.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isCVATProperty`
 - **Range:** `xsd:boolean`
 
-### Labellable root {#labellableRoot}
+### obsolete labellableRoot {#labellableRoot}
 
-When true, this class can be used as a label by annotators (solid contour in diagram). When false, non-labellable (dashed contour).
+Deprecated: use isLabellable, which has the same meaning. No ADIRO term uses this property any more; it stays declared so that data written against an earlier release keeps its meaning.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#labellableRoot`
 - **Range:** `xsd:boolean`
@@ -632,7 +646,7 @@ Horizontal orientation.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Horizontal`
 - **Type:** [Orientation](#OrientationValue)
-- **Labellable root:** true
+- **isLabellable:** true
 
 ### Undefined {#Undefined}
 
@@ -640,7 +654,7 @@ Orientation not specified.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Undefined`
 - **Type:** [Orientation](#OrientationValue)
-- **Labellable root:** true
+- **isLabellable:** true
 
 ### Vertical {#Vertical}
 
@@ -648,4 +662,4 @@ Vertical orientation.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Vertical`
 - **Type:** [Orientation](#OrientationValue)
-- **Labellable root:** true
+- **isLabellable:** true

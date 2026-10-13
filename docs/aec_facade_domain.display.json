@@ -419,7 +419,7 @@
   "exactMatch": true,
   "annotationStyleConfig": {
     "booleanProps": {
-      "labellableRoot": {
+      "isLabellable": {
         "whenTrue": {
           "fillColor": "#2ecc71",
           "borderColor": "#000000",
@@ -451,7 +451,7 @@
     }
   },
   "annotationPropertyOrder": [
-    "labellableRoot"
+    "isLabellable"
   ],
   "viewState": {
     "scale": 0.09531269974099976,

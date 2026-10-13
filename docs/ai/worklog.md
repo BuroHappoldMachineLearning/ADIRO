@@ -22,6 +22,22 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-13 — Rename the labelling annotations ([#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141), step 2 of [#89](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/89))
+
+**Branch:** `feat/rename-labelling-annotations`, stacked on `fix/89-public-prose-and-guard` (PR #139, unmerged when this was written).
+
+**Changed:** `labellableRoot` → `isLabellable` and the tool-named property → `isOptionalLabel` in `src/` (all four modules that used them) and the `.display.json` files. The old properties stay declared in `aec_drawing_metadata` with `owl:deprecated true` and an `obsolete` label (ROBOT `missing_obsolete_label`), unused. `isOptionalLabel true` implies `isLabellable true`: written in both definitions, and checked by `find_label_implication_problems` in `scripts/validate_ontology.py` (blocking). The eleven discipline classes in `aec_domain_common` were optional labels with an explicit `labellableRoot false`, which contradicts the rule, so the explicit `false` was dropped (they are labellable by implication).
+
+**Compat diff:** the classifier did not look at annotation values, so the rename showed as MINOR for one module and nothing for the other three. New delta `LABELLING_CHANGED` (potentially breaking, so MAJOR): a boolean flag of the metadata namespace added, removed or changed on an existing term. All four modules now require MAJOR with no override in `config/release_overrides.json`. Spec, report schema and tests updated.
+
+**Rejected:** `rdfs:subPropertyOf` between the two as the implication (no reasoner acts on annotation sub-properties, and RDFS reading would turn `isOptionalLabel false` into `isLabellable false`); modelling them as classes (a modelling change the pipeline does not expect); an override in `release_overrides.json` (the classifier now sees it).
+
+**Verified:** full pytest run, ttl2md tests, `validate_ontology.py`, `scripts/run_reasoning.sh` (reasoner passes; ROBOT warns resolved by the `obsolete` labels), `compat_diff.py` (MAJOR x4). **Not verified:** the annotation pipeline reading the new names and applying the implication, which has to ship with the release.
+
+**Left alone:** the two static visualisation files under `docs/specification/use-cases/` and `SS/`, which still show the old names (the guard allows the old identifier).
+
+**Next step:** the pipeline switch; merge #139 first, then this PR.
+
 ## 2026-10-13 — Public repo: internal tool name out of the prose, and a guard ([#89](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/89))
 
 **Branch:** `fix/89-public-prose-and-guard`. Steps 1 and 3 of the issue; step 2 (the rename) is open.
