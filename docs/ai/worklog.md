@@ -33,7 +33,10 @@ version (the one-time migration here, and the hand-made cut). `scripts/compat_di
 and imports are one pseudo-symbol, `ONTOLOGY_HEADER_CHANGED` (non-breaking, PATCH), because a header-only change was invisible to the classifier and
 produced no release. `scripts/validate_ontology.py` (blocking): each prior is a version IRI of the module, earlier than the file, archived with
 a matching `owl:versionIRI`, and every earlier archive is listed. `scripts/check_prior_versions.py` + a `verify-prior-versions` job in
-`generate-deploy-docs.yml`: after a deploy each IRI must answer 200 with Turtle and serve the release it names (retries for a lagging deploy).
+`generate-deploy-docs.yml`: after a deploy each IRI must answer 200 with Turtle and serve the release it names (retries for a lagging deploy). A failure also opens one tracking
+issue ("Published owl:priorVersion IRIs do not resolve", opened as the ADIRO Bot with a `GITHUB_TOKEN` fallback, commented on while deploys keep failing, closed by
+the first deploy that passes; not for a cancelled run or a non-default branch), the same pattern as the reasoner check on `main`, because a red run only notifies
+whoever merged.
 Applied to `aec_drawing_metadata`, `aec_common_symbols`, `aec_domain_common`, `aec_facade_domain` with `[Unreleased]` entries, so the bot's Release
 PR will cut four PATCH releases (4.0.1, 3.0.1, 2.0.2, 2.0.2). Docs: `docs/contribute/versioning/` (new section "Naming earlier versions with
 `owl:priorVersion`", manual-cut step, design decision), the compat spec and report schema, `AGENTS.md`.
@@ -47,8 +50,10 @@ of the same version. Archives are never edited. **Rejected:** naming the legacy 
 
 **Verified.** Full suite with the CI command (92 passed, including new tests for the writer, the validation and the resolution check); a simulated
 cut on a throwaway copy gives `aec_drawing_metadata` 4.0.1 naming 2.0.0, 3.0.0 and 4.0.0 with validation 0 errors and nothing left pending;
-`check_prior_versions.py` run live: all eight IRIs resolve; `mkdocs build --strict` passes; reasoner clean locally. **Not verified:** the
-`verify-prior-versions` job in GitHub Actions (it only runs after a deploy to `main`), and the OntoCanvas acceptance until the patch release is deployed.
+`check_prior_versions.py` run live: all eight IRIs resolve; `mkdocs build --strict` passes; reasoner clean locally. The tracking issue was exercised end to end by running the job's exact steps from a
+scratch workflow (a failing check opened the issue and still failed the job, a second failure commented, a passing run closed it as completed; the test issue was
+mirrored to the tracker and resolved on close). **Not verified:** the `verify-prior-versions` job in its real post-deploy context (it only runs after a deploy
+to `main`; the scratch copy dropped the deploy dependency and the default-branch guard), and the OntoCanvas acceptance until the patch release is deployed.
 
 **Next step.** Merge; the Release PR bot then proposes the four patch releases; merge it; after the deploy confirm
 `curl -sL -H "Accept: text/turtle" https://w3id.org/adiro/aec_drawing_metadata | grep priorVersion` lists 2.0.0, 3.0.0 and 4.0.0 and that OntoCanvas shows the

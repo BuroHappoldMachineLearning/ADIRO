@@ -109,7 +109,7 @@ The list is complete, not just the previous version, because a tool such as [Ont
 - **Archived releases are never edited.** The list in the latest release is the one place that names them.
 - **A change to the header is a PATCH.** The compatibility diff treats a changed header annotation (anything except `owl:versionIRI`, `owl:versionInfo` and `owl:imports`) as `ONTOLOGY_HEADER_CHANGED`, a non-breaking change that requires a PATCH, so a header-only change produces a release like any other.
 
-Two checks keep the lists true. `scripts/validate_ontology.py` (every PR, blocking) requires each `owl:priorVersion` to be a version IRI of the same module, earlier than the file's own version and archived with a matching `owl:versionIRI`, and every earlier archived release to be listed. After each deploy, the `verify-prior-versions` job of `generate-deploy-docs.yml` runs `scripts/check_prior_versions.py`: each IRI is requested with `Accept: text/turtle`, must answer HTTP 200 after redirects, and must serve the release whose `owl:versionIRI` it names.
+Two checks keep the lists true. `scripts/validate_ontology.py` (every PR, blocking) requires each `owl:priorVersion` to be a version IRI of the same module, earlier than the file's own version and archived with a matching `owl:versionIRI`, and every earlier archived release to be listed. After each deploy, the `verify-prior-versions` job of `generate-deploy-docs.yml` runs `scripts/check_prior_versions.py`: each IRI is requested with `Accept: text/turtle`, must answer HTTP 200 after redirects, and must serve the release whose `owl:versionIRI` it names. A failure opens one tracking issue, which the next passing deploy closes.
 
 ## Validation
 

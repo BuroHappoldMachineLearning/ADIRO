@@ -94,7 +94,8 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)); advisory, and `ENFORCE_CHANGELOG=1`
   makes it blocking. The warning appears in the QC comment (`ontology-reasoning.yml`). It also requires every module's
   `owl:priorVersion` list to name all earlier archived releases ([#122](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/122)),
-  and after each deploy `scripts/check_prior_versions.py` confirms those IRIs resolve (see `docs/contribute/versioning/`).
+  and after each deploy `scripts/check_prior_versions.py` confirms those IRIs resolve (see `docs/contribute/versioning/`); a failure
+  also opens one tracking issue, "Published owl:priorVersion IRIs do not resolve", which the next passing deploy closes.
 - **`.github/workflows/compat-diff-comment.yml`** — on PRs touching `src/**.ttl` (RES-67), posts a sticky
   comment with each changed module's **prospective next version** (`compat_diff.py --markdown`). Report-only;
   the gate is the warn step above.

@@ -66,7 +66,7 @@ The same job can be started by hand for an existing tag — `gh workflow run bac
 
 If several modules changed together, cut **one tag per changed module** — each is an independent release, and each publishes through this same chain on its own.
 
-After the deploy, the `verify-prior-versions` job of `generate-deploy-docs.yml` requests every `owl:priorVersion` IRI of every module from the published site and fails the run if one does not resolve to the release it names (`scripts/check_prior_versions.py`).
+After the deploy, the `verify-prior-versions` job of `generate-deploy-docs.yml` requests every `owl:priorVersion` IRI of every module from the published site and fails the run if one does not resolve to the release it names (`scripts/check_prior_versions.py`). A failure also opens one tracking issue (opened as the ADIRO Bot, commented on while later deploys keep failing, closed by the first deploy that passes), because a red run on `main` only notifies whoever merged.
 
 ## Release badges
 
