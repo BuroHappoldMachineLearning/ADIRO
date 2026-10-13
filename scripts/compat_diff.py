@@ -34,6 +34,7 @@ SEVERITY_RANK = {NON_BREAKING: 1, POTENTIALLY: 2, BREAKING: 3}
 DELTA_SEVERITY = {
     "TERM_ADDED": NON_BREAKING,
     "ANNOTATION_CHANGED": NON_BREAKING,
+    "ONTOLOGY_HEADER_CHANGED": NON_BREAKING,  # annotations on the owl:Ontology header (e.g. owl:priorVersion)
     "RESTRICTION_LOOSENED": NON_BREAKING,
     "RESTRICTION_REMOVED": NON_BREAKING,  # a removed constraint is a loosening
     "DOMAIN_CHANGED": POTENTIALLY,
@@ -54,6 +55,10 @@ BUMP_RANK = {BUMP_NONE: 0, BUMP_PATCH: 1, BUMP_MINOR: 2, BUMP_MAJOR: 3}
 _MINOR_DELTAS = {"TERM_ADDED", "RESTRICTION_LOOSENED", "RESTRICTION_REMOVED"}
 
 _PROP_KINDS = {"object-property", "datatype-property", "annotation-property"}
+
+# Header predicates that are not annotations: the version is bumped by the release cut, rdf:type is the declaration,
+# and owl:imports is a dependency change, which this check does not classify.
+_HEADER_IGNORED = {OWL.versionIRI, OWL.versionInfo, OWL.imports, RDF.type}
 _CARD = {
     OWL.cardinality: ("exact", 1),
     OWL.qualifiedCardinality: ("exact", 1),
@@ -120,6 +125,18 @@ def build_symbols(graph):
             "restrictions": _restrictions(graph, term) if kind == "class" else frozenset(),
         }
         symbols[str(term)] = desc
+    # The owl:Ontology header: annotations on it (a reworded description, owl:priorVersion, ...) are invisible to the
+    # per-term comparison above, so they are compared as one pseudo-symbol.
+    for ont in graph.subjects(RDF.type, OWL.Ontology):
+        if isinstance(ont, URIRef):
+            symbols[str(ont)] = {
+                "kind": "ontology",
+                "header": frozenset(
+                    (str(p), str(o))
+                    for p, o in graph.predicate_objects(ont)
+                    if p not in _HEADER_IGNORED and not isinstance(o, BNode)
+                ),
+            }
     return symbols
 
 
@@ -165,11 +182,17 @@ def compute_deltas(old_syms, new_syms):
     """
     deltas = []
     for iri in sorted(old_syms.keys() - new_syms.keys()):
-        deltas.append(("TERM_REMOVED", iri))
+        if old_syms[iri]["kind"] != "ontology":
+            deltas.append(("TERM_REMOVED", iri))
     for iri in sorted(new_syms.keys() - old_syms.keys()):
-        deltas.append(("TERM_ADDED", iri))
+        if new_syms[iri]["kind"] != "ontology":
+            deltas.append(("TERM_ADDED", iri))
     for iri in sorted(old_syms.keys() & new_syms.keys()):
         o, n = old_syms[iri], new_syms[iri]
+        if o["kind"] == "ontology" and n["kind"] == "ontology":
+            if o["header"] != n["header"]:
+                deltas.append(("ONTOLOGY_HEADER_CHANGED", iri))
+            continue
         if o["kind"] != n["kind"]:
             deltas.append(("TYPE_CHANGED", iri))
             continue
@@ -197,7 +220,7 @@ def required_bump(deltas):
         return BUMP_MAJOR
     if types & _MINOR_DELTAS:
         return BUMP_MINOR
-    if "ANNOTATION_CHANGED" in types:
+    if types & {"ANNOTATION_CHANGED", "ONTOLOGY_HEADER_CHANGED"}:
         return BUMP_PATCH
     return BUMP_NONE
 

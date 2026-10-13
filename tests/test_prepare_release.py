@@ -71,7 +71,9 @@ def test_apply_cuts_the_release_and_is_idempotent(tmp_path):
     pr.apply_plan(repo, pr.plan(repo), "2026-10-09")
 
     ttl = (repo / "src" / "aec_x.ttl").read_text(encoding="utf-8")
-    assert 'owl:versionInfo "1.1.0"' in ttl and "aec_x/1.1.0>" in ttl and "aec_x/1.0.0>" not in ttl
+    assert 'owl:versionInfo "1.1.0"' in ttl and "owl:versionIRI <https://w3id.org/adiro/aec_x/1.1.0>" in ttl
+    assert "owl:versionIRI <https://w3id.org/adiro/aec_x/1.0.0>" not in ttl  # the old IRI is now only a prior version
+    assert "owl:priorVersion <https://w3id.org/adiro/aec_x/1.0.0> ;" in ttl
 
     cl = (repo / "changelogs" / "aec_x.md").read_text(encoding="utf-8")
     assert cl.index("## [Unreleased]") < cl.index("_Pending") < cl.index("## [1.1.0] — 2026-10-09") < cl.index("- A new thing.")
@@ -203,3 +205,62 @@ def test_the_cut_bumps_the_readme_release_links(tmp_path):
     text = (repo / "README.md").read_text(encoding="utf-8")
     assert "releases/tag/aec_x-v1.1.0" in text and "aec_x-v1.0.0" not in text
     assert "releases/tag/aec_other-v9.9.9" in text  # a module not in src/ is left alone
+
+
+def add_archive(repo, version, module="aec_x"):
+    folder = repo / "versions" / module / version
+    folder.mkdir(parents=True)
+    (folder / f"{module}.ttl").write_text(HEADER.replace("1.0.0", version), encoding="utf-8")
+
+
+def test_archived_versions_are_ordered_numerically_and_a_release_never_names_itself(tmp_path):
+    repo = make_repo(tmp_path, released=False)
+    for v in ("1.10.0", "1.9.0", "1.2.0"):
+        add_archive(repo, v)
+    (repo / "versions" / "aec_x" / "not-a-version").mkdir()  # ignored
+    assert pr.archived_versions(repo, "aec_x") == ["1.2.0", "1.9.0", "1.10.0"]  # numeric, not alphabetical
+    assert pr.prior_version_iris(repo, "aec_x", "1.10.0") == [
+        "https://w3id.org/adiro/aec_x/1.2.0",
+        "https://w3id.org/adiro/aec_x/1.9.0",
+    ]
+
+
+def test_the_cut_names_every_earlier_archived_version_in_order(tmp_path):
+    repo = make_repo(tmp_path, ":B a owl:Class .\n", ENTRY)  # archive 1.0.0 exists
+    add_archive(repo, "0.9.0")
+    pr.apply_plan(repo, pr.plan(repo), "2026-10-09")
+    ttl = (repo / "src" / "aec_x.ttl").read_text(encoding="utf-8")
+    first = ttl.index("owl:priorVersion <https://w3id.org/adiro/aec_x/0.9.0> ;")
+    second = ttl.index("owl:priorVersion <https://w3id.org/adiro/aec_x/1.0.0> ;")
+    assert first < second < ttl.index("owl:versionIRI <https://w3id.org/adiro/aec_x/1.1.0>")
+    assert ttl.count("owl:priorVersion") == 2  # never the release itself: it is not archived yet
+
+
+def test_a_first_release_has_no_prior_versions(tmp_path):
+    repo = make_repo(tmp_path, entry=ENTRY, released=False)
+    pr.apply_plan(repo, pr.plan(repo), "2026-10-09")
+    assert "owl:priorVersion" not in (repo / "src" / "aec_x.ttl").read_text(encoding="utf-8")
+
+
+def test_priors_are_rewritten_not_appended_and_keep_crlf(tmp_path):
+    repo = make_repo(tmp_path)
+    ttl = repo / "src" / "aec_x.ttl"
+    ttl.write_bytes(ttl.read_bytes().replace(b"\n", b"\r\n"))
+    add_archive(repo, "0.9.0")
+    assert pr.sync_priors(repo) == ["aec_x"]
+    raw = ttl.read_bytes()
+    assert b"owl:priorVersion <https://w3id.org/adiro/aec_x/0.9.0> ;\r\n" in raw
+    assert raw.count(b"\n") == raw.count(b"\r\n")  # no bare LF introduced
+    assert pr.sync_priors(repo) == []  # idempotent
+    add_archive(repo, "0.8.0")
+    assert pr.sync_priors(repo) == ["aec_x"]
+    assert ttl.read_bytes().count(b"owl:priorVersion") == 2
+
+
+def test_a_prior_version_form_the_script_cannot_rewrite_fails_loudly(tmp_path):
+    repo = make_repo(tmp_path)
+    ttl = repo / "src" / "aec_x.ttl"
+    comma_list = "    owl:priorVersion <https://w3id.org/adiro/aec_x/0.1.0>, <https://w3id.org/adiro/aec_x/0.2.0> ;\n"
+    ttl.write_text(ttl.read_text(encoding="utf-8").replace("    owl:versionIRI", comma_list + "    owl:versionIRI"), encoding="utf-8")
+    with pytest.raises(ValueError, match="priorVersion"):
+        pr.sync_priors(repo)

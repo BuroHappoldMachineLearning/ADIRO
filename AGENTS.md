@@ -92,7 +92,9 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   `tests/` (`pytest`) on the PR; they used to run only on a push to `main`, after a failing test could already have merged. On a PR (`BASE_REF` set) it also
   warns when `src/<module>.ttl` changed but `changelogs/<module>.md` did not
   ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)); advisory, and `ENFORCE_CHANGELOG=1`
-  makes it blocking. The warning appears in the QC comment (`ontology-reasoning.yml`).
+  makes it blocking. The warning appears in the QC comment (`ontology-reasoning.yml`). It also requires every module's
+  `owl:priorVersion` list to name all earlier archived releases ([#122](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/122)),
+  and after each deploy `scripts/check_prior_versions.py` confirms those IRIs resolve (see `docs/contribute/versioning/`).
 - **`.github/workflows/compat-diff-comment.yml`** — on PRs touching `src/**.ttl` (RES-67), posts a sticky
   comment with each changed module's **prospective next version** (`compat_diff.py --markdown`). Report-only;
   the gate is the warn step above.
@@ -165,7 +167,7 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
 - **Release PR (`.github/workflows/release-pr.yml`, [#99](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/99)):**
   after every push to `main` it rebuilds one PR, `release/next` ("Release cut: …"), holding the release cut for
   everything unreleased — bumps from `scripts/compat_diff.py`, `owl:versionInfo`/`owl:versionIRI`, changelog
-  moves, the `CHANGELOG.md` rollup, the README release-badge links and the versions line below, all done by `scripts/prepare_release.py`. **An
+  moves, the `CHANGELOG.md` rollup, the README release-badge links, the `owl:priorVersion` lines naming every earlier version and the versions line below, all done by `scripts/prepare_release.py`. **An
   open Release PR means a release is pending**; merging it releases (the workflow then tags each module and
   publishes its GitHub Release, which starts `backup-version.yml`). It is a draft while a pending module's
   `[Unreleased]` is empty. It runs as the **ADIRO Bot** GitHub App (secrets `ADIRO_BOT_APP_ID` /
@@ -224,7 +226,7 @@ For anyone changing an ontology, agent or person. The sections below give the de
    `Closes #N` that did not register) and disappears when nothing is left; the version-impact and QC comments report
    what the change does. Do not copy those comments into the description.
 6. **Leave releasing to the Release PR by default.** Do not edit the `release/next` branch (it is regenerated), and do not
-   bump `owl:versionInfo` / `owl:versionIRI`, move changelog entries under a version heading or edit
+   bump `owl:versionInfo` / `owl:versionIRI`, write `owl:priorVersion` lines, move changelog entries under a version heading or edit
    `config/release_overrides.json`, unless there is a good reason that follows clearly from the change you are making. In
    that case, state the reason explicitly in the PR description and explain why the default does not fit. An override is
    rarely needed; `docs/contribute/versioning/release-process.md` ("When to use an override") lists the few cases.

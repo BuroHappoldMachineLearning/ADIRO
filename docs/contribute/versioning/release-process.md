@@ -45,11 +45,12 @@ The same cut can still be made by hand, for example when the bot is unavailable:
 1. **Determine the bump** — classify the change per the [compatibility-diff spec](compatibility-diff-algorithm-spec.md) → MAJOR / MINOR / PATCH.
 2. **Bump** `owl:versionInfo` **and** `owl:versionIRI` in that module's `src/<module>.ttl` on `main` (CI enforces tag == `versionInfo` == `versionIRI` tail).
 3. **Move** that module's `[Unreleased]` changelog entries in `changelogs/<module>.md` under the new version heading.
-4. **Tag** `<module>-v<semver>` (e.g. `aec_common_symbols-v1.2.0`) and publish a **GitHub Release** from that tag.
+4. **Name the earlier versions**: run `uv run python scripts/prepare_release.py priors`, which rewrites the `owl:priorVersion` lines of each module's header for its declared version (see [Naming earlier versions](index.md#naming-earlier-versions-with-owlpriorversion)). The bot does this for every module it releases.
+5. **Tag** `<module>-v<semver>` (e.g. `aec_common_symbols-v1.2.0`) and publish a **GitHub Release** from that tag.
 
 > Tag convention: `<module>-v<semver>`. Module names use `_` and never contain `-v`, so the tag parses unambiguously into module + version, and maps 1:1 to the versionIRI path `…/<module>/<semver>`.
 
-Everything after step 4 is automatic.
+Everything after step 5 is automatic.
 
 ## What runs automatically
 
@@ -64,6 +65,8 @@ The job then dispatches **`generate-deploy-docs.yml`** explicitly (a push made w
 The same job can be started by hand for an existing tag — `gh workflow run backup-version.yml -f tag=<module>-v<semver>` — which is what a Release published with `GITHUB_TOKEN` (and therefore not firing the `release` event) needs. The deploy dispatch is unconditional: it runs whether or not the job pushed a new snapshot, so re-running the job for a tag whose snapshot already exists repairs a release whose Pages deploy was missed. The cost of a re-run is one extra docs build, and the deploy publishes the current state of `main` (not the tagged commit), exactly as any push to `main` does.
 
 If several modules changed together, cut **one tag per changed module** — each is an independent release, and each publishes through this same chain on its own.
+
+After the deploy, the `verify-prior-versions` job of `generate-deploy-docs.yml` requests every `owl:priorVersion` IRI of every module from the published site and fails the run if one does not resolve to the release it names (`scripts/check_prior_versions.py`).
 
 ## Release badges
 
@@ -117,6 +120,7 @@ If the Release PR workflow fails with a message naming `config/release_overrides
 
 - **The workflow acts as the ADIRO Bot GitHub App, not as `GITHUB_TOKEN`.** Events created with `GITHUB_TOKEN` start no other workflows, so a bot PR would get no PR checks and a published Release would not start `backup-version.yml`; both needed workarounds. An app installation token has neither limit, and the bot gets its own name and logo. The app is registered at organisation level and installed on this repository; its credentials are the repository secrets `ADIRO_BOT_APP_ID` and `ADIRO_BOT_PRIVATE_KEY`, and the workflow requests a short-lived token from them on each run. The same identity is meant for other bot features ([#106](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/106)).
 - **The Release PR is reasoned over like any ontology PR.** It changes `src/*.ttl` (version strings), so `ontology-reasoning.yml` runs on it. It cannot change entailments, so this adds no new coverage. The one real gap, that a PR's reasoner check is not repeated if another PR merges after its last push, is independent of releases and is closed by `reasoning-main.yml`: it reasons over `main` itself after every push that touches the ontology ([#104](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/104)).
+- **A change to the ontology header counts as a PATCH.** The compatibility diff compares named terms only, so a header-only change, such as adding `owl:priorVersion` to every module, was invisible to it and produced no release. Header annotations other than the version and the imports are now compared as one pseudo-symbol (`ONTOLOGY_HEADER_CHANGED`, non-breaking, PATCH). A version bump is the release cut's own change, and a changed import is a dependency decision, so neither counts.
 - **PATCH-only (annotation) changes also open a Release PR.** Opening a PR forces nothing; merging does. The purpose is that a pending release is always visible, and hiding PATCH changes would leave them unreleased and unseen until something larger arrived.
 - **An empty `[Unreleased]` section makes the PR a draft** rather than failing the job or only warning. A draft cannot be merged by accident with empty release notes, it still shows that a release is pending, and it becomes ready on its own once the changelog entry is added. This is the fallback: the earlier check belongs at PR time, where the author can write the entry while the change is fresh ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)).
 - **Overrides live in a file on `main`, not on the PR branch**, because the branch is regenerated from `main` on every merge. One value per module (a bump level or `hold`) keeps it to a single thing to remember, and a bump can only be raised so that a breaking change cannot be released as a PATCH.

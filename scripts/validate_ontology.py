@@ -198,6 +198,69 @@ def changed_paths_vs_base(base_ref: str, repo_root: Path) -> list[str] | None:
     return r.stdout.split() if r.returncode == 0 else None
 
 
+# Releases made before the w3id.org/adiro front door declared their version IRI on the physical host. Archived releases
+# are never edited, so their declared IRI stays; the w3id IRI of the same version is the one that resolves.
+LEGACY_VERSION_IRI_HOST = "https://burohappoldmachinelearning.github.io/ADIRO/"
+
+
+def _semver(text):
+    m = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)", text or "")
+    return tuple(int(x) for x in m.groups()) if m else None
+
+
+def accepted_version_iris(module: str, version: str) -> set[str]:
+    """The owl:versionIRI values an archived release of `module` may declare for the version IRI `.../<module>/<version>`."""
+    return {f"https://w3id.org/adiro/{module}/{version}", f"{LEGACY_VERSION_IRI_HOST}{module}/{version}"}
+
+
+def find_prior_version_problems(graph, ttl_file: Path) -> list[str]:
+    """
+    owl:priorVersion consistency (#122).
+
+    Every release names ALL of its earlier published versions, because tools read only the latest release and
+    do not follow the chain. So, for the owl:Ontology in the file:
+    - each owl:priorVersion is `<ontology IRI>/<major.minor.patch>` and earlier than the file's own version;
+    - each names a release archived under versions/<module>/<version>/ (only published versions can be named),
+      whose owl:versionIRI is that IRI (or its legacy host form, see LEGACY_VERSION_IRI_HOST);
+    - every earlier archived release is named.
+
+    Returns error strings (empty if consistent).
+    """
+    errors = []
+    module = ttl_file.stem
+    archive_root = ttl_file.parent.parent / "versions" / module
+    for ont in graph.subjects(RDF.type, OWL.Ontology):
+        base = str(ont)
+        version = graph.value(ont, OWL.versionInfo)
+        own = _semver(str(version)) if version is not None else None
+        listed = set()
+        for iri in sorted(str(o) for o in graph.objects(ont, OWL.priorVersion)):
+            tail = iri[len(base) + 1:] if iri.startswith(base + "/") else ""
+            if _semver(tail) is None:
+                errors.append(f"owl:priorVersion <{iri}> must be a version IRI of this ontology ({base}/<major>.<minor>.<patch>)")
+                continue
+            listed.add(tail)
+            if own is not None and _semver(tail) >= own:
+                errors.append(f"owl:priorVersion <{iri}> is not earlier than this ontology's version {version}")
+            archived = archive_root / tail / f"{module}.ttl"
+            if not archived.is_file():
+                errors.append(f"owl:priorVersion <{iri}>: no archived release at versions/{module}/{tail}/ (only published versions can be named)")
+                continue
+            prior = Graph()
+            prior.parse(str(archived), format="turtle")
+            declared = {str(o) for o in prior.objects(None, OWL.versionIRI)}
+            if not declared & accepted_version_iris(module, tail):
+                errors.append(f"versions/{module}/{tail}/{module}.ttl declares owl:versionIRI {sorted(declared)}, not <{iri}>")
+        if own is not None and archive_root.is_dir():
+            for folder in sorted(archive_root.iterdir()):
+                v = _semver(folder.name)
+                if folder.is_dir() and v is not None and v < own and (folder / f"{module}.ttl").is_file() and folder.name not in listed:
+                    errors.append(
+                        f"release {folder.name} is archived but not named by owl:priorVersion <{base}/{folder.name}>: "
+                        "every release names all earlier versions")
+    return errors
+
+
 def validate_ontology(ttl_file: Path) -> tuple[bool, list[str], list[str]]:
     """
     Validate an ontology file.
@@ -228,6 +291,9 @@ def validate_ontology(ttl_file: Path) -> tuple[bool, list[str], list[str]]:
 
         # Check per-module version metadata consistency (RES-66)
         errors.extend(find_version_inconsistencies(graph))
+
+        # owl:priorVersion names all earlier published releases (#122)
+        errors.extend(find_prior_version_problems(graph, ttl_file))
 
         # Every ADIRO term needs a human-readable description (#87).
         # Advisory by default so the existing backlog does not block CI; set

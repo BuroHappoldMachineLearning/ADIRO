@@ -22,6 +22,38 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-13 — Every release names all earlier versions with `owl:priorVersion` ([#122](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/122))
+
+**Issue:** [#122](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/122). **Branch:** `feat/prior-versions`. Requested by the
+maintainer so OntoCanvas (which reads only the open file and the latest release, and does not follow a chain) can list and open earlier versions.
+
+**Changed.** `scripts/prepare_release.py`: `apply` writes one `owl:priorVersion` per earlier archived version (all of them, from
+`versions/<module>/`, numerically ordered) into each released module's header, and a new `priors` command does the same for the declared
+version (the one-time migration here, and the hand-made cut). `scripts/compat_diff.py`: header annotations other than versionIRI, versionInfo
+and imports are one pseudo-symbol, `ONTOLOGY_HEADER_CHANGED` (non-breaking, PATCH), because a header-only change was invisible to the classifier and
+produced no release. `scripts/validate_ontology.py` (blocking): each prior is a version IRI of the module, earlier than the file, archived with
+a matching `owl:versionIRI`, and every earlier archive is listed. `scripts/check_prior_versions.py` + a `verify-prior-versions` job in
+`generate-deploy-docs.yml`: after a deploy each IRI must answer 200 with Turtle and serve the release it names (retries for a lagging deploy).
+Applied to `aec_drawing_metadata`, `aec_common_symbols`, `aec_domain_common`, `aec_facade_domain` with `[Unreleased]` entries, so the bot's Release
+PR will cut four PATCH releases (4.0.1, 3.0.1, 2.0.2, 2.0.2). Docs: `docs/contribute/versioning/` (new section "Naming earlier versions with
+`owl:priorVersion`", manual-cut step, design decision), the compat spec and report schema, `AGENTS.md`.
+
+**Decisions.** (1) PATCH release, as the maintainer asked. (2) `aec_provenance` and `aec_geometry` have no earlier release, so nothing to name and no
+release. (3) `aec_drawing_metadata` 1.0.0 was never published (no archive; its w3id IRI and the old host IRI both 404; its header named a host IRI
+that was never served), so it is not listed and not archived. (4) The four pre-w3id archives (`aec_common_symbols`, `aec_domain_common`,
+`aec_facade_domain` 1.0.0; `aec_drawing_metadata` 2.0.0) declare a host-form `owl:versionIRI` that itself 404s, so "resolves" and "the target's
+versionIRI equals it" cannot both hold literally: the w3id IRI (which resolves) is named, and validation accepts the legacy form as the declared IRI
+of the same version. Archives are never edited. **Rejected:** naming the legacy host IRI (it does not resolve).
+
+**Verified.** Full suite with the CI command (92 passed, including new tests for the writer, the validation and the resolution check); a simulated
+cut on a throwaway copy gives `aec_drawing_metadata` 4.0.1 naming 2.0.0, 3.0.0 and 4.0.0 with validation 0 errors and nothing left pending;
+`check_prior_versions.py` run live: all eight IRIs resolve; `mkdocs build --strict` passes; reasoner clean locally. **Not verified:** the
+`verify-prior-versions` job in GitHub Actions (it only runs after a deploy to `main`), and the OntoCanvas acceptance until the patch release is deployed.
+
+**Next step.** Merge; the Release PR bot then proposes the four patch releases; merge it; after the deploy confirm
+`curl -sL -H "Accept: text/turtle" https://w3id.org/adiro/aec_drawing_metadata | grep priorVersion` lists 2.0.0, 3.0.0 and 4.0.0 and that OntoCanvas shows the
+versions menu.
+
 ## 2026-10-09 — Agent guidance: contributor workflow in AGENTS.md; stale Cursor hold removed
 
 **Issue:** none (requested by the maintainer while preparing the team announcement of the release process and the ADIRO Bot).

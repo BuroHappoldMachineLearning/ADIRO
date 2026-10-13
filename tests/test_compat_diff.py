@@ -127,3 +127,16 @@ def test_a_deleted_module_is_reported_as_removed_against_its_snapshot(tmp_path):
     (snap / "m.ttl").write_text(BASE, encoding="utf-8")
     res = cd.analyze_module(tmp_path, "m")
     assert (res["verdict"], res["required_bump"], res["prospective_version"]) == ("MODULE_REMOVED", cd.BUMP_MAJOR, "2.0.0")
+
+
+def test_ontology_header_annotations_are_a_patch():
+    changed = BASE.replace('owl:versionInfo "1.0.0" .', 'owl:versionInfo "1.0.0" ;\n    owl:priorVersion <https://ex.org/m/0.9.0> .')
+    deltas = _deltas(BASE, changed)
+    assert deltas == [("ONTOLOGY_HEADER_CHANGED", "https://ex.org/m")]
+    assert cd.required_bump(deltas) == cd.BUMP_PATCH
+
+
+def test_a_version_bump_or_a_new_import_alone_is_not_a_header_change():
+    assert _deltas(BASE, BASE.replace('"1.0.0"', '"1.0.1"')) == []  # the release cut owns the version
+    with_import = BASE.replace('owl:versionInfo "1.0.0" .', 'owl:versionInfo "1.0.0" ; owl:imports <https://ex.org/other> .')
+    assert _deltas(BASE, with_import) == []  # a dependency change is not classified here
