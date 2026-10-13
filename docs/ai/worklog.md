@@ -22,6 +22,18 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-13 — How to pin a version when labelling data ([#121](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/121))
+
+**Branch:** `docs/pin-a-version-guide`.
+
+**Changed:** `docs/contribute/versioning/index.md` gains "Pinning a version when you label data": which IRI to use when labelling data, referring to a concept and importing a module, and where to get each. Point 4 of the issue, and the part of point 1 that #125 left.
+
+**Decision:** a term has one unversioned IRI in ADIRO, so there is no "pinned term IRI" to copy; the version is pinned at module level by recording the module's versioned IRI with the data. That removes the per-term "copy pinned IRI" proposal (point 2). Not done, and left to the viewer-side work (alelom/OntoCanvas#128): copy buttons on the module page, the pinned IRIs in GitHub Release notes, a pinned column in the ontologies index.
+
+**Verified:** `mkdocs build --strict`. **Not verified:** the rendered table layout.
+
+**Next step:** none for ADIRO; #121 is closed by this PR.
+
 ## 2026-10-13 — Remove the unused `aec_common_symbols` import; classify import changes ([#134](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/134))
 
 **Branch:** `fix/unused-common-symbols-imports`.
