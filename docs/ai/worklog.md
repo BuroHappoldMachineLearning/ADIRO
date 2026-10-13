@@ -36,6 +36,31 @@ against a real git repo) and the real description generated from the repository 
 [#123](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/123). **Not verified:** the bot's rebuilt description on GitHub (it is rebuilt on the next push to `main`
 after this merges), and the token's access to the PR lookups from the workflow. **Next step:** after the merge, open the rebuilt Release PR and check the list.
 
+## 2026-10-13 — QC comment: findings inside the table, ROBOT by rule, no internal IDs ([#130](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/130))
+
+**Issue:** [#130](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/130). **Branch:** `feat/qc-comment-table`. The maintainer asked for the `<details>` of each
+finding to sit inside the "Repo-specific checks" table, and for a review of the rest of that comment.
+**Changed.** `validate_ontology.py` `write_markdown`: each row has plain right-aligned Errors and Warnings counts and a separate left-aligned Findings column with one `Show` dropdown (errors, then warnings; the status icon is tied to the module name with a non-breaking space so a wide Findings cell cannot split them; the layout was checked by rendering the comment through GitHub's Markdown API and a GitHub stylesheet) (a `<details>` in the cell;
+findings are escaped, since an IRI in angle brackets would be swallowed as an HTML tag and a pipe would end the cell), and the separate "Details" block is gone.
+The undescribed-terms warning links the backlog ([#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87)) and says how to list every term.
+New `scripts/qc_comment.py` composes the whole comment (it was ~50 lines of shell in `ontology-reasoning.yml`, untestable): the ROBOT report as a count per level
+and rule instead of 25 raw TSV rows (the INFO `missing_superclass` rows are noise, so they are only counted), ERROR and WARN rows listed with readable
+names and capped, the full report kept as a `reasoning-out` run artifact and linked, shorter header and footer. The internal tracker ID and link are gone from the
+comment, and from the version-impact comment's footer. **Decisions.** Details per module row (the finding messages are plain strings; a per-warning headline/body
+split would need every check to change its output). **Follow-up at the maintainer's request (same PR):** the sections are renamed and reordered (verdict, **Important checks** = the repo's own,
+**Minor checks** = ROBOT, then the former introduction collapsed as "About these checks"), each with a one-line "executed via" note, and the "reasoner blocks"
+and "ROBOT stays advisory" notes moved to the start of the sections they concern; the verbose count lines are gone (the tables say it); and the ROBOT table is one row
+per rule with a `Show` preview in a left-aligned Findings column: near-duplicate subject-only rows are grouped by module (25 `missing_superclass` rows became five
+lines, with a one-line explanation of the rule; rows that carry a value are listed one per row, capped). `missing_superclass` is ROBOT's INFO for a class with
+no asserted superclass, expected for root classes. **Then, same PR:** `missing_superclass` removed from `config/robot_report_profile.txt` (a test ontology run through ROBOT with our profile showed that a class asserted
+under `owl:Thing` does satisfy the rule, but that axiom says nothing and the compatibility diff would read an added superclass as a change, a MAJOR bump; the rule is an
+OBO convention that does not fit ADIRO's by-design roots and the PROV/GeoSPARQL stubs, and only produced a standing list nobody acts on); `AGENTS.md` records the
+decision next to the profile rules and `tests/test_robot_profile.py` keeps it out. The "Executed via `scripts/validate_ontology.py`. The reasoner blocks: …" note
+moved into "About these checks" (the word "too" dropped). Locally ROBOT now reports no violations, so the Minor checks read "No findings". **Not done (ideas):** marking which warnings are new in the PR (needs a comparison with the base; the
+"Required improvements" comment covers what a PR introduces); ordering modules with findings first; internal IDs remain in workflow *source* comments (not
+posted anywhere). **Verified:** 125 tests (new: the table, the composer), the composer on the real local reasoning output, and the live comment on this PR
+(see the PR). **Not verified:** fork PRs (they get the job summary, not the comment).
+
 ## 2026-10-13 — Release PR did not commit the README badge links ([#128](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/128))
 
 **Issue:** [#128](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/128). **Branch:** `fix/release-pr-stages-readme`. The first Release PR cut after

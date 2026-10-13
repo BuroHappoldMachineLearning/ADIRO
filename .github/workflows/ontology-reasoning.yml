@@ -28,6 +28,7 @@ on:
       - 'src/catalog-v001.xml'
       - 'scripts/run_reasoning.sh'
       - 'scripts/validate_ontology.py'
+      - 'scripts/qc_comment.py'
       - '.github/workflows/ontology-reasoning.yml'
 
 permissions:
@@ -91,64 +92,21 @@ jobs:
           uv run --python 3.12 --no-project python scripts/validate_ontology.py             --markdown .tools/reasoning-out/validate.md || true
 
       - name: Compose comment
+        # The comment is built by scripts/qc_comment.py (tested), from what the steps above left in .tools/reasoning-out.
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          OUT=.tools/reasoning-out
-          RC=$(cat "$OUT/reason.rc" 2>/dev/null || echo "1")
-          if [ "$RC" = "0" ]; then
-            STATUS="✅ **Consistent** — no unsatisfiable classes (HermiT, suite at latest)."
-          else
-            STATUS="⛔ **Reasoner failed** — the merged suite is inconsistent, has an unsatisfiable class, or is not valid OWL 2 DL. See the reasoner output below. **This fails the check — fix before merge.**"
-          fi
-
-          ERR=0; WARN=0; INFO=0
-          if [ -f "$OUT/report.tsv" ]; then
-            ERR=$(awk -F'\t' 'NR>1 && $1=="ERROR"{n++} END{print n+0}' "$OUT/report.tsv")
-            WARN=$(awk -F'\t' 'NR>1 && $1=="WARN"{n++} END{print n+0}' "$OUT/report.tsv")
-            INFO=$(awk -F'\t' 'NR>1 && $1=="INFO"{n++} END{print n+0}' "$OUT/report.tsv")
-          fi
-
-          {
-            echo "## 🧠 Ontology reasoning &amp; QC"
-            echo ""
-            echo "Whole-suite OWL 2 DL reasoning (**HermiT**) + ROBOT \`report\`, over all modules merged at *latest* (imports resolved offline via \`src/catalog-v001.xml\`). Run via \`scripts/run_reasoning.sh\` — the same script you can run locally (see AGENTS.md). The **reasoner is a blocking gate**; ROBOT \`report\` is advisory. See [RES-36](https://bhmlrnd.youtrack.cloud/issue/RES-36)."
-            echo ""
-            echo "### Consistency / satisfiability"
-            echo "$STATUS"
-            echo ""
-            echo "### ROBOT report (logical / structural QC)"
-            echo "| Level | Count |"
-            echo "|---|--:|"
-            echo "| ERROR | $ERR |"
-            echo "| WARN | $WARN |"
-            echo "| INFO | $INFO |"
-            echo ""
-            if [ "$RC" != "0" ] && [ -f "$OUT/reason.out" ]; then
-              echo "<details><summary>Reasoner output</summary>"
-              echo ""
-              echo '```'
-              tail -n 60 "$OUT/reason.out"
-              echo '```'
-              echo ""
-              echo "</details>"
-            fi
-            if [ -f "$OUT/report.tsv" ] && [ $((ERR + WARN + INFO)) -gt 0 ]; then
-              echo "<details><summary>ROBOT report — first 25 rows</summary>"
-              echo ""
-              echo '```'
-              head -n 26 "$OUT/report.tsv"
-              echo '```'
-              echo ""
-              echo "</details>"
-            fi
-            echo ""
-            if [ -f "$OUT/validate.md" ]; then
-              cat "$OUT/validate.md"
-              echo ""
-            fi
-            echo "<sub>RES-36 · the reasoner blocks (consistency / unsatisfiable / OWL 2 DL — incl. the root-bump-breaks-dependents check); ROBOT \`report\` stays advisory.</sub>"
-          } > reasoning-comment.md
-
+          uv run --python 3.12 --no-project python scripts/qc_comment.py > reasoning-comment.md
           cat reasoning-comment.md
+
+      - name: Keep the full ROBOT report
+        # The comment shows the report by rule; the complete rows stay here, linked from the comment.
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reasoning-out
+          path: .tools/reasoning-out/
+          retention-days: 7
 
       - name: Create ADIRO Bot token
         id: app-token

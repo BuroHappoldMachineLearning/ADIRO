@@ -462,7 +462,7 @@ def to_markdown(results, pr_results=None):
         "to the **minimum next [SemVer](https://semver.org/)** (per the "
         "[compatibility-diff spec](https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/docs/contribute/versioning/compatibility-diff-algorithm-spec.md)). "
         "`owl:versionInfo` is only bumped **at the release cut (after merge)**, so the forecast is cumulative "
-        "across every unreleased PR. Advisory only — it never blocks the PR. (RES-67 · warn mode.)"
+        "across every unreleased PR. Advisory only — it never blocks the PR. (warn mode.)"
     )
     out.append("")
     out.append("</details>")

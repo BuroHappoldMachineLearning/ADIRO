@@ -108,7 +108,7 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   comment with each changed module's **prospective next version** (`compat_diff.py --markdown`). Report-only;
   the gate is the warn step above.
 - **`.github/workflows/ontology-reasoning.yml`** — on PRs touching `src/**.ttl` (RES-36), runs an OWL 2 DL
-  reasoner (**HermiT**) + ROBOT `report` over the whole suite at latest and posts a sticky comment. The
+  reasoner (**HermiT**) + ROBOT `report` over the whole suite at latest and posts a sticky comment (built by `scripts/qc_comment.py`: the verdict, then **Important checks** (the repository's own, from `validate_ontology.py`, with each module's findings in an expandable Findings column), then **Minor checks** (ROBOT: a row per rule with a grouped preview, the full rows kept as a run artifact), and the introduction collapsed at the bottom, with no internal tracker IDs). The
   **reasoner is a blocking gate** — a PR that makes the merged suite inconsistent / unsatisfiable / non-DL
   fails the check; ROBOT `report` stays **advisory** (warn-only). It calls `scripts/run_reasoning.sh` — the
   *same* script you run locally (below) — so CI and local match. Imports resolve offline via `src/catalog-v001.xml`.
@@ -339,6 +339,11 @@ For anyone changing an ontology, agent or person. The sections below give the de
     selects from ROBOT's OBO-oriented built-ins; our own rules belong in our own script, where they can be
     namespace-aware and can exempt external stubs. The profile format is strict TSV and rejects comment
     lines, so it cannot even explain itself.
+  - **`missing_superclass` is deliberately absent from that profile.** It is an OBO convention (every class sits under
+    one upper-ontology root) that does not apply here: ADIRO's modules have root classes by design, and the external
+    classes declared as local stubs (PROV, GeoSPARQL) are not ours to classify. It only produced a standing list of root
+    classes nobody acts on. **Do not assert `rdfs:subClassOf owl:Thing` to silence it**: `owl:Thing` is implicit for every
+    class, and the compatibility diff reads an added superclass as a change (a potentially breaking, MAJOR one).
 - **Every ADIRO term needs an `rdfs:comment`.** That is ADIRO's definition vocabulary — deliberately
   **not** the OBO `IAO:0000115` that ROBOT's `missing_definition` rule looks for, which is why that rule is
   **absent** from `config/robot_report_profile.txt` (a profile lists the checks that run; omitting one

@@ -9,6 +9,7 @@ This script parses ontology files and checks for:
 - Other structural issues
 """
 
+import html
 import os
 import subprocess
 import sys
@@ -312,7 +313,9 @@ def validate_ontology(ttl_file: Path) -> tuple[bool, list[str], list[str]]:
             head = ", ".join(undescribed[:8])
             more = f" ... and {len(undescribed) - 8} more" if len(undescribed) > 8 else ""
             msg = (f"{len(undescribed)} term(s) have no rdfs:comment "
-                   f"(nor skos:definition / dcterms:description): {head}{more}")
+                   f"(nor skos:definition / dcterms:description): {head}{more}. "
+                   "Backlog: [#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87); "
+                   "`LIST_UNDESCRIBED=1 uv run python scripts/validate_ontology.py` lists every term.")
             if os.environ.get("ENFORCE_DESCRIPTIONS") == "1":
                 errors.append(msg)
             else:
@@ -374,6 +377,28 @@ def find_unused_imports(graph) -> list[str]:
     return unused
 
 
+def _escape_cell(text) -> str:
+    """Make a finding safe inside a Markdown table cell.
+
+    An IRI written in angle brackets would be taken as an HTML tag and swallowed, a pipe would end the cell, and a
+    newline would end the row.
+    """
+    return html.escape(" ".join(str(text).split()), quote=False).replace("|", "&#124;")
+
+
+def _findings_cell(errors: list[str], warnings: list[str], err_marker: str, warn_marker: str) -> str:
+    """The expandable findings of one module, errors first (a <details> inside a cell must be on one line).
+
+    It has a column of its own, left-aligned: the counts next to it are right-aligned numbers, and prose beside a
+    number in the same right-aligned cell is hard to read. Empty when the module has no findings.
+    """
+    items = [(err_marker, e) for e in errors] + [(warn_marker, w) for w in warnings]
+    if not items:
+        return ""
+    body = "<br>".join(f"{marker} {_escape_cell(text)}" for marker, text in items)
+    return f"<details><summary>Show</summary>{body}</details>"
+
+
 def write_markdown(results: list[tuple[str, list[str], list[str]]], out_path: Path) -> None:
     """
     Render this script's findings as a markdown section for the PR comment.
@@ -381,10 +406,12 @@ def write_markdown(results: list[tuple[str, list[str], list[str]]], out_path: Pa
     Every check in this script surfaces here automatically: the table is built
     from the errors/warnings each check appends, so adding a check needs no change
     to this function or to the workflow that embeds it. See AGENTS.md, "Adding a
-    quality check".
+    quality check". The findings of a module sit in its own row, in a column of
+    their own that expands in place, so a reader never has to match a count to a
+    list further down.
     """
     OK, WARN, ERR = "\u2705", "\u26a0\ufe0f", "\u26d4"
-    lines = ["### \U0001f9ea Repo-specific checks (`scripts/validate_ontology.py`)", ""]
+    lines = ["### Important checks", ""]
     total_err = sum(len(e) for _, e, _ in results)
     total_warn = sum(len(w) for _, _, w in results)
 
@@ -392,21 +419,12 @@ def write_markdown(results: list[tuple[str, list[str], list[str]]], out_path: Pa
         lines += [OK + " All %d module(s) pass: parse, circular-subclass, version "
                   "consistency, and term descriptions." % len(results), ""]
     else:
-        lines += ["| Module | Errors | Warnings |", "|---|--:|--:|"]
+        lines += ["| Module | Errors | Warnings | Findings |", "|---|--:|--:|:--|"]
         for name, errs, warns in results:
             mark = ERR if errs else (WARN if warns else OK)
-            lines.append("| %s `%s` | %d | %d |" % (mark, name, len(errs), len(warns)))
-        lines += ["", "**%d error(s), %d warning(s).** Errors block; warnings are advisory."
-                  % (total_err, total_warn), ""]
-        lines += ["<details><summary>Details</summary>", ""]
-        for name, errs, warns in results:
-            if not errs and not warns:
-                continue
-            lines.append("**`%s`**" % name)
-            lines += ["- " + ERR + " " + e for e in errs]
-            lines += ["- " + WARN + " " + w for w in warns]
-            lines.append("")
-        lines += ["</details>", ""]
+            # a non-breaking space keeps the status icon with the module name when a wide Findings cell squeezes this column
+            lines.append("| %s&nbsp;`%s` | %d | %d | %s |" % (mark, name, len(errs), len(warns), _findings_cell(errs, warns, ERR, WARN)))
+        lines.append("")
 
     out_path.write_text("\n".join(lines), encoding="utf-8")
 
