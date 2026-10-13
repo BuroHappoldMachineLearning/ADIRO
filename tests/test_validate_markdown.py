@@ -37,7 +37,8 @@ def test_findings_expand_in_their_own_column_of_the_row(tmp_path):
     mixed = render(tmp_path, [("aec_both", ["an error"], ["a warning"])])
     assert "<details><summary>Show</summary>⛔ an error<br>⚠️ a warning</details>" in mixed  # errors first, one dropdown
     assert "<summary>Details</summary>" not in text  # no separate block further down
-    assert "**1 error(s), 2 warning(s).** Errors block; warnings are advisory." in text
+    assert text.startswith("### Important checks\n\nExecuted via `scripts/validate_ontology.py`. The reasoner blocks too:")
+    assert "error(s)" not in text and "Errors block" not in text  # the table already says it
 
 
 def test_an_iri_in_angle_brackets_a_pipe_and_a_newline_cannot_break_the_table(tmp_path):

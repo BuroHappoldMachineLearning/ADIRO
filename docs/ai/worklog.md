@@ -47,7 +47,12 @@ New `scripts/qc_comment.py` composes the whole comment (it was ~50 lines of shel
 and rule instead of 25 raw TSV rows (the INFO `missing_superclass` rows are noise, so they are only counted), ERROR and WARN rows listed with readable
 names and capped, the full report kept as a `reasoning-out` run artifact and linked, shorter header and footer. The internal tracker ID and link are gone from the
 comment, and from the version-impact comment's footer. **Decisions.** Details per module row (the finding messages are plain strings; a per-warning headline/body
-split would need every check to change its output). **Not done (ideas):** marking which warnings are new in the PR (needs a comparison with the base; the
+split would need every check to change its output). **Follow-up at the maintainer's request (same PR):** the sections are renamed and reordered (verdict, **Important checks** = the repo's own,
+**Minor checks** = ROBOT, then the former introduction collapsed as "About these checks"), each with a one-line "executed via" note, and the "reasoner blocks"
+and "ROBOT stays advisory" notes moved to the start of the sections they concern; the verbose count lines are gone (the tables say it); and the ROBOT table is one row
+per rule with a `Show` preview in a left-aligned Findings column: near-duplicate subject-only rows are grouped by module (25 `missing_superclass` rows became five
+lines, with a one-line explanation of the rule; rows that carry a value are listed one per row, capped). `missing_superclass` is ROBOT's INFO for a class with
+no asserted superclass, expected for root classes. **Not done (ideas):** marking which warnings are new in the PR (needs a comparison with the base; the
 "Required improvements" comment covers what a PR introduces); ordering modules with findings first; internal IDs remain in workflow *source* comments (not
 posted anywhere). **Verified:** 125 tests (new: the table, the composer), the composer on the real local reasoning output, and the live comment on this PR
 (see the PR). **Not verified:** fork PRs (they get the job summary, not the comment).

@@ -6,9 +6,12 @@ Reads what scripts/run_reasoning.sh and scripts/validate_ontology.py left in the
 (`.tools/reasoning-out/`: reason.rc, reason.out, report.tsv, validate.md) and prints the comment as Markdown.
 It used to be a block of shell inside the workflow, which could not be tested.
 
-The ROBOT report is shown by rule (a count per level and rule), not as a dump of raw rows: the INFO rows are
-noise by design (a root class has no superclass), so they are only counted, and the ERROR and WARN rows, which
-need a person, are listed with readable names. The full report is kept as a run artifact.
+The comment, top to bottom: the reasoner's verdict, the **Important checks** (the repository's own, from
+validate_ontology.py), the **Minor checks** (ROBOT's logical / structural QC), and a collapsed "About" note.
+
+The ROBOT findings are one table row per rule with a count and an expandable preview. The rows of one rule are
+usually near-duplicates (twenty-five root classes with no superclass, say), so the preview groups them, by module
+for the ones that carry only a subject, instead of listing every row.
 
 Usage:  qc_comment.py [--out-dir DIR]     (RUN_URL in the environment adds the artifact link)
 """
@@ -18,12 +21,28 @@ import html
 import io
 import os
 import sys
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 
 ADIRO = "https://w3id.org/adiro/"
 LEVELS = ("ERROR", "WARN", "INFO")
-LIST_LIMIT = 25
+NAMES_PER_GROUP = 8   # names listed per module before "+N more"
+ROWS_PER_RULE = 10    # rows listed for a rule whose findings carry a value, before "+N more"
+
+# What a ROBOT rule means, in a line, shown at the top of its preview. Only rules ADIRO is likely to hit.
+RULE_HELP = {
+    "missing_superclass": "A class with no asserted superclass: it sits at the top of its hierarchy. Expected for a root class.",
+    "duplicate_label": "Two terms share the same rdfs:label. A docs-quality convention, not an RDF requirement.",
+    "multiple_labels": "A term has more than one rdfs:label; other-language names belong in skos:altLabel.",
+    "missing_label": "A term has no rdfs:label.",
+    "label_whitespace": "A label has leading or trailing whitespace.",
+}
+
+ABOUT = (
+    "Whole-suite OWL 2 DL reasoning (**HermiT**) and the ROBOT `report` over all modules at *latest* (imports resolved "
+    "offline via `src/catalog-v001.xml`), then the repository's own checks. The **reasoner is a blocking gate**; the "
+    "rest is advisory. Run the same script locally with `bash scripts/run_reasoning.sh` (see AGENTS.md)."
+)
 
 
 def parse_report(text):
@@ -49,48 +68,70 @@ def short_subject(subject):
     return subject
 
 
+def split_subject(subject):
+    """(group, term): the module or vocabulary a subject belongs to, and its local name."""
+    short = short_subject(subject)
+    if short.startswith(("http://", "https://")):
+        base, sep, term = short.partition("#")
+        if sep:
+            return base.rstrip("/").rsplit("/", 1)[-1] or "other", term
+        return "other", short
+    if ":" in short:
+        group, _, term = short.partition(":")
+        return group, term
+    return "other", short
+
+
 def _cell(text):
     """Safe inside a Markdown table cell: angle brackets, pipes and newlines."""
     return html.escape(" ".join(str(text).split()), quote=False).replace("|", "&#124;")
 
 
-def counts(rows):
-    """{level: n} for every level, so the headline never has to guess a missing one."""
-    found = Counter(r["level"] for r in rows)
-    return {level: found.get(level, 0) for level in LEVELS}
-
-
 def by_rule(rows):
-    """[(level, rule, n)] ordered by level (ERROR first), then rule."""
-    found = Counter((r["level"], r["rule"]) for r in rows)
+    """[(level, rule, [rows])] ordered by level (ERROR first), then rule."""
+    groups = defaultdict(list)
+    for row in rows:
+        groups[(row["level"], row["rule"])].append(row)
     order = {level: i for i, level in enumerate(LEVELS)}
-    return sorted(((lv, rule, n) for (lv, rule), n in found.items()), key=lambda t: (order.get(t[0], len(LEVELS)), t[1]))
+    return [(lv, rule, groups[(lv, rule)]) for lv, rule in sorted(groups, key=lambda k: (order.get(k[0], len(LEVELS)), k[1]))]
 
 
-def robot_section(report_tsv, run_url=None):
-    lines = ["### ROBOT report (logical / structural QC)", ""]
+def preview_lines(rule, rows):
+    """The lines of one rule's expandable preview: what the rule means, then its findings, near-duplicates grouped."""
+    lines = []
+    if rule in RULE_HELP:
+        lines.append(f"<i>{_cell(RULE_HELP[rule])}</i>")
+    if all(not row["value"] for row in rows):
+        # Only subjects: list the names grouped by module, so twenty-five similar rows become a handful of lines.
+        names = defaultdict(set)
+        for row in rows:
+            group, term = split_subject(row["subject"])
+            names[group].add(term)
+        for group in sorted(names):
+            terms = sorted(names[group])
+            shown = ", ".join(terms[:NAMES_PER_GROUP]) + (f" +{len(terms) - NAMES_PER_GROUP} more" if len(terms) > NAMES_PER_GROUP else "")
+            lines.append(f"<b>{_cell(group)}</b> ({len(terms)}): {_cell(shown)}")
+    else:
+        for row in rows[:ROWS_PER_RULE]:
+            lines.append(f"{_cell(short_subject(row['subject']))}: {_cell(row['value'])}")
+        if len(rows) > ROWS_PER_RULE:
+            lines.append(f"+{len(rows) - ROWS_PER_RULE} more")
+    return lines
+
+
+def minor_checks(report_tsv, run_url=None):
+    lines = ["### Minor checks", "",
+             "Executed via ROBOT for logical and structural QC; the ROBOT report stays advisory.", ""]
     if report_tsv is None:
         return lines + ["The ROBOT report did not run; see the reasoner status above.", ""]
     rows = parse_report(report_tsv)
-    total = counts(rows)
-    lines += [f"**{total['ERROR']} error(s), {total['WARN']} warning(s), {total['INFO']} info.**", ""]
     if not rows:
         return lines + ["✅ No findings.", ""]
-    lines += ["| Level | Rule | Count |", "|---|---|--:|"]
-    lines += [f"| {level} | `{_cell(rule)}` | {n} |" for level, rule, n in by_rule(rows)]
+    lines += ["| Level | Rule | Count | Findings |", "|---|---|--:|:--|"]
+    for level, rule, rule_rows in by_rule(rows):
+        preview = "<details><summary>Show</summary>" + "<br>".join(preview_lines(rule, rule_rows)) + "</details>"
+        lines.append(f"| {level} | `{_cell(rule)}` | {len(rule_rows)} | {preview} |")
     lines.append("")
-    actionable = [r for r in rows if r["level"] in ("ERROR", "WARN")]
-    if actionable:
-        shown = actionable[:LIST_LIMIT]
-        lines += [f"<details><summary>ERROR and WARN rows ({len(actionable)})</summary>", "",
-                  "| Level | Rule | Subject | Property | Value |", "|---|---|---|---|---|"]
-        lines += [f"| {r['level']} | `{_cell(r['rule'])}` | {_cell(short_subject(r['subject']))} | {_cell(r['property'])} | {_cell(r['value'])} |"
-                  for r in shown]
-        if len(actionable) > len(shown):
-            lines += ["", f"… and {len(actionable) - len(shown)} more."]
-        lines += ["", "</details>", ""]
-    if counts(rows)["INFO"]:
-        lines += ["INFO findings are only counted here.", ""]
     if run_url:
         lines += [f"The full report is the `reasoning-out` artifact of this [workflow run]({run_url}).", ""]
     return lines
@@ -103,25 +144,14 @@ def render(rc, reason_out, report_tsv, validate_md, run_url=None):
     else:
         status = ("⛔ **Reasoner failed** — the merged suite is inconsistent, has an unsatisfiable class, or is not valid "
                   "OWL 2 DL. See the reasoner output below. **This fails the check — fix before merge.**")
-    lines = [
-        "## 🧠 Ontology reasoning &amp; QC",
-        "",
-        "Whole-suite OWL 2 DL reasoning (**HermiT**) and the ROBOT `report` over all modules at *latest* (imports resolved "
-        "offline via `src/catalog-v001.xml`), then the repository's own checks. The **reasoner is a blocking gate**; the "
-        "rest is advisory. Run the same script locally with `bash scripts/run_reasoning.sh` (see AGENTS.md).",
-        "",
-        "### Consistency / satisfiability",
-        status,
-        "",
-    ]
+    lines = ["## 🧠 Ontology reasoning &amp; QC", "", "### Consistency / satisfiability", status, ""]
     if str(rc).strip() != "0" and reason_out:
         tail = "\n".join(reason_out.splitlines()[-60:])
         lines += ["<details><summary>Reasoner output</summary>", "", "```", tail, "```", "", "</details>", ""]
-    lines += robot_section(report_tsv, run_url)
     if validate_md:
         lines += [validate_md.strip(), ""]
-    lines.append("<sub>The reasoner blocks (consistency, unsatisfiable classes, OWL 2 DL, including a root change that breaks "
-                 "its dependents); the ROBOT report stays advisory.</sub>")
+    lines += minor_checks(report_tsv, run_url)
+    lines += ["<details><summary>About these checks</summary>", "", ABOUT, "", "</details>"]
     return "\n".join(lines) + "\n"
 
 

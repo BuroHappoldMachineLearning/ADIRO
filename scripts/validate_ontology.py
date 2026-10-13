@@ -411,7 +411,9 @@ def write_markdown(results: list[tuple[str, list[str], list[str]]], out_path: Pa
     list further down.
     """
     OK, WARN, ERR = "\u2705", "\u26a0\ufe0f", "\u26d4"
-    lines = ["### \U0001f9ea Repo-specific checks (`scripts/validate_ontology.py`)", ""]
+    lines = ["### Important checks", "",
+             "Executed via `scripts/validate_ontology.py`. The reasoner blocks too: consistency, unsatisfiable classes and "
+             "OWL 2 DL, including a root change that breaks its dependents.", ""]
     total_err = sum(len(e) for _, e, _ in results)
     total_warn = sum(len(w) for _, _, w in results)
 
@@ -424,8 +426,7 @@ def write_markdown(results: list[tuple[str, list[str], list[str]]], out_path: Pa
             mark = ERR if errs else (WARN if warns else OK)
             # a non-breaking space keeps the status icon with the module name when a wide Findings cell squeezes this column
             lines.append("| %s&nbsp;`%s` | %d | %d | %s |" % (mark, name, len(errs), len(warns), _findings_cell(errs, warns, ERR, WARN)))
-        lines += ["", "**%d error(s), %d warning(s).** Errors block; warnings are advisory. "
-                  "Open **Show** in a row to read its findings." % (total_err, total_warn), ""]
+        lines.append("")
 
     out_path.write_text("\n".join(lines), encoding="utf-8")
 
