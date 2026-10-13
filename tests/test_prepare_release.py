@@ -264,3 +264,72 @@ def test_a_prior_version_form_the_script_cannot_rewrite_fails_loudly(tmp_path):
     ttl.write_text(ttl.read_text(encoding="utf-8").replace("    owl:versionIRI", comma_list + "    owl:versionIRI"), encoding="utf-8")
     with pytest.raises(ValueError, match="priorVersion"):
         pr.sync_priors(repo)
+
+
+CHANGES = [("#108", "Add a thing"), ("#99", "Another change"), ("abc1234", "a direct push")]
+
+
+def test_body_lists_the_merged_prs_per_module_between_the_table_and_the_checklist(tmp_path):
+    repo = make_repo(tmp_path, ":B a owl:Class .\n", ENTRY)
+    text = pr.body(pr.plan(repo), repo, changes={"aec_x": CHANGES}, repo="o/r")
+    assert "### Pull requests in this release" in text and "**`aec_x`** 1.0.0 → 1.1.0" in text
+    assert "- [#108](https://github.com/o/r/pull/108) Add a thing" in text
+    assert "- [#99](https://github.com/o/r/pull/99) Another change" in text
+    assert "- `abc1234` a direct push" in text  # a commit pushed straight to main has no PR
+    assert text.index("| `aec_x` |") < text.index("### Pull requests in this release") < text.index("### Before merging")
+    assert "a PR merged while this one is open appears here on the next rebuild" in text
+
+
+def test_body_without_changes_has_no_pr_section(tmp_path):
+    repo = make_repo(tmp_path, ":B a owl:Class .\n", ENTRY)
+    assert "Pull requests in this release" not in pr.body(pr.plan(repo), repo)
+
+
+def test_a_module_with_nothing_to_count_from_or_nothing_merged_says_so(tmp_path):
+    repo = make_repo(tmp_path, ":B a owl:Class .\n", ENTRY)
+    (entry,) = pr.plan(repo)
+    assert "its previous release (1.0.0) was not tagged" in pr.body([entry], repo, changes={"aec_x": None}, repo="o/r")
+    assert "no merged PR changed the ontology file since the last release" in pr.body([entry], repo, changes={"aec_x": []}, repo="o/r")
+    (tmp_path / "first").mkdir()
+    first = make_repo(tmp_path / "first", entry=ENTRY, released=False)
+    (first_entry,) = pr.plan(first)
+    assert "this is its first release" in pr.body([first_entry], first, changes={"aec_x": None}, repo="o/r")
+
+
+def test_merged_changes_counts_from_the_last_tag_up_to_main(tmp_path, monkeypatch):
+    repo = make_repo(tmp_path, ":B a owl:Class .\n", ENTRY)
+    monkeypatch.setattr(pr, "_tag_exists", lambda root, tag: tag == "aec_x-v1.0.0")
+    seen = []
+
+    def collect(root, repo_name, module, previous, tag):
+        seen.append((repo_name, module, previous, tag))
+        return [("#5", "x")]
+
+    assert pr.merged_changes(repo, pr.plan(repo), "o/r", collect=collect) == {"aec_x": [("#5", "x")]}
+    assert seen == [("o/r", "aec_x", "1.0.0", "HEAD")]  # the release is not tagged yet, so the range ends at main
+
+
+def test_merged_changes_has_nothing_to_count_from_without_a_previous_tag(tmp_path, monkeypatch):
+    def never(*args):
+        raise AssertionError("must not look anything up")
+
+    (tmp_path / "first").mkdir()
+    first = make_repo(tmp_path / "first", entry=ENTRY, released=False)
+    assert pr.merged_changes(first, pr.plan(first), "o/r", collect=never) == {"aec_x": None}
+    repo = make_repo(tmp_path, ":B a owl:Class .\n", ENTRY)
+    monkeypatch.setattr(pr, "_tag_exists", lambda root, tag: False)  # the previous release was made before tagging began
+    assert pr.merged_changes(repo, pr.plan(repo), "o/r", collect=never) == {"aec_x": None}
+
+
+def test_tag_exists_asks_git(tmp_path):
+    import subprocess
+
+    def git(*args):
+        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.org", *args], cwd=tmp_path, check=True, capture_output=True)
+
+    git("init", "-q")
+    (tmp_path / "f").write_text("x", encoding="utf-8")
+    git("add", "-A")
+    git("commit", "-q", "-m", "c")
+    git("tag", "aec_x-v1.0.0")
+    assert pr._tag_exists(tmp_path, "aec_x-v1.0.0") and not pr._tag_exists(tmp_path, "aec_x-v2.0.0")
