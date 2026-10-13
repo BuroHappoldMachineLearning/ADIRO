@@ -387,6 +387,40 @@ worklog). Reply on every thread with the commit and what changed, and resolve th
 declined ones open for the reviewer. Claude Code: the `pr-review-feedback` skill
 (`.claude/skills/pr-review-feedback/`) drives this when a review link is pasted.
 
+### Reviewing a pull request
+
+This is the essentials; the team skills hold the fuller rules (the checklist of bug classes to hunt for, and the
+mechanics of posting). A review that restates the diff is not a review: the job is to find what the change could
+break, in the lines it touches and in the code that depends on them.
+
+- **Read in depth.** Read the description and the linked issue (what is it *meant* to do?), then the changed files
+  whole, not just the hunks. Search for the callers and users of anything changed (tests, scripts, docs, CI), and
+  ask what each deleted line or guard was protecting. Run what you can, and try to make it fail.
+- **Label every finding** by the damage if it happens, weighted by how likely it is: **major** (wrong results, data
+  loss, a security hole, a crash on a normal path, an undeclared breaking change; blocks merge), **medium** (a real bug
+  on a less common path, a regression in secondary behaviour, a missing test for risky logic; fix before merge unless
+  there is a reason not to), **minor** (low impact or cosmetic; fine to merge). When unsure between two, pick the
+  higher and say what would make it the lower. For an ontology change, a removed or renamed term, a changed
+  `rdfs:subClassOf`, domain, range or restriction, or a changed IRI is **major** until the version-impact comment
+  shows otherwise.
+- **Findings first, most severe first.** Each one gives the label and a one-line title, where (`path:line`), what
+  goes wrong (the concrete input or state and the wrong result), how sure you are (*reproduced*, *traced* or
+  *suspected*; never present a suspicion as a fact) and, when not obvious, a suggested fix. Verify each before you
+  report it; if you find nothing, say so plainly.
+- **Do not repeat what the description or a bot comment already says.** No restated scope, no praise, no CI status
+  (a failing check is mentioned only when it causes a finding). If the description does not make scope, decisions or
+  verification clear, ask the author to add that to the description.
+- **This repository is public, so a review is world-readable and permanent.** Write no internal tool, product, client
+  or project names, no internal hostnames or identifiers, no internal tracker IDs or text. Say a problem generically.
+  If a finding can only be explained by naming something internal, say it to the person who asked for the review and
+  keep the public comment generic; a PR that itself contains such material is a finding, and the comment about it
+  must not repeat the material. Never paste a secret found in a diff: give the location and say what it is (a secret
+  in a diff is **major** and needs rotating, not just deleting).
+- **Post it as one review, under the reviewer's own account, and sign it as the agent** when an agent wrote it, so
+  nobody mistakes the agent's words for the person's: end the review with a line such as *"Review written by
+  <agent> (<model>) on behalf of @<login>, who asked for it. Findings were checked by the agent; please verify before
+  acting."* Use the `COMMENT` event: an approval or a request for changes is the person's decision.
+
 ### Pull-request description
 
 The general rules for a good PR description (what earns a top-level section, grouping side effects under a single
@@ -463,7 +497,7 @@ editing the issue body with a follow-up note over a comment). The PR body says w
 what it asks of the reviewer; the *programme* it belongs to is tracked YouTrack-side. (The `docs/ai/worklog.md`
 handover log is exempt — it is excluded from the built site, so it may reference YouTrack freely.)
 
-Issue-first: propose additions/changes as an issue before coding. **ADIRO is open-source, so file issues on
+Issue-first: propose additions/changes as an issue before coding, then open the PR that closes it (`Closes #N`). **ADIRO is open-source, so file issues on
 GitHub — _not_ directly in YouTrack.** A one-way GitHub→YouTrack automation mirrors each ADIRO GitHub issue
 into RES (closing the GitHub issue resolves its mirror), and filing on GitHub keeps the activity on the public
 repo. Create an ADIRO issue **directly in YouTrack only** for internal decisions/tooling not meant to be public
