@@ -155,6 +155,39 @@ def find_version_inconsistencies(graph) -> list[str]:
     return errors
 
 
+# This repository is public, so it must not name internal tools (#89). The names are assembled from parts so the
+# guard's own source does not contain them. A match in a hand-written file is an error.
+_INTERNAL_TOOL_NAMES = ("c" + "vat",)
+# Identifiers that still carry a name and are due to be renamed (#89); removed from this list when they are.
+_PENDING_RENAME = ("is" + "c" + "vat" + "property",)
+_PUBLIC_SCAN = ("AGENTS.md", "CLAUDE.md", "README.md", "CHANGELOG.md", "changelogs", "src", "scripts", ".github",
+                ".claude", ".cursor", "docs/ai", "docs/design-decisions", "docs/contribute", "docs/specification",
+                "docs/brainstorming")
+_SCAN_SUFFIXES = {".md", ".mdc", ".ttl", ".json", ".xml", ".py", ".sh", ".yml", ".yaml", ".txt", ".toml"}
+
+
+def find_internal_names(repo_root: Path) -> list[str]:
+    """Hand-written files that name an internal tool, as 'path:line' findings (#89)."""
+    name_re = re.compile("|".join(_INTERNAL_TOOL_NAMES), re.IGNORECASE)
+    allowed_re = re.compile("|".join(re.escape(a) for a in _PENDING_RENAME), re.IGNORECASE)
+    findings = []
+    for entry in _PUBLIC_SCAN:
+        root = repo_root / entry
+        files = [root] if root.is_file() else sorted(p for p in root.rglob("*") if p.is_file()) if root.is_dir() else []
+        for path in files:
+            if path.suffix.lower() not in _SCAN_SUFFIXES or "__pycache__" in path.parts:
+                continue
+            try:
+                lines = path.read_text(encoding="utf-8").splitlines()
+            except (UnicodeDecodeError, OSError):
+                continue
+            for n, line in enumerate(lines, 1):
+                if name_re.search(allowed_re.sub("", line)):
+                    findings.append(f"{path.relative_to(repo_root).as_posix()}:{n} names an internal tool; describe the "
+                                    "behaviour generically (this repository is public)")
+    return findings
+
+
 def find_undescribed_terms(graph) -> list[str]:
     """
     ADIRO-namespace terms with no human-readable description.
@@ -511,6 +544,13 @@ def main():
                 (row[1] if enforce else row[2]).append(msg)
                 print(f"  [{'ERROR' if enforce else 'WARN'}] {module}: {msg}")
                 all_valid = all_valid and not enforce
+
+    # Public-repository guard (#89): hand-written files must not name an internal tool.
+    leaks = find_internal_names(repo_root)
+    results.append(("public-repo names", leaks, []))
+    for leak in leaks:
+        print(f"  [ERROR] {leak}")
+    all_valid = all_valid and not leaks
 
     if markdown_path is not None:
         write_markdown(results, markdown_path)

@@ -53,7 +53,7 @@
 
 :isCVATProperty rdf:type owl:AnnotationProperty ;
     rdfs:label "isCVATProperty" ;
-    rdfs:comment "When true, the label is displayed on the right side of the CVAT annotation panel instead of the default left side." ;
+    rdfs:comment "Presentation hint for downstream annotation tooling: when true, the label should be displayed on the trailing side of the tool's label panel rather than the default leading side." ;
     rdfs:range xsd:boolean .
 
 :labellableRoot rdf:type owl:AnnotationProperty ;

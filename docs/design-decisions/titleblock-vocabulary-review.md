@@ -73,7 +73,7 @@ the indirection. The extraction pipeline's entire justification for the split is
   accident" — it is *deliberately running two vocabularies for one concept*, one of which is a shipped,
   CQ-validated deliverable. That is a much higher bar to clear, and it needs UC-01's owner in the room.
 - **Option C** (migrate to titleblock-level) would **overturn a reviewed decision and break UC-01's CQ SPARQL**.
-  Already rejected for CVAT reasons; this is a second, independent reason.
+  Already rejected for annotation-tooling reasons; this is a second, independent reason.
 - **A fourth option not currently on the table:** keep sheet-level as the *validated* layer (UC-01, unchanged) and
   introduce the titleblock-level layer *only* for unvalidated extraction output, with promotion sheet-ward on
   validation. That is close to option B but framed as a **pipeline stage** rather than a parallel vocabulary —

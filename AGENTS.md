@@ -211,16 +211,15 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
 - **Keep labels unique across classes** — but note this is a **docs-quality convention, *not* an RDF/OWL
   requirement** (RDF is fine with duplicate labels; the IRI is the identifier). We enforce it because the
   published docs (pyLODE / ttl2md) and label-based search display `rdfs:label`, so duplicates confuse a human
-  reader — and because for `owl:oneOf` **enumeration values** the `rdfs:label` *is* the CVAT SELECT option a
-  person picks. Enforced by ROBOT `report` `duplicate_label` ([RES-36](https://bhmlrnd.youtrack.cloud/issue/RES-36)),
+  reader — and because for `owl:oneOf` **enumeration values** the `rdfs:label` *is* the option a
+  person picks in the annotation tool. Enforced by ROBOT `report` `duplicate_label` ([RES-36](https://bhmlrnd.youtrack.cloud/issue/RES-36)),
   as a **warning** (exceptions allowed). Legacy-label conformance is tracked in
   [RES-92](https://bhmlrnd.youtrack.cloud/issue/RES-92).
-- **CVAT label text comes from the URI, not `rdfs:label`.** The pipeline builds each CVAT *class* label from the
-  class **IRI local name** (fragment after `#`) and normalizes it via its own `name_normalizer_rules`; it does
-  **not** read the class's `rdfs:label`. `rdfs:label` reaches CVAT only for `owl:oneOf` enumeration values
-  (SELECT options). So class identity in CVAT is guaranteed by the (unique) IRI — `rdfs:label` uniqueness is for
-  humans/docs, not CVAT. Verified against the pipeline; see KB
-  [DATA-A-9](https://bhmlrnd.youtrack.cloud/articles/DATA-A-9).
+- **Annotation label text comes from the IRI, not `rdfs:label`.** The downstream annotation pipeline builds each
+  *class* label from the class **IRI local name** (fragment after `#`), normalised by its own rules; it does **not**
+  read the class's `rdfs:label`. `rdfs:label` reaches the annotation tool only for `owl:oneOf` enumeration values
+  (the options a person picks). So class identity there is guaranteed by the (unique) IRI — `rdfs:label` uniqueness
+  is for humans and docs, not for the tool.
 
 ## Contributor workflow
 For anyone changing an ontology, agent or person. The sections below give the detail; this is the order of work.
@@ -355,12 +354,16 @@ For anyone changing an ontology, agent or person. The sections below give the de
 - **Versioning.** Record any change to a module's semantics under that module's `changelogs/<module>.md`
   `[Unreleased]` section; bump its `owl:versionIRI` / `owl:versionInfo` **only at a release cut** (tag
   `<module>-v<semver>`), per `docs/contribute/versioning/`.
-- **Downstream label consumers (CVAT).** The metadata module defines the `isCVATProperty` annotation, and
-  domain modules mark labellable classes with `labellableRoot`, so the ontology **drives CVAT annotation
-  labels**. The CVAT label *text* is the class **IRI local name** (normalized by the pipeline's
-  `name_normalizer_rules`) — **not** `rdfs:label`; `rdfs:label` reaches CVAT only for `owl:oneOf` enumeration
-  values (see "Ontology authoring conventions" above). Changes to labellable classes or `isCVATProperty` usage
-  affect those consumers — coordinate via KB [DATA-A-9](https://bhmlrnd.youtrack.cloud/articles/DATA-A-9).
+- **Downstream label consumers (annotation tooling).** The metadata module defines the `isCVATProperty` annotation
+  (a presentation hint whose name is due to be replaced, [#89](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/89)),
+  and domain modules mark labellable classes with `labellableRoot`, so the ontology **drives the labels of the
+  annotation tooling**. The label *text* is the class **IRI local name**, **not** `rdfs:label`; `rdfs:label` reaches
+  the tool only for `owl:oneOf` enumeration values (see "Ontology authoring conventions" above). Changes to labellable
+  classes or to that annotation's usage affect those consumers: coordinate with the maintainers of the annotation
+  pipeline.
+- **Do not name internal tools in this public repository.** Describe the behaviour generically ("the downstream
+  annotation tooling") and keep the product name out of prose, term names and definitions. `validate_ontology.py`
+  fails on a match in the hand-written files, so a name does not creep back in ([#89](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/89)).
 - **This file ↔ CI.** If you change CI, docs generation, or versioning, update the relevant section here in
   the same PR. CI wins on conflicts.
 
