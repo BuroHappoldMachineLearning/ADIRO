@@ -67,8 +67,8 @@
 
 ###  Annotation property
 
-metadata:labellableRoot rdf:type owl:AnnotationProperty ;
-    rdfs:label "labellableRoot" ;
+metadata:isLabellable rdf:type owl:AnnotationProperty ;
+    rdfs:label "isLabellable" ;
     rdfs:range xsd:boolean .
 
 
@@ -88,12 +88,12 @@ metadata:hasProperty rdf:type owl:ObjectProperty ;
 metadata:DrawingSheet rdf:type owl:Class ;
     rdfs:label "DrawingSheet" ;
     rdfs:comment "Top-level searchable unit. UC-01 'Drawing' maps here. Carries drawingIdentifier for UC-03's compound-label resolution." ;
-    metadata:labellableRoot "false"^^xsd:boolean .
+    metadata:isLabellable "false"^^xsd:boolean .
 
 metadata:Layout rdf:type owl:Class ;
     rdfs:label "Layout" ;
     rdfs:comment "A view region within a DrawingSheet. UC-03's ReferenceSymbol mounts here (both source and target ends). Carries layoutIdentifier so a ReferenceSymbol target can resolve to a unique Layout (drawingIdentifier + layoutIdentifier pair)." ;
-    metadata:labellableRoot "true"^^xsd:boolean .
+    metadata:isLabellable "true"^^xsd:boolean .
 
 
 ###  Identity datatype properties (needed to uniquely locate a Layout)
@@ -116,7 +116,7 @@ metadata:layoutIdentifier rdf:type owl:DatatypeProperty ;
 metadata:LayoutContentType rdf:type owl:Class ;
     rdfs:label "LayoutContentType" ;
     rdfs:comment "Type of content (Plan, Section, Detail, Elevation, Table, Perspective). UC-03 derives ReferenceSymbol type from the target Layout's content type." ;
-    metadata:labellableRoot "false"^^xsd:boolean .
+    metadata:isLabellable "false"^^xsd:boolean .
 
 metadata:Plan rdf:type owl:Class ;
     rdfs:subClassOf metadata:LayoutContentType ;
@@ -137,7 +137,7 @@ metadata:Elevation rdf:type owl:Class ;
 metadata:DrawingElement rdf:type owl:Class ;
     rdfs:label "DrawingElement" ;
     rdfs:comment "Base class for elements depicted on a drawing. Contained by Layout." ;
-    metadata:labellableRoot "false"^^xsd:boolean .
+    metadata:isLabellable "false"^^xsd:boolean .
 
 
 ###  Context relationships (named subproperties of :contains,
@@ -167,7 +167,7 @@ csymbol:ReferenceSymbol rdf:type owl:Class ;
     rdfs:subClassOf metadata:DrawingElement ;
     rdfs:label "ReferenceSymbol" ;
     rdfs:comment "A symbol drawn on a Layout that references another Layout (on the same or a different DrawingSheet). Working name in UC-03 v0.2 — see UC03-1 for final naming decision vs csymbol:Callout. Typical instances include Detail Markers, Section Markers, and Elevation Markers — but the type axis is not modelled (derived from the target Layout's LayoutContentType). See NCS Module 6 and ISO 128-30 for visual conventions.\n\nReferenceSymbol is a PURE RELATIONAL NODE: it has no datatype properties. Instance identity is provided by RDF URI; the displayed marker label (e.g. '2/ST-201') is derivable from referencesLayout → Layout → layoutIdentifier and the target DrawingSheet's drawingIdentifier. See design-debate document for the full reasoning." ;
-    metadata:labellableRoot "true"^^xsd:boolean .
+    metadata:isLabellable "true"^^xsd:boolean .
 
 
 ###  No datatype properties on ReferenceSymbol.
