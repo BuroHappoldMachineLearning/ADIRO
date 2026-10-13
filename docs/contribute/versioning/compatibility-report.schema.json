@@ -74,7 +74,8 @@
               "RESTRICTION_REMOVED",
               "RESTRICTION_TIGHTENED",
               "RESTRICTION_LOOSENED",
-              "ANNOTATION_CHANGED"
+              "ANNOTATION_CHANGED",
+              "ONTOLOGY_HEADER_CHANGED"
             ]
           },
           "severity": {

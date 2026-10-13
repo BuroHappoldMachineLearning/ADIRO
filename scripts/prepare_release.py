@@ -9,6 +9,8 @@ does the mechanical part so a reviewer only has to approve it:
     apply  [--date D] write the release cut into the working tree: bump owl:versionInfo /
                       owl:versionIRI, move each [Unreleased] changelog section under a dated
                       heading, update the root CHANGELOG.md rollup, the README release-badge links and the AGENTS.md versions line
+    priors            rewrite the owl:priorVersion lines of every module's header for its declared
+                      version (idempotent; `apply` does this for each module it releases)
     body              the Release PR description (Markdown) for the current plan
     tags              releases still to be completed: modules whose declared version has a
                       dated changelog heading (a merged release cut) but no snapshot under
@@ -18,6 +20,10 @@ does the mechanical part so a reviewer only has to approve it:
 config/release_overrides.json maps a module to ONE value: a bump level ("patch" | "minor" |
 "major") that raises that module's bump (never lowers it below what compat_diff requires), or
 "hold", which leaves the module out of the Release PR. A bump override is consumed by the cut.
+
+Every release names ALL of its earlier published versions with owl:priorVersion (one line per
+version IRI, taken from versions/<module>/), so a tool that reads only the latest release (OntoCanvas
+does not follow the chain) can list and open every earlier one. Archived releases are never edited.
 
 Bumps come from scripts/compat_diff.py: the next version is the last released version plus the
 bump the changes require. A module never released before keeps its declared version.
@@ -175,13 +181,71 @@ def _bump_ttl(text, module, old, new):
     return text.replace(iri_old, iri_new).replace(f'owl:versionInfo "{old}"', f'owl:versionInfo "{new}"')
 
 
+PRIOR_LINE_RE = re.compile(r"^[ \t]*owl:priorVersion[ \t]+<[^>\r\n]*>[ \t]*;[ \t]*\r?\n", re.M)
+VERSION_IRI_LINE_RE = re.compile(r"^([ \t]*)owl:versionIRI[ \t]+<[^>\r\n]*>[ \t]*;", re.M)
+
+
+def _semver_key(version):
+    return tuple(int(x) for x in cd.SEMVER_RE.match(version).groups())
+
+
+def archived_versions(root, module):
+    """Versions archived under versions/<module>/, lowest first: the releases whose version IRI is published."""
+    base = Path(root) / "versions" / module
+    found = []
+    if base.is_dir():
+        for d in base.iterdir():
+            if d.is_dir() and cd.SEMVER_RE.match(d.name) and (d / f"{module}.ttl").is_file():
+                found.append(d.name)
+    return sorted(found, key=_semver_key)
+
+
+def prior_version_iris(root, module, below):
+    """The version IRIs a release of `below` must name with owl:priorVersion: every earlier archived version."""
+    cutoff = _semver_key(below)
+    return [f"https://w3id.org/adiro/{module}/{v}" for v in archived_versions(root, module) if _semver_key(v) < cutoff]
+
+
+def _set_prior_versions(text, iris):
+    """Rewrite the owl:priorVersion lines of the owl:Ontology header: one per IRI, just before owl:versionIRI."""
+    nl = "\r\n" if "\r\n" in text else "\n"
+    text = PRIOR_LINE_RE.sub("", text)
+    if "owl:priorVersion" in text:
+        raise ValueError("owl:priorVersion in a form this script does not rewrite: use one `owl:priorVersion <iri> ;` line each")
+    found = list(VERSION_IRI_LINE_RE.finditer(text))
+    if len(found) != 1:
+        raise ValueError("expected exactly one owl:versionIRI line in the ontology header")
+    at, indent = found[0].start(), found[0].group(1)
+    return text[:at] + "".join(f"{indent}owl:priorVersion <{iri}> ;{nl}" for iri in iris) + text[at:]
+
+
+def sync_priors(root):
+    """Rewrite every module's owl:priorVersion lines for its declared version; return the modules that changed."""
+    root, changed = Path(root), []
+    for module in modules(root):
+        version = src_version(root, module)
+        if not version:
+            continue
+        ttl = root / "src" / f"{module}.ttl"
+        old = _read(ttl)
+        new = _set_prior_versions(old, prior_version_iris(root, module, version))
+        if new != old:
+            _write(ttl, new)
+            changed.append(module)
+    return changed
+
+
 def apply_plan(root, entries, day):
     root = Path(root)
     for e in entries:
         module = e["module"]
+        ttl = root / "src" / f"{module}.ttl"
+        text = old = _read(ttl)
         if e["declared"] != e["next"]:
-            ttl = root / "src" / f"{module}.ttl"
-            _write(ttl, _bump_ttl(_read(ttl), module, e["declared"], e["next"]))
+            text = _bump_ttl(text, module, e["declared"], e["next"])
+        text = _set_prior_versions(text, prior_version_iris(root, module, e["next"]))
+        if text != old:
+            _write(ttl, text)
         cl = root / "changelogs" / f"{module}.md"
         _write(cl, _move_unreleased(_read(cl), e["next"], day))
 
@@ -294,11 +358,16 @@ def main(argv=None):
     p_apply.add_argument("--date", default=_date.today().isoformat())
     sub.add_parser("body")
     sub.add_parser("tags")
+    sub.add_parser("priors")
     args = ap.parse_args(argv)
 
     if args.cmd == "tags":
         for t in releases_to_complete():
             print(t)
+        return
+    if args.cmd == "priors":
+        changed = sync_priors(ROOT)
+        print("owl:priorVersion rewritten for: " + ", ".join(changed) if changed else "owl:priorVersion already up to date.")
         return
     try:
         entries = plan()
