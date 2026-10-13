@@ -24,7 +24,6 @@
     owl:versionIRI <https://w3id.org/adiro/aec_facade_domain/2.0.1> ;
     owl:versionInfo "2.0.1" ;
     owl:imports <https://w3id.org/adiro/aec_drawing_metadata>,
-                <https://w3id.org/adiro/aec_common_symbols>,
                 <https://w3id.org/adiro/aec_domain_common> .
 
 

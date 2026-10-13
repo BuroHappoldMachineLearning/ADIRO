@@ -136,7 +136,14 @@ def test_ontology_header_annotations_are_a_patch():
     assert cd.required_bump(deltas) == cd.BUMP_PATCH
 
 
-def test_a_version_bump_or_a_new_import_alone_is_not_a_header_change():
+def test_a_version_bump_alone_is_not_a_header_change():
     assert _deltas(BASE, BASE.replace('"1.0.0"', '"1.0.1"')) == []  # the release cut owns the version
+
+
+def test_an_added_or_removed_import_is_a_patch_and_not_a_header_change():
     with_import = BASE.replace('owl:versionInfo "1.0.0" .', 'owl:versionInfo "1.0.0" ; owl:imports <https://ex.org/other> .')
-    assert _deltas(BASE, with_import) == []  # a dependency change is not classified here
+    added = _deltas(BASE, with_import)
+    assert added == [("IMPORTS_CHANGED", "https://ex.org/m")]
+    assert cd.required_bump(added) == cd.BUMP_PATCH
+    assert _deltas(with_import, BASE) == [("IMPORTS_CHANGED", "https://ex.org/m")]  # removal is the same delta
+    assert _deltas(with_import, with_import) == []

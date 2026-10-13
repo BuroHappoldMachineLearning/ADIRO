@@ -11,6 +11,9 @@ _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumpe
 - The ontology header now names every earlier published release with `owl:priorVersion` (1.0.0 and 2.0.0), so a tool that reads only the latest release can list and open the earlier ones ([#122](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/122)). No term changes.
 
 
+### Removed
+- The unused `owl:imports` of `aec_common_symbols`: nothing in this module refers to a term of it ([#134](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/134)). A consumer that relied on loading `aec_common_symbols` through this module imports it directly. No term changes.
+
 ## [2.0.1] — 2026-10-09
 
 ### Added

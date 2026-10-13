@@ -35,6 +35,7 @@ DELTA_SEVERITY = {
     "TERM_ADDED": NON_BREAKING,
     "ANNOTATION_CHANGED": NON_BREAKING,
     "ONTOLOGY_HEADER_CHANGED": NON_BREAKING,  # annotations on the owl:Ontology header (e.g. owl:priorVersion)
+    "IMPORTS_CHANGED": NON_BREAKING,  # an owl:imports added or removed; term axioms are what MAJOR/MINOR measure
     "RESTRICTION_LOOSENED": NON_BREAKING,
     "RESTRICTION_REMOVED": NON_BREAKING,  # a removed constraint is a loosening
     "DOMAIN_CHANGED": POTENTIALLY,
@@ -57,7 +58,7 @@ _MINOR_DELTAS = {"TERM_ADDED", "RESTRICTION_LOOSENED", "RESTRICTION_REMOVED"}
 _PROP_KINDS = {"object-property", "datatype-property", "annotation-property"}
 
 # Header predicates that are not annotations: the version is bumped by the release cut, rdf:type is the declaration,
-# and owl:imports is a dependency change, which this check does not classify.
+# and owl:imports is compared separately (IMPORTS_CHANGED).
 _HEADER_IGNORED = {OWL.versionIRI, OWL.versionInfo, OWL.imports, RDF.type}
 _CARD = {
     OWL.cardinality: ("exact", 1),
@@ -136,6 +137,7 @@ def build_symbols(graph):
                     for p, o in graph.predicate_objects(ont)
                     if p not in _HEADER_IGNORED and not isinstance(o, BNode)
                 ),
+                "imports": frozenset(str(o) for o in graph.objects(ont, OWL.imports)),
             }
     return symbols
 
@@ -192,6 +194,8 @@ def compute_deltas(old_syms, new_syms):
         if o["kind"] == "ontology" and n["kind"] == "ontology":
             if o["header"] != n["header"]:
                 deltas.append(("ONTOLOGY_HEADER_CHANGED", iri))
+            if o["imports"] != n["imports"]:
+                deltas.append(("IMPORTS_CHANGED", iri))
             continue
         if o["kind"] != n["kind"]:
             deltas.append(("TYPE_CHANGED", iri))
@@ -220,7 +224,7 @@ def required_bump(deltas):
         return BUMP_MAJOR
     if types & _MINOR_DELTAS:
         return BUMP_MINOR
-    if types & {"ANNOTATION_CHANGED", "ONTOLOGY_HEADER_CHANGED"}:
+    if types & {"ANNOTATION_CHANGED", "ONTOLOGY_HEADER_CHANGED", "IMPORTS_CHANGED"}:
         return BUMP_PATCH
     return BUMP_NONE
 
