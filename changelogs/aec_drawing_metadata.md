@@ -8,7 +8,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
 ### Changed (BREAKING)
-- **Two labelling annotations renamed** ([#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141)). `isLabellable` replaces `labellableRoot` (same meaning: this class can be used as a label), and `isOptionalLabel` replaces `isCVATProperty` (the label of this class is optional, and annotation tooling presents it apart from the required labels). The old properties stay declared with `owl:deprecated true` and are no longer used by any ADIRO term. **`isOptionalLabel true` implies `isLabellable true`** even when the latter is not stated; annotation properties carry no reasoning, so `scripts/validate_ontology.py` fails on a class that is both an optional label and `isLabellable false`. Consumers that read the old names must read the new ones.
+- **Two labelling annotations renamed** ([#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141)). `isComputerVisionLabel` replaces `labellableRoot` (same meaning: this class can be used as a label in computer-vision annotation tooling), and `isComputerVisionOptionalLabel` replaces `isCVATProperty` (a presentation hint: the class is shown apart from the required labels). The names say which application they serve, so another application, such as tagging report documents, gets its own pair. The two are independent: a class may be an optional label without being a label. The old properties stay declared with `owl:deprecated true` and are no longer used by any ADIRO term. Consumers that read the old names must read the new ones.
 
 
 ## [4.0.1] — 2026-10-13

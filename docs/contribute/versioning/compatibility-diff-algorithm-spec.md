@@ -88,7 +88,7 @@ Detect the following delta records:
 - `ANNOTATION_CHANGED`
 - `ONTOLOGY_HEADER_CHANGED` (an annotation on the `owl:Ontology` header changed: its label, description, `owl:priorVersion`, ...; `owl:versionIRI`, `owl:versionInfo` and `owl:imports` are not compared here)
 - `IMPORTS_CHANGED` (an `owl:imports` was added or removed on the `owl:Ontology` header)
-- `LABELLING_CHANGED` (a boolean flag in the `aec_drawing_metadata` namespace, such as `isLabellable` or `isOptionalLabel`, was added, removed or changed on an existing term)
+- `LABELLING_CHANGED` (a boolean flag in the `aec_drawing_metadata` namespace, such as `isComputerVisionLabel` or `isComputerVisionOptionalLabel`, was added, removed or changed on an existing term)
 
 ## Step 5 — Severity Classification
 Default mapping:

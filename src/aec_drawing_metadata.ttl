@@ -39,28 +39,28 @@
     rdfs:comment "Links a class or concept to an example image illustrating it."@en .
 
 # --- Labelling annotations --------------------------------------------------------------------------------------
-# isLabellable and isOptionalLabel replace labellableRoot and the older tool-named property (#89, #141).
-# Both are annotation properties, so no reasoner draws the implication below: scripts/validate_ontology.py checks it.
+# isComputerVisionLabel and isComputerVisionOptionalLabel replace labellableRoot and the older tool-named property (#89, #141).
+# They are named for the application they serve (computer-vision annotation); another application gets its own pair.
 
-:isLabellable rdf:type owl:AnnotationProperty ;
-    rdfs:label "isLabellable" ;
-    rdfs:comment "When true, this class can be used as a label by annotators (solid contour in the diagram). When false, it cannot (dashed contour). A class marked isOptionalLabel true is labellable even when this is not stated. Carries no reasoning weight." ;
+:isComputerVisionLabel rdf:type owl:AnnotationProperty ;
+    rdfs:label "isComputerVisionLabel" ;
+    rdfs:comment "When true, this class can be used as a label by annotators in computer-vision annotation tooling (solid contour in the diagram). When false, it cannot (dashed contour). Says nothing about other applications. Carries no reasoning weight." ;
     rdfs:range xsd:boolean .
 
-:isOptionalLabel rdf:type owl:AnnotationProperty ;
-    rdfs:label "isOptionalLabel" ;
-    rdfs:comment "When true, the label of this class is optional: annotators may leave it out, and annotation tooling presents it apart from the required labels (on the trailing side of the label panel rather than the default leading side). It implies isLabellable true even when that is not stated, so a class marked isOptionalLabel true must not be marked isLabellable false. Carries no reasoning weight." ;
+:isComputerVisionOptionalLabel rdf:type owl:AnnotationProperty ;
+    rdfs:label "isComputerVisionOptionalLabel" ;
+    rdfs:comment "Presentation hint for computer-vision annotation tooling: when true, the class is presented apart from the required labels (on the trailing side of the label panel rather than the default leading side) and may be left out by annotators, for example a discipline picked as an attribute of a drawing rather than drawn as a shape. Independent of isComputerVisionLabel. Carries no reasoning weight." ;
     rdfs:range xsd:boolean .
 
 :labellableRoot rdf:type owl:AnnotationProperty ;
     rdfs:label "obsolete labellableRoot" ;
-    rdfs:comment "Deprecated: use isLabellable, which has the same meaning. No ADIRO term uses this property any more; it stays declared so that data written against an earlier release keeps its meaning." ;
+    rdfs:comment "Deprecated: use isComputerVisionLabel, which has the same meaning. No ADIRO term uses this property any more; it stays declared so that data written against an earlier release keeps its meaning." ;
     owl:deprecated true ;
     rdfs:range xsd:boolean .
 
 :isCVATProperty rdf:type owl:AnnotationProperty ;
     rdfs:label "obsolete isCVATProperty" ;
-    rdfs:comment "Deprecated: use isOptionalLabel. No ADIRO term uses this property any more; it stays declared so that data written against an earlier release keeps its meaning. Its name carries the name of a tool and cannot be withdrawn once published." ;
+    rdfs:comment "Deprecated: use isComputerVisionOptionalLabel. No ADIRO term uses this property any more; it stays declared so that data written against an earlier release keeps its meaning. Its name carries the name of a tool and cannot be withdrawn once published." ;
     owl:deprecated true ;
     rdfs:range xsd:boolean .
 
@@ -321,7 +321,7 @@
 :MetadataContainer rdf:type owl:Class;
     rdfs:label "MetadataContainer";
     rdfs:comment "Supporting visual region on a drawing sheet (titleblock, legend, etc.). Renamed from :Metadata to avoid confusion with semantic metadata properties on DrawingSheet.";
-    :isLabellable "false"^^xsd:boolean.
+    :isComputerVisionLabel "false"^^xsd:boolean.
 
 :Titleblock rdf:type owl:Class;
     rdfs:subClassOf :MetadataContainer,
@@ -334,7 +334,7 @@
     :exampleImage <img/aec_drawing_ontology/titleblock_02.png> ;
     :exampleImage <img/aec_drawing_ontology/titleblock_03.png> ;
     :exampleImage <img/aec_drawing_ontology/titleblock_04.png> ;
-    :isLabellable "true"^^xsd:boolean.
+    :isComputerVisionLabel "true"^^xsd:boolean.
 
 :RevisionTable rdf:type owl:Class;
     rdfs:subClassOf :MetadataContainer;
@@ -342,7 +342,7 @@
     rdfs:comment "A table recording the documented change history of the drawing sheet, with columns for revision number, date, and description of each amendment." ;
     :exampleImage <img/aec_drawing_ontology/revision_table_01.png> ;
     :exampleImage <img/aec_drawing_ontology/revision_table_02.png> ;
-    :isLabellable "true"^^xsd:boolean.
+    :isComputerVisionLabel "true"^^xsd:boolean.
 
 :Legend rdf:type owl:Class;
     rdfs:subClassOf :MetadataContainer;
@@ -350,19 +350,19 @@
     rdfs:comment "A legend containing mapping information between symbols and a text signifier.";
     :exampleImage <img/aec_drawing_ontology/legend_01.png> ;
     :exampleImage <img/aec_drawing_ontology/legend_02.png> ;
-    :isLabellable "true"^^xsd:boolean.
+    :isComputerVisionLabel "true"^^xsd:boolean.
 
 :KeyPlan rdf:type owl:Class;
     rdfs:subClassOf :MetadataContainer;
     rdfs:label "Key Plan";
     rdfs:comment "A small locator diagram on a drawing sheet showing where the sheet's subject sits within the wider building or site, typically with the relevant area hatched or outlined. A graphical region rather than a text field: its value is the diagram, so it is modelled here as a detectable region alongside Legend and RevisionTable, not as an asserted title-block property. Contained either by a Titleblock, where it is printed inside the title-block strip, or directly by a DrawingSheet where it stands alone on the page; both placements occur and both are optional." ;
-    :isLabellable "true"^^xsd:boolean.
+    :isComputerVisionLabel "true"^^xsd:boolean.
 
 :Note rdf:type owl:Class;
     rdfs:subClassOf :MetadataContainer;
     rdfs:label "Note";
     rdfs:comment "Superclass for annotations on a drawing sheet that are not part of the drawing geometry, including textual notes and images." ;
-    :isLabellable "true"^^xsd:boolean.
+    :isComputerVisionLabel "true"^^xsd:boolean.
 
 :TextualNote rdf:type owl:Class;
     rdfs:subClassOf :Note;
@@ -370,13 +370,13 @@
     rdfs:comment "A free-form block of text, such as numbered lists or paragraphs, containing general requirements, assumptions, or keyed notes that apply to the drawing." ;
     :exampleImage <img/aec_drawing_ontology/textual_note_01.png> ;
     :exampleImage <img/aec_drawing_ontology/textual_note_02.png> ;
-    :isLabellable "true"^^xsd:boolean.
+    :isComputerVisionLabel "true"^^xsd:boolean.
 
 :Image rdf:type owl:Class;
     rdfs:subClassOf :Note;
     rdfs:label "Image";
     rdfs:comment "An image embedded within a note region on a drawing sheet.";
-    :isLabellable "true"^^xsd:boolean.
+    :isComputerVisionLabel "true"^^xsd:boolean.
 
 #################################################################
 #    Classes — Drawing structure
@@ -392,7 +392,7 @@
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass :Layout ];
     rdfs:label "Drawing Sheet" ;
     rdfs:comment "Top-level container for a drawing. Contains Layout(s)." ;
-    :isLabellable false.
+    :isComputerVisionLabel false.
 
 :hasCoordinateFrame rdf:type owl:ObjectProperty ;
     rdfs:label "hasCoordinateFrame" ;
@@ -406,7 +406,7 @@
         [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :LayoutContentType ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ];
     rdfs:label "Layout" ;
     rdfs:comment "Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content." ;
-    :isLabellable true.
+    :isComputerVisionLabel true.
 
 #################################################################
 #    Classes — Layout content types
@@ -415,7 +415,7 @@
 :LayoutContentType rdf:type owl:Class;
     rdfs:label "Layout content type";
     rdfs:comment "Type of content included in a layout.";
-    :isLabellable "false"^^xsd:boolean.
+    :isComputerVisionLabel "false"^^xsd:boolean.
 
 :Plan rdf:type owl:Class;
     rdfs:subClassOf :LayoutContentType;
@@ -423,7 +423,7 @@
     rdfs:comment "A horizontal cut through a building viewed from above, showing the arrangement of spaces, walls, doors, and openings at a given floor level." ;
     :exampleImage <img/aec_drawing_ontology/plan_01.png> ;
     :exampleImage <img/aec_drawing_ontology/plan_02.png> ;
-    :isLabellable "true"^^xsd:boolean.
+    :isComputerVisionLabel "true"^^xsd:boolean.
 
 :Section rdf:type owl:Class;
     rdfs:subClassOf :LayoutContentType,
@@ -432,7 +432,7 @@
     rdfs:comment "Section drawing. Has a required property of orientation, which can be vertical or horizontal.";
     :exampleImage <img/aec_drawing_ontology/section_01.png> ;
     :exampleImage <img/aec_drawing_ontology/section_02.png> ;
-    :isLabellable "true"^^xsd:boolean.
+    :isComputerVisionLabel "true"^^xsd:boolean.
 
 :Elevation rdf:type owl:Class;
     rdfs:subClassOf :LayoutContentType;
@@ -440,7 +440,7 @@
     rdfs:comment "A flat, frontal orthographic view of a building facade or interior face, showing surface appearance, window positions, and heights without revealing internal construction." ;
     :exampleImage <img/aec_drawing_ontology/elevation_01.png> ;
     :exampleImage <img/aec_drawing_ontology/elevation_02.png> ;
-    :isLabellable "true"^^xsd:boolean.
+    :isComputerVisionLabel "true"^^xsd:boolean.
 
 :Detail rdf:type owl:Class ;
     rdfs:subClassOf :LayoutContentType,
@@ -449,7 +449,7 @@
     rdfs:comment "A large-scale zoomed-in drawing of a specific construction assembly or connection, showing how individual components fit together with dense material callouts and dimensions. Can be vertical or horizontal." ;
     :exampleImage <img/aec_drawing_ontology/detail_01.png> ;
     :exampleImage <img/aec_drawing_ontology/detail_02.png> ;
-    :isLabellable true .
+    :isComputerVisionLabel true .
 
 :Table rdf:type owl:Class;
     rdfs:label "Table";
@@ -457,13 +457,13 @@
     rdfs:comment "A table containing structured information, for example a schedule of elements.";
     :exampleImage <img/aec_drawing_ontology/table_01.png> ;
     :exampleImage <img/aec_drawing_ontology/table_02.png> ;
-    :isLabellable "true"^^xsd:boolean.
+    :isComputerVisionLabel "true"^^xsd:boolean.
 
 :Perspective rdf:type owl:Class;
     rdfs:subClassOf :LayoutContentType;
     rdfs:label "Perspective";
     rdfs:comment "A three-dimensional pictorial view of a building or assembly showing depth and spatial relationships, used where orthographic drawings cannot convey form." ;
-    :isLabellable "true"^^xsd:boolean.
+    :isComputerVisionLabel "true"^^xsd:boolean.
 
 #################################################################
 #    Classes — Orientation
@@ -473,22 +473,22 @@
     rdfs:label "Orientation" ;
     rdfs:comment "Enumerated orientation values used with hasOrientation." ;
     owl:oneOf ( :Undefined :Horizontal :Vertical ) ;
-    :isLabellable "false"^^xsd:boolean.
+    :isComputerVisionLabel "false"^^xsd:boolean.
 
 :Undefined rdf:type owl:NamedIndividual, :OrientationValue ;
     rdfs:label "Undefined" ;
     rdfs:comment "Orientation not specified." ;
-    :isLabellable "true"^^xsd:boolean.
+    :isComputerVisionLabel "true"^^xsd:boolean.
 
 :Horizontal rdf:type owl:NamedIndividual, :OrientationValue ;
     rdfs:label "Horizontal" ;
     rdfs:comment "Horizontal orientation." ;
-    :isLabellable "true"^^xsd:boolean.
+    :isComputerVisionLabel "true"^^xsd:boolean.
 
 :Vertical rdf:type owl:NamedIndividual, :OrientationValue ;
     rdfs:label "Vertical" ;
     rdfs:comment "Vertical orientation." ;
-    :isLabellable "true"^^xsd:boolean.
+    :isComputerVisionLabel "true"^^xsd:boolean.
 
 #################################################################
 #    Classes — Drawing elements
@@ -497,7 +497,7 @@
 :DrawingElement rdf:type owl:Class;
     rdfs:comment "Element depicted on a drawing. Contained by Layout. Can be a Facade system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc.";
     rdfs:label "Drawing element";
-    :isLabellable "false"^^xsd:boolean.
+    :isComputerVisionLabel "false"^^xsd:boolean.
 
 #################################################################
 #    Classes — UC-01 extension (semantic entities, not labellable)
@@ -506,33 +506,33 @@
 :DrawingRevision rdf:type owl:Class ;
     rdfs:label "DrawingRevision" ;
     rdfs:comment "A specific revision of a DrawingSheet. Carries revision-specific metadata: code, issue date, status, and role-differentiated person attribution." ;
-    :isLabellable "false"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean .
 
 :Project rdf:type owl:Class ;
     rdfs:label "Project" ;
     rdfs:comment "A project under which DrawingSheets are grouped." ;
-    :isLabellable "false"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean .
 
 :Person rdf:type owl:Class ;
     rdfs:label "Person" ;
     rdfs:comment "A named individual associated with a DrawingRevision in some role (author, checker, approver). The role is expressed by the object property, not by subclassing." ;
-    :isLabellable "false"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean .
 
 :Organisation rdf:type owl:Class ;
     rdfs:label "Organisation" ;
     rdfs:comment "A legal entity named in a title block — client, originator, legal owner or responsible department. Modelled as a class rather than a string so that one organisation recurring across many sheets is a single individual, which is what makes cross-sheet questions answerable. Aligns to ct:Organisation (ISO 21597-1) and IfcActorSelect; note the ISO spelling differs." ;
     skos:altLabel "Organisation"@en ;
-    :isLabellable "false"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean .
 
 :StatusCode rdf:type owl:Class ;
     rdfs:label "StatusCode" ;
     rdfs:comment "Controlled-vocabulary status assigned to a DrawingRevision, e.g. IFC (Issued for Construction), IFR (Issued for Review), AFC (Approved for Construction)." ;
-    :isLabellable "false"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean .
 
 :DrawingPackage rdf:type owl:Class ;
     rdfs:label "DrawingPackage" ;
     rdfs:comment "A grouping of DrawingSheets within a Project, e.g. a volume or submission package." ;
-    :isLabellable "false"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean .
 
 #################################################################
 #    Title-block field kinds (SKOS) - the extraction profile

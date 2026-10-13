@@ -7,8 +7,8 @@ We use custom annotation properties for application-specific behaviour or pipeli
 
 Some examples:
 
-- **`isLabellable`**: A boolean we use to mark which classes can serve as labels in annotation pipelines. These classes can be surfaced in an annotation software as concepts that can be labelled by human annotators. It replaces `labellableRoot` (deprecated, [#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141)).
-- **`isOptionalLabel`**: marks a class whose label is optional, so downstream annotation tooling presents it apart from the required labels. It implies `isLabellable true` even when that is not stated: annotation properties carry no reasoning, so `scripts/validate_ontology.py` checks that no class is both an optional label and `isLabellable false`. It replaces an earlier property whose name carried a tool name (deprecated, [#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141)).
+- **`isComputerVisionLabel`**: A boolean we use to mark which classes can serve as labels in annotation pipelines. These classes can be surfaced in an annotation software as concepts that can be labelled by human annotators. It replaces `labellableRoot` (deprecated, [#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141)).
+- **`isComputerVisionOptionalLabel`**: a presentation hint: computer-vision annotation tooling presents the class apart from the required labels. It is independent of `isComputerVisionLabel` (a discipline can be an optional label picked as an attribute without being drawn as a label). Both are named for the application they serve; another application, such as tagging report documents, gets its own pair. It replaces an earlier property whose name carried a tool name (deprecated, [#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141)).
 
 
 Other annotation properties (e.g. `rdfs:label`, `rdfs:comment`) follow standard OWL usage.

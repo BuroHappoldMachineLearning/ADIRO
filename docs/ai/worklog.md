@@ -26,17 +26,17 @@ threads*, which commits do not carry.
 
 **Branch:** `feat/rename-labelling-annotations`, stacked on `fix/89-public-prose-and-guard` (PR #139, unmerged when this was written).
 
-**Changed:** `labellableRoot` → `isLabellable` and the tool-named property → `isOptionalLabel` in `src/` (all four modules that used them) and the `.display.json` files. The old properties stay declared in `aec_drawing_metadata` with `owl:deprecated true` and an `obsolete` label (ROBOT `missing_obsolete_label`), unused. `isOptionalLabel true` implies `isLabellable true`: written in both definitions, and checked by `find_label_implication_problems` in `scripts/validate_ontology.py` (blocking). The eleven discipline classes in `aec_domain_common` were optional labels with an explicit `labellableRoot false`, which contradicts the rule, so the explicit `false` was dropped (they are labellable by implication).
+**Changed:** `labellableRoot` → `isComputerVisionLabel` and the tool-named property → `isComputerVisionOptionalLabel` in `src/` (all four modules that used them), the `.display.json` files and the two visualisation files under `docs/specification/use-cases/`. The names say which application they serve; another application gets its own pair (decided by the maintainer: qualifier in the name, not a context-valued property). The old properties stay declared in `aec_drawing_metadata` with `owl:deprecated true` and an `obsolete` label (ROBOT `missing_obsolete_label`), unused. All values are unchanged, including the explicit `false` on the eleven discipline classes of `aec_domain_common`.
 
-**Compat diff:** the classifier did not look at annotation values, so the rename showed as MINOR for one module and nothing for the other three. New delta `LABELLING_CHANGED` (potentially breaking, so MAJOR): a boolean flag of the metadata namespace added, removed or changed on an existing term. All four modules now require MAJOR with no override in `config/release_overrides.json`. Spec, report schema and tests updated.
+**Compat diff:** the classifier did not look at annotation values, so the rename showed as MINOR for one module and nothing for the other three. New delta `LABELLING_CHANGED` (potentially breaking, so MAJOR): a boolean flag of the metadata namespace added, removed or changed on an existing term. All four modules require MAJOR with no override in `config/release_overrides.json`. Spec, report schema and tests updated.
 
-**Rejected:** `rdfs:subPropertyOf` between the two as the implication (no reasoner acts on annotation sub-properties, and RDFS reading would turn `isOptionalLabel false` into `isLabellable false`); modelling them as classes (a modelling change the pipeline does not expect); an override in `release_overrides.json` (the classifier now sees it).
+**Rejected:** an implication "an optional label is labellable" with a validator check (first built, then removed: the old property meant "shown as an attribute", so the eleven discipline classes are optional labels that are deliberately not labellable; the implication contradicted real data); `rdfs:subPropertyOf` between the two; a context-valued property (`labellableIn` with annotation-context individuals), judged too complex to settle now; an override in `release_overrides.json`.
 
-**Verified:** full pytest run, ttl2md tests, `validate_ontology.py`, `scripts/run_reasoning.sh` (reasoner passes; ROBOT warns resolved by the `obsolete` labels), `compat_diff.py` (MAJOR x4). **Not verified:** the annotation pipeline reading the new names and applying the implication, which has to ship with the release.
+**Verified:** full pytest run, `validate_ontology.py`, `scripts/run_reasoning.sh`, `compat_diff.py` (MAJOR x4). **Not verified:** the annotation pipeline reading the new names.
 
-**Left alone:** the two static visualisation files under `docs/specification/use-cases/` and `SS/`, which still show the old names (the guard allows the old identifier).
+**Left alone:** `SS/` (superseded, never edited).
 
-**Next step:** the pipeline switch; merge #139 first, then this PR.
+**Open:** whether `isComputerVisionOptionalLabel` is the right name for the discipline classes, which are attributes rather than labels; the pipeline switch date.
 
 ## 2026-10-13 — Public repo: internal tool name out of the prose, and a guard ([#89](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/89))
 

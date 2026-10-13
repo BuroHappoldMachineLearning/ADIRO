@@ -141,7 +141,7 @@ def test_a_version_bump_alone_is_not_a_header_change():
 
 
 def test_changing_a_labelling_flag_on_an_existing_term_is_major():
-    flag = ':A <https://w3id.org/adiro/aec_drawing_metadata#isLabellable> "%s"^^xsd:boolean .\n'
+    flag = ':A <https://w3id.org/adiro/aec_drawing_metadata#isComputerVisionLabel> "%s"^^xsd:boolean .\n'
     off, on = BASE + flag % "false", BASE + flag % "true"
     assert _deltas(off, on) == [("LABELLING_CHANGED", "https://ex.org/m#A")]
     assert cd.required_bump(_deltas(off, on)) == cd.BUMP_MAJOR

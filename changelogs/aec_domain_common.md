@@ -8,7 +8,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
 ### Changed (BREAKING)
-- **Uses the renamed labelling annotations** ([#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141)): `labellableRoot` becomes `isLabellable` and `isCVATProperty` becomes `isOptionalLabel` on every term that carried them (see `aec_drawing_metadata`). The eleven discipline classes that are optional labels (`Architectural`, `Facade` and the other disciplines) no longer carry an explicit `isLabellable false`: an optional label is labellable by implication, so a consumer that reads only the labellable flag now sees them as labellable.
+- **Uses the renamed labelling annotations** ([#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141)): `labellableRoot` becomes `isComputerVisionLabel` and `isCVATProperty` becomes `isComputerVisionOptionalLabel` on every term that carried them (see `aec_drawing_metadata`). The values are unchanged.
 
 
 ## [2.0.2] — 2026-10-13

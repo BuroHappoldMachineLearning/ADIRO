@@ -35,497 +35,497 @@
 :FacadeComponent rdf:type owl:Class;
     rdfs:label "Facade component";
     rdfs:comment "Component of a facade system; a type of drawing element";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf metadata:DrawingElement.
 
 :FacadeSystem rdf:type owl:Class;
     rdfs:label "Facade system";
     rdfs:comment "Facade system - part of support type; a type of drawing element";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf metadata:DrawingElement, [ rdf:type owl:Restriction ; owl:onProperty metadata:contains ; owl:someValuesFrom :FacadeComponent ].
 
 :LinearComponent rdf:type owl:Class;
     rdfs:label "Linear component";
     rdfs:comment "Element category - linear facade component";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeComponent.
 
 :PanelComponent rdf:type owl:Class;
     rdfs:label "Panel component";
     rdfs:comment "Element category - panel-type facade component";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeComponent.
 
 :PointComponent rdf:type owl:Class;
     rdfs:label "Point component";
     rdfs:comment "Element category - point-type facade component";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeComponent.
 
 :CavityWallSystem rdf:type owl:Class;
     rdfs:label "Cavity wall system";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeSystem.
 
 :CurtainWallSystem rdf:type owl:Class;
     rdfs:label "Curtain wall system";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeSystem.
 
 :PrecastSystem rdf:type owl:Class;
     rdfs:label "Precast system";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeSystem.
 
 :RainscreenSystem rdf:type owl:Class;
     rdfs:label "Rainscreen";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeSystem.
 
 :SemiUnitisedCurtainWall rdf:type owl:Class;
     rdfs:label "Semi Unitised Curtain Wall";
     rdfs:comment "Semi-unitised curtain wall";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :CurtainWallSystem.
 
 :StickCurtainWall rdf:type owl:Class;
     rdfs:label "Stick Curtain Wall";
     rdfs:comment "Stick curtain wall";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :CurtainWallSystem.
 
 :UnitisedCurtainWall rdf:type owl:Class;
     rdfs:label "Unitised Curtain Wall";
     rdfs:comment "Unitised curtain wall";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :CurtainWallSystem.
 
 :GRC rdf:type owl:Class;
     rdfs:label "GRC";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :PrecastSystem.
 
 :UMPC rdf:type owl:Class;
     rdfs:label "UMPC";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :PrecastSystem.
 
 :Capping rdf:type owl:Class;
     rdfs:label "Capping";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :LinearComponent.
 
 :CWFrameMember rdf:type owl:Class;
     rdfs:label "CW frame member";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :LinearComponent.
 
 :FacadeSecondaryStructure rdf:type owl:Class;
     rdfs:label "Facade secondary structure";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :LinearComponent.
 
 :Fin rdf:type owl:Class;
     rdfs:label "Fin";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :LinearComponent.
 
 :Firestop rdf:type owl:Class;
     rdfs:label "Firestop";
     rdfs:comment "Linear seal that closes a gap in a fire-rated construction, such as the joint between a facade and a floor slab, to slow the passage of fire and smoke; a type of linear component.";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :LinearComponent.
 
 :Gasket rdf:type owl:Class;
     rdfs:label "Gasket";
     rdfs:comment "Compressible strip, typically elastomeric, fitted between facade parts to seal the joint against air and water; a type of linear component.";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :LinearComponent.
 
 :Louvre rdf:type owl:Class;
     rdfs:label "Louvre";
     rdfs:comment "Fixed or adjustable slatted opening that lets air pass while keeping out rain and direct view; a type of linear component.";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :LinearComponent.
 
 :Sealant rdf:type owl:Class;
     rdfs:label "Sealant";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :LinearComponent.
 
 :WindowSystem rdf:type owl:Class;
     rdfs:label "Window system";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :LinearComponent.
 
 :BackingWall rdf:type owl:Class;
     rdfs:label "Backing wall";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :PanelComponent.
 
 :Board rdf:type owl:Class;
     rdfs:label "Board";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :PanelComponent.
 
 :FacadeCladding rdf:type owl:Class;
     rdfs:label "Facade cladding";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :PanelComponent.
 
 :Insulation rdf:type owl:Class;
     rdfs:label "Insulation";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :PanelComponent.
 
 :Membrane rdf:type owl:Class;
     rdfs:label "Membrane";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :PanelComponent.
 
 :RoofCladding rdf:type owl:Class;
     rdfs:label "Roof cladding";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :PanelComponent.
 
 :Bracket rdf:type owl:Class;
     rdfs:label "Bracket";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :PointComponent.
 
 :Fixing rdf:type owl:Class;
     rdfs:label "Fixing";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :PointComponent.
 
 :LocalisedPenetration rdf:type owl:Class;
     rdfs:label "Localised penetration";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :PointComponent.
 
 :Mullion rdf:type owl:Class;
     rdfs:label "Mullion";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :CWFrameMember.
 
 :Transom rdf:type owl:Class;
     rdfs:label "Transom";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :CWFrameMember.
 
 :Rail rdf:type owl:Class;
     rdfs:label "Rail";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeSecondaryStructure.
 
 :ShelfAngle rdf:type owl:Class;
     rdfs:label "Shelf angle";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeSecondaryStructure.
 
 :CavityBarrier rdf:type owl:Class;
     rdfs:label "Cavity barrier";
     rdfs:comment "Barrier fitted in a ventilated cavity to limit the spread of fire and smoke through the cavity; modelled here as a kind of gasket.";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Gasket.
 
 :Channel rdf:type owl:Class;
     rdfs:label "Channel";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Gasket.
 
 :Flipper rdf:type owl:Class;
     rdfs:label "Flipper";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Gasket.
 
 :HollowGasketShape rdf:type owl:Class;
     rdfs:label "Hollow gasket shape";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Gasket.
 
 :Reflvet rdf:type owl:Class;
     rdfs:label "Reflvet";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Gasket.
 
 :SolidGasketShape rdf:type owl:Class;
     rdfs:label "Solid gasket shape";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Gasket.
 
 :OGasket rdf:type owl:Class;
     rdfs:label "O-gasket";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :HollowGasketShape.
 
 :PGasket rdf:type owl:Class;
     rdfs:label "P-gasket";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :HollowGasketShape.
 
 :PushIn rdf:type owl:Class;
     rdfs:label "Push-in";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :SolidGasketShape.
 
 :SlideIn rdf:type owl:Class;
     rdfs:label "Slide-in";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :SolidGasketShape.
 
 :Wedge rdf:type owl:Class;
     rdfs:label "Wedge";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :SolidGasketShape.
 
 :ClosedState rdf:type owl:Class;
     rdfs:label "Closed state";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :CavityBarrier.
 
 :OpenState rdf:type owl:Class;
     rdfs:label "Open state";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :CavityBarrier.
 
 :Silicone rdf:type owl:Class;
     rdfs:label "Silicone";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Sealant.
 
 :DGU rdf:type owl:Class ;
     rdfs:label "DGU" ;
     rdfs:comment "Double Glazing Unit" ;
-    metadata:isLabellable "false"^^xsd:boolean ;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean ;
     rdfs:subClassOf :FacadeCladding .
 
 :Masonry rdf:type owl:Class;
     rdfs:label "Masonry";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeCladding.
 
 :PrecastConcrete rdf:type owl:Class;
     rdfs:label "Precast concrete";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeCladding.
 
 :ProfiledMetal rdf:type owl:Class;
     rdfs:label "Profiled metal";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeCladding.
 
 :SmallPanels rdf:type owl:Class;
     rdfs:label "Small panels";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeCladding.
 
 :TGU rdf:type owl:Class;
     rdfs:label "TGU";
     rdfs:comment "Triple Glazed Unit";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeCladding.
 
 :Cementboard rdf:type owl:Class;
     rdfs:label "Cementboard";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Board.
 
 :Plasterboard rdf:type owl:Class;
     rdfs:label "Plasterboard";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Board.
 
 :MineralWool rdf:type owl:Class;
     rdfs:label "Mineral wool";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Insulation.
 
 :OtherInsulation rdf:type owl:Class;
     rdfs:label "Other insulation";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Insulation.
 
 :VCL rdf:type owl:Class;
     rdfs:label "VCL (Vapour control layer)";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Insulation.
 
 :WoodFibre rdf:type owl:Class;
     rdfs:label "Wood fibre";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Insulation.
 
 :BreatherMembrane rdf:type owl:Class;
     rdfs:label "Breather";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Membrane.
 
 :EPDM rdf:type owl:Class;
     rdfs:label "EPDM";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Membrane.
 
 :WaterproofingMembrane rdf:type owl:Class;
     rdfs:label "Waterproofing";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Membrane.
 
 :Blockwork rdf:type owl:Class;
     rdfs:label "Blockwork";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :RoofCladding.
 
 :TimberCassette rdf:type owl:Class;
     rdfs:label "Timber cassette";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :RoofCladding.
 
 :SFS rdf:type owl:Class;
     rdfs:label "SFS";
     rdfs:comment "Steel Frame System";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :BackingWall.
 
 :DeadLoadBracket rdf:type owl:Class;
     rdfs:label "Dead Load Bracket";
     rdfs:comment "Dead load bracket";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Bracket.
 
 :HelpingHandBracket rdf:type owl:Class;
     rdfs:label "Helping hand";
     rdfs:comment "Helping hand bracket";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Bracket.
 
 :PrecastRestraintBracket rdf:type owl:Class;
     rdfs:label "Precast restraint";
     rdfs:comment "Precast restraint bracket";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Bracket.
 
 :CastInChannel rdf:type owl:Class;
     rdfs:label "Cast-in channel";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Fixing.
 
 :Screw rdf:type owl:Class;
     rdfs:label "Screw";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Fixing.
 
 :WeldedBolt rdf:type owl:Class;
     rdfs:label "Welded bolt";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Fixing.
 
 :CWFrameMemberProperties rdf:type owl:Class;
     rdfs:label "CW frame member properties";
     rdfs:comment "Specific properties of curtain wall frame members";
-    metadata:isLabellable "false"^^xsd:boolean.
+    metadata:isComputerVisionLabel "false"^^xsd:boolean.
 
 :GlazingProperties rdf:type owl:Class;
     rdfs:label "Glazing properties";
     rdfs:comment "Specific properties of glazing elements";
-    metadata:isLabellable "false"^^xsd:boolean.
+    metadata:isComputerVisionLabel "false"^^xsd:boolean.
 
 :FacadeShape rdf:type owl:Class;
     rdfs:label "Facade shape";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf dcommon:GeometricProperties.
 
 :FrameType rdf:type owl:Class;
     rdfs:label "Frame type";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :CWFrameMemberProperties.
 
 :GlazingRetention rdf:type owl:Class;
     rdfs:label "Glazing retention";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :CWFrameMemberProperties.
 
 :CWSystem rdf:type owl:Class;
     rdfs:label "CW system";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :CWFrameMemberProperties.
 
 :AddOn rdf:type owl:Class;
     rdfs:label "Add-on";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FrameType.
 
 :Extruded rdf:type owl:Class;
     rdfs:label "Extruded";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FrameType.
 
 :Fabricated rdf:type owl:Class;
     rdfs:label "Fabricated";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FrameType.
 
 :Capped rdf:type owl:Class;
     rdfs:label "Capped";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :GlazingRetention.
 
 :SSG rdf:type owl:Class;
     rdfs:label "SSG (Structural silicone glazing)";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :GlazingRetention.
 
 :Toggle rdf:type owl:Class;
     rdfs:label "Toggle";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :GlazingRetention.
 
 :DoubleLaminated rdf:type owl:Class;
     rdfs:label "Double laminated";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :GlazingProperties.
 
 :Laminated rdf:type owl:Class;
     rdfs:label "Laminated";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :GlazingProperties.
 
 :Monolithic rdf:type owl:Class;
     rdfs:label "Monolithic";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :GlazingProperties.
 
 :Stick rdf:type owl:Class;
     rdfs:label "Stick";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :CWSystem.
 
 :Unitised rdf:type owl:Class;
     rdfs:label "Unitised";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :CWSystem.
 
 :Curved rdf:type owl:Class;
     rdfs:label "Curved";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeShape.
 
 :Faceted rdf:type owl:Class;
     rdfs:label "Faceted";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeShape.
 
 :Planar rdf:type owl:Class;
     rdfs:label "Planar";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeShape.
 
 :SerratedSawtooth rdf:type owl:Class;
     rdfs:label "Serrated/Sawtooth";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeShape.
 
 :ZigZag rdf:type owl:Class;
     rdfs:label "Zig-zag";
-    metadata:isLabellable "false"^^xsd:boolean;
+    metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeShape.

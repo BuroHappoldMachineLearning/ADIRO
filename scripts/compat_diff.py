@@ -56,7 +56,7 @@ BUMP_RANK = {BUMP_NONE: 0, BUMP_PATCH: 1, BUMP_MINOR: 2, BUMP_MAJOR: 3}
 # Deltas that are a semantic (non-annotation) change and so warrant at least MINOR.
 _MINOR_DELTAS = {"TERM_ADDED", "RESTRICTION_LOOSENED", "RESTRICTION_REMOVED"}
 
-# Boolean flags that the metadata module defines (isLabellable, isOptionalLabel, ...) are read by the downstream annotation
+# Boolean flags that the metadata module defines (isComputerVisionLabel, isComputerVisionOptionalLabel, ...) are read by the downstream annotation
 # tooling to build its label set, so changing one on an existing term can break a consumer although no axiom changed.
 _FLAG_NS = "https://w3id.org/adiro/aec_drawing_metadata#"
 

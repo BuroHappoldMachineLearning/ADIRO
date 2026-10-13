@@ -188,24 +188,6 @@ def find_internal_names(repo_root: Path) -> list[str]:
     return findings
 
 
-_META_NS = "https://w3id.org/adiro/aec_drawing_metadata#"
-
-
-def find_label_implication_problems(graph) -> list[str]:
-    """A class marked isOptionalLabel true must not be marked isLabellable false (#141).
-
-    Both are annotation properties, so no reasoner draws "an optional label is labellable"; this check holds the data to it.
-    """
-    optional, labellable = URIRef(_META_NS + "isOptionalLabel"), URIRef(_META_NS + "isLabellable")
-    problems = []
-    for term in sorted(set(graph.subjects(optional, None)), key=str):
-        is_optional = any(str(o).lower() == "true" for o in graph.objects(term, optional))
-        says_not = any(str(o).lower() == "false" for o in graph.objects(term, labellable))
-        if is_optional and says_not:
-            problems.append(f"{term}: isOptionalLabel true implies isLabellable true, but isLabellable is false")
-    return problems
-
-
 def find_undescribed_terms(graph) -> list[str]:
     """
     ADIRO-namespace terms with no human-readable description.
@@ -358,8 +340,6 @@ def validate_ontology(ttl_file: Path) -> tuple[bool, list[str], list[str]]:
         unused_imp = find_unused_imports(graph)
         if unused_imp:
             warnings.append("owl:imports never referenced in this file: " + ", ".join(unused_imp))
-
-        errors.extend(find_label_implication_problems(graph))
 
         undescribed = find_undescribed_terms(graph)
         if undescribed:

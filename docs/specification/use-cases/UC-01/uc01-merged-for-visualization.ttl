@@ -51,13 +51,13 @@
     rdfs:label "example image"@en ;
     rdfs:comment "Links a class or concept to an example image illustrating it."@en .
 
-:isOptionalLabel rdf:type owl:AnnotationProperty ;
-    rdfs:label "isOptionalLabel" ;
+:isComputerVisionOptionalLabel rdf:type owl:AnnotationProperty ;
+    rdfs:label "isComputerVisionOptionalLabel" ;
     rdfs:comment "Presentation hint for downstream annotation tooling: when true, the label should be displayed on the trailing side of the tool's label panel rather than the default leading side." ;
     rdfs:range xsd:boolean .
 
-:isLabellable rdf:type owl:AnnotationProperty ;
-    rdfs:label "isLabellable" ;
+:isComputerVisionLabel rdf:type owl:AnnotationProperty ;
+    rdfs:label "isComputerVisionLabel" ;
     rdfs:comment "When true, this class can be used as a label by annotators (solid contour in diagram). When false, non-labellable (dashed contour)." ;
     rdfs:range xsd:boolean .
 
@@ -100,7 +100,7 @@
 :MetadataContainer rdf:type owl:Class ;
     rdfs:label "MetadataContainer" ;
     rdfs:comment "Supporting visual region on a drawing sheet (titleblock, legend, etc.). Renamed from :Metadata to avoid confusion with semantic metadata properties (drawingIdentifier, drawingTitle, etc.) on DrawingSheet. Also known as 'Metadata' in earlier versions." ;
-    :isLabellable "false"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean .
 
 :Titleblock rdf:type owl:Class ;
     rdfs:subClassOf :MetadataContainer ;
@@ -108,33 +108,33 @@
     rdfs:comment "Titleblock containing visual information about the drawing (project name, drawing title, drawing number, etc.)." ;
     :exampleImage <img/aec_drawing_ontology/titleblock_01.png> ;
     :exampleImage <img/aec_drawing_ontology/titleblock_02.png> ;
-    :isLabellable "true"^^xsd:boolean .
+    :isComputerVisionLabel "true"^^xsd:boolean .
 
 :RevisionTable rdf:type owl:Class ;
     rdfs:subClassOf :MetadataContainer ;
     rdfs:label "Revision table" ;
-    :isLabellable "true"^^xsd:boolean .
+    :isComputerVisionLabel "true"^^xsd:boolean .
 
 :Legend rdf:type owl:Class ;
     rdfs:subClassOf :MetadataContainer ;
     rdfs:label "Legend" ;
     rdfs:comment "A legend containing mapping information between symbols and a text signifier." ;
-    :isLabellable "true"^^xsd:boolean .
+    :isComputerVisionLabel "true"^^xsd:boolean .
 
 :Note rdf:type owl:Class ;
     rdfs:subClassOf :MetadataContainer ;
     rdfs:label "Note" ;
-    :isLabellable "true"^^xsd:boolean .
+    :isComputerVisionLabel "true"^^xsd:boolean .
 
 :TextualNote rdf:type owl:Class ;
     rdfs:subClassOf :Note ;
     rdfs:label "Text" ;
-    :isLabellable "true"^^xsd:boolean .
+    :isComputerVisionLabel "true"^^xsd:boolean .
 
 :Image rdf:type owl:Class ;
     rdfs:subClassOf :Note ;
     rdfs:label "Image" ;
-    :isLabellable "true"^^xsd:boolean .
+    :isComputerVisionLabel "true"^^xsd:boolean .
 
 
 ###  DrawingSheet — the top-level searchable unit (UC-01 "Drawing")
@@ -148,7 +148,7 @@
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass :Layout ] ;
     rdfs:label "Drawing Sheet" ;
     rdfs:comment "Top-level container for a drawing. Contains Layout(s). UC-01 'Drawing' maps to this class." ;
-    :isLabellable false .
+    :isComputerVisionLabel false .
 
 
 ###  Layout and LayoutContentType
@@ -159,45 +159,45 @@
         [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :LayoutContentType ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ] ;
     rdfs:label "Layout" ;
     rdfs:comment "Drawing layout — contained by DrawingSheet. Contains DrawingElement(s) and carries exactly one LayoutContentType." ;
-    :isLabellable true .
+    :isComputerVisionLabel true .
 
 :LayoutContentType rdf:type owl:Class ;
     rdfs:label "Layout content type" ;
     rdfs:comment "Type of content included in a layout. UC-01 'DrawingType' maps to this class." ;
-    :isLabellable "false"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean .
 
 :Plan rdf:type owl:Class ;
     rdfs:subClassOf :LayoutContentType ;
     rdfs:label "Plan" ;
-    :isLabellable "true"^^xsd:boolean .
+    :isComputerVisionLabel "true"^^xsd:boolean .
 
 :Section rdf:type owl:Class ;
     rdfs:subClassOf :LayoutContentType ,
         [ rdf:type owl:Restriction ; owl:onProperty :hasOrientation ; owl:onClass :OrientationValue ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ] ;
     rdfs:label "Section" ;
-    :isLabellable "true"^^xsd:boolean .
+    :isComputerVisionLabel "true"^^xsd:boolean .
 
 :Elevation rdf:type owl:Class ;
     rdfs:subClassOf :LayoutContentType ;
     rdfs:label "Elevation" ;
-    :isLabellable "true"^^xsd:boolean .
+    :isComputerVisionLabel "true"^^xsd:boolean .
 
 :Table rdf:type owl:Class ;
     rdfs:subClassOf :LayoutContentType ;
     rdfs:label "Table" ;
     rdfs:comment "UC-01 'Schedule' maps to this class." ;
-    :isLabellable "true"^^xsd:boolean .
+    :isComputerVisionLabel "true"^^xsd:boolean .
 
 :Detail rdf:type owl:Class ;
     rdfs:subClassOf :LayoutContentType ,
         [ rdf:type owl:Restriction ; owl:onProperty :hasOrientation ; owl:onClass :OrientationValue ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ] ;
     rdfs:label "Detail" ;
-    :isLabellable true .
+    :isComputerVisionLabel true .
 
 :Perspective rdf:type owl:Class ;
     rdfs:subClassOf :LayoutContentType ;
     rdfs:label "Perspective" ;
-    :isLabellable "true"^^xsd:boolean .
+    :isComputerVisionLabel "true"^^xsd:boolean .
 
 
 ###  Orientation enumeration
@@ -206,7 +206,7 @@
     rdfs:label "Orientation" ;
     rdfs:comment "Enumerated orientation values used with hasOrientation." ;
     owl:oneOf ( :Undefined :Horizontal :Vertical ) ;
-    :isLabellable "false"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean .
 
 :Undefined rdf:type owl:NamedIndividual , :OrientationValue ; rdfs:label "Undefined" .
 :Horizontal rdf:type owl:NamedIndividual , :OrientationValue ; rdfs:label "Horizontal" .
@@ -218,7 +218,7 @@
 :DrawingElement rdf:type owl:Class ;
     rdfs:label "Drawing element" ;
     rdfs:comment "Element depicted on a drawing. Contained by Layout. Populated by domain modules." ;
-    :isLabellable "false"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean .
 
 
 #################################################################
@@ -231,7 +231,7 @@
 dcommon:Discipline rdf:type owl:Class ;
     rdfs:label "Discipline" ;
     rdfs:comment "The engineering or architectural discipline associated with a drawing content type." ;
-    :isLabellable "false"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean .
 
 dcommon:hasDiscipline rdf:type owl:ObjectProperty ;
     rdfs:label "hasDiscipline" ;
@@ -249,69 +249,69 @@ dcommon:hasDiscipline rdf:type owl:ObjectProperty ;
 dcommon:Architectural rdf:type owl:Class ;
     rdfs:subClassOf dcommon:Discipline ;
     rdfs:label "Architectural" ;
-    :isLabellable "false"^^xsd:boolean ;
-    :isOptionalLabel "true"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean ;
+    :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
 dcommon:Facade rdf:type owl:Class ;
     rdfs:subClassOf dcommon:Architectural ;
     rdfs:label "Facade" ;
-    :isLabellable "false"^^xsd:boolean ;
-    :isOptionalLabel "true"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean ;
+    :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
 dcommon:FireLifeSafety rdf:type owl:Class ;
     rdfs:subClassOf dcommon:Architectural ;
     rdfs:label "Fire life safety" ;
-    :isLabellable "false"^^xsd:boolean ;
-    :isOptionalLabel "true"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean ;
+    :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
 dcommon:Structural rdf:type owl:Class ;
     rdfs:subClassOf dcommon:Discipline ;
     rdfs:label "Structural" ;
-    :isLabellable "false"^^xsd:boolean ;
-    :isOptionalLabel "true"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean ;
+    :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
 dcommon:MEP rdf:type owl:Class ;
     rdfs:subClassOf dcommon:Discipline ;
     rdfs:label "MEP" ;
     rdfs:comment "Mechanical, Electrical, and Plumbing." ;
-    :isLabellable "false"^^xsd:boolean ;
-    :isOptionalLabel "true"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean ;
+    :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
 dcommon:Mechanical rdf:type owl:Class ;
     rdfs:subClassOf dcommon:MEP ;
     rdfs:label "Mechanical" ;
-    :isLabellable "false"^^xsd:boolean ;
-    :isOptionalLabel "true"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean ;
+    :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
 dcommon:Electrical rdf:type owl:Class ;
     rdfs:subClassOf dcommon:MEP ;
     rdfs:label "Electrical" ;
-    :isLabellable "false"^^xsd:boolean ;
-    :isOptionalLabel "true"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean ;
+    :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
 dcommon:Plumbing rdf:type owl:Class ;
     rdfs:subClassOf dcommon:MEP ;
     rdfs:label "Plumbing" ;
-    :isLabellable "false"^^xsd:boolean ;
-    :isOptionalLabel "true"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean ;
+    :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
 dcommon:Lighting rdf:type owl:Class ;
     rdfs:subClassOf dcommon:Electrical ;
     rdfs:label "Lighting" ;
-    :isLabellable "false"^^xsd:boolean ;
-    :isOptionalLabel "true"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean ;
+    :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
 dcommon:Masterplan rdf:type owl:Class ;
     rdfs:subClassOf dcommon:Discipline ;
     rdfs:label "Masterplan" ;
-    :isLabellable "false"^^xsd:boolean ;
-    :isOptionalLabel "true"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean ;
+    :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
 dcommon:Civil rdf:type owl:Class ;
     rdfs:subClassOf dcommon:Discipline ;
     rdfs:label "Civil" ;
-    :isLabellable "false"^^xsd:boolean ;
-    :isOptionalLabel "true"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean ;
+    :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
 
 #################################################################
@@ -351,27 +351,27 @@ dcommon:Civil rdf:type owl:Class ;
 :DrawingRevision rdf:type owl:Class ;
     rdfs:label "Drawing Revision" ;
     rdfs:comment "A specific revision of a drawing sheet. Carries revision-specific metadata: code, issue date, status, and role-differentiated person attribution." ;
-    :isLabellable "false"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean .
 
 :Project rdf:type owl:Class ;
     rdfs:label "Project" ;
     rdfs:comment "A project under which drawing sheets are grouped." ;
-    :isLabellable "false"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean .
 
 :Person rdf:type owl:Class ;
     rdfs:label "Person" ;
     rdfs:comment "A named individual associated with a drawing revision in some role (author/checker/approver). The role is expressed by the object property, not by subclassing." ;
-    :isLabellable "false"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean .
 
 :StatusCode rdf:type owl:Class ;
     rdfs:label "Status Code" ;
     rdfs:comment "Controlled-vocabulary status assigned to a drawing revision (e.g. IFC, IFR, AFC)." ;
-    :isLabellable "false"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean .
 
 :DrawingPackage rdf:type owl:Class ;
     rdfs:label "Drawing Package" ;
     rdfs:comment "A grouping of drawing sheets within a project (e.g. a volume). UC-01 FR8 — SHOULD, lowest priority." ;
-    :isLabellable "false"^^xsd:boolean .
+    :isComputerVisionLabel "false"^^xsd:boolean .
 
 
 ###  Datatype Properties on new classes
