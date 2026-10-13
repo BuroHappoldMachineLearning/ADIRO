@@ -227,9 +227,16 @@ jobs:
   # #122. Every release names all earlier versions with owl:priorVersion, so a tool that reads only the latest release
   # can open the earlier ones. Whether those IRIs resolve can only be answered by the published site, so it is checked
   # here, after the deploy. The offline half (the archive exists, the list is complete) is in validate_ontology.py.
+  #
+  # A red run on main only notifies whoever merged, so a failure also opens ONE tracking issue (commented on while later
+  # deploys keep failing, closed by the first deploy that passes), as ontology-reasoning-on-main does (#104). It is created
+  # as the ADIRO Bot so the issue mirror sees it; GITHUB_TOKEN (issues: write, below) is the fallback.
   verify-prior-versions:
     needs: deploy
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write   # only used if the ADIRO Bot token cannot be created
 
     steps:
       - name: Checkout repository
@@ -241,4 +248,62 @@ jobs:
           version: "latest"
 
       - name: Every owl:priorVersion IRI resolves to its release
-        run: uv run --python 3.12 --no-project --with rdflib python scripts/check_prior_versions.py
+        id: check
+        continue-on-error: true   # the tracking issue below must run either way; the last step fails the job
+        run: |
+          set -o pipefail
+          uv run --python 3.12 --no-project --with rdflib python scripts/check_prior_versions.py 2>&1 | tee prior-check.txt
+
+      - name: Create ADIRO Bot token for the tracking issue
+        id: app-token
+        if: ${{ !cancelled() && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+        continue-on-error: true   # a token problem must never hide the result; GITHUB_TOKEN is the fallback below
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ADIRO_BOT_APP_ID }}
+          private-key: ${{ secrets.ADIRO_BOT_PRIVATE_KEY }}
+          permission-issues: write
+
+      - name: Track the result in one issue
+        # Only for the default branch (a manual run may name any branch), and not for a cancelled run.
+        if: ${{ !cancelled() && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token || github.token }}
+          TITLE: Published owl:priorVersion IRIs do not resolve
+          OUTCOME: ${{ steps.check.outcome }}
+        run: |
+          SHA="$(git rev-parse --short HEAD)"
+          RUN="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          num="$(gh issue list --state open --search "\"$TITLE\" in:title" --json number,title \
+                 --jq "[.[] | select(.title == \"$TITLE\")][0].number // empty")"
+          if [ "$OUTCOME" = "failure" ]; then
+            if [ -n "$num" ]; then
+              gh issue comment "$num" --body "Still failing after the deploy of \`$SHA\` ([run]($RUN))."
+            else
+              {
+                echo "After the deploy of \`$SHA\` ([run]($RUN)), at least one \`owl:priorVersion\` IRI in \`src/*.ttl\` does not resolve to the release it names."
+                echo ""
+                echo "Every release names all of its earlier versions with \`owl:priorVersion\`, so a tool that reads only the latest release (OntoCanvas does not follow a chain) can list and open them; an IRI that does not resolve breaks that. Likely causes: a version was named before its snapshot was published, a snapshot or its pyLODE page is missing from the site, or the site was slow to update (the check already retries for about two minutes). Re-run the deploy workflow once the site is up to date; to reproduce, run \`uv run python scripts/check_prior_versions.py\`."
+                echo ""
+                echo "<details open><summary>Check output</summary>"
+                echo ""
+                echo '```'
+                tail -n 40 prior-check.txt 2>/dev/null
+                echo '```'
+                echo ""
+                echo "</details>"
+                echo ""
+                echo "This issue closes itself when a later deploy passes. The convention is in \`docs/contribute/versioning/\` ([#122](https://github.com/${{ github.repository }}/issues/122))."
+              } > issue.md
+              gh issue create --title "$TITLE" --body-file issue.md
+            fi
+          elif [ -n "$num" ]; then
+            gh issue comment "$num" --body "Resolves again after the deploy of \`$SHA\` ([run]($RUN)). Closing."
+            gh issue close "$num" --reason completed
+          fi
+
+      - name: Fail the job if the check failed
+        if: ${{ steps.check.outcome == 'failure' }}
+        run: |
+          echo "::error::at least one owl:priorVersion IRI does not resolve to its release (see the check output above)"
+          exit 1
