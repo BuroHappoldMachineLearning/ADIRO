@@ -30,6 +30,7 @@ Each module declares three kinds of IRI, all on the canonical **`w3id.org/adiro`
 Ontology files must be **resolvable** — the annotation pipeline pins a specific ontology version and must dereference the exact version it was built against. Served from GitHub Pages:
 
 - **Latest:** `…/ADIRO/<module>.ttl` (e.g. `…/ADIRO/aec_drawing_metadata.ttl`).
+- **Documentation per version:** each ontology's documentation page has a version dropdown at the top, and every release is documented on its own page: the latest at `…/ontologies/<module>/`, each earlier one at `…/ontologies/<module>/<version>/`, generated from the archived release so that its terms, links and dependency diagram are that version's. A release appears in the dropdown, with its own page, on the next deploy after its snapshot is archived.
 - **Versioned:** `…/ADIRO/<module>/<semver>/<module>.ttl` (e.g. `…/ADIRO/aec_drawing_metadata/2.0.0/aec_drawing_metadata.ttl`) — published from `versions/` by the deploy workflow. Consumers that pin a version (e.g. the pipeline) reference this URL.
 
 The ontology IRIs are `w3id.org/adiro/…` **identifiers**, distinct from the physical `.ttl` fetch URLs above. Through w3id they **content-negotiate** (bare IRI → the `.ttl` for RDF clients, or the HTML docs for browsers); the raw GitHub Pages `.ttl` URLs remain the direct-fetch fallback (Pages itself can't content-negotiate).

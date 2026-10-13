@@ -72,6 +72,14 @@ or the docs in an issue, PR, changelog, release note or message: use `w3id.org/a
 physical fetch host. The one exception is the **preview of a branch** (the OntoCanvas link in the PR description, below),
 which must point at the branch's raw file, because `w3id.org/adiro` resolves to the released version. CI
   commits the regenerated `docs/` back, then runs `mkdocs build` (output `site/`, git-ignored) and deploys the artifact.
+- **A documentation page per version** ([#124](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/124)): every ontology page
+  opens with a **version dropdown** (the selected version and its status, "latest" or "<newest> available", then every version,
+  newest first). The latest page stays at `docs/ontologies/<module>.md` (generated from `src/`). Each earlier release archived
+  under `versions/<module>/<version>/` gets its own page `docs/ontologies/<module>/<version>.md` and pyLODE HTML
+  `docs/<module>/<version>/<module>.html`, generated from that snapshot, so everything on it (terms, links, OntoCanvas view, dependency
+  diagram) is that version's. They are regenerated on every run, committed with the rest of `docs/`, and kept out of the nav and the
+  search. The version logic is `scripts/ontology_versions.py` (pure, unit-tested); the generator removes the pages of a version that
+  is now the latest or no longer exists.
 - **Local preview (uses `uv`):**
   ```bash
   uv sync                                    # install deps (once)

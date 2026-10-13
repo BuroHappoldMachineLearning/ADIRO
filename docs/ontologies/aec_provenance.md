@@ -1,5 +1,12 @@
 # Aec Provenance
 
+<details class="adiro-version">
+<summary class="md-button">Version 1.0.0 (latest)</summary>
+<ul>
+<li><a href="./" class="adiro-version-current" aria-current="page">1.0.0 (latest)</a></li>
+</ul>
+</details>
+
 [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_provenance.html){ .md-button target=_blank }
 [:material-file-document-outline: TTL source](https://w3id.org/adiro/aec_provenance.ttl){ .md-button }
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/aec_provenance.html){ .md-button }

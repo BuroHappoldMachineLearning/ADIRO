@@ -50,3 +50,86 @@ img.adiro-banner {
   width: 100%;
   height: auto;
 }
+
+/* Version selector at the top of each ontology page (#124). A <details> element, so it needs no script: the
+   <summary> is the button (it carries .md-button) and the list is a panel below it. The selectors are specific
+   because Material styles every <details> as a collapsible admonition (border, icon, arrow) and we want none of that. */
+.md-typeset details.adiro-version {
+  position: relative;
+  display: inline-block;
+  margin: 0 0.5rem 0.5rem 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  overflow: visible;
+}
+.md-typeset details.adiro-version > summary {
+  list-style: none;
+  cursor: pointer;
+  margin: 0;
+  padding: 0.625em 1.5em;
+  /* Material's collapsible-block look (pale fill, heavy left border) is reset to the plain outlined .md-button. */
+  background-color: transparent;
+  border: 0.1rem solid;
+  border-radius: 0.1rem;
+}
+.md-typeset details.adiro-version > summary:hover,
+.md-typeset details.adiro-version > summary:focus {
+  background-color: var(--md-accent-fg-color);
+  border-color: var(--md-accent-fg-color);
+  color: var(--md-accent-bg-color);
+}
+.md-typeset details.adiro-version > summary::-webkit-details-marker {
+  display: none;
+}
+.md-typeset details.adiro-version > summary::before {
+  display: none;
+}
+.md-typeset details.adiro-version > summary::after {
+  content: "\25BE";
+  position: static;
+  display: inline-block;
+  width: auto;
+  height: auto;
+  margin-left: 0.6em;
+  background: none;
+  -webkit-mask: none;
+  mask: none;
+  transform: none;
+}
+.md-typeset details.adiro-version[open] > summary::after {
+  content: "\25B4";
+  transform: none;
+}
+.md-typeset details.adiro-version > ul {
+  position: absolute;
+  z-index: 5;
+  top: 100%;
+  left: 0;
+  min-width: 100%;
+  max-height: 16rem;
+  overflow-y: auto;
+  margin: 0.25rem 0 0;
+  padding: 0.25rem 0;
+  list-style: none;
+  background: var(--md-default-bg-color);
+  border: 0.05rem solid var(--md-default-fg-color--lighter);
+  border-radius: 0.1rem;
+  box-shadow: var(--md-shadow-z2);
+}
+.md-typeset details.adiro-version > ul > li {
+  margin: 0;
+  padding: 0;
+}
+.md-typeset details.adiro-version > ul a {
+  display: block;
+  padding: 0.35rem 1rem;
+  white-space: nowrap;
+}
+.md-typeset details.adiro-version > ul a:hover {
+  background: var(--md-accent-fg-color--transparent);
+}
+.md-typeset details.adiro-version > ul a.adiro-version-current {
+  font-weight: 700;
+}

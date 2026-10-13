@@ -26,6 +26,14 @@ if _TTL2MD_SRC.exists() and str(_TTL2MD_SRC) not in sys.path:
     sys.path.insert(0, str(_TTL2MD_SRC))
 import ttl2md
 from release_badges import write_release_badges
+from ontology_versions import (
+    SEMVER_RE,
+    archived_versions,
+    declared_version,
+    selector_html,
+    version_list,
+    version_page_front_matter,
+)
 
 
 def find_ttl_files(root_dir: Path) -> list[Path]:
@@ -83,7 +91,7 @@ def find_display_json_files(root_dir: Path) -> list[Path]:
     return sorted(display_json_files)
 
 
-def generate_documentation(ttl_file: Path, output_dir: Path) -> bool:
+def generate_documentation(ttl_file: Path, output_dir: Path, copy_ttl: bool = True) -> bool:
     """
     Generate HTML documentation for a TTL file using pyLODE.
     
@@ -112,10 +120,11 @@ def generate_documentation(ttl_file: Path, output_dir: Path) -> bool:
         
         print(f"  [OK] Generated: {output_file}")
         
-        # Copy the TTL file to the docs directory
-        ttl_output = output_dir / ttl_file.name
-        shutil.copy2(ttl_file, ttl_output)
-        print(f"  [OK] Copied TTL: {ttl_output}")
+        # Copy the TTL file to the docs directory (an archived release is published from versions/ already)
+        if copy_ttl:
+            ttl_output = output_dir / ttl_file.name
+            shutil.copy2(ttl_file, ttl_output)
+            print(f"  [OK] Copied TTL: {ttl_output}")
         
         return True
         
@@ -236,6 +245,33 @@ def inject_example_images(ttl_file: Path, html_file: Path) -> None:
         html = html[:table_end] + row_html + html[table_end:]
 
     html_file.write_text(html, encoding="utf-8")
+
+
+def generate_version_documentation(ttl_files: list[Path], repo_root: Path, output_dir: Path) -> int:
+    """pyLODE HTML for every earlier release of each module (#124), at ``<module>/<version>/<module>.html``.
+
+    That is next to the archived Turtle the deploy publishes at the same path, so a version's page can link to
+    its own interactive view. The newest version is documented by the module's latest page, so it gets none.
+    Returns the number of failures.
+    """
+    failures = 0
+    for ttl_file in ttl_files:
+        stem = ttl_file.stem
+        archived = archived_versions(repo_root, stem)
+        versions = version_list(archived, declared_version(ttl_file))
+        latest = versions[0] if versions else None
+        module_dir = output_dir / stem
+        if module_dir.is_dir():  # drop the pages of a version that is now the latest or no longer exists
+            for old in module_dir.iterdir():
+                if old.is_dir() and SEMVER_RE.match(old.name):
+                    shutil.rmtree(old)
+        for version in archived:
+            if version == latest:
+                continue
+            snapshot = repo_root / "versions" / stem / version / f"{stem}.ttl"
+            if not generate_documentation(snapshot, module_dir / version, copy_ttl=False):
+                failures += 1
+    return failures
 
 
 def extract_ontology_comment(ttl_file: Path) -> str:
@@ -524,7 +560,71 @@ def build_dependency_mermaid(
     return lines
 
 
-def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path) -> None:
+def _ontology_page(ttl_file: Path, ttl_files: list[Path], title: str, selected: str | None, versions: list[str]) -> str:
+    """The Markdown page of one version of one ontology (#124).
+
+    ``selected`` is the version the page documents; ``versions`` is every version of the module, newest first.
+    The newest one is the module's latest page (ontologies/<module>/), generated from ``src/``; every other is
+    an earlier-release page (ontologies/<module>/<version>/), generated from its archived snapshot, and
+    everything on it (title, term reference, links, OntoCanvas view, dependency diagram) is that version's.
+    """
+    stem = ttl_file.stem
+    earlier = bool(versions) and selected != versions[0]
+    depth = "../../" if earlier else "../"  # an earlier page sits one directory deeper than the latest
+    if earlier:
+        base = f"{W3ID_BASE_URL}/{stem}/{selected}"
+        ttl_url, html_url, ontocanvas_target = f"{base}/{stem}.ttl", f"{base}/{stem}.html", base
+        page_title = f"{title} {selected}"
+    else:
+        html_url = f"{W3ID_BASE_URL}/{stem}.html"
+        ttl_url, ontocanvas_target = f"{W3ID_BASE_URL}/{ttl_file.name}", html_url
+        page_title = title
+    ontocanvas_url = f"https://alelom.github.io/OntoCanvas/?onto={ontocanvas_target}"
+
+    # Pages live below docs/ontologies/, so relative image references (if any) resolve via the depth prefix;
+    # absolute image URLs (the ADIRO case, resolved against @base) are left untouched by ttl2md.
+    body = ttl2md.convert_file(ttl_file, title=page_title, asset_prefix=depth)
+
+    links_block = (
+        f"[![OntoCanvas]({ONTOCANVAS_ICON_URL}){{ .ontocanvas-icon }} Open in OntoCanvas]"
+        f"({ontocanvas_url}){{ .md-button target=_blank }}\n"
+        f"[:material-file-document-outline: TTL source]({ttl_url}){{ .md-button }}\n"
+        f"[:material-file-code: pyLODE HTML]({html_url}){{ .md-button }}"
+    )
+
+    # Insert the links row directly under the H1 emitted by ttl2md.
+    body_lines = body.splitlines()
+    rest = body_lines[1:]
+    while rest and rest[0] == "":
+        rest.pop(0)
+
+    # Embedded interactive OntoCanvas view of this module (full page width, kept short). Placed just after the
+    # intro and before the dependencies; the dependency diagram follows, before the first term section (## ...).
+    iframe_section = [
+        "## Interactive view",
+        "",
+        f'<iframe src="{ontocanvas_url}" title="{page_title} in OntoCanvas" '
+        'loading="lazy" style="width: 100%; height: 480px; border: 1px solid '
+        'var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>',
+        "",
+    ]
+    dep_section = [
+        "## Dependencies",
+        "",
+        "Arrows point from an ontology to the ontologies it imports; the current ontology is highlighted.",
+        "",
+        *build_dependency_mermaid(ttl_files, highlight=stem, link_prefix=depth),
+        "",
+    ]
+    insert_at = next((i for i, line in enumerate(rest) if line.startswith("## ")), len(rest))
+    rest = rest[:insert_at] + iframe_section + dep_section + rest[insert_at:]
+
+    selector = [selector_html(selected, versions), ""] if versions else []
+    page = "\n".join([body_lines[0], ""] + selector + [links_block, ""] + rest).rstrip() + "\n"
+    return (version_page_front_matter() if earlier else "") + page
+
+
+def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path, repo_root: Path | None = None) -> None:
     """Generate native Markdown pages for each ontology using ttl2md.
 
     These pages populate the "Ontologies" section of the MkDocs site: unlike the
@@ -536,6 +636,7 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path) ->
     Example images (the ``:exampleImage`` annotations) are rendered inline by
     ttl2md, reproducing the behaviour of the pyLODE HTML post-processing.
     """
+    repo_root = repo_root or output_dir.parent
     ontologies_dir = output_dir / "ontologies"
     ontologies_dir.mkdir(parents=True, exist_ok=True)
 
@@ -563,63 +664,28 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path) ->
     for ttl_file in ttl_files:
         stem = ttl_file.stem
         title = stem.replace("_", " ").title()
-        html_filename = f"{stem}.html"
-        ontocanvas_url = (
-            f"https://alelom.github.io/OntoCanvas/?onto={W3ID_BASE_URL}/{html_filename}"
-        )
 
-        # Pages live in docs/ontologies/, one level below docs/img/, so relative
-        # image references (if any) resolve via "../"; absolute image URLs (the
-        # ADIRO case, resolved against @base) are left untouched by ttl2md.
-        body = ttl2md.convert_file(ttl_file, title=title, asset_prefix="../")
-
-        links_block = (
-            f"[![OntoCanvas]({ONTOCANVAS_ICON_URL}){{ .ontocanvas-icon }} Open in OntoCanvas]"
-            f"({ontocanvas_url}){{ .md-button target=_blank }}\n"
-            f"[:material-file-document-outline: TTL source]({W3ID_BASE_URL}/{ttl_file.name}){{ .md-button }}\n"
-            f"[:material-file-code: pyLODE HTML]({W3ID_BASE_URL}/{html_filename}){{ .md-button }}"
-        )
-
-        # Insert the links row directly under the H1 emitted by ttl2md.
-        body_lines = body.splitlines()
-        rest = body_lines[1:]
-        while rest and rest[0] == "":
-            rest.pop(0)
-
-        # Insert a dependency diagram (with the current ontology highlighted)
-        # after the ontology description/metadata and before the first term
-        # section (## …).
-        # Embedded interactive OntoCanvas view of this module (full page width,
-        # kept short). Placed just after the intro and before the dependencies.
-        iframe_section = [
-            "## Interactive view",
-            "",
-            f'<iframe src="{ontocanvas_url}" title="{title} in OntoCanvas" '
-            'loading="lazy" style="width: 100%; height: 480px; border: 1px solid '
-            'var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>',
-            "",
-        ]
-        dep_section = [
-            "## Dependencies",
-            "",
-            "Arrows point from an ontology to the ontologies it imports; the "
-            "current ontology is highlighted.",
-            "",
-            *build_dependency_mermaid(ttl_files, highlight=stem, link_prefix="../"),
-            "",
-        ]
-        # Insert the interactive view, then the dependency diagram, after the
-        # ontology description and before the first term section (## …).
-        insert_at = next(
-            (i for i, line in enumerate(rest) if line.startswith("## ")), len(rest)
-        )
-        rest = rest[:insert_at] + iframe_section + dep_section + rest[insert_at:]
-
-        page = "\n".join([body_lines[0], "", links_block, ""] + rest).rstrip() + "\n"
+        # Every version of the module has its own page (#124): the latest at ontologies/<module>/ (from src/)
+        # and each earlier release at ontologies/<module>/<version>/ (from its archived snapshot).
+        archived = archived_versions(repo_root, stem)
+        versions = version_list(archived, declared_version(ttl_file))
+        latest = versions[0] if versions else None
 
         page_file = ontologies_dir / f"{stem}.md"
-        page_file.write_text(page, encoding="utf-8")
+        page_file.write_text(_ontology_page(ttl_file, ttl_files, title, latest, versions), encoding="utf-8")
         print(f"  [OK] Generated ontology page: {page_file}")
+
+        version_dir = ontologies_dir / stem
+        shutil.rmtree(version_dir, ignore_errors=True)  # a version that is now the latest, or no longer exists
+        for version in archived:
+            if version == latest:
+                continue
+            snapshot = repo_root / "versions" / stem / version / f"{stem}.ttl"
+            diagram_files = [snapshot if f.stem == stem else f for f in ttl_files]  # this version's own imports
+            version_dir.mkdir(parents=True, exist_ok=True)
+            version_file = version_dir / f"{version}.md"
+            version_file.write_text(_ontology_page(snapshot, diagram_files, title, version, versions), encoding="utf-8")
+            print(f"  [OK] Generated ontology page: {version_file}")
 
         comment = extract_ontology_comment(ttl_file)
         dependencies = extract_adiro_dependencies(ttl_file)
@@ -692,13 +758,16 @@ def main():
     for ttl_file in ttl_files:
         if generate_documentation(ttl_file, output_dir):
             success_count += 1
+
+    # pyLODE HTML for each earlier release, next to its archived Turtle (#124)
+    version_failures = generate_version_documentation(ttl_files, repo_root, output_dir)
     
     # Generate index.html
     print("-" * 60)
     generate_index(ttl_files, output_dir)
 
     # Generate native Markdown ontology pages (Ontologies nav section)
-    generate_ontology_markdown_pages(ttl_files, output_dir)
+    generate_ontology_markdown_pages(ttl_files, output_dir, repo_root)
 
     # Latest-released-version JSON per module, read by the README's shields.io badges
     for badge_file in write_release_badges(repo_root, output_dir):
@@ -713,7 +782,7 @@ def main():
     print("-" * 60)
     print(f"Documentation generation complete: {success_count}/{len(ttl_files)} files processed successfully.")
     
-    if success_count < len(ttl_files):
+    if success_count < len(ttl_files) or version_failures:
         sys.exit(1)
 
 

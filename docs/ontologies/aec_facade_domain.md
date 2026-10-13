@@ -1,5 +1,14 @@
 # Aec Facade Domain
 
+<details class="adiro-version">
+<summary class="md-button">Version 2.0.1 (latest)</summary>
+<ul>
+<li><a href="./" class="adiro-version-current" aria-current="page">2.0.1 (latest)</a></li>
+<li><a href="2.0.0/">2.0.0</a></li>
+<li><a href="1.0.0/">1.0.0</a></li>
+</ul>
+</details>
+
 [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_facade_domain.html){ .md-button target=_blank }
 [:material-file-document-outline: TTL source](https://w3id.org/adiro/aec_facade_domain.ttl){ .md-button }
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/aec_facade_domain.html){ .md-button }
