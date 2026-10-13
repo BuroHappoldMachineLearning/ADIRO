@@ -36,7 +36,7 @@ threads*, which commits do not carry.
 
 **Left alone:** `SS/` (superseded, never edited).
 
-**Open:** whether `isComputerVisionOptionalLabel` is the right name for the discipline classes, which are attributes rather than labels; the pipeline switch date.
+**Decided:** `isComputerVisionOptionalLabel` is the right name for the discipline classes (maintainer): once a layout is identified it can be qualified as an architectural, engineering or other layout by picking a discipline. Recorded as the example in `usage-of-annotation-properties.md`. **Open:** the pipeline switch date.
 
 ## 2026-10-13 — Public repo: internal tool name out of the prose, and a guard ([#89](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/89))
 
