@@ -22,6 +22,20 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-13 — The Release cut PR lists the merged PRs behind the release ([#132](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/132))
+
+**Issue:** [#132](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/132). **Branch:** `feat/release-pr-merged-prs`. The maintainer asked for the Release PR to list every
+PR that goes into the release, kept current as more PRs merge while it is open.
+**Changed.** `scripts/prepare_release.py`: `merged_changes` gathers, per module, the PRs (or bare commits) that changed its ontology file since its last tagged
+release, by reusing `release_notes.collect_changes` with the range ending at `HEAD` (the release is not tagged yet), and `body` renders a "Pull requests in this
+release" section between the bump table and the checklist. A first release, or a previous release that was never tagged, says there is no list. `release-pr.yml`:
+the "Plan the next release" step gets the bot token for the `gh api` lookups. **No new update mechanism was needed:** the workflow already rebuilds the description
+from `main` and edits the PR on every push to `main`, so a PR merged while the Release PR is open appears on the next rebuild. A PR that changed several modules
+is listed under each. Docs: `release-process.md`, `AGENTS.md`. **Verified:** 117 tests (new: the section, the empty and no-list cases, the gathering, `_tag_exists`
+against a real git repo) and the real description generated from the repository today: each of the four pending modules lists
+[#123](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/123). **Not verified:** the bot's rebuilt description on GitHub (it is rebuilt on the next push to `main`
+after this merges), and the token's access to the PR lookups from the workflow. **Next step:** after the merge, open the rebuilt Release PR and check the list.
+
 ## 2026-10-13 — Release PR did not commit the README badge links ([#128](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/128))
 
 **Issue:** [#128](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/128). **Branch:** `fix/release-pr-stages-readme`. The first Release PR cut after

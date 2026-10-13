@@ -117,6 +117,8 @@ jobs:
 
       - name: Plan the next release
         id: plan
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}   # `body` looks up the PR behind each commit since the last release
         run: |
           uv run --python 3.12 --no-project python scripts/prepare_release.py plan --json > plan.json
           uv run --python 3.12 --no-project python scripts/prepare_release.py body > body.md

@@ -11,7 +11,10 @@ does the mechanical part so a reviewer only has to approve it:
                       heading, update the root CHANGELOG.md rollup, the README release-badge links and the AGENTS.md versions line
     priors            rewrite the owl:priorVersion lines of every module's header for its declared
                       version (idempotent; `apply` does this for each module it releases)
-    body              the Release PR description (Markdown) for the current plan
+    body              the Release PR description (Markdown) for the current plan, including, per module, the
+                      merged PRs that changed its ontology file since its last tagged release; it is rebuilt
+                      on every push to main, so a PR merged while the Release PR is open appears on the next
+                      rebuild
     tags              releases still to be completed: modules whose declared version has a
                       dated changelog heading (a merged release cut) but no snapshot under
                       versions/ yet. Idempotent: a release stays listed until its snapshot
@@ -31,13 +34,16 @@ bump the changes require. A module never released before keeps its declared vers
 
 import argparse
 import json
+import os
 import re
+import subprocess
 import sys
 from datetime import date as _date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import compat_diff as cd  # noqa: E402
+import release_notes as rn  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -309,8 +315,51 @@ def _delta_summary(e):
     return shown + more
 
 
-def body(entries, root=ROOT, held_entries=()):
+def _tag_exists(root, tag):
+    return subprocess.run(["git", "rev-parse", "-q", "--verify", f"refs/tags/{tag}"], cwd=root, capture_output=True).returncode == 0
+
+
+def merged_changes(root, entries, repo, collect=rn.collect_changes):
+    """{module: [(reference, text)] or None}: what changed each module's ontology file since its last tagged release.
+
+    The references are the merged PRs ('#N') behind those commits, or a short hash for a commit pushed straight to
+    main: the same list the GitHub Release notes give (release_notes.collect_changes), with the range ending at
+    HEAD (main) because the release is not tagged yet. None means there is nothing to count from: a first release,
+    or a previous release that was never tagged (the ones made before tagging began).
+    """
+    changes = {}
+    for e in entries:
+        released = e["released"]
+        if released and _tag_exists(root, f"{e['module']}-v{released}"):
+            changes[e["module"]] = collect(root, repo, e["module"], released, "HEAD")
+        else:
+            changes[e["module"]] = None
+    return changes
+
+
+def _changes_section(entries, changes, repo):
+    out = ["", "### Pull requests in this release", "",
+           "Every merged change to a module's ontology file since its last release. This description is rebuilt from `main` after "
+           "every merge, so a PR merged while this one is open appears here on the next rebuild."]
+    for e in entries:
+        items = changes.get(e["module"])
+        head = f"**`{e['module']}`** {e['released'] or 'never released'} → {e['next']}"
+        if items is None:
+            why = "this is its first release" if not e["released"] else f"its previous release ({e['released']}) was not tagged"
+            out += ["", f"{head}: _no list, because {why}._"]
+        elif not items:
+            out += ["", f"{head}: _no merged PR changed the ontology file since the last release._"]
+        else:
+            out += ["", head, ""]
+            for ref, text in items:
+                link = f"[{ref}](https://github.com/{repo}/pull/{ref[1:]})" if ref.startswith("#") else f"`{ref}`"
+                out.append(f"- {link} {text}")
+    return out
+
+
+def body(entries, root=ROOT, held_entries=(), changes=None, repo=None):
     root = Path(root)
+    repo = repo or os.environ.get("GITHUB_REPOSITORY") or "BuroHappoldMachineLearning/ADIRO"
     empty = [e["module"] for e in entries if e["changelog_empty"]]
     out = [MARKER, "## Release cut", ""]
     out.append(
@@ -334,6 +383,8 @@ def body(entries, root=ROOT, held_entries=()):
             "for these would be empty, so this PR is a draft. Add the entry to `changelogs/<module>.md` on `main`; "
             "this PR updates itself.",
         ]
+    if changes is not None:
+        out += _changes_section(entries, changes, repo)
     out += ["", "### Before merging"]
     out += [
         "- [ ] Each bump is right. It is the compat-diff **minimum** unless an override raised it. To release a larger bump, or to "
@@ -384,7 +435,9 @@ def main(argv=None):
     elif args.cmd == "apply":
         apply_plan(ROOT, entries, args.date)
     elif args.cmd == "body":
-        sys.stdout.buffer.write(body(entries, ROOT, held()).encode("utf-8"))
+        repo = os.environ.get("GITHUB_REPOSITORY") or "BuroHappoldMachineLearning/ADIRO"
+        changes = merged_changes(ROOT, entries, repo)
+        sys.stdout.buffer.write(body(entries, ROOT, held(), changes, repo).encode("utf-8"))
 
 
 if __name__ == "__main__":
