@@ -22,6 +22,16 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-13 — Public repo: internal tool name out of the prose, and a guard ([#89](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/89))
+
+**Branch:** `fix/89-public-prose-and-guard`. Steps 1 and 3 of the issue; step 2 (the rename) is open.
+
+**Changed:** the tool name is gone from `AGENTS.md`, the published design and versioning pages, the UC-01 merged visualisation file's property definition, `scripts/run_reasoning.sh`, the released changelog entries and this worklog (history kept, wording made generic). `AGENTS.md` no longer cites the internal KB article or the pipeline's rule names; it keeps the behaviour (the label text comes from the IRI local name, `rdfs:label` only for enumeration values). New `find_internal_names` in `scripts/validate_ontology.py`: a match in a hand-written file is a blocking error and shows as a "public-repo names" row in the QC comment. The names are assembled from parts so the guard's own source does not hold them. `versions/` and generated pages are not scanned. The one identifier that still carries the name is on an allow-list until it is renamed.
+
+**Not done:** step 2, renaming the published property (MAJOR for `aec_drawing_metadata` and a bump for `aec_domain_common`, deprecate-then-replace, snapshots untouched), which needs a name and the pipeline maintainers; and the generated pages and snapshots that still show the identifier.
+
+**Verified:** full pytest run (144 passed), `validate_ontology.py` clean. **Next step:** decide the replacement name; then the rename PR also empties the allow-list.
+
 ## 2026-10-13 — AGENTS.md: reviewing a pull request, and issue first then PR ([#137](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/137))
 
 **Branch:** `docs/agents-pr-review-and-issue-first`. Internal tracker item: MAN-37.
@@ -375,7 +385,7 @@ regenerated with `gh release edit`. Supersedes the ordering in the entry below.
 
 ## 2026-10-09 — Cut the backlog release (metadata 4.0.0, common_symbols 3.0.0, domain_common 2.0.1, provenance/geometry 1.0.0)
 
-- **Why:** a UC-03 consumer (CVAT import) needed `layoutTitle` and `hasScale` on `Layout`, merged on `main` but never tagged; `main` still declared `aec_drawing_metadata` 3.0.0, so two different files shared one version label. Tracked for automation in [#99](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/99); a related snapshot-deploy bug in [#100](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/100).
+- **Why:** a UC-03 consumer (an annotation-tool import) needed `layoutTitle` and `hasScale` on `Layout`, merged on `main` but never tagged; `main` still declared `aec_drawing_metadata` 3.0.0, so two different files shared one version label. Tracked for automation in [#99](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/99); a related snapshot-deploy bug in [#100](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/100).
 - **Changed:** bumped `owl:versionInfo` / `owl:versionIRI` per the compat-diff required bump (`aec_drawing_metadata` MAJOR — `isRevisionOf` removed; `aec_common_symbols` MAJOR — `appearsOn`/`isReferencedBy` removed; `aec_domain_common` PATCH — annotation-only; `aec_provenance` and `aec_geometry` first release at their declared 1.0.0); moved each `[Unreleased]` under a dated heading; updated the root `CHANGELOG.md` rollup and the versions line in `AGENTS.md`; regenerated `docs/`. `aec_facade_domain` has no pending change (required bump NONE) and is not released.
 - **Fixed:** the stale "All additive → MINOR (3.1.0)" note in `changelogs/aec_drawing_metadata.md`, which contradicted the breaking removal recorded in the same section; reworded to MAJOR 4.0.0. Removed the "baseline, not yet cut" stub from `changelogs/aec_provenance.md`.
 - **Verified:** `validate_ontology.py` clean (pre-existing warnings only), `compat_diff.py` reports every module `OK`, `pytest tests` 18 passed. The reasoner was not re-run: no axioms changed, only version strings and changelogs.
@@ -764,10 +774,10 @@ exercised. This is a docs-only change. The `aec_provenance` WIP on the other bra
 
 ### Deferred / rejected
 
-- **DATA-A-10 not ported.** It is an ABox-versioning proposal covering DVC, CVAT schemas and project datasets —
+- **DATA-A-10 not ported.** It is an ABox-versioning proposal covering DVC, annotation-tool schemas and project datasets —
   private-pipeline material, and partly superseded by RES-27. Note that `AGENTS.md` cites it as the versioning
   "rationale", which is a questionable citation now; left alone as out of scope.
-- **RES-A-13 / RES-A-17 / DATA-A-9 not ported.** Pipeline- and CVAT-internal; DATA-A-9 specifically documents how
+- **RES-A-13 / RES-A-17 / DATA-A-9 not ported.** Pipeline- and annotation-tool-internal; DATA-A-9 specifically documents how
   the private ml-pipeline parses ADIRO, which `AGENTS.md` keeps internal by design.
 - Did **not** edit `docs/design-decisions/index.md` to list the new page — awesome-pages generates that nav.
 
@@ -1152,7 +1162,7 @@ precedent is `drawingTitle` — the sheet's own title is a datatype property eve
 inside a region. Named `layoutTitle` (lowerCamelCase) per the `AGENTS.md` property convention.
 
 If what was actually wanted is a **labellable caption region** for annotators to box, that is a different term
-(`LayoutTitle` as a `MetadataContainer` subclass, with a new CVAT label) and is cheap to add alongside — say so
+(`LayoutTitle` as a `MetadataContainer` subclass, with a new annotation label) and is cheap to add alongside — say so
 and it lands in one edit.
 
 ### What changed
@@ -1227,7 +1237,7 @@ would have made it the first `tb:` term that is not an assertable string. This a
 
 ### Three things flagged rather than left to be discovered
 
-1. **A new CVAT annotation label.** `KeyPlan` carries `labellableRoot true`, and CVAT class labels derive from
+1. **A new annotation label.** `KeyPlan` carries `labellableRoot true`, and annotation class labels derive from
    the IRI local name — so the annotation label set changes. Needs coordination per KB
    [DATA-A-9](https://bhmlrnd.youtrack.cloud/articles/DATA-A-9) before annotation work assumes the old set.
 2. **This PR now touches a released module.** It was scoped to `aec_titleblock` (unreleased); `dm:` is at

@@ -23,7 +23,7 @@ Each module declares three kinds of IRI, all on the canonical **`w3id.org/adiro`
 
 - The `owl:versionIRI` **must** equal the unversioned ontology IRI + `/` + `owl:versionInfo` (enforced in CI — see [Validation](#validation)).
 - **Filenames stay unversioned** (`aec_drawing_metadata.ttl`, never `aec_drawing_metadata_v2.ttl`). Versioned copies live under `versions/` (see [Releases](#releases)).
-- **Term IRIs never carry a version** — term stability across releases is exactly what downstream consumers (e.g. the ml-drawing-data-pipeline, CVAT labels) rely on.
+- **Term IRIs never carry a version** — term stability across releases is exactly what downstream consumers (e.g. downstream pipelines and annotation labels) rely on.
 
 ### Resolvability
 
