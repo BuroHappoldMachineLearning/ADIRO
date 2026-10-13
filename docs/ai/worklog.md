@@ -22,6 +22,16 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-13 — AGENTS.md: reviewing a pull request, and issue first then PR ([#137](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/137))
+
+**Branch:** `docs/agents-pr-review-and-issue-first`. Internal tracker item: MAN-37.
+
+**Changed:** `AGENTS.md` gains "Reviewing a pull request" (in-depth review, minor/medium/major labels with an ontology-specific note, findings first, no repetition of the description or bots, public-repo disclosure rule, one review under the reviewer's account signed as the agent, `COMMENT` event) and the issue-first paragraph now says the PR that closes the issue follows. Written generically: no internal tool, client or tracker names. The `pr-review-feedback` skill still fits (it covers answering a review, the new section covers giving one), so it is unchanged.
+
+**Not done here:** the register row in the team plugin repo (`docs/intentional-duplication.md`), which is the second PR of the task.
+
+**Verified:** `mkdocs build --strict`. AGENTS.md is not published. **Next step:** the register PR.
+
 ## 2026-10-13 — How to pin a version when labelling data ([#121](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/121))
 
 **Branch:** `docs/pin-a-version-guide`.
