@@ -619,8 +619,13 @@ def _ontology_page(ttl_file: Path, ttl_files: list[Path], title: str, selected: 
     insert_at = next((i for i, line in enumerate(rest) if line.startswith("## ")), len(rest))
     rest = rest[:insert_at] + iframe_section + dep_section + rest[insert_at:]
 
-    selector = [selector_html(selected, versions), ""] if versions else []
-    page = "\n".join([body_lines[0], ""] + selector + [links_block, ""] + rest).rstrip() + "\n"
+    # One row: the version dropdown, then the three buttons. `markdown="span"` keeps the Markdown links (and their
+    # icons) working inside the wrapper while the raw <details> stays inline, so everything sits on the same line.
+    actions = ['<div class="adiro-actions" markdown="span">']
+    if versions:
+        actions.append(selector_html(selected, versions))
+    actions += [links_block, "</div>"]
+    page = "\n".join([body_lines[0], ""] + actions + [""] + rest).rstrip() + "\n"
     return (version_page_front_matter() if earlier else "") + page
 
 

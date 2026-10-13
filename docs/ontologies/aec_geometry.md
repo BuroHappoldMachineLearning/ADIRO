@@ -1,20 +1,21 @@
 # Aec Geometry
 
+<div class="adiro-actions" markdown="span">
 <details class="adiro-version">
 <summary class="md-button">Version 1.0.0 (latest)</summary>
 <ul>
 <li><a href="./" class="adiro-version-current" aria-current="page">1.0.0 (latest)</a></li>
 </ul>
 </details>
-
 [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_geometry.html){ .md-button target=_blank }
 [:material-file-document-outline: TTL source](https://w3id.org/adiro/aec_geometry.ttl){ .md-button }
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/aec_geometry.html){ .md-button }
+</div>
 
 Foundational, domain-neutral module for geometry. It records where something sits on a drawing page as a bounding box, read against an explicit coordinate frame. Each box carries its own provenance and confidence. It reuses GeoSPARQL, is imported by the drawing modules, and is shared across use cases.
 
 - **IRI:** `https://w3id.org/adiro/aec_geometry`
-- **Version:** 1.0.0
+- **Versioned IRI:** `https://w3id.org/adiro/aec_geometry/1.0.0`
 - **Imports:** `aec_provenance`
 
 ## Interactive view

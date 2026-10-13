@@ -48,6 +48,8 @@ def test_the_latest_page_stays_where_it_was_and_gets_a_selector(tmp_path):
     latest = (pages / "aec_x.md").read_text(encoding="utf-8")
     assert "Version 2.0.0 (latest)" in latest and '<a href="1.0.0/">1.0.0</a>' in latest
     assert not latest.startswith("---")  # the latest page is searchable
+    assert "- **Versioned IRI:** `https://w3id.org/adiro/aec_x/2.0.0`" in latest
+    assert "**Version:**" not in latest  # the versioned IRI carries the version
     assert "# Aec X\n" in latest and "Thing A, as of 2.0.0." in latest
     assert not (pages / "aec_x" / "2.0.0.md").exists()  # the version the latest page documents gets no duplicate
 
@@ -57,6 +59,10 @@ def test_an_earlier_release_gets_its_own_page_that_is_wholly_that_version(tmp_pa
     earlier = (pages / "aec_x" / "1.0.0.md").read_text(encoding="utf-8")
     assert earlier.startswith("---\nsearch:\n  exclude: true\n---\n")
     assert "# Aec X 1.0.0\n" in earlier
+    assert "- **Versioned IRI:** `https://w3id.org/adiro/aec_x/1.0.0`" in earlier and "**Version:**" not in earlier
+    # the dropdown and the three buttons are one row: a single wrapper holds the selector, then the buttons
+    row = earlier[earlier.index('<div class="adiro-actions" markdown="span">'):earlier.index("</div>")]
+    assert row.index('<details class="adiro-version">') < row.index("Open in OntoCanvas") < row.index("TTL source") < row.index("pyLODE HTML")
     assert "Version 1.0.0 (2.0.0 available)" in earlier and '<a href="../">2.0.0 (latest)</a>' in earlier
     assert "Thing A, as of 1.0.0." in earlier and "as of 2.0.0" not in earlier  # the terms are that version's
     assert "https://w3id.org/adiro/aec_x/1.0.0/aec_x.ttl" in earlier  # TTL source: the version IRI

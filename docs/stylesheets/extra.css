@@ -51,6 +51,25 @@ img.adiro-banner {
   height: auto;
 }
 
+/* The version selector and the three buttons under an ontology page's title share one row (#124). */
+.md-typeset .adiro-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+.md-typeset .adiro-actions .md-button,
+.md-typeset .adiro-actions details.adiro-version {
+  margin: 0;
+}
+/* The content column is only about 690px wide, so the four buttons use a tighter padding and a slightly smaller
+   text than a lone .md-button to fit on one row (they still wrap on a narrow screen). */
+.md-typeset .adiro-actions .md-button {
+  padding: 0.5em 0.9em;
+  font-size: 0.66rem;
+}
+
 /* Version selector at the top of each ontology page (#124). A <details> element, so it needs no script: the
    <summary> is the button (it carries .md-button) and the list is a panel below it. The selectors are specific
    because Material styles every <details> as a collapsible admonition (border, icon, arrow) and we want none of that. */
@@ -68,7 +87,8 @@ img.adiro-banner {
   list-style: none;
   cursor: pointer;
   margin: 0;
-  padding: 0.625em 1.5em;
+  padding: 0.5em 0.9em;
+  font-size: 0.66rem;
   /* Material's collapsible-block look (pale fill, heavy left border) is reset to the plain outlined .md-button. */
   background-color: transparent;
   border: 0.1rem solid;

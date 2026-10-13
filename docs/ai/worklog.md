@@ -35,7 +35,10 @@ page for one version (latest from `src/`; each earlier release from its archived
 version's title, TTL/pyLODE/OntoCanvas links on its `w3id.org/adiro/<module>/<version>` IRI, term reference and dependency diagram), stale pages are
 removed, and `generate_version_documentation` writes pyLODE HTML per earlier release to `docs/<module>/<version>/<module>.html` (next to the archived
 Turtle). `docs/stylesheets/extra.css`: the dropdown, styled as an outlined `.md-button`. Eight earlier-release pages were generated (`aec_drawing_metadata` 2.0.0 and 3.0.0, and the 1.0.0 and 2.0.0 of `aec_common_symbols`, `aec_domain_common`, `aec_facade_domain`). `AGENTS.md` and the
-versioning docs describe it.
+versioning docs describe it. Follow-up at the maintainer's request: the dropdown shares **one row** with the three existing buttons (a
+`div.adiro-actions` wrapper in Markdown span mode, so the icons and links still work; tighter padding, 0.66 rem text and a 0.4 rem gap so four buttons fit
+the ~690 px content column, measured at 668 px; they still wrap on a narrow screen), and the metadata bullets show **Versioned IRI** instead of **Version**
+(`ttl2md` renders the versioned IRI when the ontology declares one and keeps the bare version as the fallback, with a test; `ttl2md`'s own 30 tests pass).
 
 **Decisions.** The version the latest page documents gets no duplicate page; a cut whose snapshot is not taken yet is the latest. Version pages are left
 out of the nav, the ontologies index and the search. Links are relative so they work under any base path. Pure logic lives in its own module because the
