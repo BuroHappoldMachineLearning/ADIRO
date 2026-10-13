@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+
+## [4.0.1] — 2026-10-13
+
 ### Added
 - The ontology header now names every earlier published release with `owl:priorVersion` (2.0.0 and 3.0.0), so a tool that reads only the latest release can list and open the earlier ones ([#122](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/122)). No term changes.
 
