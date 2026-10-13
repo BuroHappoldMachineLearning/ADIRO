@@ -68,9 +68,22 @@ def test_version_and_imports_rendered():
             owl:imports <http://www.w3.org/2004/02/skos/core> .
         """
     )
-    assert "- **Version:** 2.1.0" in md
+    assert "- **Version:** 2.1.0" in md  # no owl:versionIRI: the bare version is shown
     assert "- **Imports:**" in md
     assert "`<" not in md  # imports rendered as CURIE/local name, never raw IRI
+
+
+def test_versioned_iri_replaces_the_bare_version():
+    md = to_md(
+        """
+        <https://example.org/onto> a owl:Ontology ;
+            owl:versionIRI <https://example.org/onto/2.1.0> ;
+            owl:versionInfo "2.1.0" .
+        """
+    )
+    assert "- **IRI:** `https://example.org/onto`" in md
+    assert "- **Versioned IRI:** `https://example.org/onto/2.1.0`" in md
+    assert "**Version:**" not in md
 
 
 # --------------------------------------------------------------------------

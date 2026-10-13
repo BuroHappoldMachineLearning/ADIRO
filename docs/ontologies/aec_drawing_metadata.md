@@ -1,13 +1,23 @@
 # Aec Drawing Metadata
 
+<div class="adiro-actions" markdown="span">
+<details class="adiro-version">
+<summary class="md-button">Version 4.0.0 (latest)</summary>
+<ul>
+<li><a href="./" class="adiro-version-current" aria-current="page">4.0.0 (latest)</a></li>
+<li><a href="3.0.0/">3.0.0</a></li>
+<li><a href="2.0.0/">2.0.0</a></li>
+</ul>
+</details>
 [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_drawing_metadata.html){ .md-button target=_blank }
 [:material-file-document-outline: TTL source](https://w3id.org/adiro/aec_drawing_metadata.ttl){ .md-button }
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/aec_drawing_metadata.html){ .md-button }
+</div>
 
 The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance and geometry modules, and the discipline modules build on it.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata`
-- **Version:** 4.0.0
+- **Versioned IRI:** `https://w3id.org/adiro/aec_drawing_metadata/4.0.0`
 - **Imports:** `aec_geometry`, `aec_provenance`
 
 ## Interactive view

@@ -1,0 +1,3143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AEC Drawing Metadata Ontology</title>
+    <style>
+        #pylode {
+            position: fixed;
+            top: 205px;
+            left: -150px;
+            font-size: small;
+            transform: rotate(-90deg);
+            color: grey;
+        }
+        #pylode a {
+            font-size: 1.5em;
+            font-weight: bold;
+            text-decoration: none;
+            color: #005A9C;
+        }
+        #pylode a:hover {
+            color: #333;
+        }
+        #pylode #p {
+            color: #329545;
+        }
+        #pylode #y {
+            color: #f9cb33;
+        }
+        #pylode #version {
+            font-size: 1.0em;
+        }
+
+        #profile {
+            font-style: italic;
+            font-size: 1.25em;
+            color: darkred!important;
+        }
+
+        .cardinality {
+            font-style: italic;
+            color: #aa00aa;
+        }
+
+        dl {
+            /*border: 1px solid navy;*/
+            /*padding:5px;*/
+        }
+
+        dt {
+            font-weight: bold;
+            padding: 0;
+        }
+
+        dd {
+            margin-bottom: 10px;
+            padding-top: 7px;
+        }
+
+        #metadata ul,
+        #classes ul {
+            list-style-type: none;
+        }
+
+        #metadata ul li,
+        #classes ul li {
+            margin-left: -40px;
+        }
+
+        ul.hlist {
+            list-style-type: none;
+            border: 1px solid navy;
+            padding:5px;
+            background-color: #F4FFFF;
+        }
+
+        ul.hierarchy {
+            border: 1px solid navy;
+            padding: 5px 25px 5px 25px;
+            background-color: #F4FFFF;
+        }
+
+
+        ul.hlist li {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        .entity {
+            border: 1px solid navy;
+            margin:5px 0 5px 0;
+            padding: 5px;
+        }
+
+        .entity th {
+            width: 150px;
+            vertical-align: top;
+        }
+
+        .entity th,
+        .entity td {
+            padding-bottom: 20px;
+        }
+
+        .entity table th {
+            text-align: left;
+        }
+
+        section#overview img {
+            max-width: 1000px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            text-align: left
+        }
+        h1, h2, h3 {
+            color: #005A9C; background: white
+        }
+        h1 {
+            font: 170% sans-serif;
+            line-height: 110%;
+        }
+        h2 {
+            font: 140% sans-serif;
+            margin-top:40px;
+        }
+        h3 {
+            font: 120% sans-serif;
+            margin-top: 20px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid navy;
+        }
+        h4 { font: bold 100% sans-serif }
+        h5 { font: italic 100% sans-serif }
+        h6 { font: small-caps 100% sans-serif }
+
+        body {
+            padding: 2em 70px 2em 70px;
+            margin: 0;
+            font-family: sans-serif;
+            color: black;
+            background: white;
+            background-position: top left;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            text-align: left;
+        }
+
+        section {
+            max-width: 1500px;
+        }
+
+        .figure {
+            margin-bottom: 20px;
+        }
+
+        :link { color: #00C; background: transparent }
+        :visited { color: #609; background: transparent }
+        a:active { color: #C00; background: transparent }
+
+        .sup-c,
+        .sup-op,
+        .sup-fp,
+        .sup-dp,
+        .sup-ap,
+        .sup-p,
+        .sup-ni,
+        .sup-con,
+        .sup-col {
+            cursor:help;
+        }
+
+        .sup-c {
+            color:orange;
+        }
+
+        .sup-op {
+            color:navy;
+        }
+
+        .sup-fp {
+            color:lightskyblue;
+        }
+
+        .sup-dp {
+            color:green;
+        }
+
+        .sup-ap {
+            color:darkred;
+        }
+
+        .sup-p {
+            color:black;
+        }
+
+        .sup-ni {
+            color:brown;
+        }
+
+        .sup-con {
+            color:orange;
+        }
+
+        .sup-col {
+            color:darkred;
+        }
+
+        sup {
+            margin-left: -3px;
+        }
+        code {
+            font-size: large;
+            color: darkred;
+        }
+
+        /* less prominent links for properties */
+        .proplink {
+            color: #336;
+            text-decoration: none;
+        }
+
+#toc {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    height: 100%;
+    overflow-y: auto;
+    padding: 10px;
+    border: solid 1px navy;
+    font-size: small;
+    width: 180px;
+}
+#toc h3 {
+    margin-top: 5px;
+}
+
+#toc ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+#toc .first > li {
+    margin-top: 5px;
+}
+
+#toc .second,
+#toc .third {
+    padding-left: 10px;
+}
+
+#content {
+    width: calc(100% - 150px);
+}
+
+.hover_property {
+    cursor: help;
+    text-decoration: none;
+    border-bottom: dashed 1px;
+}
+
+.setclass {
+    list-style-type: none;
+}
+
+code{
+    word-wrap: break-word;
+  }
+table {
+    table-layout: fixed;
+    width: 100%;
+}
+td {
+    word-wrap: break-word;
+}
+#legend table.entity {
+    width: 25%;
+}
+	</style>
+    <link href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABhklEQVQ4jbWPzStEURjG3yQLirlGKUnKFO45Z+SjmXvnnmthQcpCoVhYmD/AwmJiI3OvZuZc2U3UlKU0/gAslMw9JgvhHxAr2fko7r0jHSsl+TgbTz2Lt5731/MASEiJW9ONml2QyX6rsGalmnT74v8BDf12hxJfpV8d1uwNKUBYszabdFv84L8B9X0rESVmmUup2fme0cVhJWaZHw4NWL1SewEAfDe6H3Dy6Ll456WEJsRZS630MwCAOI20ei5OBpxse5zcBZw8eS4uPpfIuDiCainIg9umBCU0GZzgLZ9Hn31OgoATL+CkLDGB5H1OKj4nFd/FBxUXJ0UZNb4edw/6nLyJXaj5FeCVyPLNIVmYK8TG1IwWb16L1gEACAFV90ftoT8bdOX0EeyY99gxBXZMgRz6qGb1KantAACI0UvE6F5XJqEjpsdURouI0Vt5gGOUkUNnPu7ObGIIMfNaGqDmjDRi9FZldF1lRgYzeqUyeoiY4ag5Iy3RgOYRM8+/M2bG8efsO4hGrpmJseyMAAAAAElFTkSuQmCC" rel="icon" sizes="16x16" type="image/png">
+    <link href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAC40lEQVRYhe2UT0hUQRzHp6Iss1B3VZKIDbbdfW9mnoi4f3zzjkJQeOgS0SEIb1EWBGGlLLu460zQPQM1unUIIjA6rfpm6ZAhHjoIRVQUFUlEbG+euTsdXG1d3VL3bVD4g+9h+L35fT/8fvN7ADgY9aHY5fpIvK82HO9ysu66wxWOzbkjcekKx0a2ALYA/n2AGi3a6ArFezcidziecQygNhhrcUficjP6PwBqtGijKxy/thnVBePHywYoDsFhl53GV8SEcsTx4usCMLUewTVpc23BNvEzm6Neyf1+KcG2vwqwUjgrOJq2JmHftwmkVBRGTvncFodnbI7vChO/FRznCmHsNM7aHM9Yk7Df5iqsLMw9sMNOK2g+jS4IEz0UJv4iuJZb2RltWnB4UZqH6ioGAgAAGe5vtiZhtzDx7OoRadLmeM7m6IRjhnLMW2Vx1bA5GhAmnhIcz6/xNj4Ujsky8UspwfayjDPjsF2Y6L7N8Vzx/BfP+KPg6LbgSqd8DnfJW2CnbaLhfH5ephpqygJYvQU4Z3P82TLRsDDhUTnmrSq+Y3N0Mg+Xldy/zwEAnLMWZ3pHpNExmfLs/t0dOdVcbT0JeKxUwFP2VljjqiE47Jp53LTXNxhsUZjerTByXWX6VZWRs/4bIQ2ACv+UAomgDzLCISNZxAxZKMhIDjLy1JfsaK+I+eGBUBNk5E2x8RogX/PdcDZUqieWTSh5D6nOVKqfhoycUmlHFFIyu5RXqf7AcQDISCpv/tqbMBqK883RtmpISRoxQyJKPgGn3wNk5NEigDFa6hslqV/Kj+FdBQD0bshIDlKSLlVcoWQo36UhR80BAMB73lulMn0EMpJTqD6qJiOt3mho/8GbkT2BZNgDB/V+RI0fkOrT3kRIVQbaDizJm2hdNbINBxwk5xAj3yEjuV9rZ1iIkgxixkLBA83mz8uCjLwoGwAx0vOnFSy5mtR4VTaAQvVORMnwZgSpzkrV/QmdE2tKe46+MQAAAABJRU5ErkJggg==" rel="icon" sizes="32x32" type="image/png">
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <script id="schema.org" type="application/ld+json">
+[
+  {
+    "@id": "https://w3id.org/adiro/aec_drawing_metadata",
+    "@type": [
+      "https://schema.org/DefinedTermSet"
+    ],
+    "https://schema.org/creator": [
+      {
+        "@value": "Buro Happold — Machine Learning R&D"
+      }
+    ],
+    "https://schema.org/description": [
+      {
+        "@value": "Sheet/layout/document structure for AEC drawings."
+      }
+    ],
+    "https://schema.org/license": [
+      {
+        "@id": "https://www.gnu.org/licenses/gpl-3.0.html"
+      }
+    ],
+    "https://schema.org/name": [
+      {
+        "@value": "AEC Drawing Metadata Ontology"
+      }
+    ],
+    "https://schema.org/publisher": [
+      {
+        "@value": "Buro Happold"
+      }
+    ]
+  }
+]
+	</script>
+  </head>
+  <body>
+    <div id="content">
+      <div class="section" id="metadata">
+        <h1>AEC Drawing Metadata Ontology</h1>
+        <h2>Metadata</h2>
+        <dl>
+          <div>
+            <dt>
+              <strong>IRI</strong>
+            </dt>
+            <dd>
+              <code>https://w3id.org/adiro/aec_drawing_metadata</code>
+            </dd>
+          </div>
+          <div>
+            <dt>
+              <a class="hover_property" href="http://purl.org/dc/terms/title" title="A name given to the resource. Defined in DCMI Metadata Terms">Title</a>
+            </dt>
+            <dd><p>AEC Drawing Metadata Ontology</p></dd>
+          </div>
+          <div>
+            <dt>
+              <a class="hover_property" href="http://purl.org/dc/terms/publisher" title="An entity responsible for making the resource available. Defined in DCMI Metadata Terms">Publisher</a>
+            </dt>
+            <dd><p>Buro Happold</p></dd>
+          </div>
+          <div>
+            <dt>
+              <a class="hover_property" href="http://purl.org/dc/terms/creator" title="An entity responsible for making the resource. Defined in DCMI Metadata Terms">Creator</a>
+            </dt>
+            <dd><p>Buro Happold — Machine Learning R&amp;D</p></dd>
+          </div>
+          <div>
+            <dt>
+              <a class="hover_property" href="http://purl.org/dc/terms/license" title="A legal document giving official permission to do something with the resource. Defined in DCMI Metadata Terms">License</a>
+            </dt>
+            <dd>
+              <a href="https://www.gnu.org/licenses/gpl-3.0.html">https://www.gnu.org/licenses/gpl-3.0.html</a>
+            </dd>
+          </div>
+          <div>
+            <dt>
+              <a class="hover_property" href="http://www.w3.org/2002/07/owl#versionIRI" title="The property that identifies the version IRI of an ontology. Defined in The OWL 2 Schema vocabulary (OWL 2)">Version Iri</a>
+            </dt>
+            <dd>
+              <a href="#3.0.0">https://w3id.org/adiro/aec_drawing_metadata/3.0.0</a>
+            </dd>
+          </div>
+          <div>
+            <dt>
+              <a class="hover_property" href="http://www.w3.org/2002/07/owl#versionInfo" title="The annotation property that provides version information for an ontology or another OWL construct. Defined in The OWL 2 Schema vocabulary (OWL 2)">Version Info</a>
+            </dt>
+            <dd><p>3.0.0</p></dd>
+          </div>
+          <div>
+            <dt>
+              <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+            </dt>
+            <dd><p>Sheet/layout/document structure for AEC drawings.</p></dd>
+          </div>
+        </dl>
+      </div>
+      <div class="section" id="classes">
+        <h2>Classes</h2>
+        <div class="property entity" id="MetadataContainer">
+          <h3>MetadataContainer
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#MetadataContainer</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Supporting visual region on a drawing sheet (titleblock, legend, etc.). Renamed from :Metadata to avoid confusion with semantic metadata properties on DrawingSheet.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/superClassOf" title="Inverse of RDFS' subClassOf. Defined in Ontology Documentation Profile">Super Class Of</a>
+              </th>
+              <td>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#Titleblock">Titleblock</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#RevisionTable">Revision table</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#Legend">Legend</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#Note">Note</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="Titleblock">
+          <h3>Titleblock
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#Titleblock</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#MetadataContainer">MetadataContainer</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          
+            <tr>
+              <th>
+                <a class="hover_property" href="#exampleimage" title="Links a class or concept to an example image illustrating it.">Example image</a>
+              </th>
+              <td><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_01.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_01.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_01.png" alt="Example image for Titleblock" style="max-width: 500px;">
+</div><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_02.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_02.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_02.png" alt="Example image for Titleblock" style="max-width: 500px;">
+</div><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_03.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_03.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_03.png" alt="Example image for Titleblock" style="max-width: 500px;">
+</div><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_04.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_04.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_04.png" alt="Example image for Titleblock" style="max-width: 500px;">
+</div></td>
+            </tr>
+</table>
+        </div>
+        <div class="property entity" id="RevisionTable">
+          <h3>Revision table
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#RevisionTable</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A table recording the documented change history of the drawing sheet, with columns for revision number, date, and description of each amendment.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#MetadataContainer">MetadataContainer</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          
+            <tr>
+              <th>
+                <a class="hover_property" href="#exampleimage" title="Links a class or concept to an example image illustrating it.">Example image</a>
+              </th>
+              <td><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/revision_table_01.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/revision_table_01.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/revision_table_01.png" alt="Example image for RevisionTable" style="max-width: 500px;">
+</div><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/revision_table_02.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/revision_table_02.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/revision_table_02.png" alt="Example image for RevisionTable" style="max-width: 500px;">
+</div></td>
+            </tr>
+</table>
+        </div>
+        <div class="property entity" id="Legend">
+          <h3>Legend
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#Legend</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A legend containing mapping information between symbols and a text signifier.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#MetadataContainer">MetadataContainer</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          
+            <tr>
+              <th>
+                <a class="hover_property" href="#exampleimage" title="Links a class or concept to an example image illustrating it.">Example image</a>
+              </th>
+              <td><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/legend_01.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/legend_01.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/legend_01.png" alt="Example image for Legend" style="max-width: 500px;">
+</div><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/legend_02.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/legend_02.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/legend_02.png" alt="Example image for Legend" style="max-width: 500px;">
+</div></td>
+            </tr>
+</table>
+        </div>
+        <div class="property entity" id="Note">
+          <h3>Note
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#Note</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Superclass for annotations on a drawing sheet that are not part of the drawing geometry, including textual notes and images.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#MetadataContainer">MetadataContainer</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/superClassOf" title="Inverse of RDFS' subClassOf. Defined in Ontology Documentation Profile">Super Class Of</a>
+              </th>
+              <td>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#TextualNote">Text</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#Image">Image</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="TextualNote">
+          <h3>Text
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#TextualNote</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A free-form block of text, such as numbered lists or paragraphs, containing general requirements, assumptions, or keyed notes that apply to the drawing.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Note">Note</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#refersToDrawingId">refersToDrawingId</a>
+                  <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+                </span>
+              </td>
+            </tr>
+          
+            <tr>
+              <th>
+                <a class="hover_property" href="#exampleimage" title="Links a class or concept to an example image illustrating it.">Example image</a>
+              </th>
+              <td><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/textual_note_01.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/textual_note_01.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/textual_note_01.png" alt="Example image for TextualNote" style="max-width: 500px;">
+</div><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/textual_note_02.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/textual_note_02.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/textual_note_02.png" alt="Example image for TextualNote" style="max-width: 500px;">
+</div></td>
+            </tr>
+</table>
+        </div>
+        <div class="property entity" id="Image">
+          <h3>Image
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#Image</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>An image embedded within a note region on a drawing sheet.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Note">Note</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="DrawingSheet">
+          <h3>Drawing Sheet
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#DrawingSheet</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Top-level container for a drawing. Contains Layout(s).</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
+              </th>
+              <td>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#hasLayout">hasLayout</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#hasRevision">hasRevision</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#belongsToProject">belongsToProject</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#belongsToPackage">belongsToPackage</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#drawingIdentifier">drawingIdentifier</a>
+                      <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#drawingTitle">drawingTitle</a>
+                      <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#hasScale">hasScale</a>
+                      <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#sheetSize">sheetSize</a>
+                      <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+                    </span>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#isRevisionOf">isRevisionOf</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/restriction" title="Convenience property for things that subclass owl:Restriction. Defined in Ontology Documentation Profile">Restriction</a>
+              </th>
+              <td>
+                <ul>
+                  <li>
+                    <span>
+                      <span>
+                        <span>
+                          <a href="#contains">contains</a>
+                          <sup class="sup-op" title="OWL Object Property">op</sup>
+                        </span>
+                        <span>
+                          <span class="cardinality">min</span>
+                          <span>0</span>
+                        </span><br>
+                      </span>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <span>
+                        <span>
+                          <a href="#contains">contains</a>
+                          <sup class="sup-op" title="OWL Object Property">op</sup>
+                        </span>
+                        <span>
+                          <span class="cardinality">min</span>
+                          <span>0</span>
+                        </span><br>
+                      </span>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <span>
+                        <span>
+                          <a href="#contains">contains</a>
+                          <sup class="sup-op" title="OWL Object Property">op</sup>
+                        </span>
+                        <span>
+                          <span class="cardinality">exactly</span>
+                          <span>1</span>
+                        </span><br>
+                      </span>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <span>
+                        <span>
+                          <a href="#contains">contains</a>
+                          <sup class="sup-op" title="OWL Object Property">op</sup>
+                        </span>
+                        <span>
+                          <span class="cardinality">exactly</span>
+                          <span>1</span>
+                        </span><br>
+                      </span>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <span>
+                        <span>
+                          <a href="#contains">contains</a>
+                          <sup class="sup-op" title="OWL Object Property">op</sup>
+                        </span>
+                        <span>
+                          <span class="cardinality">min</span>
+                          <span>1</span>
+                        </span><br>
+                      </span>
+                    </span>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="Layout">
+          <h3>Layout
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#Layout</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
+              </th>
+              <td>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#hasLayoutContentType">hasLayoutContentType</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#layoutIdentifier">layoutIdentifier</a>
+                      <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+                    </span>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#hasLayout">hasLayout</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/restriction" title="Convenience property for things that subclass owl:Restriction. Defined in Ontology Documentation Profile">Restriction</a>
+              </th>
+              <td>
+                <ul>
+                  <li>
+                    <span>
+                      <span>
+                        <span>
+                          <a href="#contains">contains</a>
+                          <sup class="sup-op" title="OWL Object Property">op</sup>
+                        </span>
+                        <span>
+                          <span class="cardinality">min</span>
+                          <span>0</span>
+                        </span><br>
+                      </span>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <span>
+                        <span>
+                          <a href="#hasProperty">hasProperty</a>
+                          <sup class="sup-op" title="OWL Object Property">op</sup>
+                        </span>
+                        <span>
+                          <span class="cardinality">exactly</span>
+                          <span>1</span>
+                        </span><br>
+                      </span>
+                    </span>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="Layoutcontenttype">
+          <h3>Layout content type
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#LayoutContentType</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Type of content included in a layout.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#hasLayoutContentType">hasLayoutContentType</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/superClassOf" title="Inverse of RDFS' subClassOf. Defined in Ontology Documentation Profile">Super Class Of</a>
+              </th>
+              <td>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#Plan">Plan</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#Section">Section</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#Elevation">Elevation</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#Detail">Detail</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#Table">Table</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#Perspective">Perspective</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="Plan">
+          <h3>Plan
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#Plan</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A horizontal cut through a building viewed from above, showing the arrangement of spaces, walls, doors, and openings at a given floor level.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Layoutcontenttype">Layout content type</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          
+            <tr>
+              <th>
+                <a class="hover_property" href="#exampleimage" title="Links a class or concept to an example image illustrating it.">Example image</a>
+              </th>
+              <td><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/plan_01.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/plan_01.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/plan_01.png" alt="Example image for Plan" style="max-width: 500px;">
+</div><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/plan_02.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/plan_02.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/plan_02.png" alt="Example image for Plan" style="max-width: 500px;">
+</div></td>
+            </tr>
+</table>
+        </div>
+        <div class="property entity" id="Section">
+          <h3>Section
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#Section</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Section drawing. Has a required property of orientation, which can be vertical or horizontal.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Layoutcontenttype">Layout content type</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/restriction" title="Convenience property for things that subclass owl:Restriction. Defined in Ontology Documentation Profile">Restriction</a>
+              </th>
+              <td>
+                <span>
+                  <span>
+                    <span>
+                      <a href="#hasOrientation">hasOrientation</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                    <span>
+                      <span class="cardinality">exactly</span>
+                      <span>1</span>
+                    </span><br>
+                  </span>
+                </span>
+              </td>
+            </tr>
+          
+            <tr>
+              <th>
+                <a class="hover_property" href="#exampleimage" title="Links a class or concept to an example image illustrating it.">Example image</a>
+              </th>
+              <td><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/section_01.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/section_01.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/section_01.png" alt="Example image for Section" style="max-width: 500px;">
+</div><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/section_02.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/section_02.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/section_02.png" alt="Example image for Section" style="max-width: 500px;">
+</div></td>
+            </tr>
+</table>
+        </div>
+        <div class="property entity" id="Elevation">
+          <h3>Elevation
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#Elevation</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A flat, frontal orthographic view of a building facade or interior face, showing surface appearance, window positions, and heights without revealing internal construction.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Layoutcontenttype">Layout content type</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          
+            <tr>
+              <th>
+                <a class="hover_property" href="#exampleimage" title="Links a class or concept to an example image illustrating it.">Example image</a>
+              </th>
+              <td><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/elevation_01.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/elevation_01.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/elevation_01.png" alt="Example image for Elevation" style="max-width: 500px;">
+</div><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/elevation_02.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/elevation_02.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/elevation_02.png" alt="Example image for Elevation" style="max-width: 500px;">
+</div></td>
+            </tr>
+</table>
+        </div>
+        <div class="property entity" id="Detail">
+          <h3>Detail
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#Detail</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A large-scale zoomed-in drawing of a specific construction assembly or connection, showing how individual components fit together with dense material callouts and dimensions. Can be vertical or horizontal.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Layoutcontenttype">Layout content type</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/restriction" title="Convenience property for things that subclass owl:Restriction. Defined in Ontology Documentation Profile">Restriction</a>
+              </th>
+              <td>
+                <span>
+                  <span>
+                    <span>
+                      <a href="#hasOrientation">hasOrientation</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                    <span>
+                      <span class="cardinality">exactly</span>
+                      <span>1</span>
+                    </span><br>
+                  </span>
+                </span>
+              </td>
+            </tr>
+          
+            <tr>
+              <th>
+                <a class="hover_property" href="#exampleimage" title="Links a class or concept to an example image illustrating it.">Example image</a>
+              </th>
+              <td><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/detail_01.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/detail_01.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/detail_01.png" alt="Example image for Detail" style="max-width: 500px;">
+</div><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/detail_02.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/detail_02.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/detail_02.png" alt="Example image for Detail" style="max-width: 500px;">
+</div></td>
+            </tr>
+</table>
+        </div>
+        <div class="property entity" id="Table">
+          <h3>Table
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#Table</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A table containing structured information, for example a schedule of elements.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Layoutcontenttype">Layout content type</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          
+            <tr>
+              <th>
+                <a class="hover_property" href="#exampleimage" title="Links a class or concept to an example image illustrating it.">Example image</a>
+              </th>
+              <td><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/table_01.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/table_01.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/table_01.png" alt="Example image for Table" style="max-width: 500px;">
+</div><div>
+  <a href="https://w3id.org/adiro/img/aec_drawing_ontology/table_02.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/img/aec_drawing_ontology/table_02.png</code></a><br>
+  <img src="https://w3id.org/adiro/img/aec_drawing_ontology/table_02.png" alt="Example image for Table" style="max-width: 500px;">
+</div></td>
+            </tr>
+</table>
+        </div>
+        <div class="property entity" id="Perspective">
+          <h3>Perspective
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#Perspective</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A three-dimensional pictorial view of a building or assembly showing depth and spatial relationships, used where orthographic drawings cannot convey form.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Layoutcontenttype">Layout content type</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="Orientation">
+          <h3>Orientation
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#OrientationValue</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Enumerated orientation values used with hasOrientation.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#hasOrientation">hasOrientation</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="Drawingelement">
+          <h3>Drawing element
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#DrawingElement</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Element depicted on a drawing. Contained by Layout. Can be a Facade system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc.</p></td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="DrawingRevision">
+          <h3>DrawingRevision
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#DrawingRevision</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A specific revision of a DrawingSheet. Carries revision-specific metadata: code, issue date, status, and role-differentiated person attribution.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
+              </th>
+              <td>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#isRevisionOf">isRevisionOf</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#isAuthoredBy">isAuthoredBy</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#isCheckedBy">isCheckedBy</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#isApprovedBy">isApprovedBy</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#hasStatusCode">hasStatusCode</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#revisionCode">revisionCode</a>
+                      <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#issueDate">issueDate</a>
+                      <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+                    </span>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#hasRevision">hasRevision</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="Project">
+          <h3>Project
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#Project</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A project under which DrawingSheets are grouped.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
+              </th>
+              <td>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#projectName">projectName</a>
+                      <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#projectNumber">projectNumber</a>
+                      <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+                    </span>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#belongsToProject">belongsToProject</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="Person">
+          <h3>Person
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#Person</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A named individual associated with a DrawingRevision in some role (author, checker, approver). The role is expressed by the object property, not by subclassing.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#personName">personName</a>
+                  <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
+              </th>
+              <td>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#isAuthoredBy">isAuthoredBy</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#isCheckedBy">isCheckedBy</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#isApprovedBy">isApprovedBy</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="StatusCode">
+          <h3>StatusCode
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#StatusCode</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Controlled-vocabulary status assigned to a DrawingRevision, e.g. IFC (Issued for Construction), IFR (Issued for Review), AFC (Approved for Construction).</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#statusLabel">statusLabel</a>
+                  <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#hasStatusCode">hasStatusCode</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="DrawingPackage">
+          <h3>DrawingPackage
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#DrawingPackage</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A grouping of DrawingSheets within a Project, e.g. a volume or submission package.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#packageName">packageName</a>
+                  <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#belongsToPackage">belongsToPackage</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="section" id="objectproperties">
+        <h2>Object Properties</h2>
+        <div class="property entity" id="contains">
+          <h3>contains
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#contains</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Direct containment: indicates physical containment of something within a parent thing (e.g. object in a box). Min cardinality 0 by default (can contain).</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/superPropertyOf" title="Inverse of RDFS' subPropertyOf. Defined in Ontology Documentation Profile">Super Property Of</a>
+              </th>
+              <td>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#hasLayout">hasLayout</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#hasRevision">hasRevision</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="http://www.w3.org/2002/07/owl#Thing">Thing</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="http://www.w3.org/2002/07/owl#Thing">Thing</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="hasProperty">
+          <h3>hasProperty
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#hasProperty</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Subject is characterised by a property, or quality. Used for example to indicate qualitative things like 'it is vertical' or 'it has a colour blue'.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/superPropertyOf" title="Inverse of RDFS' subPropertyOf. Defined in Ontology Documentation Profile">Super Property Of</a>
+              </th>
+              <td>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#hasLayoutContentType">hasLayoutContentType</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#hasStatusCode">hasStatusCode</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="http://www.w3.org/2002/07/owl#Thing">Thing</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="http://www.w3.org/2002/07/owl#Thing">Thing</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="hasOrientation">
+          <h3>hasOrientation
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#hasOrientation</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Orientation value for layouts where orientation is applicable.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Section">Section</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+                <span class="cardinality">or</span>
+                <span>
+                  <a href="#Detail">Detail</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Orientation">Orientation</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="hasLayout">
+          <h3>hasLayout
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#hasLayout</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Named containment: a DrawingSheet contains one or more Layouts.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subPropertyOf" title="The subject is a subproperty of a property. Defined in The RDF Schema vocabulary (RDFS)">Sub Property Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#contains">contains</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Layout">Layout</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="hasLayoutContentType">
+          <h3>hasLayoutContentType
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#hasLayoutContentType</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Named characterisation: a Layout has exactly one LayoutContentType.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subPropertyOf" title="The subject is a subproperty of a property. Defined in The RDF Schema vocabulary (RDFS)">Sub Property Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#hasProperty">hasProperty</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Layout">Layout</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Layoutcontenttype">Layout content type</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="hasRevision">
+          <h3>hasRevision
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#hasRevision</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A DrawingSheet compositionally contains its DrawingRevisions.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subPropertyOf" title="The subject is a subproperty of a property. Defined in The RDF Schema vocabulary (RDFS)">Sub Property Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#contains">contains</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingRevision">DrawingRevision</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="isRevisionOf">
+          <h3>isRevisionOf
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#isRevisionOf</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Inverse of hasRevision. Navigates from a DrawingRevision back to its DrawingSheet.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingRevision">DrawingRevision</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="belongsToProject">
+          <h3>belongsToProject
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#belongsToProject</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Associates a DrawingSheet with the Project it belongs to.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Project">Project</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="belongsToPackage">
+          <h3>belongsToPackage
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#belongsToPackage</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Associates a DrawingSheet with the DrawingPackage it belongs to.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingPackage">DrawingPackage</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="isAuthoredBy">
+          <h3>isAuthoredBy
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#isAuthoredBy</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>The Person who authored this DrawingRevision.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingRevision">DrawingRevision</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Person">Person</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="isCheckedBy">
+          <h3>isCheckedBy
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#isCheckedBy</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>The Person who checked this DrawingRevision.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingRevision">DrawingRevision</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Person">Person</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="isApprovedBy">
+          <h3>isApprovedBy
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#isApprovedBy</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>The Person who approved this DrawingRevision.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingRevision">DrawingRevision</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Person">Person</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="hasStatusCode">
+          <h3>hasStatusCode
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#hasStatusCode</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>The controlled-vocabulary StatusCode assigned to a DrawingRevision.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subPropertyOf" title="The subject is a subproperty of a property. Defined in The RDF Schema vocabulary (RDFS)">Sub Property Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#hasProperty">hasProperty</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingRevision">DrawingRevision</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#StatusCode">StatusCode</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="section" id="datatypeproperties">
+        <h2>Datatype Properties</h2>
+        <div class="property entity" id="refersToDrawingId">
+          <h3>refersToDrawingId
+            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#refersToDrawingId</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>References another Drawing by using a drawing identifier, like a drawing number.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#TextualNote">Text</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="drawingIdentifier">
+          <h3>drawingIdentifier
+            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#drawingIdentifier</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Sheet-level identifier, e.g. 'ST-201'. Also known as 'drawing number'.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="drawingTitle">
+          <h3>drawingTitle
+            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#drawingTitle</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Title of the drawing sheet.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="hasScale">
+          <h3>hasScale
+            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#hasScale</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Scale notation of the drawing sheet, e.g. '1:50'.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="sheetSize">
+          <h3>sheetSize
+            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#sheetSize</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Sheet size designation, e.g. 'A1', 'A0'.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="layoutIdentifier">
+          <h3>layoutIdentifier
+            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#layoutIdentifier</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Identifier for a Layout within its parent DrawingSheet. Also known as 'layout number'. Typically a small integer or letter ('1', '2', 'A').</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Layout">Layout</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="revisionCode">
+          <h3>revisionCode
+            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#revisionCode</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>The code identifying a specific revision, e.g. 'A', 'B', 'P01'.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingRevision">DrawingRevision</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="issueDate">
+          <h3>issueDate
+            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#issueDate</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>The date this revision was issued.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingRevision">DrawingRevision</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#date">xsd:date</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="personName">
+          <h3>personName
+            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#personName</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Name of the person.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Person">Person</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="projectName">
+          <h3>projectName
+            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#projectName</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Name of the project.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Project">Project</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="projectNumber">
+          <h3>projectNumber
+            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#projectNumber</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Project number.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Project">Project</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="packageName">
+          <h3>packageName
+            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#packageName</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Name of the drawing package.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#DrawingPackage">DrawingPackage</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="statusLabel">
+          <h3>statusLabel
+            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#statusLabel</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Display label for the status code, e.g. 'IFC', 'IFR', 'AFC'.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#StatusCode">StatusCode</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="section" id="annotationproperties">
+        <h2>Annotation Properties</h2>
+        <div class="property entity" id="exampleimage">
+          <h3>example image
+            <sup class="sup-ap" title="OWL Annotation Property">ap</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#exampleImage</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Links a class or concept to an example image illustrating it.</p></td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="isCVATProperty">
+          <h3>isCVATProperty
+            <sup class="sup-ap" title="OWL Annotation Property">ap</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#isCVATProperty</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>When true, the label is displayed on the right side of the CVAT annotation panel instead of the default left side.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#boolean">xsd:boolean</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="Labellableroot">
+          <h3>Labellable root
+            <sup class="sup-ap" title="OWL Annotation Property">ap</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#labellableRoot</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>When true, this class can be used as a label by annotators (solid contour in diagram). When false, non-labellable (dashed contour).</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#boolean">xsd:boolean</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div id="namespaces">
+        <h2>Namespaces</h2>
+        <dl>
+          <dt id=":">:</dt>
+          <dd>
+            <code>https://w3id.org/adiro/aec_drawing_metadata#</code>
+          </dd>
+          <dt id="dcterms">dcterms</dt>
+          <dd>
+            <code>http://purl.org/dc/terms/</code>
+          </dd>
+          <dt id="ns1">ns1</dt>
+          <dd>
+            <code>https://w3id.org/adiro/</code>
+          </dd>
+          <dt id="owl">owl</dt>
+          <dd>
+            <code>http://www.w3.org/2002/07/owl#</code>
+          </dd>
+          <dt id="rdf">rdf</dt>
+          <dd>
+            <code>http://www.w3.org/1999/02/22-rdf-syntax-ns#</code>
+          </dd>
+          <dt id="rdfs">rdfs</dt>
+          <dd>
+            <code>http://www.w3.org/2000/01/rdf-schema#</code>
+          </dd>
+          <dt id="xsd">xsd</dt>
+          <dd>
+            <code>http://www.w3.org/2001/XMLSchema#</code>
+          </dd>
+        </dl>
+      </div>
+      <div id="legend">
+        <h2>Legend</h2>
+        <table class="entity">
+          <tr>
+            <td>
+              <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+            </td>
+            <td>Classes</td>
+          </tr>
+          <tr>
+            <td>
+              <sup class="sup-op" title="OWL Object Property">op</sup>
+            </td>
+            <td>Object Properties</td>
+          </tr>
+          <tr>
+            <td>
+              <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+            </td>
+            <td>Datatype Properties</td>
+          </tr>
+          <tr>
+            <td>
+              <sup class="sup-ap" title="OWL Annotation Property">ap</sup>
+            </td>
+            <td>Annotation Properties</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div id="pylode">
+      <p>made by 
+        <a href="https://github.com/rdflib/pyLODE">
+          <span id="p">p</span>
+          <span id="y">y</span>
+          <span>LODE</span>
+        </a>
+        <a href="https://github.com/rdflib/pyLODE/release/3.2.3" id="version">3.2.3</a>
+        <span> with the </span>
+        <a href="https://w3id.org/profile/ontpub" id="profile">OntPub</a>
+        <span>profile</span>
+      </p>
+    </div>
+    <div id="toc">
+      <h3>Table of Contents</h3>
+      <ul class="first">
+        <li>
+          <h4>
+            <a href="#metadata">Metadata</a>
+          </h4>
+        </li>
+        <li>
+          <h4>
+            <a href="#classes">Classes</a>
+          </h4>
+          <ul class="second">
+            <li>
+              <a href="#MetadataContainer">MetadataContainer</a>
+            </li>
+            <li>
+              <a href="#Titleblock">Titleblock</a>
+            </li>
+            <li>
+              <a href="#RevisionTable">Revision table</a>
+            </li>
+            <li>
+              <a href="#Legend">Legend</a>
+            </li>
+            <li>
+              <a href="#Note">Note</a>
+            </li>
+            <li>
+              <a href="#TextualNote">Text</a>
+            </li>
+            <li>
+              <a href="#Image">Image</a>
+            </li>
+            <li>
+              <a href="#DrawingSheet">Drawing Sheet</a>
+            </li>
+            <li>
+              <a href="#Layout">Layout</a>
+            </li>
+            <li>
+              <a href="#Layoutcontenttype">Layout content type</a>
+            </li>
+            <li>
+              <a href="#Plan">Plan</a>
+            </li>
+            <li>
+              <a href="#Section">Section</a>
+            </li>
+            <li>
+              <a href="#Elevation">Elevation</a>
+            </li>
+            <li>
+              <a href="#Detail">Detail</a>
+            </li>
+            <li>
+              <a href="#Table">Table</a>
+            </li>
+            <li>
+              <a href="#Perspective">Perspective</a>
+            </li>
+            <li>
+              <a href="#Orientation">Orientation</a>
+            </li>
+            <li>
+              <a href="#Drawingelement">Drawing element</a>
+            </li>
+            <li>
+              <a href="#DrawingRevision">DrawingRevision</a>
+            </li>
+            <li>
+              <a href="#Project">Project</a>
+            </li>
+            <li>
+              <a href="#Person">Person</a>
+            </li>
+            <li>
+              <a href="#StatusCode">StatusCode</a>
+            </li>
+            <li>
+              <a href="#DrawingPackage">DrawingPackage</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <h4>
+            <a href="#objectproperties">Object Properties</a>
+          </h4>
+          <ul class="second">
+            <li>
+              <a href="#contains">contains</a>
+            </li>
+            <li>
+              <a href="#hasProperty">hasProperty</a>
+            </li>
+            <li>
+              <a href="#hasOrientation">hasOrientation</a>
+            </li>
+            <li>
+              <a href="#hasLayout">hasLayout</a>
+            </li>
+            <li>
+              <a href="#hasLayoutContentType">hasLayoutContentType</a>
+            </li>
+            <li>
+              <a href="#hasRevision">hasRevision</a>
+            </li>
+            <li>
+              <a href="#isRevisionOf">isRevisionOf</a>
+            </li>
+            <li>
+              <a href="#belongsToProject">belongsToProject</a>
+            </li>
+            <li>
+              <a href="#belongsToPackage">belongsToPackage</a>
+            </li>
+            <li>
+              <a href="#isAuthoredBy">isAuthoredBy</a>
+            </li>
+            <li>
+              <a href="#isCheckedBy">isCheckedBy</a>
+            </li>
+            <li>
+              <a href="#isApprovedBy">isApprovedBy</a>
+            </li>
+            <li>
+              <a href="#hasStatusCode">hasStatusCode</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <h4>
+            <a href="#datatypeproperties">Datatype Properties</a>
+          </h4>
+          <ul class="second">
+            <li>
+              <a href="#refersToDrawingId">refersToDrawingId</a>
+            </li>
+            <li>
+              <a href="#drawingIdentifier">drawingIdentifier</a>
+            </li>
+            <li>
+              <a href="#drawingTitle">drawingTitle</a>
+            </li>
+            <li>
+              <a href="#hasScale">hasScale</a>
+            </li>
+            <li>
+              <a href="#sheetSize">sheetSize</a>
+            </li>
+            <li>
+              <a href="#layoutIdentifier">layoutIdentifier</a>
+            </li>
+            <li>
+              <a href="#revisionCode">revisionCode</a>
+            </li>
+            <li>
+              <a href="#issueDate">issueDate</a>
+            </li>
+            <li>
+              <a href="#personName">personName</a>
+            </li>
+            <li>
+              <a href="#projectName">projectName</a>
+            </li>
+            <li>
+              <a href="#projectNumber">projectNumber</a>
+            </li>
+            <li>
+              <a href="#packageName">packageName</a>
+            </li>
+            <li>
+              <a href="#statusLabel">statusLabel</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <h4>
+            <a href="#annotationproperties">Annotation Properties</a>
+          </h4>
+          <ul class="second">
+            <li>
+              <a href="#exampleimage">example image</a>
+            </li>
+            <li>
+              <a href="#isCVATProperty">isCVATProperty</a>
+            </li>
+            <li>
+              <a href="#Labellableroot">Labellable root</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <h4>
+            <a href="#namespaces">Namespaces</a>
+          </h4>
+          <ul class="second">
+            <li>
+              <a href="#"></a>
+            </li>
+            <li>
+              <a href="#dcterms">dcterms</a>
+            </li>
+            <li>
+              <a href="#ns1">ns1</a>
+            </li>
+            <li>
+              <a href="#owl">owl</a>
+            </li>
+            <li>
+              <a href="#rdf">rdf</a>
+            </li>
+            <li>
+              <a href="#rdfs">rdfs</a>
+            </li>
+            <li>
+              <a href="#xsd">xsd</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <h4>
+            <a href="#legend">Legend</a>
+          </h4>
+          <ul class="second"></ul>
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>

@@ -457,7 +457,11 @@ class MarkdownConverter:
         meta: list[str] = []
         if doc.iri:
             meta.append(f"- **IRI:** `{doc.iri}`")
-        if doc.version_info:
+        if doc.version_iri:
+            # The versioned IRI names the release and contains its version; the bare version is the fallback
+            # for an ontology that declares no owl:versionIRI.
+            meta.append(f"- **Versioned IRI:** `{doc.version_iri}`")
+        elif doc.version_info:
             meta.append(f"- **Version:** {doc.version_info}")
         if doc.imports:
             imports_md = ", ".join(f"`{self._curie(URIRef(i))}`" for i in doc.imports)
