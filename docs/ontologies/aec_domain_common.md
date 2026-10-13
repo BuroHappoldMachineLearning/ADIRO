@@ -2,9 +2,10 @@
 
 <div class="adiro-actions" markdown="span">
 <details class="adiro-version">
-<summary class="md-button">Version 2.0.1 (latest)</summary>
+<summary class="md-button">Version 2.0.2 (latest)</summary>
 <ul>
-<li><a href="./" class="adiro-version-current" aria-current="page">2.0.1 (latest)</a></li>
+<li><a href="./" class="adiro-version-current" aria-current="page">2.0.2 (latest)</a></li>
+<li><a href="2.0.1/">2.0.1</a></li>
 <li><a href="2.0.0/">2.0.0</a></li>
 <li><a href="1.0.0/">1.0.0</a></li>
 </ul>
@@ -17,7 +18,7 @@
 Concepts shared by several engineering domains. It sits between the common symbols and the discipline-specific modules, holding abstractions that more than one domain reuses, so they are defined once.
 
 - **IRI:** `https://w3id.org/adiro/aec_domain_common`
-- **Versioned IRI:** `https://w3id.org/adiro/aec_domain_common/2.0.1`
+- **Versioned IRI:** `https://w3id.org/adiro/aec_domain_common/2.0.2`
 - **Imports:** `aec_drawing_metadata`
 
 ## Interactive view
