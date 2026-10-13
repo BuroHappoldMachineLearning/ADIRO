@@ -108,7 +108,7 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   comment with each changed module's **prospective next version** (`compat_diff.py --markdown`). Report-only;
   the gate is the warn step above.
 - **`.github/workflows/ontology-reasoning.yml`** — on PRs touching `src/**.ttl` (RES-36), runs an OWL 2 DL
-  reasoner (**HermiT**) + ROBOT `report` over the whole suite at latest and posts a sticky comment (built by `scripts/qc_comment.py`: the ROBOT report by rule with the full rows kept as a run artifact, and each module's repo-specific findings expanding inside its own table row, with no internal tracker IDs). The
+  reasoner (**HermiT**) + ROBOT `report` over the whole suite at latest and posts a sticky comment (built by `scripts/qc_comment.py`: the ROBOT report by rule with the full rows kept as a run artifact, and each module's repo-specific findings in an expandable Findings column of its own table row, with no internal tracker IDs). The
   **reasoner is a blocking gate** — a PR that makes the merged suite inconsistent / unsatisfiable / non-DL
   fails the check; ROBOT `report` stays **advisory** (warn-only). It calls `scripts/run_reasoning.sh` — the
   *same* script you run locally (below) — so CI and local match. Imports resolve offline via `src/catalog-v001.xml`.

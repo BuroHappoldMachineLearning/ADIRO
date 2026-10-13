@@ -40,7 +40,7 @@ after this merges), and the token's access to the PR lookups from the workflow. 
 
 **Issue:** [#130](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/130). **Branch:** `feat/qc-comment-table`. The maintainer asked for the `<details>` of each
 finding to sit inside the "Repo-specific checks" table, and for a review of the rest of that comment.
-**Changed.** `validate_ontology.py` `write_markdown`: a non-zero Errors or Warnings count expands in place to that module's findings (a `<details>` in the cell;
+**Changed.** `validate_ontology.py` `write_markdown`: each row has plain right-aligned Errors and Warnings counts and a separate left-aligned Findings column with one `Show` dropdown (errors, then warnings; the status icon is tied to the module name with a non-breaking space so a wide Findings cell cannot split them; the layout was checked by rendering the comment through GitHub's Markdown API and a GitHub stylesheet) (a `<details>` in the cell;
 findings are escaped, since an IRI in angle brackets would be swallowed as an HTML tag and a pipe would end the cell), and the separate "Details" block is gone.
 The undescribed-terms warning links the backlog ([#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87)) and says how to list every term.
 New `scripts/qc_comment.py` composes the whole comment (it was ~50 lines of shell in `ontology-reasoning.yml`, untestable): the ROBOT report as a count per level

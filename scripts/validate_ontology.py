@@ -386,12 +386,17 @@ def _escape_cell(text) -> str:
     return html.escape(" ".join(str(text).split()), quote=False).replace("|", "&#124;")
 
 
-def _findings_cell(items: list[str], marker: str) -> str:
-    """A table cell: the count, expandable in place to the findings (a <details> inside a cell must be on one line)."""
+def _findings_cell(errors: list[str], warnings: list[str], err_marker: str, warn_marker: str) -> str:
+    """The expandable findings of one module, errors first (a <details> inside a cell must be on one line).
+
+    It has a column of its own, left-aligned: the counts next to it are right-aligned numbers, and prose beside a
+    number in the same right-aligned cell is hard to read. Empty when the module has no findings.
+    """
+    items = [(err_marker, e) for e in errors] + [(warn_marker, w) for w in warnings]
     if not items:
-        return "0"
-    body = "<br>".join(f"{marker} {_escape_cell(item)}" for item in items)
-    return f"<details><summary>{len(items)}</summary>{body}</details>"
+        return ""
+    body = "<br>".join(f"{marker} {_escape_cell(text)}" for marker, text in items)
+    return f"<details><summary>Show</summary>{body}</details>"
 
 
 def write_markdown(results: list[tuple[str, list[str], list[str]]], out_path: Path) -> None:
@@ -401,8 +406,9 @@ def write_markdown(results: list[tuple[str, list[str], list[str]]], out_path: Pa
     Every check in this script surfaces here automatically: the table is built
     from the errors/warnings each check appends, so adding a check needs no change
     to this function or to the workflow that embeds it. See AGENTS.md, "Adding a
-    quality check". The findings of a module sit in its own row: a non-zero count
-    expands in place, so a reader never has to match a count to a list further down.
+    quality check". The findings of a module sit in its own row, in a column of
+    their own that expands in place, so a reader never has to match a count to a
+    list further down.
     """
     OK, WARN, ERR = "\u2705", "\u26a0\ufe0f", "\u26d4"
     lines = ["### \U0001f9ea Repo-specific checks (`scripts/validate_ontology.py`)", ""]
@@ -413,12 +419,13 @@ def write_markdown(results: list[tuple[str, list[str], list[str]]], out_path: Pa
         lines += [OK + " All %d module(s) pass: parse, circular-subclass, version "
                   "consistency, and term descriptions." % len(results), ""]
     else:
-        lines += ["| Module | Errors | Warnings |", "|---|--:|--:|"]
+        lines += ["| Module | Errors | Warnings | Findings |", "|---|--:|--:|:--|"]
         for name, errs, warns in results:
             mark = ERR if errs else (WARN if warns else OK)
-            lines.append("| %s `%s` | %s | %s |" % (mark, name, _findings_cell(errs, ERR), _findings_cell(warns, WARN)))
+            # a non-breaking space keeps the status icon with the module name when a wide Findings cell squeezes this column
+            lines.append("| %s&nbsp;`%s` | %d | %d | %s |" % (mark, name, len(errs), len(warns), _findings_cell(errs, warns, ERR, WARN)))
         lines += ["", "**%d error(s), %d warning(s).** Errors block; warnings are advisory. "
-                  "Expand a count to read the findings." % (total_err, total_warn), ""]
+                  "Open **Show** in a row to read its findings." % (total_err, total_warn), ""]
 
     out_path.write_text("\n".join(lines), encoding="utf-8")
 
