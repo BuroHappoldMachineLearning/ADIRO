@@ -18,7 +18,7 @@ Facade-engineering concepts and symbols, such as curtain-wall systems and glazin
 
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain`
 - **Versioned IRI:** `https://w3id.org/adiro/aec_facade_domain/2.0.1`
-- **Imports:** `aec_common_symbols`, `aec_domain_common`, `aec_drawing_metadata`
+- **Imports:** `aec_domain_common`, `aec_drawing_metadata`
 
 ## Interactive view
 
@@ -41,9 +41,7 @@ graph BT
     aec_drawing_metadata --> aec_geometry
     aec_drawing_metadata --> aec_provenance
     aec_common_symbols --> aec_drawing_metadata
-    aec_domain_common --> aec_common_symbols
     aec_domain_common --> aec_drawing_metadata
-    aec_facade_domain --> aec_common_symbols
     aec_facade_domain --> aec_domain_common
     aec_facade_domain --> aec_drawing_metadata
     click aec_provenance "../aec_provenance/" "Aec Provenance reference page"

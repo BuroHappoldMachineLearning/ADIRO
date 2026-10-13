@@ -19,9 +19,7 @@ graph BT
     aec_drawing_metadata --> aec_geometry
     aec_drawing_metadata --> aec_provenance
     aec_common_symbols --> aec_drawing_metadata
-    aec_domain_common --> aec_common_symbols
     aec_domain_common --> aec_drawing_metadata
-    aec_facade_domain --> aec_common_symbols
     aec_facade_domain --> aec_domain_common
     aec_facade_domain --> aec_drawing_metadata
     click aec_provenance "aec_provenance/" "Aec Provenance reference page"
@@ -64,12 +62,12 @@ graph BT
 
     Concepts shared by several engineering domains. It sits between the common symbols and the discipline-specific modules, holding abstractions that more than one domain reuses, so they are defined once.
 
-    *Imports: aec_common_symbols, aec_drawing_metadata*
+    *Imports: aec_drawing_metadata*
 
 -   ### [Aec Facade Domain](aec_facade_domain.md)
 
     Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbol, and domain vocabularies.
 
-    *Imports: aec_common_symbols, aec_domain_common, aec_drawing_metadata*
+    *Imports: aec_domain_common, aec_drawing_metadata*
 
 </div>

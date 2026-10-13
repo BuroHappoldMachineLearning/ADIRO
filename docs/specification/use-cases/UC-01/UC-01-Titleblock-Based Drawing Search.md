@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.5 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.6 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -338,7 +338,7 @@ The query is fully expressible, confirming that CQ-I 1 is covered by the current
 
 This section makes the placement of every UC-01 term in the existing module hierarchy explicit, per [PR #15](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/15) review point #2 (@alelom).
 
-**Module hierarchy** *(updated in [v0.5](#9-version-history))*:
+**Module hierarchy** *(updated in [v0.6](#9-version-history))*:
 
 ```
 aec_provenance                      (NEW - foundational, domain-neutral)
@@ -347,11 +347,11 @@ aec_provenance                      (NEW - foundational, domain-neutral)
                 |
                 +---- aec_drawing_metadata
                         |
-                        +---- aec_common_symbols
+                        +---- aec_common_symbols       (imports aec_drawing_metadata only)
+                        |
+                        +---- aec_domain_common        (imports aec_drawing_metadata only)
                                 |
-                                +---- aec_domain_common
-                                        |
-                                        +---- aec_facade_domain
+                                +---- aec_facade_domain   (also imports aec_drawing_metadata)
 ```
 
 **Term placement:**
@@ -396,7 +396,13 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.5 (current — draft)
+### v0.6 (current — draft)
+
+Changes from v0.5, made when the unused `owl:imports` of `aec_common_symbols` was removed from `aec_domain_common` and `aec_facade_domain` ([#134](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/134)). MINOR — suite-accuracy only, no UC-01 term changes:
+
+- **§7 module hierarchy corrected.** `aec_common_symbols` and `aec_domain_common` each import `aec_drawing_metadata` only, and `aec_facade_domain` imports `aec_drawing_metadata` and `aec_domain_common`; the earlier diagram drew a single linear chain through `aec_common_symbols`, which was never the import graph.
+
+### v0.5 (draft)
 
 Changes from v0.4, made in [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76) when the `aec_geometry` module was added ([#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90)). MINOR:
 

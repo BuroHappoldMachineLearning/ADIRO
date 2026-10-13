@@ -18,7 +18,7 @@ Concepts shared by several engineering domains. It sits between the common symbo
 
 - **IRI:** `https://w3id.org/adiro/aec_domain_common`
 - **Versioned IRI:** `https://w3id.org/adiro/aec_domain_common/2.0.1`
-- **Imports:** `aec_common_symbols`, `aec_drawing_metadata`
+- **Imports:** `aec_drawing_metadata`
 
 ## Interactive view
 
@@ -41,9 +41,7 @@ graph BT
     aec_drawing_metadata --> aec_geometry
     aec_drawing_metadata --> aec_provenance
     aec_common_symbols --> aec_drawing_metadata
-    aec_domain_common --> aec_common_symbols
     aec_domain_common --> aec_drawing_metadata
-    aec_facade_domain --> aec_common_symbols
     aec_facade_domain --> aec_domain_common
     aec_facade_domain --> aec_drawing_metadata
     click aec_provenance "../aec_provenance/" "Aec Provenance reference page"

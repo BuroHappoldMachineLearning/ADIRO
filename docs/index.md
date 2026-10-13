@@ -72,7 +72,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Concepts shared by several engineering domains. It sits between the common symbols and the discipline-specific modules, holding abstractions that more than one domain reuses, so they are defined once.
 
-    *Imports: aec_common_symbols, aec_drawing_metadata*
+    *Imports: aec_drawing_metadata*
 
     Source: [`aec_domain_common.ttl`](aec_domain_common.ttl)
 
@@ -82,7 +82,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbol, and domain vocabularies.
 
-    *Imports: aec_common_symbols, aec_domain_common, aec_drawing_metadata*
+    *Imports: aec_domain_common, aec_drawing_metadata*
 
     Source: [`aec_facade_domain.ttl`](aec_facade_domain.ttl)
 

@@ -1,6 +1,6 @@
 # UC-03: Reference Symbol Cross-Sheet Linking
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-03 · **Version:** 0.4 (reviewed & implemented — see [§8](#8-open-issues-pending-team-discussion) for resolved / deferred items, [§10](#10-version-history) for changelog)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-03 · **Version:** 0.5 (reviewed & implemented — see [§8](#8-open-issues-pending-team-discussion) for resolved / deferred items, [§10](#10-version-history) for changelog)
 
 ---
 
@@ -243,7 +243,7 @@ This demonstrates FR 5: composite labels are parsed at query time, not stored on
 
 Per the project's import hierarchy and [PR #15](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/15) review point #2 (@alelom), every UC-03 term is placed in its proper module.
 
-**Module hierarchy** *(updated in [v0.4](#10-version-history))*:
+**Module hierarchy** *(updated in [v0.5](#10-version-history))*:
 
 ```
 aec_provenance                      (NEW - foundational, domain-neutral)
@@ -252,11 +252,11 @@ aec_provenance                      (NEW - foundational, domain-neutral)
                 |
                 +---- aec_drawing_metadata
                         |
-                        +---- aec_common_symbols
+                        +---- aec_common_symbols       (imports aec_drawing_metadata only)
+                        |
+                        +---- aec_domain_common        (imports aec_drawing_metadata only)
                                 |
-                                +---- aec_domain_common
-                                        |
-                                        +---- aec_facade_domain
+                                +---- aec_facade_domain   (also imports aec_drawing_metadata)
 ```
 
 **UC-03 term placement:**
@@ -310,7 +310,13 @@ For the full design-debate reasoning behind the v0.2 modelling choices, see the 
 
 ## 10. Version History
 
-### v0.4 (current — reviewed & implemented)
+### v0.5 (current — reviewed & implemented)
+
+Changes from v0.4, made when the unused `owl:imports` of `aec_common_symbols` was removed from `aec_domain_common` and `aec_facade_domain` ([#134](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/134)). MINOR — suite-accuracy only, no UC-03 term changes:
+
+- **§7 module hierarchy corrected.** `aec_common_symbols` and `aec_domain_common` each import `aec_drawing_metadata` only, and `aec_facade_domain` imports `aec_drawing_metadata` and `aec_domain_common`; the earlier diagram drew a single linear chain through `aec_common_symbols`, which was never the import graph.
+
+### v0.4 (reviewed & implemented)
 
 Changes from v0.3, made in [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76) when the `aec_geometry` module was added ([#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90)). MINOR — suite-accuracy only, no UC-03 term change:
 

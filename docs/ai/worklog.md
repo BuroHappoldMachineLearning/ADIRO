@@ -22,6 +22,24 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-13 — Remove the unused `aec_common_symbols` import; classify import changes ([#134](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/134))
+
+**Branch:** `fix/unused-common-symbols-imports`.
+
+**Changed:**
+- `src/aec_domain_common.ttl` and `src/aec_facade_domain.ttl` no longer `owl:imports` `aec_common_symbols` (neither uses one of its terms). Nothing in the suite imports `aec_common_symbols` now.
+- `scripts/compat_diff.py`: an added or removed `owl:imports` is `IMPORTS_CHANGED` (non-breaking, PATCH). It was unclassified, so an imports-only change produced no release. Spec, report schema, versioning index and release-process updated; the old test that asserted "imports alone are no delta" is replaced.
+- Changelog `[Unreleased]` entries for both modules; generated docs regenerated (dependency diagrams, landing page).
+- Hand-written: UC-01 ORSD v0.5 → v0.6 and UC-03 ORSD v0.4 → v0.5 (§7 diagram corrected: it drew a linear chain through `aec_common_symbols` that was never the import graph; MINOR), the use-case README rows, and the import lines of the early modularization page.
+
+**Versioning:** both modules already have a pending PATCH (`owl:priorVersion`), so one cut gives 2.0.1 → 2.0.2 each; two PATCH-level changes in one release are one increment.
+
+**Verified:** full pytest run (139 passed), `validate_ontology.py` (the two unused-import warnings are gone), `mkdocs build --strict`. **Not verified:** the reasoner (`run_reasoning.sh`, left to CI), and the rendered page layout of the changed spec pages.
+
+**Left alone:** `docs/aec_drawing_metadata.html` regenerated with only pyLODE ordering noise, so not committed.
+
+**Next step:** merge before Release PR #127 is merged, so the change rides in the same cut.
+
 ## 2026-10-13 — The Release cut PR lists the merged PRs behind the release ([#132](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/132))
 
 **Issue:** [#132](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/132). **Branch:** `feat/release-pr-merged-prs`. The maintainer asked for the Release PR to list every

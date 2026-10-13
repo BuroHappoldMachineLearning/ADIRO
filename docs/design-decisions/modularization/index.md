@@ -47,7 +47,7 @@ The first version of ADIRO followed these modules, to which we progressively wil
 - Structural properties: `:DeadLoad`, `:Restraint`
 - Structural components: `:StructuralComponent`, `:LinearStructuralComponent`, `:PanelStructuralComponent`, `:StructuralMember`, `:Beam`, `:Column`, `:ChordBracing`, `:Cable`, `:Slab`, `:Wall`, `:Upstand`
 
-**Imports**: Core, Drawing Metadata, Common Symbols
+**Imports**: Core, Drawing Metadata
 
 ### 5. Facade Domain Ontology (`aec_facade_domain.ttl`)
 **Namespace**: `https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#`
@@ -60,7 +60,7 @@ The first version of ADIRO followed these modules, to which we progressively wil
 - Facade property classes: `:CWFrameMemberProperties`, `:GlazingProperties`, `:FacadeShape`, `:FrameType`, `:GlazingRetention`, `:CWSystem`
 - Facade function subclasses: `:Aesthetic`, `:Airtightness`, `:FireCompartmentation`, `:Thermal`, `:Vision`, `:Waterproofing`
 
-**Imports**: Core, Drawing Metadata, Common Symbols, Domain-common
+**Imports**: Core, Drawing Metadata, Domain-common
 
 ## Import Hierarchy
 
@@ -70,11 +70,12 @@ Core (no imports)
 Drawing Metadata (imports Core)
   ↓
 Common Symbols (imports Core + Drawing Metadata)
+Domain-common (imports Core + Drawing Metadata)
   ↓
-Domain-common (imports Core + Drawing Metadata + Common Symbols)
-  ↓
-Facade Domain (imports Core + Drawing Metadata + Common Symbols + Domain-common)
+Facade Domain (imports Core + Drawing Metadata + Domain-common)
 ```
+
+Domain-common and Facade Domain do not import Common Symbols: neither uses one of its terms. The current import graph is in the [ontologies index](../../ontologies/index.md).
 
 ## Key Design Decisions
 

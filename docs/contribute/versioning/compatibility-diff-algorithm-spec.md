@@ -86,12 +86,13 @@ Detect the following delta records:
 - `RESTRICTION_TIGHTENED`
 - `RESTRICTION_LOOSENED`
 - `ANNOTATION_CHANGED`
-- `ONTOLOGY_HEADER_CHANGED` (an annotation on the `owl:Ontology` header changed: its label, description, `owl:priorVersion`, ...; `owl:versionIRI`, `owl:versionInfo` and `owl:imports` are not compared)
+- `ONTOLOGY_HEADER_CHANGED` (an annotation on the `owl:Ontology` header changed: its label, description, `owl:priorVersion`, ...; `owl:versionIRI`, `owl:versionInfo` and `owl:imports` are not compared here)
+- `IMPORTS_CHANGED` (an `owl:imports` was added or removed on the `owl:Ontology` header)
 
 ## Step 5 — Severity Classification
 Default mapping:
 - Non-breaking:
-  - `TERM_ADDED`, `ANNOTATION_CHANGED`, `ONTOLOGY_HEADER_CHANGED`, `RESTRICTION_LOOSENED`
+  - `TERM_ADDED`, `ANNOTATION_CHANGED`, `ONTOLOGY_HEADER_CHANGED`, `IMPORTS_CHANGED`, `RESTRICTION_LOOSENED`
 - Potentially-breaking:
   - `DOMAIN_CHANGED`, `RANGE_CHANGED`, `SUPERCLASS_CHANGED`, `RESTRICTION_ADDED`, `RESTRICTION_TIGHTENED`
 - Breaking:
