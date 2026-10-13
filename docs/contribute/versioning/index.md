@@ -48,6 +48,22 @@ The ontology IRIs are `w3id.org/adiro/…` **identifiers**, distinct from the ph
 
 w3id is a **host-independent** front door: it redirects *to* github.io today, so if hosting ever moves only the `.htaccess` changes and pinned `w3id` URLs keep working. **The ontology's own IRIs are still `github.io`** — repointing them to `w3id.org/adiro` is a separate, deliberate identity change (deferred; [RES-69](https://bhmlrnd.youtrack.cloud/issue/RES-69)). Until then, consumers may pin **either** front door for a given version.
 
+## Pinning a version when you label data
+
+Labelled data keeps its meaning only if it records **which release** of a module it was labelled against, because the unversioned IRI always resolves to the latest release, which may later change.
+
+**A term has one IRI, with no version in it** (`https://w3id.org/adiro/aec_drawing_metadata#Titleblock`), so there is no "pinned term IRI" to copy. The version is pinned at the **module** level, by recording the versioned IRI next to the data.
+
+| You are | Use | Where to get it |
+|---|---|---|
+| **Labelling or storing data** that must stay interpretable | the term IRI, **plus** the module's versioned IRI (`https://w3id.org/adiro/<module>/<semver>`) recorded once per dataset, export or graph | the **Versioned IRI** bullet at the top of the module's documentation page (every earlier release has its own page, reached from the version dropdown) |
+| **Referring to a concept** in general (a query, a mapping, a document) | the term IRI alone | the term's entry in the module's documentation page |
+| **Importing** a module into another ontology | the unversioned module IRI (see [Imports](#imports)) | the **IRI** bullet at the top of the module's documentation page |
+
+The versioned IRI of a release is immutable and resolves to that release's Turtle file (`https://w3id.org/adiro/<module>/<semver>`), so it is also what to give a tool that must fetch exactly the vocabulary the data was labelled with. The release notes of each GitHub Release name the module and its version, and a module's `owl:priorVersion` lines list every earlier release.
+
+When data is labelled against more than one module, record one versioned IRI per module.
+
 ## Bump rules (SemVer, per module)
 
 The bump for a module is decided by classifying its change against **that module's last released version**, per the [compatibility-diff spec](compatibility-diff-algorithm-spec.md):
