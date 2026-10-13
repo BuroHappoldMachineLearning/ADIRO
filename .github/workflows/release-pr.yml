@@ -152,7 +152,7 @@ jobs:
           # Fail fast, before pushing, if the bot's own output is invalid.
           uv run --python 3.12 --no-project python scripts/validate_ontology.py
           uv run --python 3.12 --no-project python scripts/compat_diff.py --enforce
-          git add -A src changelogs CHANGELOG.md AGENTS.md config/release_overrides.json
+          git add -A src changelogs CHANGELOG.md README.md AGENTS.md config/release_overrides.json
           git commit -m "release: ${{ steps.plan.outputs.title }}"
           git push --force origin "$RELEASE_BRANCH"
 

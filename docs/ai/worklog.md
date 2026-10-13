@@ -22,6 +22,18 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-13 — Release PR did not commit the README badge links ([#128](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/128))
+
+**Issue:** [#128](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/128). **Branch:** `fix/release-pr-stages-readme`. The first Release PR cut after
+the README badges existed ([#127](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/127)) failed `validate`: `test_each_badge_links_to_the_release_page_of_the_declared_version`.
+Cause: `prepare_release.py apply` bumps the README badge links, but `release-pr.yml` staged `src changelogs CHANGELOG.md AGENTS.md config/release_overrides.json`
+only, so `README.md` was changed in the bot's working tree and never committed; the PR shipped new versions with the old links. It surfaced now because the
+badge links are new and the repository tests only recently began to run on PRs ([#120](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/120)).
+**Changed:** `README.md` added to the `git add` line, and `tests/test_release_pr_workflow.py` fails when any file `apply_plan` changes is not covered by that
+line (it failed on exactly `README.md` before the fix). **Verified:** the new test (red before, green after) and the full suite (111 passed). **Not verified:**
+the bot's regenerated Release PR on GitHub (it is rebuilt on the next push to `main` after this merges). **Next step:** merge; check that #127 is rebuilt with the
+README change and its `validate` passes; then merge the Release PR.
+
 ## 2026-10-13 — Version dropdown and a documentation page per ontology version ([#124](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/124))
 
 **Issue:** [#124](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/124). **Branch:** `feat/versioned-ontology-docs` (a separate PR from
