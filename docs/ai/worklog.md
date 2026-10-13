@@ -42,7 +42,10 @@ the ~690 px content column, measured at 668 px; they still wrap on a narrow scre
 
 **Decisions.** The version the latest page documents gets no duplicate page; a cut whose snapshot is not taken yet is the latest. Version pages are left
 out of the nav, the ontologies index and the search. Links are relative so they work under any base path. Pure logic lives in its own module because the
-CI test job has no pyLODE (the page-generation test stubs it). **Rejected:** whole-site versioning (`mike`), because modules version independently.
+CI test job has no pyLODE (the page-generation test stubs it). An earlier release's pyLODE HTML is generated once and then kept: the release never changes, and pyLODE does not
+order some output stably (two runs on the same file, even with the same `PYTHONHASHSEED`, can swap two links), so regenerating would add noise to every deploy
+commit; `generate_docs.py --refresh-versions` regenerates them (found when rebasing: three pages differed by one swapped pair of links). **Rejected:**
+whole-site versioning (`mike`), because modules version independently.
 
 **Verified.** Tests (generation, stale removal, nav/index, the selector, pyLODE calls); `mkdocs build --strict`; the selector HTML survives Markdown intact;
 no earlier-version page is in the search index; screenshots (Chrome headless) of the latest page, an earlier page, and the dropdown open, light scheme.

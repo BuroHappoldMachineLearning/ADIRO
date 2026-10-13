@@ -108,3 +108,26 @@ def test_a_failing_pyLODE_run_is_counted(tmp_path, monkeypatch):
     repo = make_repo(tmp_path, "2.0.0", ["1.0.0", "2.0.0"])
     monkeypatch.setattr(gd, "generate_documentation", lambda ttl, out, copy_ttl=True: False)
     assert gd.generate_version_documentation([repo / "src" / "aec_x.ttl"], repo, repo / "docs") == 1
+
+
+def test_an_existing_pyLODE_page_of_an_archived_release_is_kept_not_regenerated(tmp_path, monkeypatch):
+    # an archived release never changes and pyLODE can swap two links between runs, so regenerating only adds noise
+    repo = make_repo(tmp_path, "2.0.0", ["1.0.0", "2.0.0"])
+    existing = repo / "docs" / "aec_x" / "1.0.0" / "aec_x.html"
+    existing.parent.mkdir(parents=True)
+    existing.write_text("committed page", encoding="utf-8")
+    calls = []
+    monkeypatch.setattr(gd, "generate_documentation", lambda ttl, out, copy_ttl=True: calls.append(out) or True)
+    assert gd.generate_version_documentation([repo / "src" / "aec_x.ttl"], repo, repo / "docs") == 0
+    assert calls == [] and existing.read_text(encoding="utf-8") == "committed page"
+
+
+def test_the_refresh_flag_regenerates_existing_pyLODE_pages(tmp_path, monkeypatch):
+    repo = make_repo(tmp_path, "2.0.0", ["1.0.0", "2.0.0"])
+    existing = repo / "docs" / "aec_x" / "1.0.0" / "aec_x.html"
+    existing.parent.mkdir(parents=True)
+    existing.write_text("committed page", encoding="utf-8")
+    calls = []
+    monkeypatch.setattr(gd, "generate_documentation", lambda ttl, out, copy_ttl=True: calls.append(out) or True)
+    gd.generate_version_documentation([repo / "src" / "aec_x.ttl"], repo, repo / "docs", refresh=True)
+    assert calls == [repo / "docs" / "aec_x" / "1.0.0"]

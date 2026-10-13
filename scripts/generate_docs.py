@@ -247,12 +247,16 @@ def inject_example_images(ttl_file: Path, html_file: Path) -> None:
     html_file.write_text(html, encoding="utf-8")
 
 
-def generate_version_documentation(ttl_files: list[Path], repo_root: Path, output_dir: Path) -> int:
+def generate_version_documentation(ttl_files: list[Path], repo_root: Path, output_dir: Path, refresh: bool = False) -> int:
     """pyLODE HTML for every earlier release of each module (#124), at ``<module>/<version>/<module>.html``.
 
     That is next to the archived Turtle the deploy publishes at the same path, so a version's page can link to
     its own interactive view. The newest version is documented by the module's latest page, so it gets none.
-    Returns the number of failures.
+
+    An archived release never changes, and pyLODE does not order some of its output stably (two runs on the same
+    file can swap two links), so a page that is already there is kept rather than regenerated: regenerating would
+    only add noise to every deploy commit. ``refresh`` regenerates them anyway (``generate_docs.py --refresh-versions``,
+    for example after a pyLODE upgrade). Returns the number of failures.
     """
     failures = 0
     for ttl_file in ttl_files:
@@ -261,12 +265,13 @@ def generate_version_documentation(ttl_files: list[Path], repo_root: Path, outpu
         versions = version_list(archived, declared_version(ttl_file))
         latest = versions[0] if versions else None
         module_dir = output_dir / stem
+        needed = {v for v in archived if v != latest}
         if module_dir.is_dir():  # drop the pages of a version that is now the latest or no longer exists
             for old in module_dir.iterdir():
-                if old.is_dir() and SEMVER_RE.match(old.name):
+                if old.is_dir() and SEMVER_RE.match(old.name) and old.name not in needed:
                     shutil.rmtree(old)
-        for version in archived:
-            if version == latest:
+        for version in sorted(needed):
+            if (module_dir / version / f"{stem}.html").is_file() and not refresh:
                 continue
             snapshot = repo_root / "versions" / stem / version / f"{stem}.ttl"
             if not generate_documentation(snapshot, module_dir / version, copy_ttl=False):
@@ -765,7 +770,7 @@ def main():
             success_count += 1
 
     # pyLODE HTML for each earlier release, next to its archived Turtle (#124)
-    version_failures = generate_version_documentation(ttl_files, repo_root, output_dir)
+    version_failures = generate_version_documentation(ttl_files, repo_root, output_dir, refresh="--refresh-versions" in sys.argv[1:])
     
     # Generate index.html
     print("-" * 60)
