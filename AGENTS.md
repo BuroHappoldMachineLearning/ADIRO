@@ -339,6 +339,11 @@ For anyone changing an ontology, agent or person. The sections below give the de
     selects from ROBOT's OBO-oriented built-ins; our own rules belong in our own script, where they can be
     namespace-aware and can exempt external stubs. The profile format is strict TSV and rejects comment
     lines, so it cannot even explain itself.
+  - **`missing_superclass` is deliberately absent from that profile.** It is an OBO convention (every class sits under
+    one upper-ontology root) that does not apply here: ADIRO's modules have root classes by design, and the external
+    classes declared as local stubs (PROV, GeoSPARQL) are not ours to classify. It only produced a standing list of root
+    classes nobody acts on. **Do not assert `rdfs:subClassOf owl:Thing` to silence it**: `owl:Thing` is implicit for every
+    class, and the compatibility diff reads an added superclass as a change (a potentially breaking, MAJOR one).
 - **Every ADIRO term needs an `rdfs:comment`.** That is ADIRO's definition vocabulary — deliberately
   **not** the OBO `IAO:0000115` that ROBOT's `missing_definition` rule looks for, which is why that rule is
   **absent** from `config/robot_report_profile.txt` (a profile lists the checks that run; omitting one

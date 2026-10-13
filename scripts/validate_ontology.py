@@ -411,9 +411,7 @@ def write_markdown(results: list[tuple[str, list[str], list[str]]], out_path: Pa
     list further down.
     """
     OK, WARN, ERR = "\u2705", "\u26a0\ufe0f", "\u26d4"
-    lines = ["### Important checks", "",
-             "Executed via `scripts/validate_ontology.py`. The reasoner blocks too: consistency, unsatisfiable classes and "
-             "OWL 2 DL, including a root change that breaks its dependents.", ""]
+    lines = ["### Important checks", ""]
     total_err = sum(len(e) for _, e, _ in results)
     total_warn = sum(len(w) for _, _, w in results)
 

@@ -79,6 +79,16 @@ def test_the_comment_reads_verdict_then_important_then_minor_then_a_collapsed_ab
     assert "[workflow run](https://example.org/run/1)" in text and "`reasoning-out` artifact" in text
 
 
+def test_the_executed_via_note_lives_in_the_collapsed_about_section_without_the_confusing_too():
+    text = qc.render("0", "", PASSING, VALIDATE)
+    about = text[text.index("<summary>About these checks</summary>"):]
+    assert "Important checks: executed via `scripts/validate_ontology.py`. The reasoner blocks: consistency, unsatisfiable classes" in about
+    assert "including a root change that breaks its dependents." in about
+    assert "blocks too" not in text
+    important = text[text.index("### Important checks"):text.index("### Minor checks")]
+    assert "Executed via" not in important and "executed via" not in important
+
+
 def test_the_verbose_count_lines_are_gone_because_the_tables_already_say_it():
     text = qc.render("0", "", PASSING, VALIDATE)
     assert "error(s)" not in text and "INFO findings are only counted" not in text

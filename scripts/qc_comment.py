@@ -41,7 +41,9 @@ RULE_HELP = {
 ABOUT = (
     "Whole-suite OWL 2 DL reasoning (**HermiT**) and the ROBOT `report` over all modules at *latest* (imports resolved "
     "offline via `src/catalog-v001.xml`), then the repository's own checks. The **reasoner is a blocking gate**; the "
-    "rest is advisory. Run the same script locally with `bash scripts/run_reasoning.sh` (see AGENTS.md)."
+    "rest is advisory. Run the same script locally with `bash scripts/run_reasoning.sh` (see AGENTS.md).\n\n"
+    "Important checks: executed via `scripts/validate_ontology.py`. The reasoner blocks: consistency, unsatisfiable classes "
+    "and OWL 2 DL, including a root change that breaks its dependents."
 )
 
 

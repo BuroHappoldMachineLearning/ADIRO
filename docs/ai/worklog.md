@@ -52,7 +52,11 @@ split would need every check to change its output). **Follow-up at the maintaine
 and "ROBOT stays advisory" notes moved to the start of the sections they concern; the verbose count lines are gone (the tables say it); and the ROBOT table is one row
 per rule with a `Show` preview in a left-aligned Findings column: near-duplicate subject-only rows are grouped by module (25 `missing_superclass` rows became five
 lines, with a one-line explanation of the rule; rows that carry a value are listed one per row, capped). `missing_superclass` is ROBOT's INFO for a class with
-no asserted superclass, expected for root classes. **Not done (ideas):** marking which warnings are new in the PR (needs a comparison with the base; the
+no asserted superclass, expected for root classes. **Then, same PR:** `missing_superclass` removed from `config/robot_report_profile.txt` (a test ontology run through ROBOT with our profile showed that a class asserted
+under `owl:Thing` does satisfy the rule, but that axiom says nothing and the compatibility diff would read an added superclass as a change, a MAJOR bump; the rule is an
+OBO convention that does not fit ADIRO's by-design roots and the PROV/GeoSPARQL stubs, and only produced a standing list nobody acts on); `AGENTS.md` records the
+decision next to the profile rules and `tests/test_robot_profile.py` keeps it out. The "Executed via `scripts/validate_ontology.py`. The reasoner blocks: …" note
+moved into "About these checks" (the word "too" dropped). Locally ROBOT now reports no violations, so the Minor checks read "No findings". **Not done (ideas):** marking which warnings are new in the PR (needs a comparison with the base; the
 "Required improvements" comment covers what a PR introduces); ordering modules with findings first; internal IDs remain in workflow *source* comments (not
 posted anywhere). **Verified:** 125 tests (new: the table, the composer), the composer on the real local reasoning output, and the live comment on this PR
 (see the PR). **Not verified:** fork PRs (they get the job summary, not the comment).

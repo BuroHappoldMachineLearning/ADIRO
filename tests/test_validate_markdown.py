@@ -37,7 +37,8 @@ def test_findings_expand_in_their_own_column_of_the_row(tmp_path):
     mixed = render(tmp_path, [("aec_both", ["an error"], ["a warning"])])
     assert "<details><summary>Show</summary>⛔ an error<br>⚠️ a warning</details>" in mixed  # errors first, one dropdown
     assert "<summary>Details</summary>" not in text  # no separate block further down
-    assert text.startswith("### Important checks\n\nExecuted via `scripts/validate_ontology.py`. The reasoner blocks too:")
+    assert text.startswith("### Important checks\n\n| Module |")  # the table follows the heading directly
+    assert "Executed via" not in text and "blocks too" not in text  # the note lives in the collapsed About section
     assert "error(s)" not in text and "Errors block" not in text  # the table already says it
 
 
