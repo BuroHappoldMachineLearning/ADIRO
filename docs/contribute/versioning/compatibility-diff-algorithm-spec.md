@@ -85,7 +85,7 @@ Detect the following delta records:
 - `RESTRICTION_REMOVED`
 - `RESTRICTION_TIGHTENED`
 - `RESTRICTION_LOOSENED`
-- `ANNOTATION_CHANGED`
+- `ANNOTATION_CHANGED` (a label, a comment, the `exampleImage` values of a term, or the domain or range of an annotation property, which carry no logical meaning)
 - `ONTOLOGY_HEADER_CHANGED` (an annotation on the `owl:Ontology` header changed: its label, description, `owl:priorVersion`, ...; `owl:versionIRI`, `owl:versionInfo` and `owl:imports` are not compared here)
 - `IMPORTS_CHANGED` (an `owl:imports` was added or removed on the `owl:Ontology` header)
 - `LABELLING_CHANGED` (a boolean flag in the `aec_drawing_metadata` namespace, such as `isComputerVisionLabel` or `isComputerVisionOptionalLabel`, was added, removed or changed on an existing term)

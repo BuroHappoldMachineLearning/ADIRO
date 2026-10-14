@@ -160,6 +160,17 @@ def test_changing_the_example_images_of_a_term_is_an_annotation_change():
     assert _deltas(one, one) == []
 
 
+def test_the_range_of_an_annotation_property_is_documentation_not_a_breaking_change():
+    plain = BASE + ":ap a owl:AnnotationProperty .\n"
+    ranged = BASE + ":ap a owl:AnnotationProperty ; rdfs:range xsd:anyURI .\n"
+    assert _deltas(plain, ranged) == [("ANNOTATION_CHANGED", "https://ex.org/m#ap")]
+    assert cd.required_bump(_deltas(plain, ranged)) == cd.BUMP_PATCH
+    # the same change on an object property is still potentially breaking
+    obj = BASE + ":q a owl:ObjectProperty .\n"
+    obj_ranged = BASE + ":q a owl:ObjectProperty ; rdfs:range :A .\n"
+    assert _deltas(obj, obj_ranged) == [("RANGE_CHANGED", "https://ex.org/m#q")]
+
+
 def test_an_added_or_removed_import_is_a_patch_and_not_a_header_change():
     with_import = BASE.replace('owl:versionInfo "1.0.0" .', 'owl:versionInfo "1.0.0" ; owl:imports <https://ex.org/other> .')
     added = _deltas(BASE, with_import)

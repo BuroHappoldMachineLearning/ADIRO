@@ -212,10 +212,14 @@ def compute_deltas(old_syms, new_syms):
         if o["kind"] != n["kind"]:
             deltas.append(("TYPE_CHANGED", iri))
             continue
+        if o["kind"] == "annotation-property" and (o["domain"] != n["domain"] or o["range"] != n["range"]):
+            # An annotation property's domain and range carry no logical meaning (no reasoner draws anything from
+            # them), so changing one is documentation for consumers: an annotation change, not a breaking one (#145).
+            deltas.append(("ANNOTATION_CHANGED", iri))
         if o["kind"] in _PROP_KINDS:
-            if o["domain"] != n["domain"]:
+            if o["kind"] != "annotation-property" and o["domain"] != n["domain"]:
                 deltas.append(("DOMAIN_CHANGED", iri))
-            if o["range"] != n["range"]:
+            if o["kind"] != "annotation-property" and o["range"] != n["range"]:
                 deltas.append(("RANGE_CHANGED", iri))
             if o["supers"] != n["supers"]:
                 deltas.append(("SUPERPROPERTY_CHANGED", iri))
