@@ -185,7 +185,9 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   leave it out of the next release, set `"minor"`/`"major"`/`"patch"` or `"hold"` for it in
   `config/release_overrides.json` on `main` (a bump override is consumed by the cut; see `release-process.md`).
 - **Releases are per-module:** tag `<module>-v<semver>` (e.g. `aec_common_symbols-v1.2.0`) →
-  `.github/workflows/backup-version.yml` snapshots that module to `versions/<module>/<semver>/`, then
+  `.github/workflows/backup-version.yml` snapshots that module to `versions/<module>/<semver>/` (the `.ttl` and its
+  `<module>.display.json` at the tag, via `scripts/archive_display_config.py`,
+  [#140](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/140)), then
   **dispatches** `generate-deploy-docs.yml` (a push made with `GITHUB_TOKEN` does not trigger other workflows),
   which serves it at `…/ADIRO/<module>/<semver>/<module>.ttl` (alongside the latest `…/ADIRO/<module>.ttl`).
   The dispatch is **unconditional** — it also runs when the snapshot already exists, so re-running the job for a
