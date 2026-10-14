@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "nodePositions": {
+    "DrawingElement": {
+      "x": 161,
+      "y": 0
+    },
+    "http://www.w3.org/2002/07/owl#Thing": {
+      "x": 161,
+      "y": -148
+    }
+  },
+  "edgeStyleConfig": {
+    "subClassOf": {
+      "show": true,
+      "showLabel": false,
+      "color": "#000000",
+      "lineType": "solid"
+    }
+  },
+  "wrapChars": 12,
+  "minFontSize": 20,
+  "maxFontSize": 70,
+  "relationshipFontSize": 18,
+  "dataPropertyFontSize": 12,
+  "layoutMode": "hierarchical03",
+  "searchQuery": "",
+  "includeNeighbors": true,
+  "annotationStyleConfig": {
+    "booleanProps": {
+      "labellableRoot": {
+        "whenTrue": {
+          "fillColor": "#2ecc71",
+          "borderColor": "#000000",
+          "borderLineType": "solid",
+          "show": true
+        },
+        "whenFalse": {
+          "fillColor": "#b8b8b8",
+          "borderColor": "#000000",
+          "borderLineType": "dashed",
+          "show": true
+        },
+        "whenUndefined": {
+          "fillColor": "#95a5a6",
+          "borderColor": "#000000",
+          "borderLineType": "dashed",
+          "show": true
+        }
+      }
+    },
+    "textProps": {}
+  },
+  "viewState": {
+    "scale": 1,
+    "position": {
+      "x": 212,
+      "y": -53
+    }
+  },
+  "displayExternalReferences": true,
+  "externalNodeLayout": "auto"
+}

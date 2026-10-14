@@ -81,6 +81,8 @@ jobs:
           mkdir -p "$DEST"
           git show "refs/tags/${TAG}:src/${MODULE}.ttl" > "$DEST/${MODULE}.ttl"
           echo "Snapshotted src/${MODULE}.ttl @ ${TAG} -> $DEST/${MODULE}.ttl"
+          # The viewer reads <module>.display.json from the same place, so an earlier release opens with its own layout (#140).
+          python3 scripts/archive_display_config.py archive "$MODULE" "$VERSION" --ref "refs/tags/${TAG}"
           ls -la "$DEST"
 
       - name: Setup Git user

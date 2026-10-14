@@ -77,27 +77,62 @@ def test_unregistered_closing_only_reports_what_github_missed():
 
 
 def test_render_is_empty_when_there_is_nothing_to_say():
-    assert pg.render([{"name": "aec_x", "fixes": [], "preview": None}], [], "o/r") == ""
+    assert pg.render([], [], "o/r") == ""
 
 
-def test_render_lists_todos_and_previews():
-    mods = [{"name": "aec_x", "fixes": ["`B` has no `rdfs:comment`."], "preview": pg.preview_url("o/r", "feat/x", "aec_x")}]
-    text = pg.render(mods, [7], "o/r")
+def test_render_lists_findings_and_previews():
+    url = pg.preview_url("o/r", "feat/x", "aec_x")
+    text = pg.render([("undescribed", "`B` (`aec_x`)"), ("closing", "[#7](https://github.com/o/r/issues/7)")], [("aec_x", url)], "o/r")
     assert text.startswith(pg.MARKER)
-    assert "- `aec_x`: `B` has no `rdfs:comment`." in text
+    assert "**No `rdfs:comment` on 1 term.** Add a short definition in your own words" in text
+    assert "- `B` (`aec_x`)" in text
     assert "[ ]" not in text and "recomputes" not in text
-    assert "[#7](https://github.com/o/r/issues/7)" in text
+    assert "[#7](https://github.com/o/r/issues/7)" in text and "closing keyword that GitHub did not link" in text
     assert "https://alelom.github.io/OntoCanvas/?onto=https%3A%2F%2Fraw.githubusercontent.com%2Fo%2Fr%2Ffeat%2Fx%2Fdocs%2Faec_x.ttl" in text
 
 
 def test_render_with_only_a_preview_posts_no_comment():
-    assert pg.render([{"name": "aec_x", "fixes": [], "preview": "https://example.org/p"}], [], "o/r") == ""
+    assert pg.render([], [("aec_x", "https://example.org/p")], "o/r") == ""
 
 
-def test_render_with_a_fix_lists_it_under_the_title_and_keeps_the_previews():
-    text = pg.render([{"name": "aec_x", "fixes": ["`B` has no `rdfs:comment`."], "preview": "https://example.org/p"}], [], "o/r")
-    assert text.index("## Required improvements") < text.index("- `aec_x`:") < text.index("### Previews")
+def test_render_with_a_finding_lists_it_under_the_title_and_keeps_the_previews():
+    text = pg.render([("undescribed", "`B` (`aec_x`)")], [("aec_x", "https://example.org/p")], "o/r")
+    assert text.index("## Required improvements") < text.index("- `B` (`aec_x`)") < text.index("### Previews")
     assert "### To do" not in text
+
+
+def test_findings_of_one_type_share_one_heading_and_the_advice_is_said_once():
+    items = [f"`T{i}` (`aec_x`)" for i in range(3)]
+    text = pg.render([("undescribed", i) for i in items], [], "o/r")
+    assert text.count("Add a short definition in your own words") == 1
+    assert "No `rdfs:comment` on 3 terms." in text
+    assert "<details>" not in text and all(f"- {i}" in text for i in items)  # 5 or fewer stay in the open
+
+
+def test_more_than_five_findings_of_a_type_are_collapsed():
+    items = [f"`T{i}` (`aec_x`)" for i in range(6)]
+    text = pg.render([("undescribed", i) for i in items], [], "o/r")
+    assert text.count("<details>") == 1 and "<summary>Show the 6 terms</summary>" in text
+    assert text.index("No `rdfs:comment` on 6 terms.") < text.index("<details>") < text.index("- `T0`") < text.index("</details>")
+    five = pg.render([("undescribed", i) for i in items[:5]], [], "o/r")
+    assert "<details>" not in five
+
+
+def test_each_issue_type_gets_its_own_group_in_a_fixed_order():
+    text = pg.render([("changelog", "`changelogs/aec_x.md`"), ("undescribed", "`A` (`aec_x`)"), ("changelog", "`changelogs/aec_y.md`")],
+                     [], "o/r")
+    assert text.index("No `rdfs:comment`") < text.index("The ontology changed but 2 changelogs did not")
+
+
+def test_a_finding_of_an_unregistered_type_is_an_error_not_silently_dropped():
+    with pytest.raises(AssertionError):
+        pg.render([("no-such-kind", "x")], [], "o/r")
+
+
+def test_every_issue_type_can_render():
+    for kind in pg.kinds("o/r"):
+        assert kind.heading(1) and kind.heading(2)
+        assert pg.render([(kind.key, "item")], [], "o/r").count("- item") == 1
 
 
 def test_declares_classes_is_false_for_an_annotation_only_module():
