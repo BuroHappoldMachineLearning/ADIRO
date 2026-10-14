@@ -624,20 +624,6 @@ Presentation hint for computer-vision annotation tooling: when true, the class i
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isComputerVisionOptionalLabel`
 - **Range:** `xsd:boolean`
 
-### obsolete isCVATProperty {#isCVATProperty}
-
-Deprecated: use isComputerVisionOptionalLabel. No ADIRO term uses this property any more; it stays declared so that data written against an earlier release keeps its meaning. Its name carries the name of a tool and cannot be withdrawn once published.
-
-- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isCVATProperty`
-- **Range:** `xsd:boolean`
-
-### obsolete labellableRoot {#labellableRoot}
-
-Deprecated: use isComputerVisionLabel, which has the same meaning. No ADIRO term uses this property any more; it stays declared so that data written against an earlier release keeps its meaning.
-
-- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#labellableRoot`
-- **Range:** `xsd:boolean`
-
 ## Named Individuals
 
 ### Horizontal {#Horizontal}

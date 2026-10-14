@@ -52,18 +52,6 @@
     rdfs:comment "Presentation hint for computer-vision annotation tooling: when true, the class is presented apart from the required labels (on the trailing side of the label panel rather than the default leading side) and may be left out by annotators, for example a discipline picked as an attribute of a drawing rather than drawn as a shape. Independent of isComputerVisionLabel. Carries no reasoning weight." ;
     rdfs:range xsd:boolean .
 
-:labellableRoot rdf:type owl:AnnotationProperty ;
-    rdfs:label "obsolete labellableRoot" ;
-    rdfs:comment "Deprecated: use isComputerVisionLabel, which has the same meaning. No ADIRO term uses this property any more; it stays declared so that data written against an earlier release keeps its meaning." ;
-    owl:deprecated true ;
-    rdfs:range xsd:boolean .
-
-:isCVATProperty rdf:type owl:AnnotationProperty ;
-    rdfs:label "obsolete isCVATProperty" ;
-    rdfs:comment "Deprecated: use isComputerVisionOptionalLabel. No ADIRO term uses this property any more; it stays declared so that data written against an earlier release keeps its meaning. Its name carries the name of a tool and cannot be withdrawn once published." ;
-    owl:deprecated true ;
-    rdfs:range xsd:boolean .
-
 :extractionHint rdf:type owl:AnnotationProperty ;
     rdfs:label "extraction hint"@en ;
     rdfs:comment "Free-text guidance for an information-extraction model on where and how a field typically appears on a drawing sheet (adjacent captions, cell grouping, formatting). Consumed by the generated extraction profile, not by reasoning."@en ;
