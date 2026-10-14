@@ -8,13 +8,17 @@ site can answer "does this IRI resolve?". For each owl:priorVersion IRI it reque
 file's owl:versionIRI to be that IRI (or its legacy host form, see validate_ontology.py). The offline
 half of the convention (the archive exists, the list is complete) is in validate_ontology.py.
 
+It also checks that every archived release's display config (versions/<module>/<semver>/<module>.display.json, #140) is
+served at the release's IRI path, so an earlier release opens in the viewer with its own layout.
+
 Usage:
-    check_prior_versions.py [--src DIR] [--retries N] [--wait SECONDS]
+    check_prior_versions.py [--src DIR] [--versions DIR] [--retries N] [--wait SECONDS]
 
 A just-deployed site can lag the deploy by a minute, so a failing IRI is retried before it is reported.
 Exit code 1 if any IRI does not resolve to its release. stdlib + rdflib.
 """
 import argparse
+import json
 import sys
 import time
 import urllib.error
@@ -84,17 +88,58 @@ def check(src_dir, fetch_fn=fetch, retries=5, wait=20, sleep=time.sleep):
     return problems
 
 
+def archived_display_configs(versions_dir):
+    """(module, version, url) for every archived display config under `versions_dir`."""
+    found = []
+    for path in sorted(Path(versions_dir).glob("*/*/*.display.json")):
+        version, module = path.parent.name, path.parent.parent.name
+        if path.name == f"{module}.display.json":
+            found.append((module, version, f"https://w3id.org/adiro/{module}/{version}/{module}.display.json"))
+    return found
+
+
+def display_config_problem(url, fetch_fn=fetch):
+    """Why the archived display config at `url` is not served, or None if it is."""
+    status, body = fetch_fn(url)
+    if status != 200:
+        return f"<{url}> does not resolve (HTTP {status or 'no answer'})"
+    try:
+        json.loads(body)
+    except ValueError:
+        return f"<{url}> resolves but is not JSON"
+    return None
+
+
+def check_display_configs(versions_dir, fetch_fn=fetch, retries=5, wait=20, sleep=time.sleep):
+    """List of problems (empty if every archived display config is served)."""
+    problems = []
+    for module, version, url in archived_display_configs(versions_dir):
+        problem = display_config_problem(url, fetch_fn)
+        attempt = 1
+        while problem and attempt <= retries:  # the site can lag a fresh deploy
+            sleep(wait)
+            problem = display_config_problem(url, fetch_fn)
+            attempt += 1
+        print(f"{'FAIL' if problem else 'ok  '} {module} {version}: {url}" + (f"\n     {problem}" if problem else ""))
+        if problem:
+            problems.append(f"{module} {version}: {problem}")
+    return problems
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--src", default=str(Path(__file__).resolve().parent.parent / "src"))
+    ap.add_argument("--versions", default=str(Path(__file__).resolve().parent.parent / "versions"))
     ap.add_argument("--retries", type=int, default=5)
     ap.add_argument("--wait", type=int, default=20)
     args = ap.parse_args(argv)
     problems = check(args.src, retries=args.retries, wait=args.wait)
-    if problems:
-        print(f"\n{len(problems)} owl:priorVersion IRI(s) do not resolve to their release.", file=sys.stderr)
+    config_problems = check_display_configs(args.versions, retries=args.retries, wait=args.wait)
+    if problems or config_problems:
+        print(f"\n{len(problems)} owl:priorVersion IRI(s) do not resolve to their release, "
+              f"{len(config_problems)} archived display config(s) are not served.", file=sys.stderr)
         sys.exit(1)
-    print("\nEvery owl:priorVersion IRI resolves to its release.")
+    print("\nEvery owl:priorVersion IRI resolves to its release, and every archived display config is served.")
 
 
 if __name__ == "__main__":

@@ -31,7 +31,7 @@ Ontology files must be **resolvable** — the annotation pipeline pins a specifi
 
 - **Latest:** `…/ADIRO/<module>.ttl` (e.g. `…/ADIRO/aec_drawing_metadata.ttl`).
 - **Documentation per version:** each ontology's documentation page has a version dropdown at the top, and every release is documented on its own page: the latest at `…/ontologies/<module>/`, each earlier one at `…/ontologies/<module>/<version>/`, generated from the archived release so that its terms, links and dependency diagram are that version's. A release appears in the dropdown, with its own page, on the next deploy after its snapshot is archived.
-- **Versioned:** `…/ADIRO/<module>/<semver>/<module>.ttl` (e.g. `…/ADIRO/aec_drawing_metadata/2.0.0/aec_drawing_metadata.ttl`) — published from `versions/` by the deploy workflow. Consumers that pin a version (e.g. the pipeline) reference this URL.
+- **Versioned:** `…/ADIRO/<module>/<semver>/<module>.ttl` (e.g. `…/ADIRO/aec_drawing_metadata/2.0.0/aec_drawing_metadata.ttl`) — published from `versions/` by the deploy workflow. Consumers that pin a version (e.g. the pipeline) reference this URL. The release's display config (`<module>.display.json`, the layout and colours the graph viewer applies) is archived and served beside it, at `…/ADIRO/<module>/<semver>/<module>.display.json`, so an earlier release opens with the layout it had ([#140](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/140)).
 
 The ontology IRIs are `w3id.org/adiro/…` **identifiers**, distinct from the physical `.ttl` fetch URLs above. Through w3id they **content-negotiate** (bare IRI → the `.ttl` for RDF clients, or the HTML docs for browsers); the raw GitHub Pages `.ttl` URLs remain the direct-fetch fallback (Pages itself can't content-negotiate).
 

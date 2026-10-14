@@ -130,9 +130,10 @@ jobs:
         run: |
           # Serve each versions/<module>/<semver>/<module>.ttl at
           # <site>/<module>/<semver>/<module>.ttl so versioned IRIs resolve
-          # (e.g. .../ADIRO/aec_drawing_metadata/2.0.0/aec_drawing_metadata.ttl).
+          # (e.g. .../ADIRO/aec_drawing_metadata/2.0.0/aec_drawing_metadata.ttl),
+          # and its <module>.display.json beside it (#140), so the viewer opens the release with its own layout.
           if [ -d versions ]; then
-            find versions -name '*.ttl' -print0 | while IFS= read -r -d '' f; do
+            find versions \( -name '*.ttl' -o -name '*.display.json' \) -print0 | while IFS= read -r -d '' f; do
               dest="site/${f#versions/}"
               mkdir -p "$(dirname "$dest")"
               cp "$f" "$dest"
@@ -247,7 +248,7 @@ jobs:
         with:
           version: "latest"
 
-      - name: Every owl:priorVersion IRI resolves to its release
+      - name: Every owl:priorVersion IRI resolves to its release, and every archived display config is served
         id: check
         continue-on-error: true   # the tracking issue below must run either way; the last step fails the job
         run: |
@@ -269,7 +270,7 @@ jobs:
         if: ${{ !cancelled() && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token || github.token }}
-          TITLE: Published owl:priorVersion IRIs do not resolve
+          TITLE: Published release IRIs and display configs do not resolve
           OUTCOME: ${{ steps.check.outcome }}
         run: |
           SHA="$(git rev-parse --short HEAD)"
@@ -281,9 +282,9 @@ jobs:
               gh issue comment "$num" --body "Still failing after the deploy of \`$SHA\` ([run]($RUN))."
             else
               {
-                echo "After the deploy of \`$SHA\` ([run]($RUN)), at least one \`owl:priorVersion\` IRI in \`src/*.ttl\` does not resolve to the release it names."
+                echo "After the deploy of \`$SHA\` ([run]($RUN)), at least one published release IRI (an \`owl:priorVersion\` IRI in \`src/*.ttl\`) or archived display config does not resolve."
                 echo ""
-                echo "Every release names all of its earlier versions with \`owl:priorVersion\`, so a tool that reads only the latest release (OntoCanvas does not follow a chain) can list and open them; an IRI that does not resolve breaks that. Likely causes: a version was named before its snapshot was published, a snapshot or its pyLODE page is missing from the site, or the site was slow to update (the check already retries for about two minutes). Re-run the deploy workflow once the site is up to date; to reproduce, run \`uv run python scripts/check_prior_versions.py\`."
+                echo "Every release names all of its earlier versions with \`owl:priorVersion\`, so a tool that reads only the latest release (OntoCanvas does not follow a chain) can list and open them; an IRI that does not resolve breaks that. Likely causes: a version was named before its snapshot was published, a snapshot or its pyLODE page is missing from the site, or the site was slow to update (the check already retries for about two minutes). The same check requires every archived display config (\`versions/<module>/<semver>/<module>.display.json\`) to be served next to its release. Re-run the deploy workflow once the site is up to date; to reproduce, run \`uv run python scripts/check_prior_versions.py\`."
                 echo ""
                 echo "<details open><summary>Check output</summary>"
                 echo ""
@@ -305,5 +306,5 @@ jobs:
       - name: Fail the job if the check failed
         if: ${{ steps.check.outcome == 'failure' }}
         run: |
-          echo "::error::at least one owl:priorVersion IRI does not resolve to its release (see the check output above)"
+          echo "::error::at least one owl:priorVersion IRI or archived display config does not resolve (see the check output above)"
           exit 1

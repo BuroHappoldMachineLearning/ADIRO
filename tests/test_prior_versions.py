@@ -144,3 +144,31 @@ def test_a_non_turtle_answer_fails(tmp_path):
     site = fake_site({f"{W3ID}/1.0.0": (200, "<html>not turtle</html>"), f"{W3ID}/1.1.0": (200, header("1.1.0"))})
     out = cpv.check(src_with_priors(tmp_path), fetch_fn=site, retries=0)
     assert len(out) == 1 and "not Turtle" in out[0]
+
+
+def test_archived_display_configs_are_found_next_to_their_ttl(tmp_path):
+    for rel in ("aec_x/1.0.0/aec_x.display.json", "aec_x/1.0.0/aec_x.ttl", "aec_x/1.1.0/aec_x.ttl", "aec_y/2.0.0/aec_y.display.json"):
+        path = tmp_path / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("{}", encoding="utf-8")
+    assert cpv.archived_display_configs(tmp_path) == [
+        ("aec_x", "1.0.0", "https://w3id.org/adiro/aec_x/1.0.0/aec_x.display.json"),
+        ("aec_y", "2.0.0", "https://w3id.org/adiro/aec_y/2.0.0/aec_y.display.json"),
+    ]
+
+
+def test_a_display_config_must_answer_200_with_json(tmp_path):
+    url = "https://w3id.org/adiro/aec_x/1.0.0/aec_x.display.json"
+    assert cpv.display_config_problem(url, lambda u: (200, '{"a": 1}')) is None
+    assert "HTTP 404" in cpv.display_config_problem(url, lambda u: (404, ""))
+    assert "not JSON" in cpv.display_config_problem(url, lambda u: (200, "<html>"))
+
+
+def test_a_missing_display_config_is_retried_and_then_reported(tmp_path):
+    path = tmp_path / "aec_x" / "1.0.0" / "aec_x.display.json"
+    path.parent.mkdir(parents=True)
+    path.write_text("{}", encoding="utf-8")
+    answers = iter([(404, ""), (404, ""), (200, "{}")])
+    assert cpv.check_display_configs(tmp_path, lambda u: next(answers), retries=3, wait=0, sleep=lambda s: None) == []
+    problems = cpv.check_display_configs(tmp_path, lambda u: (404, ""), retries=1, wait=0, sleep=lambda s: None)
+    assert len(problems) == 1 and problems[0].startswith("aec_x 1.0.0:")
