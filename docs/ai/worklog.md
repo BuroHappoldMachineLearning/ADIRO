@@ -22,6 +22,22 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-14 — Take down the example images that broke the convention, and replace them ([#149](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/149))
+
+**Branch:** `feat/149-synthetic-example-images`, stacked on `feat/145-example-image-convention` (PR #148, unmerged when this was written). It is the migration PR of [#145](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/145) decision 4, changed in scope by what was found.
+
+**Found:** opening the twenty linked images before moving them showed that 18 of 20 are unredacted third-party drawings (firm logos, professional seals and names, client and project names and addresses, job numbers, CAD file paths in the margin, and in several a copyright notice that prohibits reuse); the other two are old title blocks, partly blacked out. None is cropped to the part it illustrates (the red box marks the part on a whole sheet), five are over 500 KB, and none has a recorded source. The nine unlinked images in `docs/img/aec_facade_domain/` are curtain-wall detail drawings with project drawing numbers, system codes and contractor references (five opened, four are the same family): source unknown, not taken down, left for review.
+
+**Changed:**
+- The twenty images are deleted from `docs/img/aec_drawing_ontology/`; their values are dropped; each old path is recorded in `assets/aec_drawing_metadata/exampleImage/takedowns.txt` (the reason codes are indicative).
+- `scripts/synthetic_example_images.py` (new, tested): draws ten synthetic example images with fictional content (a title block in two layouts, revision table, legend, plan, section, elevation, detail, schedule, notes), 3 to 16 KB each, no embedded metadata, cropped to the content. They are committed at `assets/aec_drawing_metadata/exampleImage/<LocalName>_NN.png`, and `src/aec_drawing_metadata.ttl` links them with an `img:` prefix. The example-image checks now pass with no finding. The old image URLs no longer resolve, so the pages of earlier releases show no image for these terms (the changelog says so).
+
+**Not done:** a decision on the nine facade images; a decision on the git history (the files remain in it: rewriting a public history affects forks, tags and releases, and is for the maintainers and whoever handles rights); a better set of images (the synthetic ones are plain, and are meant to be improved by editing the script).
+
+**Verified:** full pytest run with and without matplotlib and Pillow (the new tests skip without them), `validate_ontology.py` (no example-image finding, no error), every generated image viewed. **Not verified:** the staged copy in the deploy job (first deploy that carries an image).
+
+**Next step:** merge #148 first, then this; share the review list with the team.
+
 ## 2026-10-14 — The example-image convention ([#145](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/145))
 
 **Branch:** `feat/145-example-image-convention`. The decisions are in the issue; this entry is what was built and what was not.

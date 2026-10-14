@@ -8,6 +8,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
 ### Changed
+- **Example images replaced** ([#149](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/149)): the twenty images linked from `Detail`, `Elevation`, `Legend`, `Plan`, `RevisionTable`, `Section`, `Table`, `TextualNote` and `Titleblock` are removed, because they showed third-party drawings (logos, seals, names, project details, in some cases a copyright notice) and were not cropped to the part they illustrate. Each of those terms now has a synthetic example image drawn for ADIRO with fictional content (two layouts for `Titleblock`), at `https://w3id.org/adiro/aec_drawing_metadata/exampleImage/<LocalName>_NN.png`, written with the `img:` prefix. The old image URLs no longer resolve, so the documentation pages of earlier releases show no image for these terms.
 - **`exampleImage` defined as a URL, with a convention** ([#145](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/145)): it now has `rdfs:range xsd:anyURI`, and its comment says that the value is the absolute `https` IRI of an image file in the module's `exampleImage` folder, and points to the guidance page for contributors. Annotation properties carry no reasoning, so nothing changes for a reasoner. The images themselves are not moved here (their migration to `assets/<module>/exampleImage/` is a separate change), so the existing values still follow the older form.
 
 ### Changed (BREAKING)
