@@ -5,7 +5,8 @@ using the existing `aec_provenance`, PROV-O and `aec_geometry` foundation. It ad
 
 An immutable PDF artifact is a `prov:Entity`; its content hash is distinct from a `DrawingSheet` identity.
 Each actual extraction or resolution execution is a `prov:Activity`. It `prov:used` exact input entities,
-and its output entity `prov:wasGeneratedBy` that activity. A later assembly uses those output entities;
+and its output entity `prov:wasGeneratedBy` that activity. Each export execution has a new activity identity even when its inputs are identical, with actual start/end
+times and pinned exporter-code and configuration hashes. A later assembly uses those output entities;
 it does not imply that the earlier inference ran again. Record the generating agent with
 `prov:wasAssociatedWith`. Where the historical producer, parameters or timing were not recorded, retain
 `not_recorded` in the manifest rather than reconstructing an invented execution.

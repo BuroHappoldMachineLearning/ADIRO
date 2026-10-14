@@ -1,3 +1,11 @@
+## 2026-10-15 - Independent review corrections to the UC-03 export profile
+
+Clarify that final accepted extraction branches determine expression admission and source geometry;
+provisional/abstained observations stay in evidence. Keep accepted source number mentions when target
+resolution fails. Require a distinct assembly activity for each execution, with actual timing and pinned
+code/configuration. These are application-profile clarifications; no TTL axiom or release version changed.
+Repository tests and strict documentation build are rerun for this follow-up.
+
 ## 2026-10-15 - UC-03 semantic occurrences and provenance profile
 
 Port the approved semantic proposal onto current main, preserving later suite and annotation-tooling changes.

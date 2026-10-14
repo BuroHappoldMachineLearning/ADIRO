@@ -102,3 +102,13 @@ not OWL geometry cardinality axioms. Geometry roles remain tracked in
 The new terms address the UC-03 occurrence and multi-reference questions in the
 [specification](../specification/use-cases/UC-03/UC-03-Reference%20Symbol%20Cross-Sheet%20Linking.md#4-competency-questions).
 They are schema terms, not a deployed exporter, populated knowledge graph or successful PDF navigation run.
+
+## Source admission follows the final branch
+
+The final accepted extraction branch determines an occurrence's expression type and selected source region.
+An earlier detector box does not override a later inline acceptance or non-symbol decision. A branch that
+abstains, remains provisional or is rejected retains its observations in evidence; it is not promoted to
+an accepted ReferenceSymbol or InlineLayoutSheetReference. Independently accepted SheetNoMention facts
+and Sheet resolution may remain. An accepted source LayoutNoMention is retained even when its target is
+missing or ambiguous; only its accepted target edge is withheld. Source composition and target resolution
+are separate decisions.
