@@ -102,8 +102,9 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)); advisory, and `ENFORCE_CHANGELOG=1`
   makes it blocking. The warning appears in the QC comment (`ontology-reasoning.yml`). It also requires every module's
   `owl:priorVersion` list to name all earlier archived releases ([#122](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/122)),
-  and after each deploy `scripts/check_prior_versions.py` confirms those IRIs resolve (see `docs/contribute/versioning/`); a failure
-  also opens one tracking issue, "Published owl:priorVersion IRIs do not resolve", which the next passing deploy closes.
+  and after each deploy `scripts/check_prior_versions.py` confirms those IRIs resolve and that every archived release's
+  display config is served ([#140](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/140); see `docs/contribute/versioning/`); a failure
+  also opens one tracking issue, "Published release IRIs and display configs do not resolve", which the next passing deploy closes.
 - **`.github/workflows/compat-diff-comment.yml`** — on PRs touching `src/**.ttl` (RES-67), posts a sticky
   comment with each changed module's **prospective next version** (`compat_diff.py --markdown`). Report-only;
   the gate is the warn step above.
@@ -148,7 +149,7 @@ who won't use bash can instead run the two underlying `java -jar robot.jar merge
 commands directly, but Git Bash is simpler.
 - **`.github/workflows/pr-guidance.yml`** — on every same-repo PR (opened/edited/pushed), the **ADIRO Bot** posts a
   separate, human-readable sticky comment ([#106](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/106)),
-  built by `scripts/pr_guidance.py`: a bulleted to-do list for **this PR's own changes** (a touched term with no
+  built by `scripts/pr_guidance.py`: a to-do list for **this PR's own changes**, grouped by issue type ([#144](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/144): each type's advice is said once, and more than 5 items are collapsed; a new check adds one `Kind` in the script) (a touched term with no
   `rdfs:comment`, a label shared with another term, a `.ttl` change with no changelog change (the
   `validate_ontology.py` check below, rendered in plain language), an unused `@prefix`/`owl:imports` the PR
   introduced, a `Closes #N` GitHub did not register), titled "Required improvements", with an OntoCanvas preview link

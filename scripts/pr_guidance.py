@@ -6,6 +6,9 @@ The QC comment (ontology-reasoning.yml) is the machine report. This one says wha
 do about **this PR's own changes**: it only flags terms the PR adds or edits, never the standing
 backlog (#87), so every item is something the author can act on and tick off.
 
+Findings are grouped by issue type (#144): each type's advice is said once, followed by its items, collapsed
+behind <details> when there are more than COLLAPSE_OVER. A new check adds one `Kind` to `kinds()`.
+
 Sections (each appears only when it has something to say):
   - To do: touched terms with no rdfs:comment, touched terms whose label is shared with another term,
     a `.ttl` change with no changelog entry (#105), unused @prefix / owl:imports in a touched module,
@@ -112,19 +115,67 @@ def preview_url(repo, head_ref, module):
     return "https://alelom.github.io/OntoCanvas/?onto=" + urllib.parse.quote(raw, safe="")
 
 
-def render(modules, unregistered, repo):
-    """`modules`: dicts with name, fixes (list of Markdown strings) and preview (URL or None)."""
-    fixes = [(m["name"], f) for m in modules for f in m["fixes"]]
-    previews = [(m["name"], m["preview"]) for m in modules if m["preview"]]
-    if not fixes and not unregistered:  # nothing to improve: no comment at all (previews alone are not worth one)
+# One entry per issue type. A finding is a (kind, item) pair; render() says the advice once per kind and lists the items,
+# collapsed behind <details> when there are more than COLLAPSE_OVER (#144). A new check adds one entry here.
+COLLAPSE_OVER = 5
+
+
+class Kind:
+    def __init__(self, key, title, advice, noun):
+        self.key, self.title, self.advice, self.noun = key, title, advice, noun
+
+    def heading(self, n):
+        things = self.noun[0] if n == 1 else self.noun[1]
+        return f"**{self.title.format(n=n, things=things)}.** {self.advice}"
+
+
+def kinds(repo):
+    issue = f"https://github.com/{repo}/issues"
+    return [
+        Kind("undescribed", "No `rdfs:comment` on {n} {things}",
+             f"Add a short definition in your own words (convention: [#87]({issue}/87)).", ("term", "terms")),
+        Kind("label-clash", "{n} {things} share an `rdfs:label` with another term",
+             "Labels are unique across classes so the docs and label search are not ambiguous.", ("term", "terms")),
+        Kind("removed", "{n} ontology {things} removed or renamed",
+             "That is a breaking change: say so in the changelog and check the dependent modules.", ("file", "files")),
+        Kind("changelog", "The ontology changed but {n} {things} did not",
+             f"Add an entry under `[Unreleased]`; it becomes the release notes ([#105]({issue}/105)).",
+             ("changelog", "changelogs")),
+        Kind("unused-prefix", "{n} unused `@prefix` {things}", "Delete the declaration.", ("declaration", "declarations")),
+        Kind("unused-import", "{n} `owl:imports` of a module that no term uses",
+             "Drop the import, or use a term of it.", ("import", "imports")),
+        Kind("closing", "The description names {n} {things} with a closing keyword that GitHub did not link",
+             "Put the keyword at the start of a table row or line, one issue per keyword (`Closes #1, #2` links only `#1`).",
+             ("issue", "issues")),
+    ]
+
+
+def render_group(kind, items):
+    """Markdown for one issue type: the heading with its advice, then the items (collapsed when there are many)."""
+    items = list(items)
+    out = [kind.heading(len(items)), ""]
+    if len(items) > COLLAPSE_OVER:
+        noun = kind.noun[1]
+        out += [f"<details><summary>Show the {len(items)} {noun}</summary>", ""]
+        out += [f"- {i}" for i in items]
+        out += ["", "</details>", ""]
+    else:
+        out += [f"- {i}" for i in items] + [""]
+    return out
+
+
+def render(findings, previews, repo):
+    """`findings`: (kind key, item Markdown) pairs; `previews`: (module, OntoCanvas URL) pairs."""
+    by_kind = {}
+    for key, item in findings:
+        by_kind.setdefault(key, []).append(item)
+    if not by_kind:  # nothing to improve: no comment at all (previews alone are not worth one)
         return ""
     out = [MARKER, "## Required improvements", ""]
-    out += [f"- `{name}`: {f}" for name, f in fixes]
-    for n in unregistered:
-        out.append(f"- The description says it closes [#{n}](https://github.com/{repo}/issues/{n}), but GitHub did "
-                   "not link it. Put the keyword at the start of a table row or line, one issue per keyword "
-                   "(`Closes #1, #2` links only `#1`).")
-    out.append("")
+    for kind in kinds(repo):
+        if kind.key in by_kind:
+            out += render_group(kind, by_kind.pop(kind.key))
+    assert not by_kind, f"findings of an unregistered kind: {sorted(by_kind)}"
     if previews:
         out += ["### Previews", "", "| Module | OntoCanvas |", "|---|---|"]
         out += [f"| `{n}` | [open]({u}) |" for n, u in previews]
@@ -192,7 +243,7 @@ def main(argv=None):
     for text in texts.values():
         suite.parse(data=text, format="turtle")
 
-    modules = []
+    findings, previews = [], []  # findings: (kind key, item Markdown); each kind's advice is said once by render()
     for path in (p for p in changed if re.fullmatch(r"src/[^/]+\.ttl", p)):  # includes deleted modules
         module = Path(path).stem
         head = _load(texts.get(path))
@@ -200,37 +251,33 @@ def main(argv=None):
         if isomorphic(base, head):
             continue
         touched = touched_terms(base, head)
-        fixes = []
         for t in undescribed(head, touched):
             ln = definition_line(texts[path], t)
-            where = f" ([line {ln}](https://github.com/{args.repo}/blob/{args.head_sha}/{path}#L{ln}))" if ln else ""
-            fixes.append(f"`{local_name(t)}`{where} has no `rdfs:comment`. Add a short definition in your own words "
-                         f"(convention: [#87](https://github.com/{args.repo}/issues/87)).")
+            where = f", [line {ln}](https://github.com/{args.repo}/blob/{args.head_sha}/{path}#L{ln})" if ln else ""
+            findings.append(("undescribed", f"`{local_name(t)}` (`{module}`{where})"))
         for t, others in label_clashes(suite, touched).items():
-            fixes.append(f"`{local_name(t)}` shares its `rdfs:label` with " + ", ".join(f"`{local_name(o)}`" for o in others)
-                         + ". Labels are unique across classes so the docs and label search are not ambiguous.")
+            findings.append(("label-clash", f"`{local_name(t)}` (`{module}`) shares it with "
+                                            + ", ".join(f"`{local_name(o)}`" for o in others)))
         if path not in texts:
-            fixes.append(f"`{path}` is removed or renamed. That is a breaking change: say so in the changelog "
-                         "and check the dependent modules.")
+            findings.append(("removed", f"`{path}`"))
         if module in no_changelog:
-            fixes.append(f"this PR changes the ontology but not `changelogs/{module}.md`. Add an entry under `[Unreleased]`; "
-                         f"it becomes the release notes ([#105](https://github.com/{args.repo}/issues/105)).")
+            findings.append(("changelog", f"`changelogs/{module}.md`"))
         # only what this PR introduces: a module's standing leftovers are not the author's to fix here
         base_text = _git_show(base_commit, path, root) or ""
         if path in texts:
-            fixes += [f"unused `@prefix` {pfx}: delete the declaration."
-                      for pfx in sorted(set(find_unused_prefixes(head, texts[path])) - set(find_unused_prefixes(base, base_text)))]
-            fixes += [f"`owl:imports <{imp}>` but no term of it is used: drop the import or use it."
-                      for imp in sorted(set(find_unused_imports(head)) - set(find_unused_imports(base)))]
-        modules.append({"name": module, "fixes": fixes,
-                        "preview": preview_url(args.head_repo or args.repo, args.head_ref, module) if path in texts and declares_classes(head) else None})
+            findings += [("unused-prefix", f"`@prefix` {pfx} (`{module}`)")
+                         for pfx in sorted(set(find_unused_prefixes(head, texts[path])) - set(find_unused_prefixes(base, base_text)))]
+            findings += [("unused-import", f"`owl:imports <{imp}>` (`{module}`)")
+                         for imp in sorted(set(find_unused_imports(head)) - set(find_unused_imports(base)))]
+        if path in texts and declares_classes(head):
+            previews.append((module, preview_url(args.head_repo or args.repo, args.head_ref, module)))
 
-    unregistered = []
     if args.pr and args.body_file and Path(args.body_file).is_file():
         registered = registered_closing(args.repo, args.pr)
         if registered is not None:
-            unregistered = unregistered_closing(Path(args.body_file).read_text(encoding="utf-8"), registered)
-    sys.stdout.buffer.write(render(modules, unregistered, args.repo).encode("utf-8"))
+            findings += [("closing", f"[#{n}](https://github.com/{args.repo}/issues/{n})")
+                         for n in unregistered_closing(Path(args.body_file).read_text(encoding="utf-8"), registered)]
+    sys.stdout.buffer.write(render(findings, previews, args.repo).encode("utf-8"))
 
 
 if __name__ == "__main__":

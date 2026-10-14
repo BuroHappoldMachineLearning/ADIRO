@@ -22,13 +22,23 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-14 — Required improvements: group findings by issue type ([#144](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/144))
+
+**Branch:** `feat/140-archive-display-config` (same PR as #140, at the maintainer's request).
+
+**Changed:** `scripts/pr_guidance.py` no longer writes one bullet per term. A finding is a `(kind, item)` pair; `kinds(repo)` is the registry (title, advice, noun per issue type: no definition, shared label, removed module, missing changelog, unused prefix, unused import, closing keyword not linked) and `render` says each type's advice once, then lists the items, collapsed behind `<details><summary>Show the N terms</summary>` when there are more than `COLLAPSE_OVER` (5). A new check adds one `Kind`; an unregistered kind is an assertion error, not a silent drop. Items keep the module and the line link.
+
+**Not changed:** the QC comment (the Important checks table), which already groups by module.
+
+**Verified:** full pytest run (158 passed) with new tests for grouping, the 5/6 boundary, ordering, the unregistered-kind error and every registered kind rendering; the script run against a scratch repository with 7 undescribed terms (collapsed group, single changelog item, previews). **Not verified:** the rendered comment on GitHub (the next PR run shows it).
+
 ## 2026-10-14 — Archive each release's display config next to its TTL ([#140](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/140))
 
 **Branch:** `feat/140-archive-display-config`.
 
 **Changed:** `scripts/archive_display_config.py` (new, with tests): `archive` copies `src/<module>.display.json` as it was at the release tag into `versions/<module>/<semver>/`; `backfill` does the same for the existing archives (the tag when there is one, else the commit that archived the TTL, else the current config). `backup-version.yml` calls `archive` for each new release. The deploy workflow now publishes `*.display.json` from `versions/` as well as `*.ttl`. The post-deploy check (`check_prior_versions.py`, job `verify-prior-versions`) also requires every archived config to answer 200 with JSON at `w3id.org/adiro/<module>/<semver>/<module>.display.json`, retrying like the priorVersion check. All 18 existing releases are backfilled (14 from their tag, 4 from the commit that archived their TTL; none needed the current config).
 
-**Decision:** the tracking issue keeps its title ("Published owl:priorVersion IRIs do not resolve") and its body now mentions the display configs, to avoid orphaning the issue lookup. Rename it if the display-config failures turn out to dominate.
+**Decision:** the tracking issue is renamed "Published release IRIs and display configs do not resolve" (maintainer, 2026-10-14; no issue with the old title was open). The four untagged releases take their config from the commit that archived their TTL, not the current config: the current one describes terms and layout the release never had.
 
 **Verified:** full pytest run (153 passed), every archived config parses as JSON. **Not verified:** the workflow changes themselves (no release was cut; `backup-version.yml` is exercised by the next release or by `gh workflow run backup-version.yml -f tag=<tag>`), and that the published URLs answer 200, which only the post-merge deploy shows. The viewer side (it also looks for the config in the wrong place for a version IRI) is alelom/OntoCanvas#136.
 
