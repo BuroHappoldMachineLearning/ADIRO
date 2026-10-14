@@ -357,13 +357,16 @@ For anyone changing an ontology, agent or person. The sections below give the de
 - **Versioning.** Record any change to a module's semantics under that module's `changelogs/<module>.md`
   `[Unreleased]` section; bump its `owl:versionIRI` / `owl:versionInfo` **only at a release cut** (tag
   `<module>-v<semver>`), per `docs/contribute/versioning/`.
-- **Downstream label consumers (annotation tooling).** The metadata module defines the `isCVATProperty` annotation
-  (a presentation hint whose name is due to be replaced, [#89](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/89)),
-  and domain modules mark labellable classes with `labellableRoot`, so the ontology **drives the labels of the
+- **Downstream label consumers (annotation tooling).** The metadata module defines the `isComputerVisionLabel` and
+  `isComputerVisionOptionalLabel` annotations (they replace `labellableRoot` and an earlier tool-named property,
+  [#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141)), and domain modules mark labellable classes with
+  them, so the ontology **drives the labels of the
   annotation tooling**. The label *text* is the class **IRI local name**, **not** `rdfs:label`; `rdfs:label` reaches
   the tool only for `owl:oneOf` enumeration values (see "Ontology authoring conventions" above). Changes to labellable
   classes or to that annotation's usage affect those consumers: coordinate with the maintainers of the annotation
-  pipeline.
+  pipeline. The two annotations are independent presentation hints for computer-vision annotation tooling and are named
+  for that application; a class may be an optional label without being `isComputerVisionLabel`. A different application
+  gets its own pair.
 - **Do not name internal tools in this public repository.** Describe the behaviour generically ("the downstream
   annotation tooling") and keep the product name out of prose, term names and definitions. `validate_ontology.py`
   fails on a match in the hand-written files, so a name does not creep back in ([#89](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/89)).

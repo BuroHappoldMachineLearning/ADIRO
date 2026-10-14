@@ -20,8 +20,8 @@ import re
 import sys
 from pathlib import Path
 
-from rdflib import BNode, Graph, URIRef
-from rdflib.namespace import OWL, RDF, RDFS
+from rdflib import BNode, Graph, Literal, URIRef
+from rdflib.namespace import OWL, RDF, RDFS, XSD
 
 SEMVER_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
 
@@ -39,6 +39,7 @@ DELTA_SEVERITY = {
     "RESTRICTION_LOOSENED": NON_BREAKING,
     "RESTRICTION_REMOVED": NON_BREAKING,  # a removed constraint is a loosening
     "DOMAIN_CHANGED": POTENTIALLY,
+    "LABELLING_CHANGED": POTENTIALLY,  # a boolean flag of the metadata module that drives the annotation tooling
     "RANGE_CHANGED": POTENTIALLY,
     "SUPERCLASS_CHANGED": POTENTIALLY,
     "RESTRICTION_ADDED": POTENTIALLY,
@@ -54,6 +55,10 @@ BUMP_RANK = {BUMP_NONE: 0, BUMP_PATCH: 1, BUMP_MINOR: 2, BUMP_MAJOR: 3}
 
 # Deltas that are a semantic (non-annotation) change and so warrant at least MINOR.
 _MINOR_DELTAS = {"TERM_ADDED", "RESTRICTION_LOOSENED", "RESTRICTION_REMOVED"}
+
+# Boolean flags that the metadata module defines (isComputerVisionLabel, isComputerVisionOptionalLabel, ...) are read by the downstream annotation
+# tooling to build its label set, so changing one on an existing term can break a consumer although no axiom changed.
+_FLAG_NS = "https://w3id.org/adiro/aec_drawing_metadata#"
 
 _PROP_KINDS = {"object-property", "datatype-property", "annotation-property"}
 
@@ -124,6 +129,11 @@ def build_symbols(graph):
             "domain": frozenset(str(o) for o in graph.objects(term, RDFS.domain) if isinstance(o, URIRef)),
             "range": frozenset(str(o) for o in graph.objects(term, RDFS.range) if isinstance(o, URIRef)),
             "restrictions": _restrictions(graph, term) if kind == "class" else frozenset(),
+            "flags": frozenset(
+                (str(p), str(o))
+                for p, o in graph.predicate_objects(term)
+                if str(p).startswith(_FLAG_NS) and isinstance(o, Literal) and o.datatype == XSD.boolean
+            ),
         }
         symbols[str(term)] = desc
     # The owl:Ontology header: annotations on it (a reworded description, owl:priorVersion, ...) are invisible to the
@@ -212,6 +222,8 @@ def compute_deltas(old_syms, new_syms):
                 deltas.append(("SUPERCLASS_CHANGED", iri))
             for dt in _diff_restrictions(o["restrictions"], n["restrictions"]):
                 deltas.append((dt, iri))
+        if o["flags"] != n["flags"]:
+            deltas.append(("LABELLING_CHANGED", iri))
         if (o["labels"], o["comments"]) != (n["labels"], n["comments"]):
             deltas.append(("ANNOTATION_CHANGED", iri))
     return deltas

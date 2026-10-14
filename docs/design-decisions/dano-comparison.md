@@ -116,7 +116,7 @@ Orientation and Measurement) needs exactly the dimension and axis-line territory
 Not expressivity in the abstract. ADIRO is built for the **machine-learning loop**, and that shows up as
 vocabulary DAnO has no counterpart for:
 
-- `labellableRoot`, `exampleImage`, `extractionHint` and related annotations - they tell an annotation tool
+- `isComputerVisionLabel`, `exampleImage`, `extractionHint` and related annotations - they tell an annotation tool
   and an extraction pipeline what to label and how, carried by the ontology itself.
 - `expectedRange`, `mapsToFieldProperty` - the bridge from a reified assertion to a validated, promoted
   statement.

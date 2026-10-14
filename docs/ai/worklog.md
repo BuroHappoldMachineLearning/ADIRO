@@ -22,6 +22,22 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-13 — Rename the labelling annotations ([#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141), step 2 of [#89](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/89))
+
+**Branch:** `feat/rename-labelling-annotations`, stacked on `fix/89-public-prose-and-guard` (PR #139, unmerged when this was written).
+
+**Changed:** `labellableRoot` → `isComputerVisionLabel` and the tool-named property → `isComputerVisionOptionalLabel` in `src/` (all four modules that used them), the `.display.json` files and the two visualisation files under `docs/specification/use-cases/`. The names say which application they serve; another application gets its own pair (decided by the maintainer: qualifier in the name, not a context-valued property). The old properties are removed from `aec_drawing_metadata` rather than deprecated (maintainer decision, 2026-10-14: the never-delete rule is relaxed for annotation properties when the removal is justified, now stated in `docs/contribute/versioning/index.md`; the compat diff reports them as `TERM_REMOVED`, MAJOR). Released snapshots under `versions/` still declare them. All values are unchanged, including the explicit `false` on the eleven discipline classes of `aec_domain_common`.
+
+**Compat diff:** the classifier did not look at annotation values, so the rename showed as MINOR for one module and nothing for the other three. New delta `LABELLING_CHANGED` (potentially breaking, so MAJOR): a boolean flag of the metadata namespace added, removed or changed on an existing term. All four modules require MAJOR with no override in `config/release_overrides.json`. Spec, report schema and tests updated.
+
+**Rejected:** an implication "an optional label is labellable" with a validator check (first built, then removed: the old property meant "shown as an attribute", so the eleven discipline classes are optional labels that are deliberately not labellable; the implication contradicted real data); `rdfs:subPropertyOf` between the two; a context-valued property (`labellableIn` with annotation-context individuals), judged too complex to settle now; an override in `release_overrides.json`.
+
+**Verified:** full pytest run, `validate_ontology.py`, `scripts/run_reasoning.sh`, `compat_diff.py` (MAJOR x4). **Not verified:** the annotation pipeline reading the new names.
+
+**Left alone:** `SS/` (superseded, never edited).
+
+**Decided:** `isComputerVisionOptionalLabel` is the right name for the discipline classes (maintainer): once a layout is identified it can be qualified as an architectural, engineering or other layout by picking a discipline. Recorded as the example in `usage-of-annotation-properties.md`. **Open:** the pipeline switch date.
+
 ## 2026-10-14 — Required improvements: group findings by issue type ([#144](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/144))
 
 **Branch:** `feat/140-archive-display-config` (same PR as #140, at the maintainer's request).

@@ -313,7 +313,7 @@
   "exactMatch": true,
   "annotationStyleConfig": {
     "booleanProps": {
-      "isCVATProperty": {
+      "isComputerVisionOptionalLabel": {
         "whenTrue": {
           "fillColor": "#2ecc71",
           "borderColor": "#000000",
@@ -336,7 +336,7 @@
           "active": false
         }
       },
-      "labellableRoot": {
+      "isComputerVisionLabel": {
         "whenTrue": {
           "fillColor": "#2ecc71",
           "borderColor": "#000000",
@@ -418,8 +418,8 @@
   },
   "annotationPropertyOrder": [
     "exampleImage",
-    "isCVATProperty",
-    "labellableRoot",
+    "isComputerVisionOptionalLabel",
+    "isComputerVisionLabel",
     "creator",
     "description",
     "license",

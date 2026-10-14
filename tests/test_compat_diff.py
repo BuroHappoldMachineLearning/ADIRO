@@ -140,6 +140,17 @@ def test_a_version_bump_alone_is_not_a_header_change():
     assert _deltas(BASE, BASE.replace('"1.0.0"', '"1.0.1"')) == []  # the release cut owns the version
 
 
+def test_changing_a_labelling_flag_on_an_existing_term_is_major():
+    flag = ':A <https://w3id.org/adiro/aec_drawing_metadata#isComputerVisionLabel> "%s"^^xsd:boolean .\n'
+    off, on = BASE + flag % "false", BASE + flag % "true"
+    assert _deltas(off, on) == [("LABELLING_CHANGED", "https://ex.org/m#A")]
+    assert cd.required_bump(_deltas(off, on)) == cd.BUMP_MAJOR
+    assert [d for d, _ in _deltas(BASE, on)] == ["LABELLING_CHANGED"]  # adding the flag to a term that had none counts too
+    assert _deltas(on, on) == []
+    other = ':A <https://ex.org/other#flag> "true"^^xsd:boolean .\n'  # a flag from another namespace is not tracked
+    assert _deltas(BASE, BASE + other) == []
+
+
 def test_an_added_or_removed_import_is_a_patch_and_not_a_header_change():
     with_import = BASE.replace('owl:versionInfo "1.0.0" .', 'owl:versionInfo "1.0.0" ; owl:imports <https://ex.org/other> .')
     added = _deltas(BASE, with_import)

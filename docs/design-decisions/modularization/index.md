@@ -9,7 +9,7 @@ The first version of ADIRO followed these modules, to which we progressively wil
 **Namespace**: `https://burohappoldmachinelearning.github.io/ADIRO/aec-core#`
 
 **Contents**:
-- Annotation properties: `:exampleImage`, `:labellableRoot`
+- Annotation properties: `:exampleImage`, `:isComputerVisionLabel`
 - Object properties: `:contains`, `:has`
 
 **Imports**: None (foundation layer)

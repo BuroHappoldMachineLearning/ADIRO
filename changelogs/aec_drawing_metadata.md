@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+### Changed (BREAKING)
+- **Two labelling annotations renamed** ([#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141)). `isComputerVisionLabel` replaces `labellableRoot` (same meaning: this class can be used as a label in computer-vision annotation tooling), and `isComputerVisionOptionalLabel` replaces `isCVATProperty` (a presentation hint: the class is shown apart from the required labels). The names say which application they serve, so another application, such as tagging report documents, gets its own pair. The two are independent: a class may be an optional label without being a label. The old properties are **removed**, not deprecated (justified: no ADIRO term uses them any more, and the second one's name carries the name of a tool; annotation properties may be removed outright, see the versioning docs). Consumers that read the old names must read the new ones.
+
 
 ## [4.0.1] — 2026-10-13
 

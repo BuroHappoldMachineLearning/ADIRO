@@ -28,7 +28,7 @@
   "includeNeighbors": true,
   "annotationStyleConfig": {
     "booleanProps": {
-      "labellableRoot": {
+      "isComputerVisionLabel": {
         "whenTrue": {
           "fillColor": "#2ecc71",
           "borderColor": "#000000",

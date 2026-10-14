@@ -90,6 +90,8 @@ Because dependents import a root (e.g. `aec_drawing_metadata`) at **latest**, a 
 
 Never delete or re-use a term IRI. To remove a term: mark it `owl:deprecated true`, add a history note, and provide a replacement mapping (`owl:equivalentClass` / `rdfs:subClassOf`) per the compatibility-diff spec. Deprecation counts as a **MAJOR** change. This keeps consumers' data valid across releases.
 
+**Annotation properties are the exception.** An annotation property carries no logical meaning, so removing one cannot make data inconsistent; it can only stop a consumer reading it. An annotation property may therefore be removed outright, without a deprecation period, **when the removal is justified** (for example it is unused, it carries a tool name, or another property replaces it). State the justification in the module's changelog entry. The compatibility diff still reports it as `TERM_REMOVED`, so it is a **MAJOR** change. Classes, object properties, datatype properties and individuals keep the rule above.
+
 ## Changelogs
 
 Every change is recorded in **Keep-a-Changelog** style:
