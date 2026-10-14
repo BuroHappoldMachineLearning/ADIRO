@@ -230,7 +230,8 @@ def compute_deltas(old_syms, new_syms):
                 deltas.append((dt, iri))
         if o["flags"] != n["flags"]:
             deltas.append(("LABELLING_CHANGED", iri))
-        if (o["labels"], o["comments"], o["images"]) != (n["labels"], n["comments"], n["images"]):
+        if ((o["labels"], o["comments"], o["images"]) != (n["labels"], n["comments"], n["images"])
+                and ("ANNOTATION_CHANGED", iri) not in deltas):  # one delta per term, whatever annotation changed
             deltas.append(("ANNOTATION_CHANGED", iri))
     return deltas
 
