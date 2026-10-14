@@ -5,6 +5,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+- Classify ReferenceSymbol under the shared ReferenceExpression superclass while preserving its existing Layout target relation ([#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95)).
+
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
 ### Added

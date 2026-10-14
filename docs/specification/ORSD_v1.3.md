@@ -1,7 +1,7 @@
-# ADIRO Ontology Requirements Specification — v1.2
+# ADIRO Ontology Requirements Specification — v1.3
 
 **Author:** ADIRO project team
-**Version:** 1.2 (September 2026) — see [Version history](#version-history)
+**Version:** 1.3 (October 2026) — see [Version history](#version-history)
 
 ---
 
@@ -14,6 +14,8 @@ The purpose of ADIRO is to establish a standardized semantic backbone for the co
 ---
 
 ## 2. Scope
+
+UC-03 includes source reference occurrences and accepted textual or graphical Sheet/Layout targets, with source identity and processing lineage recorded separately.
 
 The scope provides a phased, multi-disciplinary framework for representing AEC drawing concepts. ADIRO's scope begins with metadata and layout, then extends to common AEC symbols, and concludes with domain-specific and discipline-specific symbols, specifically targeting Facade and MEP extensions.
 
@@ -125,6 +127,15 @@ What is the complete set of drawings reachable from a given drawing through refe
 ---
 
 ## Version history
+
+### v1.3 (October 2026)
+
+MAJOR scope change: UC-03 includes evidenced graphical, inline and standalone reference occurrences,
+accepted Sheet/Layout targets, and the provenance application profile under
+[#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95) and
+[#96](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/96).
+Precise localisation gates navigation rather than independently accepted sheet identity.
+
 
 ### v1.2 (September 2026)
 

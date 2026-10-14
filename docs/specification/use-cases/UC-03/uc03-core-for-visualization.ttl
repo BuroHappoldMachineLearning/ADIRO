@@ -8,7 +8,10 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 #################################################################
-#  UC-03 CORE ONTOLOGY FOR VISUALIZATION
+#  HISTORICAL UC-03 GRAPHICAL-SYMBOL CORE FOR VISUALIZATION
+#  This focused projection predates the v0.5 textual-reference extension.
+#  For the current ontology, use the generated aec_drawing_metadata
+#  and aec_common_symbols reference pages sourced from src/*.ttl.
 #
 #  Scope: only the core concepts of UC-03 (Reference Symbol
 #  Cross-Sheet Linking), plus the minimum context from

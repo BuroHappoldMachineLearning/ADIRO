@@ -1,3 +1,17 @@
+## 2026-10-15 - UC-03 semantic occurrences and provenance profile
+
+Port the approved semantic proposal onto current main, preserving later suite and annotation-tooling changes.
+Add reference expressions, source number occurrences and direct accepted targets under #95; document the
+batch/evidence profile under #96. Separate semantic resolution admission from precise navigation geometry:
+unlocalisable reconstructed text blocks may retain an independently accepted sheet resolution without
+invented geometry. Preserve existing graphical Layout relations and defer navigation vocabulary.
+
+Parser, repository tests, regenerated documentation and strict site build passed locally.
+HermiT consistency/unsatisfiable-class checks and ROBOT passed using an isolated official JRE;
+the local environment initially lacked Java. Browser visual QA remains for review because no
+browser surface was connected; generated HTML structure and strict links were checked. No private instance
+data or client drawings are included in this repository. Module release versions remain unchanged.
+
 # ADIRO worklog
 
 A **running record of changes made to this repository by AI-assisted sessions** — what was done, how it was
@@ -725,7 +739,7 @@ annotation-level compatibility layer). Decision re-recorded on #77 and on the PR
   mention it).
 - **Hand-written docs brought in line** (documentation-only comparison; no shipped artifact / module / minted
   `:closeMatch`): `docs/design-decisions/dano-comparison.md`, `external-ontology-imports.md`,
-  `changelogs/aec_provenance.md`, `AGENTS.md`, `docs/specification/ORSD_v1.2.md`, and the UC-01/UC-03 module
+  `changelogs/aec_provenance.md`, `AGENTS.md`, `docs/specification/ORSD_v1.3.md`, and the UC-01/UC-03 module
   hierarchy diagrams + version-history entries. Spec-doc versions were **not** re-bumped — these are edits within
   the same unreleased PR, so the existing version-history entries were corrected in place. `#81` (staleness check
   for compatibility-layer mappings) is now **moot** → to be closed.

@@ -86,7 +86,7 @@ A grid line or grid system used for alignment and reference in architectural dra
 A symbol drawn on a Layout that references another Layout (on the same or a different DrawingSheet). Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target Layout's LayoutContentType.
 
 - **IRI:** `https://w3id.org/adiro/aec_common_symbols#ReferenceSymbol`
-- **Sub class of:** `metadata:DrawingElement`
+- **Sub class of:** `metadata:ReferenceExpression`
 
 *Example images:*
 

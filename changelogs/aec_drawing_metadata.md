@@ -5,6 +5,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+- Add UC-03 reference expressions, evidenced number occurrences and accepted textual targets ([#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95)); keep source localisation separate from resolution and navigation admission.
+
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
 ### Added
