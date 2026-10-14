@@ -184,3 +184,75 @@ def test_base_edits_made_after_the_branch_point_are_not_attributed_to_the_pr(tmp
     out = subprocess.run([sys.executable, str(script), "--root", str(tmp_path), "--base-ref", "main", "--repo", "o/r",
                           "--head-ref", "pr", "--head-sha", "abc"], capture_output=True, text=True, encoding="utf-8").stdout
     assert "PrTerm" in out and "Legacy" not in out  # the base's rename of Legacy is not the PR's change
+
+
+# --- example images (#145): suggestions, cautions and removed terms -----------------------------------------------
+
+IMG = "@prefix m: <https://w3id.org/adiro/aec_drawing_metadata#> .\n"
+PROP = "https://w3id.org/adiro/aec_drawing_metadata#exampleImage"
+
+
+def test_a_new_class_without_an_example_image_is_suggested_one():
+    head = g(BASE + IMG + ':B a owl:Class ; rdfs:label "B" .\n:C a owl:Class ; m:exampleImage <https://w3id.org/adiro/aec_x/exampleImage/C_01.png> .\n')
+    assert name(pg.new_classes_without_image(g(BASE), head)) == ["B"]  # C has one, A is not new
+
+
+def test_only_classes_are_suggested_not_properties():
+    head = g(BASE + ":p a owl:ObjectProperty .\n")
+    assert pg.new_classes_without_image(g(BASE), head) == []
+
+
+def test_a_suggestion_alone_posts_a_comment_headed_suggestions_and_links_the_page():
+    text = pg.render([("no-example-image", "`B` (`aec_x`)")], [], "o/r")
+    assert text.startswith(pg.MARKER) and "## Suggestions" in text and "## Required improvements" not in text
+    assert "a suggestion, not a requirement" in text and pg.example_images.PAGE_URL in text
+
+
+def test_suggestions_come_after_the_required_improvements():
+    text = pg.render([("undescribed", "`B` (`aec_x`)"), ("no-example-image", "`B` (`aec_x`)")], [], "o/r")
+    assert text.index("## Required improvements") < text.index("### Suggestions")
+
+
+def test_a_caution_is_a_red_alert_at_the_top_and_posts_a_comment_on_its_own():
+    text = pg.render([], [], "o/r", [("exampleimage-renamed", "`aec_drawing_metadata`: removed")])
+    assert text.startswith(pg.MARKER + "\n> [!CAUTION]\n> **The `exampleImage` annotation property is removed or renamed**")
+    assert "> - `aec_drawing_metadata`: removed" in text and "## Required improvements" not in text
+    both = pg.render([("undescribed", "`B` (`aec_x`)")], [], "o/r", [("exampleimage-renamed", "x")])
+    assert both.index("[!CAUTION]") < both.index("## Required improvements")
+
+
+def test_a_caution_of_an_unregistered_type_is_an_error():
+    with pytest.raises(AssertionError):
+        pg.render([], [], "o/r", [("no-such-caution", "x")])
+
+
+def test_every_caution_renders_and_has_a_detector():
+    for caution in pg.cautions():
+        assert caution.title and caution.explanation and callable(caution.detect)
+        assert "[!CAUTION]" in pg.render([], [], "o/r", [(caution.key, "item")])
+
+
+def test_removing_or_renaming_the_example_image_property_is_detected():
+    decl = f"@prefix m: <https://w3id.org/adiro/aec_drawing_metadata#> .\nm:exampleImage a owl:AnnotationProperty .\n"
+    renamed = "@prefix m: <https://w3id.org/adiro/aec_drawing_metadata#> .\nm:exampleImages a owl:AnnotationProperty .\n"
+    base, head = g(PREFIXES + decl), g(PREFIXES + renamed)
+    (caution,) = pg.cautions()
+    assert len(caution.detect([{"module": "aec_drawing_metadata", "base": base, "head": head}], None)) == 1
+    assert caution.detect([{"module": "aec_drawing_metadata", "base": base, "head": base}], None) == []
+    assert caution.detect([{"module": "aec_x", "base": g(BASE), "head": g(BASE)}], None) == []
+
+
+def test_images_of_a_removed_term_still_in_place_are_reported_until_moved_or_taken_down(tmp_path):
+    folder = tmp_path / "assets" / "aec_x" / "exampleImage"
+    folder.mkdir(parents=True)
+    (folder / "Gone_01.png").write_bytes(b"x")
+    value = "<https://w3id.org/adiro/aec_x/exampleImage/Gone_01.png>"
+    base = g(BASE + IMG + f":Gone a owl:Class ; m:exampleImage {value} .\n")
+    head = g(BASE)
+    assert pg.removed_term_images(base, head, "aec_x", tmp_path) == ["`Gone`: `Gone_01.png` (`aec_x`)"]
+    (folder / "takedowns.txt").write_text("Gone_01.png copyright\n", encoding="utf-8")
+    assert pg.removed_term_images(base, head, "aec_x", tmp_path) == []
+    (folder / "takedowns.txt").unlink()
+    (folder / "Gone_01.png").rename(folder / "moved.png")  # no longer in place
+    assert pg.removed_term_images(base, head, "aec_x", tmp_path) == []
+    assert pg.removed_term_images(base, base, "aec_x", tmp_path) == []  # the term is not removed

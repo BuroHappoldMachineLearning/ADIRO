@@ -129,6 +129,8 @@ def build_symbols(graph):
             "domain": frozenset(str(o) for o in graph.objects(term, RDFS.domain) if isinstance(o, URIRef)),
             "range": frozenset(str(o) for o in graph.objects(term, RDFS.range) if isinstance(o, URIRef)),
             "restrictions": _restrictions(graph, term) if kind == "class" else frozenset(),
+            # the example images of a term (#145): documentation for consumers, so a change is annotation-only (PATCH)
+            "images": frozenset(str(o) for p, o in graph.predicate_objects(term) if str(p).rsplit("#", 1)[-1] == "exampleImage"),
             "flags": frozenset(
                 (str(p), str(o))
                 for p, o in graph.predicate_objects(term)
@@ -224,7 +226,7 @@ def compute_deltas(old_syms, new_syms):
                 deltas.append((dt, iri))
         if o["flags"] != n["flags"]:
             deltas.append(("LABELLING_CHANGED", iri))
-        if (o["labels"], o["comments"]) != (n["labels"], n["comments"]):
+        if (o["labels"], o["comments"], o["images"]) != (n["labels"], n["comments"], n["images"]):
             deltas.append(("ANNOTATION_CHANGED", iri))
     return deltas
 

@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+### Changed
+- **`exampleImage` defined as a URL, with a convention** ([#145](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/145)): it now has `rdfs:range xsd:anyURI`, and its comment says that the value is the absolute `https` IRI of an image file in the module's `exampleImage` folder, and points to the guidance page for contributors. Annotation properties carry no reasoning, so nothing changes for a reasoner. The images themselves are not moved here (their migration to `assets/<module>/exampleImage/` is a separate change), so the existing values still follow the older form.
+
 ### Changed (BREAKING)
 - **Two labelling annotations renamed** ([#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141)). `isComputerVisionLabel` replaces `labellableRoot` (same meaning: this class can be used as a label in computer-vision annotation tooling), and `isComputerVisionOptionalLabel` replaces `isCVATProperty` (a presentation hint: the class is shown apart from the required labels). The names say which application they serve, so another application, such as tagging report documents, gets its own pair. The two are independent: a class may be an optional label without being a label. The old properties are **removed**, not deprecated (justified: no ADIRO term uses them any more, and the second one's name carries the name of a tool; annotation properties may be removed outright, see the versioning docs). Consumers that read the old names must read the new ones.
 

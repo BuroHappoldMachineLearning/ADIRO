@@ -155,7 +155,11 @@ commands directly, but Git Bash is simpler.
   introduced, a `Closes #N` GitHub did not register), titled "Required improvements", with an OntoCanvas preview link
   per touched module that declares classes listed beneath it. **The comment exists only while something needs fixing**
   (it is removed when nothing does, so the preview links go with it: the PR description still carries them). It never
-  lists the standing backlog. All three PR comments (version impact, QC, guidance) are posted as the
+  lists the standing backlog. It also carries **suggestions** (an example image for each class the PR adds without one,
+  [#145](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/145), under "Suggestions", never a requirement) and, at the very top, **cautions**:
+  rare, serious findings rendered as a red `[!CAUTION]` alert (the first one is removing or renaming the `exampleImage`
+  property), a registry in `scripts/pr_guidance.py` like the issue types; a caution or a suggestion alone is enough for
+  the comment to exist. All three PR comments (version impact, QC, guidance) are posted as the
   ADIRO Bot through `.github/actions/sticky-comment`; a same-repo PR is handled by each workflow itself; a **fork PR** (no access to the app secrets) is handled by
   `.github/workflows/pr-comments-fork.yml` (`pull_request_target`), which posts the version-impact and guidance
   comments from **base-branch code only**, reading the fork's `src/` and `changelogs/` as data (never run
@@ -223,6 +227,17 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   read the class's `rdfs:label`. `rdfs:label` reaches the annotation tool only for `owl:oneOf` enumeration values
   (the options a person picks). So class identity there is guaranteed by the (unique) IRI — `rdfs:label` uniqueness
   is for humans and docs, not for the tool.
+- **Example images** ([#145](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/145)). `exampleImage` links a class
+  or relationship to an image, as the full `https` IRI of a file in `assets/<module>/exampleImage/<LocalName>_NN.<ext>`
+  (published at `https://w3id.org/adiro/<module>/exampleImage/…`; `NN` is a two-digit number, always present). The image is
+  cleared for publication, shows nothing private, carries no embedded metadata, and is small (250 KB advised, 500 KB hard)
+  and cropped to the part it shows. A renamed term's images are renamed and listed in `renames.json`, a removed term's go to
+  `deletedAfterV<x.y.z>/`, and a takedown goes in `takedowns.txt`. The images are committed once, in `assets/`; the docs
+  build stages a git-ignored copy into `docs/<module>/exampleImage/`. `scripts/example_images.py` holds the checks that
+  `validate_ontology.py` reports (advisory for the older values, blocking for the limits on files; `ENFORCE_EXAMPLE_IMAGES=1`
+  makes all of it blocking) and the staging. The full guidance is the published page
+  `docs/contribute/example-images.md`; write the "Example images" statement (source and rights, what was obscured) in the
+  PR description when you add one.
 
 ## Contributor workflow
 For anyone changing an ontology, agent or person. The sections below give the detail; this is the order of work.

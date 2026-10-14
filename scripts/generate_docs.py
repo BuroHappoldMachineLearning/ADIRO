@@ -26,6 +26,7 @@ if _TTL2MD_SRC.exists() and str(_TTL2MD_SRC) not in sys.path:
     sys.path.insert(0, str(_TTL2MD_SRC))
 import ttl2md
 from release_badges import write_release_badges
+from example_images import stage as stage_example_images
 from ontology_versions import (
     SEMVER_RE,
     archived_versions,
@@ -733,12 +734,11 @@ def main():
     repo_root = Path(__file__).parent.parent
     output_dir = repo_root / "docs"
 
-    # Keep docs/img in sync with src/images for GitHub Pages publishing
-    src_images_dir = repo_root / "src" / "images"
-    docs_img_dir = output_dir / "img"
-    if src_images_dir.exists():
-        docs_img_dir.mkdir(parents=True, exist_ok=True)
-        shutil.copytree(src_images_dir, docs_img_dir, dirs_exist_ok=True)
+    # Example images (#145): the one committed copy is assets/<module>/exampleImage/. Stage it into docs/ so the site
+    # build and `mkdocs serve` publish it at <module>/exampleImage/; docs/*/exampleImage/ is git-ignored, so the
+    # images are never committed twice.
+    for staged in stage_example_images(repo_root, output_dir):
+        print(f"  [OK] Staged example image: {staged}")
     
     print(f"Scanning for TTL files in: {repo_root}")
     

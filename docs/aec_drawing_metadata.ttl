@@ -36,7 +36,8 @@
 
 :exampleImage rdf:type owl:AnnotationProperty ;
     rdfs:label "example image"@en ;
-    rdfs:comment "Links a class or concept to an example image illustrating it."@en .
+    rdfs:range xsd:anyURI ;
+    rdfs:comment "Links a class or relationship to an image that shows it. The value is the absolute https IRI of an image file in the module's exampleImage folder (https://w3id.org/adiro/<module>/exampleImage/<LocalName>_NN.<ext>, NN being the two-digit order starting at 01). Carries no reasoning weight, but can be used by downstream consumers like machine-learning workflows or annotation tools. How to add an image: see https://w3id.org/adiro/contribute/example-images/"@en .
 
 # --- Labelling annotations --------------------------------------------------------------------------------------
 # isComputerVisionLabel and isComputerVisionOptionalLabel replace labellableRoot and the older tool-named property (#89, #141).
