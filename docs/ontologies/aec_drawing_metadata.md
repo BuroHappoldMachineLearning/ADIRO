@@ -92,8 +92,8 @@ Top-level container for a drawing. Contains Layout(s).
     - [contains](#contains) min 0 [Revision table](#RevisionTable)
     - [contains](#contains) min 1 [Layout](#Layout)
     - [drawingIdentifier](#drawingIdentifier) min 0 `xsd:string`
+    - [drawingScale](#drawingScale) min 0 `xsd:string`
     - [drawingTitle](#drawingTitle) min 0 `xsd:string`
-    - [sheetScale](#sheetScale) min 0 `xsd:string`
 - **isComputerVisionLabel:** false
 
 ### DrawingPackage {#DrawingPackage}
@@ -480,6 +480,17 @@ Sheet-level identifier, e.g. 'ST-201'. Also known as 'drawing number'.
 - **Range:** `xsd:string`
 - **isComputerVisionLabel:** true
 
+### drawingScale {#drawingScale}
+
+The scale of a DrawingSheet as printed in its title block, e.g. '1:50', or a note such as 'NTS' or 'As shown'. It is the sheet's nominal or predominant scale, not a claim about every layout on it: where a Layout prints its own scale, that layoutScale is the more specific value for that drawing. A sub-property of hasScale, so every drawingScale value is also a hasScale value of the sheet.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#drawingScale`
+- **Sub property of:** [hasScale](#hasScale)
+- **Domain:** [Drawing Sheet](#DrawingSheet)
+- **Range:** `xsd:string`
+- **extraction hint:** Read from the title block, in the cell captioned 'Scale' (German 'Maßstab'), sometimes given together with the sheet size ('1:50 @ A1'). Capture only the scale ('1:50'); where the cell prints 'NTS' or 'As shown' instead of a ratio, capture that verbatim. A scale printed beside an individual drawing, outside the title block, is that layout's layoutScale, not this.
+- **isComputerVisionLabel:** true
+
 ### drawingTitle {#drawingTitle}
 
 Title of the drawing sheet.
@@ -516,13 +527,13 @@ Identifier for a Layout within its parent DrawingSheet. Also known as 'layout nu
 
 ### layoutScale {#layoutScale}
 
-The scale printed in an individual Layout's own caption, e.g. '1:5' for a detail on a sheet whose plan is drawn at 1:100. Where a Layout carries one, it is the more specific value and describes that drawing; the sheet-level sheetScale is only the sheet's nominal scale. A sub-property of hasScale, so every layoutScale value is also a hasScale value of the layout.
+The scale printed in an individual Layout's own caption, e.g. '1:5' for a detail on a sheet whose plan is drawn at 1:100. Where a Layout carries one, it is the more specific value and describes that drawing; the sheet-level drawingScale is only the sheet's nominal scale. A sub-property of hasScale, so every layoutScale value is also a hasScale value of the layout.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#layoutScale`
 - **Sub property of:** [hasScale](#hasScale)
 - **Domain:** [Layout](#Layout)
 - **Range:** `xsd:string`
-- **extraction hint:** Printed beside its layout rather than in the title block, usually at the end of the caption line after the title ('3  MULLION HEAD  1:5') or on a line beneath it ('SCALE 1:5'). Capture only the scale: that caption decomposes across three properties on the same Layout — layoutIdentifier '3', layoutTitle 'MULLION HEAD', layoutScale '1:5'. Do not confuse with sheetScale, the nominal scale printed in the title block.
+- **extraction hint:** Printed beside its layout rather than in the title block, usually at the end of the caption line after the title ('3  MULLION HEAD  1:5') or on a line beneath it ('SCALE 1:5'). Capture only the scale: that caption decomposes across three properties on the same Layout — layoutIdentifier '3', layoutTitle 'MULLION HEAD', layoutScale '1:5'. Do not confuse with drawingScale, the nominal scale printed in the title block.
 - **isComputerVisionLabel:** true
 
 ### layoutTitle {#layoutTitle}
@@ -591,17 +602,6 @@ The code identifying a specific revision, e.g. 'A', 'B', 'P01'.
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#revisionCode`
 - **Domain:** [DrawingRevision](#DrawingRevision)
 - **Range:** `xsd:string`
-
-### sheetScale {#sheetScale}
-
-The scale of a DrawingSheet as printed in its title block, e.g. '1:50', or a note such as 'NTS' or 'As shown'. It is the sheet's nominal or predominant scale, not a claim about every layout on it: where a Layout prints its own scale, that layoutScale is the more specific value for that drawing. A sub-property of hasScale, so every sheetScale value is also a hasScale value of the sheet.
-
-- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#sheetScale`
-- **Sub property of:** [hasScale](#hasScale)
-- **Domain:** [Drawing Sheet](#DrawingSheet)
-- **Range:** `xsd:string`
-- **extraction hint:** Read from the title block, in the cell captioned 'Scale' (German 'Maßstab'), sometimes given together with the sheet size ('1:50 @ A1'). Capture only the scale ('1:50'); where the cell prints 'NTS' or 'As shown' instead of a ratio, capture that verbatim. A scale printed beside an individual drawing, outside the title block, is that layout's layoutScale, not this.
-- **isComputerVisionLabel:** true
 
 ### sheetSize {#sheetSize}
 

@@ -222,9 +222,9 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
     rdfs:domain [ rdf:type owl:Class ; owl:unionOf ( :DrawingSheet :Layout ) ] ;
     rdfs:range xsd:string .
 
-:sheetScale rdf:type owl:DatatypeProperty ;
-    rdfs:label "sheetScale" ;
-    rdfs:comment "The scale of a DrawingSheet as printed in its title block, e.g. '1:50', or a note such as 'NTS' or 'As shown'. It is the sheet's nominal or predominant scale, not a claim about every layout on it: where a Layout prints its own scale, that layoutScale is the more specific value for that drawing. A sub-property of hasScale, so every sheetScale value is also a hasScale value of the sheet." ;
+:drawingScale rdf:type owl:DatatypeProperty ;
+    rdfs:label "drawingScale" ;
+    rdfs:comment "The scale of a DrawingSheet as printed in its title block, e.g. '1:50', or a note such as 'NTS' or 'As shown'. It is the sheet's nominal or predominant scale, not a claim about every layout on it: where a Layout prints its own scale, that layoutScale is the more specific value for that drawing. A sub-property of hasScale, so every drawingScale value is also a hasScale value of the sheet." ;
     rdfs:subPropertyOf :hasScale ;
     rdfs:domain :DrawingSheet ;
     rdfs:range xsd:string ;
@@ -260,11 +260,11 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
 
 :layoutScale rdf:type owl:DatatypeProperty ;
     rdfs:label "layoutScale" ;
-    rdfs:comment "The scale printed in an individual Layout's own caption, e.g. '1:5' for a detail on a sheet whose plan is drawn at 1:100. Where a Layout carries one, it is the more specific value and describes that drawing; the sheet-level sheetScale is only the sheet's nominal scale. A sub-property of hasScale, so every layoutScale value is also a hasScale value of the layout." ;
+    rdfs:comment "The scale printed in an individual Layout's own caption, e.g. '1:5' for a detail on a sheet whose plan is drawn at 1:100. Where a Layout carries one, it is the more specific value and describes that drawing; the sheet-level drawingScale is only the sheet's nominal scale. A sub-property of hasScale, so every layoutScale value is also a hasScale value of the layout." ;
     rdfs:subPropertyOf :hasScale ;
     rdfs:domain :Layout ;
     rdfs:range xsd:string ;
-    :extractionHint "Printed beside its layout rather than in the title block, usually at the end of the caption line after the title ('3  MULLION HEAD  1:5') or on a line beneath it ('SCALE 1:5'). Capture only the scale: that caption decomposes across three properties on the same Layout — layoutIdentifier '3', layoutTitle 'MULLION HEAD', layoutScale '1:5'. Do not confuse with sheetScale, the nominal scale printed in the title block."@en ;
+    :extractionHint "Printed beside its layout rather than in the title block, usually at the end of the caption line after the title ('3  MULLION HEAD  1:5') or on a line beneath it ('SCALE 1:5'). Capture only the scale: that caption decomposes across three properties on the same Layout — layoutIdentifier '3', layoutTitle 'MULLION HEAD', layoutScale '1:5'. Do not confuse with drawingScale, the nominal scale printed in the title block."@en ;
     :isComputerVisionLabel "true"^^xsd:boolean .
 
 #################################################################
@@ -409,7 +409,7 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ; owl:onClass :Layout ],
         [ rdf:type owl:Restriction ; owl:onProperty :drawingIdentifier ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onDataRange xsd:string ],
         [ rdf:type owl:Restriction ; owl:onProperty :drawingTitle ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onDataRange xsd:string ],
-        [ rdf:type owl:Restriction ; owl:onProperty :sheetScale ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onDataRange xsd:string ];
+        [ rdf:type owl:Restriction ; owl:onProperty :drawingScale ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onDataRange xsd:string ];
     rdfs:label "Drawing Sheet" ;
     rdfs:comment "Top-level container for a drawing. Contains Layout(s)." ;
     :isComputerVisionLabel false.

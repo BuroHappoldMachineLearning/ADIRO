@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parent.parent
 M = Namespace("https://w3id.org/adiro/aec_drawing_metadata#")
 
 OWNED_TEXT_FIELDS = {
-    M.DrawingSheet: (M.drawingIdentifier, M.drawingTitle, M.sheetScale),
+    M.DrawingSheet: (M.drawingIdentifier, M.drawingTitle, M.drawingScale),
     M.Layout: (M.layoutIdentifier, M.layoutTitle, M.layoutScale),
 }
 TEXT_FIELDS = [(owner, prop) for owner, props in OWNED_TEXT_FIELDS.items() for prop in props]
@@ -56,4 +56,4 @@ def test_each_text_field_is_named_by_a_can_have_restriction_on_its_owner(metadat
 
 def test_has_scale_is_the_unlabelled_parent_of_the_two_scales(metadata):
     assert not _is_label(metadata, M.hasScale)
-    assert {M.sheetScale, M.layoutScale} <= set(metadata.subjects(RDFS.subPropertyOf, M.hasScale))
+    assert {M.drawingScale, M.layoutScale} <= set(metadata.subjects(RDFS.subPropertyOf, M.hasScale))
