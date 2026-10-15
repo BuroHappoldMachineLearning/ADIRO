@@ -283,6 +283,22 @@ td {
     <script id="schema.org" type="application/ld+json">
 [
   {
+    "@id": "https://w3id.org/adiro/aec_drawing_metadata#TitleblockFieldScheme",
+    "@type": [
+      "https://schema.org/DefinedTermSet"
+    ],
+    "https://schema.org/description": [
+      {
+        "@value": "The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to."
+      }
+    ],
+    "https://schema.org/name": [
+      {
+        "@value": "Titleblock Field Scheme"
+      }
+    ]
+  },
+  {
     "@id": "https://w3id.org/adiro/aec_drawing_metadata",
     "@type": [
       "https://schema.org/DefinedTermSet"
@@ -313,22 +329,6 @@ td {
     "https://schema.org/publisher": [
       {
         "@value": "Buro Happold"
-      }
-    ]
-  },
-  {
-    "@id": "https://w3id.org/adiro/aec_drawing_metadata#TitleblockFieldScheme",
-    "@type": [
-      "https://schema.org/DefinedTermSet"
-    ],
-    "https://schema.org/description": [
-      {
-        "@value": "The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to."
-      }
-    ],
-    "https://schema.org/name": [
-      {
-        "@value": "Titleblock Field Scheme"
       }
     ]
   }
@@ -733,7 +733,17 @@ td {
                 </span>
               </td>
             </tr>
-          </table>
+          
+            <tr>
+              <th>
+                <a class="hover_property" href="#exampleimage" title="Links a class or concept to an example image illustrating it.">Example image</a>
+              </th>
+              <td><div>
+  <a href="https://w3id.org/adiro/aec_drawing_metadata/exampleImage/KeyPlan_01.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/aec_drawing_metadata/exampleImage/KeyPlan_01.png</code></a><br>
+  <img src="https://w3id.org/adiro/aec_drawing_metadata/exampleImage/KeyPlan_01.png" alt="Example image for KeyPlan" style="max-width: 500px;">
+</div></td>
+            </tr>
+</table>
         </div>
         <div class="property entity" id="Note">
           <h3>Note
@@ -1139,7 +1149,17 @@ td {
                 </ul>
               </td>
             </tr>
-          </table>
+          
+            <tr>
+              <th>
+                <a class="hover_property" href="#exampleimage" title="Links a class or concept to an example image illustrating it.">Example image</a>
+              </th>
+              <td><div>
+  <a href="https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Layout_01.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Layout_01.png</code></a><br>
+  <img src="https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Layout_01.png" alt="Example image for Layout" style="max-width: 500px;">
+</div></td>
+            </tr>
+</table>
         </div>
         <div class="property entity" id="Layoutcontenttype">
           <h3>Layout content type
@@ -1482,7 +1502,17 @@ td {
                 </span>
               </td>
             </tr>
-          </table>
+          
+            <tr>
+              <th>
+                <a class="hover_property" href="#exampleimage" title="Links a class or concept to an example image illustrating it.">Example image</a>
+              </th>
+              <td><div>
+  <a href="https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Perspective_01.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Perspective_01.png</code></a><br>
+  <img src="https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Perspective_01.png" alt="Example image for Perspective" style="max-width: 500px;">
+</div></td>
+            </tr>
+</table>
         </div>
         <div class="property entity" id="Orientation">
           <h3>Orientation
@@ -2736,12 +2766,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#Layout">Layout</a>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <a href="#Layout">Layout</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
