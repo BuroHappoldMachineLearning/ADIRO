@@ -82,16 +82,11 @@ def test_a_value_that_names_a_missing_file_is_found(tmp_path):
     assert kinds(ei.problems(graph(("A", f"<{W3ID}A_01.png>")), M, tmp_path)) == ["file-missing"]
 
 
-def test_a_file_no_term_uses_is_an_orphan_unless_it_is_in_the_takedown_list(tmp_path):
+def test_a_file_no_term_uses_is_an_orphan_and_a_taken_down_file_is_not_to_be_kept(tmp_path):
     add(tmp_path, "Lonely_01.png")
     assert kinds(ei.problems(graph(), M, tmp_path)) == ["file-orphan"]
     (Path(tmp_path) / "assets" / M / ei.FOLDER / ei.TAKEDOWNS).write_text("Lonely_01.png copyright\n", encoding="utf-8")
-    assert ei.problems(graph(), M, tmp_path) == []
-
-
-def test_the_deleted_after_backups_are_not_orphans(tmp_path):
-    add(tmp_path, "deletedAfterV1.0.0/Gone_01.png")
-    assert ei.problems(graph(), M, tmp_path) == []
+    assert kinds(ei.problems(graph(), M, tmp_path)) == ["takedown-reuse", "takedown-version"]  # delete the file
 
 
 def test_size_is_advised_at_250_kb_and_blocking_at_500_kb(tmp_path):
@@ -148,7 +143,6 @@ def test_blocking_findings_are_errors_even_without_enforcement(tmp_path):
 
 def test_stage_copies_the_images_and_serves_old_names_as_copies(tmp_path):
     add(tmp_path, "New_01.png", png(5, 5))
-    add(tmp_path, "deletedAfterV1.0.0/Gone_01.png", png(6, 6))
     add(tmp_path, "Taken_01.png", png(7, 7))
     folder = Path(tmp_path) / "assets" / M / ei.FOLDER
     (folder / ei.RENAMES).write_text(json.dumps({"Old_01.png": "New_01.png"}), encoding="utf-8")
@@ -158,7 +152,6 @@ def test_stage_copies_the_images_and_serves_old_names_as_copies(tmp_path):
     out = docs / M / ei.FOLDER
     assert (out / "New_01.png").read_bytes() == (folder / "New_01.png").read_bytes()
     assert (out / "Old_01.png").read_bytes() == (out / "New_01.png").read_bytes()
-    assert (out / "deletedAfterV1.0.0" / "Gone_01.png").is_file()
     assert not (out / "Taken_01.png").exists() and not (out / ei.RENAMES).exists() and not (out / ei.TAKEDOWNS).exists()
 
 

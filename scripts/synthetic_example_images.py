@@ -21,6 +21,9 @@ import matplotlib.pyplot as plt  # noqa: E402
 from matplotlib.patches import Arc, Circle, Polygon, Rectangle  # noqa: E402
 from PIL import Image, ImageChops  # noqa: E402
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import example_images  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_ASSETS = ROOT / "assets"
 INK = "#111111"
@@ -641,6 +644,20 @@ def mullion_plan():
     return finish(fig)
 
 
+def removed_placeholder(version):
+    """The notice served at the address of a taken-down image: an old release shows it in place of the image (#154)."""
+    fig, ax = canvas(640, 300)
+    ax.add_patch(Rectangle((10, 10), 620, 280, fill=False, edgecolor=INK, lw=2.0, ls="--"))
+    box(ax, 50, 120, 120, 130, lw=2.0)  # an image frame, crossed out
+    line(ax, [50, 170], [120, 250], lw=1.6)
+    line(ax, [50, 170], [250, 120], lw=1.6)
+    text(ax, 200, 225, "IMAGE REMOVED", 21, "bold")
+    text(ax, 200, 180, f"Removed after v{version}.", 14)
+    text(ax, 200, 145, "No replacement image is available.", 14)
+    text(ax, 50, 60, "This example image was taken down.", 11)
+    return finish(fig)
+
+
 METADATA = {
     "Titleblock_01.png": titleblock_side,
     "Titleblock_02.png": titleblock_strip,
@@ -701,6 +718,12 @@ def main(argv=None):
             data = draw()
             (out / name).write_bytes(data)
             print(f"wrote {module}/{name} ({len(data) // 1024} KB)")
+        versions = sorted({v for _, v in example_images.load_takedown_entries(out).values() if v})
+        for version in versions:  # one placeholder per removal version, published at each taken-down address
+            holder = example_images.placeholder_file(out, version)
+            holder.parent.mkdir(parents=True, exist_ok=True)
+            holder.write_bytes(removed_placeholder(version))
+            print(f"wrote {module}/{holder.relative_to(assets / module).as_posix()}")
     return 0
 
 

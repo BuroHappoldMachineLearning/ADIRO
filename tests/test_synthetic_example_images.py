@@ -33,6 +33,21 @@ def test_each_drawing_is_small_has_no_metadata_and_is_not_oversized(module, name
     assert width and height and max(width, height) <= ei.SOFT_PIXELS
 
 
+def test_the_removed_placeholder_is_small_clean_and_names_the_version(tmp_path):
+    data = syn.removed_placeholder("4.0.1")
+    path = tmp_path / "after-v4.0.1.png"
+    path.write_bytes(data)
+    width, height, metadata = ei.image_info(path)
+    assert len(data) <= ei.SOFT_BYTES and not metadata and width and height
+
+
+@pytest.mark.parametrize("module", sorted(syn.DRAWINGS))
+def test_every_takedown_version_has_a_committed_placeholder(module):
+    folder = ei.module_folder(ROOT, module)
+    for path, (_, version) in ei.load_takedown_entries(folder).items():
+        assert version and ei.placeholder_file(folder, version).is_file(), path
+
+
 def test_a_drawing_is_deterministic():
     assert syn.titleblock_strip() == syn.titleblock_strip()
 

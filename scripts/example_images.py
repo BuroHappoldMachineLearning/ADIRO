@@ -22,7 +22,7 @@ import sys
 from collections import namedtuple
 from pathlib import Path
 
-from rdflib import Literal, URIRef
+from rdflib import Graph, Literal, URIRef
 
 ROOT = Path(__file__).resolve().parent.parent
 PROPERTY_IRI = "https://w3id.org/adiro/aec_drawing_metadata#exampleImage"
@@ -35,8 +35,10 @@ SOFT_PIXELS = 1600
 BUDGET_WARN, BUDGET_BLOCK = 100 * 1024 * 1024, 250 * 1024 * 1024
 NAME_RE = re.compile(r"^(?P<term>.+)_(?P<n>\d{2})$")
 FILE_CHARS_RE = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9_.-]*[A-Za-z0-9_-]$")  # valid inside a Turtle prefixed name
-DELETED_RE = re.compile(r"^deletedAfterV\d+\.\d+\.\d+$")
 RENAMES, TAKEDOWNS = "renames.json", "takedowns.txt"
+REMOVED_DIR = "removed"  # the placeholders, one per removal version: removed/after-v<x.y.z>.png (#154)
+AFTER_RE = re.compile(r"^after=v?(\d+\.\d+\.\d+)$")
+LEGACY_BASE = "https://legacy.invalid/"  # snapshots written before the convention hold relative IRIs: resolved against this
 
 Finding = namedtuple("Finding", "kind blocking item")
 
@@ -55,6 +57,11 @@ KINDS = {
     "case-clash": "{n} file name(s) differ only by case",
     "budget": "the example images take {n}",
     "renames": "{n} entry(ies) of `{renames}` name a file that does not exist",
+    "takedown-version": "{n} takedown entry(ies) without `after=<version>`, so no placeholder is published for them",
+    "takedown-placeholder": "{n} takedown entry(ies) name a version that has no placeholder image in `{folder}/removed/`",
+    "takedown-reuse": "{n} current file(s) carry a name that `takedowns.txt` has taken down",
+    "name-reused": "{n} file name(s) that an archived release names for another term (a different image takes the next number)",
+    "archived-missing": "{n} example image(s) named by an archived release that would not be served (no file, rename or takedown covers them)",
 }
 
 
@@ -151,16 +158,66 @@ def load_renames(folder):
     return {str(k): str(v) for k, v in data.items()} if isinstance(data, dict) else {}
 
 
-def load_takedowns(folder):
-    """Paths named in takedowns.txt (one per line, then an optional reason code)."""
+def load_takedown_entries(folder):
+    """{path: (reason, version or None)} from takedowns.txt.
+
+    A line is `<path> <reason> [after=<version>]`. The path is relative to the module's exampleImage folder, or, in the
+    legacy form written before the convention, a site path starting with `/`. `version` is the release the image was
+    removed after (#154); the placeholder published at the path says so.
+    """
     path = Path(folder) / TAKEDOWNS
     if not path.is_file():
-        return set()
-    return {line.split()[0] for line in path.read_text(encoding="utf-8").splitlines() if line.strip() and not line.startswith("#")}
+        return {}
+    entries = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip() or line.startswith("#"):
+            continue
+        words = line.split()
+        version = next((m.group(1) for m in (AFTER_RE.match(w) for w in words[1:]) if m), None)
+        reason = next((w for w in words[1:] if not AFTER_RE.match(w)), "")
+        entries[words[0]] = (reason, version)
+    return entries
+
+
+def load_takedowns(folder):
+    """Paths named in takedowns.txt."""
+    return set(load_takedown_entries(folder))
+
+
+def placeholder_file(folder, version):
+    return Path(folder) / REMOVED_DIR / f"after-v{version}.png"
+
+
+def snapshot_values(root, module):
+    """(version, term, kind, target) for every exampleImage value of every archived release of the module.
+
+    kind is "module" (target: the file name in the module's folder) or "legacy" (target: the site path, from the
+    relative IRIs of the releases written before the convention: they resolve against the ontology's @base, which is the
+    site root). Values elsewhere are not ours to serve and are skipped.
+    """
+    found = []
+    for ttl in sorted((Path(root) / "versions" / module).glob(f"*/{module}.ttl")):
+        archived = Graph().parse(str(ttl), format="turtle", publicID=LEGACY_BASE)
+        pairs = set()
+        for base in BASES:  # the earliest releases declare the property under the Pages host
+            pairs |= set(archived.subject_objects(URIRef(PROPERTY_IRI.replace(BASES[0], base))))
+        for term, value in sorted(pairs, key=lambda t: (str(t[0]), str(t[1]))):
+            text = str(value)
+            if text.startswith(LEGACY_BASE):
+                found.append((ttl.parent.name, local_name(term), "legacy", "/" + text[len(LEGACY_BASE):]))
+                continue
+            state, name = file_of(value, module)
+            if state == "ok":
+                found.append((ttl.parent.name, local_name(term), "module", name))
+                continue
+            base = next((b for b in BASES if text.startswith(b)), None)
+            if base and state == "location" and not text[len(base):].startswith(f"{module}/{FOLDER}/"):
+                found.append((ttl.parent.name, local_name(term), "legacy", "/" + text[len(base):]))
+    return found
 
 
 def current_files(folder):
-    """Image files directly in the module's folder (not the deletedAfter backups or the bookkeeping files)."""
+    """Image files directly in the module's folder (not the placeholders or the bookkeeping files)."""
     folder = Path(folder)
     if not folder.is_dir():
         return []
@@ -192,10 +249,15 @@ def problems(graph, module, root=ROOT):
             found.append(Finding("file-name", False, f"{label}: {name}"))
         if not (folder / name).is_file():
             found.append(Finding("file-missing", False, f"{label}: {name}"))
+    entries = load_takedown_entries(folder)
+    archived = snapshot_values(root, module)
+    archived_names = {target for _, _, kind, target in archived if kind == "module"}
     seen_lower = {}
     for path in current_files(folder):
         seen_lower.setdefault(path.name.lower(), []).append(path.name)
-        if path.name not in used and path.name not in load_takedowns(folder):
+        if path.name in entries:
+            found.append(Finding("takedown-reuse", True, f"{module}/{path.name}"))
+        elif path.name not in used and path.name not in archived_names:
             found.append(Finding("file-orphan", False, f"{module}/{path.name}"))
         size = path.stat().st_size
         if size > SOFT_BYTES:
@@ -210,9 +272,22 @@ def problems(graph, module, root=ROOT):
     for names in seen_lower.values():
         if len(names) > 1:
             found.append(Finding("case-clash", True, f"{module}/" + ", ".join(names)))
-    for old, new in sorted(load_renames(folder).items()):
+    renames = load_renames(folder)
+    for old, new in sorted(renames.items()):
         if not (folder / new).is_file():
             found.append(Finding("renames", True, f"{module}/{FOLDER}/{RENAMES}: {old} -> {new}"))
+    for path, (_, version) in sorted(entries.items()):
+        if version is None:
+            found.append(Finding("takedown-version", False, f"{module}: {path}"))
+        elif not placeholder_file(folder, version).is_file():
+            found.append(Finding("takedown-placeholder", True, f"{module}: {path} (after v{version})"))
+    for term, value in values(graph):  # a name an archived release gives to another term is reserved (#154)
+        state, name = file_of(value, module)
+        if state == "ok" and any(t != local_name(term) and k == "module" and n == name for _, t, k, n in archived):
+            found.append(Finding("name-reused", True, f"`{local_name(term)}`: {name}"))
+    for version, term, kind, target in archived:  # every address an archived release names must still be served
+        if not ((kind == "module" and ((folder / target).is_file() or target in renames)) or target in entries):
+            found.append(Finding("archived-missing", True, f"`{term}` in v{version}: {target}"))
     return found
 
 
@@ -245,7 +320,9 @@ def stage(root=ROOT, docs=None):
 
     The copy is a build artefact: docs/*/exampleImage/ is git-ignored, so the images are committed once. The rename
     mapping is applied here: an old file name is served as a copy of the new file, so a released snapshot that names
-    the old file still shows it. Takedown-listed paths are never copied.
+    the old file still shows it. A taken-down path is never copied from assets/: it is served as the placeholder of the
+    version it was removed after (#154), also when the path is a legacy site path such as /img/<folder>/<file>. A
+    removed term's image just stays where it is.
     """
     root = Path(root)
     docs = Path(docs) if docs else root / "docs"
@@ -254,19 +331,27 @@ def stage(root=ROOT, docs=None):
         module = src.parent.name
         dest = docs / module / FOLDER
         shutil.rmtree(dest, ignore_errors=True)
-        takedowns = load_takedowns(src)
+        entries = load_takedown_entries(src)
         for path in sorted(p for p in src.rglob("*") if p.is_file()):
             rel = path.relative_to(src).as_posix()
-            if rel in (RENAMES, TAKEDOWNS) or rel in takedowns:
+            if rel in (RENAMES, TAKEDOWNS) or rel in entries or rel.startswith(REMOVED_DIR + "/"):
                 continue
             (dest / rel).parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(path, dest / rel)
             staged.append(f"{module}/{FOLDER}/{rel}")
         for old, new in sorted(load_renames(src).items()):
-            if (dest / new).is_file() and not (dest / old).exists():
+            if (dest / new).is_file() and not (dest / old).exists() and old not in entries:
                 (dest / old).parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(dest / new, dest / old)
                 staged.append(f"{module}/{FOLDER}/{old} (old name of {new})")
+        for taken, (_, version) in sorted(entries.items()):
+            holder = placeholder_file(src, version) if version else None
+            target = docs / taken.lstrip("/") if taken.startswith("/") else dest / taken
+            if holder is None or not holder.is_file() or ".." in Path(taken).parts or docs.resolve() not in target.resolve().parents:
+                continue
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(holder, target)
+            staged.append(f"{target.relative_to(docs).as_posix()} (placeholder, removed after v{version})")
     return staged
 
 

@@ -22,6 +22,21 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-15 — Archived releases keep their example images; a takedown serves a placeholder ([#154](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/154))
+
+**Branch:** `feat/154-archived-example-images`, based on `feat/151-more-synthetic-images` (the [#152](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/152) PR, unmerged when this was written).
+
+**Changed:**
+- `scripts/example_images.py`: a removed term's image stays where it is (no `deletedAfterV…/` folder, no move); the unused-file check accepts a file that an archived release names (`snapshot_values` reads every `versions/<module>/*/<module>.ttl`, also the earliest ones, which declare the property under the Pages host and hold relative IRIs resolving to site paths). New findings: `archived-missing` (an address an archived release names that no file, rename or takedown would serve; blocking), `name-reused` (a name an archived release gives to another term; blocking), `takedown-reuse` (a current file with a taken-down name; blocking), `takedown-placeholder` (a version with no placeholder; blocking), `takedown-version` (advisory).
+- `takedowns.txt` lines are `<path> <reason> after=<x.y.z>`; `stage()` serves the placeholder `removed/after-v<x.y.z>.png` at each taken-down path, also a legacy site path (`docs/img/aec_drawing_ontology/` is git-ignored), and a rename no longer serves a taken-down name again. The twenty #149 entries carry `after=4.0.1`.
+- `scripts/synthetic_example_images.py` draws the placeholder per removal version; `scripts/check_prior_versions.py` fetches every example image an archived release names after a deploy (image content type; the placeholder at a takedown), with retries, as it does for display configs.
+- The bot's "removed term's image still in place" suggestion is gone (a removed term's image now stays, so there is nothing to ask).
+- Guidance page, `AGENTS.md`, `assets/README.md`, tests (`tests/test_archived_example_images.py`).
+
+**Verified:** full pytest run (245 tests with matplotlib and Pillow), `validate_ontology.py` (no example-image finding: all 80 archived values of `aec_drawing_metadata` are covered), `stage()` into a temporary folder (the legacy paths get the placeholder). **Not verified:** the post-deploy check against the live site (first run after the next deploy); `mkdocs build --strict`.
+
+**Left for later:** a hash manifest per release to catch an image replaced in place under the same name.
+
 ## 2026-10-15 — Synthetic example images for more terms ([#152](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/152))
 
 **Branch:** `feat/151-more-synthetic-images`, based on `main` once #148 and #150 had merged. Extends [#149](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/149).
