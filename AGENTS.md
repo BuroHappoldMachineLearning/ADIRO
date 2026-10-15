@@ -233,7 +233,9 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   cleared for publication, shows nothing private, carries no embedded metadata, and is small (250 KB advised, 500 KB hard)
   and cropped to the part it shows. A renamed term's images are renamed and listed in `renames.json`, a removed term's go to
   `deletedAfterV<x.y.z>/`, and a takedown goes in `takedowns.txt`. The images are committed once, in `assets/`; the docs
-  build stages a git-ignored copy into `docs/<module>/exampleImage/`. `scripts/example_images.py` holds the checks that
+  build stages a git-ignored copy into `docs/<module>/exampleImage/`. The images of `aec_drawing_metadata` are synthetic,
+  drawn by `scripts/synthetic_example_images.py` ([#149](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/149));
+  never publish a drawing from a real project unless its owner has cleared it and every name, logo and seal is removed. `scripts/example_images.py` holds the checks that
   `validate_ontology.py` reports (advisory for the older values, blocking for the limits on files; `ENFORCE_EXAMPLE_IMAGES=1`
   makes all of it blocking) and the staging. The full guidance is the published page
   `docs/contribute/example-images.md`; write the "Example images" statement (source and rights, what was obscured) in the
