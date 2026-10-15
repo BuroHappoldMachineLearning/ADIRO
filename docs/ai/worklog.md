@@ -24,7 +24,7 @@ threads*, which commits do not carry.
 
 ## 2026-10-15 — `exampleImage` becomes a sub-property of `foaf:depiction` ([#157](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/157))
 
-**Branch:** `feat/157-foaf-depiction`, based on `feat/154-archived-example-images` (the [#154](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/154) PR, unmerged when this was written).
+**Branch:** `feat/157-foaf-depiction`, based on `main` after the [#154](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/154) PR merged.
 
 **Changed:**
 - `src/aec_drawing_metadata.ttl`: `@prefix foaf:`, `foaf:depiction a owl:AnnotationProperty` (with a label, so ROBOT's `missing_label` stays quiet) and `:exampleImage rdfs:subPropertyOf foaf:depiction`. FOAF is not imported.
