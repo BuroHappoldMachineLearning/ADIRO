@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.6 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.7 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -58,7 +58,9 @@ Characteristics of a single entity. **Datatype properties on `DrawingSheet` are 
 | ---------------- | ----------------- | ---------------------- | ------ | ------------- | ----- |
 | `drawingIdentifier`  | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | Also known as "drawing number". |
 | `drawingTitle`   | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
-| `hasScale`       | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
+| `hasScale`       | `DrawingSheet`, `Layout` | `aec_drawing_metadata` | NEW    | `xsd:string`  | The general scale property; `sheetScale` and `layoutScale` are its sub-properties, so a query on `hasScale` returns both. *(Amended in [v0.7](#9-version-history).)* |
+| `sheetScale`     | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | The scale printed in the title block; the sheet's nominal scale. Sub-property of `hasScale`. *(Added in [v0.7](#9-version-history).)* |
+| `layoutScale`    | `Layout`          | `aec_drawing_metadata` | NEW    | `xsd:string`  | The scale printed in a layout's own caption; more specific than `sheetScale`. Sub-property of `hasScale`. *(Added in [v0.7](#9-version-history).)* |
 | `sheetSize`      | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
 | `revisionCode`   | `DrawingRevision` | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
 | `issueDate`      | `DrawingRevision` | `aec_drawing_metadata` | NEW    | `xsd:date`    | |
@@ -112,7 +114,7 @@ Each FR describes one representational capability the ontology must have, in imp
 > The ontology MUST represent the core identity fields of a drawing sheet — drawing number, title, scale, and sheet size — such that sheets can be retrieved and distinguished by these fields.
 
 - Source: UC-01
-- Derived terms: `metadata:DrawingSheet` (REUSE), `metadata:drawingIdentifier`, `metadata:drawingTitle`, `metadata:hasScale`, `metadata:sheetSize` (NEW datatype properties on `DrawingSheet`)
+- Derived terms: `metadata:DrawingSheet` (REUSE), `metadata:drawingIdentifier`, `metadata:drawingTitle`, `metadata:hasScale`, `metadata:sheetScale`, `metadata:sheetSize` (NEW datatype properties on `DrawingSheet`); `metadata:layoutScale` (NEW, on `Layout`). `sheetScale` and `layoutScale` are sub-properties of `hasScale`. *(Amended in [v0.7](#9-version-history).)*
 
 ---
 
@@ -323,6 +325,8 @@ The query is fully expressible, confirming that CQ-I 1 is covered by the current
 | `metadata:drawingIdentifier`       | `aec_drawing_metadata` | NEW    | CQ 1.1, CQ 1.2                                 | FR 1                               |
 | `metadata:drawingTitle`        | `aec_drawing_metadata` | NEW    | CQ 1.2                                         | FR 1                               |
 | `metadata:hasScale`            | `aec_drawing_metadata` | NEW    | CQ 1.3, CQ-I 2                                 | FR 1                               |
+| `metadata:sheetScale`          | `aec_drawing_metadata` | NEW    | CQ 1.3, CQ-I 2 (through `hasScale`)            | FR 1                               |
+| `metadata:layoutScale`         | `aec_drawing_metadata` | NEW    | — (answers `hasScale` queries; no CQ names it) | FR 1                               |
 | `metadata:sheetSize`           | `aec_drawing_metadata` | NEW    | —                                              | FR 1                               |
 | `metadata:revisionCode`        | `aec_drawing_metadata` | NEW    | CQ 3.1, CQ 3.3                                 | FR 3                               |
 | `metadata:issueDate`           | `aec_drawing_metadata` | NEW    | CQ 3.2, CQ 3.3, CQ-I 1                         | FR 3                               |
@@ -396,7 +400,15 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.6 (current — draft)
+### v0.7 (current — draft)
+
+Changes from v0.6, made when the scale was split into a sheet-level and a layout-level property ([#162](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/162)). MAJOR in substance (attributes added); the number stays in the 0.x series because the document is still a draft:
+
+- **`metadata:sheetScale` (on `DrawingSheet`) and `metadata:layoutScale` (on `Layout`) added** as sub-properties of `metadata:hasScale`, in the §2.2 attributes table, the FR 1 derived terms and the §6 traceability matrix. `sheetScale` is the scale in the title block; `layoutScale` is the scale in a layout's own caption.
+- **`hasScale` is unchanged and still answers CQ 1.3 and CQ-I 2**: a value asserted with either sub-property is also a `hasScale` value, so no competency question or SPARQL query changed. `layoutScale` is not named by any competency question.
+- **Labelling.** `drawingIdentifier`, `drawingTitle` and `sheetScale` are marked `isComputerVisionLabel`, so annotation tooling can box each as a text field. No requirement changed.
+
+### v0.6 (draft)
 
 Changes from v0.5, made when the unused `owl:imports` of `aec_common_symbols` was removed from `aec_domain_common` and `aec_facade_domain` ([#134](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/134)). MINOR — suite-accuracy only, no UC-01 term changes:
 

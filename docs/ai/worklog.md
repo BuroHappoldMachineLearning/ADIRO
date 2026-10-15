@@ -29,6 +29,32 @@ threads*, which commits do not carry.
 - "Reviewing a pull request": a finding verified by reading the code needs no confidence label; only *reproduced* and *suspected* are written.
 - Not verified: nothing to run (documentation only). The same wording still has to be carried into the team's `tools:orientation` and `tools:public-repo-hygiene` skills (separate repository, not changed here).
 
+## 2026-10-15 — Labellable text fields: `layoutScale`, `sheetScale`, and six properties marked as labels ([#162](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/162))
+
+**Branch:** `feat/162-labellable-text-fields`, based on `main` at `2ff0acc`. Not committed yet.
+
+**Changed:**
+- `src/aec_drawing_metadata.ttl`: new `layoutScale` (domain `Layout`) and `sheetScale` (domain `DrawingSheet`), both `rdfs:subPropertyOf :hasScale`, range `xsd:string`, with a comment and an `extractionHint`. `isComputerVisionLabel true` on `drawingIdentifier`, `drawingTitle`, `sheetScale`, `layoutIdentifier`, `layoutTitle`, `layoutScale`; `hasScale` unmarked and otherwise unchanged. One "can have" restriction per property (`owl:minQualifiedCardinality 0`, `owl:onDataRange xsd:string`) on `DrawingSheet` and `Layout`. `isComputerVisionLabel`'s comment now covers "class or datatype property" (and the section comment above it says so); `isComputerVisionOptionalLabel`'s comment is left about classes, since no property carries it. `layoutTitle`'s extraction hint now says `layoutScale '1:5'` instead of `hasScale`.
+- `changelogs/aec_drawing_metadata.md`: `[Unreleased]` Added (the two properties; the restrictions) and Changed (the annotation's scope, the six labels and the rename consumers have to make; the hint).
+- `tests/test_labellable_text_fields.py`: the six are labelled datatype properties of their owner with range `xsd:string`, each named by a min-0 `owl:onDataRange xsd:string` restriction on the owner, and `hasScale` is unlabelled and the parent of both scales.
+
+**Decided here:**
+- `:ScaleField aprov:mapsToFieldProperty :hasScale` is **left as it is**. The field kind is not only a title-block field: `aprov:assertedBy`'s comment uses it for a scale asserted by the title block *and* by a layout corner, told apart by the asserting region, so mapping it to `sheetScale` would be wrong for the layout case. `hasScale` remains correct for both, and the issue puts `TitleblockFieldScheme` out of scope. A region-aware promotion (title block → `sheetScale`, layout → `layoutScale`) would be a separate issue.
+- `hasScale`'s comment does not mention the two sub-properties (the brief and the issue keep it unchanged). Adding one sentence pointing at them would be an annotation-only (PATCH-level) change if a reviewer asks for it.
+- No script or test assumes `isComputerVisionLabel` is only on classes: `compat_diff.py` reads the flags on every term kind (it reports the four existing properties as `LABELLING_CHANGED`), and ttl2md renders the annotation and the `onDataRange` restrictions on a property's and a class's page (checked by rendering the module). Nothing changed there.
+
+**Verified:** `uv run python scripts/validate_ontology.py` (also with `BASE_REF=origin/main`) — every module `[OK]`, only the standing facade #87 warning. `compat_diff.py --markdown --base-dir <main's src>` (as the PR comment workflow runs it): `aec_drawing_metadata` 13 changes, MAJOR-level — 6 `RESTRICTION_ADDED`, 4 `LABELLING_CHANGED`, 2 `TERM_ADDED`, 1 `ANNOTATION_CHANGED`; next version 5.0.0, as before this change. `compat_diff.py` (warn mode): no inconsistency. `uv run --with pytest --with pillow python -m pytest tests -q` 221 passed, 1 skipped; ttl2md tests 30 passed. **Not run:** `scripts/run_reasoning.sh` (HermiT + ROBOT DL profile) — no Java on this machine; the PR's reasoning check is the first run. Docs not regenerated (a later step), hand-written specification not updated (a later step).
+
+**Deferred to the maintainers (open questions in the issue, implemented here with the issue's proposed defaults):**
+1. Restriction form — `owl:minQualifiedCardinality 0` (adds only the class-to-property edge), rather than `someValuesFrom` (too strong) or `maxCardinality 1` (an unneeded constraint), or no restriction (consumers follow `rdfs:domain`).
+2. Annotation scope — `isComputerVisionLabel` extended to datatype properties, rather than a separate annotation for text fields.
+3. Version impact — `LABELLING_CHANGED` and `RESTRICTION_ADDED` are potentially breaking (MAJOR unless review says otherwise); `[Unreleased]` is already MAJOR because of the [#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141) rename, so this adds no further bump if released together.
+4. `hasScale` kept, not deprecated, domain unchanged; narrowing it would be a `DOMAIN_CHANGED` in its own issue.
+
+**Docs regen and spec sync (same day):** `src/aec_drawing_metadata.display.json` got diagram positions for `sheetScale` and `layoutScale` (next to `hasScale` / `layoutTitle`); `uv run python scripts/generate_docs.py` then changed only the `aec_drawing_metadata` generated files under `docs/` (page, pyLODE HTML, `.ttl`, `.display.json`). UC-01 is now v0.7 (MAJOR in substance, attributes added; 0.x draft): `sheetScale` / `layoutScale` added to the attributes table, FR 1 derived terms and traceability matrix, `hasScale` CQs left as they are (valid by sub-property entailment); `use-cases/README.md` rows updated. UC-03 needed no change (`layoutIdentifier` / `drawingIdentifier` are unchanged apart from the label flag). `usage-of-annotation-properties.md` and `usage-of-restrictions-for-cardinality.md` (the `owl:onDataRange` form) amended in place. `validate_ontology.py` OK, `mkdocs build --strict` OK, `pytest tests` 221 passed, 1 skipped. Remaining: open the PR (`Closes #162`) and coordinate the label rename with the annotation pipeline maintainers.
+
+**Next step:** open the PR (`Closes #162`), get the maintainers' answers to the four open questions in the issue, check the reasoning CI (no local Java), and coordinate the label rename with the maintainers of the annotation pipeline before the release.
+
 ## 2026-10-15 — The two logos are shrunk (PR [#161](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/161))
 
 - `docs/img/favicon.png` 1254 px, 888 KB → 256 px, 45 KB (site logo and favicon); `docs/img/adiro_banner.png` 1254 px, 1.2 MB → 640 px, 376 KB (shown at 320 px, so 2x for high-density screens). Same names, so no reference changed.
