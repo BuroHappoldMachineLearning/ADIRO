@@ -212,16 +212,18 @@ def compute_deltas(old_syms, new_syms):
         if o["kind"] != n["kind"]:
             deltas.append(("TYPE_CHANGED", iri))
             continue
-        if o["kind"] == "annotation-property" and (o["domain"] != n["domain"] or o["range"] != n["range"]):
-            # An annotation property's domain and range carry no logical meaning (no reasoner draws anything from
-            # them), so changing one is documentation for consumers: an annotation change, not a breaking one (#145).
+        if o["kind"] == "annotation-property" and (o["domain"] != n["domain"] or o["range"] != n["range"]
+                                                   or o["supers"] != n["supers"]):
+            # An annotation property's domain, range and super-properties carry no logical meaning (no reasoner draws
+            # anything from them), so changing one is documentation for consumers: an annotation change, not a breaking
+            # one (#145; #157 for the link of exampleImage to foaf:depiction).
             deltas.append(("ANNOTATION_CHANGED", iri))
         if o["kind"] in _PROP_KINDS:
             if o["kind"] != "annotation-property" and o["domain"] != n["domain"]:
                 deltas.append(("DOMAIN_CHANGED", iri))
             if o["kind"] != "annotation-property" and o["range"] != n["range"]:
                 deltas.append(("RANGE_CHANGED", iri))
-            if o["supers"] != n["supers"]:
+            if o["kind"] != "annotation-property" and o["supers"] != n["supers"]:
                 deltas.append(("SUPERPROPERTY_CHANGED", iri))
         elif o["kind"] == "class":
             if o["supers"] != n["supers"]:

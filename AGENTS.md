@@ -110,7 +110,7 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   the gate is the warn step above.
 - **`.github/workflows/ontology-reasoning.yml`** — on PRs touching `src/**.ttl` (RES-36), runs an OWL 2 DL
   reasoner (**HermiT**) + ROBOT `report` over the whole suite at latest and posts a sticky comment (built by `scripts/qc_comment.py`: the verdict, then **Important checks** (the repository's own, from `validate_ontology.py`, with each module's findings in an expandable Findings column), then **Minor checks** (ROBOT: a row per rule with a grouped preview, the full rows kept as a run artifact), and the introduction collapsed at the bottom, with no internal tracker IDs). The
-  **reasoner is a blocking gate** — a PR that makes the merged suite inconsistent / unsatisfiable / non-DL
+  **reasoner is a blocking gate** — a PR that makes the merged suite inconsistent / unsatisfiable / non-DL (the script also validates the OWL 2 DL profile with ROBOT, because the reasoner accepts illegal punning; the standing "undeclared term" violations are left out, [#157](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/157))
   fails the check; ROBOT `report` stays **advisory** (warn-only). It calls `scripts/run_reasoning.sh` — the
   *same* script you run locally (below) — so CI and local match. Imports resolve offline via `src/catalog-v001.xml`.
 - **`.github/workflows/reasoning-main.yml`** — on every push to `main` that touches `src/**.ttl`
@@ -227,7 +227,8 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   read the class's `rdfs:label`. `rdfs:label` reaches the annotation tool only for `owl:oneOf` enumeration values
   (the options a person picks). So class identity there is guaranteed by the (unique) IRI — `rdfs:label` uniqueness
   is for humans and docs, not for the tool.
-- **Example images** ([#145](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/145)). `exampleImage` links a class
+- **Example images** ([#145](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/145)). `exampleImage` (a sub-property of `foaf:depiction`: FOAF is never imported and `foaf:depiction` stays an annotation
+  property, which `validate_ontology.py` enforces, [#157](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/157)) links a class
   or relationship to an image, as the full `https` IRI of a file in `assets/<module>/exampleImage/<LocalName>_NN.<ext>`
   (published at `https://w3id.org/adiro/<module>/exampleImage/…`; `NN` is a two-digit number, always present). The image is
   cleared for publication, shows nothing private, carries no embedded metadata, and is small (250 KB advised, 500 KB hard)

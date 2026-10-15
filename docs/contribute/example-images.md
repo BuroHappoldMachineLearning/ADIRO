@@ -4,6 +4,18 @@ An **example image** shows what a class or relationship looks like on a drawing.
 `exampleImage` annotation property, and it is part of the ontology: the documentation pages show it, and downstream
 tools (annotation tools, machine-learning workflows) read it by its URI. This page is how to add one.
 
+## The standard property it belongs to
+
+`exampleImage` is a sub-property of the standard `foaf:depiction`, so a tool that reads `foaf:depiction` finds ADIRO's
+images without knowing ADIRO. `exampleImage` keeps its own meaning (an example of how the term looks on a drawing), its
+numbering and its checks. The ontology declares `foaf:depiction` as an annotation property, as the OBO ontologies do,
+and never imports FOAF. That matters: FOAF itself defines `depiction` as an object property, and OWL 2 DL does not allow
+one IRI to be both an annotation property and an object property. If FOAF's own definition is loaded together with
+ADIRO, the merged ontology is no longer OWL 2 DL (Protégé reports illegal punning, and a strict reasoner refuses it). So
+do not import FOAF into an ADIRO module, and a consumer that merges both should drop FOAF's declaration of `depiction`.
+`scripts/validate_ontology.py` fails a module that imports FOAF or declares `foaf:depiction` as anything but an
+annotation property, and the reasoning check validates the OWL 2 DL profile of the merged modules.
+
 ## What makes a good image
 
 - **It shows the term, clearly.** Crop the source drawing to the part being illustrated when the drawing shows other

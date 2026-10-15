@@ -589,11 +589,16 @@ Display label for the status code, e.g. 'IFC', 'IFR', 'AFC'.
 
 ## Annotation Properties
 
+### depiction {#depiction}
+
+- **IRI:** `http://xmlns.com/foaf/0.1/depiction`
+
 ### example image {#exampleImage}
 
 Links a class or relationship to an image that shows it. The value is the absolute https IRI of an image file in the module's exampleImage folder (https://w3id.org/adiro/<module>/exampleImage/<LocalName>_NN.<ext>, NN being the two-digit order starting at 01). Carries no reasoning weight, but can be used by downstream consumers like machine-learning workflows or annotation tools. How to add an image: see https://w3id.org/adiro/contribute/example-images/
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#exampleImage`
+- **Sub property of:** [depiction](#depiction)
 - **Range:** `xsd:anyURI`
 
 ### extraction hint {#extractionHint}

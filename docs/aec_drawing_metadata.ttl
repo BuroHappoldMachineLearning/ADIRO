@@ -9,6 +9,7 @@
 @prefix aprov: <https://w3id.org/adiro/aec_provenance#> .
 @prefix geom: <https://w3id.org/adiro/aec_geometry#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
 #################################################################
 #    Ontology
@@ -35,8 +36,14 @@
 #    Annotation properties
 #################################################################
 
+# FOAF's own definition of depiction is an object property, and OWL 2 DL does not allow one IRI to be both: it is declared
+# here as an annotation property, as the OBO ontologies do, and FOAF is never imported (see docs/contribute/example-images.md).
+foaf:depiction rdf:type owl:AnnotationProperty ;
+    rdfs:label "depiction"@en .
+
 :exampleImage rdf:type owl:AnnotationProperty ;
     rdfs:label "example image"@en ;
+    rdfs:subPropertyOf foaf:depiction ;
     rdfs:range xsd:anyURI ;
     rdfs:comment "Links a class or relationship to an image that shows it. The value is the absolute https IRI of an image file in the module's exampleImage folder (https://w3id.org/adiro/<module>/exampleImage/<LocalName>_NN.<ext>, NN being the two-digit order starting at 01). Carries no reasoning weight, but can be used by downstream consumers like machine-learning workflows or annotation tools. How to add an image: see https://w3id.org/adiro/contribute/example-images/"@en .
 
