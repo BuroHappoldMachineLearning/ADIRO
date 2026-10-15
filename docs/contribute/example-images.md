@@ -62,12 +62,20 @@ judges it; the checks cannot.
 - **Renamed.** Rename its images to follow the new name, and list the old names in
   `assets/<module>/exampleImage/renames.json` (`{"Old_01.png": "New_01.png"}`). The documentation build serves each old
   name as a copy of the new file, so a released version that names the old file still shows its image.
-- **Removed.** Move its images to `assets/<module>/exampleImage/deletedAfterV<x.y.z>/`, where `<x.y.z>` is the last
-  release that still has the term. That release then still shows them.
+- **Removed.** Leave its images where they are. A released version never changes, so the address it names must keep
+  working for good; the checks accept a file that an archived release still names. An image that no release names is
+  reported as unused and can be deleted.
 - **Taken down.** An image that was published by mistake (a rights problem, private information) is deleted in the pull
-  request and its path is added to `assets/<module>/exampleImage/takedowns.txt`, one path per line followed by a reason
-  code (`copyright` or `privacy`). A listed path needs no backup and no rename entry, and is never copied to the site.
-  The file stays in the git history; removing it from the history is a separate maintainer action.
+  request and its path is added to `assets/<module>/exampleImage/takedowns.txt`, one line per path: the path, a reason
+  code (`copyright` or `privacy`) and `after=<x.y.z>`, the last release that showed it. The path is relative to the
+  folder (or a site path starting with `/`, for the images published before the convention). The site then serves a
+  placeholder at that address, "Image removed after v<x.y.z>", so an older release shows a notice, not a broken image. The
+  placeholder for each version is `assets/<module>/exampleImage/removed/after-v<x.y.z>.png`, drawn by
+  `scripts/synthetic_example_images.py`. The file stays in the git history; removing it from the history is a separate
+  maintainer action.
+- **A name stays reserved.** A name that an archived release gives to a term, or that `takedowns.txt` lists, is not used
+  for another image: a different image takes the next number (`Stamp_02.png`). Reusing the name would change what the
+  older release shows.
 
 The `exampleImage` property itself is not renamed. If a pull request removes or renames it, the ADIRO Bot raises a
 caution at the top of its comment.
@@ -79,9 +87,15 @@ request:
 
 - every value is an absolute `https` IRI in the module's `exampleImage` folder, and the file exists;
 - the file name is the local name of the term that carries the value, then `_NN`, then a lower-case extension;
-- no file is left in a folder that no term uses (other than the `deletedAfter…` backups and takedowns), and no two
-  files differ only by case;
+- no file is left in a folder that neither a term nor an archived release uses, and no two files differ only by case;
+- every address that an archived release names (`versions/`) is still served: by a file, a rename or a takedown's
+  placeholder (advisory for the first release cycle after [#154](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/154),
+  then blocking: `ENFORCE_ARCHIVED_IMAGES=1`). A taken-down name is not kept as a file, and a name an archived release gives to
+  another term is not reused;
 - the size, the dimensions and the embedded metadata of each file, and the total size of all example images.
+
+After each deploy, `scripts/check_prior_versions.py` fetches every example image that an archived release names and
+requires an image answer, and the placeholder at a taken-down address.
 
 Findings about values and names are advisory while the older images are migrated; the limits on files that follow the
 convention (500 KB, embedded metadata, the 250 MB total) block. To run the checks locally:

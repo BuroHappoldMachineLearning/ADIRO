@@ -240,19 +240,3 @@ def test_removing_or_renaming_the_example_image_property_is_detected():
     assert len(caution.detect([{"module": "aec_drawing_metadata", "base": base, "head": head}], None)) == 1
     assert caution.detect([{"module": "aec_drawing_metadata", "base": base, "head": base}], None) == []
     assert caution.detect([{"module": "aec_x", "base": g(BASE), "head": g(BASE)}], None) == []
-
-
-def test_images_of_a_removed_term_still_in_place_are_reported_until_moved_or_taken_down(tmp_path):
-    folder = tmp_path / "assets" / "aec_x" / "exampleImage"
-    folder.mkdir(parents=True)
-    (folder / "Gone_01.png").write_bytes(b"x")
-    value = "<https://w3id.org/adiro/aec_x/exampleImage/Gone_01.png>"
-    base = g(BASE + IMG + f":Gone a owl:Class ; m:exampleImage {value} .\n")
-    head = g(BASE)
-    assert pg.removed_term_images(base, head, "aec_x", tmp_path) == ["`Gone`: `Gone_01.png` (`aec_x`)"]
-    (folder / "takedowns.txt").write_text("Gone_01.png copyright\n", encoding="utf-8")
-    assert pg.removed_term_images(base, head, "aec_x", tmp_path) == []
-    (folder / "takedowns.txt").unlink()
-    (folder / "Gone_01.png").rename(folder / "moved.png")  # no longer in place
-    assert pg.removed_term_images(base, head, "aec_x", tmp_path) == []
-    assert pg.removed_term_images(base, base, "aec_x", tmp_path) == []  # the term is not removed

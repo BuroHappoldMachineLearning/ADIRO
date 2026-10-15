@@ -113,22 +113,6 @@ def new_classes_without_image(base, head):
             if (t, RDF.type, OWL.Class) in head and not _signature(base, t) and (t, prop, None) not in head]
 
 
-def removed_term_images(base, head, module, root):
-    """Items for the images of removed terms that are still in the module's exampleImage folder (#145).
-
-    A removed term's images go to deletedAfterV<last release>/ (or the takedown list), so the last release still shows them.
-    """
-    folder = example_images.module_folder(root, module)
-    takedowns = example_images.load_takedowns(folder)
-    gone = set(adiro_terms(base)) - set(adiro_terms(head))
-    items = []
-    for term, value in example_images.values(base):
-        state, name = example_images.file_of(value, module)
-        if term in gone and state == "ok" and (folder / name).is_file() and name not in takedowns:
-            items.append(f"`{local_name(term)}`: `{name}` (`{module}`)")
-    return items
-
-
 def unregistered_closing(body, registered):
     """Issue numbers named after a closing keyword in `body` that GitHub did not register."""
     named = {int(n) for n in CLOSING_RE.findall(body or "")}
@@ -169,10 +153,6 @@ def kinds(repo):
         Kind("unused-prefix", "{n} unused `@prefix` {things}", "Delete the declaration.", ("declaration", "declarations")),
         Kind("unused-import", "{n} `owl:imports` of a module that no term uses",
              "Drop the import, or use a term of it.", ("import", "imports")),
-        Kind("removed-term-image", "{n} example {things} of a removed term still in place",
-             "Move each to `assets/<module>/exampleImage/deletedAfterV<last release>/`, so the last release still shows it "
-             "(for a rights problem list it in `takedowns.txt` instead): "
-             f"[how]({example_images.PAGE_URL}).", ("image", "images")),
         Kind("no-example-image", "{n} new {things} without an example image",
              f"Consider adding one (a suggestion, not a requirement): [how to add an example image]({example_images.PAGE_URL}).",
              ("class", "classes"), level="suggestion"),
@@ -349,7 +329,6 @@ def main(argv=None):
                          for imp in sorted(set(find_unused_imports(head)) - set(find_unused_imports(base)))]
         if path in texts:
             findings += [("no-example-image", f"`{local_name(t)}` (`{module}`)") for t in new_classes_without_image(base, head)]
-            findings += [("removed-term-image", item) for item in removed_term_images(base, head, module, root)]
         changes.append({"module": module, "base": base, "head": head})
         if path in texts and declares_classes(head):
             previews.append((module, preview_url(args.head_repo or args.repo, args.head_ref, module)))

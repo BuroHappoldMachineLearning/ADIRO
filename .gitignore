@@ -51,3 +51,4 @@ site/
 
 # Example images are committed once, in assets/<module>/exampleImage/; the build stages a copy here (#145)
 docs/*/exampleImage/
+docs/img/aec_drawing_ontology/

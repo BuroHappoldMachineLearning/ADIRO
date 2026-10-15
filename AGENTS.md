@@ -103,7 +103,7 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   makes it blocking. The warning appears in the QC comment (`ontology-reasoning.yml`). It also requires every module's
   `owl:priorVersion` list to name all earlier archived releases ([#122](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/122)),
   and after each deploy `scripts/check_prior_versions.py` confirms those IRIs resolve and that every archived release's
-  display config is served ([#140](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/140); see `docs/contribute/versioning/`); a failure
+  display config is served ([#140](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/140); see `docs/contribute/versioning/`), and that every example image an archived release names is served, a taken-down one as its placeholder ([#154](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/154)); a failure
   also opens one tracking issue, "Published release IRIs and display configs do not resolve", which the next passing deploy closes.
 - **`.github/workflows/compat-diff-comment.yml`** — on PRs touching `src/**.ttl` (RES-67), posts a sticky
   comment with each changed module's **prospective next version** (`compat_diff.py --markdown`). Report-only;
@@ -231,13 +231,16 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   or relationship to an image, as the full `https` IRI of a file in `assets/<module>/exampleImage/<LocalName>_NN.<ext>`
   (published at `https://w3id.org/adiro/<module>/exampleImage/…`; `NN` is a two-digit number, always present). The image is
   cleared for publication, shows nothing private, carries no embedded metadata, and is small (250 KB advised, 500 KB hard)
-  and cropped to the part it shows. A renamed term's images are renamed and listed in `renames.json`, a removed term's go to
-  `deletedAfterV<x.y.z>/`, and a takedown goes in `takedowns.txt`. The images are committed once, in `assets/`; the docs
+  and cropped to the part it shows. A renamed term's images are renamed and listed in `renames.json`, a removed term's images stay
+  (an archived release names them), and a takedown goes in `takedowns.txt` (`<path> <reason> after=<x.y.z>`; the site serves the
+  placeholder `removed/after-v<x.y.z>.png` there, [#154](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/154)). The images are committed once, in `assets/`; the docs
   build stages a git-ignored copy into `docs/<module>/exampleImage/`. The images of every module are synthetic,
   drawn by `scripts/synthetic_example_images.py` ([#149](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/149), [#152](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/152));
   never publish a drawing from a real project unless its owner has cleared it and every name, logo and seal is removed. `scripts/example_images.py` holds the checks that
   `validate_ontology.py` reports (advisory for the older values, blocking for the limits on files; `ENFORCE_EXAMPLE_IMAGES=1`
-  makes all of it blocking) and the staging. The full guidance is the published page
+  makes all of it blocking; the check that every address an archived release names is still served is advisory for the first
+  release cycle after [#154](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/154) and then blocking, via `ENFORCE_ARCHIVED_IMAGES=1`
+  in `validate-ontology.yml`) and the staging. The full guidance is the published page
   `docs/contribute/example-images.md`; write the "Example images" statement (source and rights, what was obscured) in the
   PR description when you add one.
 

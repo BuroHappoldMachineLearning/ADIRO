@@ -11,8 +11,10 @@ assets/<module>/exampleImage/<LocalName>_NN.<ext>
 - The images are published at `https://w3id.org/adiro/<module>/exampleImage/<LocalName>_NN.<ext>`, and that URI is what
   the ontology holds and what downstream tools (annotation tools, machine-learning workflows) read. The documentation
   site builds a copy of this folder into `docs/<module>/exampleImage/` (git-ignored), so each image is committed once.
-- `renames.json`, `takedowns.txt` and the `deletedAfterV<x.y.z>/` folders in each `exampleImage/` folder keep the images
-  of renamed and removed terms available, and record a removal for rights reasons.
+- An archived release never changes, so the images it names stay where they are, also when their term is removed.
+  `renames.json` serves a renamed image under its old name too. `takedowns.txt` records a removal for rights reasons
+  (`<path> <reason> after=<last release that showed it>`), and `removed/after-v<x.y.z>.png` is the placeholder the site
+  serves at that address ([#154](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/154)).
 
 The images of every module are synthetic: drawn with fictional content by `scripts/synthetic_example_images.py`
 (`uv run --with matplotlib --with pillow python scripts/synthetic_example_images.py`), so ADIRO owns them and they can be
