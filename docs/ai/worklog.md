@@ -22,6 +22,12 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-15 — The two logos are shrunk (PR [#161](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/161))
+
+- `docs/img/favicon.png` 1254 px, 888 KB → 256 px, 45 KB (site logo and favicon); `docs/img/adiro_banner.png` 1254 px, 1.2 MB → 640 px, 376 KB (shown at 320 px, so 2x for high-density screens). Same names, so no reference changed.
+- Verified: `tests/test_diagram_colors.py` (brand colours read from the favicon) passes. Not looked at in a built site.
+- Left for the author: whether `docs/brainstorming/ontology_modeling-object_properties.md` is obsolete; trimming old worklog entries.
+
 ## 2026-10-15 — The nine unlinked facade images are removed; the git history is left as it is ([#149](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/149))
 
 **Decided (maintainer):** (3) the nine images under `docs/img/aec_facade_domain/` are removed, now that the synthetic curtain-wall sections of [#152](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/152) cover the same terms; (4) the git history is **not** rewritten: it would take too much effort and the images were open source.
