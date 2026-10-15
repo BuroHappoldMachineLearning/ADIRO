@@ -20,6 +20,8 @@ from rdflib.namespace import RDF, RDFS, OWL, SKOS, DCTERMS
 from rdflib.term import BNode
 from collections import defaultdict, deque
 
+import example_images
+
 
 # Every ADIRO term must carry a human-readable description. ADIRO's definition
 # vocabulary is rdfs:comment - NOT the OBO convention IAO:0000115 that ROBOT's
@@ -329,6 +331,14 @@ def validate_ontology(ttl_file: Path) -> tuple[bool, list[str], list[str]]:
         # owl:priorVersion names all earlier published releases (#122)
         errors.extend(find_prior_version_problems(graph, ttl_file))
 
+        # The example-image convention (#145): values and files. Advisory while the older values are migrated
+        # (ENFORCE_EXAMPLE_IMAGES=1 makes it blocking); limits on committed files always block.
+        image_errors, image_warnings = example_images.messages(
+            example_images.problems(graph, ttl_file.stem, ttl_file.parent.parent), ttl_file.stem,
+            os.environ.get("ENFORCE_EXAMPLE_IMAGES") == "1")
+        errors.extend(image_errors)
+        warnings.extend(image_warnings)
+
         # Every ADIRO term needs a human-readable description (#87).
         # Advisory by default so the existing backlog does not block CI; set
         # ENFORCE_DESCRIPTIONS=1 to promote it to an error once that backlog is
@@ -551,6 +561,16 @@ def main():
     for leak in leaks:
         print(f"  [ERROR] {leak}")
     all_valid = all_valid and not leaks
+
+    # Whole-repository budget for the example images (#145).
+    budget_errors, budget_warnings = example_images.messages(example_images.budget_findings(repo_root), "assets")
+    if budget_errors or budget_warnings:
+        results.append(("example image budget", budget_errors, budget_warnings))
+        for msg in budget_errors:
+            print(f"  [ERROR] {msg}")
+        for msg in budget_warnings:
+            print(f"  [WARN] {msg}")
+        all_valid = all_valid and not budget_errors
 
     if markdown_path is not None:
         write_markdown(results, markdown_path)

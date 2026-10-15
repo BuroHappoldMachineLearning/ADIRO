@@ -35,6 +35,8 @@ from rdflib.namespace import OWL, RDF, RDFS
 from rdflib.term import BNode
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import example_images  # noqa: E402
+from ontology_versions import archived_versions, version_key  # noqa: E402
 from validate_ontology import (  # noqa: E402
     ADIRO_NS, DESCRIPTION_PROPS, TERM_TYPES, find_unused_imports, find_unused_prefixes, missing_changelog_modules)
 
@@ -104,6 +106,29 @@ def declares_classes(graph):
     return any(isinstance(c, URIRef) and str(c).startswith(ADIRO_NS) for c in graph.subjects(RDF.type, OWL.Class))
 
 
+def new_classes_without_image(base, head):
+    """New ADIRO classes (no triples in the base) that carry no exampleImage (#145)."""
+    prop = URIRef(example_images.PROPERTY_IRI)
+    return [t for t in sorted(adiro_terms(head), key=str)
+            if (t, RDF.type, OWL.Class) in head and not _signature(base, t) and (t, prop, None) not in head]
+
+
+def removed_term_images(base, head, module, root):
+    """Items for the images of removed terms that are still in the module's exampleImage folder (#145).
+
+    A removed term's images go to deletedAfterV<last release>/ (or the takedown list), so the last release still shows them.
+    """
+    folder = example_images.module_folder(root, module)
+    takedowns = example_images.load_takedowns(folder)
+    gone = set(adiro_terms(base)) - set(adiro_terms(head))
+    items = []
+    for term, value in example_images.values(base):
+        state, name = example_images.file_of(value, module)
+        if term in gone and state == "ok" and (folder / name).is_file() and name not in takedowns:
+            items.append(f"`{local_name(term)}`: `{name}` (`{module}`)")
+    return items
+
+
 def unregistered_closing(body, registered):
     """Issue numbers named after a closing keyword in `body` that GitHub did not register."""
     named = {int(n) for n in CLOSING_RE.findall(body or "")}
@@ -121,8 +146,8 @@ COLLAPSE_OVER = 5
 
 
 class Kind:
-    def __init__(self, key, title, advice, noun):
-        self.key, self.title, self.advice, self.noun = key, title, advice, noun
+    def __init__(self, key, title, advice, noun, level="required"):
+        self.key, self.title, self.advice, self.noun, self.level = key, title, advice, noun, level
 
     def heading(self, n):
         things = self.noun[0] if n == 1 else self.noun[1]
@@ -144,10 +169,47 @@ def kinds(repo):
         Kind("unused-prefix", "{n} unused `@prefix` {things}", "Delete the declaration.", ("declaration", "declarations")),
         Kind("unused-import", "{n} `owl:imports` of a module that no term uses",
              "Drop the import, or use a term of it.", ("import", "imports")),
+        Kind("removed-term-image", "{n} example {things} of a removed term still in place",
+             "Move each to `assets/<module>/exampleImage/deletedAfterV<last release>/`, so the last release still shows it "
+             "(for a rights problem list it in `takedowns.txt` instead): "
+             f"[how]({example_images.PAGE_URL}).", ("image", "images")),
+        Kind("no-example-image", "{n} new {things} without an example image",
+             f"Consider adding one (a suggestion, not a requirement): [how to add an example image]({example_images.PAGE_URL}).",
+             ("class", "classes"), level="suggestion"),
         Kind("closing", "The description names {n} {things} with a closing keyword that GitHub did not link",
              "Put the keyword at the start of a table row or line, one issue per keyword (`Closes #1, #2` links only `#1`).",
              ("issue", "issues")),
     ]
+
+
+class Caution:
+    """A serious finding, shown at the top as a red alert. `detect(changes, ctx)` returns the items (Markdown strings)."""
+
+    def __init__(self, key, title, explanation, detect):
+        self.key, self.title, self.explanation, self.detect = key, title, explanation, detect
+
+
+def _exampleimage_declaration_removed(changes, ctx):
+    prop = URIRef(example_images.PROPERTY_IRI)
+    return [f"`{c['module']}`: the declaration of `{example_images.FOLDER}` is removed or renamed" for c in changes
+            if (prop, RDF.type, OWL.AnnotationProperty) in c["base"] and (prop, RDF.type, OWL.AnnotationProperty) not in c["head"]]
+
+
+def cautions():
+    """The registry of cautions; a new one is one entry here (its detection function, title and explanation)."""
+    return [
+        Caution("exampleimage-renamed", "The `exampleImage` annotation property is removed or renamed",
+                f"The images folders, every value and the published image URLs are named after this property. Renaming it means "
+                f"renaming the `{example_images.FOLDER}` folders in every module, listing the old folder in `renames.json` so "
+                f"the old URLs keep working, and saying so in the changelog ([how]({example_images.PAGE_URL})).",
+                _exampleimage_declaration_removed),
+    ]
+
+
+def render_caution(caution, items):
+    out = ["> [!CAUTION]", f"> **{caution.title}**", f"> {caution.explanation}", ">"]
+    out += [f"> - {i}" for i in items]
+    return out + [""]
 
 
 def render_group(kind, items):
@@ -164,18 +226,33 @@ def render_group(kind, items):
     return out
 
 
-def render(findings, previews, repo):
-    """`findings`: (kind key, item Markdown) pairs; `previews`: (module, OntoCanvas URL) pairs."""
-    by_kind = {}
+def render(findings, previews, repo, caution_items=()):
+    """`findings`: (kind key, item Markdown) pairs; `previews`: (module, OntoCanvas URL) pairs;
+    `caution_items`: (caution key, item Markdown) pairs, shown first as red alerts."""
+    by_kind, by_caution = {}, {}
     for key, item in findings:
         by_kind.setdefault(key, []).append(item)
-    if not by_kind:  # nothing to improve: no comment at all (previews alone are not worth one)
+    for key, item in caution_items:
+        by_caution.setdefault(key, []).append(item)
+    if not by_kind and not by_caution:  # nothing to say: no comment at all (previews alone are not worth one)
         return ""
-    out = [MARKER, "## Required improvements", ""]
-    for kind in kinds(repo):
-        if kind.key in by_kind:
-            out += render_group(kind, by_kind.pop(kind.key))
-    assert not by_kind, f"findings of an unregistered kind: {sorted(by_kind)}"
+    required = [k for k in kinds(repo) if k.level == "required" and k.key in by_kind]
+    suggestions = [k for k in kinds(repo) if k.level == "suggestion" and k.key in by_kind]
+    unknown = set(by_kind) - {k.key for k in kinds(repo)}
+    assert not unknown, f"findings of an unregistered kind: {sorted(unknown)}"
+    out = [MARKER]
+    for caution in cautions():
+        if caution.key in by_caution:
+            out += render_caution(caution, by_caution.pop(caution.key))
+    assert not by_caution, f"cautions of an unregistered kind: {sorted(by_caution)}"
+    if required:
+        out += ["## Required improvements", ""]
+        for kind in required:
+            out += render_group(kind, by_kind[kind.key])
+    if suggestions:
+        out += ["### Suggestions" if required else "## Suggestions", ""]
+        for kind in suggestions:
+            out += render_group(kind, by_kind[kind.key])
     if previews:
         out += ["### Previews", "", "| Module | OntoCanvas |", "|---|---|"]
         out += [f"| `{n}` | [open]({u}) |" for n, u in previews]
@@ -243,6 +320,7 @@ def main(argv=None):
     for text in texts.values():
         suite.parse(data=text, format="turtle")
 
+    changes = []
     findings, previews = [], []  # findings: (kind key, item Markdown); each kind's advice is said once by render()
     for path in (p for p in changed if re.fullmatch(r"src/[^/]+\.ttl", p)):  # includes deleted modules
         module = Path(path).stem
@@ -269,6 +347,10 @@ def main(argv=None):
                          for pfx in sorted(set(find_unused_prefixes(head, texts[path])) - set(find_unused_prefixes(base, base_text)))]
             findings += [("unused-import", f"`owl:imports <{imp}>` (`{module}`)")
                          for imp in sorted(set(find_unused_imports(head)) - set(find_unused_imports(base)))]
+        if path in texts:
+            findings += [("no-example-image", f"`{local_name(t)}` (`{module}`)") for t in new_classes_without_image(base, head)]
+            findings += [("removed-term-image", item) for item in removed_term_images(base, head, module, root)]
+        changes.append({"module": module, "base": base, "head": head})
         if path in texts and declares_classes(head):
             previews.append((module, preview_url(args.head_repo or args.repo, args.head_ref, module)))
 
@@ -277,7 +359,8 @@ def main(argv=None):
         if registered is not None:
             findings += [("closing", f"[#{n}](https://github.com/{args.repo}/issues/{n})")
                          for n in unregistered_closing(Path(args.body_file).read_text(encoding="utf-8"), registered)]
-    sys.stdout.buffer.write(render(findings, previews, args.repo).encode("utf-8"))
+    caution_items = [(c.key, item) for c in cautions() for item in c.detect(changes, None)]
+    sys.stdout.buffer.write(render(findings, previews, args.repo, caution_items).encode("utf-8"))
 
 
 if __name__ == "__main__":

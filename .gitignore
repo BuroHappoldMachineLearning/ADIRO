@@ -48,3 +48,6 @@ site/
 .tools/
 
 # Note: docs/ folder is intentionally NOT ignored so generated documentation is tracked
+
+# Example images are committed once, in assets/<module>/exampleImage/; the build stages a copy here (#145)
+docs/*/exampleImage/

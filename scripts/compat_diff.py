@@ -129,6 +129,8 @@ def build_symbols(graph):
             "domain": frozenset(str(o) for o in graph.objects(term, RDFS.domain) if isinstance(o, URIRef)),
             "range": frozenset(str(o) for o in graph.objects(term, RDFS.range) if isinstance(o, URIRef)),
             "restrictions": _restrictions(graph, term) if kind == "class" else frozenset(),
+            # the example images of a term (#145): documentation for consumers, so a change is annotation-only (PATCH)
+            "images": frozenset(str(o) for p, o in graph.predicate_objects(term) if str(p).rsplit("#", 1)[-1] == "exampleImage"),
             "flags": frozenset(
                 (str(p), str(o))
                 for p, o in graph.predicate_objects(term)
@@ -210,10 +212,14 @@ def compute_deltas(old_syms, new_syms):
         if o["kind"] != n["kind"]:
             deltas.append(("TYPE_CHANGED", iri))
             continue
+        if o["kind"] == "annotation-property" and (o["domain"] != n["domain"] or o["range"] != n["range"]):
+            # An annotation property's domain and range carry no logical meaning (no reasoner draws anything from
+            # them), so changing one is documentation for consumers: an annotation change, not a breaking one (#145).
+            deltas.append(("ANNOTATION_CHANGED", iri))
         if o["kind"] in _PROP_KINDS:
-            if o["domain"] != n["domain"]:
+            if o["kind"] != "annotation-property" and o["domain"] != n["domain"]:
                 deltas.append(("DOMAIN_CHANGED", iri))
-            if o["range"] != n["range"]:
+            if o["kind"] != "annotation-property" and o["range"] != n["range"]:
                 deltas.append(("RANGE_CHANGED", iri))
             if o["supers"] != n["supers"]:
                 deltas.append(("SUPERPROPERTY_CHANGED", iri))
@@ -224,7 +230,8 @@ def compute_deltas(old_syms, new_syms):
                 deltas.append((dt, iri))
         if o["flags"] != n["flags"]:
             deltas.append(("LABELLING_CHANGED", iri))
-        if (o["labels"], o["comments"]) != (n["labels"], n["comments"]):
+        if ((o["labels"], o["comments"], o["images"]) != (n["labels"], n["comments"], n["images"])
+                and ("ANNOTATION_CHANGED", iri) not in deltas):  # one delta per term, whatever annotation changed
             deltas.append(("ANNOTATION_CHANGED", iri))
     return deltas
 

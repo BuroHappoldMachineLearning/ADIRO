@@ -70,9 +70,7 @@ A large-scale zoomed-in drawing of a specific construction assembly or connectio
 
 *Example images:*
 
-![Detail — example](https://w3id.org/adiro/img/aec_drawing_ontology/detail_01.png)
-
-![Detail — example](https://w3id.org/adiro/img/aec_drawing_ontology/detail_02.png)
+![Detail — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Detail_01.png)
 
 ### Drawing element {#DrawingElement}
 
@@ -119,9 +117,7 @@ A flat, frontal orthographic view of a building facade or interior face, showing
 
 *Example images:*
 
-![Elevation — example](https://w3id.org/adiro/img/aec_drawing_ontology/elevation_01.png)
-
-![Elevation — example](https://w3id.org/adiro/img/aec_drawing_ontology/elevation_02.png)
+![Elevation — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Elevation_01.png)
 
 ### Image {#Image}
 
@@ -166,9 +162,7 @@ A legend containing mapping information between symbols and a text signifier.
 
 *Example images:*
 
-![Legend — example](https://w3id.org/adiro/img/aec_drawing_ontology/legend_01.png)
-
-![Legend — example](https://w3id.org/adiro/img/aec_drawing_ontology/legend_02.png)
+![Legend — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Legend_01.png)
 
 ### MetadataContainer {#MetadataContainer}
 
@@ -228,9 +222,7 @@ A horizontal cut through a building viewed from above, showing the arrangement o
 
 *Example images:*
 
-![Plan — example](https://w3id.org/adiro/img/aec_drawing_ontology/plan_01.png)
-
-![Plan — example](https://w3id.org/adiro/img/aec_drawing_ontology/plan_02.png)
+![Plan — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Plan_01.png)
 
 ### Project {#Project}
 
@@ -249,9 +241,7 @@ A table recording the documented change history of the drawing sheet, with colum
 
 *Example images:*
 
-![Revision table — example](https://w3id.org/adiro/img/aec_drawing_ontology/revision_table_01.png)
-
-![Revision table — example](https://w3id.org/adiro/img/aec_drawing_ontology/revision_table_02.png)
+![Revision table — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/RevisionTable_01.png)
 
 ### Section {#Section}
 
@@ -264,9 +254,7 @@ Section drawing. Has a required property of orientation, which can be vertical o
 
 *Example images:*
 
-![Section — example](https://w3id.org/adiro/img/aec_drawing_ontology/section_01.png)
-
-![Section — example](https://w3id.org/adiro/img/aec_drawing_ontology/section_02.png)
+![Section — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Section_01.png)
 
 ### StatusCode {#StatusCode}
 
@@ -285,9 +273,7 @@ A table containing structured information, for example a schedule of elements.
 
 *Example images:*
 
-![Table — example](https://w3id.org/adiro/img/aec_drawing_ontology/table_01.png)
-
-![Table — example](https://w3id.org/adiro/img/aec_drawing_ontology/table_02.png)
+![Table — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Table_01.png)
 
 ### Text {#TextualNote}
 
@@ -299,9 +285,7 @@ A free-form block of text, such as numbered lists or paragraphs, containing gene
 
 *Example images:*
 
-![Text — example](https://w3id.org/adiro/img/aec_drawing_ontology/textual_note_01.png)
-
-![Text — example](https://w3id.org/adiro/img/aec_drawing_ontology/textual_note_02.png)
+![Text — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/TextualNote_01.png)
 
 ### Titleblock {#Titleblock}
 
@@ -317,13 +301,9 @@ Titleblock containing information about the drawing, for example project name, d
 
 *Example images:*
 
-![Titleblock — example](https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_01.png)
+![Titleblock — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Titleblock_01.png)
 
-![Titleblock — example](https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_02.png)
-
-![Titleblock — example](https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_03.png)
-
-![Titleblock — example](https://w3id.org/adiro/img/aec_drawing_ontology/titleblock_04.png)
+![Titleblock — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Titleblock_02.png)
 
 ## Object Properties
 
@@ -599,9 +579,10 @@ Display label for the status code, e.g. 'IFC', 'IFR', 'AFC'.
 
 ### example image {#exampleImage}
 
-Links a class or concept to an example image illustrating it.
+Links a class or relationship to an image that shows it. The value is the absolute https IRI of an image file in the module's exampleImage folder (https://w3id.org/adiro/<module>/exampleImage/<LocalName>_NN.<ext>, NN being the two-digit order starting at 01). Carries no reasoning weight, but can be used by downstream consumers like machine-learning workflows or annotation tools. How to add an image: see https://w3id.org/adiro/contribute/example-images/
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#exampleImage`
+- **Range:** `xsd:anyURI`
 
 ### extraction hint {#extractionHint}
 
