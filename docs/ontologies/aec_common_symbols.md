@@ -66,6 +66,10 @@ A dimension line or dimension annotation on a drawing, indicating measurements o
 - **IRI:** `https://w3id.org/adiro/aec_common_symbols#Dimension`
 - **Sub class of:** `metadata:DrawingElement`
 
+*Example images:*
+
+![Dimension — example](https://w3id.org/adiro/aec_common_symbols/exampleImage/Dimension_01.png)
+
 ### Grid {#Grid}
 
 A grid line or grid system used for alignment and reference in architectural drawings.
@@ -73,12 +77,20 @@ A grid line or grid system used for alignment and reference in architectural dra
 - **IRI:** `https://w3id.org/adiro/aec_common_symbols#Grid`
 - **Sub class of:** `metadata:DrawingElement`
 
+*Example images:*
+
+![Grid — example](https://w3id.org/adiro/aec_common_symbols/exampleImage/Grid_01.png)
+
 ### ReferenceSymbol {#ReferenceSymbol}
 
 A symbol drawn on a Layout that references another Layout (on the same or a different DrawingSheet). Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target Layout's LayoutContentType.
 
 - **IRI:** `https://w3id.org/adiro/aec_common_symbols#ReferenceSymbol`
 - **Sub class of:** `metadata:DrawingElement`
+
+*Example images:*
+
+![ReferenceSymbol — example](https://w3id.org/adiro/aec_common_symbols/exampleImage/ReferenceSymbol_01.png)
 
 ## Object Properties
 

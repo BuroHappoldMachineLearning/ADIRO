@@ -1,5 +1,6 @@
 @prefix : <https://w3id.org/adiro/aec_domain_common#> .
 @prefix metadata: <https://w3id.org/adiro/aec_drawing_metadata#> .
+@prefix img: <https://w3id.org/adiro/aec_domain_common/exampleImage/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -166,30 +167,35 @@
 :CHS rdf:type owl:Class ;
     rdfs:label "CHS" ;
     rdfs:comment "Circular hollow section - a hollow structural section with a circular profile." ;
+    metadata:exampleImage img:CHS_01.png ;
     metadata:isComputerVisionLabel "false"^^xsd:boolean ;
     rdfs:subClassOf :SectionShape .
 
 :ISection rdf:type owl:Class ;
     rdfs:label "I-section" ;
     rdfs:comment "I-section - a structural section with an I- or H-shaped profile, such as a universal beam or column." ;
+    metadata:exampleImage img:ISection_01.png ;
     metadata:isComputerVisionLabel "false"^^xsd:boolean ;
     rdfs:subClassOf :SectionShape .
 
 :RHS rdf:type owl:Class ;
     rdfs:label "RHS" ;
     rdfs:comment "Rectangular hollow section - a hollow structural section with a rectangular profile." ;
+    metadata:exampleImage img:RHS_01.png ;
     metadata:isComputerVisionLabel "false"^^xsd:boolean ;
     rdfs:subClassOf :SectionShape .
 
 :SectionChannel rdf:type owl:Class ;
     rdfs:label "Channel (section)" ;
     rdfs:comment "Channel section - a structural section with a C-shaped (channel) profile." ;
+    metadata:exampleImage img:SectionChannel_01.png ;
     metadata:isComputerVisionLabel "false"^^xsd:boolean ;
     rdfs:subClassOf :SectionShape .
 
 :TopHat rdf:type owl:Class ;
     rdfs:label "Top hat" ;
     rdfs:comment "Top-hat section - a cold-formed section with a top-hat-shaped profile." ;
+    metadata:exampleImage img:TopHat_01.png ;
     metadata:isComputerVisionLabel "false"^^xsd:boolean ;
     rdfs:subClassOf :SectionShape .
 
