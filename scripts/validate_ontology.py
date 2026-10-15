@@ -297,6 +297,30 @@ def find_prior_version_problems(graph, ttl_file: Path) -> list[str]:
     return errors
 
 
+FOAF = "http://xmlns.com/foaf/0.1/"
+
+
+def find_foaf_problems(graph) -> list[str]:
+    """Why this module could put FOAF's own definition of depiction next to ADIRO's (#157).
+
+    `exampleImage` is a sub-property of `foaf:depiction`, which ADIRO declares as an annotation property and FOAF defines
+    as an object property. OWL 2 DL does not allow one IRI to be both, so a module that imports FOAF, or declares
+    `foaf:depiction` as anything but an annotation property, would take the suite out of OWL 2 DL (Protege reports illegal
+    punning, a strict reasoner refuses the ontology).
+    """
+    problems = []
+    for ontology in graph.subjects(RDF.type, OWL.Ontology):
+        for imported in sorted(str(o) for o in graph.objects(ontology, OWL.imports)):
+            if imported.startswith(FOAF):
+                problems.append(f"imports FOAF (<{imported}>): FOAF defines foaf:depiction as an object property, which clashes "
+                                "with ADIRO's annotation property (OWL 2 DL punning); do not import it")
+    depiction = URIRef(FOAF + "depiction")
+    for kind in sorted(str(t) for t in graph.objects(depiction, RDF.type)):
+        if kind != str(OWL.AnnotationProperty):
+            problems.append(f"foaf:depiction is declared as <{kind}>: it must be an owl:AnnotationProperty only (OWL 2 DL punning)")
+    return problems
+
+
 def validate_ontology(ttl_file: Path) -> tuple[bool, list[str], list[str]]:
     """
     Validate an ontology file.
@@ -330,6 +354,9 @@ def validate_ontology(ttl_file: Path) -> tuple[bool, list[str], list[str]]:
 
         # owl:priorVersion names all earlier published releases (#122)
         errors.extend(find_prior_version_problems(graph, ttl_file))
+
+        # foaf:depiction stays an annotation property and FOAF is not imported (#157)
+        errors.extend(find_foaf_problems(graph))
 
         # The example-image convention (#145): values and files. Advisory while the older values are migrated
         # (ENFORCE_EXAMPLE_IMAGES=1 makes it blocking); limits on committed files always block.

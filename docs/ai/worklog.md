@@ -22,6 +22,21 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-15 — `exampleImage` becomes a sub-property of `foaf:depiction` ([#157](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/157))
+
+**Branch:** `feat/157-foaf-depiction`, based on `main` after the [#154](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/154) PR merged.
+
+**Changed:**
+- `src/aec_drawing_metadata.ttl`: `@prefix foaf:`, `foaf:depiction a owl:AnnotationProperty` (with a label, so ROBOT's `missing_label` stays quiet) and `:exampleImage rdfs:subPropertyOf foaf:depiction`. FOAF is not imported.
+- Guard 1, `scripts/validate_ontology.py` (`find_foaf_problems`): an error if a module imports FOAF or types `foaf:depiction` as anything but an annotation property; `tests/test_foaf_guard.py`.
+- Guard 2, `scripts/run_reasoning.sh`: ROBOT `validate-profile --profile DL` over the merged modules. Found while testing: HermiT through ROBOT does **not** notice the punning (reason exit code 0 with FOAF's object property merged in), so the profile check is needed. The profile report also lists 181 standing "Use of undeclared ..." violations (SKOS and DCTERMS annotation properties, `skos:Concept`, `xsd:date`): a backlog of missing declarations, not punning. Those lines are filtered out; any other violation (here "Cannot pun between properties") is added to `reason.out`, fails the reasoner gate and shows in the QC comment. Declaring the SKOS / DCTERMS terms would let the filter go; not done here.
+- `scripts/compat_diff.py`: a changed super-property of an **annotation** property is an `ANNOTATION_CHANGED` (PATCH), not a `SUPERPROPERTY_CHANGED` (MAJOR), like its domain and range (the spec line and a test updated). The new term `depiction` counts as `TERM_ADDED`; the module is MAJOR anyway because of the labelling rename pending since #141.
+- Guidance page (a section on the standard property and on not importing FOAF), `AGENTS.md`, changelog.
+
+**Verified:** `run_reasoning.sh` clean (rc 0, ROBOT report "No violations found"); with a FOAF `owl:ObjectProperty` injected into `src/` the script exits 1 under `ENFORCE=1` and names the three "Cannot pun" violations (the injected file removed afterwards); full pytest run. **Not verified:** the CI run of the reasoning workflow with the new step.
+
+**Not done:** the claim in the issue that OMO / Cell Ontology use `foaf:depicted_by`-style declarations was taken from the request, not checked.
+
 ## 2026-10-15 — Archived releases keep their example images; a takedown serves a placeholder ([#154](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/154))
 
 **Branch:** `feat/154-archived-example-images`, based on `feat/151-more-synthetic-images` (the [#152](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/152) PR, unmerged when this was written).

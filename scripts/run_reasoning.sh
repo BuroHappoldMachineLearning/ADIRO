@@ -70,6 +70,26 @@ echo "== Consistency + unsatisfiable-class check (HermiT: '$REASONER') =="
 java -jar "$ROBOT_JAR" merge --catalog "$CATALOG" "${INPUTS[@]}" \
   reason --reasoner "$REASONER" --output "$OUT_DIR/reasoned.ttl" 2>&1 | tee "$OUT_DIR/reason.out"
 REASON_RC=${PIPESTATUS[0]}
+
+# The reasoner accepts illegal punning (one IRI used as an annotation and an object property, as FOAF's own foaf:depiction
+# would be next to ADIRO's, #157), so the OWL 2 DL profile is validated too. The suite has a standing list of undeclared
+# SKOS / DCTERMS terms ("Use of undeclared ..."); those are left out, and every other violation fails like an
+# inconsistency does, with its lines added to reason.out so the QC comment shows them.
+echo "== OWL 2 DL profile (punning and other non-DL constructs) =="
+java -jar "$ROBOT_JAR" merge --catalog "$CATALOG" "${INPUTS[@]}" \
+  validate-profile --profile DL --output "$OUT_DIR/profile.txt" > "$OUT_DIR/profile.out" 2>&1 || true
+if [ -f "$OUT_DIR/profile.txt" ]; then
+  grep -v -e '^OWL 2 DL Profile Report' -e '^Use of undeclared' "$OUT_DIR/profile.txt" > "$OUT_DIR/profile-violations.txt" || true
+else
+  : > "$OUT_DIR/profile-violations.txt"
+fi
+if [ -s "$OUT_DIR/profile-violations.txt" ]; then
+  {
+    echo "ERROR: the merged modules are not in OWL 2 DL (violations other than undeclared terms):"
+    head -20 "$OUT_DIR/profile-violations.txt" | cut -c1-300
+  } | tee -a "$OUT_DIR/reason.out"
+  [ "$REASON_RC" = "0" ] && REASON_RC=1
+fi
 echo "$REASON_RC" > "$OUT_DIR/reason.rc"
 echo "reason exit code: $REASON_RC"
 

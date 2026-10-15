@@ -171,6 +171,16 @@ def test_the_range_of_an_annotation_property_is_documentation_not_a_breaking_cha
     assert _deltas(obj, obj_ranged) == [("RANGE_CHANGED", "https://ex.org/m#q")]
 
 
+def test_the_superproperty_of_an_annotation_property_is_documentation_not_a_breaking_change():
+    plain = BASE + ":ap a owl:AnnotationProperty .\n:parent a owl:AnnotationProperty .\n"
+    sub = BASE + ":ap a owl:AnnotationProperty ; rdfs:subPropertyOf :parent .\n:parent a owl:AnnotationProperty .\n"
+    assert _deltas(plain, sub) == [("ANNOTATION_CHANGED", "https://ex.org/m#ap")]
+    assert cd.required_bump(_deltas(plain, sub)) == cd.BUMP_PATCH
+    obj = BASE + ":q a owl:ObjectProperty .\n:r a owl:ObjectProperty .\n"
+    obj_sub = BASE + ":q a owl:ObjectProperty ; rdfs:subPropertyOf :r .\n:r a owl:ObjectProperty .\n"
+    assert _deltas(obj, obj_sub) == [("SUPERPROPERTY_CHANGED", "https://ex.org/m#q")]  # still breaking on an object property
+
+
 def test_an_added_or_removed_import_is_a_patch_and_not_a_header_change():
     with_import = BASE.replace('owl:versionInfo "1.0.0" .', 'owl:versionInfo "1.0.0" ; owl:imports <https://ex.org/other> .')
     added = _deltas(BASE, with_import)
