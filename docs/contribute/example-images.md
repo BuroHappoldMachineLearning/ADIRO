@@ -89,7 +89,9 @@ request:
 - the file name is the local name of the term that carries the value, then `_NN`, then a lower-case extension;
 - no file is left in a folder that neither a term nor an archived release uses, and no two files differ only by case;
 - every address that an archived release names (`versions/`) is still served: by a file, a rename or a takedown's
-  placeholder. A taken-down name is not kept as a file, and a name an archived release gives to another term is not reused;
+  placeholder (advisory for the first release cycle after [#154](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/154),
+  then blocking: `ENFORCE_ARCHIVED_IMAGES=1`). A taken-down name is not kept as a file, and a name an archived release gives to
+  another term is not reused;
 - the size, the dimensions and the embedded metadata of each file, and the total size of all example images.
 
 After each deploy, `scripts/check_prior_versions.py` fetches every example image that an archived release names and

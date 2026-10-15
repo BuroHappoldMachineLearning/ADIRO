@@ -15,6 +15,7 @@ before the convention) are advisory, the limits on files that are committed unde
 Standard library + rdflib.
 """
 import json
+import os
 import re
 import shutil
 import struct
@@ -285,9 +286,11 @@ def problems(graph, module, root=ROOT):
         state, name = file_of(value, module)
         if state == "ok" and any(t != local_name(term) and k == "module" and n == name for _, t, k, n in archived):
             found.append(Finding("name-reused", True, f"`{local_name(term)}`: {name}"))
-    for version, term, kind, target in archived:  # every address an archived release names must still be served
+    # Every address an archived release names must still be served. Advisory for the first release cycle after #154
+    # (ENFORCE_ARCHIVED_IMAGES=1, set in validate-ontology.yml, makes it blocking), because a snapshot cannot be edited.
+    for version, term, kind, target in archived:
         if not ((kind == "module" and ((folder / target).is_file() or target in renames)) or target in entries):
-            found.append(Finding("archived-missing", True, f"`{term}` in v{version}: {target}"))
+            found.append(Finding("archived-missing", os.environ.get("ENFORCE_ARCHIVED_IMAGES") == "1", f"`{term}` in v{version}: {target}"))
     return found
 
 

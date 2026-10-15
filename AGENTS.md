@@ -238,7 +238,9 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   drawn by `scripts/synthetic_example_images.py` ([#149](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/149), [#152](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/152));
   never publish a drawing from a real project unless its owner has cleared it and every name, logo and seal is removed. `scripts/example_images.py` holds the checks that
   `validate_ontology.py` reports (advisory for the older values, blocking for the limits on files; `ENFORCE_EXAMPLE_IMAGES=1`
-  makes all of it blocking) and the staging. The full guidance is the published page
+  makes all of it blocking; the check that every address an archived release names is still served is advisory for the first
+  release cycle after [#154](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/154) and then blocking, via `ENFORCE_ARCHIVED_IMAGES=1`
+  in `validate-ontology.yml`) and the staging. The full guidance is the published page
   `docs/contribute/example-images.md`; write the "Example images" statement (source and rights, what was obscured) in the
   PR description when you add one.
 

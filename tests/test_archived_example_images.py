@@ -44,10 +44,13 @@ def test_a_removed_terms_image_stays_and_is_not_an_orphan_while_a_release_names_
     assert kinds(ei.problems(graph(), M, tmp_path)) == ["file-orphan"]  # no release names it: it can be deleted
 
 
-def test_an_address_an_archived_release_names_must_still_be_served(tmp_path):
+def test_an_address_an_archived_release_names_must_still_be_served(tmp_path, monkeypatch):
     archive(tmp_path, "1.0.0", ("Gone", f"<{W3ID}Gone_01.png>"))
+    monkeypatch.delenv("ENFORCE_ARCHIVED_IMAGES", raising=False)
     found = ei.problems(graph(), M, tmp_path)
-    assert kinds(found) == ["archived-missing"] and found[0].blocking
+    assert kinds(found) == ["archived-missing"] and not found[0].blocking  # advisory for the first release cycle
+    monkeypatch.setenv("ENFORCE_ARCHIVED_IMAGES", "1")
+    assert ei.problems(graph(), M, tmp_path)[0].blocking
     add(tmp_path, "Gone_01.png")
     assert ei.problems(graph(), M, tmp_path) == []
 

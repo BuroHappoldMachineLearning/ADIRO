@@ -33,6 +33,7 @@ jobs:
         env:
           BASE_REF: origin/${{ github.base_ref }}   # enables the PR-time changelog check (#105)
           # ENFORCE_CHANGELOG: "1"   # uncomment to make a missing changelog entry blocking
+          # ENFORCE_ARCHIVED_IMAGES: "1"   # uncomment after the first release cycle (#154): an archived release's image no longer served then blocks
         run: uv run --python 3.12 --no-project python scripts/validate_ontology.py
 
       - name: Run the repository tests
