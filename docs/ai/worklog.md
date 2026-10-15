@@ -22,6 +22,16 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-15 — The nine unlinked facade images are removed; the git history is left as it is ([#149](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/149))
+
+**Decided (maintainer):** (3) the nine images under `docs/img/aec_facade_domain/` are removed, now that the synthetic curtain-wall sections of [#152](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/152) cover the same terms; (4) the git history is **not** rewritten: it would take too much effort and the images were open source.
+
+**Changed:** `docs/img/aec_facade_domain/` deleted (nine PNGs; no term, page, script or archived release referenced them, checked by search). `docs/img/` keeps the banner and the favicon. No takedown entry: they were never an `exampleImage` value of any term.
+
+**Verified:** a search for any reference to the folder or to its file names finds none outside this log. **Not verified:** the published site still serves them at the old addresses until the next deploy removes them.
+
+**Next step:** with this merged, #149 is complete (steps 1 and 2 in #150 and #153, 3 here, 4 decided).
+
 ## 2026-10-15 — `exampleImage` becomes a sub-property of `foaf:depiction` ([#157](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/157))
 
 **Branch:** `feat/157-foaf-depiction`, based on `main` after the [#154](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/154) PR merged.
