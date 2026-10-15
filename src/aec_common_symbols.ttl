@@ -1,5 +1,6 @@
 @prefix : <https://w3id.org/adiro/aec_common_symbols#> .
 @prefix metadata: <https://w3id.org/adiro/aec_drawing_metadata#> .
+@prefix img: <https://w3id.org/adiro/aec_common_symbols/exampleImage/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -29,12 +30,14 @@
     rdfs:subClassOf metadata:DrawingElement;
     rdfs:label "Dimension";
     rdfs:comment "A dimension line or dimension annotation on a drawing, indicating measurements or distances.";
+    metadata:exampleImage img:Dimension_01.png;
     metadata:isComputerVisionLabel "true"^^xsd:boolean.
 
 :Grid rdf:type owl:Class;
     rdfs:subClassOf metadata:DrawingElement;
     rdfs:label "Grid";
     rdfs:comment "A grid line or grid system used for alignment and reference in architectural drawings.";
+    metadata:exampleImage img:Grid_01.png;
     metadata:isComputerVisionLabel "true"^^xsd:boolean.
 
 #################################################################
@@ -45,6 +48,7 @@
     rdfs:subClassOf metadata:DrawingElement;
     rdfs:label "ReferenceSymbol";
     rdfs:comment "A symbol drawn on a Layout that references another Layout (on the same or a different DrawingSheet). Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target Layout's LayoutContentType.";
+    metadata:exampleImage img:ReferenceSymbol_01.png;
     metadata:isComputerVisionLabel "true"^^xsd:boolean.
 
 #################################################################

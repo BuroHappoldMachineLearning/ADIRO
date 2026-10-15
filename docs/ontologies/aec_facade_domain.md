@@ -81,8 +81,14 @@ graph BT
 
 ### Bracket {#Bracket}
 
+Connection element that fixes a facade component, such as a curtain-wall frame or a cladding panel, back to the building structure and carries its loads; a type of point component.
+
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain#Bracket`
 - **Sub class of:** [Point component](#PointComponent)
+
+*Example images:*
+
+![Bracket — example](https://w3id.org/adiro/aec_facade_domain/exampleImage/Bracket_01.png)
 
 ### Breather {#BreatherMembrane}
 
@@ -166,10 +172,14 @@ Dead load bracket
 
 ### DGU {#DGU}
 
-Double Glazing Unit
+Double glazing unit: two panes of glass held apart by a spacer around a sealed gap. The gap gives the glazing its thermal and acoustic performance.
 
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain#DGU`
 - **Sub class of:** [Facade cladding](#FacadeCladding)
+
+*Example images:*
+
+![DGU — example](https://w3id.org/adiro/aec_facade_domain/exampleImage/DGU_01.png)
 
 ### Double laminated {#DoubleLaminated}
 
@@ -238,6 +248,10 @@ Linear seal that closes a gap in a fire-rated construction, such as the joint be
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain#Firestop`
 - **Sub class of:** [Linear component](#LinearComponent)
 
+*Example images:*
+
+![Firestop — example](https://w3id.org/adiro/aec_facade_domain/exampleImage/Firestop_01.png)
+
 ### Fixing {#Fixing}
 
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain#Fixing`
@@ -259,6 +273,10 @@ Compressible strip, typically elastomeric, fitted between facade parts to seal t
 
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain#Gasket`
 - **Sub class of:** [Linear component](#LinearComponent)
+
+*Example images:*
+
+![Gasket — example](https://w3id.org/adiro/aec_facade_domain/exampleImage/Gasket_01.png)
 
 ### Glazing properties {#GlazingProperties}
 
@@ -329,8 +347,14 @@ Fixed or adjustable slatted opening that lets air pass while keeping out rain an
 
 ### Mineral wool {#MineralWool}
 
+Insulation made of spun mineral fibres. In a facade it limits heat loss and, being non-combustible, supports fire performance, typically behind spandrel panels; a type of insulation.
+
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain#MineralWool`
 - **Sub class of:** [Insulation](#Insulation)
+
+*Example images:*
+
+![Mineral wool — example](https://w3id.org/adiro/aec_facade_domain/exampleImage/MineralWool_01.png)
 
 ### Monolithic {#Monolithic}
 
@@ -339,8 +363,14 @@ Fixed or adjustable slatted opening that lets air pass while keeping out rain an
 
 ### Mullion {#Mullion}
 
+Vertical frame member of a curtain wall. It carries the glazing or panels and passes wind load to the building structure; a type of curtain-wall frame member.
+
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain#Mullion`
 - **Sub class of:** [CW frame member](#CWFrameMember)
+
+*Example images:*
+
+![Mullion — example](https://w3id.org/adiro/aec_facade_domain/exampleImage/Mullion_01.png)
 
 ### O-gasket {#OGasket}
 
@@ -440,8 +470,14 @@ Precast restraint bracket
 
 ### Sealant {#Sealant}
 
+Soft material applied wet into a joint between facade parts. It cures to seal the joint against air and water; a type of linear component.
+
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain#Sealant`
 - **Sub class of:** [Linear component](#LinearComponent)
+
+*Example images:*
+
+![Sealant — example](https://w3id.org/adiro/aec_facade_domain/exampleImage/Sealant_01.png)
 
 ### Semi Unitised Curtain Wall {#SemiUnitisedCurtainWall}
 
@@ -464,8 +500,14 @@ Steel Frame System
 
 ### Shelf angle {#ShelfAngle}
 
+Angle section fixed to the edge of a floor slab. It supports facade elements, such as spandrel insulation or a panel, along the slab edge; a type of facade secondary structure.
+
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain#ShelfAngle`
 - **Sub class of:** [Facade secondary structure](#FacadeSecondaryStructure)
+
+*Example images:*
+
+![Shelf angle — example](https://w3id.org/adiro/aec_facade_domain/exampleImage/ShelfAngle_01.png)
 
 ### Silicone {#Silicone}
 
@@ -523,8 +565,14 @@ Triple Glazed Unit
 
 ### Transom {#Transom}
 
+Horizontal frame member of a curtain wall. It spans between mullions and carries the glazing or panels above and below it; a type of curtain-wall frame member.
+
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain#Transom`
 - **Sub class of:** [CW frame member](#CWFrameMember)
+
+*Example images:*
+
+![Transom — example](https://w3id.org/adiro/aec_facade_domain/exampleImage/Transom_01.png)
 
 ### UMPC {#UMPC}
 

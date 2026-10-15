@@ -6,6 +6,7 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix dcommon: <https://w3id.org/adiro/aec_domain_common#> .
 @prefix metadata: <https://w3id.org/adiro/aec_drawing_metadata#> .
+@prefix img: <https://w3id.org/adiro/aec_facade_domain/exampleImage/> .
 
 #################################################################
 #    Ontology
@@ -133,12 +134,14 @@
 :Firestop rdf:type owl:Class;
     rdfs:label "Firestop";
     rdfs:comment "Linear seal that closes a gap in a fire-rated construction, such as the joint between a facade and a floor slab, to slow the passage of fire and smoke; a type of linear component.";
+    metadata:exampleImage img:Firestop_01.png;
     metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :LinearComponent.
 
 :Gasket rdf:type owl:Class;
     rdfs:label "Gasket";
     rdfs:comment "Compressible strip, typically elastomeric, fitted between facade parts to seal the joint against air and water; a type of linear component.";
+    metadata:exampleImage img:Gasket_01.png;
     metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :LinearComponent.
 
@@ -150,6 +153,8 @@
 
 :Sealant rdf:type owl:Class;
     rdfs:label "Sealant";
+    rdfs:comment "Soft material applied wet into a joint between facade parts. It cures to seal the joint against air and water; a type of linear component.";
+    metadata:exampleImage img:Sealant_01.png;
     metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :LinearComponent.
 
@@ -190,6 +195,8 @@
 
 :Bracket rdf:type owl:Class;
     rdfs:label "Bracket";
+    rdfs:comment "Connection element that fixes a facade component, such as a curtain-wall frame or a cladding panel, back to the building structure and carries its loads; a type of point component.";
+    metadata:exampleImage img:Bracket_01.png;
     metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :PointComponent.
 
@@ -205,11 +212,15 @@
 
 :Mullion rdf:type owl:Class;
     rdfs:label "Mullion";
+    rdfs:comment "Vertical frame member of a curtain wall. It carries the glazing or panels and passes wind load to the building structure; a type of curtain-wall frame member.";
+    metadata:exampleImage img:Mullion_01.png;
     metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :CWFrameMember.
 
 :Transom rdf:type owl:Class;
     rdfs:label "Transom";
+    rdfs:comment "Horizontal frame member of a curtain wall. It spans between mullions and carries the glazing or panels above and below it; a type of curtain-wall frame member.";
+    metadata:exampleImage img:Transom_01.png;
     metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :CWFrameMember.
 
@@ -220,6 +231,8 @@
 
 :ShelfAngle rdf:type owl:Class;
     rdfs:label "Shelf angle";
+    rdfs:comment "Angle section fixed to the edge of a floor slab. It supports facade elements, such as spandrel insulation or a panel, along the slab edge; a type of facade secondary structure.";
+    metadata:exampleImage img:ShelfAngle_01.png;
     metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :FacadeSecondaryStructure.
 
@@ -296,7 +309,8 @@
 
 :DGU rdf:type owl:Class ;
     rdfs:label "DGU" ;
-    rdfs:comment "Double Glazing Unit" ;
+    rdfs:comment "Double glazing unit: two panes of glass held apart by a spacer around a sealed gap. The gap gives the glazing its thermal and acoustic performance." ;
+    metadata:exampleImage img:DGU_01.png ;
     metadata:isComputerVisionLabel "false"^^xsd:boolean ;
     rdfs:subClassOf :FacadeCladding .
 
@@ -338,6 +352,8 @@
 
 :MineralWool rdf:type owl:Class;
     rdfs:label "Mineral wool";
+    rdfs:comment "Insulation made of spun mineral fibres. In a facade it limits heat loss and, being non-combustible, supports fire performance, typically behind spandrel panels; a type of insulation.";
+    metadata:exampleImage img:MineralWool_01.png;
     metadata:isComputerVisionLabel "false"^^xsd:boolean;
     rdfs:subClassOf :Insulation.
 

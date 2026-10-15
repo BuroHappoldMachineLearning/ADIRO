@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-Generate the synthetic example images of aec_drawing_metadata (#149).
+Generate the synthetic example images of the ADIRO modules (#149, #151).
 
 Every image is drawn by this script with fictional content ("Example Studio", "Sample Project"), so ADIRO owns it:
 no third-party drawing, logo, seal or name is involved. The images follow the example-image convention (#145):
 `assets/<module>/exampleImage/<LocalName>_NN.png`, small, cropped to the part they illustrate, with no embedded metadata.
 
-    uv run --with matplotlib --with pillow python scripts/synthetic_example_images.py [OUTPUT_DIR]
+    uv run --with matplotlib --with pillow python scripts/synthetic_example_images.py [ASSETS_DIR]
 
-The default output is assets/aec_drawing_metadata/exampleImage/. The drawings are deterministic.
+Each module's images go to <ASSETS_DIR>/<module>/exampleImage/ (default: assets/). The drawings are deterministic.
 """
 import io
 import sys
@@ -22,7 +22,7 @@ from matplotlib.patches import Arc, Circle, Polygon, Rectangle  # noqa: E402
 from PIL import Image, ImageChops  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_OUT = ROOT / "assets" / "aec_drawing_metadata" / "exampleImage"
+DEFAULT_ASSETS = ROOT / "assets"
 INK = "#111111"
 
 
@@ -49,7 +49,7 @@ def text(ax, x, y, s, size=11, weight="normal", ha="left", va="center", rotation
 
 
 def finish(fig):
-    """Render, crop to the content with a margin, reduce to a small palette and drop every metadata field."""
+    """Render, crop to the content with a margin, reduce to a small palette (32 colours) and drop every metadata field."""
     buffer = io.BytesIO()
     fig.savefig(buffer, format="png", dpi=100, facecolor="white", metadata={"Software": None})
     plt.close(fig)
@@ -57,7 +57,7 @@ def finish(fig):
     bbox = ImageChops.difference(image, Image.new("RGB", image.size, "white")).getbbox()
     margin = 14
     box_ = (max(bbox[0] - margin, 0), max(bbox[1] - margin, 0), min(bbox[2] + margin, image.width), min(bbox[3] + margin, image.height))
-    image = image.crop(box_).quantize(colors=16, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
+    image = image.crop(box_).quantize(colors=32, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
     out = io.BytesIO()
     image.save(out, format="PNG", optimize=True)  # no pnginfo: nothing but pixels is written
     return out.getvalue()
@@ -351,7 +351,297 @@ def textual_note():
     return finish(fig)
 
 
-DRAWINGS = {
+RED = "#d62728"
+
+
+def poly(ax, points, fill=None, lw=1.4, hatch=None):
+    ax.add_patch(Polygon(points, closed=True, fill=fill is not None, facecolor=fill or "none", edgecolor=INK, lw=lw, hatch=hatch))
+
+
+def dim_h(ax, x1, x2, y, label, size=12):
+    """A horizontal dimension line with oblique ticks and its value above."""
+    line(ax, [x1, x2], [y, y], lw=1.0)
+    for x in (x1, x2):
+        line(ax, [x - 6, x + 6], [y - 6, y + 6], lw=1.6)
+    text(ax, (x1 + x2) / 2, y + 16, label, size, ha="center")
+
+
+def dim_v(ax, x, y1, y2, label, size=12):
+    line(ax, [x, x], [y1, y2], lw=1.0)
+    for y in (y1, y2):
+        line(ax, [x - 6, x + 6], [y - 6, y + 6], lw=1.6)
+    text(ax, x - 14, (y1 + y2) / 2, label, size, ha="center", rotation=90)
+
+
+def bubble(ax, x, y, label, r=26, size=13):
+    ax.add_patch(Circle((x, y), r, fill=False, edgecolor=INK, lw=1.4))
+    text(ax, x, y, label, size, "bold", "center")
+
+
+# --- aec_drawing_metadata: the sheet-level concepts added in #151 ---------------------------------------------------
+
+def key_plan():
+    fig, ax = canvas(560, 430)
+    box(ax, 10, 10, 540, 410, lw=2.0)
+    text(ax, 30, 392, "KEY PLAN", 15, "bold")
+    line(ax, [10, 550], [368, 368], lw=1.2)
+    poly(ax, [(90, 80), (470, 80), (470, 210), (350, 210), (350, 320), (90, 320)], lw=3.0)
+    poly(ax, [(90, 80), (350, 80), (350, 320), (90, 320)], hatch="////", lw=0)
+    poly(ax, [(90, 80), (470, 80), (470, 210), (350, 210), (350, 320), (90, 320)], lw=3.0)
+    line(ax, [350, 350], [80, 210], lw=1.4)
+    ax.add_patch(Rectangle((170, 186), 100, 28, facecolor="white", edgecolor="none", zorder=3))
+    ax.text(220, 200, "THIS SHEET", fontsize=12, fontweight="bold", ha="center", va="center", color=INK, zorder=4)
+    text(ax, 410, 140, "WING B", 11, "normal", "center")
+    for x, label in [(90, "A"), (350, "B"), (470, "C")]:
+        bubble(ax, x, 345, label, 14, 10)
+        line(ax, [x, x], [331, 322], lw=0.9, ls="-.")
+    ax.add_patch(Circle((505, 100), 22, fill=False, edgecolor=INK, lw=1.4))
+    poly(ax, [(505, 130), (495, 90), (505, 98), (515, 90)], fill=INK)
+    text(ax, 505, 150, "N", 12, "bold", "center")
+    return finish(fig)
+
+
+def perspective():
+    fig, ax = canvas(1000, 800)
+    ox, oy, W, D, H = 300, 420, 380, 260, 300
+
+    def P(x, y, z):
+        return (ox + (x - y) * 0.866, oy - (x + y) * 0.5 + z)
+
+    def quad(a, b, c, d, fill):
+        poly(ax, [P(*a), P(*b), P(*c), P(*d)], fill=fill, lw=1.6)
+
+    quad((0, D, 0), (W, D, 0), (W, D, H), (0, D, H), "#e6e6e6")  # left face
+    quad((W, 0, 0), (W, D, 0), (W, D, H), (W, 0, H), "#bdbdbd")  # right face
+    quad((0, 0, H), (W, 0, H), (W, D, H), (0, D, H), "#f5f5f5")  # roof
+    for row in range(3):
+        for col in range(4):
+            x0, z0 = 30 + col * 85, 110 + row * 62
+            if row == 0 and col == 1:  # entrance
+                quad((x0, D, 0), (x0 + 60, D, 0), (x0 + 60, D, 90), (x0, D, 90), "#8a8a8a")
+                continue
+            quad((x0, D, z0), (x0 + 60, D, z0), (x0 + 60, D, z0 + 42), (x0, D, z0 + 42), "#cfe3f0")
+    for row in range(3):
+        for col in range(3):
+            y0, z0 = 25 + col * 80, 30 + row * 95
+            quad((W, y0, z0 + 25), (W, y0 + 55, z0 + 25), (W, y0 + 55, z0 + 80), (W, y0, z0 + 80), "#cfe3f0")
+    text(ax, 80, 60, "PERSPECTIVE VIEW", 17, "bold")
+    text(ax, 80, 30, "Sample Project, Block A", 12)
+    return finish(fig)
+
+
+def layout():
+    fig, ax = canvas(1100, 790)
+    box(ax, 10, 10, 1080, 770, lw=2.4)
+    box(ax, 30, 30, 1040, 730, lw=1.2)
+    line(ax, [880, 880], [30, 760], lw=1.4)  # title block column
+    text(ax, 975, 722, "EXAMPLE STUDIO", 13, "bold", "center")
+    for y, label, value in [(640, "PROJECT", "Sample Project"), (560, "SHEET TITLE", "THREE LAYOUTS"), (140, "DRAWING NUMBER", "EX-A-101")]:
+        line(ax, [880, 1070], [y + 38, y + 38], lw=0.9)
+        text(ax, 890, y + 22, label, 8)
+        text(ax, 890, y - 8, value, 11, "bold")
+    regions = [("LAYOUT 1", "plan", 50, 400, 400, 340), ("LAYOUT 2", "section", 470, 400, 390, 340), ("LAYOUT 3", "detail", 50, 50, 810, 330)]
+    for name, kind, x, y, w, h in regions:
+        line(ax, [x, x + w, x + w, x, x], [y, y, y + h, y + h, y], lw=1.6, ls="--")
+        box(ax, x, y + h - 32, 130, 32, lw=1.2, fill="#dddddd")
+        text(ax, x + 65, y + h - 16, name, 11, "bold", "center")
+        text(ax, x + 145, y + h - 16, kind, 11)
+    box(ax, 90, 460, 320, 190, lw=3.0)  # mini plan
+    line(ax, [250, 250], [460, 650], lw=2.0)
+    line(ax, [90, 250], [560, 560], lw=2.0)
+    for x, label in zip((90, 250, 410), "ABC"):
+        bubble(ax, x, 690, label, 13, 9)
+    for y in (410, 520, 630):  # mini section: slabs and walls
+        box(ax, 520, y, 240, 14, fill="#bbbbbb", lw=1.2)
+    for x in (520, 746):
+        box(ax, x, 410, 14, 234, lw=1.2, hatch="xxx")
+    box(ax, 240, 90, 140, 200, lw=1.6, hatch="..")  # mini detail
+    box(ax, 380, 90, 90, 200, lw=1.4, hatch="\\\\\\\\")
+    box(ax, 470, 90, 40, 200, lw=1.6, hatch="++")
+    for y, label in [(250, "Facing brick"), (190, "Insulation"), (130, "Concrete wall")]:
+        line(ax, [490, 560], [y, y], lw=0.9)
+        text(ax, 570, y, label, 11)
+    return finish(fig)
+
+
+# --- aec_common_symbols --------------------------------------------------------------------------------------------
+
+def dimension():
+    fig, ax = canvas(900, 520)
+    box(ax, 100, 150, 700, 200, lw=5)
+    for x in (380, 600):
+        line(ax, [x, x], [150, 350], lw=3)
+    for x in (100, 380, 600, 800):  # extension lines
+        line(ax, [x, x], [360, 450], lw=0.9)
+    line(ax, [100, 100], [360, 500], lw=0.9)
+    line(ax, [800, 800], [360, 500], lw=0.9)
+    dim_h(ax, 100, 380, 430, "2800")
+    dim_h(ax, 380, 600, 430, "2200")
+    dim_h(ax, 600, 800, 430, "2000")
+    dim_h(ax, 100, 800, 485, "7000")
+    line(ax, [810, 880], [150, 150], lw=0.9)
+    line(ax, [810, 880], [350, 350], lw=0.9)
+    dim_v(ax, 860, 150, 350, "2000")
+    return finish(fig)
+
+
+def grid():
+    fig, ax = canvas(860, 640)
+    xs, ys = [160, 400, 640], [150, 400]
+    for x, label in zip(xs, "ABC"):
+        line(ax, [x, x], [100, 540], lw=1.0, ls="-.")
+        bubble(ax, x, 570, label)
+        line(ax, [x, x], [544, 544], lw=1.0)
+    for y, label in zip(ys, "12"):
+        line(ax, [60, 760], [y, y], lw=1.0, ls="-.")
+        bubble(ax, 40, y, label)
+    for x in xs:
+        for y in ys:
+            box(ax, x - 12, y - 12, 24, 24, fill="#bbbbbb", lw=1.4)
+    dim_h(ax, 160, 400, 90, "6000")
+    dim_h(ax, 400, 640, 90, "6000")
+    return finish(fig)
+
+
+def reference_symbol():
+    fig, ax = canvas(1100, 380)
+
+    def marker(x, y, top, bottom):
+        ax.add_patch(Circle((x, y), 38, fill=False, edgecolor=INK, lw=1.6))
+        line(ax, [x - 38, x + 38], [y, y], lw=1.2)
+        text(ax, x, y + 18, top, 14, "bold", "center")
+        text(ax, x, y - 17, bottom, 10, "normal", "center")
+
+    marker(90, 220, "1", "A-301")  # section marker: cut line and arrow
+    poly(ax, [(90, 292), (70, 258), (110, 258)], fill=INK)
+    line(ax, [128, 330], [220, 220], lw=3.0, ls="-.")
+    ax.add_patch(Circle((520, 220), 85, fill=False, edgecolor=INK, lw=1.6, ls="--"))  # detail marker: ringed area and bubble
+    box(ax, 480, 195, 80, 50, lw=1.4, hatch="////")
+    marker(740, 300, "3", "A-501")
+    line(ax, [592, 702], [275, 296], lw=1.2)
+    marker(960, 220, "2", "A-201")  # elevation marker: bubble and arrow
+    poly(ax, [(1000, 220), (1052, 190), (1052, 250)], fill=INK)
+    for x, label in [(220, "SECTION MARKER"), (630, "DETAIL MARKER"), (990, "ELEVATION MARKER")]:
+        text(ax, x, 70, label, 12, "bold", "center")
+    return finish(fig)
+
+
+# --- aec_domain_common: section profiles --------------------------------------------------------------------------
+
+def profile_labels(ax, height_label, width_label, x1, x2, y1, y2):
+    dim_v(ax, x1 - 34, y1, y2, height_label)
+    dim_h(ax, x1, x2, y1 - 40, width_label)
+
+
+def i_section():
+    fig, ax = canvas(560, 520)
+    poly(ax, [(160, 110), (360, 110), (360, 134), (267, 134), (267, 386), (360, 386), (360, 410), (160, 410), (160, 386), (253, 386), (253, 134), (160, 134)],
+         fill="#dddddd", lw=2.4)
+    profile_labels(ax, "h", "b", 160, 360, 110, 410)
+    text(ax, 376, 122, "tf", 13)
+    text(ax, 290, 260, "tw", 13)
+    return finish(fig)
+
+
+def chs():
+    fig, ax = canvas(560, 520)
+    ax.add_patch(Circle((260, 270), 150, facecolor="#dddddd", edgecolor=INK, lw=2.4))
+    ax.add_patch(Circle((260, 270), 126, facecolor="white", edgecolor=INK, lw=2.4))
+    dim_h(ax, 110, 410, 80, "d")
+    line(ax, [412, 440], [296, 330], lw=0.9)
+    text(ax, 446, 336, "t", 13)
+    return finish(fig)
+
+
+def rhs():
+    fig, ax = canvas(560, 520)
+    box(ax, 140, 110, 240, 300, fill="#dddddd", lw=2.4)
+    box(ax, 164, 134, 192, 252, fill="white", lw=2.4)
+    profile_labels(ax, "h", "b", 140, 380, 110, 410)
+    line(ax, [382, 410], [382, 410], lw=0.9)
+    text(ax, 416, 416, "t", 13)
+    return finish(fig)
+
+
+def section_channel():
+    fig, ax = canvas(560, 520)
+    poly(ax, [(180, 110), (340, 110), (340, 132), (196, 132), (196, 388), (340, 388), (340, 410), (180, 410)], fill="#dddddd", lw=2.4)
+    profile_labels(ax, "h", "b", 180, 340, 110, 410)
+    text(ax, 356, 121, "tf", 13)
+    text(ax, 210, 260, "tw", 13)
+    return finish(fig)
+
+
+def top_hat():
+    fig, ax = canvas(620, 400)
+    poly(ax, [(100, 110), (212, 110), (212, 238), (348, 238), (348, 110), (460, 110), (460, 122), (360, 122), (360, 250), (200, 250), (200, 122), (100, 122)],
+         fill="#dddddd", lw=2.4)
+    dim_v(ax, 70, 110, 250, "h")
+    dim_h(ax, 200, 360, 280, "w")
+    dim_h(ax, 100, 460, 70, "b")
+    text(ax, 480, 116, "t", 13)
+    return finish(fig)
+
+
+# --- aec_facade_domain: curtain-wall details with one term highlighted -------------------------------------------
+
+def curtain_wall_section(hl, name):
+    """A vertical section through a unitised curtain wall at a floor-slab edge; the term `hl` is filled red."""
+    fig, ax = canvas(820, 800)
+    ax.set_ylim(170, 800)
+
+    def tone(kind, default):
+        return RED if kind == hl else default
+
+    box(ax, 40, 400, 280, 90, hatch="..", lw=1.6)  # floor slab
+    text(ax, 60, 515, "INTERIOR", 10)
+    text(ax, 540, 600, "EXTERIOR", 10)
+    box(ax, 320, 400, 136, 40, fill=tone("Firestop", "#bbbbbb"), hatch="xx", lw=1.4)
+    for y0, h in [(312, 88), (440, 80)]:
+        box(ax, 340, y0, 116, h, fill=tone("MineralWool", None), hatch="\\\\\\\\", lw=1.4)
+    poly(ax, [(322, 300), (380, 300), (380, 312), (334, 312), (334, 400), (322, 400)], fill=tone("ShelfAngle", "#888888"), lw=1.4)
+    poly(ax, [(296, 490), (296, 544), (410, 544), (410, 530), (310, 530), (310, 490)], fill=tone("Bracket", "#888888"), lw=1.4)
+    for y0, h in [(520, 70), (250, 50)]:  # transoms
+        box(ax, 410, y0, 100, h, fill=tone("Transom", "#dddddd"), lw=1.6)
+        box(ax, 424, y0 + 14, 72, h - 28, fill="white", lw=1.2)
+    box(ax, 460, 300, 8, 220, fill="#bbbbbb", lw=1.2)  # spandrel pane
+    for x in (440, 472):  # double glazing unit
+        box(ax, x, 596, 8, 170, fill=tone("DGU", "#cfe3f0"), lw=1.2)
+    box(ax, 448, 596, 24, 8, fill=tone("DGU", "#666666"), lw=1.0)
+    for x in (430, 480):
+        box(ax, x, 590, 10, 14, fill=tone("Gasket", INK), lw=1.0)
+    poly(ax, [(490, 590), (508, 590), (490, 614)], fill=tone("Sealant", "#444444"), lw=1.0)
+    line(ax, [430, 445, 455, 465, 475, 490], [766, 774, 760, 774, 760, 768], lw=1.4)  # break line
+    text(ax, 40, 222, "CURTAIN WALL SECTION AT SLAB EDGE", 12, "bold")
+    box(ax, 40, 182, 16, 16, fill=RED, lw=1.0)
+    text(ax, 66, 190, name, 12)
+    return finish(fig)
+
+
+def mullion_plan():
+    fig, ax = canvas(820, 520)
+    box(ax, 340, 190, 120, 200, fill=RED, lw=1.6)
+    box(ax, 356, 206, 88, 168, fill="white", lw=1.2)
+    box(ax, 372, 390, 56, 10, fill="#888888", lw=1.2)
+    box(ax, 364, 400, 72, 12, fill="#888888", lw=1.2)
+    for side in (-1, 1):  # a glazing unit each side of the mullion
+        x0 = 340 - 280 if side < 0 else 460
+        for y in (330, 362):
+            box(ax, x0, y, 280, 8, fill="#cfe3f0", lw=1.2)
+        sx = 316 if side < 0 else 460
+        box(ax, sx, 338, 24, 24, fill="#666666", lw=1.0)
+        gx = 330 if side < 0 else 460
+        box(ax, gx, 322, 10, 24, fill=INK, lw=1.0)
+        box(ax, gx, 354, 10, 24, fill=INK, lw=1.0)
+    text(ax, 60, 470, "EXTERIOR", 10)
+    text(ax, 60, 150, "INTERIOR", 10)
+    text(ax, 60, 100, "CURTAIN WALL PLAN AT MULLION", 14, "bold")
+    box(ax, 60, 52, 16, 16, fill=RED, lw=1.0)
+    text(ax, 86, 60, "Mullion", 12)
+    return finish(fig)
+
+
+METADATA = {
     "Titleblock_01.png": titleblock_side,
     "Titleblock_02.png": titleblock_strip,
     "RevisionTable_01.png": revision_table,
@@ -362,17 +652,55 @@ DRAWINGS = {
     "Detail_01.png": detail,
     "Table_01.png": table,
     "TextualNote_01.png": textual_note,
+    "KeyPlan_01.png": key_plan,
+    "Perspective_01.png": perspective,
+    "Layout_01.png": layout,
+}
+
+COMMON_SYMBOLS = {
+    "Dimension_01.png": dimension,
+    "Grid_01.png": grid,
+    "ReferenceSymbol_01.png": reference_symbol,
+}
+
+DOMAIN_COMMON = {
+    "ISection_01.png": i_section,
+    "CHS_01.png": chs,
+    "RHS_01.png": rhs,
+    "SectionChannel_01.png": section_channel,
+    "TopHat_01.png": top_hat,
+}
+
+FACADE = {
+    "DGU_01.png": lambda: curtain_wall_section("DGU", "Double glazing unit (DGU)"),
+    "MineralWool_01.png": lambda: curtain_wall_section("MineralWool", "Mineral wool insulation"),
+    "Transom_01.png": lambda: curtain_wall_section("Transom", "Transom"),
+    "Gasket_01.png": lambda: curtain_wall_section("Gasket", "Gasket"),
+    "Sealant_01.png": lambda: curtain_wall_section("Sealant", "Sealant"),
+    "Bracket_01.png": lambda: curtain_wall_section("Bracket", "Bracket"),
+    "ShelfAngle_01.png": lambda: curtain_wall_section("ShelfAngle", "Shelf angle"),
+    "Firestop_01.png": lambda: curtain_wall_section("Firestop", "Firestop"),
+    "Mullion_01.png": mullion_plan,
+}
+
+DRAWINGS = {  # module -> {file name -> function returning the PNG bytes}
+    "aec_drawing_metadata": METADATA,
+    "aec_common_symbols": COMMON_SYMBOLS,
+    "aec_domain_common": DOMAIN_COMMON,
+    "aec_facade_domain": FACADE,
 }
 
 
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
-    out = Path(argv[0]) if argv else DEFAULT_OUT
-    out.mkdir(parents=True, exist_ok=True)
-    for name, draw in DRAWINGS.items():
-        data = draw()
-        (out / name).write_bytes(data)
-        print(f"wrote {name} ({len(data) // 1024} KB)")
+    assets = Path(argv[0]) if argv else DEFAULT_ASSETS
+    for module, drawings in DRAWINGS.items():
+        out = assets / module / "exampleImage"
+        out.mkdir(parents=True, exist_ok=True)
+        for name, draw in drawings.items():
+            data = draw()
+            (out / name).write_bytes(data)
+            print(f"wrote {module}/{name} ({len(data) // 1024} KB)")
     return 0
 
 

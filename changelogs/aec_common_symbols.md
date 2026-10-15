@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+### Added
+- **Example images for `Dimension`, `Grid` and `ReferenceSymbol`** ([#152](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/152)): synthetic images drawn for ADIRO with fictional content (a dimension chain, a grid with bubbles, and section, detail and elevation markers), linked with the `exampleImage` annotation.
+
 ### Changed (BREAKING)
 - **Uses the renamed labelling annotation** ([#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141)): `labellableRoot` becomes `isComputerVisionLabel` on every term that carried it (see `aec_drawing_metadata`). The values are unchanged.
 

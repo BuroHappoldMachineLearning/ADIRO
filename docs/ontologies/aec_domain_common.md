@@ -108,6 +108,10 @@ Channel section - a structural section with a C-shaped (channel) profile.
 - **IRI:** `https://w3id.org/adiro/aec_domain_common#SectionChannel`
 - **Sub class of:** [Section shape](#SectionShape)
 
+*Example images:*
+
+![Channel (section) — example](https://w3id.org/adiro/aec_domain_common/exampleImage/SectionChannel_01.png)
+
 ### Chord/bracing {#ChordBracing}
 
 A chord or bracing member of a truss or braced frame.
@@ -121,6 +125,10 @@ Circular hollow section - a hollow structural section with a circular profile.
 
 - **IRI:** `https://w3id.org/adiro/aec_domain_common#CHS`
 - **Sub class of:** [Section shape](#SectionShape)
+
+*Example images:*
+
+![CHS — example](https://w3id.org/adiro/aec_domain_common/exampleImage/CHS_01.png)
 
 ### Circular {#Circular}
 
@@ -237,6 +245,10 @@ I-section - a structural section with an I- or H-shaped profile, such as a unive
 - **IRI:** `https://w3id.org/adiro/aec_domain_common#ISection`
 - **Sub class of:** [Section shape](#SectionShape)
 
+*Example images:*
+
+![I-section — example](https://w3id.org/adiro/aec_domain_common/exampleImage/ISection_01.png)
+
 ### Lighting {#Lighting}
 
 The lighting discipline, a specialisation of electrical.
@@ -341,6 +353,10 @@ Rectangular hollow section - a hollow structural section with a rectangular prof
 - **IRI:** `https://w3id.org/adiro/aec_domain_common#RHS`
 - **Sub class of:** [Section shape](#SectionShape)
 
+*Example images:*
+
+![RHS — example](https://w3id.org/adiro/aec_domain_common/exampleImage/RHS_01.png)
+
 ### Section properties {#SectionProperties}
 
 General property category
@@ -435,6 +451,10 @@ Top-hat section - a cold-formed section with a top-hat-shaped profile.
 
 - **IRI:** `https://w3id.org/adiro/aec_domain_common#TopHat`
 - **Sub class of:** [Section shape](#SectionShape)
+
+*Example images:*
+
+![Top hat — example](https://w3id.org/adiro/aec_domain_common/exampleImage/TopHat_01.png)
 
 ### Upstand {#Upstand}
 

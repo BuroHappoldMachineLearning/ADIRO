@@ -135,6 +135,10 @@ A small locator diagram on a drawing sheet showing where the sheet's subject sit
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
 - **isComputerVisionLabel:** true
 
+*Example images:*
+
+![Key Plan — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/KeyPlan_01.png)
+
 ### Layout {#Layout}
 
 Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content.
@@ -144,6 +148,10 @@ Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotati
     - [contains](#contains) min 0 [Drawing element](#DrawingElement)
     - [hasProperty](#hasProperty) exactly 1 [Layout content type](#LayoutContentType)
 - **isComputerVisionLabel:** true
+
+*Example images:*
+
+![Layout — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Layout_01.png)
 
 ### Layout content type {#LayoutContentType}
 
@@ -211,6 +219,10 @@ A three-dimensional pictorial view of a building or assembly showing depth and s
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Perspective`
 - **Sub class of:** [Layout content type](#LayoutContentType)
 - **isComputerVisionLabel:** true
+
+*Example images:*
+
+![Perspective — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Perspective_01.png)
 
 ### Plan {#Plan}
 

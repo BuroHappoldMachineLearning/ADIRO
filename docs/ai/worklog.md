@@ -22,6 +22,21 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-15 — Synthetic example images for more terms ([#152](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/152))
+
+**Branch:** `feat/151-more-synthetic-images`, based on `main` once #148 and #150 had merged. Extends [#149](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/149).
+
+**Changed:**
+- `scripts/synthetic_example_images.py` now draws 30 images in four modules (the registry `DRAWINGS` is keyed by module; the output root is `assets/`). New: `KeyPlan`, `Perspective`, `Layout` (one sheet with three labelled layouts) in `aec_drawing_metadata`; `Dimension`, `Grid`, `ReferenceSymbol` in `aec_common_symbols`; `ISection`, `CHS`, `RHS`, `SectionChannel`, `TopHat` in `aec_domain_common`; `DGU`, `MineralWool`, `Transom`, `Gasket`, `Sealant`, `Bracket`, `ShelfAngle`, `Firestop` (one curtain-wall section at a slab edge, the term filled red) and `Mullion` (plan section) in `aec_facade_domain`. The palette went from 16 to 32 colours (a thin red part was quantised to brown), so the ten earlier PNGs changed bytes, not content.
+- The four TTLs link them with `exampleImage` and an `img:` prefix per module. `rdfs:comment` added to `Mullion`, `Transom`, `MineralWool`, `Sealant`, `Bracket`, `ShelfAngle`; `DGU`'s comment (it repeated its label) rewritten.
+- Changelogs of the four modules, `AGENTS.md` and `assets/README.md` (all modules' images are synthetic), tests made per-module.
+
+**Decided / left out:** no image for `Note` (a superclass), `DrawingRevision` (a revision cloud would overlap `RevisionTable`), `Column`/`Beam`/`Slab` (generic), nor the abstract and metadata classes. `SingleGlazing` (named earlier in the discussion) is not a class of the suite. The nine unlinked images in `docs/img/aec_facade_domain/` are not removed: that is still the maintainers' decision on #149, now possible without losing coverage.
+
+**Verified:** full pytest run (229 passed, with matplotlib and Pillow), `validate_ontology.py` (no example-image finding), `compat_diff.py` (only ANNOTATION_CHANGED for the new comments and images), `generate_docs.py` rerun (pyLODE HTML left as committed), every new image viewed. **Not verified:** `mkdocs build --strict` (skipped, memory); the staged copy in the deploy job.
+
+**Next step:** merge the PR; then the maintainers decide the nine facade images and the git history on #149.
+
 ## 2026-10-14 — Take down the example images that broke the convention, and replace them ([#149](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/149))
 
 **Branch:** `feat/149-synthetic-example-images`, stacked on `feat/145-example-image-convention` (PR #148, unmerged when this was written). It is the migration PR of [#145](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/145) decision 4, changed in scope by what was found.

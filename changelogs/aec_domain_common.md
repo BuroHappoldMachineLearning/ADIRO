@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+### Added
+- **Example images for `ISection`, `CHS`, `RHS`, `SectionChannel` and `TopHat`** ([#152](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/152)): synthetic images of each section profile with its parameters, linked with the `exampleImage` annotation.
+
 ### Changed (BREAKING)
 - **Uses the renamed labelling annotations** ([#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141)): `labellableRoot` becomes `isComputerVisionLabel` and `isCVATProperty` becomes `isComputerVisionOptionalLabel` on every term that carried them (see `aec_drawing_metadata`). The values are unchanged.
 
