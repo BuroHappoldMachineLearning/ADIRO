@@ -209,7 +209,7 @@ CQs are grouped by the FR they validate. Each must be translatable directly into
 | ------ | ---------------------------------------------------------------- |
 | CQ 1.1 | What drawing sheets have a drawing number beginning with "ST-"?  |
 | CQ 1.2 | What is the title of the sheet with drawing number "ST-101"?     |
-| CQ 1.3 | What drawing sheets are drawn at scale 1:50?                     |
+| CQ 1.3 | What drawing sheets are drawn at scale 1:50? (Only sheets with a sheet-level scale are returned; a sheet whose only scale is in its single layout's caption is not.) |
 | CQ 1.4 | What scale applies to this layout: its own, or otherwise its sheet's? |
 | CQ 1.5 | Which drawing sheets state no scale at all? |
 | CQ 1.6 | Which layouts have no scale of their own and sit on a sheet with no scale, so that their scale cannot be determined? |
@@ -271,7 +271,7 @@ CQs are grouped by the FR they validate. Each must be translatable directly into
 | ID     | Competency Question                                                                                  | FRs exercised               |
 | ------ | ---------------------------------------------------------------------------------------------------- | --------------------------- |
 | CQ-I 1 | What sheets in project "X" contain a `MEP` Layout and were approved by "R. Jones" after March 2024?  | FR 2, FR 4, FR 5, FR 7      |
-| CQ-I 2 | What sheets at scale 1:50 contain a `Structural` Layout and belong to project "Y"?                   | FR 1, FR 2, FR 5            |
+| CQ-I 2 | What sheets at scale 1:50 contain a `Structural` Layout and belong to project "Y"? (Only sheets with a sheet-level scale are returned; see CQ 1.3.) | FR 1, FR 2, FR 5            |
 | CQ-I 3 | What sheets in project "X" contain a `Structural` Layout of content type `Detail`?                   | FR 2, FR 5, FR 6            |
 
 ---
@@ -318,7 +318,7 @@ The query is fully expressible, confirming that CQ-I 1 is covered by the current
 
 CQ 1.3 and the scale questions CQ 1.4–1.7 are expressible without a reasoner. Each path lists the parent property together with its sub-property, so values written with either are found whether or not sub-property entailment has been applied: a sheet's scale is read with `(metadata:drawingScale|metadata:hasScale)` and a layout's with `(metadata:layoutScale|metadata:hasScale)`. A sheet's layouts are reached with `metadata:contains`, as in CQ-I 1. The queries were run with rdflib, without a reasoner, on a small example: a sheet with a title-block scale and three layouts (one with its own scale, one with none, one marked "NTS"), a sheet whose scale was written with `hasScale`, a sheet with no scale, and a sheet with a single detected layout.
 
-**CQ 1.3:** *What drawing sheets are drawn at scale 1:50?*
+**CQ 1.3:** *What drawing sheets are drawn at scale 1:50?* Only a sheet with a sheet-level scale is returned: a layout's scale is never copied to its sheet, so a sheet whose only scale is in the caption of its single layout is not returned.
 
 ```sparql
 PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
@@ -496,7 +496,7 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 Changes from v0.6, made when the scale was split into a sheet-level and a layout-level property ([#162](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/162)). MAJOR in substance (attributes added); the number stays in the 0.x series because the document is still a draft:
 
 - **`metadata:drawingScale` (on `DrawingSheet`) and `metadata:layoutScale` (on `Layout`) added** as sub-properties of `metadata:hasScale`, in the §2.2 attributes table, the FR 1 derived terms and the §6 traceability matrix. `drawingScale` is the scale of the sheet as a whole (usually in the title block); `layoutScale` is the scale in a layout's own caption.
-- **`hasScale` is unchanged; CQ 1.3 and CQ-I 2 are about the sheet's scale and are answered with or without entailment**: with sub-property entailment a value asserted with `drawingScale` is also a `hasScale` value; without it, the sheet's scale is read with the property path `metadata:hasScale|metadata:drawingScale`. CQ 1.3 and CQ-I 2 themselves are unchanged.
+- **`hasScale` is unchanged; CQ 1.3 and CQ-I 2 are about the sheet's scale and are answered with or without entailment**: with sub-property entailment a value asserted with `drawingScale` is also a `hasScale` value; without it, the sheet's scale is read with the property path `metadata:hasScale|metadata:drawingScale`. CQ 1.3 and CQ-I 2 are unchanged in substance; their text now states that they return only sheets with a sheet-level scale, so a sheet whose only scale is in its single layout's caption is not returned.
 - **Where a scale is printed.** §2.2 gains a table of where a scale is printed and which property records it. `drawingScale` is the scale of the sheet as a whole (the title block is the usual place, and a general note outside any layout also counts, judged from context at extraction); `layoutScale` is the scale in a layout's own caption, "NTS" / "As shown" are recorded verbatim, and a layout that prints no scale gets none. A layout's scale is not copied to the sheet: a scale belongs to a drawing view, and a `drawingScale` taken from the only layout detected would stop being true once more layouts are detected.
 - **CQ 1.4–1.7 added** (Group 1): the scale that applies to a layout, sheets with no scale, layouts whose scale cannot be determined, and layouts at a different scale from their sheet. `layoutScale` is now named by CQ 1.4, 1.6 and 1.7. A missing scale is a closed-world check, answered by a query and not by an OWL restriction. §5 gives the SPARQL for CQ 1.3–1.7, run without a reasoner.
 - **`sheetSize` naming noted.** `sheetSize` keeps "sheet" because a sheet of paper has a size, while the printed fields say "drawing"; "drawing size" is recorded as a synonym (`skos:altLabel`) so that a second term is not added. No requirement changed.

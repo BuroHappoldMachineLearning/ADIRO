@@ -105,7 +105,7 @@ The subject the claim is ABOUT - the thing a validated assertion is promoted ont
 
 ### assertedBy {#assertedBy}
 
-The source that makes this assertion - typically the drawing region it was read from (e.g. a Titleblock or a Layout). This is the provenance that lets the same field kind asserted by different regions be distinguished (e.g. a sheet-level scale in the title block versus a per-layout scale in a layout corner), which a fixed domain on a per-field property cannot express.
+The source that makes this assertion - typically the drawing region it was read from (e.g. a Titleblock or a Layout). This is the provenance that lets the same field kind asserted by different regions be distinguished (e.g. a sheet's scale read from the title block versus the same sheet's scale read from a general note), which a fixed domain on a per-field property cannot express.
 
 - **IRI:** `https://w3id.org/adiro/aec_provenance#assertedBy`
 - **Domain:** [Field Assertion](#FieldAssertion)
