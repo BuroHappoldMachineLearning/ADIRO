@@ -384,8 +384,8 @@ For anyone changing an ontology, agent or person. The sections below give the de
   them, so the ontology **drives the labels of the
   annotation tooling**. The label *text* is the class **IRI local name**, **not** `rdfs:label`; `rdfs:label` reaches
   the tool only for `owl:oneOf` enumeration values (see "Ontology authoring conventions" above). Changes to labellable
-  classes or to that annotation's usage affect those consumers: coordinate with the maintainers of the annotation
-  pipeline. The two annotations are independent presentation hints for computer-vision annotation tooling and are named
+  classes or to that annotation's usage affect those consumers: say in the changelog entry that downstream consumers may
+  need adjustments, without naming a consumer, its configuration or the display names it uses. The two annotations are independent presentation hints for computer-vision annotation tooling and are named
   for that application; a class may be an optional label without being `isComputerVisionLabel`. A different application
   gets its own pair.
 - **Do not name internal tools in this public repository.** Describe the behaviour generically ("the downstream
@@ -434,8 +434,9 @@ break, in the lines it touches and in the code that depends on them.
   `rdfs:subClassOf`, domain, range or restriction, or a changed IRI is **major** until the version-impact comment
   shows otherwise.
 - **Findings first, most severe first.** Each one gives the label and a one-line title, where (`path:line`), what
-  goes wrong (the concrete input or state and the wrong result), how sure you are (*reproduced*, *traced* or
-  *suspected*; never present a suspicion as a fact) and, when not obvious, a suggested fix. Verify each before you
+  goes wrong (the concrete input or state and the wrong result), how sure you are (say *reproduced* when you
+  ran it and saw it fail, and *suspected* when you did not verify it; never present a suspicion as a fact. A finding you
+  verified by reading the code is the default and needs no label) and, when not obvious, a suggested fix. Verify each before you
   report it; if you find nothing, say so plainly.
 - **Do not repeat what the description or a bot comment already says.** No restated scope, no praise, no CI status
   (a failing check is mentioned only when it causes a finding). If the description does not make scope, decisions or
@@ -515,11 +516,15 @@ repo, so branch links keep working after merge.
     happened. Point at `docs/<module>.ttl` rather than `src/` — that is the
 copy `generate_docs.py` publishes, and it is what the site serves.
 
-**4. Keep YouTrack out of the public PR body — and out of published artifacts generally.** ADIRO is a public
+**4. Keep YouTrack out of every public place: the PR body, commit messages, branch names and published artifacts.** ADIRO is a public
 repo, and its tracker mirrors **one way**: every GitHub issue is copied into YouTrack **RES**, but YouTrack also
 holds items that exist *only* there — internal tooling, and work that is merely **planned** (`RES-*` / `MLE-*`
 epics and their sub-tasks). A PR description is public, so reference only **public GitHub issues and
-Discussions** in it; do **not** cite YouTrack IDs or describe YouTrack-only / not-yet-public plans. The same
+Discussions** in it; do **not** cite YouTrack IDs or describe YouTrack-only / not-yet-public plans. Commit messages and branch names are
+public and permanent too, so they carry the **GitHub issue number** (`feat: … (#162)`, `feat/162-…`) and never a YouTrack ID. The
+YouTrack copy of a GitHub issue is an internal planning mirror (GitHub is the source of truth, and the copy is never
+edited), and an internal issue linked to public work, such as a change an internal system needs, is tracked privately and
+not referenced here. The same
 restraint applies to anything the site publishes — the TTL (`rdfs:comment`, `skos:note`…), changelogs, docs:
 point at the public Discussion/issue, not the YouTrack mirror. In particular, **record which sub-tasks a PR
 advances, and what it leaves for later, on the relevant YouTrack issue/epic — not in the PR body** (prefer

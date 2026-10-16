@@ -22,6 +22,13 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-16 — AGENTS.md: no YouTrack IDs in commits or branches, review labels, consumer wording
+
+- Paragraph 4 of the PR-description rules now also covers commit messages and branch names: they carry the GitHub issue number, never a YouTrack ID (the YouTrack copy is an internal mirror, never edited; an internal issue linked to public work is not referenced). 25 earlier commits on `main` carry `RES-` IDs; history is not rewritten.
+- "Downstream label consumers": the instruction to coordinate with the maintainers of a named pipeline is replaced by "say in the changelog that downstream consumers may need adjustments", without naming a consumer, its configuration or display names.
+- "Reviewing a pull request": a finding verified by reading the code needs no confidence label; only *reproduced* and *suspected* are written.
+- Not verified: nothing to run (documentation only). The same wording still has to be carried into the team's `tools:orientation` and `tools:public-repo-hygiene` skills (separate repository, not changed here).
+
 ## 2026-10-15 — The two logos are shrunk (PR [#161](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/161))
 
 - `docs/img/favicon.png` 1254 px, 888 KB → 256 px, 45 KB (site logo and favicon); `docs/img/adiro_banner.png` 1254 px, 1.2 MB → 640 px, 376 KB (shown at 320 px, so 2x for high-density screens). Same names, so no reference changed.
