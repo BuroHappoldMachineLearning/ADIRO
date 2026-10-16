@@ -58,10 +58,10 @@ Characteristics of a single entity. **Datatype properties on `DrawingSheet` are 
 | ---------------- | ----------------- | ---------------------- | ------ | ------------- | ----- |
 | `drawingIdentifier`  | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | Also known as "drawing number". |
 | `drawingTitle`   | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
-| `hasScale`       | `DrawingSheet`, `Layout` | `aec_drawing_metadata` | NEW    | `xsd:string`  | The general scale property; `drawingScale` and `layoutScale` are its sub-properties, so a query on `hasScale` returns both. *(Amended in [v0.7](#9-version-history).)* |
-| `drawingScale`     | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | The scale printed in the title block; the sheet's nominal scale. Sub-property of `hasScale`. *(Added in [v0.7](#9-version-history).)* |
-| `layoutScale`    | `Layout`          | `aec_drawing_metadata` | NEW    | `xsd:string`  | The scale printed in a layout's own caption; more specific than `drawingScale`. Sub-property of `hasScale`. *(Added in [v0.7](#9-version-history).)* |
-| `sheetSize`      | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
+| `hasScale`       | `DrawingSheet`, `Layout` | `aec_drawing_metadata` | NEW    | `xsd:string`  | The general scale property; `drawingScale` and `layoutScale` are its sub-properties. With sub-property entailment a query on `hasScale` returns values recorded with either; without it, a sheet's scale is read with the path `metadata:hasScale\|metadata:drawingScale` and a layout's with `metadata:hasScale\|metadata:layoutScale`. *(Amended in [v0.7](#9-version-history).)* |
+| `drawingScale`     | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | The scale of the sheet as a whole: most often printed in the title block, also in general notes or other areas outside any layout. Never copied from a layout. Sub-property of `hasScale`. *(Added in [v0.7](#9-version-history).)* |
+| `layoutScale`    | `Layout`          | `aec_drawing_metadata` | NEW    | `xsd:string`  | The scale printed in a layout's own caption (or 'NTS' / 'As shown', verbatim); more specific than `drawingScale`; left empty when the layout prints none. Sub-property of `hasScale`. *(Added in [v0.7](#9-version-history).)* |
+| `sheetSize`      | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | Named for the sheet of paper, which has a size; also known as "drawing size". *(Noted in [v0.7](#9-version-history).)* |
 | `revisionCode`   | `DrawingRevision` | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
 | `issueDate`      | `DrawingRevision` | `aec_drawing_metadata` | NEW    | `xsd:date`    | |
 | `personName`     | `Person`          | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
@@ -69,6 +69,19 @@ Characteristics of a single entity. **Datatype properties on `DrawingSheet` are 
 | `projectNumber`  | `Project`         | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
 | `packageName`    | `DrawingPackage`  | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
 | `statusLabel`    | `StatusCode`      | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
+
+#### Where a scale is printed, and which property records it
+
+| Where the scale is printed | Recorded as | Note |
+| -------------------------- | ----------- | ---- |
+| In the title block (the "Scale" cell), the usual place | `drawingScale` on the `DrawingSheet` | The sheet's nominal scale. |
+| In a general note or another area of the drawing outside the title block and outside any layout ("all drawings 1:50 unless noted") | `drawingScale` on the `DrawingSheet` | Whether such a scale applies to the whole sheet is judged from its context when the value is extracted; that is a matter for extraction, not for the ontology. |
+| In a layout's own caption | `layoutScale` on that `Layout` | More specific than the sheet's, and may differ from it (a 1:500 plan on a 1:50 sheet). |
+| In the caption of the only layout detected on the sheet | `layoutScale` on that `Layout`, and nothing on the sheet | Not repeated as `drawingScale`. A scale belongs to a drawing view: if more layouts are detected later, a `drawingScale` copied from the first would no longer be true of the sheet. |
+| A layout printing "NTS" or "As shown" instead of a ratio | `layoutScale` with that text, verbatim | Tells a layout drawn out of scale apart from one that prints no scale. |
+| A layout printing no scale | nothing | `layoutScale` stays empty; the sheet's scale is not written into it. |
+
+What scale applies to a layout is answered by a query (CQ 1.4), not by a stored value: the layout's own `layoutScale` if it has one, otherwise the sheet's scale, reported as "assumed from sheet". The fallback is an assumption (a scale can be missing by mistake), so it is never asserted as a `layoutScale`, which would present an assumption as a printed value. "No scale" (CQ 1.5, CQ 1.6) is a closed-world check: OWL reads a missing value as "not stated", never as an error, so a `someValuesFrom` restriction would only make a reasoner infer that a scale exists. Such checks are queries, or validation shapes in the wider ABox validation work ([#22](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/22)).
 
 ### 2.3 Relations — Object Properties
 
@@ -197,6 +210,10 @@ CQs are grouped by the FR they validate. Each must be translatable directly into
 | CQ 1.1 | What drawing sheets have a drawing number beginning with "ST-"?  |
 | CQ 1.2 | What is the title of the sheet with drawing number "ST-101"?     |
 | CQ 1.3 | What drawing sheets are drawn at scale 1:50?                     |
+| CQ 1.4 | What scale applies to this layout: its own, or otherwise its sheet's? |
+| CQ 1.5 | Which drawing sheets state no scale at all? |
+| CQ 1.6 | Which layouts have no scale of their own and sit on a sheet with no scale, so that their scale cannot be determined? |
+| CQ 1.7 | Which layouts are drawn at a different scale from their sheet? |
 
 ### CQ Group 2 — Project Membership (validates FR 2)
 
@@ -297,6 +314,80 @@ Every filter condition maps to a defined property:
 
 The query is fully expressible, confirming that CQ-I 1 is covered by the current term inventory. The previous v0.2 placeholder prefix (`https://example.org/aec-ontology#`) is retired in favour of the real module namespaces.
 
+### Scale competency questions
+
+CQ 1.3 and the scale questions CQ 1.4–1.7 are expressible without a reasoner. Each path lists the parent property together with its sub-property, so values written with either are found whether or not sub-property entailment has been applied: a sheet's scale is read with `(metadata:drawingScale|metadata:hasScale)` and a layout's with `(metadata:layoutScale|metadata:hasScale)`. A sheet's layouts are reached with `metadata:contains`, as in CQ-I 1. The queries were run with rdflib, without a reasoner, on a small example: a sheet with a title-block scale and three layouts (one with its own scale, one with none, one marked "NTS"), a sheet whose scale was written with `hasScale`, a sheet with no scale, and a sheet with a single detected layout.
+
+**CQ 1.3:** *What drawing sheets are drawn at scale 1:50?*
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+
+SELECT ?sheet WHERE {
+  ?sheet  a                                         metadata:DrawingSheet ;
+          (metadata:drawingScale|metadata:hasScale) "1:50" .
+}
+```
+
+**CQ 1.4:** *What scale applies to this layout: its own, or otherwise its sheet's?*
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+
+SELECT ?layout ?scale ?basis WHERE {
+  ?sheet  a metadata:DrawingSheet ;
+          metadata:contains ?layout .
+  ?layout a metadata:Layout .
+  OPTIONAL { ?layout (metadata:layoutScale|metadata:hasScale)  ?own }
+  OPTIONAL { ?sheet  (metadata:drawingScale|metadata:hasScale) ?nominal }
+  BIND(COALESCE(?own, ?nominal) AS ?scale)
+  BIND(IF(BOUND(?own), "own",
+          IF(BOUND(?nominal), "assumed from sheet", "none")) AS ?basis)
+}
+```
+
+**CQ 1.5:** *Which drawing sheets state no scale at all?*
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+
+SELECT ?sheet WHERE {
+  ?sheet a metadata:DrawingSheet .
+  FILTER NOT EXISTS { ?sheet (metadata:drawingScale|metadata:hasScale) ?scale }
+}
+```
+
+**CQ 1.6:** *Which layouts have no scale of their own and sit on a sheet with no scale, so that their scale cannot be determined?*
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+
+SELECT ?layout WHERE {
+  ?sheet  a metadata:DrawingSheet ;
+          metadata:contains ?layout .
+  ?layout a metadata:Layout .
+  FILTER NOT EXISTS { ?layout (metadata:layoutScale|metadata:hasScale)  ?own }
+  FILTER NOT EXISTS { ?sheet  (metadata:drawingScale|metadata:hasScale) ?nominal }
+}
+```
+
+**CQ 1.7:** *Which layouts are drawn at a different scale from their sheet?*
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+
+SELECT ?layout ?own ?nominal WHERE {
+  ?sheet  a metadata:DrawingSheet ;
+          (metadata:drawingScale|metadata:hasScale) ?nominal ;
+          metadata:contains ?layout .
+  ?layout a metadata:Layout ;
+          (metadata:layoutScale|metadata:hasScale) ?own .
+  FILTER (?own != ?nominal)
+}
+```
+
+CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
+
 ---
 
 ## 6. Traceability Matrix
@@ -304,7 +395,7 @@ The query is fully expressible, confirming that CQ-I 1 is covered by the current
 | OWL Term                       | Module                 | Action | CQ(s)                                          | FR(s)                              |
 | ------------------------------ | ---------------------- | ------ | ---------------------------------------------- | ---------------------------------- |
 | `metadata:DrawingSheet`        | `aec_drawing_metadata` | REUSE  | CQ 1.x, CQ 2.x, CQ 3.x, CQ 5.x, CQ 6.x, CQ 8.x | FR 1, FR 2, FR 3, FR 5, FR 6, FR 8 |
-| `metadata:Layout`              | `aec_drawing_metadata` | REUSE  | CQ 5.x, CQ 6.x, CQ-I 1, CQ-I 2, CQ-I 3         | FR 5, FR 6                         |
+| `metadata:Layout`              | `aec_drawing_metadata` | REUSE  | CQ 1.4, CQ 1.6, CQ 1.7, CQ 5.x, CQ 6.x, CQ-I 1, CQ-I 2, CQ-I 3         | FR 5, FR 6                         |
 | `metadata:LayoutContentType`   | `aec_drawing_metadata` | REUSE  | CQ 6.x, CQ-I 3                                 | FR 6                               |
 | `metadata:DrawingRevision`     | `aec_drawing_metadata` | NEW    | CQ 3.x, CQ 4.x, CQ 7.x                         | FR 3, FR 4, FR 7                   |
 | `metadata:Project`             | `aec_drawing_metadata` | NEW    | CQ 2.x, CQ-I 1                                 | FR 2                               |
@@ -312,7 +403,7 @@ The query is fully expressible, confirming that CQ-I 1 is covered by the current
 | `dcommon:Discipline`           | `aec_domain_common`    | REUSE  | CQ 5.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 5                               |
 | `metadata:StatusCode`          | `aec_drawing_metadata` | NEW    | CQ 7.x, CQ 8.2                                 | FR 7                               |
 | `metadata:DrawingPackage`      | `aec_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
-| `metadata:contains`            | `aec_drawing_metadata` | REUSE  | CQ-I 1, CQ-I 2, CQ-I 3                         | (structural)                       |
+| `metadata:contains`            | `aec_drawing_metadata` | REUSE  | CQ 1.4, CQ 1.6, CQ 1.7, CQ-I 1, CQ-I 2, CQ-I 3                         | (structural)                       |
 | `metadata:hasRevision`         | `aec_drawing_metadata` | NEW    | CQ 3.x                                         | FR 3                               |
 | `metadata:isAuthoredBy`           | `aec_drawing_metadata` | NEW    | CQ 4.1                                         | FR 4                               |
 | `metadata:isCheckedBy`          | `aec_drawing_metadata` | NEW    | CQ 4.2                                         | FR 4                               |
@@ -324,9 +415,9 @@ The query is fully expressible, confirming that CQ-I 1 is covered by the current
 | `metadata:belongsToPackage`    | `aec_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
 | `metadata:drawingIdentifier`       | `aec_drawing_metadata` | NEW    | CQ 1.1, CQ 1.2                                 | FR 1                               |
 | `metadata:drawingTitle`        | `aec_drawing_metadata` | NEW    | CQ 1.2                                         | FR 1                               |
-| `metadata:hasScale`            | `aec_drawing_metadata` | NEW    | CQ 1.3, CQ-I 2                                 | FR 1                               |
-| `metadata:drawingScale`          | `aec_drawing_metadata` | NEW    | CQ 1.3, CQ-I 2 (through `hasScale`)            | FR 1                               |
-| `metadata:layoutScale`         | `aec_drawing_metadata` | NEW    | — (answers `hasScale` queries; no CQ names it) | FR 1                               |
+| `metadata:hasScale`            | `aec_drawing_metadata` | NEW    | CQ 1.3–1.7, CQ-I 2                                 | FR 1                               |
+| `metadata:drawingScale`          | `aec_drawing_metadata` | NEW    | CQ 1.3–1.7, CQ-I 2 (directly, or through `hasScale` with entailment) | FR 1                               |
+| `metadata:layoutScale`         | `aec_drawing_metadata` | NEW    | CQ 1.4, CQ 1.6, CQ 1.7 (directly, or through `hasScale` with entailment) | FR 1                               |
 | `metadata:sheetSize`           | `aec_drawing_metadata` | NEW    | —                                              | FR 1                               |
 | `metadata:revisionCode`        | `aec_drawing_metadata` | NEW    | CQ 3.1, CQ 3.3                                 | FR 3                               |
 | `metadata:issueDate`           | `aec_drawing_metadata` | NEW    | CQ 3.2, CQ 3.3, CQ-I 1                         | FR 3                               |
@@ -404,8 +495,11 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 Changes from v0.6, made when the scale was split into a sheet-level and a layout-level property ([#162](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/162)). MAJOR in substance (attributes added); the number stays in the 0.x series because the document is still a draft:
 
-- **`metadata:drawingScale` (on `DrawingSheet`) and `metadata:layoutScale` (on `Layout`) added** as sub-properties of `metadata:hasScale`, in the §2.2 attributes table, the FR 1 derived terms and the §6 traceability matrix. `drawingScale` is the scale in the title block; `layoutScale` is the scale in a layout's own caption.
-- **`hasScale` is unchanged and still answers CQ 1.3 and CQ-I 2**: a value asserted with either sub-property is also a `hasScale` value, so no competency question or SPARQL query changed. `layoutScale` is not named by any competency question.
+- **`metadata:drawingScale` (on `DrawingSheet`) and `metadata:layoutScale` (on `Layout`) added** as sub-properties of `metadata:hasScale`, in the §2.2 attributes table, the FR 1 derived terms and the §6 traceability matrix. `drawingScale` is the scale of the sheet as a whole (usually in the title block); `layoutScale` is the scale in a layout's own caption.
+- **`hasScale` is unchanged; CQ 1.3 and CQ-I 2 are about the sheet's scale and are answered with or without entailment**: with sub-property entailment a value asserted with `drawingScale` is also a `hasScale` value; without it, the sheet's scale is read with the property path `metadata:hasScale|metadata:drawingScale`. CQ 1.3 and CQ-I 2 themselves are unchanged.
+- **Where a scale is printed.** §2.2 gains a table of where a scale is printed and which property records it. `drawingScale` is the scale of the sheet as a whole (the title block is the usual place, and a general note outside any layout also counts, judged from context at extraction); `layoutScale` is the scale in a layout's own caption, "NTS" / "As shown" are recorded verbatim, and a layout that prints no scale gets none. A layout's scale is not copied to the sheet: a scale belongs to a drawing view, and a `drawingScale` taken from the only layout detected would stop being true once more layouts are detected.
+- **CQ 1.4–1.7 added** (Group 1): the scale that applies to a layout, sheets with no scale, layouts whose scale cannot be determined, and layouts at a different scale from their sheet. `layoutScale` is now named by CQ 1.4, 1.6 and 1.7. A missing scale is a closed-world check, answered by a query and not by an OWL restriction. §5 gives the SPARQL for CQ 1.3–1.7, run without a reasoner.
+- **`sheetSize` naming noted.** `sheetSize` keeps "sheet" because a sheet of paper has a size, while the printed fields say "drawing"; "drawing size" is recorded as a synonym (`skos:altLabel`) so that a second term is not added. No requirement changed.
 - **Labelling.** `drawingIdentifier`, `drawingTitle` and `drawingScale` are marked `isComputerVisionLabel`, so annotation tooling can box each as a text field. No requirement changed.
 
 ### v0.6 (draft)

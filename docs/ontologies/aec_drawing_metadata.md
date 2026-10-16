@@ -482,13 +482,13 @@ Sheet-level identifier, e.g. 'ST-201'. Also known as 'drawing number'.
 
 ### drawingScale {#drawingScale}
 
-The scale of a DrawingSheet as printed in its title block, e.g. '1:50', or a note such as 'NTS' or 'As shown'. It is the sheet's nominal or predominant scale, not a claim about every layout on it: where a Layout prints its own scale, that layoutScale is the more specific value for that drawing. A sub-property of hasScale, so every drawingScale value is also a hasScale value of the sheet.
+The scale of a DrawingSheet as a whole, e.g. '1:50', or a note such as 'NTS' or 'As shown'. It is most often printed in the title block, and can also appear in a general note or another area outside any layout. It is the sheet's nominal or predominant scale, not a claim about every layout on it: where a Layout prints its own scale, that layoutScale is the more specific value for that drawing. A layout's scale is not copied into drawingScale, because a sheet can gain layouts and the scale of one of them would then no longer describe the sheet. A sub-property of hasScale, so every drawingScale value is also a hasScale value of the sheet.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#drawingScale`
 - **Sub property of:** [hasScale](#hasScale)
 - **Domain:** [Drawing Sheet](#DrawingSheet)
 - **Range:** `xsd:string`
-- **extraction hint:** Read from the title block, in the cell captioned 'Scale' (German 'Maßstab'), sometimes given together with the sheet size ('1:50 @ A1'). Capture only the scale ('1:50'); where the cell prints 'NTS' or 'As shown' instead of a ratio, capture that verbatim. A scale printed beside an individual drawing, outside the title block, is that layout's layoutScale, not this.
+- **extraction hint:** Most often read from the title block, in the cell captioned 'Scale' (German 'Maßstab'), sometimes given together with the sheet size ('1:50 @ A1'). It can also be printed in a general note or another area outside any layout (for example 'ALL DRAWINGS 1:50 UNLESS NOTED'); decide from the context that it applies to the sheet as a whole. Capture only the scale ('1:50'); where it prints 'NTS' or 'As shown' instead of a ratio, capture that verbatim. A scale printed beside an individual drawing is that layout's layoutScale, not this, and is not repeated here.
 - **isComputerVisionLabel:** true
 
 ### drawingTitle {#drawingTitle}
@@ -527,13 +527,13 @@ Identifier for a Layout within its parent DrawingSheet. Also known as 'layout nu
 
 ### layoutScale {#layoutScale}
 
-The scale printed in an individual Layout's own caption, e.g. '1:5' for a detail on a sheet whose plan is drawn at 1:100. Where a Layout carries one, it is the more specific value and describes that drawing; the sheet-level drawingScale is only the sheet's nominal scale. A sub-property of hasScale, so every layoutScale value is also a hasScale value of the layout.
+The scale printed in an individual Layout's own caption, e.g. '1:5' for a detail on a sheet whose plan is drawn at 1:100, or a note such as 'NTS' or 'As shown'. Where a Layout carries one, it is the more specific value and describes that drawing; the sheet-level drawingScale is only the sheet's nominal scale. Where a Layout prints no scale, no layoutScale is recorded: it is left empty, not filled from the sheet. A sub-property of hasScale, so every layoutScale value is also a hasScale value of the layout.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#layoutScale`
 - **Sub property of:** [hasScale](#hasScale)
 - **Domain:** [Layout](#Layout)
 - **Range:** `xsd:string`
-- **extraction hint:** Printed beside its layout rather than in the title block, usually at the end of the caption line after the title ('3  MULLION HEAD  1:5') or on a line beneath it ('SCALE 1:5'). Capture only the scale: that caption decomposes across three properties on the same Layout — layoutIdentifier '3', layoutTitle 'MULLION HEAD', layoutScale '1:5'. Do not confuse with drawingScale, the nominal scale printed in the title block.
+- **extraction hint:** Printed beside its layout rather than in the title block, usually at the end of the caption line after the title ('3  MULLION HEAD  1:5') or on a line beneath it ('SCALE 1:5'). Capture only the scale: that caption decomposes across three properties on the same Layout — layoutIdentifier '3', layoutTitle 'MULLION HEAD', layoutScale '1:5'. Where the caption prints 'NTS' or 'As shown' instead of a ratio, capture that verbatim; where it prints no scale, record nothing. Do not confuse with drawingScale, the scale of the sheet as a whole, and do not repeat this value there.
 - **isComputerVisionLabel:** true
 
 ### layoutTitle {#layoutTitle}
@@ -605,7 +605,7 @@ The code identifying a specific revision, e.g. 'A', 'B', 'P01'.
 
 ### sheetSize {#sheetSize}
 
-Sheet size designation, e.g. 'A1', 'A0'.
+Sheet size designation, e.g. 'A1', 'A0'. Named for the sheet of paper, which has a size; the printed fields of the drawing itself say 'drawing' (drawingIdentifier, drawingTitle, drawingScale). 'Drawing size' is a synonym of this term, not a second term.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#sheetSize`
 - **Domain:** [Drawing Sheet](#DrawingSheet)
