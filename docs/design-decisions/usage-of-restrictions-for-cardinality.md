@@ -23,4 +23,4 @@ The same form states that a class carries a **datatype property**: the restricti
                        ] .
 ```
 
-ADIRO does this for the datatype properties that are computer-vision labels (`isComputerVisionLabel`, see [Use of annotation properties](usage-of-annotation-properties.md)), so that the class that owns a text field names it, and annotation tooling can reach the property from the class. It adds no obligation: min 0 reads "can carry".
+ADIRO does this for the datatype properties that are computer-vision labels (`isComputerVisionLabel`, see [Use of annotation properties](usage-of-annotation-properties.md)), so that the class that owns a text field names it. It adds no obligation: min 0 reads "can carry".

@@ -1,7 +1,7 @@
 """The sheet's and each layout's text fields are labels, and are reachable from the class that owns them (#162).
 
-A tool that derives its labels by walking the ontology from a class follows rdfs:subClassOf and restrictions, not
-rdfs:domain, so a labelled datatype property must be named by an owl:onProperty restriction on its owner class.
+The class names the properties it can carry: each labelled datatype property is named by a min-0 owl:onProperty
+restriction on its owner class ("can carry", like "can contain").
 """
 from pathlib import Path
 

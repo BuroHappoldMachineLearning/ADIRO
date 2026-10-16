@@ -22,6 +22,18 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-16 — #162: rebased on `main`, YouTrack ID out of the commits, consumer-neutral wording ([#162](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/162))
+
+**Branch:** `feat/162-labellable-text-fields`, rebased on `main` after [#165](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/165) (worklog conflict only: both entries kept, newest first) and force-pushed.
+
+**Changed:**
+- The two branch commits are reworded to carry only the GitHub issue number, as #165 requires.
+- Consumer-neutral wording, as #165 requires: the changelog, the test docstring, `usage-of-restrictions-for-cardinality.md` and the 2026-10-15 entry below no longer name a downstream consumer, its display names or how it walks the graph. The changelog says that downstream consumers that derive labels from ADIRO may need adjustments, and the restrictions are justified by what they mean (the class names the properties it can carry).
+
+**Verified:** after the rebase and the wording changes, `uv run python scripts/validate_ontology.py` every module `[OK]`; `uv run python scripts/generate_docs.py` 6/6, no generated page changed apart from pyLODE's unstable ordering in the HTML (discarded); `uv run --with pytest pytest -q` 248 passed, 4 skipped. **Not run:** `scripts/run_reasoning.sh` (no local Java; the PR's reasoning check covers it).
+
+**Next step:** the review's remaining findings (sub-property entailment, where a scale is printed, `ScaleField`'s mapping, a rule-based test, the UC-01 visualisation file).
+
 ## 2026-10-16 — AGENTS.md: no YouTrack IDs in commits or branches, review labels, consumer wording
 
 - Paragraph 4 of the PR-description rules now also covers commit messages and branch names: they carry the GitHub issue number, never a YouTrack ID (the YouTrack copy is an internal mirror, never edited; an internal issue linked to public work is not referenced). 25 earlier commits on `main` carry `RES-` IDs; history is not rewritten.
@@ -35,7 +47,7 @@ threads*, which commits do not carry.
 
 **Changed:**
 - `src/aec_drawing_metadata.ttl`: new `layoutScale` (domain `Layout`) and `drawingScale` (domain `DrawingSheet`), both `rdfs:subPropertyOf :hasScale`, range `xsd:string`, with a comment and an `extractionHint`. `isComputerVisionLabel true` on `drawingIdentifier`, `drawingTitle`, `drawingScale`, `layoutIdentifier`, `layoutTitle`, `layoutScale`; `hasScale` unmarked and otherwise unchanged. One "can have" restriction per property (`owl:minQualifiedCardinality 0`, `owl:onDataRange xsd:string`) on `DrawingSheet` and `Layout`. `isComputerVisionLabel`'s comment now covers "class or datatype property" (and the section comment above it says so); `isComputerVisionOptionalLabel`'s comment is left about classes, since no property carries it. `layoutTitle`'s extraction hint now says `layoutScale '1:5'` instead of `hasScale`.
-- `changelogs/aec_drawing_metadata.md`: `[Unreleased]` Added (the two properties; the restrictions) and Changed (the annotation's scope, the six labels and the rename consumers have to make; the hint).
+- `changelogs/aec_drawing_metadata.md`: `[Unreleased]` Added (the two properties; the restrictions) and Changed (the annotation's scope, the six labels and the note that downstream consumers may need adjustments; the hint).
 - `tests/test_labellable_text_fields.py`: the six are labelled datatype properties of their owner with range `xsd:string`, each named by a min-0 `owl:onDataRange xsd:string` restriction on the owner, and `hasScale` is unlabelled and the parent of both scales.
 
 **Decided here:**
@@ -46,14 +58,14 @@ threads*, which commits do not carry.
 **Verified:** `uv run python scripts/validate_ontology.py` (also with `BASE_REF=origin/main`) — every module `[OK]`, only the standing facade #87 warning. `compat_diff.py --markdown --base-dir <main's src>` (as the PR comment workflow runs it): `aec_drawing_metadata` 13 changes, MAJOR-level — 6 `RESTRICTION_ADDED`, 4 `LABELLING_CHANGED`, 2 `TERM_ADDED`, 1 `ANNOTATION_CHANGED`; next version 5.0.0, as before this change. `compat_diff.py` (warn mode): no inconsistency. `uv run --with pytest --with pillow python -m pytest tests -q` 221 passed, 1 skipped; ttl2md tests 30 passed. **Not run:** `scripts/run_reasoning.sh` (HermiT + ROBOT DL profile) — no Java on this machine; the PR's reasoning check is the first run. Docs not regenerated (a later step), hand-written specification not updated (a later step).
 
 **Deferred to the maintainers (open questions in the issue, implemented here with the issue's proposed defaults):**
-1. Restriction form — `owl:minQualifiedCardinality 0` (adds only the class-to-property edge), rather than `someValuesFrom` (too strong) or `maxCardinality 1` (an unneeded constraint), or no restriction (consumers follow `rdfs:domain`).
+1. Restriction form — `owl:minQualifiedCardinality 0` (adds only the class-to-property edge), rather than `someValuesFrom` (too strong) or `maxCardinality 1` (an unneeded constraint), or no restriction (the class would not name the property).
 2. Annotation scope — `isComputerVisionLabel` extended to datatype properties, rather than a separate annotation for text fields.
 3. Version impact — `LABELLING_CHANGED` and `RESTRICTION_ADDED` are potentially breaking (MAJOR unless review says otherwise); `[Unreleased]` is already MAJOR because of the [#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141) rename, so this adds no further bump if released together.
 4. `hasScale` kept, not deprecated, domain unchanged; narrowing it would be a `DOMAIN_CHANGED` in its own issue.
 
-**Docs regen and spec sync (same day):** `src/aec_drawing_metadata.display.json` got diagram positions for `drawingScale` and `layoutScale` (next to `hasScale` / `layoutTitle`); `uv run python scripts/generate_docs.py` then changed only the `aec_drawing_metadata` generated files under `docs/` (page, pyLODE HTML, `.ttl`, `.display.json`). UC-01 is now v0.7 (MAJOR in substance, attributes added; 0.x draft): `drawingScale` / `layoutScale` added to the attributes table, FR 1 derived terms and traceability matrix, `hasScale` CQs left as they are (valid by sub-property entailment); `use-cases/README.md` rows updated. UC-03 needed no change (`layoutIdentifier` / `drawingIdentifier` are unchanged apart from the label flag). `usage-of-annotation-properties.md` and `usage-of-restrictions-for-cardinality.md` (the `owl:onDataRange` form) amended in place. `validate_ontology.py` OK, `mkdocs build --strict` OK, `pytest tests` 221 passed, 1 skipped. Remaining: open the PR (`Closes #162`) and coordinate the label rename with the annotation pipeline maintainers.
+**Docs regen and spec sync (same day):** `src/aec_drawing_metadata.display.json` got diagram positions for `drawingScale` and `layoutScale` (next to `hasScale` / `layoutTitle`); `uv run python scripts/generate_docs.py` then changed only the `aec_drawing_metadata` generated files under `docs/` (page, pyLODE HTML, `.ttl`, `.display.json`). UC-01 is now v0.7 (MAJOR in substance, attributes added; 0.x draft): `drawingScale` / `layoutScale` added to the attributes table, FR 1 derived terms and traceability matrix, `hasScale` CQs left as they are (valid by sub-property entailment); `use-cases/README.md` rows updated. UC-03 needed no change (`layoutIdentifier` / `drawingIdentifier` are unchanged apart from the label flag). `usage-of-annotation-properties.md` and `usage-of-restrictions-for-cardinality.md` (the `owl:onDataRange` form) amended in place. `validate_ontology.py` OK, `mkdocs build --strict` OK, `pytest tests` 221 passed, 1 skipped. Remaining: open the PR (`Closes #162`).
 
-**Next step:** open the PR (`Closes #162`), get the maintainers' answers to the four open questions in the issue, check the reasoning CI (no local Java), and coordinate the label rename with the maintainers of the annotation pipeline before the release.
+**Next step:** open the PR (`Closes #162`), get the maintainers' answers to the four open questions in the issue, and check the reasoning CI (no local Java).
 
 ## 2026-10-15 — The two logos are shrunk (PR [#161](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/161))
 
