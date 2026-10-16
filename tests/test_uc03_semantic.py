@@ -26,7 +26,7 @@ def test_reference_forms_keep_symbol_and_inline_domains_distinct() -> None:
     assert MD.ReferenceExpression in graph.transitive_objects(
         CS.ReferenceSymbol, RDFS.subClassOf
     )
-    assert MD.SheetNoMention in graph.transitive_objects(
+    assert MD.DrawingIdentifierMention in graph.transitive_objects(
         MD.StandaloneSheetReference, RDFS.subClassOf
     )
     assert MD.ReferenceExpression in graph.transitive_objects(
@@ -45,20 +45,21 @@ def test_published_inline_query_returns_only_accepted_targets() -> None:
     graph.add((EX.sheet, MD.hasLayout, EX.layout1))
     graph.add((EX.sheet, MD.hasLayout, EX.layout3))
     graph.add((EX.inline, RDF.type, MD.InlineLayoutSheetReference))
-    graph.add((EX.inline, MD.hasSheetNoMention, EX.sheet_mention))
+    graph.add((EX.inline, MD.contains, EX.sheet_mention))
+    graph.add((EX.sheet_mention, RDF.type, MD.DrawingIdentifierMention))
     graph.add((EX.sheet_mention, MD.denotesDrawingSheet, EX.sheet))
-    graph.add((EX.inline, MD.hasLayoutNoMention, EX.layout_number_1))
-    graph.add((EX.inline, MD.hasLayoutNoMention, EX.layout_number_3))
+    graph.add((EX.inline, MD.contains, EX.layout_number_1))
+    graph.add((EX.inline, MD.contains, EX.layout_number_3))
     graph.add((EX.inline, MD.inlineReferencesLayout, EX.layout1))
 
     page = (
         ROOT
         / "docs/specification/use-cases/UC-03/UC-03-Reference Symbol Cross-Sheet Linking.md"
     ).read_text(encoding="utf-8")
-    queries = re.findall(r"```sparql\n(.*?)\n```", page, re.DOTALL)
-    assert len(queries) == 3
+    match = re.search(r"\*\*CQ 4\.2[^\n]*\n+```sparql\n(.*?)\n```", page, re.DOTALL)
+    assert match, "CQ 4.2 query not found under its heading"
 
-    rows = list(graph.query(queries[2]))
+    rows = list(graph.query(match.group(1)))
     assert rows == [(EX.layout1,)]
     assert (EX.inline, MD.inlineReferencesLayout, EX.layout3) not in graph
 
@@ -69,11 +70,11 @@ def test_unrelated_symbols_keep_drawing_element_superclass() -> None:
     assert (CS.Dimension, RDFS.subClassOf, MD.ReferenceExpression) not in graph
 
 
-def test_unlocalised_resolution_is_not_forbidden_by_geometry_cardinality() -> None:
+def test_sheet_mention_has_no_geometry_restriction() -> None:
     graph = load_semantic_modules()
-    for value in graph.objects(MD.SheetNoMention, RDFS.subClassOf):
+    for value in graph.objects(MD.DrawingIdentifierMention, RDFS.subClassOf):
         assert not list(graph.objects(value, OWL.onProperty))
-    graph.add((EX.unlocalised, RDF.type, MD.SheetNoMention))
+    graph.add((EX.unlocalised, RDF.type, MD.DrawingIdentifierMention))
     graph.add((EX.unlocalised, MD.denotesDrawingSheet, EX.sheet))
     assert list(graph.query('SELECT ?s WHERE { ?s <https://w3id.org/adiro/aec_drawing_metadata#denotesDrawingSheet> <https://example.org/adiro/uc03-check#sheet> }'))
 

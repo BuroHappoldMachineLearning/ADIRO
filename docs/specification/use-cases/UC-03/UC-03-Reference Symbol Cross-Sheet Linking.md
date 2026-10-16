@@ -14,7 +14,7 @@
 | **Primary Actor** | Designer                                                                                                                                                                                                                                             |
 | **Goal**          | Given a drawing sheet or Layout, retrieve accepted target Layouts reached through graphical markers and accepted sheet/layout targets reached through evidenced textual references; keep outgoing and incoming source relationships queryable. |
 
-> **Terminology note:** A `DrawingSheet` and its `Layout` are target identities, while a `SheetNoMention` is one occurrence of source text. Graphical symbols normally reference a specific Layout, such as view 2 on ST-201. An evidenced standalone sheet-number reference may denote a DrawingSheet without claiming a Layout target or an emitted PDF link. *(Amended in [v0.6](#10-version-history).)*
+> **Terminology note:** A `DrawingSheet` and its `Layout` are target identities, while a `DrawingIdentifierMention` is one occurrence of source text. Graphical symbols normally reference a specific Layout, such as view 2 on ST-201. An evidenced standalone sheet-number reference may denote a DrawingSheet without claiming a Layout target or an emitted PDF link. *(Amended in [v0.6](#10-version-history).)*
 
 ---
 
@@ -29,9 +29,9 @@
 | `LayoutContentType`      | `aec_drawing_metadata` | REUSE  | Plan / Section / Detail / Elevation / Table / Perspective. UC-03 can derive a ReferenceSymbol's type when its target Layout is accepted. |
 | `ReferenceSymbol`        | `aec_common_symbols`   | REUSE | A graphical linking entity drawn on a source Layout and pointing to an accepted target Layout. |
 | `ReferenceExpression` | `aec_drawing_metadata` | NEW | Common type for a complete graphical, inline or standalone reference; no extra wrapper individual is required. |
-| `SheetNoMention` / `LayoutNoMention` | `aec_drawing_metadata` | NEW | Distinct, evidenced occurrences of source number text, separate from target identities. |
+| `DrawingIdentifierMention` / `LayoutIdentifierMention` | `aec_drawing_metadata` | NEW | Distinct, evidenced occurrences of source number text, separate from target identities. |
 | `InlineLayoutSheetReference` | `aec_drawing_metadata` | NEW | One complete inline expression, possibly with several layout-number components and accepted target Layouts. |
-| `StandaloneSheetReference` | `aec_drawing_metadata` | NEW | One occurrence typed as both `SheetNoMention` and `ReferenceExpression`. |
+| `StandaloneSheetReference` | `aec_drawing_metadata` | NEW | One occurrence typed as both `DrawingIdentifierMention` and `ReferenceExpression`. |
 
 > **Design note — graphical symbols and text.** `csymbol:ReferenceSymbol` is the established class for graphical cross-sheet markers. `metadata:ReferenceExpression` now groups it with inline and standalone textual forms for source-reference queries. A graphical marker is still a `metadata:DrawingElement`; its accepted `csymbol:referencesLayout` target remains Layout-level. *(Amended in [v0.6](#10-version-history).)*
 
@@ -62,9 +62,8 @@ decisions remain in immutable source evidence; an accepted target edge is assert
 | `hasLayout`            | `DrawingSheet`    | `Layout`          | `aec_drawing_metadata` | REUSE  | `metadata:contains`     |
 | `hasReferenceSymbol`  | `Layout`          | `ReferenceSymbol` | `aec_common_symbols`   | NEW    | `metadata:contains`     |
 | `referencesLayout`    | `ReferenceSymbol` | `Layout`          | `aec_common_symbols`   | NEW    | (top-level)             |
-| `hasSheetNoMention` / `hasLayoutNoMention` | `ReferenceExpression` | `SheetNoMention` / `LayoutNoMention` | `aec_drawing_metadata` | NEW | `metadata:contains` |
-| `denotesDrawingSheet` | `SheetNoMention` | `DrawingSheet` | `aec_drawing_metadata` | NEW | (top-level) |
-| `inlineAppearsOn` | `InlineLayoutSheetReference` | `Layout` | `aec_drawing_metadata` | NEW | (top-level) |
+| `denotesDrawingSheet` | `DrawingIdentifierMention` | `DrawingSheet` | `aec_drawing_metadata` | NEW | (top-level) |
+| `appearsOnLayout` | `ReferenceExpression` | `Layout` | `aec_drawing_metadata` | NEW | (top-level) |
 | `inlineReferencesLayout` | `InlineLayoutSheetReference` | `Layout` | `aec_drawing_metadata` | NEW | (top-level) |
 
 > **Design note — inverse properties.** ADIRO declares **no** named inverse properties and no `owl:inverseOf` axioms. Only the forward direction of each pair is modelled: `hasReferenceSymbol` (Layout → ReferenceSymbol, ⊂ `metadata:contains`) and `referencesLayout` (ReferenceSymbol → Layout). Reverse navigation uses the SPARQL inverse path, e.g. `?sym ^csymbol:hasReferenceSymbol ?layout`, or simply reads the forward triple in the other direction. Decided project-wide in [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21). *(Changed in [v0.3](#10-version-history).)*
@@ -146,8 +145,8 @@ See the [semantic design note](../../../design-decisions/uc03-semantic-reference
 > wrapper for a standalone sheet-number reference.
 
 - Source: UC-03 reference extraction and cross-sheet linking ([#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95))
-- Derived terms: `metadata:ReferenceExpression`, `SheetNoMention`, `LayoutNoMention`,
-  `InlineLayoutSheetReference`, `StandaloneSheetReference`, `hasSheetNoMention`, `hasLayoutNoMention`
+- Derived terms: `metadata:ReferenceExpression`, `DrawingIdentifierMention`, `LayoutIdentifierMention`,
+  `InlineLayoutSheetReference`, `StandaloneSheetReference`
 - Export condition: a semantic Mention has source-text and immutable PDF/page evidence. An unlocalisable
   reconstructed block may retain an independently accepted Sheet resolution with explicit source status
   and no navigation link. Unresolved target candidates remain in extraction evidence; OWL subclassing
@@ -161,10 +160,11 @@ See the [semantic design note](../../../design-decisions/uc03-semantic-reference
 > expression to its accepted Layout targets, while allowing unresolved members to have no target edge.
 
 - Source: UC-03 source-to-target traceability ([#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95))
-- Derived terms: `metadata:denotesDrawingSheet`, `inlineAppearsOn`, `inlineReferencesLayout`
+- Derived terms: `metadata:denotesDrawingSheet`, `appearsOnLayout`, `inlineReferencesLayout`
 - Detailed component-to-target pairing stays in structured evidence; the graph contains the supported
   target set. This does not add the graphical whole-sheet relation deferred in
   [#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38) or claim that a PDF hyperlink was emitted.
+- **Deferred: bare layout-identifier reference.** A layout identifier that is a complete reference by itself (for example a same-sheet "see detail 3") is a `LayoutIdentifierMention` but not yet a `ReferenceExpression`, so it has no class. A dedicated reference class for it, the layout counterpart of `StandaloneSheetReference`, is deferred together with [#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38) and [#20](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/20).
 
 ---
 
@@ -284,16 +284,17 @@ PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
 
 SELECT DISTINCT ?targetLayout WHERE {
   ?inline a metadata:InlineLayoutSheetReference ;
-          metadata:hasSheetNoMention ?sheetMention ;
+          metadata:contains ?sheetMention ;
           metadata:inlineReferencesLayout ?targetLayout .
-  ?sheetMention metadata:denotesDrawingSheet ?sheet .
+  ?sheetMention a metadata:DrawingIdentifierMention ;
+                metadata:denotesDrawingSheet ?sheet .
   ?sheet metadata:drawingIdentifier "S601" ;
          metadata:hasLayout ?targetLayout .
 }
 ```
 
 The query returns only asserted target edges. It does not invent an edge for every number in the source
-string; member-level pairings and unresolved decisions require the indexed evidence record.
+string; member-level pairings and unresolved decisions require the indexed evidence record. A consumer holding only the graph cannot tell which printed layout number produced which target; the evidence record is intended to be delivered alongside the graph (delivery policy to be confirmed).
 
 ---
 
@@ -311,11 +312,10 @@ string; member-level pairings and unresolved decisions require the indexed evide
 | `metadata:drawingIdentifier`       | `aec_drawing_metadata` | REUSE  | CQ 2.x                               | FR 5 (UC-01 v0.3) |
 | `metadata:layoutIdentifier`        | `aec_drawing_metadata` | REUSE | CQ 2.x | FR 5 |
 | `metadata:ReferenceExpression` | `aec_drawing_metadata` | NEW | CQ 4.1 | FR 7 |
-| `metadata:SheetNoMention` / `LayoutNoMention` | `aec_drawing_metadata` | NEW | CQ 4.1–4.3 | FR 7, FR 8 |
+| `metadata:DrawingIdentifierMention` / `LayoutIdentifierMention` | `aec_drawing_metadata` | NEW | CQ 4.1–4.3 | FR 7, FR 8 |
 | `metadata:InlineLayoutSheetReference` / `StandaloneSheetReference` | `aec_drawing_metadata` | NEW | CQ 4.1–4.3 | FR 7 |
-| `metadata:hasSheetNoMention` / `hasLayoutNoMention` | `aec_drawing_metadata` | NEW | CQ 4.1, CQ 4.2 | FR 7 |
 | `metadata:denotesDrawingSheet` | `aec_drawing_metadata` | NEW | CQ 4.2, CQ 4.3 | FR 8 |
-| `metadata:inlineAppearsOn` / `inlineReferencesLayout` | `aec_drawing_metadata` | NEW | CQ 4.2 | FR 8 |
+| `metadata:appearsOnLayout` / `inlineReferencesLayout` | `aec_drawing_metadata` | NEW | CQ 4.2 | FR 8 |
 
 ---
 
@@ -352,13 +352,12 @@ aec_provenance                      (NEW - foundational, domain-neutral)
 
 ```
 metadata:contains (existing)
-  ├── csymbol:hasReferenceSymbol
-  ├── metadata:hasSheetNoMention
-  └── metadata:hasLayoutNoMention
+  ├── metadata:hasLayout
+  └── csymbol:hasReferenceSymbol
 ```
 
 `referencesLayout`, `inlineReferencesLayout` and `denotesDrawingSheet` remain top-level target relations, not
-containment. `inlineAppearsOn` is a source-membership relation, not an inverse of `hasReferenceSymbol`.
+containment. `appearsOnLayout` is a source-membership relation; read from a `ReferenceSymbol` it states the same fact as `hasReferenceSymbol`, which stays the symbol-specific relation.
 
 ---
 

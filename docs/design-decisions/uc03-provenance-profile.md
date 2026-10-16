@@ -68,5 +68,33 @@ this profile does not require a particular named-graph store. Validate duplicate
 scope, source status, member reconstruction, object/datatype property use, accepted-only target edges,
 and evidence lookup. Verify actual PDF emission and clicks separately when navigation is delivered.
 
+## Composition and validation rules for UC-03 references
+
+These rules are checked on the data, not asserted as OWL axioms:
+
+- An `InlineLayoutSheetReference` has exactly one `DrawingIdentifierMention` and at least one
+  `LayoutIdentifierMention`, attached with `contains`.
+- A `ReferenceSymbol` has at most one `DrawingIdentifierMention`.
+- A mention has at most one accepted `denotesDrawingSheet` target.
+
+**Why not OWL.** OWL reasons under the open-world assumption and does not assume that different names are
+different things. An existential restriction (`contains some DrawingIdentifierMention`) would not report a
+missing mention; it would infer an anonymous one with no source text, box or evidence. A `max 1` or functional
+axiom would not report a second mention or a second sheet; it would infer that the two are the same individual
+and merge them, silently, including two different drawing sheets that share a printed number. A completeness or
+cardinality rule on detections is a closed-world check, so it belongs in validation (NFR 2 of the ORSD, #84).
+
+**Status of the checks.** These rules are specified here and are **not yet implemented** as SHACL shapes.
+Where shapes live is still open (a file under `src/` would be treated as an ontology module), and is tracked with
+the wider validation programme in [#22](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/22) and
+[#84](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/84); the shapes for these three rules are
+[#168](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/168).
+
+**Pairing of numbers and targets.** The graph holds the accepted target set of an inline reference; which printed
+layout number produced which target is kept in the indexed evidence record. A consumer holding only the graph
+cannot recover that pairing. The evidence record is intended to be delivered with the delivery manifest
+(delivery policy to be confirmed). Making the pairing queryable in the graph would need a binding term and is
+out of scope here.
+
 Review/retraction state machines and graph-level modelling of rare human review events remain deferred.
 Detailed processing crops, candidate scores and intermediate transforms stay in evidence/manifests.

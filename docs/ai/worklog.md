@@ -1,3 +1,14 @@
+## 2026-10-16 - Review changes to the UC-03 semantic references
+
+Replace `hasSheetNoMention` / `hasLayoutNoMention` with `contains` and a typed mention, and rename the mention
+classes `DrawingIdentifierMention` / `LayoutIdentifierMention` (an identifier is often alphanumeric, and `No`
+reads as a negation). Mark the five new classes `isComputerVisionLabel`. Generalise `inlineAppearsOn` to
+`appearsOnLayout` on `ReferenceExpression`. Write the composition rules in the provenance profile as validation
+rules, not OWL axioms (open-world reasoning would infer an anonymous mention or merge distinct individuals);
+the shapes are tracked in #168. Defer a bare layout-identifier reference class with #38 and #20. Tests and the
+CQ 4.2 query lookup were tightened. Repository tests and ontology validation pass locally; the reasoning
+check is not run locally.
+
 ## 2026-10-15 - Independent review corrections to the UC-03 export profile
 
 Clarify that final accepted extraction branches determine expression admission and source geometry;
