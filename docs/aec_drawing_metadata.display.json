@@ -121,6 +121,10 @@
       "x": -3608,
       "y": -102
     },
+    "__dataprop__DrawingSheet__drawingScale": {
+      "x": -3608,
+      "y": -30
+    },
     "__dataprop__DrawingSheet__sheetSize": {
       "x": -3491,
       "y": -102
@@ -135,6 +139,10 @@
     },
     "__dataprop__Layout__layoutTitle": {
       "x": -4927,
+      "y": 647
+    },
+    "__dataprop__Layout__layoutScale": {
+      "x": -5013,
       "y": 647
     },
     "__dataprop__DrawingRevision__issueDate": {

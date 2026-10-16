@@ -116,7 +116,7 @@ prov:endedAtTime rdf:type owl:DatatypeProperty ;
 
 :assertedBy rdf:type owl:ObjectProperty ;
     rdfs:label "assertedBy" ;
-    rdfs:comment "The source that makes this assertion - typically the drawing region it was read from (e.g. a Titleblock or a Layout). This is the provenance that lets the same field kind asserted by different regions be distinguished (e.g. a sheet-level scale in the title block versus a per-layout scale in a layout corner), which a fixed domain on a per-field property cannot express." ;
+    rdfs:comment "The source that makes this assertion - typically the drawing region it was read from (e.g. a Titleblock or a Layout). This is the provenance that lets the same field kind asserted by different regions be distinguished (e.g. a sheet's scale read from the title block versus the same sheet's scale read from a general note), which a fixed domain on a per-field property cannot express." ;
     rdfs:domain :FieldAssertion .
 
 :assertedAbout rdf:type owl:ObjectProperty ;

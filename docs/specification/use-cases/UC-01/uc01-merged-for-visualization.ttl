@@ -27,6 +27,11 @@
 #  owl:imports. This is a flat consolidation for inspection.
 #
 #  Aligned with UC-01 ORSD v0.3 (decisions G1–G10).
+#
+#  A snapshot of that version: it is not kept in step with later terms (for
+#  example the layout identifier and title fields, or the split of the
+#  scale into drawingScale and layoutScale). The aec_drawing_metadata
+#  module is authoritative; do not update this file's content.
 #################################################################
 
 <https://w3id.org/adiro/aec_drawing_metadata> rdf:type owl:Ontology ;

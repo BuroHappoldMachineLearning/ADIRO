@@ -5,6 +5,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+- **`assertedBy`'s example reworded** ([#162](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/162), [#166](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/166)): the comment gave "a sheet-level scale in the title block versus a per-layout scale in a layout corner" as an example of one field kind asserted from different regions. The scale field kind is promoted to the sheet's `drawingScale`, and no field kind exists for a layout's caption scale, so the example now reads "a sheet's scale read from the title block versus the same sheet's scale read from a general note". Comment only; no term, axiom or domain changes.
+
 ## [1.0.0] — 2026-10-09
 
 ### Added
