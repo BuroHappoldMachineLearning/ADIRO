@@ -357,7 +357,7 @@ metadata:contains (existing)
 ```
 
 `referencesLayout`, `inlineReferencesLayout` and `denotesDrawingSheet` remain top-level target relations, not
-containment. `appearsOnLayout` is a source-membership relation; read from a `ReferenceSymbol` it states the same fact as `hasReferenceSymbol`, which stays the symbol-specific relation.
+containment. Because `contains` is the one composition relation (`hasLayout` and `hasReferenceSymbol` specialise it), everything on a layout, including a mention inside a reference symbol or an inline reference, is `?layout metadata:contains+ ?x`; with sub-property entailment the same holds through the specialised properties. `appearsOnLayout` is a source-membership relation; read from a `ReferenceSymbol` it states the same fact as `hasReferenceSymbol`, which stays the symbol-specific relation.
 
 ---
 
