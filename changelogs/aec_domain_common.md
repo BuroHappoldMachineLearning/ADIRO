@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+
+## [3.0.0] — 2026-10-17
+
 ### Added
 - **Example images for `ISection`, `CHS`, `RHS`, `SectionChannel` and `TopHat`** ([#152](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/152)): synthetic images of each section profile with its parameters, linked with the `exampleImage` annotation.
 
