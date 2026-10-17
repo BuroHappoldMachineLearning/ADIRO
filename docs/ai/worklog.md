@@ -55,6 +55,16 @@ threads*, which commits do not carry.
 
 ---
 
+## 2026-10-17 — Rebase the UC-03 semantic profile after the text-field changes
+
+**Issues:** [#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95), [#96](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/96). **PR:** [#151](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/151). **Branch:** `codex/uc03-semantic-profile-20261015`.
+
+**Changed:** rebased all four existing commits onto `main` at `8402f32`, including the merged text-field changes from [#163](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/163). Kept both sides of the metadata changelog conflict. The use-case index retains UC-01 v0.7 and UC-03 v0.6. The original tip, `b9c6533`, is preserved locally as `codex/backup-pr151-before-rebase-20261017`. No ontology changes beyond the existing branch and the updated base were introduced.
+
+**Verified:** ontology validation; regenerated all six ontology documentation pages; 259 tests passed, one skipped; strict MkDocs build; enforced HermiT consistency/unsatisfiable-class and OWL 2 DL checks; ROBOT report found no violations. The source and test files match the automatic merge of the original branch and the new base. Existing missing-description and Pillow deprecation warnings remain.
+
+**Next:** inspect remote checks on the updated PR before the maintainer's merge decision. Release versions and the deferred geometry/navigation scope are unchanged.
+
 ## 2026-10-16 — #162: rebased on `main`, YouTrack ID out of the commits, consumer-neutral wording ([#162](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/162))
 
 **Branch:** `feat/162-labellable-text-fields`, rebased on `main` after [#165](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/165) (worklog conflict only: both entries kept, newest first) and force-pushed.
