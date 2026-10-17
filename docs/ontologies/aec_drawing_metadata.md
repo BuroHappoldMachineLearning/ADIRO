@@ -79,6 +79,14 @@ Element depicted on a drawing. Contained by Layout. Can be a Facade system or Fa
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#DrawingElement`
 - **isComputerVisionLabel:** false
 
+### Drawing identifier mention {#DrawingIdentifierMention}
+
+One evidenced occurrence of drawing-identifier (sheet-identifier) text on a source drawing, distinct from the DrawingSheet that the text may denote. Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted sheet resolution: an unlocalisable text block may retain its accepted denotesDrawingSheet edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#DrawingIdentifierMention`
+- **Sub class of:** [Drawing element](#DrawingElement)
+- **isComputerVisionLabel:** true
+
 ### Drawing Sheet {#DrawingSheet}
 
 Top-level container for a drawing. Contains Layout(s).
@@ -130,6 +138,14 @@ An image embedded within a note region on a drawing sheet.
 - **Sub class of:** [Note](#Note)
 - **isComputerVisionLabel:** true
 
+### Inline layout and sheet reference {#InlineLayoutSheetReference}
+
+A complete inline textual expression relating layout number(s) to a sheet number, such as '1, 3, 5 & 7/S601'. The component mentions retain their own identities; accepted Layout targets are connected separately by inlineReferencesLayout. Expected composition: one sheet-identifier mention and at least one layout-identifier mention, attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#InlineLayoutSheetReference`
+- **Sub class of:** [Reference expression](#ReferenceExpression)
+- **isComputerVisionLabel:** true
+
 ### Key Plan {#KeyPlan}
 
 A small locator diagram on a drawing sheet showing where the sheet's subject sits within the wider building or site, typically with the relevant area hatched or outlined. A graphical region rather than a text field: its value is the diagram, so it is modelled here as a detectable region alongside Legend and RevisionTable, not as an asserted title-block property. Contained either by a Titleblock, where it is printed inside the title-block strip, or directly by a DrawingSheet where it stands alone on the page; both placements occur and both are optional.
@@ -165,6 +181,14 @@ Type of content included in a layout.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#LayoutContentType`
 - **isComputerVisionLabel:** false
+
+### Layout identifier mention {#LayoutIdentifierMention}
+
+One evidenced occurrence of layout-identifier text (a small integer or letter), distinct from a target Layout. A complete inline reference may contain several such occurrences, attached with contains; no target is inferred from matching text alone.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#LayoutIdentifierMention`
+- **Sub class of:** [Drawing element](#DrawingElement)
+- **isComputerVisionLabel:** true
 
 ### Legend {#Legend}
 
@@ -249,6 +273,14 @@ A project under which DrawingSheets are grouped.
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Project`
 - **isComputerVisionLabel:** false
 
+### Reference expression {#ReferenceExpression}
+
+A complete source reference expression, whether graphical, inline or a standalone sheet-number reference. This superclass groups those forms for queries; it does not require a second individual around any of them.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#ReferenceExpression`
+- **Sub class of:** [Drawing element](#DrawingElement)
+- **isComputerVisionLabel:** true
+
 ### Revision table {#RevisionTable}
 
 A table recording the documented change history of the drawing sheet, with columns for revision number, date, and description of each amendment.
@@ -273,6 +305,16 @@ Section drawing. Has a required property of orientation, which can be vertical o
 *Example images:*
 
 ![Section — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Section_01.png)
+
+### Standalone sheet reference {#StandaloneSheetReference}
+
+A drawing-identifier occurrence that itself constitutes a complete reference. One individual is both the DrawingIdentifierMention and the ReferenceExpression: no duplicate wrapper, self-directed hasDrawingIdentifierMention edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#StandaloneSheetReference`
+- **Sub class of:**
+    - [Drawing identifier mention](#DrawingIdentifierMention)
+    - [Reference expression](#ReferenceExpression)
+- **isComputerVisionLabel:** true
 
 ### StatusCode {#StatusCode}
 
@@ -325,6 +367,14 @@ Titleblock containing information about the drawing, for example project name, d
 
 ## Object Properties
 
+### appearsOnLayout {#appearsOnLayout}
+
+Source Layout on which a reference expression (inline, standalone or graphical) occurs, when membership is supported by evidence. For a ReferenceSymbol it is the same fact as hasReferenceSymbol read from the symbol; it is not asserted when the evidence supports only a page location.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#appearsOnLayout`
+- **Domain:** [Reference expression](#ReferenceExpression)
+- **Range:** [Layout](#Layout)
+
 ### asserts client {#assertsClient}
 
 The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from assertsOriginator, which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value.
@@ -370,11 +420,19 @@ Associates a DrawingSheet with the Project it belongs to.
 
 ### contains {#contains}
 
-Direct containment: indicates physical containment of something within a parent thing (e.g. object in a box). Min cardinality 0 by default (can contain).
+Direct containment: indicates physical containment of something within a parent thing (e.g. object in a box), or the containment of a text part within a text expression (e.g. a sheet-identifier mention inside an inline reference). Min cardinality 0 by default (can contain).
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#contains`
 - **Domain:** `owl:Thing`
 - **Range:** `owl:Thing`
+
+### denotesDrawingSheet {#denotesDrawingSheet}
+
+The accepted DrawingSheet identity denoted by one sheet-number occurrence. It does not assert that a Layout target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#denotesDrawingSheet`
+- **Domain:** [Drawing identifier mention](#DrawingIdentifierMention)
+- **Range:** [Drawing Sheet](#DrawingSheet)
 
 ### hasCoordinateFrame {#hasCoordinateFrame}
 
@@ -435,6 +493,14 @@ The controlled-vocabulary StatusCode assigned to a DrawingRevision.
 - **Sub property of:** [hasProperty](#hasProperty)
 - **Domain:** [DrawingRevision](#DrawingRevision)
 - **Range:** [StatusCode](#StatusCode)
+
+### inlineReferencesLayout {#inlineReferencesLayout}
+
+An accepted target Layout of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#inlineReferencesLayout`
+- **Domain:** [Inline layout and sheet reference](#InlineLayoutSheetReference)
+- **Range:** [Layout](#Layout)
 
 ### isApprovedBy {#isApprovedBy}
 

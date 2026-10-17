@@ -1,3 +1,36 @@
+## 2026-10-16 - Review changes to the UC-03 semantic references
+
+Replace `hasSheetNoMention` / `hasLayoutNoMention` with `contains` and a typed mention, and rename the mention
+classes `DrawingIdentifierMention` / `LayoutIdentifierMention` (an identifier is often alphanumeric, and `No`
+reads as a negation). Mark the five new classes `isComputerVisionLabel`. Generalise `inlineAppearsOn` to
+`appearsOnLayout` on `ReferenceExpression`. Write the composition rules in the provenance profile as validation
+rules, not OWL axioms (open-world reasoning would infer an anonymous mention or merge distinct individuals);
+the shapes are tracked in #168. Defer a bare layout-identifier reference class with #38 and #20. Tests and the
+CQ 4.2 query lookup were tightened. Repository tests and ontology validation pass locally; the reasoning
+check is not run locally.
+
+## 2026-10-15 - Independent review corrections to the UC-03 export profile
+
+Clarify that final accepted extraction branches determine expression admission and source geometry;
+provisional/abstained observations stay in evidence. Keep accepted source number mentions when target
+resolution fails. Require a distinct assembly activity for each execution, with actual timing and pinned
+code/configuration. These are application-profile clarifications; no TTL axiom or release version changed.
+Repository tests and strict documentation build are rerun for this follow-up.
+
+## 2026-10-15 - UC-03 semantic occurrences and provenance profile
+
+Port the approved semantic proposal onto current main, preserving later suite and annotation-tooling changes.
+Add reference expressions, source number occurrences and direct accepted targets under #95; document the
+batch/evidence profile under #96. Separate semantic resolution admission from precise navigation geometry:
+unlocalisable reconstructed text blocks may retain an independently accepted sheet resolution without
+invented geometry. Preserve existing graphical Layout relations and defer navigation vocabulary.
+
+Parser, repository tests, regenerated documentation and strict site build passed locally.
+HermiT consistency/unsatisfiable-class checks and ROBOT passed using an isolated official JRE;
+the local environment initially lacked Java. Browser visual QA remains for review because no
+browser surface was connected; generated HTML structure and strict links were checked. No private instance
+data or client drawings are included in this repository. Module release versions remain unchanged.
+
 # ADIRO worklog
 
 A **running record of changes made to this repository by AI-assisted sessions** — what was done, how it was
@@ -21,6 +54,16 @@ threads*, which commits do not carry.
 - Keep it factual. If a gate was not run, say so plainly rather than implying it passed.
 
 ---
+
+## 2026-10-17 — Rebase the UC-03 semantic profile after the text-field changes
+
+**Issues:** [#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95), [#96](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/96). **PR:** [#151](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/151). **Branch:** `codex/uc03-semantic-profile-20261015`.
+
+**Changed:** rebased all four existing commits onto `main` at `8402f32`, including the merged text-field changes from [#163](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/163). Kept both sides of the metadata changelog conflict. The use-case index retains UC-01 v0.7 and UC-03 v0.6. The original tip, `b9c6533`, is preserved locally as `codex/backup-pr151-before-rebase-20261017`. No ontology changes beyond the existing branch and the updated base were introduced.
+
+**Verified:** ontology validation; regenerated all six ontology documentation pages; 259 tests passed, one skipped; strict MkDocs build; enforced HermiT consistency/unsatisfiable-class and OWL 2 DL checks; ROBOT report found no violations. The source and test files match the automatic merge of the original branch and the new base. Existing missing-description and Pillow deprecation warnings remain.
+
+**Next:** inspect remote checks on the updated PR before the maintainer's merge decision. Release versions and the deferred geometry/navigation scope are unchanged.
 
 ## 2026-10-16 — #162: rebased on `main`, YouTrack ID out of the commits, consumer-neutral wording ([#162](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/162))
 
@@ -725,7 +768,7 @@ annotation-level compatibility layer). Decision re-recorded on #77 and on the PR
   mention it).
 - **Hand-written docs brought in line** (documentation-only comparison; no shipped artifact / module / minted
   `:closeMatch`): `docs/design-decisions/dano-comparison.md`, `external-ontology-imports.md`,
-  `changelogs/aec_provenance.md`, `AGENTS.md`, `docs/specification/ORSD_v1.2.md`, and the UC-01/UC-03 module
+  `changelogs/aec_provenance.md`, `AGENTS.md`, `docs/specification/ORSD_v1.3.md`, and the UC-01/UC-03 module
   hierarchy diagrams + version-history entries. Spec-doc versions were **not** re-bumped — these are edits within
   the same unreleased PR, so the existing version-history entries were corrected in place. `#81` (staleness check
   for compatibility-layer mappings) is now **moot** → to be closed.
