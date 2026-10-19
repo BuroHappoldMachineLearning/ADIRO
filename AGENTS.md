@@ -57,6 +57,13 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
 
 - **Deploy workflow:** `.github/workflows/generate-deploy-docs.yml`. Triggers on push to `main`/`master` and
   manual `workflow_dispatch`. Jobs: `validate` + `test-ttl2md` + `test-docs` → `generate-docs` → `deploy`.
+- **Direct pushes to `main` need a ruleset bypass** ([#173](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/173)).
+  Two workflows commit straight to `main` with the default `GITHUB_TOKEN` (the GitHub Actions app): `generate-deploy-docs.yml`
+  commits the regenerated `docs/` back, and `backup-version.yml` commits a release snapshot to `versions/`. A repository ruleset
+  on the default branch that requires a pull request (or restricts updates) rejects both with `GH013: Changes must be made
+  through a pull request`, so the docs deploy is skipped and a release never publishes its snapshot, site pages or badges. The
+  ruleset therefore lists the GitHub Actions app as a bypass actor (mode "always"). Check this before changing the ruleset, and
+  after a failed release run `gh workflow run backup-version.yml -f tag=<module>-v<semver>` for each tag of the release.
 - **Doc generation:** `scripts/generate_docs.py` reads every `src/*.ttl`, emits a pyLODE HTML reference page
   per ontology, emits native Markdown pages (via `ttl2md/`) into `docs/ontologies/`, copies the `.ttl` and
   `*.display.json` sources into `docs/`, and regenerates the MkDocs landing page `docs/index.md` (including

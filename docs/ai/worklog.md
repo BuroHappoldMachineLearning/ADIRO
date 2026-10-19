@@ -1,3 +1,14 @@
+## 2026-10-19 - Releases did not publish: CI pushes to `main` rejected by the ruleset
+
+Investigated why the site and the README badges showed the previous versions after the 19 October cut ([#173](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/173)).
+Cause: the ruleset "main PRs" (created 12:52 UTC, edited 13:02 UTC) requires a pull request and lists only a user as a bypass
+actor, so the `Commit and push documentation` step and the five `Commit and push snapshot` steps are rejected with `GH013`.
+The deploy is therefore skipped and `versions/` has no snapshot for any of the five releases. Verified from the run logs, the
+site's `badges/aec_drawing_metadata.json` (still `4.0.1`) and the `versions/` listing. This change records the dependency in
+`AGENTS.md`; it does not fix it. The fix is outside the repository's files: add the GitHub Actions app as a bypass actor, then
+re-run `backup-version.yml` for the five tags. Not verified: whether the ADIRO Bot app needs a bypass too (it pushes
+`release/next`, not `main`).
+
 ## 2026-10-19 - Check existing issues and Discussions first
 
 Add the rule "Look before you write" to `AGENTS.md` (team workflow) and the Claude Code skill
