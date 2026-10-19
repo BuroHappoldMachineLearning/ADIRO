@@ -1,3 +1,11 @@
+## 2026-10-19 - Merge with a merge commit only
+
+Add the rule to `AGENTS.md` (contributor workflow, step 7): PRs are merged with a merge commit, never squashed or
+rebased, the Release PR included. The reasons: squash and rebase discard the branch structure and rewrite the
+hashes quoted in reviews, and the Release PR workflow (`release-pr.yml`) does not depend on the merge method (it
+finds a merged cut from the declared version and tags `$GITHUB_SHA`). The repository settings were changed to
+allow only merge commits (squash and rebase merging off). Docs-only change; no ontology touched.
+
 ## 2026-10-16 - Review changes to the UC-03 semantic references
 
 Replace `hasSheetNoMention` / `hasLayoutNoMention` with `contains` and a typed mention, and rename the mention
