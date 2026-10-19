@@ -262,6 +262,11 @@ For anyone changing an ontology, agent or person. The sections below give the de
    `config/release_overrides.json`, unless there is a good reason that follows clearly from the change you are making. In
    that case, state the reason explicitly in the PR description and explain why the default does not fit. An override is
    rarely needed; `docs/contribute/versioning/release-process.md` ("When to use an override") lists the few cases.
+7. **Merge with a merge commit, never a squash or a rebase.** `gh pr merge <N> --merge`. Squashing discards the
+   branch's commits and their structure, and a squash or a rebase gives them new hashes, so a commit quoted in a
+   review or an issue stops existing on `main`. A merge commit keeps the commits as written and records the PR as one
+   marker in `git log --first-parent`. The same holds for the Release PR, whose single commit is kept as the bot built
+   it. The repository settings allow only merge commits, so a squash or a rebase is not offered.
 
 ## Keep in sync (mandatory)
 - **Worklog.** Record any non-trivial change you make in **`docs/ai/worklog.md`** (newest entry first) — what
