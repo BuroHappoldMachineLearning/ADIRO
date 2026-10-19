@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+
+## [3.0.0] — 2026-10-19
+
 ### Added
 - **Example images for `DGU`, `Mineral wool`, `Transom`, `Gasket`, `Sealant`, `Bracket`, `ShelfAngle`, `Firestop` and `Mullion`** ([#152](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/152)): synthetic curtain-wall details drawn for ADIRO, one section at a slab edge with the term highlighted and a plan section for the mullion, linked with the `exampleImage` annotation.
 - **Definitions** ([#152](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/152)): `Mullion`, `Transom`, `MineralWool`, `Sealant`, `Bracket` and `ShelfAngle` get an `rdfs:comment`, and the comment of `DGU`, which only repeated its name, now says what the term is.

@@ -20,8 +20,9 @@
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
     dcterms:creator "Buro Happold - Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
-    owl:versionIRI <https://w3id.org/adiro/aec_provenance/1.0.0> ;
-    owl:versionInfo "1.0.0" .
+    owl:priorVersion <https://w3id.org/adiro/aec_provenance/1.0.0> ;
+    owl:versionIRI <https://w3id.org/adiro/aec_provenance/1.0.1> ;
+    owl:versionInfo "1.0.1" .
 
 #################################################################
 #    PROV-O terms referenced for alignment

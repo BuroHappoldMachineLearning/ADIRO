@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+
+## [5.0.0] — 2026-10-19
+
 ### Added
 - **`exampleImage` is a sub-property of `foaf:depiction`** ([#157](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/157)): the ontology declares `foaf:depiction` as an annotation property (as the OBO ontologies do; FOAF is not imported) and states `exampleImage rdfs:subPropertyOf foaf:depiction`, so a tool that reads the standard property finds ADIRO's images. `exampleImage` keeps its meaning (an example of how the term looks on a drawing), its file conventions and its IRI. Annotation properties carry no reasoning, so nothing changes for a reasoner. FOAF defines `foaf:depiction` as an object property, and OWL 2 DL does not allow one IRI to be both: do not import FOAF, and a consumer that loads FOAF as well should drop FOAF's own declaration of `depiction`.
 - **UC-03 reference expressions and evidenced identifier occurrences** ([#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95)): `ReferenceExpression` (groups graphical, inline and standalone references), `DrawingIdentifierMention` and `LayoutIdentifierMention` (source text occurrences, distinct from the sheet or layout they denote), `InlineLayoutSheetReference` and `StandaloneSheetReference`, plus the `denotesDrawingSheet`, `appearsOnLayout` (any reference expression to its source Layout) and `inlineReferencesLayout` properties. A mention is attached to its expression with the existing `contains`; no dedicated composition property is added. Source localisation stays separate from resolution and navigation admission. All five classes carry `isComputerVisionLabel`.
