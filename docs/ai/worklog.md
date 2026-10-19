@@ -1,3 +1,11 @@
+## 2026-10-19 - Check existing issues and Discussions first
+
+Add the rule "Look before you write" to `AGENTS.md` (team workflow) and the Claude Code skill
+`check-existing-work`: search issues (open and closed), PRs and Discussions, and read the threads with their
+comments, before a new task, when picking up an issue and before creating an issue or Discussion. The search
+commands in the skill were run against this repository (issues, PRs and Discussions return hits; a Discussion
+and an issue thread were read). The Cursor adapter inherits the rule through `AGENTS.md`. Docs-only change.
+
 ## 2026-10-19 - Merge with a merge commit only
 
 Add the rule to `AGENTS.md` (contributor workflow, step 7): PRs are merged with a merge commit, never squashed or
