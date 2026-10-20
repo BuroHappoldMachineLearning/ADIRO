@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+
+## [1.0.1] — 2026-10-20
+
 ### Changed
 - The `rdfs:comment` of `bboxXYXY` no longer names a repository file path; it points to the public issue [#91](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/91) instead, because a path is not an address that resolves and a release cannot be corrected afterwards. Annotation change only; no term, domain or range changes.
 

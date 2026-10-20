@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+
+## [5.0.1] — 2026-10-20
+
 ### Added
 - **`assertsRevision`** ([#69](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/69)): from a `RevisionTable` to each `DrawingRevision` it lists, one link per row. It records which printed table a revision was read from; it does not say which revision is the latest.
 - **Example images for `DrawingSheet`** ([#177](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/177)): three synthetic drawings of a drawing sheet with one, three and six layouts, showing that the number of layouts varies. The three-layout sheet is the one `Layout_01.png` has always shown.
