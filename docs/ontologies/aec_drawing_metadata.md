@@ -614,10 +614,10 @@ Scale notation, e.g. '1:50'. Applies to a DrawingSheet where one scale governs t
 
 ### issueDate {#issueDate}
 
-The date this revision was issued.
+The date a drawing or a revision of it was issued. On a DrawingSheet it is the date the title block prints for the drawing (the date of its current issue); on a DrawingRevision it is the date that revision was issued. It is also the date authored: ADIRO has no separate authoring-date property.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#issueDate`
-- **Domain:** [DrawingRevision](#DrawingRevision)
+- **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))
 - **Range:** `xsd:date`
 
 ### layoutIdentifier {#layoutIdentifier}

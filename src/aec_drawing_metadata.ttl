@@ -288,8 +288,9 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
 
 :issueDate rdf:type owl:DatatypeProperty ;
     rdfs:label "issueDate" ;
-    rdfs:comment "The date this revision was issued." ;
-    rdfs:domain :DrawingRevision ;
+    rdfs:comment "The date a drawing or a revision of it was issued. On a DrawingSheet it is the date the title block prints for the drawing (the date of its current issue); on a DrawingRevision it is the date that revision was issued. It is also the date authored: ADIRO has no separate authoring-date property." ;
+    skos:altLabel "date authored"@en ;
+    rdfs:domain [ rdf:type owl:Class ; owl:unionOf ( :DrawingSheet :DrawingRevision ) ] ;
     rdfs:range xsd:date .
 
 :personName rdf:type owl:DatatypeProperty ;
