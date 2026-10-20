@@ -130,6 +130,13 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   comment is posted; the result is in the job summary. A failure also opens **one** issue, "Ontology reasoning fails on
   main" (as the ADIRO Bot, so the issue mirror sees it), comments on it while later runs keep failing, and closes it when
   a run passes.
+- **`.github/workflows/alert-on-failure.yml`** ([#173](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/173)) — watches
+  the docs deploy, the release snapshot (`backup-version.yml`) and the Release PR workflows from outside, so a failure that
+  the workflow itself would not report (a skipped later job, a failed push) is still visible. A failed run on `main` opens
+  **one** tracking issue per workflow ("Docs deploy fails on main", "Release snapshot fails", "Release PR automation
+  fails"; as the ADIRO Bot) and comments on it while later runs fail. A later passing run closes the deploy and Release PR
+  issues; the snapshot issue is closed by hand once every failed tag is published, because one tag's success says nothing
+  about another's. A new release or publishing workflow is added to its `workflows:` list.
 
 **After any `.ttl` edit, validate immediately:**
 `uv run python scripts/validate_ontology.py src/<file>.ttl` (or with no arg to validate all of `src/`).

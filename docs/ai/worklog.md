@@ -1,3 +1,13 @@
+## 2026-10-20 - Alert when a release or publishing workflow fails
+
+Nothing reported the failed releases of 19 October ([#173](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/173)): the only
+alert, in `verify-prior-versions`, depends on the deploy job that was skipped. Added `.github/workflows/alert-on-failure.yml`
+(a `workflow_run` watcher of the docs deploy, `backup-version.yml` and the Release PR workflow) that opens one tracking issue per
+workflow as the ADIRO Bot, comments while it keeps failing and closes the deploy and Release PR issues when a run passes.
+The YAML parses; the workflow cannot run before it is on `main`, so the first real failure is the test. Decided: the snapshot
+issue is closed by hand, because a success for one tag does not clear another. Not done: alerting on a failure that never
+starts a run (a disabled workflow).
+
 ## 2026-10-19 - Releases did not publish: CI pushes to `main` rejected by the ruleset
 
 Investigated why the site and the README badges showed the previous versions after the 19 October cut ([#173](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/173)).

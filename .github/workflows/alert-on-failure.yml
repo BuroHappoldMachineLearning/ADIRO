@@ -1,0 +1,96 @@
+name: Alert on release and publishing failures
+
+# #173. The release and publishing workflows ran red for a day before anyone noticed: the docs deploy, the release
+# snapshots and the Release PR each fail on their own, and the only alert (the tracking issue of
+# `verify-prior-versions`) sits behind the very job that failed, so it was skipped. A red run on `main` only
+# notifies whoever started it, and only if their notification settings allow it.
+#
+# This workflow watches the workflows from outside, so a failure anywhere in them, including a skipped later job,
+# is reported. It opens ONE tracking issue per workflow, comments while it keeps failing, and (where one run
+# answers for the whole stream) closes the issue when a later run passes. Issues are created as the ADIRO Bot,
+# so the one-way issue mirror sees them. It runs from the default branch, whatever branch the watched run used.
+
+on:
+  workflow_run:
+    workflows:
+      - Generate and Deploy Documentation
+      - Backup Ontology Version
+      - Release PR
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+  issues: write   # only used if the ADIRO Bot token cannot be created (fallback)
+
+jobs:
+  track:
+    # Only the default branch (a push, or a manual run of it), and never a cancelled run. A snapshot started by a
+    # published release reports the tag as its branch, so that workflow is accepted whatever the ref.
+    if: >-
+      (github.event.workflow_run.head_branch == github.event.repository.default_branch ||
+       github.event.workflow_run.name == 'Backup Ontology Version') &&
+      (github.event.workflow_run.conclusion == 'failure' || github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create ADIRO Bot token
+        id: app-token
+        continue-on-error: true   # a token problem must never hide the alert; GITHUB_TOKEN is the fallback below
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ADIRO_BOT_APP_ID }}
+          private-key: ${{ secrets.ADIRO_BOT_PRIVATE_KEY }}
+          permission-issues: write
+
+      - name: Open, update or close the tracking issue
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token || github.token }}
+          GH_REPO: ${{ github.repository }}
+          WORKFLOW: ${{ github.event.workflow_run.name }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          # Title, whether a later success closes it, and the next step, per watched workflow.
+          case "$WORKFLOW" in
+            "Generate and Deploy Documentation")
+              TITLE="Docs deploy fails on main"; AUTOCLOSE=1
+              NEXT="The site, the badges and the version pages are not republished while this fails. Open the run, find the failed job, fix it forward in a PR, or re-run the workflow (\`gh workflow run generate-deploy-docs.yml\`) once the cause is gone." ;;
+            "Backup Ontology Version")
+              TITLE="Release snapshot fails"; AUTOCLOSE=0
+              NEXT="A release whose snapshot failed has no \`versions/<module>/<semver>/\` archive and no published site pages or badge. Fix the cause, then run \`gh workflow run backup-version.yml -f tag=<module>-v<semver>\` for the tag of each failed run. Close this issue when every failed tag is published; a later success for another tag does not close it." ;;
+            "Release PR")
+              TITLE="Release PR automation fails"; AUTOCLOSE=1
+              NEXT="The Release PR is not rebuilt, or a merged release is not tagged, while this fails. Open the run and find the failed job." ;;
+            *) echo "Unexpected workflow: $WORKFLOW"; exit 0 ;;
+          esac
+          SHORT="${SHA:0:7}"
+          num="$(gh issue list --state open --search "\"$TITLE\" in:title" --json number,title \
+                 --jq "[.[] | select(.title == \"$TITLE\")][0].number // empty")"
+          if [ "$CONCLUSION" = "failure" ]; then
+            FAILED="$(gh run view "$RUN_ID" --json jobs \
+                      --jq '[.jobs[] | select(.conclusion == "failure") | "- " + .name] | join("\n")' 2>/dev/null || true)"
+            if [ -n "$num" ]; then
+              gh issue comment "$num" --body "Failed again at \`$SHORT\` ([run]($RUN_URL))."
+            else
+              {
+                echo "The workflow **$WORKFLOW** failed on \`main\` at \`$SHORT\` ([run]($RUN_URL))."
+                echo ""
+                echo "Failed jobs:"
+                echo ""
+                echo "${FAILED:-"- (none reported: the run failed before or between jobs)"}"
+                echo ""
+                echo "$NEXT"
+                echo ""
+                if [ "$AUTOCLOSE" = 1 ]; then
+                  echo "This issue closes itself when a later run of the workflow passes."
+                fi
+                echo "It is opened by \`.github/workflows/alert-on-failure.yml\`, so a failure that is skipped or buried inside the workflow is still reported ([#173](https://github.com/$GH_REPO/issues/173))."
+              } > issue.md
+              gh issue create --title "$TITLE" --body-file issue.md
+            fi
+          elif [ -n "$num" ] && [ "$AUTOCLOSE" = 1 ]; then
+            gh issue comment "$num" --body "Passes again at \`$SHORT\` ([run]($RUN_URL)). Closing."
+            gh issue close "$num" --reason completed
+          fi
