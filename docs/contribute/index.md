@@ -19,6 +19,7 @@ Proposing a new [use case or competency question](../specification/use-cases/REA
 ## Contribution guides
 
 - **[Adding New Ontologies](adding-ontologies.md)** — how to add a new `.ttl` and have it documented automatically.
+- **[Data validation](data-validation.md)** — the SHACL rules that check a dataset (the individuals a pipeline extracts), which the ontology cannot state under the open-world assumption.
 - **[Example images](example-images.md)** — how to add an image that shows a class or relationship: rights and privacy, size, where the file goes and what it is called.
 - **[Build status badges](build-status.md)** — what each badge at the top of the README measures, what red means and what to do.
 - **[Versioning](versioning/index.md)** — versioned/unversioned IRIs, version backups, and how to cut a new version.

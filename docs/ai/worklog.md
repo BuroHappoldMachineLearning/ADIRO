@@ -1,3 +1,15 @@
+## 2026-10-20 - Data validation: SHACL shapes outside the ontology modules
+
+Implemented [#168](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/168). Decided with the maintainer: a root folder `data-validation/`
+(not `shapes/`, which is SHACL jargon; not `src/`, whose top-level `*.ttl` are read as ontology modules by the docs generator, the validator,
+the reasoner and the release scripts) with files named `<topic>.shacl.ttl`. First file: `uc03-composition.shacl.ttl` with the three UC-03
+composition rules (severity Violation). `scripts/validate_data.py` runs them with pySHACL, reading the ontology as background so a subclass
+counts as its superclass; `tests/test_data_validation.py` (14 tests) shows each rule accepting and rejecting, and checks every named ADIRO term
+exists. `--with pyshacl` added to the two CI pytest commands. New page `docs/contribute/data-validation.md`, `AGENTS.md` entries.
+Not done: the "no author" shapes of [#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179) (they wait for its ontology half and
+for [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)), publishing the folder on the site, and a run over real data (there is
+no ABox yet, [#22](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/22)).
+
 ## 2026-10-20 - Example images: DrawingSheet, one layout per Layout image, and the UC-03 reference classes
 
 Implemented [#177](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/177) and [#164](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/164) in

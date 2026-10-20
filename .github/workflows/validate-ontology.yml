@@ -39,7 +39,7 @@ jobs:
       - name: Run the repository tests
         # `tests/` used to run only on a push to main (generate-deploy-docs.yml), so a failing test could merge and
         # break the deploy afterwards. Run them on the PR too; the command is the one the deploy workflow uses.
-        run: uv run --python 3.12 --no-project --with pytest --with pillow --with rdflib python -m pytest tests -q
+        run: uv run --python 3.12 --no-project --with pytest --with pillow --with rdflib --with pyshacl python -m pytest tests -q
 
       - name: Compatibility diff (warn)
         # RES-67, warn mode: classifies each module's change vs its last released

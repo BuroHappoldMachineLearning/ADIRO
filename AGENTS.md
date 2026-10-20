@@ -143,6 +143,12 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   about another's. A new release or publishing workflow is added to its `workflows:` list. Each issue carries the `ci-alert`
   label, which the README's "Build status" column counts (`docs/contribute/build-status.md` explains each badge).
 
+- **`data-validation/` + `scripts/validate_data.py`** ([#168](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/168)) — SHACL files
+  (`<topic>.shacl.ttl`) that check **data** (the individuals a pipeline extracts) against closed-world rules the ontology cannot state
+  under the open-world assumption, for example the UC-03 composition rules. They are not ontology modules: no version, no release,
+  and nothing in `src/`. `uv run --with pyshacl python scripts/validate_data.py DATA.ttl` runs them; `tests/test_data_validation.py`
+  proves each rule accepts a conforming graph and rejects a violating one. Full guide: `docs/contribute/data-validation.md`.
+
 **After any `.ttl` edit, validate immediately:**
 `uv run python scripts/validate_ontology.py src/<file>.ttl` (or with no arg to validate all of `src/`).
 Never skip it — a missing period or malformed RDF fails parsing and must be caught at once.
@@ -311,6 +317,9 @@ For anyone changing an ontology, agent or person. The sections below give the de
   it) — regenerate in the same change: `uv run python scripts/generate_docs.py`, and let
   `generate-deploy-docs.yml` publish. Do **not** hand-edit any generated page under `docs/` (including
   `docs/ontologies/`) — they are overwritten on the next run; change the `.ttl` (or the generator) instead.
+- **A closed-world rule needs a shape.** A competency question or requirement that the ontology cannot enforce (a required field, a
+  cardinality over detections) is written as a shape in `data-validation/`, with a conforming and a violating test graph, not as an
+  OWL cardinality axiom ([#84](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/84)).
 - **Ontology ↔ specification (hand-written docs).** The rule above covers *generated* pages. The
   **hand-written** specification does not regenerate and is the one people forget: `docs/specification/ORSD_*.md`,
   the per-use-case ORSDs under `docs/specification/use-cases/UC-*/`, and the design notes (`docs/specification/design-decisions/*.md` and `UC-*/design-notes/*.md`). When a
