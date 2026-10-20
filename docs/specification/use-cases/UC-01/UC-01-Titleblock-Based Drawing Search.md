@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.7 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.8 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -48,7 +48,7 @@ Things that exist independently and will become OWL Classes.
 
 > **Design note — curated values vs extracted assertions:** UC-01 attaches title-block information as datatype properties **directly on `DrawingSheet`** (`drawingIdentifier`, `drawingTitle`, …). That remains correct for a *validated* value. A second, parallel path exists for values that have been **machine-extracted and not yet validated**: an `aprov:FieldAssertion` reifies the claim - what was read, from which region (`assertedBy`), by what (`hasInferenceMeta`), with what confidence, and with the caption exactly as printed (`capturedCaption`) - bound to a field kind in the `TitleblockFieldScheme`. `aprov:mapsToFieldProperty` names the UC-01 property a validated assertion is promoted to. The two coexist: UC-01's properties are the query surface, the assertion layer is the extraction and provenance record. **When a value moves from one to the other, and whether the direct properties eventually deprecate, is open — see §8 (G11).** *(Added in [v0.4](#9-version-history).)*
 
-> **Design note — Person vs Role:** `Person` models what an individual *is*, not the role they play. Roles (Author, Checker, Approver) are expressed as distinct Object Properties on `DrawingRevision`, not as subclasses of `Person`. This keeps `Person` reusable across roles and binds each role assignment to its specific revision context.
+> **Design note — Person vs Role:** `Person` models what an individual *is*, not the role they play. Roles (Author, Checker, Approver) are expressed as distinct Object Properties, not as subclasses of `Person`. Each applies to a `DrawingSheet` (the person the drawing names, for example the title block's "drawn by") and to a `DrawingRevision` (the person who made, checked or approved that revision, who can differ from the one named for the drawing). This keeps `Person` reusable across roles. *(Amended in [v0.8](#9-version-history).)*
 
 ### 2.2 Attributes — Datatype Properties
 
@@ -95,9 +95,10 @@ Links between two entities. New properties are wired into the existing generic t
 | `hasRevision`         | `DrawingSheet`    | `DrawingRevision`   | `aec_drawing_metadata` | NEW    | `metadata:contains`     |
 | `belongsToProject`    | `DrawingSheet`    | `Project`           | `aec_drawing_metadata` | NEW    | (top-level)             |
 | `belongsToPackage`    | `DrawingSheet`    | `DrawingPackage`    | `aec_drawing_metadata` | NEW    | (top-level)             |
-| `isAuthoredBy`           | `DrawingRevision` | `Person`            | `aec_drawing_metadata` | NEW    | (top-level)             |
-| `isCheckedBy`          | `DrawingRevision` | `Person`            | `aec_drawing_metadata` | NEW    | (top-level)             |
-| `isApprovedBy`         | `DrawingRevision` | `Person`            | `aec_drawing_metadata` | NEW    | (top-level)             |
+| `isAuthoredBy`           | `DrawingSheet` or `DrawingRevision` | `Person` | `aec_drawing_metadata` | NEW    | (top-level)             |
+| `isCheckedBy`          | `DrawingSheet` or `DrawingRevision` | `Person` | `aec_drawing_metadata` | NEW    | (top-level)             |
+| `isApprovedBy`         | `DrawingSheet` or `DrawingRevision` | `Person` | `aec_drawing_metadata` | NEW    | (top-level)             |
+| `assertsRevision`      | `RevisionTable`   | `DrawingRevision`   | `aec_drawing_metadata` | NEW    | (top-level)             |
 | `hasStatusCode`       | `DrawingRevision` | `StatusCode`        | `aec_drawing_metadata` | NEW    | `metadata:hasProperty`  |
 
 ¹ ⚠️ **Open issue (G5):** `dcommon:hasDiscipline` currently has `rdfs:domain metadata:LayoutContentType`. v0.3 proposes moving the domain to `metadata:Layout` (along with the `min 1` cardinality restriction). Discipline characterises the layout itself, not its content type — and the two are orthogonal axes (see design note below). Pending @alelom / @m-asakihattori sign-off.
@@ -145,13 +146,13 @@ Each FR describes one representational capability the ontology must have, in imp
 > The ontology MUST represent multiple revisions of the same drawing sheet as distinct entities, each carrying a revision code, issue date, and status code, such that both the current state and the full revision history of a sheet can be queried.
 
 - Source: UC-01
-- Derived terms: `metadata:DrawingRevision` (NEW), `metadata:hasRevision` (NEW, `subPropertyOf metadata:contains`), `metadata:revisionCode`, `metadata:issueDate` (NEW)
+- Derived terms: `metadata:DrawingRevision` (NEW), `metadata:hasRevision` (NEW, `subPropertyOf metadata:contains`), `metadata:assertsRevision` (NEW, from a `RevisionTable` to each revision it lists), `metadata:revisionCode`, `metadata:issueDate` (NEW)
 
 ---
 
 **FR 4 — Role-Differentiated Person Attribution**
 
-> The ontology MUST distinguish between the roles of Author, Checker, and Approver as separate relationships between a drawing revision and a person, such that sheets can be filtered by a specific person in a specific role.
+> The ontology MUST distinguish between the roles of Author, Checker, and Approver as separate relationships between a person and a drawing, and between a person and a revision of it, such that drawings can be filtered by a specific person in a specific role, and a drawing with no recorded person in a required role can be found.
 
 - Source: UC-01
 - Derived terms: `metadata:Person` (NEW), `metadata:isAuthoredBy`, `metadata:isCheckedBy`, `metadata:isApprovedBy` (NEW, top-level), `metadata:personName` (NEW)
@@ -229,6 +230,7 @@ CQs are grouped by the FR they validate. Each must be translatable directly into
 | CQ 3.1 | What is the latest revision code of the sheet with drawing number "ST-101"?                 |
 | CQ 3.2 | What sheets were issued after 1 January 2024?                                               |
 | CQ 3.3 | How many revisions has sheet "ST-101" gone through, and what were their issue dates?        |
+| CQ 3.4 | From which revision table was revision "B" of drawing "ST-101" read? *(Added in [v0.8](#9-version-history).)* |
 
 ### CQ Group 4 — Role-Differentiated Persons (validates FR 4)
 
@@ -237,6 +239,33 @@ CQs are grouped by the FR they validate. Each must be translatable directly into
 | CQ 4.1 | What sheets were authored by "J. Smith"?                     |
 | CQ 4.2 | What sheets were checked by "A. Chen"?                       |
 | CQ 4.3 | For sheet "ST-101 Rev C", who was the approving authority?   |
+| CQ 4.4 | Which drawings have no recorded author? *(Added in [v0.8](#9-version-history).)* |
+| CQ 4.5 | Which drawings have no recorded checker, or no recorded approver? *(Added in [v0.8](#9-version-history).)* |
+
+CQ 3.4 and CQ 4.4 as queries (CQ 4.5 is CQ 4.4 with `isCheckedBy` or `isApprovedBy`):
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+
+# CQ 3.4: the table a revision was read from
+SELECT ?table WHERE {
+  ?table a metadata:RevisionTable ;
+         metadata:assertsRevision ?revision .
+  ?revision metadata:revisionCode "B" .
+}
+```
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+
+# CQ 4.4: the drawings with no recorded author
+SELECT ?drawing WHERE {
+  ?drawing a metadata:DrawingSheet .
+  FILTER NOT EXISTS { ?drawing metadata:isAuthoredBy ?person }
+}
+```
+
+CQ 4.4 and CQ 4.5 are closed-world checks: the ontology cannot state "every drawing has an author" (an OWL cardinality would infer an author, not report its absence), so the same rule is also a data-validation shape ([#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179)). The query lists the drawings with no recorded person; it cannot say whether the extraction missed the author or the drawing names none (open issue G12).
 
 ### CQ Group 5 — Discipline (validates FR 5)
 
@@ -405,9 +434,10 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `metadata:DrawingPackage`      | `aec_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
 | `metadata:contains`            | `aec_drawing_metadata` | REUSE  | CQ 1.4, CQ 1.6, CQ 1.7, CQ-I 1, CQ-I 2, CQ-I 3                         | (structural)                       |
 | `metadata:hasRevision`         | `aec_drawing_metadata` | NEW    | CQ 3.x                                         | FR 3                               |
-| `metadata:isAuthoredBy`           | `aec_drawing_metadata` | NEW    | CQ 4.1                                         | FR 4                               |
-| `metadata:isCheckedBy`          | `aec_drawing_metadata` | NEW    | CQ 4.2                                         | FR 4                               |
-| `metadata:isApprovedBy`         | `aec_drawing_metadata` | NEW    | CQ 4.3, CQ-I 1                                 | FR 4                               |
+| `metadata:isAuthoredBy`           | `aec_drawing_metadata` | NEW    | CQ 4.1, CQ 4.4                                 | FR 4                               |
+| `metadata:isCheckedBy`          | `aec_drawing_metadata` | NEW    | CQ 4.2, CQ 4.5                                 | FR 4                               |
+| `metadata:isApprovedBy`         | `aec_drawing_metadata` | NEW    | CQ 4.3, CQ 4.5, CQ-I 1                         | FR 4                               |
+| `metadata:assertsRevision`      | `aec_drawing_metadata` | NEW    | CQ 3.4                                         | FR 3                               |
 | `metadata:hasStatusCode`       | `aec_drawing_metadata` | NEW    | CQ 7.x, CQ 8.2                                 | FR 7                               |
 | `metadata:belongsToProject`    | `aec_drawing_metadata` | NEW    | CQ 2.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 2                               |
 | `dcommon:hasDiscipline`        | `aec_domain_common`    | REUSE  | CQ 5.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 5                               |
@@ -470,7 +500,7 @@ metadata:hasProperty (already exists)
   └── metadata:hasStatusCode (NEW)
 ```
 
-All other new object properties (`belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`) are declared at the top level — they are associative or role-differentiated and do not fit the "containment" or "characterising property" generalisations.
+All other new object properties (`belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `assertsRevision`) are declared at the top level — they are associative or role-differentiated and do not fit the "containment" or "characterising property" generalisations.
 
 ---
 
@@ -483,6 +513,7 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 | G5  | Should `hasDiscipline` domain move from `LayoutContentType` to `Layout`? v0.3 proposes yes — discipline characterises the layout, not its content type.            |
 | G5b | Should `DrawingSheet` itself carry a `hasDiscipline` (a "primary discipline" for the whole sheet) in addition to Layout-level discipline?                          |
 | G11 | **Direct properties vs `FieldAssertion`.** The assertion layer carries extracted, unvalidated title-block values alongside UC-01's direct datatype properties on `DrawingSheet`. Open: at what point does a value get promoted, who performs the promotion, must both representations be kept, and do the direct properties eventually deprecate? Tracked in [#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85). |
+| G12 | **A missing person is two different facts.** "The extraction did not find the author" and "the drawing names none" must be told apart (the first is retried or reviewed, the second is a defect of the drawing). Decided: record absence as a value-less `FieldAssertion` with an outcome. Open: the vocabulary, tracked in [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187) and [#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179). |
 | G10 | ~~`:Metadata` class name misleading~~ — **resolved**: renamed to `:MetadataContainer` (team decision). The class models visual supporting regions (titleblock, legend, etc.), not semantic metadata. |
 | —   | ~~Project-wide convention for `owl:inverseOf`~~ — **resolved** in [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21): ADIRO does not declare inverse properties. `isRevisionOf` removed; use `^metadata:hasRevision`. |
 | —   | ~~"Civil" discipline~~ — **resolved**: `Civil` to be added as a direct subclass of `dcommon:Discipline` (team decision).                                           |
@@ -491,7 +522,16 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.7 (current — draft)
+### v0.8 (current — draft)
+
+Changes from v0.7, made when the person roles were extended to the drawing and the revision table was linked to its revisions ([#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179), [#69](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/69)). MAJOR in substance (relations re-scoped and added, competency questions added); the number stays in the 0.x series because the document is still a draft:
+
+- **`isAuthoredBy`, `isCheckedBy` and `isApprovedBy` now apply to a `DrawingSheet` as well as a `DrawingRevision`** (§2.3, FR 4, §6). The title block names who drew, checked and approved the drawing; a revision can be made by other people, so the two are different facts and both are kept. The "Person vs Role" note is amended. The domain is the union of the two classes; no cardinality, because an extraction may find nobody (#84).
+- **`assertsRevision` added** (`RevisionTable` to `DrawingRevision`, §2.3, FR 3, §6): one link per row of a printed revision table, so a table with revisions A, B and C asserts three. It records which table a revision was read from; it does not say which revision is the latest (that is read from `issueDate`).
+- **CQ 3.4, CQ 4.4 and CQ 4.5 added**, with the queries for CQ 3.4 and CQ 4.4. CQ 4.4 and CQ 4.5 are closed-world checks; the same rule is a data-validation shape.
+- **Open issue G12 added**: a missing person is two different facts (not found, not printed); decided in principle, vocabulary open.
+
+### v0.7 (draft)
 
 Changes from v0.6, made when the scale was split into a sheet-level and a layout-level property ([#162](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/162)). MAJOR in substance (attributes added); the number stays in the 0.x series because the document is still a draft:
 

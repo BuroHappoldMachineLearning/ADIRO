@@ -431,6 +431,15 @@ The organisation that produced the drawing — the originator in ISO 19650-2 ter
 - **Range:** [Organisation](#Organisation)
 - **extraction hint:** Usually the organisation whose logo sits in or beside the title block, and whose code appears in the drawing-number originator segment.
 
+### assertsRevision {#assertsRevision}
+
+A revision that this revision table lists: a claim read off the printed table, one link per row, so a table listing revisions A, B and C asserts three. It does not say which revision is the latest, and it does not replace hasRevision, which states that a drawing has the revision; assertsRevision records which printed table a revision was read from. Reach the table from a revision with the inverse path ^assertsRevision.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#assertsRevision`
+- **Domain:** [Revision table](#RevisionTable)
+- **Range:** [DrawingRevision](#DrawingRevision)
+- **extraction hint:** One assertion per row of the table. Do not infer the latest revision from the order of the rows: it differs between drawings.
+
 ### belongsToPackage {#belongsToPackage}
 
 Associates a DrawingSheet with the DrawingPackage it belongs to.
@@ -533,26 +542,26 @@ An accepted target Layout of an inline layout/sheet reference. Multiple supporte
 
 ### isApprovedBy {#isApprovedBy}
 
-The Person who approved this DrawingRevision.
+The Person who approved a drawing or a revision of it. On a DrawingSheet it is the person the drawing names as having approved it; on a DrawingRevision it is the person who approved that revision, who can differ from the one named for the drawing. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179).
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isApprovedBy`
-- **Domain:** [DrawingRevision](#DrawingRevision)
+- **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))
 - **Range:** [Person](#Person)
 
 ### isAuthoredBy {#isAuthoredBy}
 
-The Person who authored this DrawingRevision.
+The Person who authored a drawing or a revision of it. On a DrawingSheet it is the person the drawing names as having drawn it; on a DrawingRevision it is the person who authored that revision, who can differ from the one named for the drawing. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179).
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isAuthoredBy`
-- **Domain:** [DrawingRevision](#DrawingRevision)
+- **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))
 - **Range:** [Person](#Person)
 
 ### isCheckedBy {#isCheckedBy}
 
-The Person who checked this DrawingRevision.
+The Person who checked a drawing or a revision of it. On a DrawingSheet it is the person the drawing names as having checked it; on a DrawingRevision it is the person who checked that revision, who can differ from the one named for the drawing. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179).
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isCheckedBy`
-- **Domain:** [DrawingRevision](#DrawingRevision)
+- **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))
 - **Range:** [Person](#Person)
 
 ## Datatype Properties
