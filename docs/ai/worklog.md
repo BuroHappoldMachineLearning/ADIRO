@@ -1,3 +1,12 @@
+## 2026-10-20 - Guard against removing what a warning flags
+
+Implemented [#195](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/195) after an import was dropped as "unused" and the dependency behind it (UC-01 locates a title block with a `BoundingBox`, a
+data pattern) was lost. The bot's own advice ("Drop the import") and the validator's warning had no hint to look first; the dependency was documented only in prose. Added: `config/module_imports.json` (each module's
+imports and why) with `tests/test_module_imports.py` (the real imports must match; every pin has a reason); the corrected advice for the unused-import finding and a hint in the validator's warning; a red
+caution in `pr_guidance.py` when a pull request removes an `owl:imports`; the `AGENTS.md` rule "A warning is a question" and the `check-before-removing` skill; and a check that a released changelog section
+equals the one at its tag, with the six corrections made after a release listed with their reasons (it skips where the tags are absent). Stacked on #194, whose changelog fix the released-section check relies
+on. Not verified: the new caution on a live pull request, and the released-section check in CI (it needs the tags in the checkout, otherwise it skips).
+
 ## 2026-10-20 - The file, the page and the agents in the ontology
 
 Implemented [#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192) in full (the maintainer asked for the whole issue, not only the design page). `aec_provenance` gains `DrawingFile`, `FilePage` and

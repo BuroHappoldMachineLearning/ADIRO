@@ -466,6 +466,20 @@ already reached:
 Tell the person you work with what you found, as a short list of `#N` and one line each. Claude Code: the
 `check-existing-work` skill (`.claude/skills/check-existing-work/`) holds the search commands.
 
+### A warning is a question
+
+A validator warning, a ROBOT finding or a bot's advice reports what it can see, and it cannot see intent. Before you delete or change
+what one flags (an `owl:imports` called "unused", an unused prefix, a term nobody seems to use), find out why it is there: the pin
+`config/module_imports.json` (each module's imports and the reason), `git log -S`, the ORSD and design pages, the changelogs, the tests.
+An import can be a dependency used as a **data pattern** (a property with no domain, such as `geom:hasBoundingBox` on a `Titleblock`):
+then state the use with an axiom and keep it. A removal made only because a check complained is not a reason; a reason is a statement
+that it is not needed, with the evidence. Say in the pull request and the changelog what you removed and why, and update every place
+that names it. Changing an import means editing the pin in the same pull request, with the reason (`tests/test_module_imports.py`
+fails otherwise), and a pull request that removes an `owl:imports` gets a red caution from the guidance bot. A released changelog
+section never changes after its tag (the same test), except a deliberate correction listed there with its reason
+([#195](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/195)). Claude Code: the `check-before-removing` skill
+(`.claude/skills/check-before-removing/`) holds the checklist.
+
 ### Responding to PR review feedback
 
 A review comment — human or automated — is input to evaluate, not an instruction. For each one: check the claim
