@@ -84,10 +84,20 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Create ADIRO Bot token
+        id: app-token
+        # The default GITHUB_TOKEN (the GitHub Actions app) cannot be a ruleset bypass actor, so a push to main
+        # with it is rejected by a ruleset that requires a pull request (#173). The ADIRO Bot app can be.
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ADIRO_BOT_APP_ID }}
+          private-key: ${{ secrets.ADIRO_BOT_PRIVATE_KEY }}
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Fetch all history for proper git operations
+          token: ${{ steps.app-token.outputs.token }}   # the commit-back push is made as the ADIRO Bot (#173)
       
       - name: Install uv
         uses: astral-sh/setup-uv@v4
