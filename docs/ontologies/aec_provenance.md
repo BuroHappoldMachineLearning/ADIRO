@@ -2,9 +2,10 @@
 
 <div class="adiro-actions" markdown="span">
 <details class="adiro-version">
-<summary class="md-button">Version 1.0.0 (latest)</summary>
+<summary class="md-button">Version 1.0.1 (latest)</summary>
 <ul>
-<li><a href="./" class="adiro-version-current" aria-current="page">1.0.0 (latest)</a></li>
+<li><a href="./" class="adiro-version-current" aria-current="page">1.0.1 (latest)</a></li>
+<li><a href="1.0.0/">1.0.0</a></li>
 </ul>
 </details>
 [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_provenance.html){ .md-button target=_blank }
@@ -15,7 +16,7 @@
 Foundational, domain-neutral module for provenance. It lets any value inferred from a drawing be recorded as an assertion that carries its own source, confidence, and how it was produced, aligned to W3C PROV-O. The drawing modules import it.
 
 - **IRI:** `https://w3id.org/adiro/aec_provenance`
-- **Versioned IRI:** `https://w3id.org/adiro/aec_provenance/1.0.0`
+- **Versioned IRI:** `https://w3id.org/adiro/aec_provenance/1.0.1`
 
 ## Interactive view
 
