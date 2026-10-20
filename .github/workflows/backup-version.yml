@@ -28,6 +28,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Create ADIRO Bot token
+        id: app-token
+        # The default GITHUB_TOKEN (the GitHub Actions app) cannot be a ruleset bypass actor, so a push to main
+        # with it is rejected by a ruleset that requires a pull request (#173). The ADIRO Bot app can be.
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ADIRO_BOT_APP_ID }}
+          private-key: ${{ secrets.ADIRO_BOT_PRIVATE_KEY }}
+
       # A `release` event checks out the tag ref (detached HEAD), which can't be
       # committed/pushed. Check out the default branch to push to, and read the
       # tagged ontology content explicitly via `git show <tag>:...` so the
@@ -38,7 +47,7 @@ jobs:
           ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0        # full history
           fetch-tags: true      # ensure the release tag is available for `git show`
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}   # the push below is made as the ADIRO Bot (#173)
 
       - name: Parse module + version from tag
         id: parse
@@ -98,7 +107,8 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit (snapshot already exists)."
           else
-            git commit -m "chore: snapshot ${MODULE} ${VERSION}"
+            # [skip actions]: a push by an app starts other workflows; the deploy is dispatched explicitly below.
+            git commit -m "chore: snapshot ${MODULE} ${VERSION} [skip actions]"
             # Rebase first: releases for several modules are published back to back,
             # and a snapshot push must not be rejected because another landed meanwhile.
             # Several tags can be dispatched together (release automation), so retry
@@ -111,8 +121,8 @@ jobs:
           fi
 
       - name: Publish the snapshot to GitHub Pages
-        # A push made with GITHUB_TOKEN does not trigger other workflows, so the push
-        # above never starts generate-deploy-docs.yml (#100). Dispatch it explicitly;
+        # The push above is marked [skip actions], so it does not start generate-deploy-docs.yml (#100).
+        # Dispatch it explicitly (with GITHUB_TOKEN, which may dispatch);
         # without this the versioned URL only appears if some later push redeploys.
         # Deliberately unconditional: when the snapshot already exists nothing was
         # pushed, but re-running this job for a tag must still repair a release whose
