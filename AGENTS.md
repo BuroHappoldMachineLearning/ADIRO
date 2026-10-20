@@ -28,7 +28,7 @@ Ontology sources live in `src/` as independently versioned modules (dependency o
 2. `aec_geometry` — foundational, domain-neutral: `BoundingBox` (a provenance-bearing `InferredEntity`, and a
    GeoSPARQL `geo:Geometry`) + `CoordinateFrame` (unit, named coordinate space, page/artifact). Imports
    `aec_provenance`; shared by UC-01 and UC-03.
-3. `aec_drawing_metadata` — sheet/layout/document structure (titleblock, legend, revision table, drawing types…).
+3. `aec_drawing_metadata` — drawing/layout/document structure (titleblock, legend, revision table, drawing types…).
 4. `aec_common_symbols` — cross-discipline reusable symbols (dimensions, callouts, grids, levels…).
 5. `aec_domain_common` — concepts shared across a set of domains.
 6. `aec_facade_domain` — facade-engineering discipline-specific concepts (`:FacadeComponent`, `:DGU`, …).
@@ -223,6 +223,10 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   release cut performs the bump. *(Supersedes the earlier "hold pending ratification".)*
 
 ## Ontology authoring conventions
+- **Say "drawing", not "sheet".** In prose, in a definition, in a competency question and in a PR or an issue, the thing
+  ADIRO describes is a *drawing*. "Sheet" means only the paper format (an A1 sheet, a sheet of paper). The existing class
+  `DrawingSheet` and the names built on it (`denotesDrawingSheet`, `assertsMetadataFor` with range `DrawingSheet`) keep their
+  names, which are IRIs, and are written in code font when cited; do not coin a new term with "sheet" in it for a drawing.
 - **`rdfs:label` is the human-readable name.** Give every class a clear label that **contains** the class's
   PascalCase local name split into words (Title Case) — `:UnitisedCurtainWall` → `"Unitised Curtain Wall"` —
   but the label *is* a human name, so it may **expand acronyms** (`:DGU` → `"Double Glazing Unit"`) or add a
