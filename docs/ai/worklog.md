@@ -9,6 +9,17 @@ compatibility check reads any domain change as potentially breaking although a w
 planned with [#170](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/170) and [#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171).
 `issueDate` widens the same way (decided with the maintainer; "date authored" is its `skos:altLabel`), and only the author is required (checker and approver are optional). `data-validation/uc01-authorship.shacl.ttl` is the shape for CQ 4.4 (a Warning; its property shape carries its own severity, because SHACL does not pass a node shape's severity down). Not done: telling "the extraction missed the author" from "the drawing names none" (the vocabulary of [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)). Merge the pending PATCH Release PR before this one: this change turns the next cut into a MAJOR.
 
+## 2026-10-20 - The post-release deploy failed on a stale checkout and raised no alert
+
+First release since [#173](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/173) was fixed: the snapshots were committed (the bot-token push works), but the
+deploy dispatched by `backup-version.yml` failed (`Commit and push documentation`: add/add conflict on `docs/aec_drawing_metadata/5.0.0/aec_drawing_metadata.html`), so the site
+and the badges stayed on the old versions. Cause: a `workflow_dispatch` run is queued behind the push run (concurrency group) but checks out the commit `main` had when it was
+dispatched, so it regenerated pages the first run had already committed. Repaired by dispatching the deploy again from the current `main`. Second finding: the alert
+watcher ([#175](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/175)) never saw the failure, because the run had been dispatched with `GITHUB_TOKEN` (actor `github-actions[bot]`) and GitHub starts
+no `workflow_run` workflow for such a run; the runs started by a person or by the ADIRO Bot did reach it (compared by actor). Fix ([#190](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/190)): `generate-docs` checks out `github.ref_name`;
+`backup-version.yml` dispatches with the ADIRO Bot token; `tests/test_workflow_tokens.py` keeps both (it fails without the fix). Not verified: the ADIRO Bot token's right to dispatch
+workflows from `backup-version.yml` (the release workflow already dispatches that way), and an alert on a real post-release failure: both show at the next release.
+
 ## 2026-10-20 - Data validation: SHACL shapes outside the ontology modules
 
 Implemented [#168](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/168). Decided with the maintainer: a root folder `data-validation/`
