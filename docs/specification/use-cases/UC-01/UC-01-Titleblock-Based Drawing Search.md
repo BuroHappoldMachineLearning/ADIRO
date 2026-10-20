@@ -240,9 +240,9 @@ CQs are grouped by the FR they validate. Each must be translatable directly into
 | CQ 4.2 | What sheets were checked by "A. Chen"?                       |
 | CQ 4.3 | For sheet "ST-101 Rev C", who was the approving authority?   |
 | CQ 4.4 | Which drawings have no recorded author? *(Added in [v0.8](#9-version-history).)* |
-| CQ 4.5 | Which drawings that are ready to be issued outside the organisation have no recorded checker, or no recorded approver? *(Added in [v0.8](#9-version-history).)* |
+| CQ 4.5 | Which drawings have no recorded checker, or no recorded approver? *(Added in [v0.8](#9-version-history).)* |
 
-CQ 3.4 and CQ 4.4 as queries (CQ 4.5 is CQ 4.4 with `isCheckedBy` or `isApprovedBy`, restricted to drawings in a state ready to be issued outside the organisation; an internal drawing needs no checker or approver, so CQ 4.5 is not a check on every drawing as CQ 4.4 is):
+CQ 3.4 and CQ 4.4 as queries (CQ 4.5 is CQ 4.4 with `isCheckedBy` or `isApprovedBy`):
 
 ```sparql
 PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
@@ -265,7 +265,7 @@ SELECT ?drawing WHERE {
 }
 ```
 
-CQ 4.4 and CQ 4.5 are closed-world checks: the ontology cannot state "every drawing has an author" (an OWL cardinality would infer an author, not report its absence), so the same rule is also a data-validation shape ([#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179)). The query lists the drawings with no recorded person; it cannot say whether the extraction missed the author or the drawing names none (open issue G12).
+A drawing must have an author; whether it was checked or approved varies, so CQ 4.5 is a plain query and not a check. CQ 4.4 is a closed-world check: the ontology cannot state "every drawing has an author" (an OWL cardinality would infer an author, not report its absence), so the same rule is also a data-validation shape ([#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179)). The query lists the drawings with no recorded person; it cannot say whether the extraction missed the author or the drawing names none (open issue G12).
 
 ### CQ Group 5 — Discipline (validates FR 5)
 
@@ -529,7 +529,7 @@ Changes from v0.7, made when the person roles were extended to the drawing and t
 - **`isAuthoredBy`, `isCheckedBy` and `isApprovedBy` now apply to a `DrawingSheet` as well as a `DrawingRevision`** (§2.3, FR 4, §6). The title block names who drew, checked and approved the drawing; a revision can be made by other people, so the two are different facts and both are kept. The "Person vs Role" note is amended. The domain is the union of the two classes; no cardinality, because an extraction may find nobody (#84).
 - **`assertsRevision` added** (`RevisionTable` to `DrawingRevision`, §2.3, FR 3, §6): one link per row of a printed revision table, so a table with revisions A, B and C asserts three. It records which table a revision was read from; it does not say which revision is the latest (that is read from `issueDate`).
 - **`issueDate` applies to a `DrawingSheet` as well as a `DrawingRevision`** (§2.2): the title block's date is the drawing's, and "date authored" is the same property, not a second one.
-- **CQ 3.4, CQ 4.4 and CQ 4.5 added**, with the queries for CQ 3.4 and CQ 4.4. A drawing needs an author always; it needs a checker and an approver only when it is ready to be issued outside the organisation. CQ 4.4 and CQ 4.5 are closed-world checks; the same rule is a data-validation shape.
+- **CQ 3.4, CQ 4.4 and CQ 4.5 added**, with the queries for CQ 3.4 and CQ 4.4. A drawing must have an author; a checker and an approver are optional. CQ 4.4 is a closed-world check, and the same rule is a data-validation shape.
 - **Open issue G12 added**: a missing person is two different facts (not found, not printed); decided in principle, vocabulary open.
 
 ### v0.7 (draft)
