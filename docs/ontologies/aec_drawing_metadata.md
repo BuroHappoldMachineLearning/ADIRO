@@ -230,9 +230,10 @@ A legend containing mapping information between symbols and a text signifier.
 
 ### MetadataContainer {#MetadataContainer}
 
-Supporting visual region on a drawing sheet (titleblock, legend, etc.). Renamed from :Metadata to avoid confusion with semantic metadata properties on DrawingSheet.
+Supporting visual region on a drawing sheet (titleblock, legend, etc.). Renamed from :Metadata to avoid confusion with semantic metadata properties on DrawingSheet. Every container (the title block, a revision table, a legend, a key plan, a note) may carry a BoundingBox, its region on the page, which what is read from it is located by (geom:hasBoundingBox); each subclass inherits this.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#MetadataContainer`
+- **Restrictions:** `geom:hasBoundingBox` min 0 `geom:BoundingBox`
 - **isComputerVisionLabel:** false
 
 ### Note {#Note}
@@ -365,7 +366,7 @@ A free-form block of text, such as numbered lists or paragraphs, containing gene
 
 ### Titleblock {#Titleblock}
 
-Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc. May itself contain a KeyPlan, Legend or RevisionTable, which are commonly printed inside the title-block strip rather than standing alone on the page; all three are optional, and each may alternatively be contained directly by the DrawingSheet. It may carry a BoundingBox, its region on the page, which its fields are read from (geom:hasBoundingBox).
+Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc. May itself contain a KeyPlan, Legend or RevisionTable, which are commonly printed inside the title-block strip rather than standing alone on the page; all three are optional, and each may alternatively be contained directly by the DrawingSheet.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Titleblock`
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
@@ -373,7 +374,6 @@ Titleblock containing information about the drawing, for example project name, d
     - [contains](#contains) min 0 [Key Plan](#KeyPlan)
     - [contains](#contains) min 0 [Legend](#Legend)
     - [contains](#contains) min 0 [Revision table](#RevisionTable)
-    - `geom:hasBoundingBox` min 0 `geom:BoundingBox`
 - **isComputerVisionLabel:** true
 
 *Example images:*
