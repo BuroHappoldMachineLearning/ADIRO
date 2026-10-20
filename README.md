@@ -4,7 +4,7 @@
      badges/<module>.json from the docs site (scripts/release_badges.py), which every docs deploy refreshes
      from versions/, so the badges update after a release is published. Each badge links to its latest
      release page; the Release PR (scripts/prepare_release.py) bumps those links at the release cut.
-     The Build status column shows the latest run of the release and publishing workflows (docs/contribute/build-status.md). -->
+     The Build status column shows the latest run of the release and publishing workflows (docs/contribute/build-status.md); each badge links to its section there. -->
 <table align="center">
   <tr>
     <td><img src="docs/img/adiro_banner.png" alt="ADIRO" width="320"></td>
@@ -19,11 +19,11 @@
     </td>
     <td align="left" valign="middle">
       <b>Build status</b><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/actions/workflows/generate-deploy-docs.yml?query=branch%3Amain"><img src="https://img.shields.io/github/actions/workflow/status/BuroHappoldMachineLearning/ADIRO/generate-deploy-docs.yml?branch=main&label=build%20%26%20tests" alt="build and tests"></a><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/actions/workflows/release-pr.yml?query=branch%3Amain"><img src="https://img.shields.io/github/actions/workflow/status/BuroHappoldMachineLearning/ADIRO/release-pr.yml?branch=main&label=release%20PR" alt="release PR"></a><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/actions/workflows/backup-version.yml"><img src="https://img.shields.io/github/actions/workflow/status/BuroHappoldMachineLearning/ADIRO/backup-version.yml?label=snapshot" alt="release snapshot"></a><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/actions/workflows/reasoning-main.yml?query=branch%3Amain"><img src="https://img.shields.io/github/actions/workflow/status/BuroHappoldMachineLearning/ADIRO/reasoning-main.yml?branch=main&label=reasoning" alt="reasoning"></a><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/issues?q=is%3Aissue+is%3Aopen+label%3Aci-alert"><img src="https://img.shields.io/github/issues/BuroHappoldMachineLearning/ADIRO/ci-alert" alt="open CI alerts"></a><br>
+      <a href="https://burohappoldmachinelearning.github.io/ADIRO/contribute/build-status/#build-and-tests"><img src="https://img.shields.io/github/actions/workflow/status/BuroHappoldMachineLearning/ADIRO/generate-deploy-docs.yml?branch=main&label=build%20%26%20tests" alt="build and tests"></a><br>
+      <a href="https://burohappoldmachinelearning.github.io/ADIRO/contribute/build-status/#release-pr"><img src="https://img.shields.io/github/actions/workflow/status/BuroHappoldMachineLearning/ADIRO/release-pr.yml?branch=main&label=release%20PR" alt="release PR"></a><br>
+      <a href="https://burohappoldmachinelearning.github.io/ADIRO/contribute/build-status/#snapshot"><img src="https://img.shields.io/github/actions/workflow/status/BuroHappoldMachineLearning/ADIRO/backup-version.yml?label=snapshot" alt="release snapshot"></a><br>
+      <a href="https://burohappoldmachinelearning.github.io/ADIRO/contribute/build-status/#reasoning"><img src="https://img.shields.io/github/actions/workflow/status/BuroHappoldMachineLearning/ADIRO/reasoning-main.yml?branch=main&label=reasoning" alt="reasoning"></a><br>
+      <a href="https://burohappoldmachinelearning.github.io/ADIRO/contribute/build-status/#ci-alert-issues"><img src="https://img.shields.io/github/issues/BuroHappoldMachineLearning/ADIRO/ci-alert" alt="open CI alerts"></a><br>
       <a href="https://burohappoldmachinelearning.github.io/ADIRO/contribute/build-status/">What do these mean?</a>
     </td>
   </tr>

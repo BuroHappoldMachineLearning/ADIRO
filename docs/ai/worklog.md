@@ -8,8 +8,8 @@ The YAML parses; the workflow cannot run before it is on `main`, so the first re
 issue is closed by hand, because a success for one tag does not clear another. Not done: alerting on a failure that never
 starts a run (a disabled workflow).
 Also added a "Build status" column to the README (build & tests, release PR, snapshot, reasoning, and a count of open
-`ci-alert` issues), each badge linking to its workflow's runs, and `docs/contribute/build-status.md` explaining what each
-shows and what red means. The badge URLs were fetched from shields.io and render; the snapshot badge has no `branch=main`
+`ci-alert` issues), each badge linking to its own section of `docs/contribute/build-status.md`, which explains what it
+shows and what red means and links to the workflow's runs. The badge URLs were fetched from shields.io and render; the snapshot badge has no `branch=main`
 because a snapshot started by a release reports the tag as its branch. Label `ci-alert` created on the repository.
 
 ## 2026-10-19 - Releases did not publish: CI pushes to `main` rejected by the ruleset
