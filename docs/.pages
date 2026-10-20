@@ -1,7 +1,6 @@
 nav:
   - index.md
-  - specification
   - ontologies
-  - design-decisions
+  - specification
   - contribute
   - ...

@@ -56,5 +56,5 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 ### Notes
 - This module deliberately mentions **no** external vocabulary other than PROV-O, which it aligns to
   directly. ADIRO ships **no** DAnO crosswalk; the correspondence with DAnO's equivalent provenance terms is
-  documentation only - see the [DAnO comparison](../docs/design-decisions/dano-comparison.md).
+  documentation only - see the [DAnO comparison](../docs/specification/design-decisions/dano-comparison.md).
 

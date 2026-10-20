@@ -1,6 +1,6 @@
 # Locating a title block: bounding boxes, coordinate frames and provenance — a worked example
 
-> Companion to the [`aec_geometry`](../ontologies/aec_geometry.md) and [`aec_provenance`](../ontologies/aec_provenance.md)
+> Companion to the [`aec_geometry`](../../ontologies/aec_geometry.md) and [`aec_provenance`](../../ontologies/aec_provenance.md)
 > reference pages. It shows, end to end, how a title block's **region**, its **coordinate frame**, and an
 > extracted **field value** fit together — and how the page coordinates are meant to be read. Introduced with
 > [#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90); the model is shared with the UC-03

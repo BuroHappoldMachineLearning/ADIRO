@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+### Changed
+- The `rdfs:comment` of `bboxXYXY` no longer names a repository file path; it points to the public issue [#91](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/91) instead, because a path is not an address that resolves and a release cannot be corrected afterwards. Annotation change only; no term, domain or range changes.
+
 
 ## [1.0.0] — 2026-10-09
 
@@ -32,7 +35,7 @@ _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumpe
   geometry) use the same `BoundingBox` / `CoordinateFrame` model. This PR introduces only what UC-01 needs;
   UC-03-specific geometry (coordinate transforms, crop/symbol metrics, clickable/navigation geometry) is left
   for the UC-03 work and slots into this module without conflict. Rationale:
-  [croissant-comparison.md](../docs/design-decisions/croissant-comparison.md).
+  [croissant-comparison.md](../docs/specification/design-decisions/croissant-comparison.md).
 
 ### Notes
 - All additive; first in-repo version. `owl:versionInfo` is set at the first release cut (tag `aec_geometry-v1.0.0`).

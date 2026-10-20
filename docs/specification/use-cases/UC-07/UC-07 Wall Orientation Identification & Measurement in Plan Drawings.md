@@ -387,7 +387,7 @@ That is the wrong behaviour for this use case, whose CQ Groups 4 and 5 aggregate
 - Model a dimension's parts with **`min 0`** cardinality, or none at all, so that absence is recorded rather than repaired.
 - Keep well-formedness (*"a complete dimension has exactly two terminators"*) as a **SHACL shape** evaluated over a finished extraction under closed-world semantics, not as an OWL axiom over detections. Completeness is a validation question, not an entailment.
 - Consider an explicit completeness or legibility flag on the extracted dimension, so that a partially-read dimension can be excluded from aggregation by query rather than by inference.
-- Mint ADIRO's own terms rather than reusing `dano:` IRIs, so that these cardinality choices are ADIRO's to make. See [#79](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/79) and the [DAnO comparison](../../../design-decisions/dano-comparison.md).
+- Mint ADIRO's own terms rather than reusing `dano:` IRIs, so that these cardinality choices are ADIRO's to make. See [#79](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/79) and the [DAnO comparison](../../design-decisions/dano-comparison.md).
 
 This generalises beyond dimensions: **ADIRO individuals are detections, not idealised drawing constructs**, and structural axioms that are true of a well-formed drawing can be false of what was actually found on a damaged one.
 

@@ -35,7 +35,7 @@ Ontology sources live in `src/` as independently versioned modules (dependency o
 
 DAnO is **not** part of the suite: ADIRO ships no DAnO artifact — no module, no import, no annotation-level
 crosswalk. The comparison with DAnO, and the reasons ADIRO mints its own terms rather than importing or aligning
-to it, are **documentation only** — see `docs/design-decisions/dano-comparison.md` and
+to it, are **documentation only** — see `docs/specification/design-decisions/dano-comparison.md` and
 `external-ontology-imports.md` (the latter also states when an external reference may sit in a core module at
 all, and the optional-compatibility-layer pattern ADIRO does not currently use).
 
@@ -97,8 +97,9 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   # or: uv run mkdocs build                   # produce the static site into site/
   ```
 - `docs/brainstorming/` and `docs/ai/` are excluded from the built site (`exclude_docs` in `mkdocs.yml`) —
-  verify before assuming a docs page publishes. Design-decision notes (including modularization write-ups)
-  live under `docs/design-decisions/` and **are** published.
+  verify before assuming a docs page publishes. Design-decision notes live under `docs/specification/` and **are** published: a note about one use case
+  in that use case's `design-notes/` folder (`docs/specification/use-cases/UC-*/design-notes/`), a suite-wide note (including
+  modularization write-ups) in `docs/specification/design-decisions/`.
 
 ## Validation & YouTrack-sync CI
 - **`.github/workflows/validate-ontology.yml`** — on PRs to any branch; runs `scripts/validate_ontology.py`
@@ -312,7 +313,7 @@ For anyone changing an ontology, agent or person. The sections below give the de
   `docs/ontologies/`) — they are overwritten on the next run; change the `.ttl` (or the generator) instead.
 - **Ontology ↔ specification (hand-written docs).** The rule above covers *generated* pages. The
   **hand-written** specification does not regenerate and is the one people forget: `docs/specification/ORSD_*.md`,
-  the per-use-case ORSDs under `docs/specification/use-cases/UC-*/`, and `docs/design-decisions/*.md`. When a
+  the per-use-case ORSDs under `docs/specification/use-cases/UC-*/`, and the design notes (`docs/specification/design-decisions/*.md` and `UC-*/design-notes/*.md`). When a
   `.ttl` change alters what the suite can represent, bring them into line **in the same PR**:
   - **Does a use-case ORSD now describe only part of the picture?** A new mechanism sitting alongside an
     existing one must be recorded where the existing one is documented, or a reader will not know it exists.
@@ -341,7 +342,7 @@ For anyone changing an ontology, agent or person. The sections below give the de
         `*(Amended in [v0.3](#10-version-history).)*` or `*(Added in [v0.4](#9-version-history).)*` — and put
         the full explanation (what it said before, what changed, why) in that version's entry in the version
         history. Never inline a dated paragraph, a "superseded" essay or a quoted previous wording into the
-        body. For a page with no version history (e.g. `docs/design-decisions/`), the marker links to the
+        body. For a page with no version history (e.g. `docs/specification/design-decisions/`), the marker links to the
         document that supersedes it instead. Rewrite the surrounding prose so it reads as current fact, not as
         a diff: "a second parallel path exists", not "PR #NN adds a second path".
       - **Mind the Markdown when you add a marker.** A blockquote or admonition indented inside a numbered
@@ -400,7 +401,7 @@ For anyone changing an ontology, agent or person. The sections below give the de
   **not** the OBO `IAO:0000115` that ROBOT's `missing_definition` rule looks for, which is why that rule is
   **absent** from `config/robot_report_profile.txt` (a profile lists the checks that run; omitting one
   disables it, and the file format accepts no comments to say so). Reasons in
-  `docs/design-decisions/usage-of-annotation-properties.md`. `scripts/validate_ontology.py` reports
+  `docs/specification/design-decisions/usage-of-annotation-properties.md`. `scripts/validate_ontology.py` reports
   ADIRO-namespace terms that lack one (external stubs exempt — their definitions live at the source). It is
   advisory while the backlog in [#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87) is
   cleared; `ENFORCE_DESCRIPTIONS=1` makes it blocking, `LIST_UNDESCRIBED=1` lists every term.

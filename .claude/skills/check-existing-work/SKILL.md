@@ -37,7 +37,7 @@ gh api graphql -f q='repo:BuroHappoldMachineLearning/ADIRO layoutScale' \
   --jq '.data.search.nodes[]|"D#\(.number) \(.category.name) \(.title)"'
 ```
 
-Also search the repository for the term (`grep` over `src/`, `docs/specification/`, `docs/design-decisions/`,
+Also search the repository for the term (`grep` over `src/`, `docs/specification/` (the use cases, their `design-notes/` and `design-decisions/`),
 `changelogs/`): a decision is often recorded in a design-decision page and not only in a thread.
 
 ## 3. Read what you found, comments included

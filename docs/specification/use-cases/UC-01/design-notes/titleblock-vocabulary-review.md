@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-11 · **Issue:** [RES-89](https://bhmlrnd.youtrack.cloud/issue/RES-89) · **Branch:** `res-89-aec-titleblock-tbox`
 **Reviews:** the 73 proposed terms in [Discussion #61 §11.1](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/61)
-**Against:** [`docs/specification/use-cases/`](../specification/use-cases/README.md) (UC-01, UC-03, UC-06, UC-07) and [DANO](https://rub-informatik-im-bauwesen.github.io/dano/)
+**Against:** [`docs/specification/use-cases/`](../../README.md) (UC-01, UC-03, UC-06, UC-07) and [DANO](https://rub-informatik-im-bauwesen.github.io/dano/)
 
 ## Why this document exists
 
@@ -11,7 +11,7 @@ useful, 20 marginal, 5 redundant). This document applies two **external** tests 
 
 1. **Do the terms serve the use cases?** The repo follows LOT — `Use Case → Information Needs → Functional
    Requirements → Competency Questions → OWL Terms` — and claims *"forward traceability (every OWL term traces
-   back to a use case need)"* ([`docs/specification/use-cases/README.md`](../specification/use-cases/README.md) §1).
+   back to a use case need)"* ([`docs/specification/use-cases/README.md`](../../README.md) §1).
 2. **Has someone already built the drawing-analysis half of this?** DANO is a published, CC BY 4.0 ontology for
    exactly computer-vision-based drawing analysis.
 
@@ -105,7 +105,7 @@ vocabulary is required to answer any existing CQ.
 | `Discipline` (SKOS scheme) | 🟢 Core | 🔴 **Redundant** | `dcommon:Discipline` is a full class hierarchy (`Structural`, `MEP > Mechanical / Electrical > Lighting / Plumbing`, `Architectural > Facade / FireLifeSafety`, `Masterplan`, + `Civil`). UC-01 FR 5 reuses it and **explicitly dropped** a `disciplineCode` string (change G3) because `rdf:type` checks against the hierarchy give **automatic sub-discipline rollup** — querying `dcommon:MEP` matches `Mechanical`, `Electrical`, `Plumbing`, `Lighting` via `rdfs:subClassOf`. A flat SKOS scheme loses exactly that. Reuse `dcommon:Discipline` + `dcommon:hasDiscipline` |
 | `hasNorthPointOrientation` | 🟠 Marginal | 🔴 **Redundant** | UC-07 specifies `northArrowAngle` (`xsd:decimal`, degrees clockwise from page-up) on the drawing, with a stated datum convention, and **explicitly rejects** modelling the arrow as an entity. ADIRO's version is the same measurement with a vaguer name, a different datatype and no datum. It is also a drawing-level datum, not a title-block field |
 | `scale` | 🟢 Core | 🔴 **Redundant as a term** | `dm:hasScale` (string) exists from UC-01 FR 1, and UC-07 adds `scaleRatio` (decimal) for arithmetic. The scale story is *already* two properties by design. A third string property is duplication. **The field remains core to extraction** — it just binds to `dm:hasScale` |
-| `dimensionUnits` | 🟡 Useful | ~~🟡 Useful — confirmed genuinely new~~ → 🔴 **Withdrawn 2026-09-14, on evidence** | Nothing in any use case or module covers the German `1:50 – m,cm` convention, and **that finding still stands** — this is not a redundancy call. It was withdrawn because it appeared in none of the four surveyed projects and so fails the `<40%` rule. The corpus is UK/US with no German project in it, so treat this as *unevidenced here*, not *not a real field* — see [titleblock-field-survey-2026-09.md](modularization/titleblock-field-survey-2026-09.md) §7.3 |
+| `dimensionUnits` | 🟡 Useful | ~~🟡 Useful — confirmed genuinely new~~ → 🔴 **Withdrawn 2026-09-14, on evidence** | Nothing in any use case or module covers the German `1:50 – m,cm` convention, and **that finding still stands** — this is not a redundancy call. It was withdrawn because it appeared in none of the four surveyed projects and so fails the `<40%` rule. The corpus is UK/US with no German project in it, so treat this as *unevidenced here*, not *not a real field* — see [titleblock-field-survey-2026-09.md](titleblock-field-survey-2026-09.md) §7.3 |
 | `DocumentType` | 🟢 Core | 🟢 **Core, with a warning** | UC-01 v0.2 introduced a `DrawingType` (Plan / Section / Elevation / Detail / Schedule) and v0.3 **deleted it** as a duplicate of `metadata:LayoutContentType` (change G4). ADIRO's `DocumentType` is DIN *Planart* + ISO 19650 type codes — design **stage** and document **kind**, a genuinely different axis from view type. Keep it, but say so in the `rdfs:comment`, or it will be deleted for the same reason `DrawingType` was |
 | `SuitabilityStatus`, `DocumentLifecycleStatus` | 🟡 Useful | 🟡 **Useful, but no CQ demands the split** | UC-01 satisfies CQ 7.1/7.2 with a *single* `StatusCode` + `statusLabel`. RES-A-9 finding 5's three-way split is justified by **standards fidelity**, not by any current query. That is a legitimate reason — but it should be stated as such rather than presented as a requirement |
 | `ContainerState` / `hasContainerState` | 🟠 Marginal | 🟠 **Marginal — confirmed, and now doubly so** | Not printed on a sheet (internal review) **and** no CQ in any of the four use cases references CDE location |
@@ -158,7 +158,7 @@ Minor, but worth noting since the review runs both ways:
 !!! warning "Partly superseded"
     The **findings** in this part stand. The **recommendations** drawn from them in §3.2, §4 and §5 do not,
     and §3.4's "complementary, not competing" is narrower than it reads. What replaced them, and why, is in
-    the **[DAnO comparison](dano-comparison.md)**.
+    the **[DAnO comparison](../../../design-decisions/dano-comparison.md)**.
 
 ### 3.1 What DANO is
 
@@ -177,7 +177,7 @@ This is the real find. ADIRO §10 proposes six provenance terms; DANO already ha
 
 | ADIRO §10 proposal | DANO equivalent | Assessment |
 | --- | --- | --- |
-| `extractionConfidence` (`xsd:float`) | `dano:hasConfidence` (`xsd:decimal`, on `DrawingElement`) | ~~**Direct equivalent.** Align or reuse~~ → **superseded** — minted as `aprov:hasConfidence`; see the [DAnO comparison](dano-comparison.md) |
+| `extractionConfidence` (`xsd:float`) | `dano:hasConfidence` (`xsd:decimal`, on `DrawingElement`) | ~~**Direct equivalent.** Align or reuse~~ → **superseded** — minted as `aprov:hasConfidence`; see the [DAnO comparison](../../../design-decisions/dano-comparison.md) |
 | `extractedFrom` → `SourceFile` (object) | `dano:inferredFrom` (`xsd:string`, "the origin file") | DANO uses a **string**. Corroborates that `SourceFile`-as-a-class may be over-modelled for current needs |
 | `extractedByModel` → `MLModel` (object) | `dano:inferredBy` (`xsd:string`, actor/company/software) **+** `dano:inferredWith` (`xsd:string`, algorithm) | DANO **splits actor from algorithm**, which is a better decomposition than ADIRO's single property — and both are strings, independently corroborating the #61 verdict that `MLModel` is over-modelled |
 | *(nothing proposed)* | `dano:inferredAt` (`xsd:date`) | **🔴 GAP IN ADIRO.** No extraction timestamp is proposed anywhere. Re-extraction comparison is impossible without one. Add it |
@@ -209,7 +209,7 @@ is per-assertion, whereas the inference metadata is often shared across every el
 them in different places is arguably correct rather than sloppy.
 
 **Recommendation: use DANO as evidence in the pass-5 decision.** *(The companion recommendation to align
-`tb:` provenance to `dano:` was withdrawn — see the [DAnO comparison](dano-comparison.md).)* Do not import DANO — it would drag its 16 drawing-element classes
+`tb:` provenance to `dano:` was withdrawn — see the [DAnO comparison](../../../design-decisions/dano-comparison.md).)* Do not import DANO — it would drag its 16 drawing-element classes
 into a suite with a blocking DL reasoner for the sake of seven datatype properties.
 
 ### 3.4 DANO is relevant beyond the title block — flag to other use-case owners
@@ -239,7 +239,7 @@ this review. **#61 has not yet been updated** — apply these before it is used 
 | `MLModel` | 🟠 Over-modelled | 🟠 **Confirmed** — drop to a literal | DANO uses strings (§3.2) |
 | `SourceFile` | 🟢 Core | 🟡 Useful — consider a literal | `dano:inferredFrom` is a string (§3.2) |
 | `BoundingBox` | 🟢 Core | 🟡 Useful — consider a geometry | `dano:hasGeometry` (§3.2) |
-| `extractionConfidence` | 🟡 Needed, blocked | ~~🟡 Align to `dano:hasConfidence`~~ → 🟢 **Minted as `aprov:hasConfidence`** | §3.2; see the [DAnO comparison](dano-comparison.md) |
+| `extractionConfidence` | 🟡 Needed, blocked | ~~🟡 Align to `dano:hasConfidence`~~ → 🟢 **Minted as `aprov:hasConfidence`** | §3.2; see the [DAnO comparison](../../../design-decisions/dano-comparison.md) |
 | `extractedByModel` | 🟡 Useful | 🟡 **Split** into actor + algorithm | `dano:inferredBy` / `inferredWith` (§3.2) |
 | **NEW — extraction timestamp** | *(absent)* | 🟢 **Core — add it** | `dano:inferredAt`; re-extraction comparison needs it (§3.2) |
 | `DocumentType` | 🟢 Core | 🟢 Core **+ comment required** | Must state it is not `LayoutContentType` (§2.3) |
@@ -258,7 +258,7 @@ change shape. The mint shrinks from ~48 to roughly **44**, and gains a timestamp
 | 2 | **Write an extraction ORSD, or cut to use-case demand** (§2.4) | Alessio | the legitimacy of ~40 terms |
 | 3 | Confirm `dcommon:Discipline` reuse and drop the SKOS `Discipline` | — | pass 3 |
 | 4 | Drop `scale`, `hasNorthPointOrientation`; bind to `dm:hasScale` / UC-07 `northArrowAngle` | — | pass 2 |
-| 5 | ~~**Align provenance to `dano:` rather than minting parallel terms**~~; add the timestamp | — | **Resolved.** Timestamp added as `aprov:inferredAt`; the alignment half is **reversed** — see the [DAnO comparison](dano-comparison.md) |
+| 5 | ~~**Align provenance to `dano:` rather than minting parallel terms**~~; add the timestamp | — | **Resolved.** Timestamp added as `aprov:inferredAt`; the alignment half is **reversed** — see the [DAnO comparison](../../../design-decisions/dano-comparison.md) |
 | 6 | Use DANO's `DrawingElementMeta` as evidence in the RDF-star vs reification decision | — | pass 5 |
 | 7 | Flag DANO to the UC-03 / UC-06 / UC-07 owners (§3.4) | — | nothing here |
 
@@ -266,7 +266,7 @@ change shape. The mint shrinks from ~48 to roughly **44**, and gains a timestamp
 
 ## 6. Method and limits
 
-**Read in full:** UC-01 ORSD v0.3 (402 lines), UC-06 ORSD v0.1, [`docs/specification/use-cases/README.md`](../specification/use-cases/README.md); UC-07 and UC-03
+**Read in full:** UC-01 ORSD v0.3 (402 lines), UC-06 ORSD v0.1, [`docs/specification/use-cases/README.md`](../../README.md); UC-07 and UC-03
 entity/traceability sections; the DANO specification pages; the DANO repository's activity.
 
 **Not read:** UC-07 and UC-03 in full (CQ sections skimmed via their traceability matrices); the raw DANO TTL —
