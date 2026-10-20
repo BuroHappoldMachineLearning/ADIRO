@@ -2,9 +2,10 @@
 
 <div class="adiro-actions" markdown="span">
 <details class="adiro-version">
-<summary class="md-button">Version 5.0.0 (latest)</summary>
+<summary class="md-button">Version 5.0.1 (latest)</summary>
 <ul>
-<li><a href="./" class="adiro-version-current" aria-current="page">5.0.0 (latest)</a></li>
+<li><a href="./" class="adiro-version-current" aria-current="page">5.0.1 (latest)</a></li>
+<li><a href="5.0.0/">5.0.0</a></li>
 <li><a href="4.0.1/">4.0.1</a></li>
 <li><a href="4.0.0/">4.0.0</a></li>
 <li><a href="3.0.0/">3.0.0</a></li>
@@ -19,7 +20,7 @@
 The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance and geometry modules, and the discipline modules build on it.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata`
-- **Versioned IRI:** `https://w3id.org/adiro/aec_drawing_metadata/5.0.0`
+- **Versioned IRI:** `https://w3id.org/adiro/aec_drawing_metadata/5.0.1`
 - **Imports:** `aec_geometry`, `aec_provenance`
 
 ## Interactive view
