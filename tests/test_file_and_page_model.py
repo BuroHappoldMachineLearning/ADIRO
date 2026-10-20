@@ -39,7 +39,7 @@ def test_party_is_the_disjoint_union_of_person_and_organisation():
 
 def test_the_iso_stubs_name_the_standard_and_carry_none_of_its_axioms():
     for stub in (CT.Document, CT.Party, CT.Person, CT.Organisation):
-        assert PROVENANCE.value(stub, RDFS.isDefinedBy) == URIRef("https://standards.iso.org/iso/21597/-1/ed-1/en/Container")
+        assert PROVENANCE.value(stub, RDFS.isDefinedBy) == URIRef("https://standards.iso.org/iso/21597/-1/ed-1/en/Container.rdf")
         axioms = [p for p, _ in PROVENANCE.predicate_objects(stub) if p in (RDFS.subClassOf, RDFS.domain, RDFS.range, OWL.disjointWith, OWL.equivalentClass)]
         assert axioms == [], f"{stub} is a stub: it carries {axioms}"
 

@@ -205,22 +205,22 @@ prov:endedAtTime rdf:type owl:DatatypeProperty ;
 ct:Document rdf:type owl:Class ;
     rdfs:label "Document (ISO 21597-1)" ;
     rdfs:comment "Typing stub for the ISO 21597-1 (ICDD) term Document, edition 1: an abstract reference to a document inside or outside a container. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at." ;
-    rdfs:isDefinedBy <https://standards.iso.org/iso/21597/-1/ed-1/en/Container> .
+    rdfs:isDefinedBy <https://standards.iso.org/iso/21597/-1/ed-1/en/Container.rdf> .
 
 ct:Party rdf:type owl:Class ;
     rdfs:label "Party (ISO 21597-1)" ;
     rdfs:comment "Typing stub for the ISO 21597-1 (ICDD) term Party, edition 1: the generalisation of an organisation and a person. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at." ;
-    rdfs:isDefinedBy <https://standards.iso.org/iso/21597/-1/ed-1/en/Container> .
+    rdfs:isDefinedBy <https://standards.iso.org/iso/21597/-1/ed-1/en/Container.rdf> .
 
 ct:Person rdf:type owl:Class ;
     rdfs:label "Person (ISO 21597-1)" ;
     rdfs:comment "Typing stub for the ISO 21597-1 (ICDD) term Person, edition 1. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at." ;
-    rdfs:isDefinedBy <https://standards.iso.org/iso/21597/-1/ed-1/en/Container> .
+    rdfs:isDefinedBy <https://standards.iso.org/iso/21597/-1/ed-1/en/Container.rdf> .
 
 ct:Organisation rdf:type owl:Class ;
     rdfs:label "Organisation (ISO 21597-1)" ;
     rdfs:comment "Typing stub for the ISO 21597-1 (ICDD) term Organisation, edition 1. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at." ;
-    rdfs:isDefinedBy <https://standards.iso.org/iso/21597/-1/ed-1/en/Container> .
+    rdfs:isDefinedBy <https://standards.iso.org/iso/21597/-1/ed-1/en/Container.rdf> .
 
 #################################################################
 #    Classes - agents
