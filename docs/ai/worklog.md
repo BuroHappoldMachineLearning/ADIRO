@@ -1,3 +1,11 @@
+## 2026-10-20 - Design page: the file a drawing is stored in
+
+Drafted `docs/specification/design-decisions/file-and-page-metadata.md` from the brainstorm [#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192). Decided with the maintainer: a `DrawingFile` (a reference to a
+document, identity by content hash), a `FilePage` (page number from 1, rotation, display size in points) and the `CoordinateFrame` reduced to the convention; `Party`, `Person`, `Organisation`
+in `aec_provenance`; classes are subclasses of the ISO 21597-1 edition-1 terms (local stubs), properties align by `skos:closeMatch` only (every ICDD property is functional, and `createdBy` has the
+container as its domain, which I checked in the published `Container.rdf`); the change is a MAJOR one for `aec_geometry` and `aec_provenance`, in the cut with [#170](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/170) and [#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171).
+Docs only: nothing is in the ontology yet. Not verified: the IFC document-information IRI in its OWL form (the IFC pages could not be read), and the ICDD terms beyond the published edition 1.
+
 ## 2026-10-20 - Authorship on the drawing and the revision, and `assertsRevision`
 
 Implemented the ontology half of [#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179) and [#69](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/69)
