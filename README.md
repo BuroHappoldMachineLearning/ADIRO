@@ -24,7 +24,7 @@
       <a href="https://burohappoldmachinelearning.github.io/ADIRO/contribute/build-status/#snapshot"><img src="https://img.shields.io/github/actions/workflow/status/BuroHappoldMachineLearning/ADIRO/backup-version.yml?label=snapshot" alt="release snapshot"></a><br>
       <a href="https://burohappoldmachinelearning.github.io/ADIRO/contribute/build-status/#reasoning"><img src="https://img.shields.io/github/actions/workflow/status/BuroHappoldMachineLearning/ADIRO/reasoning-main.yml?branch=main&label=reasoning" alt="reasoning"></a><br>
       <a href="https://burohappoldmachinelearning.github.io/ADIRO/contribute/build-status/#ci-alert-issues"><img src="https://img.shields.io/github/issues/BuroHappoldMachineLearning/ADIRO/ci-alert" alt="open CI alerts"></a><br>
-      <a href="https://burohappoldmachinelearning.github.io/ADIRO/contribute/build-status/">What do these mean?</a>
+      <sub><a href="https://burohappoldmachinelearning.github.io/ADIRO/contribute/build-status/">What do these mean?</a></sub>
     </td>
   </tr>
 </table>
