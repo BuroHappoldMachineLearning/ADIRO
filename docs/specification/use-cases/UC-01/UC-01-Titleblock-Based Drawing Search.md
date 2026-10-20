@@ -626,7 +626,7 @@ Changes from v0.8, made when the file a drawing is stored in was modelled ([#192
 
 - **FR 9 and CQ Group 9 added** (§3, §4): the file a drawing is stored in, and the page of it. `DrawingFile`, `FilePage`, `isOnPage` and `belongsToFile` are new (§2.1, §2.3, §6), with the properties that describe a file and a page; CQ 9.1 and CQ 9.3 are recorded as queries. The design is in [the file a drawing is stored in](../../design-decisions/file-and-page-metadata.md).
 - **`Person` moved to `aec_provenance`** (§2.1, §6), with its new parent `Party` and `Organisation`: they are domain-neutral, and a file's creator needs them too. `personName` stays in `aec_drawing_metadata`.
-- **`hasCoordinateFrame` removed**: the coordinate frames of a drawing are reached with `isOnPage` and `describesPage`. A region of the drawing stays a `BoundingBox` (`hasBoundingBox`), now stated as a restriction on `MetadataContainer` and on `Layout`, so the title block, a revision table, a legend, a key plan, a note and a layout may each carry one.
+- **`hasCoordinateFrame` removed**: the coordinate frames of a drawing are reached with `isOnPage` and `describesPage`. A region of the drawing stays a `BoundingBox` (`hasBoundingBox`), now stated as a restriction on `MetadataContainer`, on `Layout` and on `DrawingElement`, so the title block, a revision table, a legend, a key plan, a note, a layout and any symbol or component may each carry one.
 
 ### v0.8 (draft)
 

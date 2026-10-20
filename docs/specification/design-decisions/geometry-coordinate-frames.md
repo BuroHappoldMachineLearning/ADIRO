@@ -66,7 +66,7 @@ Two things are worth reading off this:
   boxes.
 - **Two independent inferences, two confidences.** The detector found the *box* (0.97, via a detector model);
   a different model read the *value* (0.88, via a VLM). Each is an `InferredEntity`, so each carries its own
-  `hasInferenceMeta` / `hasConfidence`. A **human** annotation is the same shape with `inferredWith` omitted and
+  `hasInferenceMeta` / `hasConfidence`. A **human** annotation is an inference step performed by a person, and the same shape with `inferredWith` omitted and
   the agent (`aprov:inferredBy`) a person.
 
 ## 2. Reading the numbers: coordinate frames
