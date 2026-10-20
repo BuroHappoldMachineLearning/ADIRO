@@ -1,3 +1,14 @@
+## 2026-10-20 - The post-release deploy failed on a stale checkout and raised no alert
+
+First release since [#173](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/173) was fixed: the snapshots were committed (the bot-token push works), but the
+deploy dispatched by `backup-version.yml` failed (`Commit and push documentation`: add/add conflict on `docs/aec_drawing_metadata/5.0.0/aec_drawing_metadata.html`), so the site
+and the badges stayed on the old versions. Cause: a `workflow_dispatch` run is queued behind the push run (concurrency group) but checks out the commit `main` had when it was
+dispatched, so it regenerated pages the first run had already committed. Repaired by dispatching the deploy again from the current `main`. Second finding: the alert
+watcher ([#175](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/175)) never saw the failure, because the run had been dispatched with `GITHUB_TOKEN` (actor `github-actions[bot]`) and GitHub starts
+no `workflow_run` workflow for such a run; the runs started by a person or by the ADIRO Bot did reach it (compared by actor). Fix ([#190](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/190)): `generate-docs` checks out `github.ref_name`;
+`backup-version.yml` dispatches with the ADIRO Bot token; `tests/test_workflow_tokens.py` keeps both (it fails without the fix). Not verified: the ADIRO Bot token's right to dispatch
+workflows from `backup-version.yml` (the release workflow already dispatches that way), and an alert on a real post-release failure: both show at the next release.
+
 ## 2026-10-20 - Data validation: SHACL shapes outside the ontology modules
 
 Implemented [#168](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/168). Decided with the maintainer: a root folder `data-validation/`

@@ -96,6 +96,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          # The branch by name, not the dispatched commit: runs are serialised, and a queued run started from the commit
+          # `main` had when it was dispatched, which misses what the run ahead of it committed back (#190).
+          ref: ${{ github.ref_name }}
           fetch-depth: 0  # Fetch all history for proper git operations
           token: ${{ steps.app-token.outputs.token }}   # the commit-back push is made as the ADIRO Bot (#173)
       

@@ -128,7 +128,9 @@ jobs:
         # pushed, but re-running this job for a tag must still repair a release whose
         # deploy was missed.
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # The ADIRO Bot token, not GITHUB_TOKEN: a run dispatched with GITHUB_TOKEN is started by github-actions[bot],
+          # and GitHub does not start a workflow_run workflow for it, so its failure would never reach the alert watcher (#190).
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: gh workflow run generate-deploy-docs.yml --repo "${{ github.repository }}" --ref "${{ github.event.repository.default_branch }}"
 
       - name: Publish changelog to the GitHub Release notes
