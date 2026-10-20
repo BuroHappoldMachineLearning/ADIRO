@@ -283,6 +283,22 @@ td {
     <script id="schema.org" type="application/ld+json">
 [
   {
+    "@id": "https://w3id.org/adiro/aec_drawing_metadata#TitleblockFieldScheme",
+    "@type": [
+      "https://schema.org/DefinedTermSet"
+    ],
+    "https://schema.org/description": [
+      {
+        "@value": "The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to."
+      }
+    ],
+    "https://schema.org/name": [
+      {
+        "@value": "Titleblock Field Scheme"
+      }
+    ]
+  },
+  {
     "@id": "https://w3id.org/adiro/aec_drawing_metadata",
     "@type": [
       "https://schema.org/DefinedTermSet"
@@ -313,22 +329,6 @@ td {
     "https://schema.org/publisher": [
       {
         "@value": "Buro Happold"
-      }
-    ]
-  },
-  {
-    "@id": "https://w3id.org/adiro/aec_drawing_metadata#TitleblockFieldScheme",
-    "@type": [
-      "https://schema.org/DefinedTermSet"
-    ],
-    "https://schema.org/description": [
-      {
-        "@value": "The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to."
-      }
-    ],
-    "https://schema.org/name": [
-      {
-        "@value": "Titleblock Field Scheme"
       }
     ]
   }
@@ -1240,12 +1240,6 @@ td {
                   </li>
                   <li>
                     <span>
-                      <a href="#appearsOnLayout">appearsOnLayout</a>
-                      <sup class="sup-op" title="OWL Object Property">op</sup>
-                    </span>
-                  </li>
-                  <li>
-                    <span>
                       <a href="#inlineReferencesLayout">inlineReferencesLayout</a>
                       <sup class="sup-op" title="OWL Object Property">op</sup>
                     </span>
@@ -2050,17 +2044,6 @@ td {
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#appearsOnLayout">appearsOnLayout</a>
-                  <sup class="sup-op" title="OWL Object Property">op</sup>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>
                 <a class="hover_property" href="https://w3id.org/profile/ontdoc/superClassOf" title="Inverse of RDFS' subClassOf. Defined in Ontology Documentation Profile">Super Class Of</a>
               </th>
               <td>
@@ -2719,12 +2702,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#DrawingRevision">DrawingRevision</a>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <a href="#DrawingRevision">DrawingRevision</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -2805,12 +2788,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <a href="#DrawingRevision">DrawingRevision</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#DrawingRevision">DrawingRevision</a>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -3190,47 +3173,6 @@ td {
               <td>
                 <span>
                   <a href="#DrawingSheet">Drawing Sheet</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="appearsOnLayout">
-          <h3>appearsOnLayout
-            <sup class="sup-op" title="OWL Object Property">op</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_drawing_metadata#appearsOnLayout</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>Source Layout on which a reference expression (inline, standalone or graphical) occurs, when membership is supported by evidence. For a ReferenceSymbol it is the same fact as hasReferenceSymbol read from the symbol; it is not asserted when the evidence supports only a page location.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#ReferenceExpression">Reference expression</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#Layout">Layout</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -3732,12 +3674,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <a href="#DrawingRevision">DrawingRevision</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#DrawingRevision">DrawingRevision</a>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -4414,9 +4356,6 @@ td {
             </li>
             <li>
               <a href="#denotesDrawingSheet">denotesDrawingSheet</a>
-            </li>
-            <li>
-              <a href="#appearsOnLayout">appearsOnLayout</a>
             </li>
             <li>
               <a href="#inlineReferencesLayout">inlineReferencesLayout</a>
