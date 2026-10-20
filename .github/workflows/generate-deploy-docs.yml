@@ -224,6 +224,10 @@ jobs:
           # Together these avoid the /ADIRO/ project-subpath false positives that
           # `--base-url` produced (it rewrote e.g. `ORSD_v1.2/` to `github.io/ORSD_v1.2/`,
           # dropping the /ADIRO/ prefix).
+          # `--accept` lists 502-504 as "could not verify", not broken: the check sends thousands of requests to github.com
+          # (our own issue and edit pages) and a transient 5xx from GitHub itself must not fail the deploy and raise an
+          # alert (#202). A 404 still fails, which is what catches a wrong issue number. `--max-concurrency` keeps the
+          # check from hammering one host (lychee's default is 128).
           args: >-
             --no-progress
             --max-retries 3
@@ -232,7 +236,8 @@ jobs:
             --scheme https
             --scheme http
             --exclude-path site/404.html
-            --accept '100..=103,200..=299,429'
+            --max-concurrency 16
+            --accept '100..=103,200..=299,429,502..=504'
             './site/**/*.html'
           fail: true
           jobSummary: true
