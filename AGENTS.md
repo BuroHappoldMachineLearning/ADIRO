@@ -118,8 +118,9 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
 - **`.github/workflows/compat-diff-comment.yml`** — on PRs touching `src/**.ttl` (RES-67), posts a sticky
   comment with each changed module's **prospective next version** (`compat_diff.py --markdown`). Report-only;
   the gate is the warn step above. Each listed change names what changed (for an annotation change, which annotation)
-  and links to its line in `src/<module>.ttl` at the PR's head commit ([#181](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/181));
-  the link context comes from `COMPAT_LINK_REPO` / `COMPAT_LINK_SHA`, so a local run lists the changes without links.
+  and links to its line in the PR diff (`diff`) and in `src/<module>.ttl` at the PR's head commit (`file`)
+  ([#181](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/181), [#183](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/183));
+  the link context comes from `COMPAT_LINK_REPO` / `COMPAT_LINK_SHA` / `COMPAT_LINK_PR` / `COMPAT_LINK_BASE_REPO`, so a local run lists the changes without links.
 - **`.github/workflows/ontology-reasoning.yml`** — on PRs touching `src/**.ttl` (RES-36), runs an OWL 2 DL
   reasoner (**HermiT**) + ROBOT `report` over the whole suite at latest and posts a sticky comment (built by `scripts/qc_comment.py`: the verdict, then **Important checks** (the repository's own, from `validate_ontology.py`, with each module's findings in an expandable Findings column), then **Minor checks** (ROBOT: a row per rule with a grouped preview, the full rows kept as a run artifact), and the introduction collapsed at the bottom, with no internal tracker IDs). The
   **reasoner is a blocking gate** — a PR that makes the merged suite inconsistent / unsatisfiable / non-DL (the script also validates the OWL 2 DL profile with ROBOT, because the reasoner accepts illegal punning; the standing "undeclared term" violations are left out, [#157](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/157))

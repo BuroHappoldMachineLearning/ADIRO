@@ -1,3 +1,12 @@
+## 2026-10-20 - Version-impact comment links each change to the PR diff
+
+Implemented [#183](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/183). Each change in the comment now links to its line in the
+PR's "Files changed" view (`.../pull/<n>/changes#diff-<sha256 of the path>R<line>`, `L<line>` on the old side for a removed term) as well as
+to the file at the head commit. The anchor rule was checked against a real link from the user (SHA-256 of `docs/aec_geometry.ttl`). Two more
+variables in both workflows carry the pull request number and the base repository (the fork flow's PR is in the base repository, the file in the
+fork). Verified: 29 tests, and a run with `COMPAT_LINK_PR=180`. Not verified: GitHub opening the anchor for a line the diff does not show (an
+unchanged first line of a term), or for a diff GitHub collapses as large; the file link is the fallback for both.
+
 ## 2026-10-20 - Version-impact comment names the changed annotation and links its line
 
 Implemented [#181](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/181) in `scripts/compat_diff.py`: `annotation_details` names the

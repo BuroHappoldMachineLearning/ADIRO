@@ -16,6 +16,7 @@ Warn mode: this is advisory. The script exits 0 unless ``--enforce`` is given
 (Phase 2b), in which case an insufficient/missing bump exits 1.
 """
 
+import hashlib
 import os
 import re
 import subprocess
@@ -250,6 +251,7 @@ _ANNOTATION_PREDICATE = {
     "rdfs:range": r"rdfs:range\b",
     "rdfs:subPropertyOf": r"rdfs:subPropertyOf\b",
 }
+_REPO_RE = r"[\w-][\w.-]*/[\w-][\w.-]*"  # owner/name: no part may start with a dot (".." is not a repository)
 _PREFIX_RE = re.compile(r"^\s*@prefix\s+([\w.-]*):\s*<([^>]*)>\s*\.", re.M | re.I)
 
 
@@ -297,11 +299,21 @@ def locate_lines(text, iri, names=()):
     return start + 1, found
 
 
-def links_from_env(repo_root):
-    """The context for line links, from COMPAT_LINK_REPO (owner/name) and COMPAT_LINK_SHA (a full commit), or None."""
+def links_from_env(repo_root, base_dir=None):
+    """The context for line links, or None.
+
+    COMPAT_LINK_REPO (owner/name of the head) and COMPAT_LINK_SHA (a full commit) give the file links. With
+    COMPAT_LINK_PR (the pull request number) and COMPAT_LINK_BASE_REPO (owner/name of the repository the pull request
+    is in; the head's when absent) each change also links to its line in the PR diff (#183). ``base_dir`` holds the
+    base branch's files, for the line of a removed term.
+    """
     repo, sha = os.environ.get("COMPAT_LINK_REPO", ""), os.environ.get("COMPAT_LINK_SHA", "")
-    if not (re.fullmatch(r"[\w.-]+/[\w.-]+", repo) and re.fullmatch(r"[0-9a-f]{40}", sha)):
+    if not (re.fullmatch(_REPO_RE, repo) and re.fullmatch(r"[0-9a-f]{40}", sha)):
         return None
+    pr = os.environ.get("COMPAT_LINK_PR", "")
+    base_repo = os.environ.get("COMPAT_LINK_BASE_REPO", "") or repo
+    if not (re.fullmatch(r"[1-9][0-9]{0,8}", pr) and re.fullmatch(_REPO_RE, base_repo)):
+        pr, base_repo = "", repo
 
     def read(module):
         # The text at the linked commit, so a line number is the one the link opens; the working tree is the fallback.
@@ -311,7 +323,11 @@ def links_from_env(repo_root):
         except Exception:
             return (Path(repo_root) / "src" / f"{module}.ttl").read_text(encoding="utf-8")
 
-    return {"repo": repo, "sha": sha, "read": read}
+    def read_base(module):
+        return (Path(base_dir) / f"{module}.ttl").read_text(encoding="utf-8")
+
+    return {"repo": repo, "sha": sha, "read": read, "pr": pr, "base_repo": base_repo,
+            "read_base": read_base if base_dir else None}
 
 
 def required_bump(deltas):
@@ -492,8 +508,8 @@ def to_markdown(results, pr_results=None, links=None):
     vs the base branch, from ``analyze_pr_change``); when given, a "Changes in
     this PR" section is shown first. When ``None`` (e.g. a local run without
     ``--base-dir``) that section is omitted.
-    ``links`` — optional ``{repo, sha, read}`` (see ``links_from_env``): each listed change then links to its line
-    in ``src/<module>.ttl`` at that commit (#181).
+    ``links`` — optional (see ``links_from_env``): each listed change then links to its line in the PR diff (#183)
+    and in ``src/<module>.ttl`` at the head commit (#181).
     """
     out = ["## 🔢 Ontology version impact", ""]
 
@@ -513,31 +529,45 @@ def to_markdown(results, pr_results=None, links=None):
                 for d, iri in r["deltas"]:
                     by_sev.setdefault(DELTA_SEVERITY[d], []).append((d, iri))
                 details = r.get("details", {})
-                text = None
+                text = base_text = None
                 if links:
                     try:
                         text = links["read"](r["module"])
                     except Exception:
                         text = None  # no text, no links: the report never fails for it
+                    try:
+                        base_text = links["read_base"](r["module"]) if links.get("read_base") else None
+                    except Exception:
+                        base_text = None
+                path_hash = hashlib.sha256(f"src/{r['module']}.ttl".encode()).hexdigest()  # GitHub's anchor of a file in a PR diff
 
-                def url(line):
-                    return f"https://github.com/{links['repo']}/blob/{links['sha']}/src/{r['module']}.ttl#L{line}"
+                def refs(line, side="R"):
+                    """Links to one line: the PR diff (R = new side, L = old side) when the PR is known, and the file at the head."""
+                    found = []
+                    if links.get("pr"):
+                        found.append(f"[diff](https://github.com/{links['base_repo']}/pull/{links['pr']}/changes#diff-{path_hash}{side}{line})")
+                    if side == "R":
+                        found.append(f"[file](https://github.com/{links['repo']}/blob/{links['sha']}/src/{r['module']}.ttl#L{line})")
+                    return " · ".join(found)
 
                 for sev in (BREAKING, POTENTIALLY, NON_BREAKING):
                     for d, iri in by_sev.get(sev, []):
                         local = iri.rsplit("/", 1)[-1].rsplit("#", 1)[-1]
                         names = details.get(iri, []) if d == "ANNOTATION_CHANGED" else []
-                        subject, where = (None, {})
-                        if text is not None and d != "TERM_REMOVED":  # a removed term has no line in the PR head
+                        subject, where, side = None, {}, "R"
+                        if d == "TERM_REMOVED":  # no line in the PR head: the line is on the old side of the diff
+                            if base_text is not None:
+                                subject, side = locate_lines(base_text, iri)[0], "L"
+                        elif text is not None:
                             subject, where = locate_lines(text, iri, names)
                         if names:
                             parts = []
                             for name in names:
                                 line = where.get(name) or subject
-                                parts.append(f"`{name}`" + (f" ([line {line}]({url(line)}))" if line else ""))
+                                parts.append(f"`{name}`" + (f" (line {line}: {refs(line)})" if line else ""))
                             out.append(f"  - `[{sev}]` {d} — `{local}`: " + ", ".join(parts))
-                        elif subject:
-                            out.append(f"  - `[{sev}]` {d} — [`{local}`]({url(subject)})")
+                        elif subject and refs(subject, side):
+                            out.append(f"  - `[{sev}]` {d} — `{local}` (line {subject}: {refs(subject, side)})")
                         else:
                             out.append(f"  - `[{sev}]` {d} — `{local}`")
         out.append("")
@@ -621,7 +651,7 @@ def main():
         if base_dir is not None:
             pr_results = [analyze_pr_change(repo_root, base_dir, m) for m in modules]
         # UTF-8 to stdout regardless of the host console codepage (Windows cp1252).
-        sys.stdout.buffer.write((to_markdown(results, pr_results, links_from_env(repo_root)) + "\n").encode("utf-8"))
+        sys.stdout.buffer.write((to_markdown(results, pr_results, links_from_env(repo_root, base_dir)) + "\n").encode("utf-8"))
         return
 
     print("Compatibility diff (warn mode) - src/ vs last released snapshot:")
