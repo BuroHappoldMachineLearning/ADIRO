@@ -65,6 +65,8 @@ jobs:
           # each listed change links to its line in the PR head (#181)
           COMPAT_LINK_REPO: ${{ github.repository }}
           COMPAT_LINK_SHA: ${{ github.event.pull_request.head.sha }}
+          COMPAT_LINK_PR: ${{ github.event.pull_request.number }}
+          COMPAT_LINK_BASE_REPO: ${{ github.repository }}
         run: uv run --python 3.12 --no-project python scripts/compat_diff.py --markdown --base-dir .tools/base-src > compat-diff.md
 
       - name: Create ADIRO Bot token
