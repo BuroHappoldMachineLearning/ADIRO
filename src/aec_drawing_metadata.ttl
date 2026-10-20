@@ -549,7 +549,8 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
 #################################################################
 
 :DrawingElement rdf:type owl:Class;
-    rdfs:comment "Element depicted on a drawing. Contained by Layout. Can be a Facade system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc.";
+    rdfs:subClassOf [ rdf:type owl:Restriction ; owl:onProperty geom:hasBoundingBox ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass geom:BoundingBox ];
+    rdfs:comment "Element depicted on a drawing. Contained by Layout. Can be a Facade system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc. It may carry a BoundingBox, its region on the page (geom:hasBoundingBox).";
     rdfs:label "Drawing element";
     :isComputerVisionLabel "false"^^xsd:boolean.
 

@@ -76,9 +76,10 @@ A large-scale zoomed-in drawing of a specific construction assembly or connectio
 
 ### Drawing element {#DrawingElement}
 
-Element depicted on a drawing. Contained by Layout. Can be a Facade system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc.
+Element depicted on a drawing. Contained by Layout. Can be a Facade system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc. It may carry a BoundingBox, its region on the page (geom:hasBoundingBox).
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#DrawingElement`
+- **Restrictions:** `geom:hasBoundingBox` min 0 `geom:BoundingBox`
 - **isComputerVisionLabel:** false
 
 ### Drawing identifier mention {#DrawingIdentifierMention}
