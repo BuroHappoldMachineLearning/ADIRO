@@ -18,6 +18,7 @@ The ontology is validated by `scripts/validate_ontology.py` and the reasoner. Da
 
 | File | Rules |
 |---|---|
+| `uc01-authorship.shacl.ttl` | A drawing has at least one recorded author (a warning); a drawing that records none is read as authored by its revisions' authors, so an author on a revision counts. Only the author is required: the checker and the approver are optional, and no rule reports their absence. It answers competency question CQ 4.4 of the UC-01 ORSD. |
 | `uc03-composition.shacl.ttl` | The composition rules of the UC-03 reference expressions: an inline layout and sheet reference contains exactly one drawing identifier mention and at least one layout identifier mention; a reference symbol contains at most one drawing identifier mention; a drawing identifier mention has at most one accepted `denotesDrawingSheet` target. |
 
 A file holds the rules of one use case or one topic, and is named `<topic>.shacl.ttl`. The suffix names the technology;

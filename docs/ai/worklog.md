@@ -1,3 +1,14 @@
+## 2026-10-20 - Authorship on the drawing and the revision, and `assertsRevision`
+
+Implemented the ontology half of [#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179) and [#69](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/69)
+(approved by the maintainer). `isAuthoredBy`, `isCheckedBy` and `isApprovedBy` now have the union domain `DrawingSheet` or `DrawingRevision`, since
+the title block's author is the drawing's and a revision can be made by someone else; `assertsProject` and `assertsPackage` (`Titleblock` to `Project` / `DrawingPackage`, added at the maintainer's request: the title block's claim differs from `belongsToProject` / `belongsToPackage`, the filing; CQ 2.3, 2.4, 8.3, 8.4; a package is optional), `assertsRevision` (`RevisionTable` to `DrawingRevision`)
+records which printed table a revision was read from. UC-01 ORSD v0.8 (CQ 3.4, 4.4, 4.5 with their queries, the amended "Person vs Role" note,
+open issue G12); `tests/test_uc01_competency_queries.py` runs the recorded queries on small data. The version impact is MAJOR, because the
+compatibility check reads any domain change as potentially breaking although a widening invalidates no statement; it goes into the MAJOR cut
+planned with [#170](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/170) and [#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171).
+`issueDate` widens the same way (decided with the maintainer; "date authored" is its `skos:altLabel`), and only the author is required (checker and approver are optional). A drawing that records no author is read as authored by its revisions' authors (decided with the maintainer; a path in CQ 4.4 and in the shape, not an OWL chain, which would add revision authors to a drawing that records its own); the fallback is for the author only. `data-validation/uc01-authorship.shacl.ttl` is the shape for CQ 4.4 (a Warning; its property shape carries its own severity, because SHACL does not pass a node shape's severity down). Not done: telling "the extraction missed the author" from "the drawing names none" (the vocabulary of [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)). Merge the pending PATCH Release PR before this one: this change turns the next cut into a MAJOR.
+
 ## 2026-10-20 - The post-release deploy failed on a stale checkout and raised no alert
 
 First release since [#173](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/173) was fixed: the snapshots were committed (the bot-token push works), but the

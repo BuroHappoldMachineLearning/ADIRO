@@ -18,6 +18,7 @@ dv:InlineReferenceComposition a sh:NodeShape ;
     sh:targetClass metadata:InlineLayoutSheetReference ;
     sh:severity sh:Violation ;
     sh:property [
+        sh:severity sh:Violation ;
         sh:path metadata:contains ;
         sh:qualifiedValueShape [ sh:class metadata:DrawingIdentifierMention ] ;
         sh:qualifiedMinCount 1 ;
@@ -25,6 +26,7 @@ dv:InlineReferenceComposition a sh:NodeShape ;
         sh:message "An inline layout and sheet reference contains exactly one drawing identifier mention."
     ] ;
     sh:property [
+        sh:severity sh:Violation ;
         sh:path metadata:contains ;
         sh:qualifiedValueShape [ sh:class metadata:LayoutIdentifierMention ] ;
         sh:qualifiedMinCount 1 ;
@@ -35,6 +37,7 @@ dv:ReferenceSymbolComposition a sh:NodeShape ;
     sh:targetClass csymbol:ReferenceSymbol ;
     sh:severity sh:Violation ;
     sh:property [
+        sh:severity sh:Violation ;
         sh:path metadata:contains ;
         sh:qualifiedValueShape [ sh:class metadata:DrawingIdentifierMention ] ;
         sh:qualifiedMaxCount 1 ;
@@ -45,6 +48,7 @@ dv:MentionTarget a sh:NodeShape ;
     sh:targetClass metadata:DrawingIdentifierMention ;
     sh:severity sh:Violation ;
     sh:property [
+        sh:severity sh:Violation ;
         sh:path metadata:denotesDrawingSheet ;
         sh:maxCount 1 ;
         sh:message "A drawing identifier mention has at most one accepted denotesDrawingSheet target."

@@ -432,6 +432,33 @@ The organisation that produced the drawing — the originator in ISO 19650-2 ter
 - **Range:** [Organisation](#Organisation)
 - **extraction hint:** Usually the organisation whose logo sits in or beside the title block, and whose code appears in the drawing-number originator segment.
 
+### assertsPackage {#assertsPackage}
+
+The drawing package this title block names, when it names one: a claim read off the printed region, like assertsProject. Optional: a title block may or may not name a package, so there is no cardinality. The fact that a drawing is filed in a package is belongsToPackage; the two can differ, and the difference is what a query can report.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#assertsPackage`
+- **Domain:** [Titleblock](#Titleblock)
+- **Range:** [DrawingPackage](#DrawingPackage)
+- **extraction hint:** Present on some title blocks only: a package, volume or submission cell, often next to the project. Do not invent one when the cell is absent.
+
+### assertsProject {#assertsProject}
+
+The project this title block names: a claim read off the printed region, like assertsClient. The fact that a drawing is filed under a project is belongsToProject; the two can differ (a drawing filed under another project than its title block names), and the difference is what a query can report.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#assertsProject`
+- **Domain:** [Titleblock](#Titleblock)
+- **Range:** [Project](#Project)
+- **extraction hint:** The project cell of the title block, a name, a number or both; the same project is named on every drawing of the project.
+
+### assertsRevision {#assertsRevision}
+
+A revision that this revision table lists: a claim read off the printed table, one link per row, so a table listing revisions A, B and C asserts three. It does not say which revision is the latest, and it does not replace hasRevision, which states that a drawing has the revision; assertsRevision records which printed table a revision was read from. Reach the table from a revision with the inverse path ^assertsRevision.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#assertsRevision`
+- **Domain:** [Revision table](#RevisionTable)
+- **Range:** [DrawingRevision](#DrawingRevision)
+- **extraction hint:** One assertion per row of the table. Do not infer the latest revision from the order of the rows: it differs between drawings.
+
 ### belongsToPackage {#belongsToPackage}
 
 Associates a DrawingSheet with the DrawingPackage it belongs to.
@@ -534,26 +561,26 @@ An accepted target Layout of an inline layout/sheet reference. Multiple supporte
 
 ### isApprovedBy {#isApprovedBy}
 
-The Person who approved this DrawingRevision.
+The Person who approved a drawing or a revision of it. On a DrawingSheet it is the person the drawing names as having approved it; on a DrawingRevision it is the person who approved that revision, who can differ from the one named for the drawing. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179).
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isApprovedBy`
-- **Domain:** [DrawingRevision](#DrawingRevision)
+- **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))
 - **Range:** [Person](#Person)
 
 ### isAuthoredBy {#isAuthoredBy}
 
-The Person who authored this DrawingRevision.
+The Person who authored a drawing or a revision of it. On a DrawingSheet it is the person the drawing names as having drawn it; on a DrawingRevision it is the person who authored that revision, who can differ from the one named for the drawing. A drawing that records no author of its own is read as authored by the authors of its revisions (the property path isAuthoredBy | hasRevision/isAuthoredBy); this is a reading convention, not an entailment, so a drawing that records its own author keeps just that author. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179).
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isAuthoredBy`
-- **Domain:** [DrawingRevision](#DrawingRevision)
+- **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))
 - **Range:** [Person](#Person)
 
 ### isCheckedBy {#isCheckedBy}
 
-The Person who checked this DrawingRevision.
+The Person who checked a drawing or a revision of it. On a DrawingSheet it is the person the drawing names as having checked it; on a DrawingRevision it is the person who checked that revision, who can differ from the one named for the drawing. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179).
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isCheckedBy`
-- **Domain:** [DrawingRevision](#DrawingRevision)
+- **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))
 - **Range:** [Person](#Person)
 
 ## Datatype Properties
@@ -606,10 +633,10 @@ Scale notation, e.g. '1:50'. Applies to a DrawingSheet where one scale governs t
 
 ### issueDate {#issueDate}
 
-The date this revision was issued.
+The date a drawing or a revision of it was issued. On a DrawingSheet it is the date the title block prints for the drawing (the date of its current issue); on a DrawingRevision it is the date that revision was issued. It is also the date authored: ADIRO has no separate authoring-date property.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#issueDate`
-- **Domain:** [DrawingRevision](#DrawingRevision)
+- **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))
 - **Range:** `xsd:date`
 
 ### layoutIdentifier {#layoutIdentifier}

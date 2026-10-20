@@ -131,20 +131,20 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
 
 :isAuthoredBy rdf:type owl:ObjectProperty ;
     rdfs:label "isAuthoredBy" ;
-    rdfs:comment "The Person who authored this DrawingRevision." ;
-    rdfs:domain :DrawingRevision ;
+    rdfs:comment "The Person who authored a drawing or a revision of it. On a DrawingSheet it is the person the drawing names as having drawn it; on a DrawingRevision it is the person who authored that revision, who can differ from the one named for the drawing. A drawing that records no author of its own is read as authored by the authors of its revisions (the property path isAuthoredBy | hasRevision/isAuthoredBy); this is a reading convention, not an entailment, so a drawing that records its own author keeps just that author. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179)." ;
+    rdfs:domain [ rdf:type owl:Class ; owl:unionOf ( :DrawingSheet :DrawingRevision ) ] ;
     rdfs:range :Person .
 
 :isCheckedBy rdf:type owl:ObjectProperty ;
     rdfs:label "isCheckedBy" ;
-    rdfs:comment "The Person who checked this DrawingRevision." ;
-    rdfs:domain :DrawingRevision ;
+    rdfs:comment "The Person who checked a drawing or a revision of it. On a DrawingSheet it is the person the drawing names as having checked it; on a DrawingRevision it is the person who checked that revision, who can differ from the one named for the drawing. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179)." ;
+    rdfs:domain [ rdf:type owl:Class ; owl:unionOf ( :DrawingSheet :DrawingRevision ) ] ;
     rdfs:range :Person .
 
 :isApprovedBy rdf:type owl:ObjectProperty ;
     rdfs:label "isApprovedBy" ;
-    rdfs:comment "The Person who approved this DrawingRevision." ;
-    rdfs:domain :DrawingRevision ;
+    rdfs:comment "The Person who approved a drawing or a revision of it. On a DrawingSheet it is the person the drawing names as having approved it; on a DrawingRevision it is the person who approved that revision, who can differ from the one named for the drawing. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179)." ;
+    rdfs:domain [ rdf:type owl:Class ; owl:unionOf ( :DrawingSheet :DrawingRevision ) ] ;
     rdfs:range :Person .
 
 :hasStatusCode rdf:type owl:ObjectProperty ;
@@ -161,7 +161,7 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
 #    CLAIM, not a verified fact, and the property name is the cheapest
 #    place to make that visible at every call site. It carries real
 #    weight here: assertsClient (a claim read off a printed region) and
-#    isCheckedBy (a fact about a revision) sit in the same namespace,
+#    isCheckedBy (a fact about a drawing or a revision) sit in the same namespace,
 #    so the verb is the only thing distinguishing them.
 #################################################################
 
@@ -180,6 +180,29 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
     skos:altLabel "client"@en, "employer"@en, "for"@en,
                   "Bauherr"@de, "Auftraggeber"@de ;
     :extractionHint "Often the most prominent organisation name on the sheet, sometimes a logo rather than text. Frequently in its own cell above or beside the originator's block."@en .
+
+:assertsProject rdf:type owl:ObjectProperty ;
+    rdfs:label "assertsProject" ;
+    rdfs:domain :Titleblock ;
+    rdfs:range :Project ;
+    rdfs:comment "The project this title block names: a claim read off the printed region, like assertsClient. The fact that a drawing is filed under a project is belongsToProject; the two can differ (a drawing filed under another project than its title block names), and the difference is what a query can report." ;
+    skos:altLabel "project"@en, "Projekt"@de, "Bauvorhaben"@de ;
+    :extractionHint "The project cell of the title block, a name, a number or both; the same project is named on every drawing of the project."@en .
+
+:assertsPackage rdf:type owl:ObjectProperty ;
+    rdfs:label "assertsPackage" ;
+    rdfs:domain :Titleblock ;
+    rdfs:range :DrawingPackage ;
+    rdfs:comment "The drawing package this title block names, when it names one: a claim read off the printed region, like assertsProject. Optional: a title block may or may not name a package, so there is no cardinality. The fact that a drawing is filed in a package is belongsToPackage; the two can differ, and the difference is what a query can report." ;
+    skos:altLabel "package"@en, "volume"@en, "submission"@en, "Paket"@de ;
+    :extractionHint "Present on some title blocks only: a package, volume or submission cell, often next to the project. Do not invent one when the cell is absent."@en .
+
+:assertsRevision rdf:type owl:ObjectProperty ;
+    rdfs:label "assertsRevision" ;
+    rdfs:domain :RevisionTable ;
+    rdfs:range :DrawingRevision ;
+    rdfs:comment "A revision that this revision table lists: a claim read off the printed table, one link per row, so a table listing revisions A, B and C asserts three. It does not say which revision is the latest, and it does not replace hasRevision, which states that a drawing has the revision; assertsRevision records which printed table a revision was read from. Reach the table from a revision with the inverse path ^assertsRevision." ;
+    :extractionHint "One assertion per row of the table. Do not infer the latest revision from the order of the rows: it differs between drawings."@en .
 
 :assertsOriginator rdf:type owl:ObjectProperty ;
     rdfs:label "asserts originator"@en ;
@@ -282,8 +305,9 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
 
 :issueDate rdf:type owl:DatatypeProperty ;
     rdfs:label "issueDate" ;
-    rdfs:comment "The date this revision was issued." ;
-    rdfs:domain :DrawingRevision ;
+    rdfs:comment "The date a drawing or a revision of it was issued. On a DrawingSheet it is the date the title block prints for the drawing (the date of its current issue); on a DrawingRevision it is the date that revision was issued. It is also the date authored: ADIRO has no separate authoring-date property." ;
+    skos:altLabel "date authored"@en ;
+    rdfs:domain [ rdf:type owl:Class ; owl:unionOf ( :DrawingSheet :DrawingRevision ) ] ;
     rdfs:range xsd:date .
 
 :personName rdf:type owl:DatatypeProperty ;
