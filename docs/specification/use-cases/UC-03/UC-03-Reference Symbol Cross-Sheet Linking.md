@@ -1,6 +1,6 @@
 # UC-03: Reference Symbol Cross-Sheet Linking
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-03 · **Version:** 0.6 (semantic extension implemented on this branch, pending review — see [§8](#8-open-issues-pending-team-discussion) for deferred items, [§10](#10-version-history) for changelog)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-03 · **Version:** 0.7 (semantic extension implemented on this branch, pending review — see [§8](#8-open-issues-pending-team-discussion) for deferred items, [§10](#10-version-history) for changelog)
 
 ---
 
@@ -63,7 +63,6 @@ decisions remain in immutable source evidence; an accepted target edge is assert
 | `hasReferenceSymbol`  | `Layout`          | `ReferenceSymbol` | `aec_common_symbols`   | NEW    | `metadata:contains`     |
 | `referencesLayout`    | `ReferenceSymbol` | `Layout`          | `aec_common_symbols`   | NEW    | (top-level)             |
 | `denotesDrawingSheet` | `DrawingIdentifierMention` | `DrawingSheet` | `aec_drawing_metadata` | NEW | (top-level) |
-| `appearsOnLayout` | `ReferenceExpression` | `Layout` | `aec_drawing_metadata` | NEW | (top-level) |
 | `inlineReferencesLayout` | `InlineLayoutSheetReference` | `Layout` | `aec_drawing_metadata` | NEW | (top-level) |
 
 > **Design note — inverse properties.** ADIRO declares **no** named inverse properties and no `owl:inverseOf` axioms. Only the forward direction of each pair is modelled: `hasReferenceSymbol` (Layout → ReferenceSymbol, ⊂ `metadata:contains`) and `referencesLayout` (ReferenceSymbol → Layout). Reverse navigation uses the SPARQL inverse path, e.g. `?sym ^csymbol:hasReferenceSymbol ?layout`, or simply reads the forward triple in the other direction. Decided project-wide in [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21). *(Changed in [v0.3](#10-version-history).)*
@@ -160,7 +159,7 @@ See the [semantic design note](design-notes/uc03-semantic-references.md) for the
 > expression to its accepted Layout targets, while allowing unresolved members to have no target edge.
 
 - Source: UC-03 source-to-target traceability ([#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95))
-- Derived terms: `metadata:denotesDrawingSheet`, `appearsOnLayout`, `inlineReferencesLayout`
+- Derived terms: `metadata:denotesDrawingSheet`, `inlineReferencesLayout`
 - Detailed component-to-target pairing stays in structured evidence; the graph contains the supported
   target set. This does not add the graphical whole-sheet relation deferred in
   [#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38) or claim that a PDF hyperlink was emitted.
@@ -315,7 +314,7 @@ string; member-level pairings and unresolved decisions require the indexed evide
 | `metadata:DrawingIdentifierMention` / `LayoutIdentifierMention` | `aec_drawing_metadata` | NEW | CQ 4.1–4.3 | FR 7, FR 8 |
 | `metadata:InlineLayoutSheetReference` / `StandaloneSheetReference` | `aec_drawing_metadata` | NEW | CQ 4.1–4.3 | FR 7 |
 | `metadata:denotesDrawingSheet` | `aec_drawing_metadata` | NEW | CQ 4.2, CQ 4.3 | FR 8 |
-| `metadata:appearsOnLayout` / `inlineReferencesLayout` | `aec_drawing_metadata` | NEW | CQ 4.2 | FR 8 |
+| `metadata:inlineReferencesLayout` | `aec_drawing_metadata` | NEW | CQ 4.2 | FR 8 |
 
 ---
 
@@ -392,7 +391,13 @@ For the full design-debate reasoning behind the v0.2 modelling choices, see the 
 
 ## 10. Version History
 
-### v0.6 (current branch — pending review)
+### v0.7 (current)
+
+Change from v0.6, made when the duplicate of `contains` was removed ([#170](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/170)). MAJOR in substance (a term removed); the number stays in the 0.x series because the document is still a draft:
+
+- **`appearsOnLayout` removed** (§2.3, FR 8, §6). The evidenced source Layout of a reference expression, inline, standalone or graphical, is stated with `contains` from that Layout (`hasReferenceSymbol` specialises it for a marker) and read from the expression's side with the inverse path `^metadata:contains`; a term that said the same fact a second way is not kept. The design note on semantic references is amended. No script or test used the term.
+
+### v0.6 (previous)
 
 Substantive UC-03 semantic extension under [#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95):
 FR 7–8 and CQ Group 4 add source-number occurrences, complete inline/standalone expressions, and accepted

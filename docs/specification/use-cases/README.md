@@ -50,7 +50,7 @@ This pipeline enforces **forward traceability** (every OWL term traces back to a
 | **Actor**       | Designer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | **Goal**        | Navigate across sheets via reference symbols                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | **Description** | As a designer, I want to understand how a certain building element or parts are designed, so I want to find all the drawings that are connected to a drawing. In engineering drawings, there are typically Reference Symbols such as Detail Markers, Section Markers, and Elevation Markers. By recognising these Reference Symbols, we can automatically match and link the Sections, Details, and Elevations they reference -- enabling navigation across sheets and even across drawing sets. |
-| **ORSD Status** | ✅ [Semantic extension (v0.6), pending review](<UC-03/UC-03-Reference Symbol Cross-Sheet Linking.md>) — geometry and navigation cases deferred |
+| **ORSD Status** | ✅ [Semantic extension (v0.7), pending review](<UC-03/UC-03-Reference Symbol Cross-Sheet Linking.md>) — geometry and navigation cases deferred |
 
 ### UC-04: Element Similarity Search
 
@@ -124,7 +124,7 @@ Following the LOT pipeline (`Use Case → Information Needs → Functional Requi
 
 | Milestone | UC-01 | UC-03 |
 |---|:---:|:---:|
-| ORSD (Use Case → CQs) | ✅ v0.10 | ✅ v0.6 |
+| ORSD (Use Case → CQs) | ✅ v0.10 | ✅ v0.7 |
 | OWL Terms Specification | ✅ | ✅ |
 | ORSD Review & Alignment | ✅ | ✅ (3 open issues) |
 | T-Box Implementation (.owl/.ttl) | ✅ | ✅ |

@@ -15,6 +15,7 @@ _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumpe
 - **`assertsRevision`** ([#69](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/69)): from a `RevisionTable` to each `DrawingRevision` it lists, one link per row. It records which printed table a revision was read from; it does not say which revision is the latest.
 
 ### Removed
+- **BREAKING: `appearsOnLayout` removed** ([#170](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/170)): it recorded the source `Layout` of a reference expression, which `contains` from that Layout already says (`hasReferenceSymbol` specialises it for a marker); the layout of an expression is read with the inverse path `^contains`. Downstream consumers that emit or read `appearsOnLayout` need to use `contains` from the layout instead.
 - **BREAKING: `Person` and `Organisation` moved to `aec_provenance`** ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)): they are domain-neutral, and the creator of a file needs them too. Their IRIs change, and they gain a parent `Party`. `personName` and `organisationName` stay here, with the moved classes as their domain; the ranges of `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `assertsClient` and `assertsOriginator` follow. Downstream consumers that read a person or an organisation by IRI need to adjust.
 - **BREAKING: `hasCoordinateFrame` removed** ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)): the frames of a drawing are reached through its page, with `isOnPage` and `^describesPage`.
 
