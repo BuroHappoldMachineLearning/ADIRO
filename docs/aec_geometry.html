@@ -460,7 +460,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A rectangular region on a drawing page that locates something detected there - e.g. a title-block field's caption or value. Its coordinates are held as an xyxy string (bboxXYXY) and are meaningless without the CoordinateFrame it points at (inCoordinateFrame), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an InferredEntity: it carries its own provenance (aprov:hasInferenceMeta - a detector, or a human annotator) and its own confidence (aprov:hasConfidence, the detector score), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL geo:Geometry so it is recognised as a spatial shape.</p></td>
+              <td><p>A rectangular region on a drawing page that locates something there, whether a model detected it or a person marked it - e.g. a title-block field's caption or value. Its coordinates are held as an xyxy string (bboxXYXY) and are meaningless without the CoordinateFrame it points at (inCoordinateFrame), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an InferredEntity: it carries its own provenance (aprov:hasInferenceMeta - a detector, or a human annotator, told apart by aprov:inferredBy) and its own confidence (aprov:hasConfidence, the detector's score, absent for a hand-drawn box), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL geo:Geometry so it is recognised as a spatial shape.</p></td>
             </tr>
             <tr>
               <th>
@@ -519,7 +519,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The coordinate context that makes a geometry's numbers interpretable - the exact PDF/page, unit and named coordinate space its coordinates are relative to (detailed by the datatype properties below). Normally owned by a DrawingSheet (aec_drawing_metadata:hasCoordinateFrame) and shared by the geometries on that page; a sheet may have different frames for different file versions. Not an InferredEntity: a declared coordinate context, not a detection with its own confidence.</p></td>
+              <td><p>A page of a file read in one coordinate convention: the named coordinate space, the unit and the profile that defines it (the datatype properties below), for the page it describes (describesPage). A page can have more than one frame (the primary page_display_pt in points, and px for raster evidence), and each states only its convention: what is true of the page itself (its number, file, rotation and size) is on the aec_provenance:FilePage. Not an InferredEntity: a declared coordinate context, not a detection with its own confidence.</p></td>
             </tr>
             <tr>
               <th>
@@ -529,6 +529,12 @@ td {
                 <ul>
                   <li>
                     <span>
+                      <a href="#describesPage">describesPage</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
                       <a href="#coordinateSpace">coordinateSpace</a>
                       <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
                     </span>
@@ -536,36 +542,6 @@ td {
                   <li>
                     <span>
                       <a href="#unit">unit</a>
-                      <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
-                    </span>
-                  </li>
-                  <li>
-                    <span>
-                      <a href="#frameArtifactRef">frameArtifactRef</a>
-                      <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
-                    </span>
-                  </li>
-                  <li>
-                    <span>
-                      <a href="#pageIndex">pageIndex</a>
-                      <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
-                    </span>
-                  </li>
-                  <li>
-                    <span>
-                      <a href="#displayWidthPt">displayWidthPt</a>
-                      <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
-                    </span>
-                  </li>
-                  <li>
-                    <span>
-                      <a href="#displayHeightPt">displayHeightPt</a>
-                      <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
-                    </span>
-                  </li>
-                  <li>
-                    <span>
-                      <a href="#pdfRotationDeg">pdfRotationDeg</a>
                       <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
                     </span>
                   </li>
@@ -594,6 +570,44 @@ td {
       </div>
       <div class="section" id="objectproperties">
         <h2>Object Properties</h2>
+        <div class="property entity" id="describesPage">
+          <h3>describesPage
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/aec_geometry#describesPage</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>The page (an aprov:FilePage) that this coordinate frame reads. The frames of a drawing are reached through its page: the path isOnPage / ^describesPage from the drawing, in aec_drawing_metadata.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#CoordinateFrame">Coordinate Frame</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="https://w3id.org/adiro/aec_provenance#FilePage">aprov:FilePage</a>
+              </td>
+            </tr>
+          </table>
+        </div>
         <div class="property entity" id="inCoordinateFrame">
           <h3>inCoordinateFrame
             <sup class="sup-op" title="OWL Object Property">op</sup>
@@ -650,7 +664,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The bounding box that locates a region on a drawing page. In UC-01 this is the title block's own region (aec_drawing_metadata:Titleblock hasBoundingBox ...): the field values are read from within that single region and are not themselves individually localised. No rdfs:domain is asserted, so the same property serves any locatable region or element - e.g. UC-03 reference symbols, when that work extends this module.</p></td>
+              <td><p>The bounding box that locates a region on a drawing page. In UC-01 this is the title block's own region (a aec_drawing_metadata:Titleblock, like every MetadataContainer, may have a hasBoundingBox): the field values are read from within that single region and are not themselves individually localised. No rdfs:domain is asserted, so the same property serves any locatable region or element - e.g. UC-03 reference symbols, when that work extends this module.</p></td>
             </tr>
             <tr>
               <th>
@@ -782,196 +796,6 @@ td {
             </tr>
           </table>
         </div>
-        <div class="property entity" id="frameArtifactRef">
-          <h3>frameArtifactRef
-            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_geometry#frameArtifactRef</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>A reference (e.g. a manifest key or content hash) pinning the exact PDF/artifact version the coordinates are relative to, so a frame is tied to a specific file and not merely a page number.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#CoordinateFrame">Coordinate Frame</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="pageIndex">
-          <h3>pageIndex
-            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_geometry#pageIndex</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>Zero-based index of the page within the referenced PDF that this frame describes.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#CoordinateFrame">Coordinate Frame</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <a href="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">xsd:nonNegativeInteger</a>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="displayWidthPt">
-          <h3>displayWidthPt
-            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_geometry#displayWidthPt</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>Effective display-page width in points after the recorded page mapping; supports bounds checks on coordinates.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#CoordinateFrame">Coordinate Frame</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <a href="http://www.w3.org/2001/XMLSchema#decimal">xsd:decimal</a>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="displayHeightPt">
-          <h3>displayHeightPt
-            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_geometry#displayHeightPt</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>Effective display-page height in points after the recorded page mapping; supports bounds checks on coordinates.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#CoordinateFrame">Coordinate Frame</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <a href="http://www.w3.org/2001/XMLSchema#decimal">xsd:decimal</a>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="pdfRotationDeg">
-          <h3>pdfRotationDeg
-            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_geometry#pdfRotationDeg</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>Effective PDF page rotation metadata for the referenced page. The primary page_display_pt coordinates already include the recorded page mapping, so this is for interpretation/validation - do not apply the rotation to the coordinates again.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#CoordinateFrame">Coordinate Frame</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
-              </th>
-              <td>
-                <a href="http://www.w3.org/2001/XMLSchema#integer">xsd:integer</a>
-              </td>
-            </tr>
-          </table>
-        </div>
         <div class="property entity" id="profileRef">
           <h3>profileRef
             <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
@@ -987,7 +811,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Reference to the versioned coordinate profile that defines the named coordinateSpace in full (origin, axes, unit and effective page extent), so the convention is pinned rather than only implied by the space's name.</p></td>
+              <td><p>Reference to the versioned coordinate profile that defines the named coordinateSpace in full (origin, axes and unit), so the convention is pinned rather than only implied by the space's name.</p></td>
             </tr>
             <tr>
               <th>
@@ -1119,6 +943,9 @@ td {
           </h4>
           <ul class="second">
             <li>
+              <a href="#describesPage">describesPage</a>
+            </li>
+            <li>
               <a href="#inCoordinateFrame">inCoordinateFrame</a>
             </li>
             <li>
@@ -1139,21 +966,6 @@ td {
             </li>
             <li>
               <a href="#unit">unit</a>
-            </li>
-            <li>
-              <a href="#frameArtifactRef">frameArtifactRef</a>
-            </li>
-            <li>
-              <a href="#pageIndex">pageIndex</a>
-            </li>
-            <li>
-              <a href="#displayWidthPt">displayWidthPt</a>
-            </li>
-            <li>
-              <a href="#displayHeightPt">displayHeightPt</a>
-            </li>
-            <li>
-              <a href="#pdfRotationDeg">pdfRotationDeg</a>
             </li>
             <li>
               <a href="#profileRef">profileRef</a>

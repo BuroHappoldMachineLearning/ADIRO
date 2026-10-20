@@ -297,7 +297,7 @@ td {
         "@value": "Sheet/layout/document structure for AEC drawings."
       },
       {
-        "@value": "The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance and geometry modules, and the discipline modules build on it."
+        "@value": "The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance module (which also holds the file, the page and the agents) and the geometry module (where a title block's region is located), and the discipline modules build on it."
       }
     ],
     "https://schema.org/license": [
@@ -437,7 +437,7 @@ td {
             <dd>
               <ul>
                 <li><p>Sheet/layout/document structure for AEC drawings.</p></li>
-                <li><p>The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance and geometry modules, and the discipline modules build on it.</p></li>
+                <li><p>The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance module (which also holds the file, the page and the agents) and the geometry module (where a title block's region is located), and the discipline modules build on it.</p></li>
                 <li><p>The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to.</p></li>
               </ul>
             </dd>
@@ -461,7 +461,23 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Supporting visual region on a drawing sheet (titleblock, legend, etc.). Renamed from :Metadata to avoid confusion with semantic metadata properties on DrawingSheet.</p></td>
+              <td><p>Supporting visual region on a drawing sheet (titleblock, legend, etc.). Renamed from :Metadata to avoid confusion with semantic metadata properties on DrawingSheet. Every container (the title block, a revision table, a legend, a key plan, a note) may carry a BoundingBox, its region on the page, which what is read from it is located by (geom:hasBoundingBox); each subclass inherits this.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/restriction" title="Convenience property for things that subclass owl:Restriction. Defined in Ontology Documentation Profile">Restriction</a>
+              </th>
+              <td>
+                <span>
+                  <span>
+                    <a href="#hasBoundingBox">geom:hasBoundingBox</a>
+                    <span>
+                      <span class="cardinality">min</span>
+                      <span>0</span>
+                    </span><br>
+                  </span>
+                </span>
+              </td>
             </tr>
             <tr>
               <th>
@@ -979,7 +995,7 @@ td {
                   </li>
                   <li>
                     <span>
-                      <a href="#hasCoordinateFrame">hasCoordinateFrame</a>
+                      <a href="#isOnPage">isOnPage</a>
                       <sup class="sup-op" title="OWL Object Property">op</sup>
                     </span>
                   </li>
@@ -1175,7 +1191,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content.</p></td>
+              <td><p>Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content. It may carry a BoundingBox, its region on the page (geom:hasBoundingBox).</p></td>
             </tr>
             <tr>
               <th>
@@ -1306,6 +1322,17 @@ td {
                           <a href="#layoutScale">layoutScale</a>
                           <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
                         </span>
+                        <span>
+                          <span class="cardinality">min</span>
+                          <span>0</span>
+                        </span><br>
+                      </span>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <span>
+                        <a href="#hasBoundingBox">geom:hasBoundingBox</a>
                         <span>
                           <span class="cardinality">min</span>
                           <span>0</span>
@@ -1732,7 +1759,23 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Element depicted on a drawing. Contained by Layout. Can be a Facade system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc.</p></td>
+              <td><p>Element depicted on a drawing. Contained by Layout. Can be a Facade system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc. It may carry a BoundingBox, its region on the page (geom:hasBoundingBox).</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/restriction" title="Convenience property for things that subclass owl:Restriction. Defined in Ontology Documentation Profile">Restriction</a>
+              </th>
+              <td>
+                <span>
+                  <span>
+                    <a href="#hasBoundingBox">geom:hasBoundingBox</a>
+                    <span>
+                      <span class="cardinality">min</span>
+                      <span>0</span>
+                    </span><br>
+                  </span>
+                </span>
+              </td>
             </tr>
             <tr>
               <th>
@@ -1877,114 +1920,6 @@ td {
                   <li>
                     <span>
                       <a href="#assertsProject">assertsProject</a>
-                      <sup class="sup-op" title="OWL Object Property">op</sup>
-                    </span>
-                  </li>
-                </ul>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="Person">
-          <h3>Person
-            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_drawing_metadata#Person</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>A named individual associated with a DrawingRevision in some role (author, checker, approver). The role is expressed by the object property, not by subclassing.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#personName">personName</a>
-                  <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
-              </th>
-              <td>
-                <ul>
-                  <li>
-                    <span>
-                      <a href="#isAuthoredBy">isAuthoredBy</a>
-                      <sup class="sup-op" title="OWL Object Property">op</sup>
-                    </span>
-                  </li>
-                  <li>
-                    <span>
-                      <a href="#isCheckedBy">isCheckedBy</a>
-                      <sup class="sup-op" title="OWL Object Property">op</sup>
-                    </span>
-                  </li>
-                  <li>
-                    <span>
-                      <a href="#isApprovedBy">isApprovedBy</a>
-                      <sup class="sup-op" title="OWL Object Property">op</sup>
-                    </span>
-                  </li>
-                </ul>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="property entity" id="Organisation">
-          <h3>Organisation
-            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-          </h3>
-          <table>
-            <tr>
-              <th>IRI</th>
-              <td>
-                <code>https://w3id.org/adiro/aec_drawing_metadata#Organisation</code>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
-              </th>
-              <td><p>A legal entity named in a title block — client, originator, legal owner or responsible department. Modelled as a class rather than a string so that one organisation recurring across many sheets is a single individual, which is what makes cross-sheet questions answerable. Aligns to ct:Organisation (ISO 21597-1) and IfcActorSelect; note the ISO spelling differs.</p></td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
-              </th>
-              <td>
-                <span>
-                  <a href="#organisationName">organisationName</a>
-                  <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <th>
-                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
-              </th>
-              <td>
-                <ul>
-                  <li>
-                    <span>
-                      <a href="#assertsClient">asserts client</a>
-                      <sup class="sup-op" title="OWL Object Property">op</sup>
-                    </span>
-                  </li>
-                  <li>
-                    <span>
-                      <a href="#assertsOriginator">asserts originator</a>
                       <sup class="sup-op" title="OWL Object Property">op</sup>
                     </span>
                   </li>
@@ -2500,12 +2435,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#Section">Section</a>
+                  <a href="#Detail">Detail</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#Detail">Detail</a>
+                  <a href="#Section">Section</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -2799,10 +2734,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <span>
-                  <a href="#Person">Person</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
+                <a href="#Person">aprov:Person</a>
               </td>
             </tr>
           </table>
@@ -2845,10 +2777,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <span>
-                  <a href="#Person">Person</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
+                <a href="#Person">aprov:Person</a>
               </td>
             </tr>
           </table>
@@ -2876,12 +2805,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <a href="#DrawingRevision">DrawingRevision</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#DrawingRevision">DrawingRevision</a>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -2891,10 +2820,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <span>
-                  <a href="#Person">Person</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
+                <a href="#Person">aprov:Person</a>
               </td>
             </tr>
           </table>
@@ -3025,10 +2951,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <span>
-                  <a href="#Organisation">Organisation</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
+                <a href="#Organisation">aprov:Organisation</a>
               </td>
             </tr>
           </table>
@@ -3189,30 +3112,27 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <span>
-                  <a href="#Organisation">Organisation</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
+                <a href="#Organisation">aprov:Organisation</a>
               </td>
             </tr>
           </table>
         </div>
-        <div class="property entity" id="hasCoordinateFrame">
-          <h3>hasCoordinateFrame
+        <div class="property entity" id="isOnPage">
+          <h3>isOnPage
             <sup class="sup-op" title="OWL Object Property">op</sup>
           </h3>
           <table>
             <tr>
               <th>IRI</th>
               <td>
-                <code>https://w3id.org/adiro/aec_drawing_metadata#hasCoordinateFrame</code>
+                <code>https://w3id.org/adiro/aec_drawing_metadata#isOnPage</code>
               </td>
             </tr>
             <tr>
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The coordinate frame (aec_geometry:CoordinateFrame) that a drawing sheet's page geometry is expressed in - the exact PDF/page, unit and named coordinate space its bounding boxes are relative to. Owned by the sheet and shared by the geometries on that page; a sheet may carry different frames for different file versions or output PDFs.</p></td>
+              <td><p>The page of a file that a drawing is on (an aprov:FilePage). One drawing can be on a page of several files (the PDF export, a scan, an earlier version) and one file holds many drawings, so the page belongs to this link, not to the drawing and not to the file. The coordinate frames that read the page are reached with the inverse path ^describesPage of aec_geometry (ADIRO declares no named inverse properties).</p></td>
             </tr>
             <tr>
               <th>
@@ -3230,7 +3150,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#CoordinateFrame">geom:CoordinateFrame</a>
+                <a href="#FilePage">aprov:FilePage</a>
               </td>
             </tr>
           </table>
@@ -3812,12 +3732,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#DrawingRevision">DrawingRevision</a>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <a href="#DrawingRevision">DrawingRevision</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -3854,10 +3774,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
               </th>
               <td>
-                <span>
-                  <a href="#Person">Person</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
+                <a href="#Person">aprov:Person</a>
               </td>
             </tr>
             <tr>
@@ -4044,10 +3961,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
               </th>
               <td>
-                <span>
-                  <a href="#Organisation">Organisation</a>
-                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
-                </span>
+                <a href="#Organisation">aprov:Organisation</a>
               </td>
             </tr>
             <tr>
@@ -4414,12 +4328,6 @@ td {
               <a href="#Project">Project</a>
             </li>
             <li>
-              <a href="#Person">Person</a>
-            </li>
-            <li>
-              <a href="#Organisation">Organisation</a>
-            </li>
-            <li>
               <a href="#StatusCode">StatusCode</a>
             </li>
             <li>
@@ -4502,7 +4410,7 @@ td {
               <a href="#assertsOriginator">asserts originator</a>
             </li>
             <li>
-              <a href="#hasCoordinateFrame">hasCoordinateFrame</a>
+              <a href="#isOnPage">isOnPage</a>
             </li>
             <li>
               <a href="#denotesDrawingSheet">denotesDrawingSheet</a>
