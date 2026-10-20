@@ -6,7 +6,7 @@
   },
   "aec_drawing_metadata": {
     "aec_provenance": "Field assertions and inference provenance, the file and page a drawing is on (FilePage), and the agents (Person, Organisation) whose roles the drawing names.",
-    "aec_geometry": "A region of the drawing (a title block, a revision table, a legend, a key plan, a note, a layout) is located with a BoundingBox (geom:hasBoundingBox, which has no domain on purpose), stated as a min 0 restriction on MetadataContainer and on Layout; the box is read in a CoordinateFrame of the page."
+    "aec_geometry": "A region of the drawing (a title block, a revision table, a legend, a key plan, a note, a layout, a symbol) is located with a BoundingBox (geom:hasBoundingBox, which has no domain on purpose), stated as a min 0 restriction on MetadataContainer, on Layout and on DrawingElement; the box is read in a CoordinateFrame of the page."
   },
   "aec_common_symbols": {
     "aec_drawing_metadata": "Symbols are DrawingElements that a Layout contains; they use isComputerVisionLabel and exampleImage, and the reference symbols specialise ReferenceExpression."
