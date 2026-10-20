@@ -163,7 +163,7 @@ _INTERNAL_TOOL_NAMES = ("c" + "vat",)
 # Identifiers that still carry a name and are due to be renamed (#89); removed from this list when they are.
 _PENDING_RENAME = ("is" + "c" + "vat" + "property",)
 _PUBLIC_SCAN = ("AGENTS.md", "CLAUDE.md", "README.md", "CHANGELOG.md", "changelogs", "src", "scripts", ".github",
-                ".claude", ".cursor", "docs/ai", "docs/contribute", "docs/specification",
+                ".claude", ".cursor", "docs/ai", "docs/contribute", "docs/specification", "data-validation",
                 "docs/brainstorming")
 _SCAN_SUFFIXES = {".md", ".mdc", ".ttl", ".json", ".xml", ".py", ".sh", ".yml", ".yaml", ".txt", ".toml"}
 

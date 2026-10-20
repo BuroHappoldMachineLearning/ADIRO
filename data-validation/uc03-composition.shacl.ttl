@@ -1,0 +1,51 @@
+# UC-03 composition rules for reference expressions (#168).
+#
+# These rules check DATA (the individuals an extraction pipeline produces), not the ontology. They are written
+# down in docs/specification/use-cases/UC-03/design-notes/uc03-provenance-profile.md and are closed-world checks,
+# so they are deliberately not OWL axioms: an existential restriction would infer an anonymous mention with no
+# evidence, and a `max 1` or a functional axiom would merge two distinct mentions instead of reporting the
+# conflict. What is read here is documented in docs/contribute/data-validation.md.
+#
+# Severity: sh:Violation. The conditions are structural: a graph that breaks one is malformed, not merely incomplete.
+
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix metadata: <https://w3id.org/adiro/aec_drawing_metadata#> .
+@prefix csymbol: <https://w3id.org/adiro/aec_common_symbols#> .
+@prefix dv: <https://w3id.org/adiro/data-validation/uc03-composition#> .
+
+dv:InlineReferenceComposition a sh:NodeShape ;
+    sh:targetClass metadata:InlineLayoutSheetReference ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path metadata:contains ;
+        sh:qualifiedValueShape [ sh:class metadata:DrawingIdentifierMention ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+        sh:message "An inline layout and sheet reference contains exactly one drawing identifier mention."
+    ] ;
+    sh:property [
+        sh:path metadata:contains ;
+        sh:qualifiedValueShape [ sh:class metadata:LayoutIdentifierMention ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:message "An inline layout and sheet reference contains at least one layout identifier mention."
+    ] .
+
+dv:ReferenceSymbolComposition a sh:NodeShape ;
+    sh:targetClass csymbol:ReferenceSymbol ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path metadata:contains ;
+        sh:qualifiedValueShape [ sh:class metadata:DrawingIdentifierMention ] ;
+        sh:qualifiedMaxCount 1 ;
+        sh:message "A reference symbol contains at most one drawing identifier mention."
+    ] .
+
+dv:MentionTarget a sh:NodeShape ;
+    sh:targetClass metadata:DrawingIdentifierMention ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path metadata:denotesDrawingSheet ;
+        sh:maxCount 1 ;
+        sh:message "A drawing identifier mention has at most one accepted denotesDrawingSheet target."
+    ] .
