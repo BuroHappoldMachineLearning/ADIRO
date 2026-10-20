@@ -56,6 +56,16 @@ graph BT
 
 ## Classes
 
+### Acceptance Status {#AcceptanceStatus}
+
+Whether an assertion was taken into the direct properties of its subject: Pending (not yet decided), Accepted or Rejected. Only an Accepted assertion that has a value is promoted by mapsToFieldProperty.
+
+- **IRI:** `https://w3id.org/adiro/aec_provenance#AcceptanceStatus`
+- **One of:**
+    - [Pending](#Pending)
+    - [Accepted](#Accepted)
+    - [Rejected](#Rejected)
+
 ### Activity {#Activity}
 
 Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. Disjoint with prov:Entity in PROV-O - see prov:Entity above.
@@ -67,6 +77,17 @@ Typing stub for the PROV-O term of the same name, declared locally so this modul
 Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at.
 
 - **IRI:** `http://www.w3.org/ns/prov#Agent`
+
+### Assertion Outcome {#AssertionOutcome}
+
+What a search for a field found, when it found no value: Empty, Illegible, NotPrinted or NotFound. An assertion that has a value needs no outcome (the value is its outcome), and an assertion has a value or an outcome, never both.
+
+- **IRI:** `https://w3id.org/adiro/aec_provenance#AssertionOutcome`
+- **One of:**
+    - [Empty](#Empty)
+    - [Illegible](#Illegible)
+    - [Not printed](#NotPrinted)
+    - [Not found](#NotFound)
 
 ### Document (ISO 21597-1) {#Document}
 
@@ -91,7 +112,7 @@ Typing stub for the PROV-O term of the same name, declared locally so this modul
 
 ### Field Assertion {#FieldAssertion}
 
-A single reified assertion that some source makes a value-claim about a field kind. Reifying the claim (rather than attaching the value straight to a subject) lets each printed occurrence carry its own provenance - which region asserted it (assertedBy), what produced it (hasInferenceMeta), and with what confidence (hasConfidence) - independently of the value it states. The value is a literal (hasLiteralValue) for datatype-valued fields or an entity (hasValueEntity) for object-valued fields. Validated assertions are promoted to direct statements on the subject downstream; conflicting assertions across sources are surfaced, not silently merged. A kind of InferredEntity, so it carries the shared provenance/confidence; in PROV-O terms the prov:Entity an extraction produced, which is why the PROV alignment is seated across two classes rather than all on one.
+A single reified assertion that some source makes a value-claim about a field kind. Reifying the claim (rather than attaching the value straight to a subject) lets each printed occurrence carry its own provenance - which region asserted it (assertedBy), what produced it (hasInferenceMeta), and with what confidence (hasConfidence) - independently of the value it states. The value is a literal (hasLiteralValue) for datatype-valued fields or an entity (hasValueEntity) for object-valued fields. An assertion has a value or, when none was found, an outcome (hasOutcome); it is promoted to a direct statement on its subject only once it is Accepted (hasAcceptance), by tooling and never by reasoning. Conflicting assertions across sources are surfaced, not silently merged, and a later one that replaces an earlier says so with supersedes. A kind of InferredEntity, so it carries the shared provenance/confidence; in PROV-O terms the prov:Entity an extraction produced, which is why the PROV alignment is seated across two classes rather than all on one.
 
 - **IRI:** `https://w3id.org/adiro/aec_provenance#FieldAssertion`
 - **Sub class of:** [Inferred Entity](#InferredEntity)
@@ -164,6 +185,14 @@ Typing stub for the ISO 21597-1 (ICDD) term Person, edition 1. A stub is a name,
 
 ## Object Properties
 
+### acceptedBy {#acceptedBy}
+
+The agent that accepted or rejected this assertion: a person for a review, or a software agent for a pipeline rule.
+
+- **IRI:** `https://w3id.org/adiro/aec_provenance#acceptedBy`
+- **Domain:** [Field Assertion](#FieldAssertion)
+- **Range:** [Agent](#Agent)
+
 ### assertedAbout {#assertedAbout}
 
 The subject the claim is ABOUT - the thing a validated assertion is promoted onto. Distinct from assertedBy, which records where the claim was read FROM: a drawn-by name is read from a title-block region (assertedBy) but is a claim about a particular DrawingRevision (assertedAbout), and a sheet has many revisions, so the subject cannot be recovered from the region alone. Without it, mapsToFieldProperty names a property but nothing names the individual to hang it on, and promotion is not expressible. No rdfs:range is asserted: the subjects differ per field kind - Titleblock, DrawingSheet, DrawingRevision, DrawingPackage, Project - and a narrower range would entail those subjects are of a type they are not.
@@ -210,6 +239,14 @@ A party that modified the file in the storage system. More than one is allowed.
 - **Domain:** [Drawing File](#DrawingFile)
 - **Range:** [Party](#Party)
 
+### hasAcceptance {#hasAcceptance}
+
+Whether this assertion was taken into the direct properties of its subject (an AcceptanceStatus). An assertion with no acceptance recorded is as good as Pending.
+
+- **IRI:** `https://w3id.org/adiro/aec_provenance#hasAcceptance`
+- **Domain:** [Field Assertion](#FieldAssertion)
+- **Range:** [Acceptance Status](#AcceptanceStatus)
+
 ### hasInferenceMeta {#hasInferenceMeta}
 
 Links an inferred entity (a FieldAssertion, a BoundingBox, ...) to the InferenceMeta describing what produced it, from where, and when. Aligned to prov:wasGeneratedBy: the entity (a prov:Entity) was generated by the inference (a prov:Activity).
@@ -218,6 +255,14 @@ Links an inferred entity (a FieldAssertion, a BoundingBox, ...) to the Inference
 - **Sub property of:** [wasGeneratedBy](#wasGeneratedBy)
 - **Domain:** [Inferred Entity](#InferredEntity)
 - **Range:** [Inference Meta](#InferenceMeta)
+
+### hasOutcome {#hasOutcome}
+
+What the search for this field found, when it found no value (an AssertionOutcome). An assertion with a hasLiteralValue or a hasValueEntity has no outcome.
+
+- **IRI:** `https://w3id.org/adiro/aec_provenance#hasOutcome`
+- **Domain:** [Field Assertion](#FieldAssertion)
+- **Range:** [Assertion Outcome](#AssertionOutcome)
 
 ### hasValueEntity {#hasValueEntity}
 
@@ -251,6 +296,14 @@ The algorithm or model (ideally with version) used to produce this inference. Di
 - **Sub property of:** [used](#used)
 - **Domain:** [Inference Meta](#InferenceMeta)
 
+### supersedes {#supersedes}
+
+The earlier assertion that this one replaces about the same field of the same subject: a person's correction of a model's value, or a later value after a not-found. The earlier one stays as a record. Explicit, so a query does not depend on timestamps.
+
+- **IRI:** `https://w3id.org/adiro/aec_provenance#supersedes`
+- **Domain:** [Field Assertion](#FieldAssertion)
+- **Range:** [Field Assertion](#FieldAssertion)
+
 ### used {#used}
 
 Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range prov:Entity)
@@ -270,6 +323,22 @@ Typing stub for the PROV-O term of the same name, declared locally so this modul
 - **IRI:** `http://www.w3.org/ns/prov#wasGeneratedBy`
 
 ## Datatype Properties
+
+### acceptedAt {#acceptedAt}
+
+When this assertion was accepted or rejected.
+
+- **IRI:** `https://w3id.org/adiro/aec_provenance#acceptedAt`
+- **Domain:** [Field Assertion](#FieldAssertion)
+- **Range:** `xsd:dateTime`
+
+### acceptedUnder {#acceptedUnder}
+
+An IRI naming the versioned policy under which this assertion was accepted: a confidence-threshold rule of the pipeline, or the annotation protocol and mapping version of a ground-truth campaign. The threshold itself lives in the policy, not on each assertion, so a policy can be re-evaluated later.
+
+- **IRI:** `https://w3id.org/adiro/aec_provenance#acceptedUnder`
+- **Domain:** [Field Assertion](#FieldAssertion)
+- **Range:** `xsd:anyURI`
 
 ### capturedCaption {#capturedCaption}
 
@@ -424,6 +493,57 @@ On a field-kind concept: the expected type of its asserted value - a datatype (e
 
 ### mapsToFieldProperty {#mapsToFieldProperty}
 
-On a field-kind concept: the canonical ADIRO property that a validated assertion of this field kind is promoted to (the bridge from the reified assertion to a direct statement on the subject). The subject is the assertion's assertedAbout, so a promotion is: ?a assertedAbout ?subject ; assertsFieldKind ?k . ?k mapsToFieldProperty ?p  =>  ?subject ?p <value>. Annotation only - the promotion is performed by tooling on validation, not by reasoning.
+On a field-kind concept: the canonical ADIRO property that an accepted assertion (hasAcceptance Accepted) of this field kind, one that has a value, is promoted to (the bridge from the reified assertion to a direct statement on the subject). The subject is the assertion's assertedAbout, so a promotion is: ?a assertedAbout ?subject ; assertsFieldKind ?k . ?k mapsToFieldProperty ?p  =>  ?subject ?p <value>. Annotation only - the promotion is performed by tooling on acceptance, not by reasoning.
 
 - **IRI:** `https://w3id.org/adiro/aec_provenance#mapsToFieldProperty`
+
+## Named Individuals
+
+### Accepted {#Accepted}
+
+Taken in, by a pipeline rule (a confidence threshold, named by acceptedUnder) or by a person. An accepted assertion that has a value is promoted to a direct property.
+
+- **IRI:** `https://w3id.org/adiro/aec_provenance#Accepted`
+- **Type:** [Acceptance Status](#AcceptanceStatus)
+
+### Empty {#Empty}
+
+The field is printed on the drawing but holds no value (a blank cell). The ground-truth observation status 'empty'.
+
+- **IRI:** `https://w3id.org/adiro/aec_provenance#Empty`
+- **Type:** [Assertion Outcome](#AssertionOutcome)
+
+### Illegible {#Illegible}
+
+The field is printed on the drawing but cannot be read. The ground-truth observation status 'illegible'.
+
+- **IRI:** `https://w3id.org/adiro/aec_provenance#Illegible`
+- **Type:** [Assertion Outcome](#AssertionOutcome)
+
+### Not found {#NotFound}
+
+A model searched where the field is expected and matched nothing. Not confirmed: the field may be missing from the drawing or merely missed, so it is retried or reviewed; it says nothing yet about the drawing.
+
+- **IRI:** `https://w3id.org/adiro/aec_provenance#NotFound`
+- **Type:** [Assertion Outcome](#AssertionOutcome)
+
+### Not printed {#NotPrinted}
+
+The drawing does not print the field at all, confirmed by a person (a reviewer or a ground-truth label). The ground-truth observation status 'absent'. For a field every drawing must have, such as the author, this is a defect of the drawing and not of the extraction.
+
+- **IRI:** `https://w3id.org/adiro/aec_provenance#NotPrinted`
+- **Type:** [Assertion Outcome](#AssertionOutcome)
+
+### Pending {#Pending}
+
+Not yet accepted or rejected: the assertion is the extraction's record and its value is not yet a direct property.
+
+- **IRI:** `https://w3id.org/adiro/aec_provenance#Pending`
+- **Type:** [Acceptance Status](#AcceptanceStatus)
+
+### Rejected {#Rejected}
+
+Decided against: the assertion stays as a record but is not promoted.
+
+- **IRI:** `https://w3id.org/adiro/aec_provenance#Rejected`
+- **Type:** [Acceptance Status](#AcceptanceStatus)

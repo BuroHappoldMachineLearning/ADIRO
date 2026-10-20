@@ -1,3 +1,12 @@
+## 2026-10-20 - The outcome and the acceptance of a field assertion
+
+Implemented [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187) with the maintainer's five decisions (recorded on the issue). `aec_provenance`: `AssertionOutcome` (`Empty`, `Illegible`, `NotPrinted`, `NotFound`; the values follow the ground-truth
+observation statuses of Discussion #63, a value being its own outcome) with `hasOutcome`; `AcceptanceStatus` (`Pending`, `Accepted`, `Rejected`) with `hasAcceptance`, `acceptedBy`, `acceptedAt`, `acceptedUnder`; `supersedes`. Per assertion, a minimal
+acceptance record, no list of attempted field kinds. `data-validation/assertions.shacl.ttl`: a value or an outcome, never both; an accepted assertion has an agent; a superseding assertion is about the same subject and kind. UC-01 ORSD v0.10:
+the design note amended, G11 and G12 resolved, CQ 4.6 (why a drawing has no author) with its query, run on small data. The 'no author' shape of `uc01-authorship` still reports every such drawing as one warning; splitting that report by cause is the
+query of CQ 4.6 for now, a shape per cause being a possible next step. Not done: the documented SPARQL CONSTRUCT that performs the promotion ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85) stays open for it), and acceptance of a
+bounding box (the vocabulary is on `FieldAssertion` only).
+
 ## 2026-10-20 - Guard against removing what a warning flags
 
 Implemented [#195](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/195) after an import was dropped as "unused" and the dependency behind it (UC-01 locates a title block with a `BoundingBox`, a

@@ -118,6 +118,26 @@ def test_cq_9_3_lists_the_files_that_hold_more_than_one_drawing():
     assert {(str(r[0]).rsplit("#", 1)[-1], int(r[1])) for r in graph.query(query)} == {("many", 2)}
 
 
+def test_cq_4_6_says_why_a_drawing_has_no_author():
+    query = recorded_query("# CQ 4.6")
+    data = """:printed a metadata:DrawingSheet .
+:a1 a aprov:FieldAssertion ; aprov:assertedAbout :printed ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:NotPrinted .
+:blank a metadata:DrawingSheet .
+:a2 a aprov:FieldAssertion ; aprov:assertedAbout :blank ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:Empty .
+:waiting a metadata:DrawingSheet .
+:a3 a aprov:FieldAssertion ; aprov:assertedAbout :waiting ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasLiteralValue "J. Smith" .
+:unseen a metadata:DrawingSheet .
+:retried a metadata:DrawingSheet .
+:old a aprov:FieldAssertion ; aprov:assertedAbout :retried ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:NotFound .
+:newer a aprov:FieldAssertion ; aprov:assertedAbout :retried ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:Illegible ; aprov:supersedes :old .
+:done a metadata:DrawingSheet ; metadata:isAuthoredBy :jsmith .
+"""
+    graph = Graph().parse(data=PREFIXES + data, format="turtle")
+    reasons = {str(r[0]).rsplit("#", 1)[-1]: str(r[1]) for r in graph.query(query)}
+    # the latest assertion decides (a superseded one is not read), a value awaiting acceptance is Pending, no assertion is NotProcessed
+    assert reasons == {"printed": "NotPrinted", "blank": "Empty", "waiting": "Pending", "unseen": "NotProcessed", "retried": "Illegible"}
+
+
 def test_a_table_asserts_every_revision_it_lists_and_the_ontology_declares_the_property():
     ontology = Graph().parse(str(ROOT / "src" / "aec_drawing_metadata.ttl"), format="turtle")
     names = {str(s).rsplit("#", 1)[-1] for s in ontology.subjects()}
