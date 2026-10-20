@@ -367,18 +367,18 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
 #################################################################
 
 :MetadataContainer rdf:type owl:Class;
+    rdfs:subClassOf [ rdf:type owl:Restriction ; owl:onProperty geom:hasBoundingBox ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass geom:BoundingBox ];
     rdfs:label "MetadataContainer";
-    rdfs:comment "Supporting visual region on a drawing sheet (titleblock, legend, etc.). Renamed from :Metadata to avoid confusion with semantic metadata properties on DrawingSheet.";
+    rdfs:comment "Supporting visual region on a drawing sheet (titleblock, legend, etc.). Renamed from :Metadata to avoid confusion with semantic metadata properties on DrawingSheet. Every container (the title block, a revision table, a legend, a key plan, a note) may carry a BoundingBox, its region on the page, which what is read from it is located by (geom:hasBoundingBox); each subclass inherits this.";
     :isComputerVisionLabel "false"^^xsd:boolean.
 
 :Titleblock rdf:type owl:Class;
     rdfs:subClassOf :MetadataContainer,
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :KeyPlan ],
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Legend ],
-        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :RevisionTable ],
-        [ rdf:type owl:Restriction ; owl:onProperty geom:hasBoundingBox ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass geom:BoundingBox ];
+        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :RevisionTable ];
     rdfs:label "Titleblock";
-    rdfs:comment "Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc. May itself contain a KeyPlan, Legend or RevisionTable, which are commonly printed inside the title-block strip rather than standing alone on the page; all three are optional, and each may alternatively be contained directly by the DrawingSheet. It may carry a BoundingBox, its region on the page, which its fields are read from (geom:hasBoundingBox).";
+    rdfs:comment "Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc. May itself contain a KeyPlan, Legend or RevisionTable, which are commonly printed inside the title-block strip rather than standing alone on the page; all three are optional, and each may alternatively be contained directly by the DrawingSheet.";
     :exampleImage img:Titleblock_01.png ;
     :exampleImage img:Titleblock_02.png ;
     :isComputerVisionLabel "true"^^xsd:boolean.
@@ -457,9 +457,10 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
         [ rdf:type owl:Restriction ; owl:onProperty :hasProperty ; owl:onClass :LayoutContentType ; owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ],
         [ rdf:type owl:Restriction ; owl:onProperty :layoutIdentifier ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onDataRange xsd:string ],
         [ rdf:type owl:Restriction ; owl:onProperty :layoutTitle ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onDataRange xsd:string ],
-        [ rdf:type owl:Restriction ; owl:onProperty :layoutScale ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onDataRange xsd:string ];
+        [ rdf:type owl:Restriction ; owl:onProperty :layoutScale ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onDataRange xsd:string ],
+        [ rdf:type owl:Restriction ; owl:onProperty geom:hasBoundingBox ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass geom:BoundingBox ];
     rdfs:label "Layout" ;
-    rdfs:comment "Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content." ;
+    rdfs:comment "Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content. It may carry a BoundingBox, its region on the page (geom:hasBoundingBox)." ;
     :exampleImage img:Layout_02.png ;
     :exampleImage img:Layout_03.png ;
     :exampleImage img:Layout_04.png ;

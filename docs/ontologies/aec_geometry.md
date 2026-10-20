@@ -90,7 +90,7 @@ The page (an aprov:FilePage) that this coordinate frame reads. The frames of a d
 
 ### hasBoundingBox {#hasBoundingBox}
 
-The bounding box that locates a region on a drawing page. In UC-01 this is the title block's own region (aec_drawing_metadata:Titleblock hasBoundingBox ...): the field values are read from within that single region and are not themselves individually localised. No rdfs:domain is asserted, so the same property serves any locatable region or element - e.g. UC-03 reference symbols, when that work extends this module.
+The bounding box that locates a region on a drawing page. In UC-01 this is the title block's own region (a aec_drawing_metadata:Titleblock, like every MetadataContainer, may have a hasBoundingBox): the field values are read from within that single region and are not themselves individually localised. No rdfs:domain is asserted, so the same property serves any locatable region or element - e.g. UC-03 reference symbols, when that work extends this module.
 
 - **IRI:** `https://w3id.org/adiro/aec_geometry#hasBoundingBox`
 - **Range:** [Bounding Box](#BoundingBox)
