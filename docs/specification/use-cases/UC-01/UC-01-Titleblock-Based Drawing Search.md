@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.9 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.10 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -48,7 +48,7 @@ Things that exist independently and will become OWL Classes.
 
 > **Design note — Discipline reuse:** UC-01 v0.2 introduced `:Discipline` plus a `:disciplineCode` string property. The existing `dcommon:Discipline` is already a full class hierarchy (`Structural`, `MEP > Mechanical / Electrical > Lighting / Plumbing`, `Architectural > Facade / FireLifeSafety`, `Masterplan`). v0.3 reuses it and drops `:disciplineCode` — discipline filtering uses `rdf:type` checks against the class hierarchy (e.g. `?disc a dcommon:MEP`), which automatically rolls up sub-disciplines via `rdfs:subClassOf` reasoning.
 
-> **Design note — curated values vs extracted assertions:** UC-01 attaches title-block information as datatype properties **directly on `DrawingSheet`** (`drawingIdentifier`, `drawingTitle`, …). That remains correct for a *validated* value. A second, parallel path exists for values that have been **machine-extracted and not yet validated**: an `aprov:FieldAssertion` reifies the claim - what was read, from which region (`assertedBy`), by what (`hasInferenceMeta`), with what confidence, and with the caption exactly as printed (`capturedCaption`) - bound to a field kind in the `TitleblockFieldScheme`. `aprov:mapsToFieldProperty` names the UC-01 property a validated assertion is promoted to. The two coexist: UC-01's properties are the query surface, the assertion layer is the extraction and provenance record. **When a value moves from one to the other, and whether the direct properties eventually deprecate, is open — see §8 (G11).** *(Added in [v0.4](#9-version-history).)*
+> **Design note — curated values vs extracted assertions:** UC-01 attaches title-block information as datatype properties **directly on `DrawingSheet`** (`drawingIdentifier`, `drawingTitle`, …). That remains correct for a *validated* value. A second, parallel path exists for values that have been **machine-extracted and not yet validated**: an `aprov:FieldAssertion` reifies the claim - what was read, from which region (`assertedBy`), by what (`hasInferenceMeta`), with what confidence, and with the caption exactly as printed (`capturedCaption`) - bound to a field kind in the `TitleblockFieldScheme`. `aprov:mapsToFieldProperty` names the UC-01 property a validated assertion is promoted to. The two coexist: UC-01's properties are the query surface, the assertion layer is the extraction and provenance record. A value moves from the assertion to the direct property when its assertion is **accepted** (`aprov:hasAcceptance` `Accepted`), by a pipeline rule (a confidence threshold, named by `aprov:acceptedUnder`) or by a person, and the acceptance records who and when (`acceptedBy`, `acceptedAt`). The assertions are never deleted, and the direct properties stay as the permanent query surface of accepted values ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)). When a search finds no value, the assertion carries an outcome instead (`aprov:hasOutcome`: `Empty`, `Illegible`, `NotPrinted`, `NotFound`), and is never promoted. *(Added in [v0.4](#9-version-history); amended in [v0.10](#9-version-history).)*
 
 > **Design note — Person vs Role:** `Person` models what an individual *is*, not the role they play. Roles (Author, Checker, Approver) are expressed as distinct Object Properties, not as subclasses of `Person`. Each applies to a `DrawingSheet` (the person the drawing names, for example the title block's "drawn by") and to a `DrawingRevision` (the person who made, checked or approved that revision, who can differ from the one named for the drawing). This keeps `Person` reusable across roles. A drawing that records no author of its own is read as authored by the authors of its revisions (the path `metadata:isAuthoredBy|metadata:hasRevision/metadata:isAuthoredBy`); a drawing that records its own author keeps just that author, so this is a reading convention and not an OWL entailment. It applies to the author only. *(Amended in [v0.8](#9-version-history).)*
 
@@ -275,6 +275,7 @@ SELECT ?drawing ?named ?filed WHERE {
 | CQ 4.3 | For sheet "ST-101 Rev C", who was the approving authority?   |
 | CQ 4.4 | Which drawings have no recorded author, neither their own nor a revision's? *(Added in [v0.8](#9-version-history).)* |
 | CQ 4.5 | Which drawings have no recorded checker, or no recorded approver? *(Added in [v0.8](#9-version-history).)* |
+| CQ 4.6 | For each drawing with no recorded author, why: not printed, empty, illegible, not found, or awaiting acceptance? *(Added in [v0.10](#9-version-history).)* |
 
 CQ 3.4 and CQ 4.4 as queries (CQ 4.5 is the same pattern with `isCheckedBy` or `isApprovedBy` alone, without the path through the revisions, which is for the author only):
 
@@ -299,7 +300,26 @@ SELECT ?drawing WHERE {
 }
 ```
 
-A drawing must have an author; whether it was checked or approved varies, so CQ 4.5 is a plain query and not a check. CQ 4.4 is a closed-world check: the ontology cannot state "every drawing has an author" (an OWL cardinality would infer an author, not report its absence), so the same rule is also a data-validation shape ([#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179)). The query lists the drawings with no recorded person; it cannot say whether the extraction missed the author or the drawing names none (open issue G12).
+A drawing must have an author; whether it was checked or approved varies, so CQ 4.5 is a plain query and not a check. CQ 4.4 is a closed-world check: the ontology cannot state "every drawing has an author" (an OWL cardinality would infer an author, not report its absence), so the same rule is also a data-validation shape ([#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179)). The query lists the drawings with no recorded person; it cannot say whether the extraction missed the author or the drawing names none; CQ 4.6 does.
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/aec_provenance#>
+
+# CQ 4.6: why a drawing has no recorded author
+SELECT ?drawing ?reason WHERE {
+  ?drawing a metadata:DrawingSheet .
+  FILTER NOT EXISTS { ?drawing metadata:isAuthoredBy|(metadata:hasRevision/metadata:isAuthoredBy) ?person }
+  OPTIONAL {
+    ?a aprov:assertedAbout ?drawing ; aprov:assertsFieldKind metadata:DrawnByField .
+    FILTER NOT EXISTS { ?newer aprov:supersedes ?a }
+    OPTIONAL { ?a aprov:hasOutcome ?outcome }
+  }
+  BIND (IF(BOUND(?outcome), STRAFTER(STR(?outcome), "#"), IF(BOUND(?a), "Pending", "NotProcessed")) AS ?reason)
+}
+```
+
+`NotPrinted` is a defect of the drawing; `NotFound` is retried; `Empty` and `Illegible` are reviewed; `Pending` is a value found and awaiting acceptance; `NotProcessed` means no assertion about the author exists, so the field was not looked at.
 
 ### CQ Group 5 — Discipline (validates FR 5)
 
@@ -549,6 +569,10 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `metadata:revisionCode`        | `aec_drawing_metadata` | NEW    | CQ 3.1, CQ 3.3                                 | FR 3                               |
 | `metadata:issueDate`           | `aec_drawing_metadata` | NEW    | CQ 3.2, CQ 3.3, CQ-I 1                         | FR 3                               |
 | `aprov:Person`                 | `aec_provenance`       | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
+| `aprov:AssertionOutcome` (`Empty`, `Illegible`, `NotPrinted`, `NotFound`), `aprov:hasOutcome` | `aec_provenance` | NEW | CQ 4.6 | FR 4 |
+| `aprov:AcceptanceStatus` (`Pending`, `Accepted`, `Rejected`), `aprov:hasAcceptance` | `aec_provenance` | NEW | CQ 4.6 | FR 4 |
+| `aprov:supersedes`             | `aec_provenance`       | NEW    | CQ 4.6                                         | FR 4                               |
+| `aprov:acceptedBy`, `aprov:acceptedAt`, `aprov:acceptedUnder` | `aec_provenance` | NEW | none yet: the record of an acceptance (the decision of #85), not asked by a question | FR 4 |
 | `metadata:personName`          | `aec_drawing_metadata` | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
 | `metadata:statusLabel`         | `aec_drawing_metadata` | NEW    | CQ 7.x                                         | FR 7                               |
 | `metadata:projectName`         | `aec_drawing_metadata` | NEW    | CQ 2.x                                         | FR 2                               |
@@ -610,8 +634,8 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | G5  | Should `hasDiscipline` domain move from `LayoutContentType` to `Layout`? v0.3 proposes yes — discipline characterises the layout, not its content type.            |
 | G5b | Should `DrawingSheet` itself carry a `hasDiscipline` (a "primary discipline" for the whole sheet) in addition to Layout-level discipline?                          |
-| G11 | **Direct properties vs `FieldAssertion`.** The assertion layer carries extracted, unvalidated title-block values alongside UC-01's direct datatype properties on `DrawingSheet`. Open: at what point does a value get promoted, who performs the promotion, must both representations be kept, and do the direct properties eventually deprecate? Tracked in [#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85). |
-| G12 | **A missing person is two different facts.** "The extraction did not find the author" and "the drawing names none" must be told apart (the first is retried or reviewed, the second is a defect of the drawing). Decided: record absence as a value-less `FieldAssertion` with an outcome. Open: the vocabulary, tracked in [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187) and [#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179). |
+| G11 | ~~**Direct properties vs `FieldAssertion`.**~~ **Resolved** ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85), [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)): a value is promoted when its assertion is accepted, by a pipeline rule or a person, with the acceptance recorded on the assertion; both layers are kept, and the direct properties are permanent. See the design note in §2.1. |
+| G12 | ~~**A missing person is two different facts.**~~ "The extraction did not find the author" and "the drawing names none" must be told apart (the first is retried or reviewed, the second is a defect of the drawing). Decided: record absence as a value-less `FieldAssertion` with an outcome. **Resolved**: the vocabulary is in `aec_provenance` (`hasOutcome`, `hasAcceptance`, [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)), and CQ 4.6 reports a drawing by cause. |
 | G10 | ~~`:Metadata` class name misleading~~ — **resolved**: renamed to `:MetadataContainer` (team decision). The class models visual supporting regions (titleblock, legend, etc.), not semantic metadata. |
 | —   | ~~Project-wide convention for `owl:inverseOf`~~ — **resolved** in [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21): ADIRO does not declare inverse properties. `isRevisionOf` removed; use `^metadata:hasRevision`. |
 | —   | ~~"Civil" discipline~~ — **resolved**: `Civil` to be added as a direct subclass of `dcommon:Discipline` (team decision).                                           |
@@ -620,7 +644,15 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.9 (current — draft)
+### v0.10 (current — draft)
+
+Changes from v0.9, made when the outcome and the acceptance of an assertion were modelled ([#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187), decided in [#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85) and [#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179)). MINOR: a design note amended, open issues resolved, one competency question added; the number stays in the 0.x series because the document is still a draft:
+
+- **The design note "curated values vs extracted assertions" (§2.1) is amended**: a value is promoted when its assertion is accepted, the assertions are kept, the direct properties are permanent. G11 is resolved.
+- **`AssertionOutcome`, `AcceptanceStatus` and their properties added in `aec_provenance`** (§6): `hasOutcome` (`Empty`, `Illegible`, `NotPrinted`, `NotFound`, following the ground-truth observation statuses), `hasAcceptance` (`Pending`, `Accepted`, `Rejected`), `acceptedBy`, `acceptedAt`, `acceptedUnder` and `supersedes`. G12 is resolved.
+- **CQ 4.6 added**, with its query: a drawing with no recorded author, by cause.
+
+### v0.9 (draft)
 
 Changes from v0.8, made when the file a drawing is stored in was modelled ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)). MAJOR in substance (entities and relations added, one moved, one removed); the number stays in the 0.x series because the document is still a draft:
 

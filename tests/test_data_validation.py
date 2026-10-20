@@ -164,3 +164,44 @@ def test_a_drawing_with_no_author_of_its_own_is_read_as_authored_by_its_revision
 
 def test_the_checker_and_the_approver_are_optional():
     assert check(":d a metadata:DrawingSheet ; metadata:isAuthoredBy :jsmith .\n") == []  # no checker, no approver: no result
+
+
+# --- field assertions: a value or an outcome, an agent when accepted, the same thing when superseding (#187) ----------
+APROV = "@prefix aprov: <https://w3id.org/adiro/aec_provenance#> .\n"
+
+
+def check_assertions(body):
+    return vd.validate(Graph().parse(data=PREFIXES + APROV + body, format="turtle"), ROOT)
+
+
+def test_an_assertion_with_a_value_or_with_an_outcome_conforms():
+    assert check_assertions(':a a aprov:FieldAssertion ; aprov:hasLiteralValue "J. Smith" .\n') == []
+    assert check_assertions(":a a aprov:FieldAssertion ; aprov:hasOutcome aprov:NotPrinted .\n") == []
+    assert check_assertions(":a a aprov:FieldAssertion .\n") == []  # still being filled in
+
+
+def test_an_assertion_with_both_a_value_and_an_outcome_is_reported():
+    both = ':a a aprov:FieldAssertion ; aprov:hasLiteralValue "J. Smith" ; aprov:hasOutcome aprov:Empty .\n'
+    assert [r["message"] for r in check_assertions(both)] == ["An assertion has a value or an outcome, never both."]
+    entity = ":a a aprov:FieldAssertion ; aprov:hasValueEntity :p ; aprov:hasOutcome aprov:Illegible .\n"
+    assert len(check_assertions(entity)) == 1
+
+
+def test_an_accepted_assertion_needs_an_agent_and_a_pending_one_does_not():
+    assert [r["message"] for r in check_assertions(":a a aprov:FieldAssertion ; aprov:hasAcceptance aprov:Accepted .\n")] == [
+        "An accepted assertion has an acceptedBy."]
+    assert check_assertions(":a a aprov:FieldAssertion ; aprov:hasAcceptance aprov:Accepted ; aprov:acceptedBy :reviewer .\n") == []
+    assert check_assertions(":a a aprov:FieldAssertion ; aprov:hasAcceptance aprov:Pending .\n") == []
+    assert check_assertions(":a a aprov:FieldAssertion ; aprov:hasAcceptance aprov:Rejected .\n") == []
+
+
+def test_a_superseding_assertion_is_about_the_same_subject_and_kind():
+    same = """:old a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind :k .
+:new a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind :k ; aprov:supersedes :old .
+"""
+    assert check_assertions(same) == []
+    other_kind = same.replace(":new a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind :k",
+                              ":new a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind :other")
+    assert [r["message"] for r in check_assertions(other_kind)] == ["An assertion supersedes another about the same subject and the same field kind."]
+    other_subject = same.replace(":new a aprov:FieldAssertion ; aprov:assertedAbout :d", ":new a aprov:FieldAssertion ; aprov:assertedAbout :e")
+    assert len(check_assertions(other_subject)) == 1

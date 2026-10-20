@@ -1,0 +1,58 @@
+# Rules for field assertions: a value or an outcome, an accepted assertion has an agent, a superseding assertion
+# is about the same thing (#187).
+#
+# They check DATA (what an extraction pipeline or a ground-truth import produces), not the ontology: OWL cannot say "never both"
+# or "if accepted, then by someone", under the open-world assumption. What is read here is documented in
+# docs/contribute/data-validation.md and the vocabulary is that of aec_provenance.
+#
+# Severity: sh:Violation. Each condition is structural: an assertion that breaks one cannot be read unambiguously.
+
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix aprov: <https://w3id.org/adiro/aec_provenance#> .
+@prefix dv: <https://w3id.org/adiro/data-validation/assertions#> .
+
+dv: sh:declare [ sh:prefix "aprov" ; sh:namespace "https://w3id.org/adiro/aec_provenance#"^^xsd:anyURI ] .
+
+# An assertion has a value or an outcome, never both. (An assertion with neither is allowed: it may still be being filled in.)
+dv:ValueOrOutcome a sh:NodeShape ;
+    sh:targetClass aprov:FieldAssertion ;
+    sh:severity sh:Violation ;
+    sh:message "An assertion has a value or an outcome, never both." ;
+    sh:not [
+        sh:and (
+            [ sh:property [ sh:path aprov:hasOutcome ; sh:minCount 1 ] ]
+            [ sh:or (
+                [ sh:property [ sh:path aprov:hasLiteralValue ; sh:minCount 1 ] ]
+                [ sh:property [ sh:path aprov:hasValueEntity ; sh:minCount 1 ] ]
+            ) ]
+        )
+    ] .
+
+# An accepted assertion says who accepted it.
+dv:AcceptedHasAgent a sh:NodeShape ;
+    sh:targetClass aprov:FieldAssertion ;
+    sh:severity sh:Violation ;
+    sh:message "An accepted assertion has an acceptedBy." ;
+    sh:or (
+        [ sh:not [ sh:property [ sh:path aprov:hasAcceptance ; sh:hasValue aprov:Accepted ] ] ]
+        [ sh:property [ sh:path aprov:acceptedBy ; sh:minCount 1 ] ]
+    ) .
+
+# An assertion that supersedes another is about the same subject and the same field kind.
+dv:SupersedesTheSameThing a sh:NodeShape ;
+    sh:targetClass aprov:FieldAssertion ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "An assertion supersedes another about the same subject and the same field kind." ;
+        sh:prefixes dv: ;
+        sh:select """
+            SELECT $this ?other WHERE {
+                $this aprov:supersedes ?other .
+                { $this aprov:assertedAbout ?a . ?other aprov:assertedAbout ?b . FILTER (?a != ?b) }
+                UNION
+                { $this aprov:assertsFieldKind ?a . ?other aprov:assertsFieldKind ?b . FILTER (?a != ?b) }
+            }
+        """
+    ] .

@@ -86,7 +86,7 @@ prov:endedAtTime rdf:type owl:DatatypeProperty ;
 
 :mapsToFieldProperty rdf:type owl:AnnotationProperty ;
     rdfs:label "mapsToFieldProperty" ;
-    rdfs:comment "On a field-kind concept: the canonical ADIRO property that a validated assertion of this field kind is promoted to (the bridge from the reified assertion to a direct statement on the subject). The subject is the assertion's assertedAbout, so a promotion is: ?a assertedAbout ?subject ; assertsFieldKind ?k . ?k mapsToFieldProperty ?p  =>  ?subject ?p <value>. Annotation only - the promotion is performed by tooling on validation, not by reasoning." .
+    rdfs:comment "On a field-kind concept: the canonical ADIRO property that an accepted assertion (hasAcceptance Accepted) of this field kind, one that has a value, is promoted to (the bridge from the reified assertion to a direct statement on the subject). The subject is the assertion's assertedAbout, so a promotion is: ?a assertedAbout ?subject ; assertsFieldKind ?k . ?k mapsToFieldProperty ?p  =>  ?subject ?p <value>. Annotation only - the promotion is performed by tooling on acceptance, not by reasoning." .
 
 #################################################################
 #    Classes
@@ -99,7 +99,7 @@ prov:endedAtTime rdf:type owl:DatatypeProperty ;
 
 :FieldAssertion rdf:type owl:Class ;
     rdfs:label "Field Assertion" ;
-    rdfs:comment "A single reified assertion that some source makes a value-claim about a field kind. Reifying the claim (rather than attaching the value straight to a subject) lets each printed occurrence carry its own provenance - which region asserted it (assertedBy), what produced it (hasInferenceMeta), and with what confidence (hasConfidence) - independently of the value it states. The value is a literal (hasLiteralValue) for datatype-valued fields or an entity (hasValueEntity) for object-valued fields. Validated assertions are promoted to direct statements on the subject downstream; conflicting assertions across sources are surfaced, not silently merged. A kind of InferredEntity, so it carries the shared provenance/confidence; in PROV-O terms the prov:Entity an extraction produced, which is why the PROV alignment is seated across two classes rather than all on one." ;
+    rdfs:comment "A single reified assertion that some source makes a value-claim about a field kind. Reifying the claim (rather than attaching the value straight to a subject) lets each printed occurrence carry its own provenance - which region asserted it (assertedBy), what produced it (hasInferenceMeta), and with what confidence (hasConfidence) - independently of the value it states. The value is a literal (hasLiteralValue) for datatype-valued fields or an entity (hasValueEntity) for object-valued fields. An assertion has a value or, when none was found, an outcome (hasOutcome); it is promoted to a direct statement on its subject only once it is Accepted (hasAcceptance), by tooling and never by reasoning. Conflicting assertions across sources are surfaced, not silently merged, and a later one that replaces an earlier says so with supersedes. A kind of InferredEntity, so it carries the shared provenance/confidence; in PROV-O terms the prov:Entity an extraction produced, which is why the PROV alignment is seated across two classes rather than all on one." ;
     rdfs:subClassOf :InferredEntity .
 
 :InferenceMeta rdf:type owl:Class ;
@@ -380,3 +380,93 @@ ct:Organisation rdf:type owl:Class ;
     rdfs:comment "The rotation recorded for the page, in degrees. The page_display_pt coordinates of a coordinate frame already include the recorded page mapping, so this is for interpretation and validation: do not apply the rotation to the coordinates again." ;
     rdfs:domain :FilePage ;
     rdfs:range xsd:integer .
+
+#################################################################
+#    Classes - the outcome and the acceptance of an assertion
+#
+#    Two independent axes. The OUTCOME says what a search for a field found
+#    when it found no value; an assertion that has a value needs none. The
+#    ACCEPTANCE says whether the assertion was taken into the direct
+#    properties (see mapsToFieldProperty). The values of the outcome follow
+#    the ground-truth observation statuses (present, empty, illegible,
+#    absent). Both lists are closed enumerations.
+#################################################################
+
+:AssertionOutcome rdf:type owl:Class ;
+    rdfs:label "Assertion Outcome" ;
+    rdfs:comment "What a search for a field found, when it found no value: Empty, Illegible, NotPrinted or NotFound. An assertion that has a value needs no outcome (the value is its outcome), and an assertion has a value or an outcome, never both." ;
+    owl:oneOf ( :Empty :Illegible :NotPrinted :NotFound ) .
+
+:Empty rdf:type owl:NamedIndividual , :AssertionOutcome ;
+    rdfs:label "Empty" ;
+    rdfs:comment "The field is printed on the drawing but holds no value (a blank cell). The ground-truth observation status 'empty'." .
+
+:Illegible rdf:type owl:NamedIndividual , :AssertionOutcome ;
+    rdfs:label "Illegible" ;
+    rdfs:comment "The field is printed on the drawing but cannot be read. The ground-truth observation status 'illegible'." .
+
+:NotPrinted rdf:type owl:NamedIndividual , :AssertionOutcome ;
+    rdfs:label "Not printed" ;
+    rdfs:comment "The drawing does not print the field at all, confirmed by a person (a reviewer or a ground-truth label). The ground-truth observation status 'absent'. For a field every drawing must have, such as the author, this is a defect of the drawing and not of the extraction." .
+
+:NotFound rdf:type owl:NamedIndividual , :AssertionOutcome ;
+    rdfs:label "Not found" ;
+    rdfs:comment "A model searched where the field is expected and matched nothing. Not confirmed: the field may be missing from the drawing or merely missed, so it is retried or reviewed; it says nothing yet about the drawing." .
+
+:AcceptanceStatus rdf:type owl:Class ;
+    rdfs:label "Acceptance Status" ;
+    rdfs:comment "Whether an assertion was taken into the direct properties of its subject: Pending (not yet decided), Accepted or Rejected. Only an Accepted assertion that has a value is promoted by mapsToFieldProperty." ;
+    owl:oneOf ( :Pending :Accepted :Rejected ) .
+
+:Pending rdf:type owl:NamedIndividual , :AcceptanceStatus ;
+    rdfs:label "Pending" ;
+    rdfs:comment "Not yet accepted or rejected: the assertion is the extraction's record and its value is not yet a direct property." .
+
+:Accepted rdf:type owl:NamedIndividual , :AcceptanceStatus ;
+    rdfs:label "Accepted" ;
+    rdfs:comment "Taken in, by a pipeline rule (a confidence threshold, named by acceptedUnder) or by a person. An accepted assertion that has a value is promoted to a direct property." .
+
+:Rejected rdf:type owl:NamedIndividual , :AcceptanceStatus ;
+    rdfs:label "Rejected" ;
+    rdfs:comment "Decided against: the assertion stays as a record but is not promoted." .
+
+#################################################################
+#    Properties - the outcome and the acceptance of an assertion
+#################################################################
+
+:hasOutcome rdf:type owl:ObjectProperty ;
+    rdfs:label "hasOutcome" ;
+    rdfs:comment "What the search for this field found, when it found no value (an AssertionOutcome). An assertion with a hasLiteralValue or a hasValueEntity has no outcome." ;
+    rdfs:domain :FieldAssertion ;
+    rdfs:range :AssertionOutcome .
+
+:hasAcceptance rdf:type owl:ObjectProperty ;
+    rdfs:label "hasAcceptance" ;
+    rdfs:comment "Whether this assertion was taken into the direct properties of its subject (an AcceptanceStatus). An assertion with no acceptance recorded is as good as Pending." ;
+    rdfs:domain :FieldAssertion ;
+    rdfs:range :AcceptanceStatus .
+
+:acceptedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "acceptedBy" ;
+    rdfs:comment "The agent that accepted or rejected this assertion: a person for a review, or a software agent for a pipeline rule." ;
+    rdfs:domain :FieldAssertion ;
+    rdfs:range prov:Agent .
+
+:acceptedAt rdf:type owl:DatatypeProperty ;
+    rdfs:label "acceptedAt" ;
+    rdfs:comment "When this assertion was accepted or rejected." ;
+    rdfs:domain :FieldAssertion ;
+    rdfs:range xsd:dateTime .
+
+:acceptedUnder rdf:type owl:DatatypeProperty ;
+    rdfs:label "acceptedUnder" ;
+    rdfs:comment "An IRI naming the versioned policy under which this assertion was accepted: a confidence-threshold rule of the pipeline, or the annotation protocol and mapping version of a ground-truth campaign. The threshold itself lives in the policy, not on each assertion, so a policy can be re-evaluated later." ;
+    rdfs:domain :FieldAssertion ;
+    rdfs:range xsd:anyURI .
+
+:supersedes rdf:type owl:ObjectProperty ;
+    rdfs:label "supersedes" ;
+    rdfs:comment "The earlier assertion that this one replaces about the same field of the same subject: a person's correction of a model's value, or a later value after a not-found. The earlier one stays as a record. Explicit, so a query does not depend on timestamps." ;
+    rdfs:domain :FieldAssertion ;
+    rdfs:range :FieldAssertion ;
+    skos:closeMatch prov:wasRevisionOf .
