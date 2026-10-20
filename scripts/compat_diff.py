@@ -16,7 +16,9 @@ Warn mode: this is advisory. The script exits 0 unless ``--enforce`` is given
 (Phase 2b), in which case an insufficient/missing bump exits 1.
 """
 
+import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -238,6 +240,80 @@ def compute_deltas(old_syms, new_syms):
     return deltas
 
 
+# --- what changed and where (#181) --------------------------------------------
+# The annotations whose change ANNOTATION_CHANGED reports, and the regex that finds each one's predicate in the Turtle text.
+_ANNOTATION_PREDICATE = {
+    "rdfs:label": r"rdfs:label\b",
+    "rdfs:comment": r"rdfs:comment\b",
+    "exampleImage": r"(?:[\w-]*:|<[^>]*#)exampleImage\b",
+    "rdfs:domain": r"rdfs:domain\b",
+    "rdfs:range": r"rdfs:range\b",
+    "rdfs:subPropertyOf": r"rdfs:subPropertyOf\b",
+}
+_PREFIX_RE = re.compile(r"^\s*@prefix\s+([\w.-]*):\s*<([^>]*)>\s*\.", re.M | re.I)
+
+
+def annotation_details(old_syms, new_syms):
+    """IRI -> the annotations whose value changed, for the terms an ANNOTATION_CHANGED delta reports."""
+    out = {}
+    for iri in sorted(old_syms.keys() & new_syms.keys()):
+        o, n = old_syms[iri], new_syms[iri]
+        if o["kind"] != n["kind"] or o["kind"] == "ontology":
+            continue
+        pairs = [("labels", "rdfs:label"), ("comments", "rdfs:comment"), ("images", "exampleImage")]
+        if o["kind"] == "annotation-property":
+            pairs += [("domain", "rdfs:domain"), ("range", "rdfs:range"), ("supers", "rdfs:subPropertyOf")]
+        names = [name for key, name in pairs if o[key] != n[key]]
+        if names:
+            out[iri] = names
+    return out
+
+
+def locate_lines(text, iri, names=()):
+    """Where a term sits in Turtle text: (first line of the term, {annotation name: its line}), 1-based.
+
+    The term is the subject at the start of a line (as a prefixed name or as <iri>); its block runs over the
+    indented lines that follow. (None, {}) when it is not found. Reads the text only: it never fails a report.
+    """
+    lines = text.splitlines()
+    tokens = ["<%s>" % iri]
+    for prefix, ns in _PREFIX_RE.findall(text):
+        if ns and iri.startswith(ns) and re.fullmatch(r"[\w.-]*", iri[len(ns):]):
+            tokens.append("%s:%s" % (prefix, iri[len(ns):]))
+    subject = re.compile(r"^(?:%s)(?=\s)" % "|".join(re.escape(t) for t in tokens))
+    start = next((i for i, line in enumerate(lines) if subject.match(line)), None)
+    if start is None:
+        return None, {}
+    end = start + 1
+    while end < len(lines) and (not lines[end].strip() or lines[end][0].isspace()):
+        end += 1
+    found = {}
+    for name in names:
+        rx = re.compile(_ANNOTATION_PREDICATE[name])
+        for i in range(start, end):
+            if rx.search(lines[i]):
+                found[name] = i + 1
+                break
+    return start + 1, found
+
+
+def links_from_env(repo_root):
+    """The context for line links, from COMPAT_LINK_REPO (owner/name) and COMPAT_LINK_SHA (a full commit), or None."""
+    repo, sha = os.environ.get("COMPAT_LINK_REPO", ""), os.environ.get("COMPAT_LINK_SHA", "")
+    if not (re.fullmatch(r"[\w.-]+/[\w.-]+", repo) and re.fullmatch(r"[0-9a-f]{40}", sha)):
+        return None
+
+    def read(module):
+        # The text at the linked commit, so a line number is the one the link opens; the working tree is the fallback.
+        try:
+            done = subprocess.run(["git", "show", f"{sha}:src/{module}.ttl"], cwd=repo_root, capture_output=True, check=True)
+            return done.stdout.decode("utf-8")
+        except Exception:
+            return (Path(repo_root) / "src" / f"{module}.ttl").read_text(encoding="utf-8")
+
+    return {"repo": repo, "sha": sha, "read": read}
+
+
 def required_bump(deltas):
     sevs = {DELTA_SEVERITY[d] for d, _ in deltas}
     types = {d for d, _ in deltas}
@@ -382,7 +458,8 @@ def analyze_pr_change(repo_root, base_dir, module):
         old_syms = build_symbols(old_g)
     # a module present in the base but not in the PR is deleted/renamed: every term diffs as removed
     deltas = compute_deltas(old_syms, new_syms)
-    return {"module": module, "deltas": deltas, "required_bump": required_bump(deltas)}
+    return {"module": module, "deltas": deltas, "required_bump": required_bump(deltas),
+            "details": annotation_details(old_syms, new_syms)}
 
 
 def print_report(result):
@@ -406,7 +483,7 @@ def print_report(result):
 
 
 _BUMP_LABEL = {BUMP_MAJOR: "MAJOR", BUMP_MINOR: "MINOR", BUMP_PATCH: "PATCH", BUMP_NONE: "none"}
-def to_markdown(results, pr_results=None):
+def to_markdown(results, pr_results=None, links=None):
     """Render a GitHub-flavored Markdown report (for a PR comment).
 
     ``results`` — cumulative analysis (working ``src/`` vs each module's last
@@ -415,6 +492,8 @@ def to_markdown(results, pr_results=None):
     vs the base branch, from ``analyze_pr_change``); when given, a "Changes in
     this PR" section is shown first. When ``None`` (e.g. a local run without
     ``--base-dir``) that section is omitted.
+    ``links`` — optional ``{repo, sha, read}`` (see ``links_from_env``): each listed change then links to its line
+    in ``src/<module>.ttl`` at that commit (#181).
     """
     out = ["## 🔢 Ontology version impact", ""]
 
@@ -433,10 +512,34 @@ def to_markdown(results, pr_results=None):
                 by_sev = {}
                 for d, iri in r["deltas"]:
                     by_sev.setdefault(DELTA_SEVERITY[d], []).append((d, iri))
+                details = r.get("details", {})
+                text = None
+                if links:
+                    try:
+                        text = links["read"](r["module"])
+                    except Exception:
+                        text = None  # no text, no links: the report never fails for it
+
+                def url(line):
+                    return f"https://github.com/{links['repo']}/blob/{links['sha']}/src/{r['module']}.ttl#L{line}"
+
                 for sev in (BREAKING, POTENTIALLY, NON_BREAKING):
                     for d, iri in by_sev.get(sev, []):
                         local = iri.rsplit("/", 1)[-1].rsplit("#", 1)[-1]
-                        out.append(f"  - `[{sev}]` {d} — `{local}`")
+                        names = details.get(iri, []) if d == "ANNOTATION_CHANGED" else []
+                        subject, where = (None, {})
+                        if text is not None and d != "TERM_REMOVED":  # a removed term has no line in the PR head
+                            subject, where = locate_lines(text, iri, names)
+                        if names:
+                            parts = []
+                            for name in names:
+                                line = where.get(name) or subject
+                                parts.append(f"`{name}`" + (f" ([line {line}]({url(line)}))" if line else ""))
+                            out.append(f"  - `[{sev}]` {d} — `{local}`: " + ", ".join(parts))
+                        elif subject:
+                            out.append(f"  - `[{sev}]` {d} — [`{local}`]({url(subject)})")
+                        else:
+                            out.append(f"  - `[{sev}]` {d} — `{local}`")
         out.append("")
 
     # --- Section 2: cumulative next-version forecast (src vs last released) ----
@@ -518,7 +621,7 @@ def main():
         if base_dir is not None:
             pr_results = [analyze_pr_change(repo_root, base_dir, m) for m in modules]
         # UTF-8 to stdout regardless of the host console codepage (Windows cp1252).
-        sys.stdout.buffer.write((to_markdown(results, pr_results) + "\n").encode("utf-8"))
+        sys.stdout.buffer.write((to_markdown(results, pr_results, links_from_env(repo_root)) + "\n").encode("utf-8"))
         return
 
     print("Compatibility diff (warn mode) - src/ vs last released snapshot:")

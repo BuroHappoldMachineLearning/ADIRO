@@ -79,6 +79,9 @@ jobs:
         env:
           MB: ${{ steps.data.outputs.merge_base }}
           TTL_CHANGED: ${{ steps.data.outputs.ttl_changed }}
+          # each listed change links to its line in the fork's head commit (#181); the script validates both values
+          COMPAT_LINK_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          COMPAT_LINK_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           : > compat-diff.md
           if [ "$TTL_CHANGED" = "true" ]; then

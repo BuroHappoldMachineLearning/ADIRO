@@ -1,3 +1,14 @@
+## 2026-10-20 - Version-impact comment names the changed annotation and links its line
+
+Implemented [#181](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/181) in `scripts/compat_diff.py`: `annotation_details` names the
+annotation behind an `ANNOTATION_CHANGED` (label, comment, example images; domain, range, superproperty of an annotation property),
+`locate_lines` finds the term's line and each annotation's line by reading the Turtle text, and `to_markdown` renders a GitHub blob link
+at the PR head commit. The classification and the bump are unchanged. Wired through `COMPAT_LINK_REPO` / `COMPAT_LINK_SHA` in
+`compat-diff-comment.yml` and `pr-comments-fork.yml` (the fork flow points at the fork's repository). A removed term and a term whose line
+is not found stay unlinked. Verified: 26 tests, and a run on the real `bboxXYXY` change gave a link to line 80. Not verified: the
+comment on a live PR, and the fork flow. The lookup assumes the repository's Turtle style (the subject at the start of a line, the
+rest indented); a different layout loses the link, not the report.
+
 ## 2026-10-20 - Terminology: "drawing", not "sheet"
 
 Recorded the maintainer's rule in `AGENTS.md` (ontology authoring conventions): say "drawing" for the thing ADIRO describes and

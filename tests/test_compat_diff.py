@@ -188,3 +188,82 @@ def test_an_added_or_removed_import_is_a_patch_and_not_a_header_change():
     assert cd.required_bump(added) == cd.BUMP_PATCH
     assert _deltas(with_import, BASE) == [("IMPORTS_CHANGED", "https://ex.org/m")]  # removal is the same delta
     assert _deltas(with_import, with_import) == []
+
+
+# --- what changed and where (#181) --------------------------------------------
+def _syms(ttl):
+    g = Graph()
+    g.parse(data=ttl, format="turtle")
+    return cd.build_symbols(g)
+
+
+def _described(comment):
+    return BASE.replace(":A a owl:Class .\n", ':A a owl:Class ;\n    rdfs:label "A" ;\n    rdfs:comment "%s" .\n' % comment)
+
+
+COMMENTED, RECOMMENDED = _described("one"), _described("two")
+
+
+def test_the_changed_annotation_is_named():
+    assert cd.annotation_details(_syms(COMMENTED), _syms(RECOMMENDED)) == {"https://ex.org/m#A": ["rdfs:comment"]}
+    relabelled = COMMENTED.replace('rdfs:label "A"', 'rdfs:label "B"')
+    assert cd.annotation_details(_syms(COMMENTED), _syms(relabelled)) == {"https://ex.org/m#A": ["rdfs:label"]}
+    assert cd.annotation_details(_syms(COMMENTED), _syms(COMMENTED)) == {}
+
+
+def test_a_line_is_found_for_the_term_and_for_each_annotation():
+    text = RECOMMENDED
+    subject, found = cd.locate_lines(text, "https://ex.org/m#A", ["rdfs:comment", "rdfs:label"])
+    assert text.splitlines()[subject - 1].startswith(':A a owl:Class')
+    assert text.splitlines()[found["rdfs:comment"] - 1].strip().startswith("rdfs:comment")
+    assert found["rdfs:label"] == subject + 1  # the line after the first one of the block
+    assert cd.locate_lines(text, "https://ex.org/m#Missing", ["rdfs:comment"]) == (None, {})
+
+
+def test_a_line_is_found_for_a_term_written_over_several_lines():
+    text = BASE + ":Z a owl:Class ;\n    rdfs:comment \"x\" ;\n    rdfs:label \"Z\" .\n\n:Y a owl:Class .\n"
+    subject, found = cd.locate_lines(text, "https://ex.org/m#Z", ["rdfs:label", "rdfs:comment"])
+    lines = text.splitlines()
+    assert lines[subject - 1].startswith(":Z a owl:Class")
+    assert lines[found["rdfs:label"] - 1].strip().startswith("rdfs:label")
+    assert found["rdfs:comment"] == found["rdfs:label"] - 1  # the block ends at the next term, not before
+
+
+def test_the_markdown_names_the_annotation_and_links_its_line():
+    sha = "a" * 40
+    links = {"repo": "o/r", "sha": sha, "read": lambda module: RECOMMENDED}
+    pr = [{"module": "m", "deltas": [("ANNOTATION_CHANGED", "https://ex.org/m#A")], "required_bump": cd.BUMP_PATCH,
+           "details": {"https://ex.org/m#A": ["rdfs:comment"]}}]
+    line = cd.locate_lines(RECOMMENDED, "https://ex.org/m#A", ["rdfs:comment"])[1]["rdfs:comment"]
+    md = cd.to_markdown([], pr, links)
+    assert "ANNOTATION_CHANGED — `A`: `rdfs:comment` ([line %d](https://github.com/o/r/blob/%s/src/m.ttl#L%d))" % (line, sha, line) in md
+    # without a link context the annotation is still named, and nothing is linked
+    plain = cd.to_markdown([], pr)
+    assert "ANNOTATION_CHANGED — `A`: `rdfs:comment`" in plain and "github.com/o/r" not in plain
+
+
+def test_a_removed_term_is_not_linked_and_an_unreadable_file_does_not_fail_the_report():
+    def broken(module):
+        raise OSError("no file")
+
+    pr = [{"module": "m", "deltas": [("TERM_REMOVED", "https://ex.org/m#A"), ("TERM_ADDED", "https://ex.org/m#B")],
+           "required_bump": cd.BUMP_MAJOR}]
+    md = cd.to_markdown([], pr, {"repo": "o/r", "sha": "b" * 40, "read": broken})
+    assert "TERM_REMOVED — `A`" in md and "TERM_ADDED — `B`" in md and "github.com/o/r" not in md
+    linked = cd.to_markdown([], pr, {"repo": "o/r", "sha": "b" * 40, "read": lambda m: BASE + ":B a owl:Class .\n"})
+    assert "TERM_REMOVED — `A`" in linked  # a removed term has no line in the PR head
+    assert "[`B`](https://github.com/o/r/blob/" + "b" * 40 + "/src/m.ttl#L" in linked
+
+
+def test_links_come_from_the_environment_only_when_both_values_are_valid(monkeypatch, tmp_path):
+    monkeypatch.delenv("COMPAT_LINK_REPO", raising=False)
+    monkeypatch.delenv("COMPAT_LINK_SHA", raising=False)
+    assert cd.links_from_env(tmp_path) is None
+    monkeypatch.setenv("COMPAT_LINK_REPO", "o/r")
+    monkeypatch.setenv("COMPAT_LINK_SHA", "not-a-sha")
+    assert cd.links_from_env(tmp_path) is None
+    monkeypatch.setenv("COMPAT_LINK_SHA", "c" * 40)
+    ctx = cd.links_from_env(tmp_path)
+    assert ctx["repo"] == "o/r" and ctx["sha"] == "c" * 40
+    monkeypatch.setenv("COMPAT_LINK_REPO", "o/r/../x")
+    assert cd.links_from_env(tmp_path) is None
