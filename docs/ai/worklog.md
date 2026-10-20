@@ -1,3 +1,11 @@
+## 2026-10-20 - The pyLODE Metadata block shows the module's own IRI and title
+
+Implemented [#146](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/146). Cause, read in pyLODE's source: `OntPub._make_metadata` merges every `owl:Ontology`, `skos:ConceptScheme` and `prof:Profile` and keeps the last subject's IRI, so
+`aec_drawing_metadata`, the only module with a scheme, showed `…#TitleblockFieldScheme`, two titles in the heading and a second schema.org block. Fix (`scripts/pylode_metadata.py`): pyLODE gets the module's graph without the type
+`skos:ConceptScheme` (checked: pyLODE shows no section for the scheme or its concepts, so nothing is lost; the published Turtle is untouched). Every page also gets a TTL source row and a documentation row, and the build checks the IRI row,
+the heading and the schema.org block of each page against its Turtle, including the kept pages of earlier releases, which are not regenerated but get the rows. The check flagged exactly the 4.0.0, 4.0.1 and 5.0.0 pages of
+`aec_drawing_metadata`; they were refreshed once with the new `--refresh-module`. The 1.0.0 and 2.0.0 pages that show the legacy `github.io` IRI are right for their snapshot and were kept. CI's pytest commands now install pyLODE so the new tests run there.
+
 ## 2026-10-20 - appearsOnLayout removed
 
 Implemented [#170](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/170) (decided by the maintainer: remove, in the MAJOR cut): `appearsOnLayout` is gone from `aec_drawing_metadata`. The source layout of any reference expression is `contains` from the layout, read back with `^contains`. Amended the UC-03 design note

@@ -67,6 +67,11 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
   the ADIRO Bot as a bypass actor (mode "always"). Their commits carry `[skip actions]` so the push does not start the other
   workflows again. Check this before changing the ruleset, and after a failed release run
   `gh workflow run backup-version.yml -f tag=<module>-v<semver>` for each tag of the release.
+- **The pyLODE Metadata block** ([#146](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/146)): pyLODE reads a `skos:ConceptScheme` as a second ontology and would show
+  its IRI and title, so `scripts/pylode_metadata.py` hands it the module's graph without that type (the Turtle is untouched), adds a **TTL source** and a **Documentation** row
+  (`w3id.org/adiro/<module>.ttl`, `w3id.org/adiro/ontologies/<module>/`; an earlier release's own files) to every page, and checks that the IRI row and the heading are the
+  module's own `owl:Ontology` IRI and title, for the latest page and every kept page of an earlier release: a wrong page fails the build. To correct kept pages once, run
+  `generate_docs.py --refresh-module <module>` (or `--refresh-versions` for all).
 - **Doc generation:** `scripts/generate_docs.py` reads every `src/*.ttl`, emits a pyLODE HTML reference page
   per ontology, emits native Markdown pages (via `ttl2md/`) into `docs/ontologies/`, copies the `.ttl` and
   `*.display.json` sources into `docs/`, and regenerates the MkDocs landing page `docs/index.md` (including

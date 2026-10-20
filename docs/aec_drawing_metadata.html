@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Titleblock Field Scheme</title>
+    <title>AEC Drawing Metadata Ontology</title>
     <style>
         #pylode {
             position: fixed;
@@ -283,22 +283,6 @@ td {
     <script id="schema.org" type="application/ld+json">
 [
   {
-    "@id": "https://w3id.org/adiro/aec_drawing_metadata#TitleblockFieldScheme",
-    "@type": [
-      "https://schema.org/DefinedTermSet"
-    ],
-    "https://schema.org/description": [
-      {
-        "@value": "The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to."
-      }
-    ],
-    "https://schema.org/name": [
-      {
-        "@value": "Titleblock Field Scheme"
-      }
-    ]
-  },
-  {
     "@id": "https://w3id.org/adiro/aec_drawing_metadata",
     "@type": [
       "https://schema.org/DefinedTermSet"
@@ -338,7 +322,7 @@ td {
   <body>
     <div id="content">
       <div class="section" id="metadata">
-        <h1>AEC Drawing Metadata OntologyTitleblock Field Scheme</h1>
+        <h1>AEC Drawing Metadata Ontology</h1>
         <h2>Metadata</h2>
         <dl>
           <div>
@@ -346,19 +330,30 @@ td {
               <strong>IRI</strong>
             </dt>
             <dd>
-              <code>https://w3id.org/adiro/aec_drawing_metadata#TitleblockFieldScheme</code>
+              <code>https://w3id.org/adiro/aec_drawing_metadata</code>
+            </dd>
+          </div>
+                    <div>
+            <dt>
+              <strong>TTL source</strong>
+            </dt>
+            <dd>
+              <a href="https://w3id.org/adiro/aec_drawing_metadata.ttl">https://w3id.org/adiro/aec_drawing_metadata.ttl</a>
             </dd>
           </div>
           <div>
             <dt>
-              <a class="hover_property" href="http://purl.org/dc/terms/title" title="A name given to the resource. Defined in DCMI Metadata Terms">Title</a>
+              <strong>Documentation</strong>
             </dt>
             <dd>
-              <ul>
-                <li><p>AEC Drawing Metadata Ontology</p></li>
-                <li><p>Titleblock Field Scheme</p></li>
-              </ul>
+              <a href="https://w3id.org/adiro/ontologies/aec_drawing_metadata/">https://w3id.org/adiro/ontologies/aec_drawing_metadata/</a>
             </dd>
+          </div>
+<div>
+            <dt>
+              <a class="hover_property" href="http://purl.org/dc/terms/title" title="A name given to the resource. Defined in DCMI Metadata Terms">Title</a>
+            </dt>
+            <dd><p>AEC Drawing Metadata Ontology</p></dd>
           </div>
           <div>
             <dt>
@@ -377,7 +372,7 @@ td {
               <a class="hover_property" href="http://purl.org/dc/terms/license" title="A legal document giving official permission to do something with the resource. Defined in DCMI Metadata Terms">License</a>
             </dt>
             <dd>
-              <a href="#gpl-3.0.html">https://www.gnu.org/licenses/gpl-3.0.html</a>
+              <a href="https://www.gnu.org/licenses/gpl-3.0.html">https://www.gnu.org/licenses/gpl-3.0.html</a>
             </dd>
           </div>
           <div>
@@ -420,25 +415,12 @@ td {
           </div>
           <div>
             <dt>
-              <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#scopeNote" title="A note that helps to clarify the meaning and/or the use of a concept. Defined in SKOS Vocabulary">Scope Note</a>
-            </dt>
-            <dd><p>Content provenance (public/private policy). Every skos:prefLabel, skos:altLabel and skos:example in this scheme is generic and public: standard AEC field names, their common German equivalents, and non-identifying example values (scales, status/revision/discipline codes). No project-specific name, synonym or value appears here - project-specific keys stay in the per-project titleblock_keys_to_ensure.json overlay and are joined to these concepts by IRI (aprov:mapsToFieldProperty / the concept's own IRI as adiro_uri). Per-item dcterms:source citations to a published source dataset will be added when the anonymised title-block dataset is public. The private key inventory and its per-item public/vs/project-specific classification are tracked off-repo, internally; the modelling rationale is in field-kind Discussion #72.</p></dd>
-          </div>
-          <div>
-            <dt>
-              <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#note" title="A general note, for any purpose. Defined in SKOS Vocabulary">Note</a>
-            </dt>
-            <dd><p>Synonym-uniqueness contract (for the JSON-vs-ADIRO consistency check): within this scheme a given skos:altLabel string, in a given language, denotes at most one field kind. A per-project synonym that collides with an altLabel of a different field kind is therefore a genuine conflict, not an ADIRO-internal ambiguity. Note the sentinel :UnidentifiedField below is intentionally NOT a member of this scheme, so it is never itself searched for.</p></dd>
-          </div>
-          <div>
-            <dt>
               <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
             </dt>
             <dd>
               <ul>
                 <li><p>Sheet/layout/document structure for AEC drawings.</p></li>
                 <li><p>The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance module (which also holds the file, the page and the agents) and the geometry module (where a title block's region is located), and the discipline modules build on it.</p></li>
-                <li><p>The controlled vocabulary of title-block field kinds an extraction pipeline looks for. Each member concept carries the names/synonyms (per language) the field is printed under, generic public example values where useful, its expected value type, and the ADIRO property a validated assertion of it maps to.</p></li>
               </ul>
             </dd>
           </div>
@@ -470,7 +452,7 @@ td {
               <td>
                 <span>
                   <span>
-                    <a href="#hasBoundingBox">geom:hasBoundingBox</a>
+                    <a href="https://w3id.org/adiro/aec_geometry#hasBoundingBox">geom:hasBoundingBox</a>
                     <span>
                       <span class="cardinality">min</span>
                       <span>0</span>
@@ -1326,7 +1308,7 @@ td {
                   <li>
                     <span>
                       <span>
-                        <a href="#hasBoundingBox">geom:hasBoundingBox</a>
+                        <a href="https://w3id.org/adiro/aec_geometry#hasBoundingBox">geom:hasBoundingBox</a>
                         <span>
                           <span class="cardinality">min</span>
                           <span>0</span>
@@ -1762,7 +1744,7 @@ td {
               <td>
                 <span>
                   <span>
-                    <a href="#hasBoundingBox">geom:hasBoundingBox</a>
+                    <a href="https://w3id.org/adiro/aec_geometry#hasBoundingBox">geom:hasBoundingBox</a>
                     <span>
                       <span class="cardinality">min</span>
                       <span>0</span>
@@ -2315,7 +2297,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#Thing">Thing</a>
+                  <a href="http://www.w3.org/2002/07/owl#Thing">Thing</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -2326,7 +2308,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#Thing">Thing</a>
+                  <a href="http://www.w3.org/2002/07/owl#Thing">Thing</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -2377,7 +2359,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#Thing">Thing</a>
+                  <a href="http://www.w3.org/2002/07/owl#Thing">Thing</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -2388,7 +2370,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#Thing">Thing</a>
+                  <a href="http://www.w3.org/2002/07/owl#Thing">Thing</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -2702,12 +2684,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <a href="#DrawingRevision">DrawingRevision</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#DrawingRevision">DrawingRevision</a>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -2717,7 +2699,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#Person">aprov:Person</a>
+                <a href="https://w3id.org/adiro/aec_provenance#Person">aprov:Person</a>
               </td>
             </tr>
           </table>
@@ -2745,12 +2727,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#DrawingRevision">DrawingRevision</a>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <a href="#DrawingRevision">DrawingRevision</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -2760,7 +2742,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#Person">aprov:Person</a>
+                <a href="https://w3id.org/adiro/aec_provenance#Person">aprov:Person</a>
               </td>
             </tr>
           </table>
@@ -2803,7 +2785,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#Person">aprov:Person</a>
+                <a href="https://w3id.org/adiro/aec_provenance#Person">aprov:Person</a>
               </td>
             </tr>
           </table>
@@ -2934,7 +2916,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#Organisation">aprov:Organisation</a>
+                <a href="https://w3id.org/adiro/aec_provenance#Organisation">aprov:Organisation</a>
               </td>
             </tr>
           </table>
@@ -3095,7 +3077,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#Organisation">aprov:Organisation</a>
+                <a href="https://w3id.org/adiro/aec_provenance#Organisation">aprov:Organisation</a>
               </td>
             </tr>
           </table>
@@ -3133,7 +3115,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#FilePage">aprov:FilePage</a>
+                <a href="https://w3id.org/adiro/aec_provenance#FilePage">aprov:FilePage</a>
               </td>
             </tr>
           </table>
@@ -3256,7 +3238,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#string">xsd:string</a>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3294,7 +3276,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#string">xsd:string</a>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3332,7 +3314,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#string">xsd:string</a>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3396,7 +3378,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#string">xsd:string</a>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3445,7 +3427,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#string">xsd:string</a>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3483,7 +3465,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#string">xsd:string</a>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3521,7 +3503,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#string">xsd:string</a>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3559,7 +3541,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#string">xsd:string</a>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3608,7 +3590,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#string">xsd:string</a>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3646,7 +3628,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#string">xsd:string</a>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3674,12 +3656,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#DrawingRevision">DrawingRevision</a>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <a href="#DrawingRevision">DrawingRevision</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -3689,7 +3671,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#date">xsd:date</a>
+                <a href="http://www.w3.org/2001/XMLSchema#date">xsd:date</a>
               </td>
             </tr>
           </table>
@@ -3716,7 +3698,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
               </th>
               <td>
-                <a href="#Person">aprov:Person</a>
+                <a href="https://w3id.org/adiro/aec_provenance#Person">aprov:Person</a>
               </td>
             </tr>
             <tr>
@@ -3724,7 +3706,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#string">xsd:string</a>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3762,7 +3744,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#string">xsd:string</a>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3800,7 +3782,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#string">xsd:string</a>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3838,7 +3820,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#string">xsd:string</a>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3876,7 +3858,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#string">xsd:string</a>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3903,7 +3885,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
               </th>
               <td>
-                <a href="#Organisation">aprov:Organisation</a>
+                <a href="https://w3id.org/adiro/aec_provenance#Organisation">aprov:Organisation</a>
               </td>
             </tr>
             <tr>
@@ -3911,7 +3893,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#string">xsd:string</a>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -3949,7 +3931,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#string">xsd:string</a>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -4004,7 +3986,7 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#depiction">depiction</a>
+                  <a href="http://xmlns.com/foaf/0.1/depiction">depiction</a>
                   <sup class="sup-ap" title="OWL Annotation Property">ap</sup>
                 </span>
               </td>
@@ -4014,7 +3996,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#anyURI">xsd:anyURI</a>
+                <a href="http://www.w3.org/2001/XMLSchema#anyURI">xsd:anyURI</a>
               </td>
             </tr>
           </table>
@@ -4041,7 +4023,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#boolean">xsd:boolean</a>
+                <a href="http://www.w3.org/2001/XMLSchema#boolean">xsd:boolean</a>
               </td>
             </tr>
           </table>
@@ -4068,7 +4050,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#boolean">xsd:boolean</a>
+                <a href="http://www.w3.org/2001/XMLSchema#boolean">xsd:boolean</a>
               </td>
             </tr>
           </table>
@@ -4095,7 +4077,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="#string">xsd:string</a>
+                <a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a>
               </td>
             </tr>
           </table>
@@ -4128,9 +4110,17 @@ td {
           <dd>
             <code>https://w3id.org/adiro/aec_drawing_metadata/exampleImage/</code>
           </dd>
+          <dt id="ns1">ns1</dt>
+          <dd>
+            <code>https://w3id.org/adiro/</code>
+          </dd>
           <dt id="owl">owl</dt>
           <dd>
             <code>http://www.w3.org/2002/07/owl#</code>
+          </dd>
+          <dt id="prov">prov</dt>
+          <dd>
+            <code>http://www.w3.org/ns/prov#</code>
           </dd>
           <dt id="rdf">rdf</dt>
           <dd>
@@ -4469,7 +4459,13 @@ td {
               <a href="#img">img</a>
             </li>
             <li>
+              <a href="#ns1">ns1</a>
+            </li>
+            <li>
               <a href="#owl">owl</a>
+            </li>
+            <li>
+              <a href="#prov">prov</a>
             </li>
             <li>
               <a href="#rdf">rdf</a>
