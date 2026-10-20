@@ -88,7 +88,8 @@ jobs:
                 fi
                 echo "It is opened by \`.github/workflows/alert-on-failure.yml\`, so a failure that is skipped or buried inside the workflow is still reported ([#173](https://github.com/$GH_REPO/issues/173))."
               } > issue.md
-              gh issue create --title "$TITLE" --body-file issue.md
+              # The README's "ci-alert issues" badge counts open issues with this label.
+              gh issue create --title "$TITLE" --body-file issue.md --label ci-alert
             fi
           elif [ -n "$num" ] && [ "$AUTOCLOSE" = 1 ]; then
             gh issue comment "$num" --body "Passes again at \`$SHORT\` ([run]($RUN_URL)). Closing."

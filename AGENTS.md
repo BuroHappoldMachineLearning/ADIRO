@@ -136,7 +136,8 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   **one** tracking issue per workflow ("Docs deploy fails on main", "Release snapshot fails", "Release PR automation
   fails"; as the ADIRO Bot) and comments on it while later runs fail. A later passing run closes the deploy and Release PR
   issues; the snapshot issue is closed by hand once every failed tag is published, because one tag's success says nothing
-  about another's. A new release or publishing workflow is added to its `workflows:` list.
+  about another's. A new release or publishing workflow is added to its `workflows:` list. Each issue carries the `ci-alert`
+  label, which the README's "Build status" column counts (`docs/contribute/build-status.md` explains each badge).
 
 **After any `.ttl` edit, validate immediately:**
 `uv run python scripts/validate_ontology.py src/<file>.ttl` (or with no arg to validate all of `src/`).
