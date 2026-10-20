@@ -2,3 +2,5 @@
 ^https?://burohappoldmachinelearning\.github\.io
 ^https://github\.com/rdflib/pyLODE/release/
 ^https://www\.gnu\.org/licenses/
+# The ISO 21597-1 (ICDD) namespace is not a page: only .../Container.rdf answers, the term IRIs (.../Container#Document) do not dereference (#197)
+^https://standards\.iso\.org/iso/21597/-1/ed-1/en/Container(#|$)
