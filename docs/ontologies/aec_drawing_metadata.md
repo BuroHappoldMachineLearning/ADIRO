@@ -178,7 +178,7 @@ A small locator diagram on a drawing sheet showing where the sheet's subject sit
 
 ### Layout {#Layout}
 
-Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content.
+Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content. It may carry a BoundingBox, its region on the page (geom:hasBoundingBox).
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Layout`
 - **Restrictions:**
@@ -187,6 +187,7 @@ Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotati
     - [layoutIdentifier](#layoutIdentifier) min 0 `xsd:string`
     - [layoutScale](#layoutScale) min 0 `xsd:string`
     - [layoutTitle](#layoutTitle) min 0 `xsd:string`
+    - `geom:hasBoundingBox` min 0 `geom:BoundingBox`
 - **isComputerVisionLabel:** true
 
 *Example images:*

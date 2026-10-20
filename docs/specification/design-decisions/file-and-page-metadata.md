@@ -56,7 +56,7 @@ The page size is the **measured** size of one page of one file after rotation an
 the paper format the drawing is meant for (for example "A1"). They can disagree, and the disagreement is information: an A1
 drawing exported on an A3 page is a reduced copy, and a scan has a page size unrelated to the paper.
 
-`aec_drawing_metadata` keeps its import of `aec_geometry`: every `MetadataContainer` (the title block, a revision table, a legend, a key plan, a note) may carry a `BoundingBox` (`hasBoundingBox`, stated as a `min 0` restriction), and that region is read in the frame of the page the drawing is on.
+`aec_drawing_metadata` keeps its import of `aec_geometry`: every `MetadataContainer` (the title block, a revision table, a legend, a key plan, a note) and every `Layout` may carry a `BoundingBox` (`hasBoundingBox`, stated as a `min 0` restriction on each), and that region is read in the frame of the page the drawing is on.
 
 A page is named by its file and its number, so a page can be written as an address with the page fragment of RFC 3778
 (`<file>#page=3`), whose pages also count from 1.

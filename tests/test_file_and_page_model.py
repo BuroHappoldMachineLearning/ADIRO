@@ -89,6 +89,8 @@ def test_every_metadata_container_may_carry_a_bounding_box_and_that_use_is_state
     children = {"Titleblock", "RevisionTable", "Legend", "KeyPlan", "Note"}
     assert {str(c).rsplit("#", 1)[-1] for c in METADATA.subjects(RDFS.subClassOf, META.MetadataContainer)} == children
     assert box_restrictions(META.Titleblock) == [], "the children inherit it: it is not repeated on the title block"
+    layout = box_restrictions(META.Layout)
+    assert len(layout) == 1 and METADATA.value(layout[0], OWL.onClass) == GEOM.BoundingBox, "a Layout may carry a bounding box too"
     # the property itself stays free of a domain: a domain is an inference, and geometry sits below the drawing module
     assert (GEOM.hasBoundingBox, RDFS.domain, None) not in GEOMETRY
 
