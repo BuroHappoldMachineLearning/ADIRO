@@ -21,8 +21,9 @@
     dcterms:creator "Buro Happold - Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
     owl:imports <https://w3id.org/adiro/aec_provenance> ;
-    owl:versionIRI <https://w3id.org/adiro/aec_geometry/1.0.0> ;
-    owl:versionInfo "1.0.0" .
+    owl:priorVersion <https://w3id.org/adiro/aec_geometry/1.0.0> ;
+    owl:versionIRI <https://w3id.org/adiro/aec_geometry/1.0.1> ;
+    owl:versionInfo "1.0.1" .
 
 #################################################################
 #    GeoSPARQL term reused for alignment

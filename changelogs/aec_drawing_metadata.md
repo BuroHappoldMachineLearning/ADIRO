@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+
+## [5.0.1] — 2026-10-20
+
 ### Added
 - **Example images for `DrawingSheet`** ([#177](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/177)): three synthetic drawings of a drawing sheet with one, three and six layouts, showing that the number of layouts varies. The three-layout sheet is the one `Layout_01.png` has always shown.
 - **Example images for the UC-03 reference classes** ([#164](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/164)): `InlineLayoutSheetReference`, `StandaloneSheetReference`, `DrawingIdentifierMention` and `LayoutIdentifierMention` each get a synthetic drawing note ("SEE 1, 3, 5 & 7/S601 FOR TYPICAL DETAIL") with the part the class names marked.
