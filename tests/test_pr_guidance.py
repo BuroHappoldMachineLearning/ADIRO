@@ -236,7 +236,7 @@ def test_removing_or_renaming_the_example_image_property_is_detected():
     decl = f"@prefix m: <https://w3id.org/adiro/aec_drawing_metadata#> .\nm:exampleImage a owl:AnnotationProperty .\n"
     renamed = "@prefix m: <https://w3id.org/adiro/aec_drawing_metadata#> .\nm:exampleImages a owl:AnnotationProperty .\n"
     base, head = g(PREFIXES + decl), g(PREFIXES + renamed)
-    (caution,) = pg.cautions()
+    caution = next(c for c in pg.cautions() if c.key == "exampleimage-renamed")
     assert len(caution.detect([{"module": "aec_drawing_metadata", "base": base, "head": head}], None)) == 1
     assert caution.detect([{"module": "aec_drawing_metadata", "base": base, "head": base}], None) == []
     assert caution.detect([{"module": "aec_x", "base": g(BASE), "head": g(BASE)}], None) == []

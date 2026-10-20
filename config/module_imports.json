@@ -1,0 +1,21 @@
+{
+  "_comment": "The intended owl:imports of every module in src/, and why. tests/test_module_imports.py compares this file with the real imports: a change to an import is a change to this file, in the same pull request, with its reason. An import can be a dependency the module's own axioms do not show (a data pattern, a property with no domain), so a warning that calls one 'unused' is a question to answer here before anything is deleted (#195).",
+  "aec_provenance": {},
+  "aec_geometry": {
+    "aec_provenance": "A BoundingBox is an InferredEntity, a CoordinateFrame describes a FilePage, and the file and page are defined there."
+  },
+  "aec_drawing_metadata": {
+    "aec_provenance": "Field assertions and inference provenance, the file and page a drawing is on (FilePage), and the agents (Person, Organisation) whose roles the drawing names.",
+    "aec_geometry": "A region of the drawing (a title block, a revision table, a legend, a key plan, a note, a layout, a symbol) is located with a BoundingBox (geom:hasBoundingBox, which has no domain on purpose), stated as a min 0 restriction on MetadataContainer, on Layout and on DrawingElement; the box is read in a CoordinateFrame of the page."
+  },
+  "aec_common_symbols": {
+    "aec_drawing_metadata": "Symbols are DrawingElements that a Layout contains; they use isComputerVisionLabel and exampleImage, and the reference symbols specialise ReferenceExpression."
+  },
+  "aec_domain_common": {
+    "aec_drawing_metadata": "Disciplines and sections classify a Layout; they use isComputerVisionLabel, isComputerVisionOptionalLabel and exampleImage."
+  },
+  "aec_facade_domain": {
+    "aec_drawing_metadata": "Facade components are DrawingElements that a Layout contains; they use isComputerVisionLabel and exampleImage.",
+    "aec_domain_common": "Facade geometry specialises GeometricProperties of the common discipline module."
+  }
+}

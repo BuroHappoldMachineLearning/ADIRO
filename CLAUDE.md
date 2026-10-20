@@ -14,5 +14,7 @@ The shared, tool-agnostic conventions for this repo are in `AGENTS.md` (imported
 - **Existing issues and Discussions:** before a new task, when starting an existing issue and before creating an
   issue or Discussion, use the `check-existing-work` skill (`.claude/skills/check-existing-work/`); its authority is
   `AGENTS.md` ("Look before you write").
+- **Before deleting what a warning flags** (an "unused" import, an unused term, a bot's "drop it"), use the
+  `check-before-removing` skill (`.claude/skills/check-before-removing/`); its authority is `AGENTS.md` ("A warning is a question").
 - **Team workflow:** issue-first — see the `orientation` skill and `tools:youtrack`. KB
   https://bhmlrnd.youtrack.cloud/articles/MAN-A-13.

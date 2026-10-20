@@ -376,7 +376,8 @@ def validate_ontology(ttl_file: Path) -> tuple[bool, list[str], list[str]]:
 
         unused_imp = find_unused_imports(graph)
         if unused_imp:
-            warnings.append("owl:imports never referenced in this file: " + ", ".join(unused_imp))
+            warnings.append("owl:imports never referenced in this file: " + ", ".join(unused_imp)
+                            + " (an import can be a dependency used as a data pattern: see config/module_imports.json before removing it)")
 
         undescribed = find_undescribed_terms(graph)
         if undescribed:

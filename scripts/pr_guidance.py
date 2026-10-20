@@ -151,8 +151,11 @@ def kinds(repo):
              f"Add an entry under `[Unreleased]`; it becomes the release notes ([#105]({issue}/105)).",
              ("changelog", "changelogs")),
         Kind("unused-prefix", "{n} unused `@prefix` {things}", "Delete the declaration.", ("declaration", "declarations")),
-        Kind("unused-import", "{n} `owl:imports` of a module that no term uses",
-             "Drop the import, or use a term of it.", ("import", "imports")),
+        Kind("unused-import", "{n} `owl:imports` of a module that no axiom of this file uses",
+             "Find out why it is there before dropping it: see `config/module_imports.json` and the ORSD. An import can be a "
+             "dependency used as a data pattern (a property with no domain): then state the use with an axiom and keep it, "
+             "and drop the import only if the pin says it is not needed ([#195]("
+             f"{issue}/195)).", ("import", "imports")),
         Kind("no-example-image", "{n} new {things} without an example image",
              f"Consider adding one (a suggestion, not a requirement): [how to add an example image]({example_images.PAGE_URL}).",
              ("class", "classes"), level="suggestion"),
@@ -175,9 +178,24 @@ def _exampleimage_declaration_removed(changes, ctx):
             if (prop, RDF.type, OWL.AnnotationProperty) in c["base"] and (prop, RDF.type, OWL.AnnotationProperty) not in c["head"]]
 
 
+def _import_removed(changes, ctx):
+    out = []
+    for c in changes:
+        base = {str(o) for o in c["base"].objects(None, OWL.imports)}
+        head = {str(o) for o in c["head"].objects(None, OWL.imports)}
+        out += [f"`{c['module']}`: the import of `{i.rsplit('/', 1)[-1]}` is removed" for i in sorted(base - head)]
+    return out
+
+
 def cautions():
     """The registry of cautions; a new one is one entry here (its detection function, title and explanation)."""
     return [
+        Caution("import-removed", "An `owl:imports` is removed",
+                "An import is a stated dependency, and it can be one the module's own axioms do not show (a data pattern, a "
+                "property with no domain). Check `config/module_imports.json` and the ORSD for why it exists, edit the pin with "
+                "the reason if the removal is intended, and say in the changelog that it was removed "
+                "([#195](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/195)).",
+                _import_removed),
         Caution("exampleimage-renamed", "The `exampleImage` annotation property is removed or renamed",
                 f"The images folders, every value and the published image URLs are named after this property. Renaming it means "
                 f"renaming the `{example_images.FOLDER}` folders in every module, listing the old folder in `renames.json` so "
