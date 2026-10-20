@@ -790,12 +790,6 @@ aprov:Organisation :isComputerVisionLabel "false"^^xsd:boolean .
     rdfs:domain :DrawingIdentifierMention ;
     rdfs:range :DrawingSheet .
 
-:appearsOnLayout rdf:type owl:ObjectProperty ;
-    rdfs:label "appearsOnLayout" ;
-    rdfs:comment "Source Layout on which a reference expression (inline, standalone or graphical) occurs, when membership is supported by evidence. For a ReferenceSymbol it is the same fact as hasReferenceSymbol read from the symbol; it is not asserted when the evidence supports only a page location." ;
-    rdfs:domain :ReferenceExpression ;
-    rdfs:range :Layout .
-
 :inlineReferencesLayout rdf:type owl:ObjectProperty ;
     rdfs:label "inlineReferencesLayout" ;
     rdfs:comment "An accepted target Layout of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges." ;

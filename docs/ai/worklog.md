@@ -1,3 +1,9 @@
+## 2026-10-20 - appearsOnLayout removed
+
+Implemented [#170](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/170) (decided by the maintainer: remove, in the MAJOR cut): `appearsOnLayout` is gone from `aec_drawing_metadata`. The source layout of any reference expression is `contains` from the layout, read back with `^contains`. Amended the UC-03 design note
+on semantic references and the UC-03 ORSD (v0.7: the relation table, FR 8 derived terms, the traceability matrix, the version history) and the use-cases README; `tests/test_uc03_semantic.py` checks the term is gone and that a standalone reference and a
+marker are both found with `^contains`. No script or test used the term; the changelog of the released 5.0.0, which names it, is unchanged. Not verified: whether a downstream producer already emitted it (the question on the issue was not answered).
+
 ## 2026-10-20 - The outcome and the acceptance of a field assertion
 
 Implemented [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187) with the maintainer's five decisions (recorded on the issue). `aec_provenance`: `AssertionOutcome` (`Empty`, `Illegible`, `NotPrinted`, `NotFound`; the values follow the ground-truth

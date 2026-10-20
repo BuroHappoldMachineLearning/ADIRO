@@ -81,3 +81,24 @@ def test_sheet_mention_has_no_geometry_restriction() -> None:
 
 if __name__ == '__main__':
     pytest.main([__file__])
+
+
+def test_the_source_layout_of_a_reference_expression_is_contains_from_the_layout() -> None:
+    """appearsOnLayout (#170) said what `contains` from the layout already says, and was removed."""
+    graph = load_semantic_modules()
+    assert (MD.appearsOnLayout, RDF.type, OWL.ObjectProperty) not in graph
+
+    # a standalone sheet reference and a graphical marker are both found from their layout with `contains`, and back with ^contains
+    graph.parse(
+        data=f"""@prefix md: <{MD}> . @prefix cs: <{CS}> . @prefix ex: <{EX}> .
+ex:layout md:contains ex:standalone , ex:marker . ex:standalone a md:StandaloneSheetReference . ex:marker a cs:ReferenceSymbol .""",
+        format="turtle",
+    )
+    found = {
+        str(r[0]).rsplit("#", 1)[-1]
+        for r in graph.query(
+            f"""PREFIX md: <{MD}>
+SELECT ?e WHERE {{ ?e a/<{RDFS.subClassOf}>* md:ReferenceExpression . ?e ^md:contains ?layout }}"""
+        )
+    }
+    assert found == {"standalone", "marker"}

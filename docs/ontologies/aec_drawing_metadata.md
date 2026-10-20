@@ -386,14 +386,6 @@ Titleblock containing information about the drawing, for example project name, d
 
 ## Object Properties
 
-### appearsOnLayout {#appearsOnLayout}
-
-Source Layout on which a reference expression (inline, standalone or graphical) occurs, when membership is supported by evidence. For a ReferenceSymbol it is the same fact as hasReferenceSymbol read from the symbol; it is not asserted when the evidence supports only a page location.
-
-- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#appearsOnLayout`
-- **Domain:** [Reference expression](#ReferenceExpression)
-- **Range:** [Layout](#Layout)
-
 ### asserts client {#assertsClient}
 
 The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from assertsOriginator, which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value.

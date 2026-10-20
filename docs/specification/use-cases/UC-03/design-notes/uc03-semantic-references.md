@@ -28,12 +28,13 @@ processing history have separate responsibilities.
 
 `metadata:contains`, with a typed mention as its object, expresses accepted composition, not target
 resolution. The existing `metadata:hasLayout` states which Layout belongs to a DrawingSheet; a layout number
-alone is not a globally unique Layout identity. `metadata:appearsOnLayout` records an evidenced source Layout
-for any reference expression, inline or standalone. For a graphical marker it restates `csymbol:hasReferenceSymbol`
-from the symbol's side; `hasReferenceSymbol` keeps its range of `ReferenceSymbol`. Likewise, `metadata:inlineReferencesLayout` is separate from the existing symbol-only
+alone is not a globally unique Layout identity. The evidenced source Layout of any reference expression, inline or
+standalone, is stated with `metadata:contains` from that Layout (a graphical marker through `csymbol:hasReferenceSymbol`,
+a sub-property of `contains`), and read from the expression's side with the inverse path `^metadata:contains`, as ADIRO
+declares no named inverse properties ([#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21)). Likewise, `metadata:inlineReferencesLayout` is separate from the existing symbol-only
 `csymbol:referencesLayout`, so using an inline reference cannot accidentally infer that it is a graphical
-symbol. An evidenced standalone occurrence uses `metadata:appearsOnLayout` (or `metadata:contains` from its source
-Layout); source membership is left unset when the evidence supports only a page location.
+symbol. Source membership is left unset when the evidence supports only a page location. *(Amended in
+[UC-03 v0.7](../UC-03-Reference%20Symbol%20Cross-Sheet%20Linking.md#10-version-history): `appearsOnLayout` was removed.)*
 
 ## Worked examples
 
