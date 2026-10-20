@@ -231,15 +231,48 @@ def test_a_line_is_found_for_a_term_written_over_several_lines():
 
 def test_the_markdown_names_the_annotation_and_links_its_line():
     sha = "a" * 40
-    links = {"repo": "o/r", "sha": sha, "read": lambda module: RECOMMENDED}
+    links = {"repo": "o/r", "sha": sha, "read": lambda module: RECOMMENDED, "pr": "", "base_repo": "o/r"}
     pr = [{"module": "m", "deltas": [("ANNOTATION_CHANGED", "https://ex.org/m#A")], "required_bump": cd.BUMP_PATCH,
            "details": {"https://ex.org/m#A": ["rdfs:comment"]}}]
     line = cd.locate_lines(RECOMMENDED, "https://ex.org/m#A", ["rdfs:comment"])[1]["rdfs:comment"]
     md = cd.to_markdown([], pr, links)
-    assert "ANNOTATION_CHANGED — `A`: `rdfs:comment` ([line %d](https://github.com/o/r/blob/%s/src/m.ttl#L%d))" % (line, sha, line) in md
+    assert "ANNOTATION_CHANGED — `A`: `rdfs:comment` (line %d: [file](https://github.com/o/r/blob/%s/src/m.ttl#L%d))" % (line, sha, line) in md
+    assert "[diff]" not in md  # no pull request number: only the file link
     # without a link context the annotation is still named, and nothing is linked
     plain = cd.to_markdown([], pr)
     assert "ANNOTATION_CHANGED — `A`: `rdfs:comment`" in plain and "github.com/o/r" not in plain
+
+
+def test_the_markdown_links_the_line_in_the_pr_diff():
+    import hashlib
+
+    sha = "a" * 40
+    links = {"repo": "fork/r", "sha": sha, "read": lambda module: RECOMMENDED, "pr": "42", "base_repo": "o/r"}
+    pr = [{"module": "m", "deltas": [("ANNOTATION_CHANGED", "https://ex.org/m#A")], "required_bump": cd.BUMP_PATCH,
+           "details": {"https://ex.org/m#A": ["rdfs:comment"]}}]
+    line = cd.locate_lines(RECOMMENDED, "https://ex.org/m#A", ["rdfs:comment"])[1]["rdfs:comment"]
+    md = cd.to_markdown([], pr, links)
+    anchor = hashlib.sha256(b"src/m.ttl").hexdigest()  # GitHub's anchor of a file in a PR diff: the SHA-256 of its path
+    # the diff is in the base repository's pull request; the file is in the head repository (a fork)
+    assert "[diff](https://github.com/o/r/pull/42/changes#diff-%sR%d)" % (anchor, line) in md
+    assert "[file](https://github.com/fork/r/blob/%s/src/m.ttl#L%d)" % (sha, line) in md
+
+
+def test_a_removed_term_links_to_the_old_side_of_the_diff_only():
+    import hashlib
+
+    base_text = BASE + ":Gone a owl:Class .\n"
+    links = {"repo": "o/r", "sha": "b" * 40, "read": lambda m: BASE, "pr": "7", "base_repo": "o/r",
+             "read_base": lambda m: base_text}
+    pr = [{"module": "m", "deltas": [("TERM_REMOVED", "https://ex.org/m#Gone")], "required_bump": cd.BUMP_MAJOR}]
+    md = cd.to_markdown([], pr, links)
+    line = cd.locate_lines(base_text, "https://ex.org/m#Gone")[0]
+    assert "TERM_REMOVED — `Gone` (line %d: [diff](https://github.com/o/r/pull/7/changes#diff-%sL%d))" % (
+        line, hashlib.sha256(b"src/m.ttl").hexdigest(), line) in md
+    assert "[file]" not in md  # no such line in the head commit
+    # without the base file, or without a pull request number, a removed term is listed unlinked
+    assert "TERM_REMOVED — `Gone`\n" in cd.to_markdown([], pr, {**links, "read_base": None})
+    assert "TERM_REMOVED — `Gone`\n" in cd.to_markdown([], pr, {**links, "pr": ""})
 
 
 def test_a_removed_term_is_not_linked_and_an_unreadable_file_does_not_fail_the_report():
@@ -251,8 +284,8 @@ def test_a_removed_term_is_not_linked_and_an_unreadable_file_does_not_fail_the_r
     md = cd.to_markdown([], pr, {"repo": "o/r", "sha": "b" * 40, "read": broken})
     assert "TERM_REMOVED — `A`" in md and "TERM_ADDED — `B`" in md and "github.com/o/r" not in md
     linked = cd.to_markdown([], pr, {"repo": "o/r", "sha": "b" * 40, "read": lambda m: BASE + ":B a owl:Class .\n"})
-    assert "TERM_REMOVED — `A`" in linked  # a removed term has no line in the PR head
-    assert "[`B`](https://github.com/o/r/blob/" + "b" * 40 + "/src/m.ttl#L" in linked
+    assert "TERM_REMOVED — `A`" in linked  # a removed term has no line in the PR head, and no old file was given
+    assert "TERM_ADDED — `B` (line " in linked and "[file](https://github.com/o/r/blob/" + "b" * 40 + "/src/m.ttl#L" in linked
 
 
 def test_links_come_from_the_environment_only_when_both_values_are_valid(monkeypatch, tmp_path):
@@ -267,3 +300,24 @@ def test_links_come_from_the_environment_only_when_both_values_are_valid(monkeyp
     assert ctx["repo"] == "o/r" and ctx["sha"] == "c" * 40
     monkeypatch.setenv("COMPAT_LINK_REPO", "o/r/../x")
     assert cd.links_from_env(tmp_path) is None
+
+
+def test_the_pull_request_number_and_base_repository_are_taken_only_when_valid(monkeypatch, tmp_path):
+    monkeypatch.setenv("COMPAT_LINK_REPO", "fork/r")
+    monkeypatch.setenv("COMPAT_LINK_SHA", "d" * 40)
+    for name in ("COMPAT_LINK_PR", "COMPAT_LINK_BASE_REPO"):
+        monkeypatch.delenv(name, raising=False)
+    ctx = cd.links_from_env(tmp_path)
+    assert ctx["pr"] == "" and ctx["base_repo"] == "fork/r"  # no number: only the file links
+    monkeypatch.setenv("COMPAT_LINK_PR", "180")
+    monkeypatch.setenv("COMPAT_LINK_BASE_REPO", "o/r")
+    ctx = cd.links_from_env(tmp_path)
+    assert ctx["pr"] == "180" and ctx["base_repo"] == "o/r"
+    monkeypatch.setenv("COMPAT_LINK_PR", "1; rm -rf")
+    assert cd.links_from_env(tmp_path)["pr"] == ""  # not a number: ignored
+    monkeypatch.setenv("COMPAT_LINK_PR", "180")
+    monkeypatch.setenv("COMPAT_LINK_BASE_REPO", "../x")
+    assert cd.links_from_env(tmp_path)["pr"] == ""  # not a repository: the diff links are dropped, not guessed
+    (tmp_path / "m.ttl").write_text("x", encoding="utf-8")
+    monkeypatch.setenv("COMPAT_LINK_BASE_REPO", "o/r")
+    assert cd.links_from_env(tmp_path, tmp_path)["read_base"]("m") == "x"
