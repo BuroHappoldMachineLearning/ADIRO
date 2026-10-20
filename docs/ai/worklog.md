@@ -1,3 +1,14 @@
+## 2026-10-20 - Example images: DrawingSheet, one layout per Layout image, and the UC-03 reference classes
+
+Implemented [#177](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/177) and [#164](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/164) in
+`scripts/synthetic_example_images.py`. `DrawingSheet` gets three sheets (one, three and six layouts; the six-layout one mixes large and small
+layouts, as a real sheet does), `Layout` gets three single-layout images (`Layout_02` to `_04`: plan, section, detail), and the four UC-03
+classes each get a drawing note with the named part boxed. `Layout_01.png` is still drawn and committed (byte-identical to before) in a new
+`ARCHIVED` registry, because an earlier release names it; it is no longer linked from `Layout`, and `DrawingSheet_02.png` is the same
+picture. Verified: the image tests (84), the strict image validation (`ENFORCE_EXAMPLE_IMAGES=1`, `ENFORCE_ARCHIVED_IMAGES=1`), the version
+impact (PATCH, annotation changes) and a look at the rendered images. Not verified: the rendering on the published pages. Changelog under
+`[Unreleased]`.
+
 ## 2026-10-20 - Version-impact comment links each change to the PR diff
 
 Implemented [#183](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/183). Each change in the comment now links to its line in the

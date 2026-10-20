@@ -414,6 +414,9 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
         [ rdf:type owl:Restriction ; owl:onProperty :drawingScale ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onDataRange xsd:string ];
     rdfs:label "Drawing Sheet" ;
     rdfs:comment "Top-level container for a drawing. Contains Layout(s)." ;
+    :exampleImage img:DrawingSheet_01.png ;
+    :exampleImage img:DrawingSheet_02.png ;
+    :exampleImage img:DrawingSheet_03.png ;
     :isComputerVisionLabel false.
 
 :hasCoordinateFrame rdf:type owl:ObjectProperty ;
@@ -431,7 +434,9 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
         [ rdf:type owl:Restriction ; owl:onProperty :layoutScale ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onDataRange xsd:string ];
     rdfs:label "Layout" ;
     rdfs:comment "Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content." ;
-    :exampleImage img:Layout_01.png ;
+    :exampleImage img:Layout_02.png ;
+    :exampleImage img:Layout_03.png ;
+    :exampleImage img:Layout_04.png ;
     :isComputerVisionLabel true.
 
 #################################################################
@@ -790,23 +795,27 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
     rdfs:subClassOf :DrawingElement ;
     rdfs:label "Drawing identifier mention" ;
     rdfs:comment "One evidenced occurrence of drawing-identifier (sheet-identifier) text on a source drawing, distinct from the DrawingSheet that the text may denote. Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted sheet resolution: an unlocalisable text block may retain its accepted denotesDrawingSheet edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed." ;
+    :exampleImage img:DrawingIdentifierMention_01.png ;
     :isComputerVisionLabel "true"^^xsd:boolean .
 
 :LayoutIdentifierMention rdf:type owl:Class ;
     rdfs:subClassOf :DrawingElement ;
     rdfs:label "Layout identifier mention" ;
     rdfs:comment "One evidenced occurrence of layout-identifier text (a small integer or letter), distinct from a target Layout. A complete inline reference may contain several such occurrences, attached with contains; no target is inferred from matching text alone." ;
+    :exampleImage img:LayoutIdentifierMention_01.png ;
     :isComputerVisionLabel "true"^^xsd:boolean .
 
 :InlineLayoutSheetReference rdf:type owl:Class ;
     rdfs:subClassOf :ReferenceExpression ;
     rdfs:label "Inline layout and sheet reference" ;
     rdfs:comment "A complete inline textual expression relating layout number(s) to a sheet number, such as '1, 3, 5 & 7/S601'. The component mentions retain their own identities; accepted Layout targets are connected separately by inlineReferencesLayout. Expected composition: one sheet-identifier mention and at least one layout-identifier mention, attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction." ;
+    :exampleImage img:InlineLayoutSheetReference_01.png ;
     :isComputerVisionLabel "true"^^xsd:boolean .
 
 :StandaloneSheetReference rdf:type owl:Class ;
     rdfs:subClassOf :DrawingIdentifierMention , :ReferenceExpression ;
     rdfs:label "Standalone sheet reference" ;
     rdfs:comment "A drawing-identifier occurrence that itself constitutes a complete reference. One individual is both the DrawingIdentifierMention and the ReferenceExpression: no duplicate wrapper, self-directed hasDrawingIdentifierMention edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified." ;
+    :exampleImage img:StandaloneSheetReference_01.png ;
     :isComputerVisionLabel "true"^^xsd:boolean .
 

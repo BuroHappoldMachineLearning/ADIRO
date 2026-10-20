@@ -658,6 +658,136 @@ def removed_placeholder(version):
     return finish(fig)
 
 
+# --- drawings, sheets and layouts (#177) --------------------------------------------------------------------------
+def _mini(ax, kind, x, y, w, h):
+    """A small drawing of `kind` ('plan', 'section' or 'detail'), fitted into the region and centred in it."""
+    s = min(w / 480, h / 300)
+    ox, oy = x + (w - 480 * s) / 2, y + (h - 300 * s) / 2
+
+    def X(v):
+        return ox + v * s
+
+    def Y(v):
+        return oy + v * s
+
+    def lw(v):
+        return max(0.8, v * s)
+
+    if kind == "plan":
+        box(ax, X(70), Y(30), 320 * s, 190 * s, lw=lw(3.0))
+        line(ax, [X(230), X(230)], [Y(30), Y(220)], lw=lw(2.0))
+        line(ax, [X(70), X(230)], [Y(130), Y(130)], lw=lw(2.0))
+        for xx, label in zip((70, 230, 390), "ABC"):
+            bubble(ax, X(xx), Y(262), label, 13 * s, max(6, 9 * s))
+    elif kind == "section":
+        for yy in (30, 140, 250):  # slabs
+            box(ax, X(110), Y(yy), 240 * s, 14 * s, fill="#bbbbbb", lw=lw(1.2))
+        for xx in (110, 336):  # walls
+            box(ax, X(xx), Y(30), 14 * s, 234 * s, lw=lw(1.2), hatch="xxx")
+    else:
+        box(ax, X(20), Y(30), 140 * s, 200 * s, lw=lw(1.6), hatch="..")
+        box(ax, X(160), Y(30), 90 * s, 200 * s, lw=lw(1.4), hatch="\\\\\\\\")
+        box(ax, X(250), Y(30), 40 * s, 200 * s, lw=lw(1.6), hatch="++")
+        for yy, label in [(190, "Facing brick"), (130, "Insulation"), (70, "Concrete wall")]:
+            line(ax, [X(270), X(340)], [Y(yy), Y(yy)], lw=lw(0.9))
+            text(ax, X(350), Y(yy), label, max(6, 11 * s))
+
+
+def _layout_region(ax, name, kind, x, y, w, h):
+    """One layout: a dashed region with its name tag, holding a drawing of `kind`."""
+    line(ax, [x, x + w, x + w, x, x], [y, y, y + h, y + h, y], lw=1.6, ls="--")
+    box(ax, x, y + h - 32, 130, 32, lw=1.2, fill="#dddddd")
+    text(ax, x + 65, y + h - 16, name, 11, "bold", "center")
+    text(ax, x + 145, y + h - 16, kind, 11)
+    _mini(ax, kind, x, y, w, h - 40)
+
+
+def _sheet(title, number):
+    """A drawing sheet with its border and title-block column; the layouts are drawn by the caller."""
+    fig, ax = canvas(1100, 790)
+    box(ax, 10, 10, 1080, 770, lw=2.4)
+    box(ax, 30, 30, 1040, 730, lw=1.2)
+    line(ax, [880, 880], [30, 760], lw=1.4)  # title block column
+    text(ax, 975, 722, "EXAMPLE STUDIO", 13, "bold", "center")
+    for y, label, value in [(640, "PROJECT", "Sample Project"), (560, "SHEET TITLE", title), (140, "DRAWING NUMBER", number)]:
+        line(ax, [880, 1070], [y + 38, y + 38], lw=0.9)
+        text(ax, 890, y + 22, label, 8)
+        text(ax, 890, y - 8, value, 11, "bold")
+    return fig, ax
+
+
+def sheet_one_layout():
+    fig, ax = _sheet("ONE LAYOUT", "EX-A-100")
+    _layout_region(ax, "LAYOUT 1", "plan", 50, 50, 810, 710)
+    return finish(fig)
+
+
+def sheet_six_layouts():
+    fig, ax = _sheet("SIX LAYOUTS", "EX-A-103")
+    for name, kind, x, y, w, h in [
+        ("LAYOUT 1", "plan", 50, 420, 500, 340), ("LAYOUT 2", "section", 570, 420, 290, 340),
+        ("LAYOUT 3", "detail", 50, 50, 250, 350), ("LAYOUT 4", "detail", 320, 50, 250, 350),
+        ("LAYOUT 5", "plan", 590, 230, 270, 170), ("LAYOUT 6", "detail", 590, 50, 270, 160),
+    ]:
+        _layout_region(ax, name, kind, x, y, w, h)
+    return finish(fig)
+
+
+def _single_layout(number, kind):
+    fig, ax = canvas(600, 420)
+    _layout_region(ax, f"LAYOUT {number}", kind, 20, 20, 560, 380)
+    return finish(fig)
+
+
+def layout_plan():
+    return _single_layout(1, "plan")
+
+
+def layout_section():
+    return _single_layout(2, "section")
+
+
+def layout_detail():
+    return _single_layout(3, "detail")
+
+
+# --- reference expressions and their occurrences (#164) ------------------------------------------------------------
+MONO = "DejaVu Sans Mono"
+
+
+def _expression(note, marked, caption):
+    """A drawing note in a fixed-width face with dashed boxes round the parts `marked` ((start, length) in characters)."""
+    size = 24
+    cw = size * 100 / 72 * 0.602  # one character, in drawing units: points to pixels at 100 dpi, times the face's advance
+    x0, y0 = 40, 140
+    fig, ax = canvas(900, 240)
+    text(ax, x0, y0, note, size, family=MONO)
+    for start, length in marked:
+        ax.add_patch(Rectangle((x0 + start * cw - 2, y0 - 26), length * cw + 4, 52, fill=False, edgecolor=INK, lw=1.8, ls="--"))
+    text(ax, x0, 60, caption, 15, "bold")
+    return finish(fig)
+
+
+NOTE = "SEE 1, 3, 5 & 7/S601 FOR TYPICAL DETAIL"
+EXPRESSION = NOTE.index("1, 3, 5")
+
+
+def inline_layout_sheet_reference():
+    return _expression(NOTE, [(EXPRESSION, len("1, 3, 5 & 7/S601"))], "Inline layout and sheet reference")
+
+
+def standalone_sheet_reference():
+    return _expression("SEE S601 FOR TYPICAL DETAIL", [(4, len("S601"))], "Standalone sheet reference")
+
+
+def drawing_identifier_mention():
+    return _expression(NOTE, [(NOTE.index("S601"), len("S601"))], "Drawing identifier mention")
+
+
+def layout_identifier_mention():
+    return _expression(NOTE, [(NOTE.index(n, EXPRESSION), 1) for n in ("1", "3", "5", "7")], "Layout identifier mention")
+
+
 METADATA = {
     "Titleblock_01.png": titleblock_side,
     "Titleblock_02.png": titleblock_strip,
@@ -671,7 +801,23 @@ METADATA = {
     "TextualNote_01.png": textual_note,
     "KeyPlan_01.png": key_plan,
     "Perspective_01.png": perspective,
-    "Layout_01.png": layout,
+    "Layout_02.png": layout_plan,
+    "Layout_03.png": layout_section,
+    "Layout_04.png": layout_detail,
+    "DrawingSheet_01.png": sheet_one_layout,
+    "DrawingSheet_02.png": layout,  # the sheet with three layouts, which Layout_01.png has always shown
+    "DrawingSheet_03.png": sheet_six_layouts,
+    "InlineLayoutSheetReference_01.png": inline_layout_sheet_reference,
+    "StandaloneSheetReference_01.png": standalone_sheet_reference,
+    "DrawingIdentifierMention_01.png": drawing_identifier_mention,
+    "LayoutIdentifierMention_01.png": layout_identifier_mention,
+}
+
+# Images that no current term links but that an earlier release names, so their address must keep answering with
+# the same picture ("a released version never changes", docs/contribute/example-images.md). Still drawn, so a
+# regeneration reproduces them.
+ARCHIVED = {  # module -> {file name -> function returning the PNG bytes}
+    "aec_drawing_metadata": {"Layout_01.png": layout},
 }
 
 COMMON_SYMBOLS = {
@@ -714,7 +860,7 @@ def main(argv=None):
     for module, drawings in DRAWINGS.items():
         out = assets / module / "exampleImage"
         out.mkdir(parents=True, exist_ok=True)
-        for name, draw in drawings.items():
+        for name, draw in {**drawings, **ARCHIVED.get(module, {})}.items():
             data = draw()
             (out / name).write_bytes(data)
             print(f"wrote {module}/{name} ({len(data) // 1024} KB)")
