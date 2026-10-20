@@ -113,6 +113,9 @@ def test_every_shape_has_a_message_and_a_severity():
         assert shapes.value(shape, SH.severity) is not None, f"{shape} has no sh:severity"
         for prop in shapes.objects(shape, SH.property):
             assert shapes.value(prop, SH.message) is not None, f"a property shape of {shape} has no sh:message"
+            # SHACL does not pass a node shape's severity down to its property shapes: without its own, the default
+            # (Violation) applies, whatever the node shape says.
+            assert shapes.value(prop, SH.severity) == shapes.value(shape, SH.severity), f"a property shape of {shape} has a different or no sh:severity"
 
 
 def test_every_adiro_term_a_shape_names_exists_in_the_ontology():
@@ -134,3 +137,25 @@ def test_the_shape_files_follow_the_naming_convention():
     assert all(p.name.endswith(".shacl.ttl") for p in files)
     stray = [p.name for p in (ROOT / vd.SHAPES_DIR).iterdir() if p.suffix == ".ttl" and not p.name.endswith(".shacl.ttl")]
     assert stray == [], f"a .ttl in {vd.SHAPES_DIR}/ that is not *.shacl.ttl is never run: {stray}"
+
+
+# --- UC-01: a drawing has an author (#179) -----------------------------------------------------------------------------
+def test_a_drawing_with_an_author_conforms():
+    assert check(":d a metadata:DrawingSheet ; metadata:isAuthoredBy :jsmith .\n") == []
+
+
+def test_a_drawing_with_no_author_is_a_warning_and_never_fails_a_run(tmp_path):
+    results = check(":d a metadata:DrawingSheet .\n")
+    assert [(r["severity"], r["message"]) for r in results] == [("Warning", "A drawing has at least one recorded author.")]
+    data = tmp_path / "d.ttl"
+    data.write_text(PREFIXES + ":d a metadata:DrawingSheet .\n", encoding="utf-8")
+    assert vd.main([str(data)]) == 0  # a warning is reported; only a violation fails the run
+
+
+def test_an_author_of_a_revision_does_not_count_for_the_drawing():
+    only_revision = ":d a metadata:DrawingSheet ; metadata:hasRevision :r . :r a metadata:DrawingRevision ; metadata:isAuthoredBy :jsmith .\n"
+    assert [r["severity"] for r in check(only_revision)] == ["Warning"]
+
+
+def test_the_checker_and_the_approver_are_optional():
+    assert check(":d a metadata:DrawingSheet ; metadata:isAuthoredBy :jsmith .\n") == []  # no checker, no approver: no result

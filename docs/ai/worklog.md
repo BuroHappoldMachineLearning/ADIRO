@@ -7,8 +7,7 @@ records which printed table a revision was read from. UC-01 ORSD v0.8 (CQ 3.4, 4
 open issue G12); `tests/test_uc01_competency_queries.py` runs the recorded queries on small data. The version impact is MAJOR, because the
 compatibility check reads any domain change as potentially breaking although a widening invalidates no statement; it goes into the MAJOR cut
 planned with [#170](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/170) and [#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171).
-Not done: the shapes for a drawing with no author and the absence/status vocabulary (waiting for [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)),
-and the question whether `issueDate` widens the same way. Merge the pending PATCH Release PR before this one: this change turns the next cut into a MAJOR.
+`issueDate` widens the same way (decided with the maintainer; "date authored" is its `skos:altLabel`), and only the author is required (checker and approver are optional). `data-validation/uc01-authorship.shacl.ttl` is the shape for CQ 4.4 (a Warning; its property shape carries its own severity, because SHACL does not pass a node shape's severity down). Not done: telling "the extraction missed the author" from "the drawing names none" (the vocabulary of [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)). Merge the pending PATCH Release PR before this one: this change turns the next cut into a MAJOR.
 
 ## 2026-10-20 - Data validation: SHACL shapes outside the ontology modules
 
