@@ -181,6 +181,14 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
                   "Bauherr"@de, "Auftraggeber"@de ;
     :extractionHint "Often the most prominent organisation name on the sheet, sometimes a logo rather than text. Frequently in its own cell above or beside the originator's block."@en .
 
+:assertsProject rdf:type owl:ObjectProperty ;
+    rdfs:label "assertsProject" ;
+    rdfs:domain :Titleblock ;
+    rdfs:range :Project ;
+    rdfs:comment "The project this title block names: a claim read off the printed region, like assertsClient. The fact that a drawing is filed under a project is belongsToProject; the two can differ (a drawing filed under another project than its title block names), and the difference is what a query can report." ;
+    skos:altLabel "project"@en, "Projekt"@de, "Bauvorhaben"@de ;
+    :extractionHint "The project cell of the title block, a name, a number or both; the same project is named on every drawing of the project."@en .
+
 :assertsRevision rdf:type owl:ObjectProperty ;
     rdfs:label "assertsRevision" ;
     rdfs:domain :RevisionTable ;

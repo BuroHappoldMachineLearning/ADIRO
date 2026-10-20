@@ -2,7 +2,7 @@
 
 Implemented the ontology half of [#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179) and [#69](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/69)
 (approved by the maintainer). `isAuthoredBy`, `isCheckedBy` and `isApprovedBy` now have the union domain `DrawingSheet` or `DrawingRevision`, since
-the title block's author is the drawing's and a revision can be made by someone else; `assertsRevision` (`RevisionTable` to `DrawingRevision`)
+the title block's author is the drawing's and a revision can be made by someone else; `assertsProject` (`Titleblock` to `Project`, added at the maintainer's request: the title block's claim differs from `belongsToProject`, the filing; CQ 2.3 and 2.4), `assertsRevision` (`RevisionTable` to `DrawingRevision`)
 records which printed table a revision was read from. UC-01 ORSD v0.8 (CQ 3.4, 4.4, 4.5 with their queries, the amended "Person vs Role" note,
 open issue G12); `tests/test_uc01_competency_queries.py` runs the recorded queries on small data. The version impact is MAJOR, because the
 compatibility check reads any domain change as potentially breaking although a widening invalidates no statement; it goes into the MAJOR cut

@@ -432,6 +432,15 @@ The organisation that produced the drawing — the originator in ISO 19650-2 ter
 - **Range:** [Organisation](#Organisation)
 - **extraction hint:** Usually the organisation whose logo sits in or beside the title block, and whose code appears in the drawing-number originator segment.
 
+### assertsProject {#assertsProject}
+
+The project this title block names: a claim read off the printed region, like assertsClient. The fact that a drawing is filed under a project is belongsToProject; the two can differ (a drawing filed under another project than its title block names), and the difference is what a query can report.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#assertsProject`
+- **Domain:** [Titleblock](#Titleblock)
+- **Range:** [Project](#Project)
+- **extraction hint:** The project cell of the title block, a name, a number or both; the same project is named on every drawing of the project.
+
 ### assertsRevision {#assertsRevision}
 
 A revision that this revision table lists: a claim read off the printed table, one link per row, so a table listing revisions A, B and C asserts three. It does not say which revision is the latest, and it does not replace hasRevision, which states that a drawing has the revision; assertsRevision records which printed table a revision was read from. Reach the table from a revision with the inverse path ^assertsRevision.

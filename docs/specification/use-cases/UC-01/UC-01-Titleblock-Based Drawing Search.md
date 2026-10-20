@@ -94,6 +94,7 @@ Links between two entities. New properties are wired into the existing generic t
 | `hasDiscipline` ⚠️    | `Layout`          | `Discipline` (min 1)| `aec_domain_common`    | REUSE¹ | —                       |
 | `hasRevision`         | `DrawingSheet`    | `DrawingRevision`   | `aec_drawing_metadata` | NEW    | `metadata:contains`     |
 | `belongsToProject`    | `DrawingSheet`    | `Project`           | `aec_drawing_metadata` | NEW    | (top-level)             |
+| `assertsProject`      | `Titleblock`      | `Project`           | `aec_drawing_metadata` | NEW    | (top-level)             |
 | `belongsToPackage`    | `DrawingSheet`    | `DrawingPackage`    | `aec_drawing_metadata` | NEW    | (top-level)             |
 | `isAuthoredBy`           | `DrawingSheet` or `DrawingRevision` | `Person` | `aec_drawing_metadata` | NEW    | (top-level)             |
 | `isCheckedBy`          | `DrawingSheet` or `DrawingRevision` | `Person` | `aec_drawing_metadata` | NEW    | (top-level)             |
@@ -137,7 +138,7 @@ Each FR describes one representational capability the ontology must have, in imp
 > The ontology MUST represent the relationship between a drawing sheet and the project it belongs to, such that all sheets within a given project can be retrieved as a set.
 
 - Source: UC-01
-- Derived terms: `metadata:Project` (NEW), `metadata:belongsToProject` (NEW), `metadata:projectName`, `metadata:projectNumber` (NEW datatype properties on `Project`)
+- Derived terms: `metadata:Project` (NEW), `metadata:belongsToProject` (NEW), `metadata:assertsProject` (NEW, from a `Titleblock` to the project it names), `metadata:projectName`, `metadata:projectNumber` (NEW datatype properties on `Project`)
 
 ---
 
@@ -222,6 +223,23 @@ CQs are grouped by the FR they validate. Each must be translatable directly into
 | ------ | ------------------------------------------------------------------- |
 | CQ 2.1 | What drawing sheets belong to project "HS 2-N 400"?                 |
 | CQ 2.2 | How many drawing sheets are currently registered under project "X"? |
+| CQ 2.3 | Which project does the title block of drawing "ST-101" name? *(Added in [v0.8](#9-version-history).)* |
+| CQ 2.4 | Which drawings are filed under a project other than the one their title block names? *(Added in [v0.8](#9-version-history).)* |
+
+CQ 2.4 as a query (`assertsProject` is the title block's claim, `belongsToProject` the filing):
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+
+# CQ 2.4: the drawings filed under another project than their title block names
+SELECT ?drawing ?named ?filed WHERE {
+  ?titleblock a metadata:Titleblock ;
+              metadata:assertsMetadataFor ?drawing ;
+              metadata:assertsProject     ?named .
+  ?drawing metadata:belongsToProject ?filed .
+  FILTER (?named != ?filed)
+}
+```
 
 ### CQ Group 3 — Revision History (validates FR 3)
 
@@ -440,6 +458,7 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `metadata:assertsRevision`      | `aec_drawing_metadata` | NEW    | CQ 3.4                                         | FR 3                               |
 | `metadata:hasStatusCode`       | `aec_drawing_metadata` | NEW    | CQ 7.x, CQ 8.2                                 | FR 7                               |
 | `metadata:belongsToProject`    | `aec_drawing_metadata` | NEW    | CQ 2.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 2                               |
+| `metadata:assertsProject`      | `aec_drawing_metadata` | NEW    | CQ 2.3, CQ 2.4                                 | FR 2                               |
 | `dcommon:hasDiscipline`        | `aec_domain_common`    | REUSE  | CQ 5.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 5                               |
 | `metadata:hasProperty`         | `aec_drawing_metadata` | REUSE  | CQ 6.x, CQ-I 3                                 | FR 6                               |
 | `metadata:belongsToPackage`    | `aec_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
@@ -500,7 +519,7 @@ metadata:hasProperty (already exists)
   └── metadata:hasStatusCode (NEW)
 ```
 
-All other new object properties (`belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `assertsRevision`) are declared at the top level — they are associative or role-differentiated and do not fit the "containment" or "characterising property" generalisations.
+All other new object properties (`belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `assertsRevision`, `assertsProject`) are declared at the top level — they are associative or role-differentiated and do not fit the "containment" or "characterising property" generalisations.
 
 ---
 
@@ -529,6 +548,7 @@ Changes from v0.7, made when the person roles were extended to the drawing and t
 - **`isAuthoredBy`, `isCheckedBy` and `isApprovedBy` now apply to a `DrawingSheet` as well as a `DrawingRevision`** (§2.3, FR 4, §6). The title block names who drew, checked and approved the drawing; a revision can be made by other people, so the two are different facts and both are kept. The "Person vs Role" note is amended. The domain is the union of the two classes; no cardinality, because an extraction may find nobody (#84). A drawing that records no author is read as authored by its revisions' authors (a path, not an entailment).
 - **`assertsRevision` added** (`RevisionTable` to `DrawingRevision`, §2.3, FR 3, §6): one link per row of a printed revision table, so a table with revisions A, B and C asserts three. It records which table a revision was read from; it does not say which revision is the latest (that is read from `issueDate`).
 - **`issueDate` applies to a `DrawingSheet` as well as a `DrawingRevision`** (§2.2): the title block's date is the drawing's, and "date authored" is the same property, not a second one.
+- **`assertsProject` added** (`Titleblock` to `Project`, §2.3, FR 2, §6) with CQ 2.3 and CQ 2.4: the project a title block names is a claim, and the project a drawing is filed under (`belongsToProject`) is a fact; the two can differ, and CQ 2.4 finds the drawings where they do.
 - **CQ 3.4, CQ 4.4 and CQ 4.5 added**, with the queries for CQ 3.4 and CQ 4.4. A drawing must have an author; a checker and an approver are optional. CQ 4.4 is a closed-world check, and the same rule is a data-validation shape.
 - **Open issue G12 added**: a missing person is two different facts (not found, not printed); decided in principle, vocabulary open.
 

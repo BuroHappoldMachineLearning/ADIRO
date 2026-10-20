@@ -63,7 +63,20 @@ def test_cq_3_4_finds_the_table_a_revision_was_read_from():
     assert run(query, data) == {"t1"}
 
 
+def test_cq_2_4_finds_the_drawings_filed_under_another_project_than_their_title_block_names():
+    query = recorded_query("# CQ 2.4")
+    data = """:t1 a metadata:Titleblock ; metadata:assertsMetadataFor :a ; metadata:assertsProject :p1 .
+:a a metadata:DrawingSheet ; metadata:belongsToProject :p1 .
+:t2 a metadata:Titleblock ; metadata:assertsMetadataFor :b ; metadata:assertsProject :p1 .
+:b a metadata:DrawingSheet ; metadata:belongsToProject :p2 .
+:t3 a metadata:Titleblock ; metadata:assertsMetadataFor :c ; metadata:assertsProject :p1 .
+:c a metadata:DrawingSheet .
+"""
+    # a agrees, b is filed under p2 while its title block names p1; c is not filed under any project, so nothing to compare
+    assert run(query, data) == {"b"}
+
+
 def test_a_table_asserts_every_revision_it_lists_and_the_ontology_declares_the_property():
     ontology = Graph().parse(str(ROOT / "src" / "aec_drawing_metadata.ttl"), format="turtle")
     names = {str(s).rsplit("#", 1)[-1] for s in ontology.subjects()}
-    assert {"assertsRevision", "isAuthoredBy", "isCheckedBy", "isApprovedBy"} <= names
+    assert {"assertsRevision", "assertsProject", "isAuthoredBy", "isCheckedBy", "isApprovedBy"} <= names
