@@ -1,3 +1,10 @@
+## 2026-10-20 - Terminology: "drawing", not "sheet"
+
+Recorded the maintainer's rule in `AGENTS.md` (ontology authoring conventions): say "drawing" for the thing ADIRO describes and
+keep "sheet" for the paper format; `DrawingSheet` and the terms built on it keep their IRIs. Fixed the one line in the module
+list that said "sheet". Not done: the other hand-written pages and the issues still say "sheet" in places; they are changed when
+they are next edited. Whether `DrawingSheet` itself should be renamed is a separate, MAJOR decision, not made here.
+
 ## 2026-10-20 - Alert when a release or publishing workflow fails
 
 Nothing reported the failed releases of 19 October ([#173](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/173)): the only
