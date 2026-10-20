@@ -7,6 +7,8 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix ct: <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#> .
 
 #################################################################
 #    Ontology
@@ -187,3 +189,194 @@ prov:endedAtTime rdf:type owl:DatatypeProperty ;
     rdfs:subPropertyOf prov:endedAtTime ;
     rdfs:domain :InferenceMeta ;
     rdfs:range xsd:dateTime .
+
+#################################################################
+#    ISO 21597-1 (ICDD) terms referenced for alignment
+#
+#    Declared locally (not owl:imports), for the same reason as the PROV-O
+#    stubs above. They are typing stubs of the terms of edition 1 of the
+#    standard (the edition is part of its namespace); a stub is a name, not
+#    a definition, and carries none of the standard's axioms. The classes
+#    below are subclasses of them; the properties are related to the
+#    standard's by skos:closeMatch only, because every ICDD property is
+#    functional and createdBy has the container as its domain.
+#################################################################
+
+ct:Document rdf:type owl:Class ;
+    rdfs:label "Document (ISO 21597-1)" ;
+    rdfs:comment "Typing stub for the ISO 21597-1 (ICDD) term Document, edition 1: an abstract reference to a document inside or outside a container. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at." ;
+    rdfs:isDefinedBy <https://standards.iso.org/iso/21597/-1/ed-1/en/Container> .
+
+ct:Party rdf:type owl:Class ;
+    rdfs:label "Party (ISO 21597-1)" ;
+    rdfs:comment "Typing stub for the ISO 21597-1 (ICDD) term Party, edition 1: the generalisation of an organisation and a person. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at." ;
+    rdfs:isDefinedBy <https://standards.iso.org/iso/21597/-1/ed-1/en/Container> .
+
+ct:Person rdf:type owl:Class ;
+    rdfs:label "Person (ISO 21597-1)" ;
+    rdfs:comment "Typing stub for the ISO 21597-1 (ICDD) term Person, edition 1. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at." ;
+    rdfs:isDefinedBy <https://standards.iso.org/iso/21597/-1/ed-1/en/Container> .
+
+ct:Organisation rdf:type owl:Class ;
+    rdfs:label "Organisation (ISO 21597-1)" ;
+    rdfs:comment "Typing stub for the ISO 21597-1 (ICDD) term Organisation, edition 1. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at." ;
+    rdfs:isDefinedBy <https://standards.iso.org/iso/21597/-1/ed-1/en/Container> .
+
+#################################################################
+#    Classes - agents
+#################################################################
+
+:Party rdf:type owl:Class ;
+    rdfs:label "Party" ;
+    rdfs:comment "A person or an organisation: whoever made, saved or is named on something. Abstract: every party is exactly a Person or an Organisation, never both and never neither (their disjoint union), as in ISO 21597-1. Software that produced a file is not a party; a PROV activity records it." ;
+    owl:disjointUnionOf ( :Person :Organisation ) ;
+    rdfs:subClassOf prov:Agent , ct:Party .
+
+:Person rdf:type owl:Class ;
+    rdfs:label "Person" ;
+    rdfs:comment "A named individual: a person named on a drawing (the author, a checker, an approver) or who made or saved a file. Transcribed as printed, so possibly only initials. The role is expressed by the property that points to the person, not by subclassing." ;
+    rdfs:subClassOf :Party , ct:Person .
+
+:Organisation rdf:type owl:Class ;
+    rdfs:label "Organisation" ;
+    rdfs:comment "A legal entity: the client, the originator, a legal owner or a responsible department named on a drawing, or the organisation that made or saved a file. Modelled as a class rather than a string so that one organisation recurring across many drawings is a single individual, which is what makes cross-drawing questions answerable." ;
+    rdfs:subClassOf :Party , ct:Organisation .
+
+#################################################################
+#    Classes - files and pages
+#
+#    A drawing lives in a file, and a PDF holds many drawings, one per
+#    page. The file, the page of it, and the coordinate frame (in
+#    aec_geometry) that reads the page are kept apart so that nothing is
+#    stated twice. File metadata comes from the storage system, so it
+#    carries no confidence: these are not InferredEntity.
+#################################################################
+
+:DrawingFile rdf:type owl:Class ;
+    rdfs:label "Drawing File" ;
+    rdfs:comment "A reference to a document in which drawings are stored: not the bytes, but what identifies and locates them (name, media type, content hash, where it is stored, when and by whom it was made and last changed, how many pages it has). The content hash is its identity; the storage location is a fact that changes when the file is moved, and more than one is allowed (copies). A subclass of the ISO 21597-1 Document, which is likewise a reference." ;
+    rdfs:subClassOf prov:Entity , ct:Document .
+
+:FilePage rdf:type owl:Class ;
+    rdfs:label "File Page" ;
+    rdfs:comment "One page of one DrawingFile, counted from 1; a single-page or raster file has page 1. It holds what is true of the page itself: its number, the file it belongs to, its rotation and its display size in points. A drawing is linked to the page it is on, and a coordinate frame reads the page in one coordinate convention." ;
+    rdfs:subClassOf prov:Entity .
+
+#################################################################
+#    Properties - files
+#
+#    Names follow ISO 21597-1 where the meaning is the same; each is related
+#    to the standard's term, to Dublin Core terms (ISO 15836-2) and to DCAT
+#    by skos:closeMatch, never as a subproperty.
+#################################################################
+
+:fileName rdf:type owl:DatatypeProperty ;
+    rdfs:label "fileName" ;
+    rdfs:comment "The name of the file, with its extension, as the storage system gives it." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:string ;
+    skos:closeMatch ct:name , dcterms:title .
+
+:mediaType rdf:type owl:DatatypeProperty ;
+    rdfs:comment "The IANA media type of the file, for example application/pdf or image/tiff." ;
+    rdfs:label "mediaType" ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:string ;
+    skos:closeMatch ct:format , dcterms:format , dcat:mediaType .
+
+:contentHash rdf:type owl:DatatypeProperty ;
+    rdfs:label "contentHash" ;
+    rdfs:comment "The hash of the bytes of the file, as a hexadecimal string. It identifies the content: two files with the same hash and algorithm are the same bytes, wherever they are stored, and a hash that no longer matches means an extraction was made from other bytes." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:string ;
+    skos:closeMatch ct:checksum .
+
+:hashAlgorithm rdf:type owl:DatatypeProperty ;
+    rdfs:label "hashAlgorithm" ;
+    rdfs:comment "The algorithm that produced the contentHash, for example sha256." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:string ;
+    skos:closeMatch ct:checksumAlgorithm .
+
+:storageLocation rdf:type owl:DatatypeProperty ;
+    rdfs:label "storageLocation" ;
+    rdfs:comment "Where a copy of the file is stored: an address in a document-management or cloud storage system, or a path as a file address. More than one is allowed, and a location changes when the file is moved; the contentHash is what stays the same." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:anyURI ;
+    skos:closeMatch ct:url , dcat:downloadURL .
+
+:fileCreatedAt rdf:type owl:DatatypeProperty ;
+    rdfs:label "fileCreatedAt" ;
+    rdfs:comment "When the file was created, as the storage system records it. Not the drawing's issue date (issueDate)." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:dateTime ;
+    skos:closeMatch ct:creationDate , dcterms:created .
+
+:fileModifiedAt rdf:type owl:DatatypeProperty ;
+    rdfs:label "fileModifiedAt" ;
+    rdfs:comment "When the file was last modified, as the storage system records it." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:dateTime ;
+    skos:closeMatch ct:modificationDate , dcterms:modified .
+
+:fileCreatedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "fileCreatedBy" ;
+    rdfs:comment "The party that made the file in the storage system, usually whoever saved it. Not the drawing's author, which is isAuthoredBy in aec_drawing_metadata; a close match to, not the same as, Dublin Core creator and ICDD createdBy." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range :Party ;
+    skos:closeMatch ct:createdBy , dcterms:creator .
+
+:fileModifiedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "fileModifiedBy" ;
+    rdfs:comment "A party that modified the file in the storage system. More than one is allowed." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range :Party ;
+    skos:closeMatch ct:modifiedBy , dcterms:contributor .
+
+:pageCount rdf:type owl:DatatypeProperty ;
+    rdfs:label "pageCount" ;
+    rdfs:comment "The number of pages of the file: 1 for a single-page or raster file." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:positiveInteger ;
+    skos:closeMatch dcterms:extent .
+
+:fileSize rdf:type owl:DatatypeProperty ;
+    rdfs:label "fileSize" ;
+    rdfs:comment "The size of the file in bytes." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:nonNegativeInteger ;
+    skos:closeMatch dcat:byteSize , dcterms:extent .
+
+#################################################################
+#    Properties - pages
+#################################################################
+
+:belongsToFile rdf:type owl:ObjectProperty ;
+    rdfs:label "belongsToFile" ;
+    rdfs:comment "The DrawingFile that a FilePage is a page of. To go from a file to its pages, use the inverse path ^aprov:belongsToFile (ADIRO declares no named inverse properties)." ;
+    rdfs:domain :FilePage ;
+    rdfs:range :DrawingFile .
+
+:pageNumber rdf:type owl:DatatypeProperty ;
+    rdfs:label "pageNumber" ;
+    rdfs:comment "The number of the page within its file, counted from 1; a single-page or raster file has page 1. A page can be written as an address with the page fragment of RFC 3778 (the file's address followed by #page=3), which counts from 1 as well. A zero-based index, where a program needs one, is this number minus one." ;
+    rdfs:domain :FilePage ;
+    rdfs:range xsd:positiveInteger .
+
+:displayWidthPt rdf:type owl:DatatypeProperty ;
+    rdfs:label "displayWidthPt" ;
+    rdfs:comment "The effective width of the page in points after the recorded page mapping (rotation and cropping); supports bounds checks on coordinates. The measured size of this page of this file, not the paper format the drawing is meant for (sheetSize)." ;
+    rdfs:domain :FilePage ;
+    rdfs:range xsd:decimal .
+
+:displayHeightPt rdf:type owl:DatatypeProperty ;
+    rdfs:label "displayHeightPt" ;
+    rdfs:comment "The effective height of the page in points after the recorded page mapping (rotation and cropping); supports bounds checks on coordinates. The measured size of this page of this file, not the paper format the drawing is meant for (sheetSize)." ;
+    rdfs:domain :FilePage ;
+    rdfs:range xsd:decimal .
+
+:pdfRotationDeg rdf:type owl:DatatypeProperty ;
+    rdfs:label "pdfRotationDeg" ;
+    rdfs:comment "The rotation recorded for the page, in degrees. The page_display_pt coordinates of a coordinate frame already include the recorded page mapping, so this is for interpretation and validation: do not apply the rotation to the coordinates again." ;
+    rdfs:domain :FilePage ;
+    rdfs:range xsd:integer .

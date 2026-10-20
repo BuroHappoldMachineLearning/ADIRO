@@ -55,11 +55,17 @@ geo:Geometry rdf:type owl:Class ;
 
 :CoordinateFrame rdf:type owl:Class ;
     rdfs:label "Coordinate Frame" ;
-    rdfs:comment "The coordinate context that makes a geometry's numbers interpretable - the exact PDF/page, unit and named coordinate space its coordinates are relative to (detailed by the datatype properties below). Normally owned by a DrawingSheet (aec_drawing_metadata:hasCoordinateFrame) and shared by the geometries on that page; a sheet may have different frames for different file versions. Not an InferredEntity: a declared coordinate context, not a detection with its own confidence." .
+    rdfs:comment "A page of a file read in one coordinate convention: the named coordinate space, the unit and the profile that defines it (the datatype properties below), for the page it describes (describesPage). A page can have more than one frame (the primary page_display_pt in points, and px for raster evidence), and each states only its convention: what is true of the page itself (its number, file, rotation and size) is on the aec_provenance:FilePage. Not an InferredEntity: a declared coordinate context, not a detection with its own confidence." .
 
 #################################################################
 #    Object Properties
 #################################################################
+
+:describesPage rdf:type owl:ObjectProperty ;
+    rdfs:label "describesPage" ;
+    rdfs:comment "The page (an aprov:FilePage) that this coordinate frame reads. The frames of a drawing are reached through its page: the path isOnPage / ^describesPage from the drawing, in aec_drawing_metadata." ;
+    rdfs:domain :CoordinateFrame ;
+    rdfs:range aprov:FilePage .
 
 :inCoordinateFrame rdf:type owl:ObjectProperty ;
     rdfs:label "inCoordinateFrame" ;
@@ -98,38 +104,8 @@ geo:Geometry rdf:type owl:Class ;
     rdfs:domain :CoordinateFrame ;
     rdfs:range xsd:string .
 
-:frameArtifactRef rdf:type owl:DatatypeProperty ;
-    rdfs:label "frameArtifactRef" ;
-    rdfs:comment "A reference (e.g. a manifest key or content hash) pinning the exact PDF/artifact version the coordinates are relative to, so a frame is tied to a specific file and not merely a page number." ;
-    rdfs:domain :CoordinateFrame ;
-    rdfs:range xsd:string .
-
-:pageIndex rdf:type owl:DatatypeProperty ;
-    rdfs:label "pageIndex" ;
-    rdfs:comment "Zero-based index of the page within the referenced PDF that this frame describes." ;
-    rdfs:domain :CoordinateFrame ;
-    rdfs:range xsd:nonNegativeInteger .
-
-:displayWidthPt rdf:type owl:DatatypeProperty ;
-    rdfs:label "displayWidthPt" ;
-    rdfs:comment "Effective display-page width in points after the recorded page mapping; supports bounds checks on coordinates." ;
-    rdfs:domain :CoordinateFrame ;
-    rdfs:range xsd:decimal .
-
-:displayHeightPt rdf:type owl:DatatypeProperty ;
-    rdfs:label "displayHeightPt" ;
-    rdfs:comment "Effective display-page height in points after the recorded page mapping; supports bounds checks on coordinates." ;
-    rdfs:domain :CoordinateFrame ;
-    rdfs:range xsd:decimal .
-
-:pdfRotationDeg rdf:type owl:DatatypeProperty ;
-    rdfs:label "pdfRotationDeg" ;
-    rdfs:comment "Effective PDF page rotation metadata for the referenced page. The primary page_display_pt coordinates already include the recorded page mapping, so this is for interpretation/validation - do not apply the rotation to the coordinates again." ;
-    rdfs:domain :CoordinateFrame ;
-    rdfs:range xsd:integer .
-
 :profileRef rdf:type owl:DatatypeProperty ;
     rdfs:label "profileRef" ;
-    rdfs:comment "Reference to the versioned coordinate profile that defines the named coordinateSpace in full (origin, axes, unit and effective page extent), so the convention is pinned rather than only implied by the space's name." ;
+    rdfs:comment "Reference to the versioned coordinate profile that defines the named coordinateSpace in full (origin, axes and unit), so the convention is pinned rather than only implied by the space's name." ;
     rdfs:domain :CoordinateFrame ;
     rdfs:range xsd:string .

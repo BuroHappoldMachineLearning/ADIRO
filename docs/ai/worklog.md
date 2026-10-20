@@ -1,10 +1,14 @@
-## 2026-10-20 - Design page: the file a drawing is stored in
+## 2026-10-20 - The file, the page and the agents in the ontology
 
-Drafted `docs/specification/design-decisions/file-and-page-metadata.md` from the brainstorm [#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192). Decided with the maintainer: a `DrawingFile` (a reference to a
-document, identity by content hash), a `FilePage` (page number from 1, rotation, display size in points) and the `CoordinateFrame` reduced to the convention; `Party`, `Person`, `Organisation`
-in `aec_provenance`; classes are subclasses of the ISO 21597-1 edition-1 terms (local stubs), properties align by `skos:closeMatch` only (every ICDD property is functional, and `createdBy` has the
-container as its domain, which I checked in the published `Container.rdf`); the change is a MAJOR one for `aec_geometry` and `aec_provenance`, in the cut with [#170](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/170) and [#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171).
-Docs only: nothing is in the ontology yet. Not verified: the IFC document-information IRI in its OWL form (the IFC pages could not be read), and the ICDD terms beyond the published edition 1.
+Implemented [#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192) in full (the maintainer asked for the whole issue, not only the design page). `aec_provenance` gains `DrawingFile`, `FilePage` and
+the agents `Party`, `Person`, `Organisation` (moved from `aec_drawing_metadata`, new IRIs; `Party` is their disjoint union), with the file and page properties; the classes are subclasses of
+local stubs of the ISO 21597-1 edition-1 terms, the properties are related to ICDD, Dublin Core and DCAT by `skos:closeMatch` only (every ICDD property is functional). `aec_geometry`: a `CoordinateFrame`
+keeps only `coordinateSpace`, `unit`, `profileRef` and points to its page with `describesPage` (`pageIndex`, `frameArtifactRef`, `pdfRotationDeg`, `displayWidthPt`, `displayHeightPt` leave it:
+BREAKING). `aec_drawing_metadata`: `isOnPage` added; `Person`, `Organisation` and `hasCoordinateFrame` removed; the now-unused import of `aec_geometry` dropped. UC-01 ORSD v0.9 (FR 9, CQ group 9);
+`tests/test_file_and_page_model.py` pins the structure and the alignment rules, and the recorded queries CQ 9.1 and 9.3 run on small data. Display configs pruned of the removed terms.
+Also fixed a changelog accident from the merge of #189: its entries had landed under the released `[5.0.1]` heading (the tag does not contain them) and are back under `[Unreleased]`.
+Not verified: the IFC document-information IRI (open point on the design page), the rendering of the new pages in OntoCanvas, and the `uc01-merged-for-visualization.ttl` copy, which still shows the old structure.
+Released with the module rename of [#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171).
 
 ## 2026-10-20 - Authorship on the drawing and the revision, and `assertsRevision`
 

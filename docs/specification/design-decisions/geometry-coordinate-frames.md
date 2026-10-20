@@ -18,23 +18,31 @@ from inside it. In ADIRO that is:
 @prefix ex:    <https://example.org/adiro/demo#> .
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 
+ex:file-A101 a aprov:DrawingFile ;                   # the file the drawing is stored in (a reference, not the bytes)
+    aprov:fileName "A101-ground-floor.pdf" ;
+    aprov:contentHash "9f2c…" ; aprov:hashAlgorithm "sha256" ;   # identifies the exact bytes
+    aprov:pageCount 12 .
+
+ex:page-A101 a aprov:FilePage ;                      # one page of that file: what is true of the page itself
+    aprov:belongsToFile ex:file-A101 ;
+    aprov:pageNumber 1 ;                             # counted from 1
+    aprov:displayWidthPt 2384 ; aprov:displayHeightPt 1684 ;
+    aprov:pdfRotationDeg 0 .
+
 ex:sheet-A101 a md:DrawingSheet ;
     md:contains ex:tb-A101 ;
-    md:hasCoordinateFrame ex:frame-A101 .            # the sheet owns its page frame
+    md:isOnPage ex:page-A101 .                       # the drawing is on this page of this file
 
 ex:frame-A101 a geom:CoordinateFrame ;
-    geom:coordinateSpace "page_display_pt" ;         # top-left origin, x right, y down, points
-    geom:unit "pt" ;
-    geom:frameArtifactRef "sha256:9f2c…" ;           # pins the exact PDF page
-    geom:pageIndex 0 ;
-    geom:displayWidthPt 2384 ; geom:displayHeightPt 1684 ;
-    geom:pdfRotationDeg 0 .
+    geom:describesPage ex:page-A101 ;                # the frame reads that page…
+    geom:coordinateSpace "page_display_pt" ;         # …in one convention: top-left origin, x right, y down
+    geom:unit "pt" .
 
 ex:tb-A101 a md:Titleblock ;
     geom:hasBoundingBox ex:bbox-tb-A101 .            # the TITLE BLOCK carries a box…
 
 ex:bbox-tb-A101 a geom:BoundingBox ;
-    geom:bboxXYXY "[1900, 1400, 2360, 1660]" ;       # …its region, in the sheet's frame
+    geom:bboxXYXY "[1900, 1400, 2360, 1660]" ;       # …its region, in the page's frame
     geom:inCoordinateFrame ex:frame-A101 ;
     aprov:hasConfidence 0.97 ;                        # confidence in the BOX (the detector)
     aprov:hasInferenceMeta [ a aprov:InferenceMeta ;

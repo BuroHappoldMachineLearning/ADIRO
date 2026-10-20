@@ -17,11 +17,11 @@
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/aec_drawing_metadata.html){ .md-button }
 </div>
 
-The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance and geometry modules, and the discipline modules build on it.
+The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance module (which also holds the file, the page and the agents), and the discipline modules build on it.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata`
 - **Versioned IRI:** `https://w3id.org/adiro/aec_drawing_metadata/5.0.1`
-- **Imports:** `aec_geometry`, `aec_provenance`
+- **Imports:** `aec_provenance`
 
 ## Interactive view
 
@@ -41,7 +41,6 @@ graph BT
     aec_domain_common["Aec Domain Common"]
     aec_facade_domain["Aec Facade Domain"]
     aec_geometry --> aec_provenance
-    aec_drawing_metadata --> aec_geometry
     aec_drawing_metadata --> aec_provenance
     aec_common_symbols --> aec_drawing_metadata
     aec_domain_common --> aec_drawing_metadata
@@ -243,13 +242,6 @@ Superclass for annotations on a drawing sheet that are not part of the drawing g
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
 - **isComputerVisionLabel:** true
 
-### Organisation {#Organisation}
-
-A legal entity named in a title block — client, originator, legal owner or responsible department. Modelled as a class rather than a string so that one organisation recurring across many sheets is a single individual, which is what makes cross-sheet questions answerable. Aligns to ct:Organisation (ISO 21597-1) and IfcActorSelect; note the ISO spelling differs.
-
-- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Organisation`
-- **isComputerVisionLabel:** false
-
 ### Orientation {#OrientationValue}
 
 Enumerated orientation values used with hasOrientation.
@@ -259,13 +251,6 @@ Enumerated orientation values used with hasOrientation.
     - [Undefined](#Undefined)
     - [Horizontal](#Horizontal)
     - [Vertical](#Vertical)
-- **isComputerVisionLabel:** false
-
-### Person {#Person}
-
-A named individual associated with a DrawingRevision in some role (author, checker, approver). The role is expressed by the object property, not by subclassing.
-
-- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Person`
 - **isComputerVisionLabel:** false
 
 ### Perspective {#Perspective}
@@ -411,7 +396,7 @@ The organisation commissioning the work — the client or employer — as named 
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#assertsClient`
 - **Domain:** [Titleblock](#Titleblock)
-- **Range:** [Organisation](#Organisation)
+- **Range:** `aprov:Organisation`
 - **extraction hint:** Often the most prominent organisation name on the sheet, sometimes a logo rather than text. Frequently in its own cell above or beside the originator's block.
 
 ### asserts metadata for {#assertsMetadataFor}
@@ -429,7 +414,7 @@ The organisation that produced the drawing — the originator in ISO 19650-2 ter
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#assertsOriginator`
 - **Domain:** [Titleblock](#Titleblock)
-- **Range:** [Organisation](#Organisation)
+- **Range:** `aprov:Organisation`
 - **extraction hint:** Usually the organisation whose logo sits in or beside the title block, and whose code appears in the drawing-number originator segment.
 
 ### assertsPackage {#assertsPackage}
@@ -490,14 +475,6 @@ The accepted DrawingSheet identity denoted by one sheet-number occurrence. It do
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#denotesDrawingSheet`
 - **Domain:** [Drawing identifier mention](#DrawingIdentifierMention)
 - **Range:** [Drawing Sheet](#DrawingSheet)
-
-### hasCoordinateFrame {#hasCoordinateFrame}
-
-The coordinate frame (aec_geometry:CoordinateFrame) that a drawing sheet's page geometry is expressed in - the exact PDF/page, unit and named coordinate space its bounding boxes are relative to. Owned by the sheet and shared by the geometries on that page; a sheet may carry different frames for different file versions or output PDFs.
-
-- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#hasCoordinateFrame`
-- **Domain:** [Drawing Sheet](#DrawingSheet)
-- **Range:** `geom:CoordinateFrame`
 
 ### hasLayout {#hasLayout}
 
@@ -565,7 +542,7 @@ The Person who approved a drawing or a revision of it. On a DrawingSheet it is t
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isApprovedBy`
 - **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))
-- **Range:** [Person](#Person)
+- **Range:** `aprov:Person`
 
 ### isAuthoredBy {#isAuthoredBy}
 
@@ -573,7 +550,7 @@ The Person who authored a drawing or a revision of it. On a DrawingSheet it is t
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isAuthoredBy`
 - **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))
-- **Range:** [Person](#Person)
+- **Range:** `aprov:Person`
 
 ### isCheckedBy {#isCheckedBy}
 
@@ -581,7 +558,15 @@ The Person who checked a drawing or a revision of it. On a DrawingSheet it is th
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isCheckedBy`
 - **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))
-- **Range:** [Person](#Person)
+- **Range:** `aprov:Person`
+
+### isOnPage {#isOnPage}
+
+The page of a file that a drawing is on (an aprov:FilePage). One drawing can be on a page of several files (the PDF export, a scan, an earlier version) and one file holds many drawings, so the page belongs to this link, not to the drawing and not to the file. The coordinate frames that read the page are reached with the inverse path ^describesPage of aec_geometry (ADIRO declares no named inverse properties).
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isOnPage`
+- **Domain:** [Drawing Sheet](#DrawingSheet)
+- **Range:** `aprov:FilePage`
 
 ## Datatype Properties
 
@@ -674,7 +659,7 @@ The caption naming an individual Layout, distinct from the sheet-level drawingTi
 The name of an organisation as printed. Parallels personName. Verbatim: not normalised, expanded or translated at extraction time.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#organisationName`
-- **Domain:** [Organisation](#Organisation)
+- **Domain:** `aprov:Organisation`
 - **Range:** `xsd:string`
 - **extraction hint:** Transcribe exactly as printed, including any legal suffix.
 
@@ -691,7 +676,7 @@ Name of the drawing package.
 Name of the person.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#personName`
-- **Domain:** [Person](#Person)
+- **Domain:** `aprov:Person`
 - **Range:** `xsd:string`
 
 ### projectName {#projectName}

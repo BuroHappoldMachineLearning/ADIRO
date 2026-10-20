@@ -7,7 +7,6 @@
 @prefix img: <https://w3id.org/adiro/aec_drawing_metadata/exampleImage/> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix aprov: <https://w3id.org/adiro/aec_provenance#> .
-@prefix geom: <https://w3id.org/adiro/aec_geometry#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
@@ -17,14 +16,13 @@
 
 <https://w3id.org/adiro/aec_drawing_metadata> rdf:type owl:Ontology ;
     rdfs:label "AEC Drawing Metadata Ontology" ;
-    rdfs:comment "The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance and geometry modules, and the discipline modules build on it." ;
+    rdfs:comment "The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance module (which also holds the file, the page and the agents), and the discipline modules build on it." ;
     dcterms:title "AEC Drawing Metadata Ontology" ;
     dcterms:description "Sheet/layout/document structure for AEC drawings." ;
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
     owl:imports <https://w3id.org/adiro/aec_provenance> ;
-    owl:imports <https://w3id.org/adiro/aec_geometry> ;
     owl:priorVersion <https://w3id.org/adiro/aec_drawing_metadata/2.0.0> ;
     owl:priorVersion <https://w3id.org/adiro/aec_drawing_metadata/3.0.0> ;
     owl:priorVersion <https://w3id.org/adiro/aec_drawing_metadata/4.0.0> ;
@@ -133,19 +131,19 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
     rdfs:label "isAuthoredBy" ;
     rdfs:comment "The Person who authored a drawing or a revision of it. On a DrawingSheet it is the person the drawing names as having drawn it; on a DrawingRevision it is the person who authored that revision, who can differ from the one named for the drawing. A drawing that records no author of its own is read as authored by the authors of its revisions (the property path isAuthoredBy | hasRevision/isAuthoredBy); this is a reading convention, not an entailment, so a drawing that records its own author keeps just that author. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179)." ;
     rdfs:domain [ rdf:type owl:Class ; owl:unionOf ( :DrawingSheet :DrawingRevision ) ] ;
-    rdfs:range :Person .
+    rdfs:range aprov:Person .
 
 :isCheckedBy rdf:type owl:ObjectProperty ;
     rdfs:label "isCheckedBy" ;
     rdfs:comment "The Person who checked a drawing or a revision of it. On a DrawingSheet it is the person the drawing names as having checked it; on a DrawingRevision it is the person who checked that revision, who can differ from the one named for the drawing. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179)." ;
     rdfs:domain [ rdf:type owl:Class ; owl:unionOf ( :DrawingSheet :DrawingRevision ) ] ;
-    rdfs:range :Person .
+    rdfs:range aprov:Person .
 
 :isApprovedBy rdf:type owl:ObjectProperty ;
     rdfs:label "isApprovedBy" ;
     rdfs:comment "The Person who approved a drawing or a revision of it. On a DrawingSheet it is the person the drawing names as having approved it; on a DrawingRevision it is the person who approved that revision, who can differ from the one named for the drawing. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179)." ;
     rdfs:domain [ rdf:type owl:Class ; owl:unionOf ( :DrawingSheet :DrawingRevision ) ] ;
-    rdfs:range :Person .
+    rdfs:range aprov:Person .
 
 :hasStatusCode rdf:type owl:ObjectProperty ;
     rdfs:label "hasStatusCode" ;
@@ -175,7 +173,7 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
 :assertsClient rdf:type owl:ObjectProperty ;
     rdfs:label "asserts client"@en ;
     rdfs:domain :Titleblock ;
-    rdfs:range :Organisation ;
+    rdfs:range aprov:Organisation ;
     rdfs:comment "The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from assertsOriginator, which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value."@en ;
     skos:altLabel "client"@en, "employer"@en, "for"@en,
                   "Bauherr"@de, "Auftraggeber"@de ;
@@ -207,7 +205,7 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
 :assertsOriginator rdf:type owl:ObjectProperty ;
     rdfs:label "asserts originator"@en ;
     rdfs:domain :Titleblock ;
-    rdfs:range :Organisation ;
+    rdfs:range aprov:Organisation ;
     rdfs:comment "The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. This is the practice or consultancy whose name and logo appear as author of the sheet. Distinct from assertsClient, which names who commissioned the work."@en ;
     skos:altLabel "originator"@en, "drawn by (company)"@en, "consultant"@en,
                   "Planverfasser"@de, "Verfasser"@de ;
@@ -313,7 +311,7 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
 :personName rdf:type owl:DatatypeProperty ;
     rdfs:label "personName" ;
     rdfs:comment "Name of the person." ;
-    rdfs:domain :Person ;
+    rdfs:domain aprov:Person ;
     rdfs:range xsd:string .
 
 :projectName rdf:type owl:DatatypeProperty ;
@@ -348,7 +346,7 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
 
 :organisationName rdf:type owl:DatatypeProperty ;
     rdfs:label "organisationName" ;
-    rdfs:domain :Organisation ;
+    rdfs:domain aprov:Organisation ;
     rdfs:range xsd:string ;
     rdfs:comment "The name of an organisation as printed. Parallels personName. Verbatim: not normalised, expanded or translated at extraction time."@en ;
     :extractionHint "Transcribe exactly as printed, including any legal suffix."@en .
@@ -444,11 +442,11 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
     :exampleImage img:DrawingSheet_03.png ;
     :isComputerVisionLabel false.
 
-:hasCoordinateFrame rdf:type owl:ObjectProperty ;
-    rdfs:label "hasCoordinateFrame" ;
-    rdfs:comment "The coordinate frame (aec_geometry:CoordinateFrame) that a drawing sheet's page geometry is expressed in - the exact PDF/page, unit and named coordinate space its bounding boxes are relative to. Owned by the sheet and shared by the geometries on that page; a sheet may carry different frames for different file versions or output PDFs." ;
+:isOnPage rdf:type owl:ObjectProperty ;
+    rdfs:label "isOnPage" ;
+    rdfs:comment "The page of a file that a drawing is on (an aprov:FilePage). One drawing can be on a page of several files (the PDF export, a scan, an earlier version) and one file holds many drawings, so the page belongs to this link, not to the drawing and not to the file. The coordinate frames that read the page are reached with the inverse path ^describesPage of aec_geometry (ADIRO declares no named inverse properties)." ;
     rdfs:domain :DrawingSheet ;
-    rdfs:range geom:CoordinateFrame .
+    rdfs:range aprov:FilePage .
 
 :Layout rdf:type owl:Class ;
     rdfs:subClassOf
@@ -565,16 +563,10 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
     rdfs:comment "A project under which DrawingSheets are grouped." ;
     :isComputerVisionLabel "false"^^xsd:boolean .
 
-:Person rdf:type owl:Class ;
-    rdfs:label "Person" ;
-    rdfs:comment "A named individual associated with a DrawingRevision in some role (author, checker, approver). The role is expressed by the object property, not by subclassing." ;
-    :isComputerVisionLabel "false"^^xsd:boolean .
-
-:Organisation rdf:type owl:Class ;
-    rdfs:label "Organisation" ;
-    rdfs:comment "A legal entity named in a title block — client, originator, legal owner or responsible department. Modelled as a class rather than a string so that one organisation recurring across many sheets is a single individual, which is what makes cross-sheet questions answerable. Aligns to ct:Organisation (ISO 21597-1) and IfcActorSelect; note the ISO spelling differs." ;
-    skos:altLabel "Organisation"@en ;
-    :isComputerVisionLabel "false"^^xsd:boolean .
+# Person and Organisation (and their parent Party) moved to aec_provenance: a person or an organisation is
+# domain-neutral, and a file's creator needs them too. Neither is a label for the annotation tooling.
+aprov:Person :isComputerVisionLabel "false"^^xsd:boolean .
+aprov:Organisation :isComputerVisionLabel "false"^^xsd:boolean .
 
 :StatusCode rdf:type owl:Class ;
     rdfs:label "StatusCode" ;
@@ -615,7 +607,7 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
     skos:prefLabel "Client"@en , "Auftraggeber"@de ;
     skos:altLabel "client"@en , "employer"@en , "for"@en , "Bauherr"@de ;
     skos:inScheme :TitleblockFieldScheme ;
-    aprov:expectedRange :Organisation ;
+    aprov:expectedRange aprov:Organisation ;
     aprov:mapsToFieldProperty :assertsClient .
 
 :OriginatorField rdf:type skos:Concept ;
@@ -624,7 +616,7 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
     skos:prefLabel "Originator"@en , "Planverfasser"@de ;
     skos:altLabel "originator"@en , "consultant"@en , "drawn by (company)"@en ;
     skos:inScheme :TitleblockFieldScheme ;
-    aprov:expectedRange :Organisation ;
+    aprov:expectedRange aprov:Organisation ;
     aprov:mapsToFieldProperty :assertsOriginator .
 
 :DrawingTitleField rdf:type skos:Concept ;
@@ -671,7 +663,7 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
     skos:prefLabel "Drawn By"@en , "Gezeichnet"@de ;
     skos:altLabel "Author"@en , "drawn"@en , "Verfasser"@de , "Bearb."@de ;
     skos:inScheme :TitleblockFieldScheme ;
-    aprov:expectedRange :Person ;
+    aprov:expectedRange aprov:Person ;
     aprov:mapsToFieldProperty :isAuthoredBy .
 
 :CheckedByField rdf:type skos:Concept ;
@@ -680,7 +672,7 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
     skos:prefLabel "Checked By"@en , "Geprüft"@de ;
     skos:altLabel "checked"@en , "Gepr."@de ;
     skos:inScheme :TitleblockFieldScheme ;
-    aprov:expectedRange :Person ;
+    aprov:expectedRange aprov:Person ;
     aprov:mapsToFieldProperty :isCheckedBy .
 
 :ApprovedByField rdf:type skos:Concept ;
@@ -689,7 +681,7 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
     skos:prefLabel "Approved By"@en , "Genehmigt"@de ;
     skos:altLabel "approved"@en , "authorised"@en ;
     skos:inScheme :TitleblockFieldScheme ;
-    aprov:expectedRange :Person ;
+    aprov:expectedRange aprov:Person ;
     aprov:mapsToFieldProperty :isApprovedBy .
 
 :RevisionCodeField rdf:type skos:Concept ;

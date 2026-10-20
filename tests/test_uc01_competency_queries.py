@@ -10,7 +10,11 @@ from rdflib import Graph  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 ORSD = ROOT / "docs" / "specification" / "use-cases" / "UC-01" / "UC-01-Titleblock-Based Drawing Search.md"
-PREFIXES = "@prefix : <https://ex.org/d#> .\n@prefix metadata: <https://w3id.org/adiro/aec_drawing_metadata#> .\n"
+PREFIXES = (
+    "@prefix : <https://ex.org/d#> .\n"
+    "@prefix metadata: <https://w3id.org/adiro/aec_drawing_metadata#> .\n"
+    "@prefix aprov: <https://w3id.org/adiro/aec_provenance#> .\n"
+)
 
 
 def recorded_query(marker):
@@ -87,6 +91,31 @@ def test_cq_8_4_finds_the_drawings_filed_in_another_package_than_their_title_blo
 """
     # b is filed in v4 while its title block names v3; c's title block names no package, so there is nothing to compare
     assert run(query, data) == {"b"}
+
+
+def test_cq_9_1_gives_the_file_and_the_page_of_a_drawing():
+    query = recorded_query("# CQ 9.1")
+    data = """:d a metadata:DrawingSheet ; metadata:drawingIdentifier "ST-101" ; metadata:isOnPage :p3 .
+:p3 a aprov:FilePage ; aprov:pageNumber 3 ; aprov:belongsToFile :f .
+:f a aprov:DrawingFile ; aprov:fileName "A101-ground-floor.pdf" .
+:other a metadata:DrawingSheet ; metadata:drawingIdentifier "ST-102" ; metadata:isOnPage :p4 .
+:p4 a aprov:FilePage ; aprov:pageNumber 4 ; aprov:belongsToFile :f .
+"""
+    graph = Graph().parse(data=PREFIXES + data, format="turtle")
+    assert {(str(r[0]), int(r[1])) for r in graph.query(query)} == {("A101-ground-floor.pdf", 3)}
+
+
+def test_cq_9_3_lists_the_files_that_hold_more_than_one_drawing():
+    query = recorded_query("# CQ 9.3")
+    data = """:a a metadata:DrawingSheet ; metadata:isOnPage :pa .
+:b a metadata:DrawingSheet ; metadata:isOnPage :pb .
+:c a metadata:DrawingSheet ; metadata:isOnPage :pc .
+:pa a aprov:FilePage ; aprov:belongsToFile :many .
+:pb a aprov:FilePage ; aprov:belongsToFile :many .
+:pc a aprov:FilePage ; aprov:belongsToFile :single .
+"""
+    graph = Graph().parse(data=PREFIXES + data, format="turtle")
+    assert {(str(r[0]).rsplit("#", 1)[-1], int(r[1])) for r in graph.query(query)} == {("many", 2)}
 
 
 def test_a_table_asserts_every_revision_it_lists_and_the_ontology_declares_the_property():

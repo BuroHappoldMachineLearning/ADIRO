@@ -50,9 +50,9 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
 -   ### [Aec Drawing Metadata](aec_drawing_metadata.html)
 
-    The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance and geometry modules, and the discipline modules build on it.
+    The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance module (which also holds the file, the page and the agents), and the discipline modules build on it.
 
-    *Imports: aec_geometry, aec_provenance*
+    *Imports: aec_provenance*
 
     Source: [`aec_drawing_metadata.ttl`](aec_drawing_metadata.ttl)
 

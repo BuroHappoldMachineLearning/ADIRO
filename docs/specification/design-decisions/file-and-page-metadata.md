@@ -1,9 +1,10 @@
 # The file a drawing is stored in: the model and its alignment
 
 !!! info "Status"
-    Decided, and not yet in the ontology: the terms below are working names, and they are added in the next MAJOR release of
-    `aec_provenance` and `aec_geometry` ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)). Until then the
-    only trace of a file is the pointer inside a `CoordinateFrame`.
+    In the ontology as unreleased changes ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)), published with the next
+    release of `aec_provenance`, `aec_geometry` and `aec_drawing_metadata`. The names below are those in `src/`. The change is a MAJOR one for
+    `aec_geometry` (five properties leave `CoordinateFrame`) and is released with the module rename of
+    [#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171).
 
 A drawing lives in a file, and a PDF holds many drawings, one per page. ADIRO therefore keeps three things apart: the drawing,
 the file it is stored in, and the page of that file it is on.
@@ -49,10 +50,13 @@ saved a file) belong to private data, not to this repository.
 | `frameArtifactRef` (a string) | the file | replaced by `belongsToFile`, which reaches a `DrawingFile` with its content hash |
 | `pdfRotationDeg` | the page | `FilePage` |
 | `displayWidthPt`, `displayHeightPt` | the page, in points | `FilePage` |
+| `hasCoordinateFrame` (drawing to frame, in `aec_drawing_metadata`) | the link from a drawing to its frame | removed: the frames of a drawing are reached with `isOnPage` and `describesPage` |
 
 The page size is the **measured** size of one page of one file after rotation and cropping, and is not `sheetSize`, which is
 the paper format the drawing is meant for (for example "A1"). They can disagree, and the disagreement is information: an A1
 drawing exported on an A3 page is a reduced copy, and a scan has a page size unrelated to the paper.
+
+`aec_drawing_metadata` no longer imports `aec_geometry`: it used the frame only through `hasCoordinateFrame`, and the page it now links to is in `aec_provenance`.
 
 A page is named by its file and its number, so a page can be written as an address with the page fragment of RFC 3778
 (`<file>#page=3`), whose pages also count from 1.
@@ -81,7 +85,7 @@ alignment is to edition 1, and a later edition adds one more line.
 its domain. A subproperty would make a renamed file, a second location or a second modifier inconsistent for a reader that
 reasons with ICDD's axioms, so the alignment is an annotation, with local names that follow ICDD's where the meaning is the same.
 
-| Need | ADIRO (working name) | ISO 21597-1 | Dublin Core terms (ISO 15836-2) | Other |
+| Need | ADIRO | ISO 21597-1 | Dublin Core terms (ISO 15836-2) | Other |
 |---|---|---|---|---|
 | name of the file | `fileName` | `ct:name` | `dcterms:title` | IFC document information: name |
 | media type | `mediaType` | `ct:format` | `dcterms:format` | DCAT: media type |
@@ -117,7 +121,6 @@ produce), and a link element addresses a `FilePage` by its `#page=N` identifier.
 
 ## Open points
 
-- The final names of the properties, and of the three that link a drawing to its page, a page to its file and a frame to its page.
 - The IRI of IFC document information in its OWL form.
 - Whether a file made by software (a plotting tool) is recorded by a person or organisation, or by a PROV activity.
 

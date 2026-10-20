@@ -24,10 +24,11 @@ whole `src/` listing before generalising, and say *which module* you mean.
 Ontology sources live in `src/` as independently versioned modules (dependency order):
 1. `aec_provenance` — foundational, domain-neutral: reified `FieldAssertion` + `InferenceMeta` carrying
    extraction provenance and confidence; PROV-O-aligned. Also defines `InferredEntity`, the superclass of
-   anything ADIRO infers that bears provenance/confidence. Imported by the drawing modules.
+   anything ADIRO infers that bears provenance/confidence. Also holds the file a drawing is stored in (`DrawingFile`,
+   `FilePage`) and the agents (`Party`, `Person`, `Organisation`), aligned to ISO 21597-1 (ICDD). Imported by the drawing modules.
 2. `aec_geometry` — foundational, domain-neutral: `BoundingBox` (a provenance-bearing `InferredEntity`, and a
-   GeoSPARQL `geo:Geometry`) + `CoordinateFrame` (unit, named coordinate space, page/artifact). Imports
-   `aec_provenance`; shared by UC-01 and UC-03.
+   GeoSPARQL `geo:Geometry`) + `CoordinateFrame` (a page of a file read in one coordinate convention: named space, unit, profile). Imports
+   `aec_provenance`, which holds the page; used by UC-01 and UC-03.
 3. `aec_drawing_metadata` — drawing/layout/document structure (titleblock, legend, revision table, drawing types…).
 4. `aec_common_symbols` — cross-discipline reusable symbols (dimensions, callouts, grids, levels…).
 5. `aec_domain_common` — concepts shared across a set of domains.

@@ -16,7 +16,6 @@ graph BT
     aec_domain_common["Aec Domain Common"]
     aec_facade_domain["Aec Facade Domain"]
     aec_geometry --> aec_provenance
-    aec_drawing_metadata --> aec_geometry
     aec_drawing_metadata --> aec_provenance
     aec_common_symbols --> aec_drawing_metadata
     aec_domain_common --> aec_drawing_metadata
@@ -48,9 +47,9 @@ graph BT
 
 -   ### [Aec Drawing Metadata](aec_drawing_metadata.md)
 
-    The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance and geometry modules, and the discipline modules build on it.
+    The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance module (which also holds the file, the page and the agents), and the discipline modules build on it.
 
-    *Imports: aec_geometry, aec_provenance*
+    *Imports: aec_provenance*
 
 -   ### [Aec Common Symbols](aec_common_symbols.md)
 
