@@ -75,7 +75,7 @@ Domain-common (imports Core + Drawing Metadata)
 Facade Domain (imports Core + Drawing Metadata + Domain-common)
 ```
 
-Domain-common and Facade Domain do not import Common Symbols: neither uses one of its terms. The current import graph is in the [ontologies index](../../ontologies/index.md).
+Domain-common and Facade Domain do not import Common Symbols: neither uses one of its terms. The current import graph is in the [ontologies index](../../../ontologies/index.md).
 
 ## Key Design Decisions
 

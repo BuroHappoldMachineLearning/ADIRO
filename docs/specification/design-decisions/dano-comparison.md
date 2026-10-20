@@ -139,7 +139,7 @@ ADIRO commits to per-module SemVer, version-pinned IRIs, changelogs, and a block
 pull request. DAnO's repository was created 2025-03-11 and last pushed 2025-07-15, with **no tags or
 releases** - though it does have a permanent `w3id.org` IRI, which is more than many peers offer.
 
-The earlier [title-block vocabulary review](titleblock-vocabulary-review.md) called it **"borrowable, not
+The earlier [title-block vocabulary review](../use-cases/UC-01/design-notes/titleblock-vocabulary-review.md) called it **"borrowable, not
 dependable"**. That remains the right summary, and it is an argument about what to take a hard dependency on,
 not about the quality of the modelling.
 
@@ -364,7 +364,7 @@ type quoted here is read from that file, not from DAnO's generated specification
 `owl:imports`, `owl:disjointWith` and `owl:equivalentClass` was confirmed by direct search. ADIRO class and
 annotation-property counts are read from `src/*.ttl` on the branch implementing this decision.
 
-**Supersedes:** the earlier [title-block vocabulary review](titleblock-vocabulary-review.md) recommended
+**Supersedes:** the earlier [title-block vocabulary review](../use-cases/UC-01/design-notes/titleblock-vocabulary-review.md) recommended
 aligning ADIRO's provenance terms to `dano:` rather than minting parallel ones. That review read DAnO from its
 generated specification and explicitly flagged that domains and ranges should be confirmed against the source
 before any alignment axiom was written. They now have been, and the recommendation does not survive the check.

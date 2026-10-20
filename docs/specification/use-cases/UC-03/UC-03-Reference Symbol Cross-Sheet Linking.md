@@ -71,7 +71,7 @@ decisions remain in immutable source evidence; an accepted target edge is assert
 `csymbol:referencesLayout` keeps its symbol-only domain; inline targets use `metadata:inlineReferencesLayout`.
 `metadata:denotesDrawingSheet` resolves a text occurrence's sheet identity without introducing the general
 `referencesSheet` relation deferred in [#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38).
-See the [semantic design note](../../../design-decisions/uc03-semantic-references.md) for the model boundaries.
+See the [semantic design note](design-notes/uc03-semantic-references.md) for the model boundaries.
 
 ---
 

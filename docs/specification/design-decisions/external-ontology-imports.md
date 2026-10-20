@@ -22,7 +22,7 @@ Pick the **lightest option that meets the need**, in this order:
 | 4 | ~~`owl:imports` of a whole external ontology~~ | **Never.** | Drags the entire source (and its imports) under our blocking DL gate. |
 
 Options 2 and 3 additionally require, per
-[Versioning § Imports](../contribute/versioning/index.md):
+[Versioning § Imports](../../contribute/versioning/index.md):
 
 - **version-pin the source**, and
 - **document + justify the pin** — an `rdfs:comment` on the import axiom *plus* a note in the module's changelog.

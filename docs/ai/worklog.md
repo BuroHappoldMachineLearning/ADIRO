@@ -1,3 +1,13 @@
+## 2026-10-20 - Navigation: Ontologies first, design decisions under Specification and use cases
+
+Implemented [#176](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/176). The menu is Introduction, Ontologies, Specification,
+Contribute. `docs/design-decisions/` moved to `docs/specification/design-decisions/` (suite-wide pages); the three UC-03 notes moved to
+`UC-03/design-notes/` and the title-block review and field survey to `UC-01/design-notes/`. Files moved without redirects (decided by the
+maintainer: nothing published cites the old addresses), so the old page addresses no longer open. Every internal link was rewritten;
+`mkdocs build --strict` and `pytest tests` pass. The two repository paths in `src/aec_geometry.ttl` were replaced (the `bboxXYXY`
+`rdfs:comment` now cites issue #91; changelog entry under `[Unreleased]`, an annotation change). Not verified: the rendered menu in a
+browser (checked the built labels and order only). The use-case ORSDs were not re-versioned: no content changed.
+
 ## 2026-10-20 - Terminology: "drawing", not "sheet"
 
 Recorded the maintainer's rule in `AGENTS.md` (ontology authoring conventions): say "drawing" for the thing ADIRO describes and
