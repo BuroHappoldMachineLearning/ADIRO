@@ -7,6 +7,7 @@
 @prefix img: <https://w3id.org/adiro/aec_drawing_metadata/exampleImage/> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix aprov: <https://w3id.org/adiro/aec_provenance#> .
+@prefix geom: <https://w3id.org/adiro/aec_geometry#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
@@ -16,13 +17,14 @@
 
 <https://w3id.org/adiro/aec_drawing_metadata> rdf:type owl:Ontology ;
     rdfs:label "AEC Drawing Metadata Ontology" ;
-    rdfs:comment "The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance module (which also holds the file, the page and the agents), and the discipline modules build on it." ;
+    rdfs:comment "The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance module (which also holds the file, the page and the agents) and the geometry module (where a title block's region is located), and the discipline modules build on it." ;
     dcterms:title "AEC Drawing Metadata Ontology" ;
     dcterms:description "Sheet/layout/document structure for AEC drawings." ;
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
     owl:imports <https://w3id.org/adiro/aec_provenance> ;
+    owl:imports <https://w3id.org/adiro/aec_geometry> ;
     owl:priorVersion <https://w3id.org/adiro/aec_drawing_metadata/2.0.0> ;
     owl:priorVersion <https://w3id.org/adiro/aec_drawing_metadata/3.0.0> ;
     owl:priorVersion <https://w3id.org/adiro/aec_drawing_metadata/4.0.0> ;
@@ -373,9 +375,10 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
     rdfs:subClassOf :MetadataContainer,
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :KeyPlan ],
         [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :Legend ],
-        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :RevisionTable ];
+        [ rdf:type owl:Restriction ; owl:onProperty :contains ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass :RevisionTable ],
+        [ rdf:type owl:Restriction ; owl:onProperty geom:hasBoundingBox ; owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ; owl:onClass geom:BoundingBox ];
     rdfs:label "Titleblock";
-    rdfs:comment "Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc. May itself contain a KeyPlan, Legend or RevisionTable, which are commonly printed inside the title-block strip rather than standing alone on the page; all three are optional, and each may alternatively be contained directly by the DrawingSheet.";
+    rdfs:comment "Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc. May itself contain a KeyPlan, Legend or RevisionTable, which are commonly printed inside the title-block strip rather than standing alone on the page; all three are optional, and each may alternatively be contained directly by the DrawingSheet. It may carry a BoundingBox, its region on the page, which its fields are read from (geom:hasBoundingBox).";
     :exampleImage img:Titleblock_01.png ;
     :exampleImage img:Titleblock_02.png ;
     :isComputerVisionLabel "true"^^xsd:boolean.

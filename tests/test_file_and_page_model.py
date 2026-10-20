@@ -74,7 +74,17 @@ def test_a_drawing_is_linked_to_its_page_and_no_longer_to_its_frame():
     assert METADATA.value(META.isOnPage, RDFS.range) == APROV.FilePage
     assert (META.hasCoordinateFrame, None, None) not in METADATA
     imports = {str(o) for o in METADATA.objects(None, OWL.imports)}
-    assert "https://w3id.org/adiro/aec_geometry" not in imports, "aec_drawing_metadata used the geometry module only through hasCoordinateFrame"
+    assert "https://w3id.org/adiro/aec_geometry" in imports, "a title block's region is located with the geometry module"
+
+
+def test_a_title_block_may_carry_a_bounding_box_and_that_use_is_stated_in_the_module():
+    restrictions = [
+        r for r in METADATA.objects(META.Titleblock, RDFS.subClassOf)
+        if isinstance(r, BNode) and METADATA.value(r, OWL.onProperty) == GEOM.hasBoundingBox
+    ]
+    assert len(restrictions) == 1, "Titleblock has one restriction on geom:hasBoundingBox"
+    assert METADATA.value(restrictions[0], OWL.onClass) == GEOM.BoundingBox
+    assert METADATA.value(restrictions[0], OWL.minQualifiedCardinality) is not None
 
 
 def test_the_agents_live_in_the_provenance_module_and_the_drawing_module_uses_them():

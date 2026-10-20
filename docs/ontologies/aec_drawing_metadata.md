@@ -17,11 +17,11 @@
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/aec_drawing_metadata.html){ .md-button }
 </div>
 
-The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance module (which also holds the file, the page and the agents), and the discipline modules build on it.
+The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance module (which also holds the file, the page and the agents) and the geometry module (where a title block's region is located), and the discipline modules build on it.
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata`
 - **Versioned IRI:** `https://w3id.org/adiro/aec_drawing_metadata/5.0.1`
-- **Imports:** `aec_provenance`
+- **Imports:** `aec_geometry`, `aec_provenance`
 
 ## Interactive view
 
@@ -41,6 +41,7 @@ graph BT
     aec_domain_common["Aec Domain Common"]
     aec_facade_domain["Aec Facade Domain"]
     aec_geometry --> aec_provenance
+    aec_drawing_metadata --> aec_geometry
     aec_drawing_metadata --> aec_provenance
     aec_common_symbols --> aec_drawing_metadata
     aec_domain_common --> aec_drawing_metadata
@@ -364,7 +365,7 @@ A free-form block of text, such as numbered lists or paragraphs, containing gene
 
 ### Titleblock {#Titleblock}
 
-Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc. May itself contain a KeyPlan, Legend or RevisionTable, which are commonly printed inside the title-block strip rather than standing alone on the page; all three are optional, and each may alternatively be contained directly by the DrawingSheet.
+Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc. May itself contain a KeyPlan, Legend or RevisionTable, which are commonly printed inside the title-block strip rather than standing alone on the page; all three are optional, and each may alternatively be contained directly by the DrawingSheet. It may carry a BoundingBox, its region on the page, which its fields are read from (geom:hasBoundingBox).
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#Titleblock`
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
@@ -372,6 +373,7 @@ Titleblock containing information about the drawing, for example project name, d
     - [contains](#contains) min 0 [Key Plan](#KeyPlan)
     - [contains](#contains) min 0 [Legend](#Legend)
     - [contains](#contains) min 0 [Revision table](#RevisionTable)
+    - `geom:hasBoundingBox` min 0 `geom:BoundingBox`
 - **isComputerVisionLabel:** true
 
 *Example images:*
