@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.8 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.9 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -31,7 +31,9 @@ Things that exist independently and will become OWL Classes.
 | `LayoutContentType` | `aec_drawing_metadata`              | REUSE  | View type (Plan / Section / Elevation / Detail / Table / Perspective).                   |
 | `DrawingRevision`   | `aec_drawing_metadata`              | NEW    | Titleblock data (status, date, persons) changes per revision.                            |
 | `Project`           | `aec_drawing_metadata`              | NEW    | Drawings are grouped under a project.                                                    |
-| `Person`            | `aec_drawing_metadata`              | NEW    | Authors, checkers, and approvers appear in the titleblock.                               |
+| `Person`            | `aec_provenance`                    | NEW    | Authors, checkers, and approvers appear in the titleblock. *(Moved from `aec_drawing_metadata` in [v0.9](#9-version-history).)* |
+| `DrawingFile`       | `aec_provenance`                    | NEW    | The file a drawing is stored in: a reference to a document, identified by its content hash. *(Added in [v0.9](#9-version-history).)* |
+| `FilePage`          | `aec_provenance`                    | NEW    | One page of a file, counted from 1; the drawing is on a page, not on a file. *(Added in [v0.9](#9-version-history).)* |
 | `Discipline`        | `aec_domain_common`                 | REUSE  | Existing class hierarchy (`Structural`, `MEP`, `Architectural`, …).                      |
 | `StatusCode`        | `aec_drawing_metadata`              | NEW    | Approval state (IFC, IFR, AFC…) expressed as a controlled vocabulary.                    |
 | `DrawingPackage`    | `aec_drawing_metadata`              | NEW    | Drawings are grouped into volumes or packages within a project.                          |
@@ -101,6 +103,8 @@ Links between two entities. New properties are wired into the existing generic t
 | `isCheckedBy`          | `DrawingSheet` or `DrawingRevision` | `Person` | `aec_drawing_metadata` | NEW    | (top-level)             |
 | `isApprovedBy`         | `DrawingSheet` or `DrawingRevision` | `Person` | `aec_drawing_metadata` | NEW    | (top-level)             |
 | `assertsRevision`      | `RevisionTable`   | `DrawingRevision`   | `aec_drawing_metadata` | NEW    | (top-level)             |
+| `isOnPage`            | `DrawingSheet`    | `FilePage`          | `aec_drawing_metadata` | NEW    | (top-level)             |
+| `belongsToFile`       | `FilePage`        | `DrawingFile`       | `aec_provenance`       | NEW    | (top-level)             |
 | `hasStatusCode`       | `DrawingRevision` | `StatusCode`        | `aec_drawing_metadata` | NEW    | `metadata:hasProperty`  |
 
 ¹ ⚠️ **Open issue (G5):** `dcommon:hasDiscipline` currently has `rdfs:domain metadata:LayoutContentType`. v0.3 proposes moving the domain to `metadata:Layout` (along with the `min 1` cardinality restriction). Discipline characterises the layout itself, not its content type — and the two are orthogonal axes (see design note below). Pending @alelom / @m-asakihattori sign-off.
@@ -200,6 +204,17 @@ Each FR describes one representational capability the ontology must have, in imp
 - Source: UC-01
 - Derived terms: `metadata:DrawingPackage` (NEW), `metadata:belongsToPackage` (NEW), `metadata:assertsPackage` (NEW, from a `Titleblock` to the package it names, when it names one), `metadata:packageName` (NEW)
 
+
+---
+
+**FR 9 — Source File and Page**
+
+> The ontology MUST say in which file, and on which page of it, a drawing is stored, and identify and locate that file, such that a drawing can be traced to its source, the drawings of a file can be listed, and a file can be found again.
+
+- Source: UC-01 (and every use case that must return to the source of an extraction)
+- Derived terms: `aprov:DrawingFile` (NEW), `aprov:FilePage` (NEW), `metadata:isOnPage` (NEW), `aprov:belongsToFile` (NEW), `aprov:pageNumber` (NEW, from 1); the description of a file: `aprov:fileName`, `aprov:storageLocation`, `aprov:contentHash` and `aprov:hashAlgorithm`, `aprov:mediaType`, `aprov:fileCreatedAt`, `aprov:fileModifiedAt`, `aprov:fileCreatedBy`, `aprov:fileModifiedBy`, `aprov:pageCount`, `aprov:fileSize` (all NEW); and of a page: `aprov:displayWidthPt`, `aprov:displayHeightPt`, `aprov:pdfRotationDeg` (moved from the coordinate frame)
+
+> **Design note — drawing, file, page.** A PDF holds many drawings and one drawing can exist in several files, so a drawing is linked to the *page* it is on (`isOnPage`), and the page to its file (`belongsToFile`). The coordinate frame of `aec_geometry` reads a page in one convention (`describesPage`). The measured size of a page is not `sheetSize`, which is the paper format the drawing is meant for. See [the file a drawing is stored in](../../design-decisions/file-and-page-metadata.md). *(Added in [v0.9](#9-version-history).)*
 ---
 
 ## 4. Competency Questions
@@ -329,6 +344,43 @@ SELECT ?drawing ?named ?filed WHERE {
   ?drawing metadata:belongsToPackage ?filed .
   FILTER (?named != ?filed)
 }
+```
+
+### CQ Group 9 — Source File and Page (validates FR 9)
+
+| ID     | Competency Question                                                                  |
+| ------ | ------------------------------------------------------------------------------------ |
+| CQ 9.1 | In which file, and on which page, is drawing "ST-101" stored? *(Added in [v0.9](#9-version-history).)* |
+| CQ 9.2 | Which drawings are in file "A101-ground-floor.pdf"? *(Added in [v0.9](#9-version-history).)* |
+| CQ 9.3 | Which files hold more than one drawing? *(Added in [v0.9](#9-version-history).)* |
+| CQ 9.4 | Which drawings are in files last modified after 1 January 2026? *(Added in [v0.9](#9-version-history).)* |
+
+CQ 9.1 and CQ 9.3 as queries:
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/aec_provenance#>
+
+# CQ 9.1: the file and the page of a drawing
+SELECT ?fileName ?pageNumber WHERE {
+  ?drawing metadata:drawingIdentifier "ST-101" ;
+           metadata:isOnPage          ?page .
+  ?page aprov:pageNumber ?pageNumber ;
+        aprov:belongsToFile ?file .
+  ?file aprov:fileName ?fileName .
+}
+```
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/aec_provenance#>
+
+# CQ 9.3: the files that hold more than one drawing
+SELECT ?file (COUNT(DISTINCT ?drawing) AS ?drawings) WHERE {
+  ?drawing metadata:isOnPage ?page .
+  ?page aprov:belongsToFile ?file .
+}
+GROUP BY ?file HAVING (COUNT(DISTINCT ?drawing) > 1)
 ```
 
 ### CQ Group I — Integration / Multi-field Queries
@@ -480,6 +532,13 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `dcommon:hasDiscipline`        | `aec_domain_common`    | REUSE  | CQ 5.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 5                               |
 | `metadata:hasProperty`         | `aec_drawing_metadata` | REUSE  | CQ 6.x, CQ-I 3                                 | FR 6                               |
 | `metadata:belongsToPackage`    | `aec_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
+| `aprov:DrawingFile`            | `aec_provenance`       | NEW    | CQ 9.2, CQ 9.3                                 | FR 9                               |
+| `aprov:FilePage`               | `aec_provenance`       | NEW    | CQ 9.1, CQ 9.3                                 | FR 9                               |
+| `metadata:isOnPage`            | `aec_drawing_metadata` | NEW    | CQ 9.1, CQ 9.2, CQ 9.3, CQ 9.4                 | FR 9                               |
+| `aprov:belongsToFile`          | `aec_provenance`       | NEW    | CQ 9.1, CQ 9.2, CQ 9.3, CQ 9.4                 | FR 9                               |
+| `aprov:fileName`, `aprov:pageNumber` | `aec_provenance` | NEW    | CQ 9.1, CQ 9.2                                 | FR 9                               |
+| `aprov:fileModifiedAt`         | `aec_provenance`       | NEW    | CQ 9.4                                         | FR 9                               |
+| `aprov:storageLocation`, `aprov:contentHash`, `aprov:hashAlgorithm`, `aprov:mediaType`, `aprov:fileCreatedAt`, `aprov:fileCreatedBy`, `aprov:fileModifiedBy`, `aprov:pageCount`, `aprov:fileSize` | `aec_provenance` | NEW | none yet: they identify, locate and describe the file (the first set of the file brainstorm) | FR 9 |
 | `metadata:assertsPackage`      | `aec_drawing_metadata` | NEW    | CQ 8.3, CQ 8.4                                 | FR 8                               |
 | `metadata:drawingIdentifier`       | `aec_drawing_metadata` | NEW    | CQ 1.1, CQ 1.2                                 | FR 1                               |
 | `metadata:drawingTitle`        | `aec_drawing_metadata` | NEW    | CQ 1.2                                         | FR 1                               |
@@ -489,6 +548,7 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `metadata:sheetSize`           | `aec_drawing_metadata` | NEW    | —                                              | FR 1                               |
 | `metadata:revisionCode`        | `aec_drawing_metadata` | NEW    | CQ 3.1, CQ 3.3                                 | FR 3                               |
 | `metadata:issueDate`           | `aec_drawing_metadata` | NEW    | CQ 3.2, CQ 3.3, CQ-I 1                         | FR 3                               |
+| `aprov:Person`                 | `aec_provenance`       | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
 | `metadata:personName`          | `aec_drawing_metadata` | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
 | `metadata:statusLabel`         | `aec_drawing_metadata` | NEW    | CQ 7.x                                         | FR 7                               |
 | `metadata:projectName`         | `aec_drawing_metadata` | NEW    | CQ 2.x                                         | FR 2                               |
@@ -521,9 +581,9 @@ aec_provenance                      (NEW - foundational, domain-neutral)
 
 | Module                 | UC-01 contribution                                                                                                                                                          |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `aec_drawing_metadata` | **New classes:** `DrawingRevision`, `Project`, `Person`, `StatusCode`, `DrawingPackage`. **New properties:** all UC-01 datatype properties; `hasRevision` (⊂ `contains`), `hasStatusCode` (⊂ `hasProperty`), `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`. |
-| `aec_provenance`       | **Reused (new module):** `FieldAssertion`, `InferenceMeta`, `hasConfidence`, `capturedCaption`, `assertedBy`, `inferredBy`/`inferredWith`/`inferredFrom`/`inferredAt`, and the `TitleblockFieldScheme` binding via `assertsFieldKind`. Carries **extracted** title-block values before validation - see the design note in §2.1. |
-| `aec_geometry`         | **Reused (new module):** the `Titleblock` region may carry a `BoundingBox` (via `hasBoundingBox`) interpreted by a `CoordinateFrame` (owned by the sheet via `hasCoordinateFrame`) — i.e. *where the title block sits on the page*. The extracted field values are read from within that one region and are **not** individually localised. *(Added in [v0.5](#9-version-history).)* |
+| `aec_drawing_metadata` | **New classes:** `DrawingRevision`, `Project`, `StatusCode`, `DrawingPackage`. **New properties:** all UC-01 datatype properties; `hasRevision` (⊂ `contains`), `hasStatusCode` (⊂ `hasProperty`), `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `isOnPage`. |
+| `aec_provenance`       | **New classes:** `DrawingFile`, `FilePage`, and the agents `Party`, `Person` and `Organisation` (moved here from `aec_drawing_metadata`), with the file and page properties of FR 9. **Reused (new module):** `FieldAssertion`, `InferenceMeta`, `hasConfidence`, `capturedCaption`, `assertedBy`, `inferredBy`/`inferredWith`/`inferredFrom`/`inferredAt`, and the `TitleblockFieldScheme` binding via `assertsFieldKind`. Carries **extracted** title-block values before validation - see the design note in §2.1. |
+| `aec_geometry`         | **Reused (new module):** the `Titleblock` region may carry a `BoundingBox` (via `hasBoundingBox`) interpreted by a `CoordinateFrame` (which reads the page the drawing is on, via `describesPage`) — i.e. *where the title block sits on the page*. The extracted field values are read from within that one region and are **not** individually localised. *(Added in [v0.5](#9-version-history).)* |
 | `aec_common_symbols`   | No UC-01 contribution.                                                                                                                                                      |
 | `aec_domain_common`    | **Reused:** `Discipline` and its subclasses; `hasDiscipline` (with proposed domain change from `LayoutContentType` to `Layout` — see G5).                                   |
 | `aec_facade_domain`    | No UC-01 contribution.                                                                                                                                                      |
@@ -560,7 +620,15 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.8 (current — draft)
+### v0.9 (current — draft)
+
+Changes from v0.8, made when the file a drawing is stored in was modelled ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)). MAJOR in substance (entities and relations added, one moved, one removed); the number stays in the 0.x series because the document is still a draft:
+
+- **FR 9 and CQ Group 9 added** (§3, §4): the file a drawing is stored in, and the page of it. `DrawingFile`, `FilePage`, `isOnPage` and `belongsToFile` are new (§2.1, §2.3, §6), with the properties that describe a file and a page; CQ 9.1 and CQ 9.3 are recorded as queries. The design is in [the file a drawing is stored in](../../design-decisions/file-and-page-metadata.md).
+- **`Person` moved to `aec_provenance`** (§2.1, §6), with its new parent `Party` and `Organisation`: they are domain-neutral, and a file's creator needs them too. `personName` stays in `aec_drawing_metadata`.
+- **`hasCoordinateFrame` removed**: the coordinate frames of a drawing are reached with `isOnPage` and `describesPage`. A region of the drawing stays a `BoundingBox` (`hasBoundingBox`), now stated as a restriction on `MetadataContainer`, on `Layout` and on `DrawingElement`, so the title block, a revision table, a legend, a key plan, a note, a layout and any symbol or component may each carry one.
+
+### v0.8 (draft)
 
 Changes from v0.7, made when the person roles were extended to the drawing and the revision table was linked to its revisions ([#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179), [#69](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/69)). MAJOR in substance (relations re-scoped and added, competency questions added); the number stays in the 0.x series because the document is still a draft:
 

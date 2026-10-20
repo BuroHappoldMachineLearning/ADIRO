@@ -7,6 +7,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+### Changed
+- **BREAKING: a `CoordinateFrame` states only its coordinate convention** ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)). `pageIndex`, `frameArtifactRef`, `pdfRotationDeg`, `displayWidthPt` and `displayHeightPt` leave it: they are facts about a page of a file, and move to `aec_provenance:FilePage` (the page number is counted from 1, the file is a `DrawingFile` with its content hash). The frame points to its page with the new `describesPage`. A page can now have several frames (the primary `page_display_pt` in points, and `px` for raster evidence) without repeating the page. Downstream consumers that read these properties from a frame need to adjust.
+- `profileRef`'s comment no longer lists the page extent among what a profile defines, and `hasBoundingBox`'s says that every `MetadataContainer` may have one.
+
 
 ## [1.0.1] — 2026-10-20
 

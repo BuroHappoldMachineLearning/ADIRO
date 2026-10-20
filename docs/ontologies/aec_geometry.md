@@ -59,7 +59,7 @@ graph BT
 
 ### Bounding Box {#BoundingBox}
 
-A rectangular region on a drawing page that locates something detected there - e.g. a title-block field's caption or value. Its coordinates are held as an xyxy string (bboxXYXY) and are meaningless without the CoordinateFrame it points at (inCoordinateFrame), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an InferredEntity: it carries its own provenance (aprov:hasInferenceMeta - a detector, or a human annotator) and its own confidence (aprov:hasConfidence, the detector score), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL geo:Geometry so it is recognised as a spatial shape.
+A rectangular region on a drawing page that locates something there, whether a model detected it or a person marked it - e.g. a title-block field's caption or value. Its coordinates are held as an xyxy string (bboxXYXY) and are meaningless without the CoordinateFrame it points at (inCoordinateFrame), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an InferredEntity: it carries its own provenance (aprov:hasInferenceMeta - a detector, or a human annotator, told apart by aprov:inferredBy) and its own confidence (aprov:hasConfidence, the detector's score, absent for a hand-drawn box), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL geo:Geometry so it is recognised as a spatial shape.
 
 - **IRI:** `https://w3id.org/adiro/aec_geometry#BoundingBox`
 - **Sub class of:**
@@ -68,7 +68,7 @@ A rectangular region on a drawing page that locates something detected there - e
 
 ### Coordinate Frame {#CoordinateFrame}
 
-The coordinate context that makes a geometry's numbers interpretable - the exact PDF/page, unit and named coordinate space its coordinates are relative to (detailed by the datatype properties below). Normally owned by a DrawingSheet (aec_drawing_metadata:hasCoordinateFrame) and shared by the geometries on that page; a sheet may have different frames for different file versions. Not an InferredEntity: a declared coordinate context, not a detection with its own confidence.
+A page of a file read in one coordinate convention: the named coordinate space, the unit and the profile that defines it (the datatype properties below), for the page it describes (describesPage). A page can have more than one frame (the primary page_display_pt in points, and px for raster evidence), and each states only its convention: what is true of the page itself (its number, file, rotation and size) is on the aec_provenance:FilePage. Not an InferredEntity: a declared coordinate context, not a detection with its own confidence.
 
 - **IRI:** `https://w3id.org/adiro/aec_geometry#CoordinateFrame`
 
@@ -80,9 +80,17 @@ Local typing stub for GeoSPARQL's Geometry class (authoritative definition at th
 
 ## Object Properties
 
+### describesPage {#describesPage}
+
+The page (an aprov:FilePage) that this coordinate frame reads. The frames of a drawing are reached through its page: the path isOnPage / ^describesPage from the drawing, in aec_drawing_metadata.
+
+- **IRI:** `https://w3id.org/adiro/aec_geometry#describesPage`
+- **Domain:** [Coordinate Frame](#CoordinateFrame)
+- **Range:** `aprov:FilePage`
+
 ### hasBoundingBox {#hasBoundingBox}
 
-The bounding box that locates a region on a drawing page. In UC-01 this is the title block's own region (aec_drawing_metadata:Titleblock hasBoundingBox ...): the field values are read from within that single region and are not themselves individually localised. No rdfs:domain is asserted, so the same property serves any locatable region or element - e.g. UC-03 reference symbols, when that work extends this module.
+The bounding box that locates a region on a drawing page. In UC-01 this is the title block's own region (a aec_drawing_metadata:Titleblock, like every MetadataContainer, may have a hasBoundingBox): the field values are read from within that single region and are not themselves individually localised. No rdfs:domain is asserted, so the same property serves any locatable region or element - e.g. UC-03 reference symbols, when that work extends this module.
 
 - **IRI:** `https://w3id.org/adiro/aec_geometry#hasBoundingBox`
 - **Range:** [Bounding Box](#BoundingBox)
@@ -113,49 +121,9 @@ The named coordinate convention that fixes the origin and axes. Primary: 'page_d
 - **Domain:** [Coordinate Frame](#CoordinateFrame)
 - **Range:** `xsd:string`
 
-### displayHeightPt {#displayHeightPt}
-
-Effective display-page height in points after the recorded page mapping; supports bounds checks on coordinates.
-
-- **IRI:** `https://w3id.org/adiro/aec_geometry#displayHeightPt`
-- **Domain:** [Coordinate Frame](#CoordinateFrame)
-- **Range:** `xsd:decimal`
-
-### displayWidthPt {#displayWidthPt}
-
-Effective display-page width in points after the recorded page mapping; supports bounds checks on coordinates.
-
-- **IRI:** `https://w3id.org/adiro/aec_geometry#displayWidthPt`
-- **Domain:** [Coordinate Frame](#CoordinateFrame)
-- **Range:** `xsd:decimal`
-
-### frameArtifactRef {#frameArtifactRef}
-
-A reference (e.g. a manifest key or content hash) pinning the exact PDF/artifact version the coordinates are relative to, so a frame is tied to a specific file and not merely a page number.
-
-- **IRI:** `https://w3id.org/adiro/aec_geometry#frameArtifactRef`
-- **Domain:** [Coordinate Frame](#CoordinateFrame)
-- **Range:** `xsd:string`
-
-### pageIndex {#pageIndex}
-
-Zero-based index of the page within the referenced PDF that this frame describes.
-
-- **IRI:** `https://w3id.org/adiro/aec_geometry#pageIndex`
-- **Domain:** [Coordinate Frame](#CoordinateFrame)
-- **Range:** `xsd:nonNegativeInteger`
-
-### pdfRotationDeg {#pdfRotationDeg}
-
-Effective PDF page rotation metadata for the referenced page. The primary page_display_pt coordinates already include the recorded page mapping, so this is for interpretation/validation - do not apply the rotation to the coordinates again.
-
-- **IRI:** `https://w3id.org/adiro/aec_geometry#pdfRotationDeg`
-- **Domain:** [Coordinate Frame](#CoordinateFrame)
-- **Range:** `xsd:integer`
-
 ### profileRef {#profileRef}
 
-Reference to the versioned coordinate profile that defines the named coordinateSpace in full (origin, axes, unit and effective page extent), so the convention is pinned rather than only implied by the space's name.
+Reference to the versioned coordinate profile that defines the named coordinateSpace in full (origin, axes and unit), so the convention is pinned rather than only implied by the space's name.
 
 - **IRI:** `https://w3id.org/adiro/aec_geometry#profileRef`
 - **Domain:** [Coordinate Frame](#CoordinateFrame)

@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+- **The file a drawing is stored in, and its pages** ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)): `DrawingFile` (a reference to a document, identified by its content hash) and `FilePage` (one page of a file, counted from 1), with the properties that describe them (`fileName`, `mediaType`, `contentHash`, `hashAlgorithm`, `storageLocation`, `fileCreatedAt`, `fileModifiedAt`, `fileCreatedBy`, `fileModifiedBy`, `pageCount`, `fileSize`; `belongsToFile`, `pageNumber`, `displayWidthPt`, `displayHeightPt`, `pdfRotationDeg`). Both are `prov:Entity` and subclasses of the ISO 21597-1 (ICDD) `Document` and, for the page, nothing more; each property is related to ICDD, Dublin Core terms and DCAT by `skos:closeMatch`, never as a subproperty.
+- **`Party`, `Person` and `Organisation`** ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)), moved here from `aec_drawing_metadata` (their IRIs change): `Party` is abstract, the disjoint union of the other two, and a `prov:Agent`; each is a subclass of its ISO 21597-1 counterpart. Downstream consumers that read a person or an organisation by IRI need to adjust.
+- **A human annotation is an inference step performed by a person** ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)): the comments of `InferredEntity`, `inferredBy` and `hasConfidence` say that the producing step can be a model or a person (an `aprov:Person`, with no `inferredWith`, and a confidence only if one is given). No term changes.
+- **ISO 21597-1 typing stubs** (`ct:Document`, `ct:Party`, `ct:Person`, `ct:Organisation`, edition 1), declared locally, with no `owl:imports`.
+
 ## [1.0.1] — 2026-10-19
 
 ### Changed

@@ -8,6 +8,7 @@ use case, under its **Design notes**:
 
 ## Suite-wide decisions
 
+- [The file a drawing is stored in](file-and-page-metadata.md): the file, the page and the coordinate frame kept apart, and their alignment to ISO 21597-1 and other vocabularies (decided, not yet in the ontology).
 - [External ontology imports](external-ontology-imports.md): how ADIRO brings in terms from external vocabularies, and when it does not.
 - [DAnO comparison](dano-comparison.md): where ADIRO overlaps DAnO, and why ADIRO mints its own terms.
 - [Croissant, PROV-O and DAnO](croissant-comparison.md): what each does, and where Croissant fits ADIRO.

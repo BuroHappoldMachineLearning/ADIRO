@@ -7,19 +7,29 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
-
-## [5.0.1] — 2026-10-20
-
 ### Added
+- **`isOnPage`** ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)): from a `DrawingSheet` to the `aprov:FilePage` it is on. One drawing can be on a page of several files and one file holds many drawings, so the page belongs to this link. The frames that read the page are reached with the inverse path `^describesPage` (`aec_geometry`).
+- **A `MetadataContainer`, a `Layout` and a `DrawingElement` may carry a `BoundingBox`** ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)): an explicit `min 0` restriction on `geom:hasBoundingBox` on each, inherited by `Titleblock`, `RevisionTable`, `Legend`, `KeyPlan` and `Note` for the first and by every symbol and component for the last, so the region of each (which what is read from it is located by) is stated in this module and not only in the documentation; the import of `aec_geometry` stays.
 - **`assertsPackage`** ([#69](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/69)): from a `Titleblock` to the `DrawingPackage` it names, when it names one (a title block may or may not). `belongsToPackage` stays the fact that a drawing is filed in a package.
 - **`assertsProject`** ([#69](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/69)): from a `Titleblock` to the `Project` it names, a claim read off the printed region, like `assertsClient`. `belongsToProject` stays the fact that a drawing is filed under a project; the two can differ.
 - **`assertsRevision`** ([#69](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/69)): from a `RevisionTable` to each `DrawingRevision` it lists, one link per row. It records which printed table a revision was read from; it does not say which revision is the latest.
-- **Example images for `DrawingSheet`** ([#177](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/177)): three synthetic drawings of a drawing sheet with one, three and six layouts, showing that the number of layouts varies. The three-layout sheet is the one `Layout_01.png` has always shown.
-- **Example images for the UC-03 reference classes** ([#164](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/164)): `InlineLayoutSheetReference`, `StandaloneSheetReference`, `DrawingIdentifierMention` and `LayoutIdentifierMention` each get a synthetic drawing note ("SEE 1, 3, 5 & 7/S601 FOR TYPICAL DETAIL") with the part the class names marked.
+
+### Removed
+- **BREAKING: `Person` and `Organisation` moved to `aec_provenance`** ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)): they are domain-neutral, and the creator of a file needs them too. Their IRIs change, and they gain a parent `Party`. `personName` and `organisationName` stay here, with the moved classes as their domain; the ranges of `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `assertsClient` and `assertsOriginator` follow. Downstream consumers that read a person or an organisation by IRI need to adjust.
+- **BREAKING: `hasCoordinateFrame` removed** ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)): the frames of a drawing are reached through its page, with `isOnPage` and `^describesPage`.
 
 ### Changed
 - **`issueDate` applies to a `DrawingSheet` or a `DrawingRevision`** ([#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179)): the title block's date is the drawing's, and "date authored" is the same property. Its domain widens from `DrawingRevision` to the union of the two.
 - **`isAuthoredBy`, `isCheckedBy` and `isApprovedBy` apply to a `DrawingSheet` or a `DrawingRevision`** ([#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179)): their domain widens from `DrawingRevision` to the union of the two. On a drawing it is the person the title block names; on a revision it is the person who made, checked or approved that revision, who can differ. A drawing that records no author is read as authored by its revisions' authors (a reading convention for queries and the validation shape, not an entailment). The compatibility check reads any domain change as potentially breaking (MAJOR), although a widening invalidates no existing statement.
+
+
+## [5.0.1] — 2026-10-20
+
+### Added
+- **Example images for `DrawingSheet`** ([#177](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/177)): three synthetic drawings of a drawing sheet with one, three and six layouts, showing that the number of layouts varies. The three-layout sheet is the one `Layout_01.png` has always shown.
+- **Example images for the UC-03 reference classes** ([#164](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/164)): `InlineLayoutSheetReference`, `StandaloneSheetReference`, `DrawingIdentifierMention` and `LayoutIdentifierMention` each get a synthetic drawing note ("SEE 1, 3, 5 & 7/S601 FOR TYPICAL DETAIL") with the part the class names marked.
+
+### Changed
 - **`Layout` shows one layout per image** ([#177](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/177)): its example images are now `Layout_02.png`, `Layout_03.png` and `Layout_04.png` (the plan, the section and the detail of the former sheet, one layout each). `Layout_01.png`, the sheet with three layouts, is no longer linked from `Layout` (it moves to `DrawingSheet`) and stays served at its address for the releases that name it.
 
 

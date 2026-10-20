@@ -37,10 +37,6 @@
       "x": -2586,
       "y": -126
     },
-    "Person": {
-      "x": -4895,
-      "y": 155
-    },
     "StatusCode": {
       "x": -4444,
       "y": 149
@@ -48,10 +44,6 @@
     "Titleblock": {
       "x": -3459,
       "y": 788
-    },
-    "Organisation": {
-      "x": -3402,
-      "y": 1068
     },
     "TextualNote": {
       "x": -3880,
@@ -153,17 +145,9 @@
       "x": -4563,
       "y": -46
     },
-    "__dataprop__Organisation__organisationName": {
-      "x": -3402,
-      "y": 1145
-    },
     "__dataprop__DrawingPackage__packageName": {
       "x": -2586,
       "y": -48
-    },
-    "__dataprop__Person__personName": {
-      "x": -4895,
-      "y": 232
     },
     "__dataprop__Project__projectName": {
       "x": -2828,
@@ -187,12 +171,6 @@
       "show": true,
       "showLabel": true,
       "color": "#8026d9",
-      "lineType": "solid"
-    },
-    "hasCoordinateFrame": {
-      "show": true,
-      "showLabel": true,
-      "color": "#5c26d9",
       "lineType": "solid"
     },
     "hasOrientation": {
@@ -289,12 +267,6 @@
       "show": true,
       "showLabel": true,
       "color": "#8026d9",
-      "lineType": "solid"
-    },
-    "https://w3id.org/adiro/aec_drawing_metadata#hasCoordinateFrame": {
-      "show": true,
-      "showLabel": true,
-      "color": "#5c26d9",
       "lineType": "solid"
     },
     "https://w3id.org/adiro/aec_drawing_metadata#hasOrientation": {
