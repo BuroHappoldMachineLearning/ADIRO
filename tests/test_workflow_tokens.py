@@ -35,3 +35,15 @@ def test_the_commit_back_job_starts_from_the_tip_of_the_branch():
     text = (WORKFLOWS / "generate-deploy-docs.yml").read_text(encoding="utf-8")
     generate = text[text.index("  generate-docs:"):text.index("  deploy:")]
     assert "ref: ${{ github.ref_name }}" in generate, "generate-docs must check out the branch by name, not the dispatched commit"
+
+
+def test_the_link_check_tolerates_a_transient_server_error_but_not_a_missing_page():
+    text = (WORKFLOWS / "generate-deploy-docs.yml").read_text(encoding="utf-8")
+    accepted = re.search(r"--accept '([^']+)'", text).group(1)
+    codes = set()
+    for part in accepted.split(","):
+        low, _, high = part.partition("..=")
+        codes.update(range(int(low), int(high or low) + 1))
+    assert {502, 503, 504} <= codes, "a transient 5xx from GitHub must not fail the deploy (#202)"
+    assert 404 not in codes and 410 not in codes, "a missing page must still fail: it is how a wrong issue number is caught"
+    assert re.search(r"--max-concurrency \d+", text), "the link check limits its concurrency instead of using lychee's default of 128"
