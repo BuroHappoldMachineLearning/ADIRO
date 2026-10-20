@@ -31,15 +31,24 @@ def test_cq_4_4_lists_the_drawings_with_no_recorded_author():
     data = """:a a metadata:DrawingSheet ; metadata:isAuthoredBy :jsmith .
 :b a metadata:DrawingSheet .
 :c a metadata:DrawingSheet ; metadata:isCheckedBy :achen .
-:rev a metadata:DrawingRevision ; metadata:isAuthoredBy :jsmith .
+:d a metadata:DrawingSheet ; metadata:hasRevision :rd .
+:rd a metadata:DrawingRevision ; metadata:isAuthoredBy :jsmith .
+:e a metadata:DrawingSheet ; metadata:hasRevision :re .
+:re a metadata:DrawingRevision ; metadata:isCheckedBy :achen .
+:stray a metadata:DrawingRevision ; metadata:isAuthoredBy :jsmith .
 """
-    # b has nobody, c has a checker but no author; a revision is not a drawing; an author of a revision does not count for the drawing
-    assert run(query, data) == {"b", "c"}
+    # b has nobody, c has a checker but no author, e has a revision with a checker but no author; d has no author of its own
+    # but a revision's author counts; a revision is not a drawing, and one not linked to a drawing counts for none
+    assert run(query, data) == {"b", "c", "e"}
 
 
 def test_cq_4_5_is_cq_4_4_with_the_checker_or_the_approver():
-    query = recorded_query("# CQ 4.4").replace("isAuthoredBy", "isCheckedBy")
-    data = ":a a metadata:DrawingSheet ; metadata:isCheckedBy :achen .\n:b a metadata:DrawingSheet .\n"
+    query = """SELECT ?drawing WHERE {
+  ?drawing a <https://w3id.org/adiro/aec_drawing_metadata#DrawingSheet> .
+  FILTER NOT EXISTS { ?drawing <https://w3id.org/adiro/aec_drawing_metadata#isCheckedBy> ?person }
+}"""
+    # the revision fallback is for the author only: a checker on a revision does not make the drawing checked
+    data = ":a a metadata:DrawingSheet ; metadata:isCheckedBy :achen .\n:b a metadata:DrawingSheet ; metadata:hasRevision :r .\n:r a metadata:DrawingRevision ; metadata:isCheckedBy :achen .\n"
     assert run(query, data) == {"b"}
 
 

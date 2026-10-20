@@ -551,7 +551,7 @@ The Person who approved a drawing or a revision of it. On a DrawingSheet it is t
 
 ### isAuthoredBy {#isAuthoredBy}
 
-The Person who authored a drawing or a revision of it. On a DrawingSheet it is the person the drawing names as having drawn it; on a DrawingRevision it is the person who authored that revision, who can differ from the one named for the drawing. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179).
+The Person who authored a drawing or a revision of it. On a DrawingSheet it is the person the drawing names as having drawn it; on a DrawingRevision it is the person who authored that revision, who can differ from the one named for the drawing. A drawing that records no author of its own is read as authored by the authors of its revisions (the property path isAuthoredBy | hasRevision/isAuthoredBy); this is a reading convention, not an entailment, so a drawing that records its own author keeps just that author. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179).
 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#isAuthoredBy`
 - **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))

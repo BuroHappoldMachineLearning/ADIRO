@@ -152,9 +152,14 @@ def test_a_drawing_with_no_author_is_a_warning_and_never_fails_a_run(tmp_path):
     assert vd.main([str(data)]) == 0  # a warning is reported; only a violation fails the run
 
 
-def test_an_author_of_a_revision_does_not_count_for_the_drawing():
+def test_a_drawing_with_no_author_of_its_own_is_read_as_authored_by_its_revisions_authors():
     only_revision = ":d a metadata:DrawingSheet ; metadata:hasRevision :r . :r a metadata:DrawingRevision ; metadata:isAuthoredBy :jsmith .\n"
-    assert [r["severity"] for r in check(only_revision)] == ["Warning"]
+    assert check(only_revision) == []
+    # only the author has the fallback, and a revision that is not linked to the drawing counts for nothing
+    checked_only = ":d a metadata:DrawingSheet ; metadata:hasRevision :r . :r a metadata:DrawingRevision ; metadata:isCheckedBy :achen .\n"
+    assert [r["severity"] for r in check(checked_only)] == ["Warning"]
+    unlinked = ":d a metadata:DrawingSheet . :r a metadata:DrawingRevision ; metadata:isAuthoredBy :jsmith .\n"
+    assert [r["severity"] for r in check(unlinked)] == ["Warning"]
 
 
 def test_the_checker_and_the_approver_are_optional():

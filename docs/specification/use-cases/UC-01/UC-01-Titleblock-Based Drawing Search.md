@@ -48,7 +48,7 @@ Things that exist independently and will become OWL Classes.
 
 > **Design note — curated values vs extracted assertions:** UC-01 attaches title-block information as datatype properties **directly on `DrawingSheet`** (`drawingIdentifier`, `drawingTitle`, …). That remains correct for a *validated* value. A second, parallel path exists for values that have been **machine-extracted and not yet validated**: an `aprov:FieldAssertion` reifies the claim - what was read, from which region (`assertedBy`), by what (`hasInferenceMeta`), with what confidence, and with the caption exactly as printed (`capturedCaption`) - bound to a field kind in the `TitleblockFieldScheme`. `aprov:mapsToFieldProperty` names the UC-01 property a validated assertion is promoted to. The two coexist: UC-01's properties are the query surface, the assertion layer is the extraction and provenance record. **When a value moves from one to the other, and whether the direct properties eventually deprecate, is open — see §8 (G11).** *(Added in [v0.4](#9-version-history).)*
 
-> **Design note — Person vs Role:** `Person` models what an individual *is*, not the role they play. Roles (Author, Checker, Approver) are expressed as distinct Object Properties, not as subclasses of `Person`. Each applies to a `DrawingSheet` (the person the drawing names, for example the title block's "drawn by") and to a `DrawingRevision` (the person who made, checked or approved that revision, who can differ from the one named for the drawing). This keeps `Person` reusable across roles. *(Amended in [v0.8](#9-version-history).)*
+> **Design note — Person vs Role:** `Person` models what an individual *is*, not the role they play. Roles (Author, Checker, Approver) are expressed as distinct Object Properties, not as subclasses of `Person`. Each applies to a `DrawingSheet` (the person the drawing names, for example the title block's "drawn by") and to a `DrawingRevision` (the person who made, checked or approved that revision, who can differ from the one named for the drawing). This keeps `Person` reusable across roles. A drawing that records no author of its own is read as authored by the authors of its revisions (the path `metadata:isAuthoredBy|metadata:hasRevision/metadata:isAuthoredBy`); a drawing that records its own author keeps just that author, so this is a reading convention and not an OWL entailment. It applies to the author only. *(Amended in [v0.8](#9-version-history).)*
 
 ### 2.2 Attributes — Datatype Properties
 
@@ -239,10 +239,10 @@ CQs are grouped by the FR they validate. Each must be translatable directly into
 | CQ 4.1 | What sheets were authored by "J. Smith"?                     |
 | CQ 4.2 | What sheets were checked by "A. Chen"?                       |
 | CQ 4.3 | For sheet "ST-101 Rev C", who was the approving authority?   |
-| CQ 4.4 | Which drawings have no recorded author? *(Added in [v0.8](#9-version-history).)* |
+| CQ 4.4 | Which drawings have no recorded author, neither their own nor a revision's? *(Added in [v0.8](#9-version-history).)* |
 | CQ 4.5 | Which drawings have no recorded checker, or no recorded approver? *(Added in [v0.8](#9-version-history).)* |
 
-CQ 3.4 and CQ 4.4 as queries (CQ 4.5 is CQ 4.4 with `isCheckedBy` or `isApprovedBy`):
+CQ 3.4 and CQ 4.4 as queries (CQ 4.5 is the same pattern with `isCheckedBy` or `isApprovedBy` alone, without the path through the revisions, which is for the author only):
 
 ```sparql
 PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
@@ -258,10 +258,10 @@ SELECT ?table WHERE {
 ```sparql
 PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
 
-# CQ 4.4: the drawings with no recorded author
+# CQ 4.4: the drawings with no recorded author (a revision's author counts when the drawing records none)
 SELECT ?drawing WHERE {
   ?drawing a metadata:DrawingSheet .
-  FILTER NOT EXISTS { ?drawing metadata:isAuthoredBy ?person }
+  FILTER NOT EXISTS { ?drawing metadata:isAuthoredBy|(metadata:hasRevision/metadata:isAuthoredBy) ?person }
 }
 ```
 
@@ -526,7 +526,7 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 Changes from v0.7, made when the person roles were extended to the drawing and the revision table was linked to its revisions ([#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179), [#69](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/69)). MAJOR in substance (relations re-scoped and added, competency questions added); the number stays in the 0.x series because the document is still a draft:
 
-- **`isAuthoredBy`, `isCheckedBy` and `isApprovedBy` now apply to a `DrawingSheet` as well as a `DrawingRevision`** (§2.3, FR 4, §6). The title block names who drew, checked and approved the drawing; a revision can be made by other people, so the two are different facts and both are kept. The "Person vs Role" note is amended. The domain is the union of the two classes; no cardinality, because an extraction may find nobody (#84).
+- **`isAuthoredBy`, `isCheckedBy` and `isApprovedBy` now apply to a `DrawingSheet` as well as a `DrawingRevision`** (§2.3, FR 4, §6). The title block names who drew, checked and approved the drawing; a revision can be made by other people, so the two are different facts and both are kept. The "Person vs Role" note is amended. The domain is the union of the two classes; no cardinality, because an extraction may find nobody (#84). A drawing that records no author is read as authored by its revisions' authors (a path, not an entailment).
 - **`assertsRevision` added** (`RevisionTable` to `DrawingRevision`, §2.3, FR 3, §6): one link per row of a printed revision table, so a table with revisions A, B and C asserts three. It records which table a revision was read from; it does not say which revision is the latest (that is read from `issueDate`).
 - **`issueDate` applies to a `DrawingSheet` as well as a `DrawingRevision`** (§2.2): the title block's date is the drawing's, and "date authored" is the same property, not a second one.
 - **CQ 3.4, CQ 4.4 and CQ 4.5 added**, with the queries for CQ 3.4 and CQ 4.4. A drawing must have an author; a checker and an approver are optional. CQ 4.4 is a closed-world check, and the same rule is a data-validation shape.
