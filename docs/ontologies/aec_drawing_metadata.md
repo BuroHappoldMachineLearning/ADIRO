@@ -88,6 +88,10 @@ One evidenced occurrence of drawing-identifier (sheet-identifier) text on a sour
 - **Sub class of:** [Drawing element](#DrawingElement)
 - **isComputerVisionLabel:** true
 
+*Example images:*
+
+![Drawing identifier mention — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/DrawingIdentifierMention_01.png)
+
 ### Drawing Sheet {#DrawingSheet}
 
 Top-level container for a drawing. Contains Layout(s).
@@ -104,6 +108,14 @@ Top-level container for a drawing. Contains Layout(s).
     - [drawingScale](#drawingScale) min 0 `xsd:string`
     - [drawingTitle](#drawingTitle) min 0 `xsd:string`
 - **isComputerVisionLabel:** false
+
+*Example images:*
+
+![Drawing Sheet — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/DrawingSheet_01.png)
+
+![Drawing Sheet — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/DrawingSheet_02.png)
+
+![Drawing Sheet — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/DrawingSheet_03.png)
 
 ### DrawingPackage {#DrawingPackage}
 
@@ -147,6 +159,10 @@ A complete inline textual expression relating layout number(s) to a sheet number
 - **Sub class of:** [Reference expression](#ReferenceExpression)
 - **isComputerVisionLabel:** true
 
+*Example images:*
+
+![Inline layout and sheet reference — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/InlineLayoutSheetReference_01.png)
+
 ### Key Plan {#KeyPlan}
 
 A small locator diagram on a drawing sheet showing where the sheet's subject sits within the wider building or site, typically with the relevant area hatched or outlined. A graphical region rather than a text field: its value is the diagram, so it is modelled here as a detectable region alongside Legend and RevisionTable, not as an asserted title-block property. Contained either by a Titleblock, where it is printed inside the title-block strip, or directly by a DrawingSheet where it stands alone on the page; both placements occur and both are optional.
@@ -174,7 +190,11 @@ Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotati
 
 *Example images:*
 
-![Layout — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Layout_01.png)
+![Layout — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Layout_02.png)
+
+![Layout — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Layout_03.png)
+
+![Layout — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Layout_04.png)
 
 ### Layout content type {#LayoutContentType}
 
@@ -190,6 +210,10 @@ One evidenced occurrence of layout-identifier text (a small integer or letter), 
 - **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#LayoutIdentifierMention`
 - **Sub class of:** [Drawing element](#DrawingElement)
 - **isComputerVisionLabel:** true
+
+*Example images:*
+
+![Layout identifier mention — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/LayoutIdentifierMention_01.png)
 
 ### Legend {#Legend}
 
@@ -316,6 +340,10 @@ A drawing-identifier occurrence that itself constitutes a complete reference. On
     - [Drawing identifier mention](#DrawingIdentifierMention)
     - [Reference expression](#ReferenceExpression)
 - **isComputerVisionLabel:** true
+
+*Example images:*
+
+![Standalone sheet reference — example](https://w3id.org/adiro/aec_drawing_metadata/exampleImage/StandaloneSheetReference_01.png)
 
 ### StatusCode {#StatusCode}
 

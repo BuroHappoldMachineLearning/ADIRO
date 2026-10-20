@@ -69,3 +69,25 @@ def test_every_value_in_the_ontology_has_a_drawing_and_a_committed_file(module):
     for name in names:
         assert (ei.module_folder(ROOT, module) / name).is_file(), name
     assert ei.problems(graph, module, ROOT) == []
+
+
+def test_an_image_no_term_links_any_more_is_still_drawn_committed_and_unchanged():
+    # A released version never changes (docs/contribute/example-images.md): Layout_01.png is named by earlier releases,
+    # so the address keeps answering with the same picture even though `Layout` no longer links it (#177).
+    for module, drawings in syn.ARCHIVED.items():
+        linked = {ei.file_of(value, module)[1] for _, value in ei.values(graph_of(module))}
+        for name, draw in drawings.items():
+            assert name not in linked, f"{name} is linked again: move it to DRAWINGS"
+            committed = ei.module_folder(ROOT, module) / name
+            assert committed.is_file() and committed.read_bytes() == draw(), f"{name} differs from what the generator draws"
+
+
+def test_drawing_sheet_shows_one_three_and_six_layouts_and_layout_shows_one_each():
+    graph = graph_of("aec_drawing_metadata")
+    by_term = {}
+    for term, value in ei.values(graph):
+        by_term.setdefault(ei.local_name(term), set()).add(ei.file_of(value, "aec_drawing_metadata")[1])
+    assert by_term["DrawingSheet"] == {"DrawingSheet_01.png", "DrawingSheet_02.png", "DrawingSheet_03.png"}
+    assert by_term["Layout"] == {"Layout_02.png", "Layout_03.png", "Layout_04.png"}
+    # the three-layout sheet is the picture Layout_01.png has always shown
+    assert syn.DRAWINGS["aec_drawing_metadata"]["DrawingSheet_02.png"]() == syn.ARCHIVED["aec_drawing_metadata"]["Layout_01.png"]()
