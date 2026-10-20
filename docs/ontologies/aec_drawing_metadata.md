@@ -432,6 +432,15 @@ The organisation that produced the drawing — the originator in ISO 19650-2 ter
 - **Range:** [Organisation](#Organisation)
 - **extraction hint:** Usually the organisation whose logo sits in or beside the title block, and whose code appears in the drawing-number originator segment.
 
+### assertsPackage {#assertsPackage}
+
+The drawing package this title block names, when it names one: a claim read off the printed region, like assertsProject. Optional: a title block may or may not name a package, so there is no cardinality. The fact that a drawing is filed in a package is belongsToPackage; the two can differ, and the difference is what a query can report.
+
+- **IRI:** `https://w3id.org/adiro/aec_drawing_metadata#assertsPackage`
+- **Domain:** [Titleblock](#Titleblock)
+- **Range:** [DrawingPackage](#DrawingPackage)
+- **extraction hint:** Present on some title blocks only: a package, volume or submission cell, often next to the project. Do not invent one when the cell is absent.
+
 ### assertsProject {#assertsProject}
 
 The project this title block names: a claim read off the printed region, like assertsClient. The fact that a drawing is filed under a project is belongsToProject; the two can differ (a drawing filed under another project than its title block names), and the difference is what a query can report.

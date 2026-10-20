@@ -189,6 +189,14 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
     skos:altLabel "project"@en, "Projekt"@de, "Bauvorhaben"@de ;
     :extractionHint "The project cell of the title block, a name, a number or both; the same project is named on every drawing of the project."@en .
 
+:assertsPackage rdf:type owl:ObjectProperty ;
+    rdfs:label "assertsPackage" ;
+    rdfs:domain :Titleblock ;
+    rdfs:range :DrawingPackage ;
+    rdfs:comment "The drawing package this title block names, when it names one: a claim read off the printed region, like assertsProject. Optional: a title block may or may not name a package, so there is no cardinality. The fact that a drawing is filed in a package is belongsToPackage; the two can differ, and the difference is what a query can report." ;
+    skos:altLabel "package"@en, "volume"@en, "submission"@en, "Paket"@de ;
+    :extractionHint "Present on some title blocks only: a package, volume or submission cell, often next to the project. Do not invent one when the cell is absent."@en .
+
 :assertsRevision rdf:type owl:ObjectProperty ;
     rdfs:label "assertsRevision" ;
     rdfs:domain :RevisionTable ;

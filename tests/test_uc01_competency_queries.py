@@ -76,7 +76,20 @@ def test_cq_2_4_finds_the_drawings_filed_under_another_project_than_their_title_
     assert run(query, data) == {"b"}
 
 
+def test_cq_8_4_finds_the_drawings_filed_in_another_package_than_their_title_block_names():
+    query = recorded_query("# CQ 8.4")
+    data = """:t1 a metadata:Titleblock ; metadata:assertsMetadataFor :a ; metadata:assertsPackage :v3 .
+:a a metadata:DrawingSheet ; metadata:belongsToPackage :v3 .
+:t2 a metadata:Titleblock ; metadata:assertsMetadataFor :b ; metadata:assertsPackage :v3 .
+:b a metadata:DrawingSheet ; metadata:belongsToPackage :v4 .
+:t3 a metadata:Titleblock ; metadata:assertsMetadataFor :c .
+:c a metadata:DrawingSheet ; metadata:belongsToPackage :v4 .
+"""
+    # b is filed in v4 while its title block names v3; c's title block names no package, so there is nothing to compare
+    assert run(query, data) == {"b"}
+
+
 def test_a_table_asserts_every_revision_it_lists_and_the_ontology_declares_the_property():
     ontology = Graph().parse(str(ROOT / "src" / "aec_drawing_metadata.ttl"), format="turtle")
     names = {str(s).rsplit("#", 1)[-1] for s in ontology.subjects()}
-    assert {"assertsRevision", "assertsProject", "isAuthoredBy", "isCheckedBy", "isApprovedBy"} <= names
+    assert {"assertsRevision", "assertsProject", "assertsPackage", "isAuthoredBy", "isCheckedBy", "isApprovedBy"} <= names

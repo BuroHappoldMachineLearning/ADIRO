@@ -96,6 +96,7 @@ Links between two entities. New properties are wired into the existing generic t
 | `belongsToProject`    | `DrawingSheet`    | `Project`           | `aec_drawing_metadata` | NEW    | (top-level)             |
 | `assertsProject`      | `Titleblock`      | `Project`           | `aec_drawing_metadata` | NEW    | (top-level)             |
 | `belongsToPackage`    | `DrawingSheet`    | `DrawingPackage`    | `aec_drawing_metadata` | NEW    | (top-level)             |
+| `assertsPackage`      | `Titleblock`      | `DrawingPackage`    | `aec_drawing_metadata` | NEW    | (top-level)             |
 | `isAuthoredBy`           | `DrawingSheet` or `DrawingRevision` | `Person` | `aec_drawing_metadata` | NEW    | (top-level)             |
 | `isCheckedBy`          | `DrawingSheet` or `DrawingRevision` | `Person` | `aec_drawing_metadata` | NEW    | (top-level)             |
 | `isApprovedBy`         | `DrawingSheet` or `DrawingRevision` | `Person` | `aec_drawing_metadata` | NEW    | (top-level)             |
@@ -197,7 +198,7 @@ Each FR describes one representational capability the ontology must have, in imp
 > The ontology SHOULD represent the grouping of drawing sheets into packages or volumes within a project, such that project-scoped and package-scoped searches can both be supported.
 
 - Source: UC-01
-- Derived terms: `metadata:DrawingPackage` (NEW), `metadata:belongsToPackage` (NEW), `metadata:packageName` (NEW)
+- Derived terms: `metadata:DrawingPackage` (NEW), `metadata:belongsToPackage` (NEW), `metadata:assertsPackage` (NEW, from a `Titleblock` to the package it names, when it names one), `metadata:packageName` (NEW)
 
 ---
 
@@ -312,6 +313,23 @@ A drawing must have an author; whether it was checked or approved varies, so CQ 
 | ------ | -------------------------------------------------------------------------------- |
 | CQ 8.1 | What sheets belong to package "Volume 3"?                                        |
 | CQ 8.2 | Which sheets in package "Volume 3" still have status "Issued for Comment"?       |
+| CQ 8.3 | Which package does the title block of drawing "ST-101" name, if it names one? *(Added in [v0.8](#9-version-history).)* |
+| CQ 8.4 | Which drawings are filed in a package other than the one their title block names? *(Added in [v0.8](#9-version-history).)* |
+
+CQ 8.4 as a query (a title block that names no package is not compared):
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+
+# CQ 8.4: the drawings filed in another package than their title block names
+SELECT ?drawing ?named ?filed WHERE {
+  ?titleblock a metadata:Titleblock ;
+              metadata:assertsMetadataFor ?drawing ;
+              metadata:assertsPackage     ?named .
+  ?drawing metadata:belongsToPackage ?filed .
+  FILTER (?named != ?filed)
+}
+```
 
 ### CQ Group I — Integration / Multi-field Queries
 
@@ -462,6 +480,7 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `dcommon:hasDiscipline`        | `aec_domain_common`    | REUSE  | CQ 5.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 5                               |
 | `metadata:hasProperty`         | `aec_drawing_metadata` | REUSE  | CQ 6.x, CQ-I 3                                 | FR 6                               |
 | `metadata:belongsToPackage`    | `aec_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
+| `metadata:assertsPackage`      | `aec_drawing_metadata` | NEW    | CQ 8.3, CQ 8.4                                 | FR 8                               |
 | `metadata:drawingIdentifier`       | `aec_drawing_metadata` | NEW    | CQ 1.1, CQ 1.2                                 | FR 1                               |
 | `metadata:drawingTitle`        | `aec_drawing_metadata` | NEW    | CQ 1.2                                         | FR 1                               |
 | `metadata:hasScale`            | `aec_drawing_metadata` | NEW    | CQ 1.3–1.7, CQ-I 2                                 | FR 1                               |
@@ -519,7 +538,7 @@ metadata:hasProperty (already exists)
   └── metadata:hasStatusCode (NEW)
 ```
 
-All other new object properties (`belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `assertsRevision`, `assertsProject`) are declared at the top level — they are associative or role-differentiated and do not fit the "containment" or "characterising property" generalisations.
+All other new object properties (`belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `assertsRevision`, `assertsProject`, `assertsPackage`) are declared at the top level — they are associative or role-differentiated and do not fit the "containment" or "characterising property" generalisations.
 
 ---
 
@@ -549,6 +568,7 @@ Changes from v0.7, made when the person roles were extended to the drawing and t
 - **`assertsRevision` added** (`RevisionTable` to `DrawingRevision`, §2.3, FR 3, §6): one link per row of a printed revision table, so a table with revisions A, B and C asserts three. It records which table a revision was read from; it does not say which revision is the latest (that is read from `issueDate`).
 - **`issueDate` applies to a `DrawingSheet` as well as a `DrawingRevision`** (§2.2): the title block's date is the drawing's, and "date authored" is the same property, not a second one.
 - **`assertsProject` added** (`Titleblock` to `Project`, §2.3, FR 2, §6) with CQ 2.3 and CQ 2.4: the project a title block names is a claim, and the project a drawing is filed under (`belongsToProject`) is a fact; the two can differ, and CQ 2.4 finds the drawings where they do.
+- **`assertsPackage` added** (`Titleblock` to `DrawingPackage`, §2.3, FR 8, §6) with CQ 8.3 and CQ 8.4, on the pattern of `assertsProject`. A title block may or may not name a package, so it is optional (no cardinality, nothing to compare when it names none).
 - **CQ 3.4, CQ 4.4 and CQ 4.5 added**, with the queries for CQ 3.4 and CQ 4.4. A drawing must have an author; a checker and an approver are optional. CQ 4.4 is a closed-world check, and the same rule is a data-validation shape.
 - **Open issue G12 added**: a missing person is two different facts (not found, not printed); decided in principle, vocabulary open.
 
