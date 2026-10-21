@@ -152,6 +152,14 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   issue says `Related #N`, never a closing keyword**: the watcher closes the issue when a later run passes, and a keyword closes it on merge, while the deploy that
   follows may still fail, which hides the failure and opens a duplicate ([#202](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/202)). Each issue carries the `ci-alert`
   label, which the README's "Build status" column counts (`docs/contribute/build-status.md` explains each badge).
+- **`.github/workflows/worklog-conflicts.yml`** ([#206](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/206)) — every
+  pull request adds a worklog entry at the top of `docs/ai/worklog.md`, so two open pull requests conflict there once one merges. After
+  every push to `main` (and when a pull request is opened or pushed to), the **ADIRO Bot** merges `main` into each open same-repository
+  pull request whose **only** conflicting file is the worklog and whose two sides only *add* lines to it, keeping both entries (the pull
+  request's first), and pushes the merge commit, which starts the checks again. It pushes only after the validation and the tests pass on
+  the merged tree; if one fails, it pushes nothing and says so in a comment on the pull request. Any other conflict, a fork pull request
+  and a branch that moved during the run are left to the author (the push is never forced). The job that runs the pull request's code
+  has no secrets; the job that pushes runs only `main`'s `scripts/worklog_conflicts.py` and pushes only the tree that was verified.
 
 - **`data-validation/` + `scripts/validate_data.py`** ([#168](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/168)) — SHACL files
   (`<topic>.shacl.ttl`) that check **data** (the individuals a pipeline extracts) against closed-world rules the ontology cannot state
@@ -313,7 +321,8 @@ For anyone changing an ontology, agent or person. The sections below give the de
 - **Worklog.** Record any non-trivial change you make in **`docs/ai/worklog.md`** (newest entry first) — what
   changed, how it was verified (including gates you could *not* run), decisions deferred or rejected, and the
   next step. It is the handover record between sessions; `git log` does not carry intent or open threads. Excluded
-  from the built site (`exclude_docs`).
+  from the built site (`exclude_docs`). Add the entry at the top and do not edit older ones: then a conflict with another pull
+  request's entry is a pure addition on both sides, which the ADIRO Bot resolves for you (`worklog-conflicts.yml`, above).
 - **Ontology ↔ docs (generated pages).** Docs under `docs/` come in two kinds, maintained differently:
   **generated** pages, which you regenerate and never hand-edit (this rule), and **hand-written**
   specification pages, which you edit deliberately (next rule). Confusing the two is how a `.ttl` change
