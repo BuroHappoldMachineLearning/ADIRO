@@ -9,9 +9,9 @@ from rdflib.collection import Collection  # noqa: E402
 from rdflib.namespace import OWL, RDF, RDFS, XSD  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
-APROV = Namespace("https://w3id.org/adiro/aec_provenance#")
+APROV = Namespace("https://w3id.org/adiro/adiro_provenance#")
 PROV = Namespace("http://www.w3.org/ns/prov#")
-G = Graph().parse(str(ROOT / "src" / "aec_provenance.ttl"), format="turtle")
+G = Graph().parse(str(ROOT / "src" / "adiro_provenance.ttl"), format="turtle")
 
 
 def members(cls):

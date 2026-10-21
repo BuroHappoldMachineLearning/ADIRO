@@ -1,3 +1,8 @@
+---
+search:
+  exclude: true
+---
+
 # Aec Provenance
 
 <div class="adiro-actions" markdown="span">
@@ -16,7 +21,7 @@
 
 !!! warning "Deprecated"
 
-    This module is deprecated and receives no further changes. It is replaced by `adiro_provenance`, which continues its version numbering. Every release of it stays published at its own IRI.
+    This module is deprecated and receives no further changes. It is replaced by [`adiro_provenance`](adiro_provenance.md), which continues its version numbering. Every release of it stays published at its own IRI.
 
 Foundational, domain-neutral module for provenance. It lets any value inferred from a drawing be recorded as an assertion that carries its own source, confidence, and how it was produced, aligned to W3C PROV-O. The drawing modules import it.
 

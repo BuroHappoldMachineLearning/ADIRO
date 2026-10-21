@@ -12,8 +12,8 @@ ROOT = Path(__file__).resolve().parent.parent
 ORSD = ROOT / "docs" / "specification" / "use-cases" / "UC-01" / "UC-01-Titleblock-Based Drawing Search.md"
 PREFIXES = (
     "@prefix : <https://ex.org/d#> .\n"
-    "@prefix metadata: <https://w3id.org/adiro/aec_drawing_metadata#> .\n"
-    "@prefix aprov: <https://w3id.org/adiro/aec_provenance#> .\n"
+    "@prefix metadata: <https://w3id.org/adiro/adiro_drawing_metadata#> .\n"
+    "@prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .\n"
 )
 
 
@@ -48,8 +48,8 @@ def test_cq_4_4_lists_the_drawings_with_no_recorded_author():
 
 def test_cq_4_5_is_cq_4_4_with_the_checker_or_the_approver():
     query = """SELECT ?drawing WHERE {
-  ?drawing a <https://w3id.org/adiro/aec_drawing_metadata#DrawingSheet> .
-  FILTER NOT EXISTS { ?drawing <https://w3id.org/adiro/aec_drawing_metadata#isCheckedBy> ?person }
+  ?drawing a <https://w3id.org/adiro/adiro_drawing_metadata#DrawingSheet> .
+  FILTER NOT EXISTS { ?drawing <https://w3id.org/adiro/adiro_drawing_metadata#isCheckedBy> ?person }
 }"""
     # the revision fallback is for the author only: a checker on a revision does not make the drawing checked
     data = ":a a metadata:DrawingSheet ; metadata:isCheckedBy :achen .\n:b a metadata:DrawingSheet ; metadata:hasRevision :r .\n:r a metadata:DrawingRevision ; metadata:isCheckedBy :achen .\n"
@@ -158,6 +158,6 @@ def test_the_promotion_gives_a_direct_statement_only_for_an_accepted_assertion_w
 
 
 def test_a_table_asserts_every_revision_it_lists_and_the_ontology_declares_the_property():
-    ontology = Graph().parse(str(ROOT / "src" / "aec_drawing_metadata.ttl"), format="turtle")
+    ontology = Graph().parse(str(ROOT / "src" / "adiro_drawing_metadata.ttl"), format="turtle")
     names = {str(s).rsplit("#", 1)[-1] for s in ontology.subjects()}
     assert {"assertsRevision", "assertsProject", "assertsPackage", "isAuthoredBy", "isCheckedBy", "isApprovedBy"} <= names

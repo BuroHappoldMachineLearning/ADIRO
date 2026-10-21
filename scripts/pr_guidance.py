@@ -36,6 +36,7 @@ from rdflib.term import BNode
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import example_images  # noqa: E402
+import module_renames  # noqa: E402
 from ontology_versions import archived_versions, version_key  # noqa: E402
 from validate_ontology import (  # noqa: E402
     ADIRO_NS, DESCRIPTION_PROPS, TERM_TYPES, find_unused_imports, find_unused_prefixes, missing_changelog_modules)
@@ -108,9 +109,9 @@ def declares_classes(graph):
 
 def new_classes_without_image(base, head):
     """New ADIRO classes (no triples in the base) that carry no exampleImage (#145)."""
-    prop = URIRef(example_images.PROPERTY_IRI)
+    props = [URIRef(iri) for iri in example_images.PROPERTY_IRIS]
     return [t for t in sorted(adiro_terms(head), key=str)
-            if (t, RDF.type, OWL.Class) in head and not _signature(base, t) and (t, prop, None) not in head]
+            if (t, RDF.type, OWL.Class) in head and not _signature(base, t) and not any((t, p, None) in head for p in props)]
 
 
 def unregistered_closing(body, registered):
@@ -173,9 +174,10 @@ class Caution:
 
 
 def _exampleimage_declaration_removed(changes, ctx):
-    prop = URIRef(example_images.PROPERTY_IRI)
+    props = [URIRef(iri) for iri in example_images.PROPERTY_IRIS]
     return [f"`{c['module']}`: the declaration of `{example_images.FOLDER}` is removed or renamed" for c in changes
-            if (prop, RDF.type, OWL.AnnotationProperty) in c["base"] and (prop, RDF.type, OWL.AnnotationProperty) not in c["head"]]
+            if any((p, RDF.type, OWL.AnnotationProperty) in c["base"] and (p, RDF.type, OWL.AnnotationProperty) not in c["head"]
+                   for p in props)]
 
 
 def _import_removed(changes, ctx):
@@ -314,16 +316,25 @@ def main(argv=None):
                              capture_output=True, text=True, cwd=root).stdout.split()
     no_changelog = set(missing_changelog_modules(changed))  # the same check as validate_ontology.py (#105)
     texts = {f"src/{p.name}": p.read_text(encoding="utf-8") for p in sorted((root / "src").glob("*.ttl"))}
+    # A module that a renamed one replaces, kept in src/ for one more cycle, repeats every term of its successor under
+    # the old IRIs (#171): its labels are not clashes, so the suite the labels are compared in leaves it out.
+    renames = module_renames.load(root)
+    retiring = module_renames.superseded(renames, [Path(p).stem for p in texts])
     suite = Graph()
-    for text in texts.values():
-        suite.parse(data=text, format="turtle")
+    for path, text in texts.items():
+        if Path(path).stem not in retiring:
+            suite.parse(data=text, format="turtle")
 
     changes = []
     findings, previews = [], []  # findings: (kind key, item Markdown); each kind's advice is said once by render()
     for path in (p for p in changed if re.fullmatch(r"src/[^/]+\.ttl", p)):  # includes deleted modules
         module = Path(path).stem
         head = _load(texts.get(path))
-        base = _load(_git_show(base_commit, path, root))
+        base_text = _git_show(base_commit, path, root)
+        old_name = module_renames.predecessor(renames, module)
+        if base_text is None and old_name:  # a renamed module: what it changes is measured against the module it replaces
+            base_text = module_renames.rewrite_text(_git_show(base_commit, f"src/{old_name}.ttl", root) or "", renames) or None
+        base = _load(base_text)
         if isomorphic(base, head):
             continue
         touched = touched_terms(base, head)
@@ -339,7 +350,7 @@ def main(argv=None):
         if module in no_changelog:
             findings.append(("changelog", f"`changelogs/{module}.md`"))
         # only what this PR introduces: a module's standing leftovers are not the author's to fix here
-        base_text = _git_show(base_commit, path, root) or ""
+        base_text = base_text or ""
         if path in texts:
             findings += [("unused-prefix", f"`@prefix` {pfx} (`{module}`)")
                          for pfx in sorted(set(find_unused_prefixes(head, texts[path])) - set(find_unused_prefixes(base, base_text)))]

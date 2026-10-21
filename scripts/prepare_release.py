@@ -50,12 +50,12 @@ ROOT = Path(__file__).resolve().parent.parent
 
 # Dependency order (matches scripts/generate_docs.py); unknown modules sort after these.
 MODULE_ORDER = [
-    "aec_provenance",
-    "aec_geometry",
-    "aec_drawing_metadata",
-    "aec_common_symbols",
-    "aec_domain_common",
-    "aec_facade_domain",
+    "adiro_provenance",
+    "adiro_geometry",
+    "adiro_drawing_metadata",
+    "adiro_common_symbols",
+    "adiro_domain_common",
+    "adiro_facade_domain",
 ]
 PENDING_VERDICTS = {"RELEASE_PENDING", "INSUFFICIENT_BUMP"}
 OVERRIDES_FILE = Path("config") / "release_overrides.json"
@@ -77,8 +77,8 @@ def _write(path, text):
 
 
 def order_key(module, renames=None):
-    """Dependency position of `module`; a renamed module takes the place of the module it replaced (#171)."""
-    names = mr.lineage(renames or {}, module)
+    """Dependency position of `module`; a module and the one it replaced, or that replaced it, share a place (#171)."""
+    names = mr.names(renames or {}, module)
     position = next((MODULE_ORDER.index(n) for n in names if n in MODULE_ORDER), len(MODULE_ORDER))
     return (position, module)
 

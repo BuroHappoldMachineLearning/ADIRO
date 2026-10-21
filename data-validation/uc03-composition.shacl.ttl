@@ -10,8 +10,8 @@
 
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix metadata: <https://w3id.org/adiro/aec_drawing_metadata#> .
-@prefix csymbol: <https://w3id.org/adiro/aec_common_symbols#> .
+@prefix metadata: <https://w3id.org/adiro/adiro_drawing_metadata#> .
+@prefix csymbol: <https://w3id.org/adiro/adiro_common_symbols#> .
 @prefix dv: <https://w3id.org/adiro/data-validation/uc03-composition#> .
 
 dv:InlineReferenceComposition a sh:NodeShape ;

@@ -13,8 +13,8 @@ from rdflib import Graph, Literal, Namespace, URIRef  # noqa: E402
 from rdflib.namespace import OWL, RDF, RDFS, SKOS, XSD  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
-M = Namespace("https://w3id.org/adiro/aec_drawing_metadata#")
-APROV = Namespace("https://w3id.org/adiro/aec_provenance#")
+M = Namespace("https://w3id.org/adiro/adiro_drawing_metadata#")
+APROV = Namespace("https://w3id.org/adiro/adiro_provenance#")
 
 OWNED_TEXT_FIELDS = {
     M.DrawingSheet: (M.drawingIdentifier, M.drawingTitle, M.drawingScale),
@@ -25,7 +25,7 @@ TEXT_FIELDS = [(owner, prop) for owner, props in OWNED_TEXT_FIELDS.items() for p
 
 @pytest.fixture(scope="module")
 def metadata():
-    return Graph().parse(str(ROOT / "src" / "aec_drawing_metadata.ttl"), format="turtle")
+    return Graph().parse(str(ROOT / "src" / "adiro_drawing_metadata.ttl"), format="turtle")
 
 
 def _is_label(graph, term):

@@ -26,7 +26,10 @@ from pathlib import Path
 from rdflib import Graph, Literal, URIRef
 
 ROOT = Path(__file__).resolve().parent.parent
-PROPERTY_IRI = "https://w3id.org/adiro/aec_drawing_metadata#exampleImage"
+PROPERTY_IRI = "https://w3id.org/adiro/adiro_drawing_metadata#exampleImage"
+# The property under every name its module has had (#171): the deprecated aec_* modules and their archived releases
+# name it in the old namespace, and their images are still checked and served.
+PROPERTY_IRIS = (PROPERTY_IRI, "https://w3id.org/adiro/aec_drawing_metadata#exampleImage")
 FOLDER = PROPERTY_IRI.rsplit("#", 1)[1]  # the folder is named like the annotation property (decision 10)
 PAGE_URL = "https://w3id.org/adiro/contribute/example-images/"
 BASES = ("https://w3id.org/adiro/", "https://burohappoldmachinelearning.github.io/ADIRO/")
@@ -78,7 +81,8 @@ def module_folder(root, module):
 
 def values(graph):
     """(term, value) for every exampleImage assertion in the graph, sorted."""
-    return sorted(((s, o) for s, o in graph.subject_objects(URIRef(PROPERTY_IRI))), key=lambda t: (str(t[0]), str(t[1])))
+    found = {(s, o) for iri in PROPERTY_IRIS for s, o in graph.subject_objects(URIRef(iri))}
+    return sorted(found, key=lambda t: (str(t[0]), str(t[1])))
 
 
 def file_of(value, module):
@@ -201,7 +205,8 @@ def snapshot_values(root, module):
         archived = Graph().parse(str(ttl), format="turtle", publicID=LEGACY_BASE)
         pairs = set()
         for base in BASES:  # the earliest releases declare the property under the Pages host
-            pairs |= set(archived.subject_objects(URIRef(PROPERTY_IRI.replace(BASES[0], base))))
+            for iri in PROPERTY_IRIS:
+                pairs |= set(archived.subject_objects(URIRef(iri.replace(BASES[0], base))))
         for term, value in sorted(pairs, key=lambda t: (str(t[0]), str(t[1]))):
             text = str(value)
             if text.startswith(LEGACY_BASE):

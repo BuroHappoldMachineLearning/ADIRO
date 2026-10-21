@@ -1,7 +1,7 @@
 # UC-03 provenance application profile
 
 This profile implements [#96](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/96)
-using the existing `aec_provenance`, PROV-O and `aec_geometry` foundation. It adds no competing core module.
+using the existing `adiro_provenance`, PROV-O and `adiro_geometry` foundation. It adds no competing core module.
 
 An immutable PDF artifact is a `prov:Entity`; its content hash is distinct from a `DrawingSheet` identity.
 Each actual extraction or resolution execution is a `prov:Activity`. It `prov:used` exact input entities,

@@ -1,10 +1,19 @@
-"""The README shows a latest-release badge per module in src/; keep the two in step."""
+"""The README shows a latest-release badge per module in src/; keep the two in step.
+
+A module that a renamed one replaces (config/module_renames.json, #171) gets no badge while both are in src/: the README
+shows the current modules and says the old ones were renamed.
+"""
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "scripts"))
+import module_renames  # noqa: E402
+
 README = (ROOT / "README.md").read_text(encoding="utf-8")
-MODULES = sorted(p.stem for p in (ROOT / "src").glob("*.ttl"))
+_ALL = [p.stem for p in (ROOT / "src").glob("*.ttl")]
+MODULES = sorted(set(_ALL) - module_renames.superseded(module_renames.load(ROOT), _ALL))
 BADGE_FILTER = re.compile(r"img\.shields\.io/endpoint\?url=[^\"]*%2Fbadges%2F([a-z0-9_]+)\.json")
 RELEASE_LINK = re.compile(r"/releases/tag/([a-z0-9_]+)-v(\d+\.\d+\.\d+)")
 

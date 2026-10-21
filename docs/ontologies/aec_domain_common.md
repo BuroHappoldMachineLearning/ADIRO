@@ -1,3 +1,8 @@
+---
+search:
+  exclude: true
+---
+
 # Aec Domain Common
 
 <div class="adiro-actions" markdown="span">
@@ -19,7 +24,7 @@
 
 !!! warning "Deprecated"
 
-    This module is deprecated and receives no further changes. It is replaced by `adiro_domain_common`, which continues its version numbering. Every release of it stays published at its own IRI.
+    This module is deprecated and receives no further changes. It is replaced by [`adiro_domain_common`](adiro_domain_common.md), which continues its version numbering. Every release of it stays published at its own IRI.
 
 Concepts shared by several engineering domains. It sits between the common symbols and the discipline-specific modules, holding abstractions that more than one domain reuses, so they are defined once.
 

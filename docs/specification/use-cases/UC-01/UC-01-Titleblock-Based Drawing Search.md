@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.11 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.12 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -26,17 +26,17 @@ Things that exist independently and will become OWL Classes.
 
 | Entity              | Module                              | Action | Rationale                                                                                |
 | ------------------- | ----------------------------------- | ------ | ---------------------------------------------------------------------------------------- |
-| `DrawingSheet`      | `aec_drawing_metadata`              | REUSE  | The primary object being searched. UC-01 "Drawing" maps here.                            |
-| `Layout`            | `aec_drawing_metadata`              | REUSE  | A view region within a DrawingSheet; carries discipline and content-type classification. |
-| `LayoutContentType` | `aec_drawing_metadata`              | REUSE  | View type (Plan / Section / Elevation / Detail / Table / Perspective).                   |
-| `DrawingRevision`   | `aec_drawing_metadata`              | NEW    | Titleblock data (status, date, persons) changes per revision.                            |
-| `Project`           | `aec_drawing_metadata`              | NEW    | Drawings are grouped under a project.                                                    |
-| `Person`            | `aec_provenance`                    | NEW    | Authors, checkers, and approvers appear in the titleblock. *(Moved from `aec_drawing_metadata` in [v0.9](#9-version-history).)* |
-| `DrawingFile`       | `aec_provenance`                    | NEW    | The file a drawing is stored in: a reference to a document, identified by its content hash. *(Added in [v0.9](#9-version-history).)* |
-| `FilePage`          | `aec_provenance`                    | NEW    | One page of a file, counted from 1; the drawing is on a page, not on a file. *(Added in [v0.9](#9-version-history).)* |
-| `Discipline`        | `aec_domain_common`                 | REUSE  | Existing class hierarchy (`Structural`, `MEP`, `Architectural`, …).                      |
-| `StatusCode`        | `aec_drawing_metadata`              | NEW    | Approval state (IFC, IFR, AFC…) expressed as a controlled vocabulary.                    |
-| `DrawingPackage`    | `aec_drawing_metadata`              | NEW    | Drawings are grouped into volumes or packages within a project.                          |
+| `DrawingSheet`      | `adiro_drawing_metadata`              | REUSE  | The primary object being searched. UC-01 "Drawing" maps here.                            |
+| `Layout`            | `adiro_drawing_metadata`              | REUSE  | A view region within a DrawingSheet; carries discipline and content-type classification. |
+| `LayoutContentType` | `adiro_drawing_metadata`              | REUSE  | View type (Plan / Section / Elevation / Detail / Table / Perspective).                   |
+| `DrawingRevision`   | `adiro_drawing_metadata`              | NEW    | Titleblock data (status, date, persons) changes per revision.                            |
+| `Project`           | `adiro_drawing_metadata`              | NEW    | Drawings are grouped under a project.                                                    |
+| `Person`            | `adiro_provenance`                    | NEW    | Authors, checkers, and approvers appear in the titleblock. *(Moved from `adiro_drawing_metadata` in [v0.9](#9-version-history).)* |
+| `DrawingFile`       | `adiro_provenance`                    | NEW    | The file a drawing is stored in: a reference to a document, identified by its content hash. *(Added in [v0.9](#9-version-history).)* |
+| `FilePage`          | `adiro_provenance`                    | NEW    | One page of a file, counted from 1; the drawing is on a page, not on a file. *(Added in [v0.9](#9-version-history).)* |
+| `Discipline`        | `adiro_domain_common`                 | REUSE  | Existing class hierarchy (`Structural`, `MEP`, `Architectural`, …).                      |
+| `StatusCode`        | `adiro_drawing_metadata`              | NEW    | Approval state (IFC, IFR, AFC…) expressed as a controlled vocabulary.                    |
+| `DrawingPackage`    | `adiro_drawing_metadata`              | NEW    | Drawings are grouped into volumes or packages within a project.                          |
 
 > **Design note — DrawingSheet vs Layout:** A `DrawingSheet` may contain multiple `Layout`s, each with its own `LayoutContentType` and `Discipline`. Queries for "Structural Plan drawings" filter for sheets containing at least one Layout whose content type is `Plan` and whose discipline is (a subclass of) `Structural`.
 
@@ -53,7 +53,7 @@ Things that exist independently and will become OWL Classes.
 The promotion is a query that tooling runs on accepted assertions, not an inference. Each accepted assertion that has a value, and that no later assertion supersedes, gives one direct statement on its subject, with the property its field kind maps to (`aprov:mapsToFieldProperty`):
 
 ```sparql
-PREFIX aprov: <https://w3id.org/adiro/aec_provenance#>
+PREFIX aprov: <https://w3id.org/adiro/adiro_provenance#>
 
 # Promotion: the direct statements that accepted assertions give
 CONSTRUCT { ?subject ?property ?value }
@@ -78,19 +78,19 @@ Characteristics of a single entity. **Datatype properties on `DrawingSheet` are 
 
 | Attribute        | Entity            | Module                 | Action | Expected Type | Notes |
 | ---------------- | ----------------- | ---------------------- | ------ | ------------- | ----- |
-| `drawingIdentifier`  | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | Also known as "drawing number". |
-| `drawingTitle`   | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
-| `hasScale`       | `DrawingSheet`, `Layout` | `aec_drawing_metadata` | NEW    | `xsd:string`  | The general scale property; `drawingScale` and `layoutScale` are its sub-properties. With sub-property entailment a query on `hasScale` returns values recorded with either; without it, a sheet's scale is read with the path `metadata:hasScale\|metadata:drawingScale` and a layout's with `metadata:hasScale\|metadata:layoutScale`. *(Amended in [v0.7](#9-version-history).)* |
-| `drawingScale`     | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | The scale of the sheet as a whole: most often printed in the title block, also in general notes or other areas outside any layout. Never copied from a layout. Sub-property of `hasScale`. *(Added in [v0.7](#9-version-history).)* |
-| `layoutScale`    | `Layout`          | `aec_drawing_metadata` | NEW    | `xsd:string`  | The scale printed in a layout's own caption (or 'NTS' / 'As shown', verbatim); more specific than `drawingScale`; left empty when the layout prints none. Sub-property of `hasScale`. *(Added in [v0.7](#9-version-history).)* |
-| `sheetSize`      | `DrawingSheet`    | `aec_drawing_metadata` | NEW    | `xsd:string`  | Named for the sheet of paper, which has a size; also known as "drawing size". *(Noted in [v0.7](#9-version-history).)* |
-| `revisionCode`   | `DrawingRevision` | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
-| `issueDate`      | `DrawingSheet` or `DrawingRevision` | `aec_drawing_metadata` | NEW    | `xsd:date`    | The date a drawing, or a revision of it, was issued; the title block's date is the drawing's, and "date authored" is the same property. *(Amended in [v0.8](#9-version-history).)* |
-| `personName`     | `Person`          | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
-| `projectName`    | `Project`         | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
-| `projectNumber`  | `Project`         | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
-| `packageName`    | `DrawingPackage`  | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
-| `statusLabel`    | `StatusCode`      | `aec_drawing_metadata` | NEW    | `xsd:string`  | |
+| `drawingIdentifier`  | `DrawingSheet`    | `adiro_drawing_metadata` | NEW    | `xsd:string`  | Also known as "drawing number". |
+| `drawingTitle`   | `DrawingSheet`    | `adiro_drawing_metadata` | NEW    | `xsd:string`  | |
+| `hasScale`       | `DrawingSheet`, `Layout` | `adiro_drawing_metadata` | NEW    | `xsd:string`  | The general scale property; `drawingScale` and `layoutScale` are its sub-properties. With sub-property entailment a query on `hasScale` returns values recorded with either; without it, a sheet's scale is read with the path `metadata:hasScale\|metadata:drawingScale` and a layout's with `metadata:hasScale\|metadata:layoutScale`. *(Amended in [v0.7](#9-version-history).)* |
+| `drawingScale`     | `DrawingSheet`    | `adiro_drawing_metadata` | NEW    | `xsd:string`  | The scale of the sheet as a whole: most often printed in the title block, also in general notes or other areas outside any layout. Never copied from a layout. Sub-property of `hasScale`. *(Added in [v0.7](#9-version-history).)* |
+| `layoutScale`    | `Layout`          | `adiro_drawing_metadata` | NEW    | `xsd:string`  | The scale printed in a layout's own caption (or 'NTS' / 'As shown', verbatim); more specific than `drawingScale`; left empty when the layout prints none. Sub-property of `hasScale`. *(Added in [v0.7](#9-version-history).)* |
+| `sheetSize`      | `DrawingSheet`    | `adiro_drawing_metadata` | NEW    | `xsd:string`  | Named for the sheet of paper, which has a size; also known as "drawing size". *(Noted in [v0.7](#9-version-history).)* |
+| `revisionCode`   | `DrawingRevision` | `adiro_drawing_metadata` | NEW    | `xsd:string`  | |
+| `issueDate`      | `DrawingSheet` or `DrawingRevision` | `adiro_drawing_metadata` | NEW    | `xsd:date`    | The date a drawing, or a revision of it, was issued; the title block's date is the drawing's, and "date authored" is the same property. *(Amended in [v0.8](#9-version-history).)* |
+| `personName`     | `Person`          | `adiro_drawing_metadata` | NEW    | `xsd:string`  | |
+| `projectName`    | `Project`         | `adiro_drawing_metadata` | NEW    | `xsd:string`  | |
+| `projectNumber`  | `Project`         | `adiro_drawing_metadata` | NEW    | `xsd:string`  | |
+| `packageName`    | `DrawingPackage`  | `adiro_drawing_metadata` | NEW    | `xsd:string`  | |
+| `statusLabel`    | `StatusCode`      | `adiro_drawing_metadata` | NEW    | `xsd:string`  | |
 
 #### Where a scale is printed, and which property records it
 
@@ -111,21 +111,21 @@ Links between two entities. New properties are wired into the existing generic t
 
 | Relation              | Domain            | Range               | Module                 | Action | `subPropertyOf`         |
 | --------------------- | ----------------- | ------------------- | ---------------------- | ------ | ----------------------- |
-| `contains` (sheet)    | `DrawingSheet`    | `Layout` (1..*)     | `aec_drawing_metadata` | REUSE  | —                       |
-| `hasProperty`         | `Layout`          | `LayoutContentType` | `aec_drawing_metadata` | REUSE  | —                       |
-| `hasDiscipline` ⚠️    | `Layout`          | `Discipline` (min 1)| `aec_domain_common`    | REUSE¹ | —                       |
-| `hasRevision`         | `DrawingSheet`    | `DrawingRevision`   | `aec_drawing_metadata` | NEW    | `metadata:contains`     |
-| `belongsToProject`    | `DrawingSheet`    | `Project`           | `aec_drawing_metadata` | NEW    | (top-level)             |
-| `assertsProject`      | `Titleblock`      | `Project`           | `aec_drawing_metadata` | NEW    | (top-level)             |
-| `belongsToPackage`    | `DrawingSheet`    | `DrawingPackage`    | `aec_drawing_metadata` | NEW    | (top-level)             |
-| `assertsPackage`      | `Titleblock`      | `DrawingPackage`    | `aec_drawing_metadata` | NEW    | (top-level)             |
-| `isAuthoredBy`           | `DrawingSheet` or `DrawingRevision` | `Person` | `aec_drawing_metadata` | NEW    | (top-level)             |
-| `isCheckedBy`          | `DrawingSheet` or `DrawingRevision` | `Person` | `aec_drawing_metadata` | NEW    | (top-level)             |
-| `isApprovedBy`         | `DrawingSheet` or `DrawingRevision` | `Person` | `aec_drawing_metadata` | NEW    | (top-level)             |
-| `assertsRevision`      | `RevisionTable`   | `DrawingRevision`   | `aec_drawing_metadata` | NEW    | (top-level)             |
-| `isOnPage`            | `DrawingSheet`    | `FilePage`          | `aec_drawing_metadata` | NEW    | (top-level)             |
-| `belongsToFile`       | `FilePage`        | `DrawingFile`       | `aec_provenance`       | NEW    | (top-level)             |
-| `hasStatusCode`       | `DrawingRevision` | `StatusCode`        | `aec_drawing_metadata` | NEW    | `metadata:hasProperty`  |
+| `contains` (sheet)    | `DrawingSheet`    | `Layout` (1..*)     | `adiro_drawing_metadata` | REUSE  | —                       |
+| `hasProperty`         | `Layout`          | `LayoutContentType` | `adiro_drawing_metadata` | REUSE  | —                       |
+| `hasDiscipline` ⚠️    | `Layout`          | `Discipline` (min 1)| `adiro_domain_common`    | REUSE¹ | —                       |
+| `hasRevision`         | `DrawingSheet`    | `DrawingRevision`   | `adiro_drawing_metadata` | NEW    | `metadata:contains`     |
+| `belongsToProject`    | `DrawingSheet`    | `Project`           | `adiro_drawing_metadata` | NEW    | (top-level)             |
+| `assertsProject`      | `Titleblock`      | `Project`           | `adiro_drawing_metadata` | NEW    | (top-level)             |
+| `belongsToPackage`    | `DrawingSheet`    | `DrawingPackage`    | `adiro_drawing_metadata` | NEW    | (top-level)             |
+| `assertsPackage`      | `Titleblock`      | `DrawingPackage`    | `adiro_drawing_metadata` | NEW    | (top-level)             |
+| `isAuthoredBy`           | `DrawingSheet` or `DrawingRevision` | `Person` | `adiro_drawing_metadata` | NEW    | (top-level)             |
+| `isCheckedBy`          | `DrawingSheet` or `DrawingRevision` | `Person` | `adiro_drawing_metadata` | NEW    | (top-level)             |
+| `isApprovedBy`         | `DrawingSheet` or `DrawingRevision` | `Person` | `adiro_drawing_metadata` | NEW    | (top-level)             |
+| `assertsRevision`      | `RevisionTable`   | `DrawingRevision`   | `adiro_drawing_metadata` | NEW    | (top-level)             |
+| `isOnPage`            | `DrawingSheet`    | `FilePage`          | `adiro_drawing_metadata` | NEW    | (top-level)             |
+| `belongsToFile`       | `FilePage`        | `DrawingFile`       | `adiro_provenance`       | NEW    | (top-level)             |
+| `hasStatusCode`       | `DrawingRevision` | `StatusCode`        | `adiro_drawing_metadata` | NEW    | `metadata:hasProperty`  |
 
 ¹ ⚠️ **Open issue (G5):** `dcommon:hasDiscipline` currently has `rdfs:domain metadata:LayoutContentType`. v0.3 proposes moving the domain to `metadata:Layout` (along with the `min 1` cardinality restriction). Discipline characterises the layout itself, not its content type — and the two are orthogonal axes (see design note below). Pending @alelom / @m-asakihattori sign-off.
 
@@ -234,7 +234,7 @@ Each FR describes one representational capability the ontology must have, in imp
 - Source: UC-01 (and every use case that must return to the source of an extraction)
 - Derived terms: `aprov:DrawingFile` (NEW), `aprov:FilePage` (NEW), `metadata:isOnPage` (NEW), `aprov:belongsToFile` (NEW), `aprov:pageNumber` (NEW, from 1); the description of a file: `aprov:fileName`, `aprov:storageLocation`, `aprov:contentHash` and `aprov:hashAlgorithm`, `aprov:mediaType`, `aprov:fileCreatedAt`, `aprov:fileModifiedAt`, `aprov:fileCreatedBy`, `aprov:fileModifiedBy`, `aprov:pageCount`, `aprov:fileSize` (all NEW); and of a page: `aprov:displayWidthPt`, `aprov:displayHeightPt`, `aprov:pdfRotationDeg` (moved from the coordinate frame)
 
-> **Design note — drawing, file, page.** A PDF holds many drawings and one drawing can exist in several files, so a drawing is linked to the *page* it is on (`isOnPage`), and the page to its file (`belongsToFile`). The coordinate frame of `aec_geometry` reads a page in one convention (`describesPage`). The measured size of a page is not `sheetSize`, which is the paper format the drawing is meant for. See [the file a drawing is stored in](../../design-decisions/file-and-page-metadata.md). *(Added in [v0.9](#9-version-history).)*
+> **Design note — drawing, file, page.** A PDF holds many drawings and one drawing can exist in several files, so a drawing is linked to the *page* it is on (`isOnPage`), and the page to its file (`belongsToFile`). The coordinate frame of `adiro_geometry` reads a page in one convention (`describesPage`). The measured size of a page is not `sheetSize`, which is the paper format the drawing is meant for. See [the file a drawing is stored in](../../design-decisions/file-and-page-metadata.md). *(Added in [v0.9](#9-version-history).)*
 ---
 
 ## 4. Competency Questions
@@ -265,7 +265,7 @@ CQs are grouped by the FR they validate. Each must be translatable directly into
 CQ 2.4 as a query (`assertsProject` is the title block's claim, `belongsToProject` the filing):
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 # CQ 2.4: the drawings filed under another project than their title block names
 SELECT ?drawing ?named ?filed WHERE {
@@ -300,7 +300,7 @@ SELECT ?drawing ?named ?filed WHERE {
 CQ 3.4 and CQ 4.4 as queries (CQ 4.5 is the same pattern with `isCheckedBy` or `isApprovedBy` alone, without the path through the revisions, which is for the author only):
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 # CQ 3.4: the table a revision was read from
 SELECT ?table WHERE {
@@ -311,7 +311,7 @@ SELECT ?table WHERE {
 ```
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 # CQ 4.4: the drawings with no recorded author (a revision's author counts when the drawing records none)
 SELECT ?drawing WHERE {
@@ -323,8 +323,8 @@ SELECT ?drawing WHERE {
 A drawing must have an author; whether it was checked or approved varies, so CQ 4.5 is a plain query and not a check. CQ 4.4 is a closed-world check: the ontology cannot state "every drawing has an author" (an OWL cardinality would infer an author, not report its absence), so the same rule is also a data-validation shape ([#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179)). The query lists the drawings with no recorded person; it cannot say whether the extraction missed the author or the drawing names none; CQ 4.6 does.
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
-PREFIX aprov:    <https://w3id.org/adiro/aec_provenance#>
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
 
 # CQ 4.6: why a drawing has no recorded author
 SELECT ?drawing ?reason WHERE {
@@ -374,7 +374,7 @@ SELECT ?drawing ?reason WHERE {
 CQ 8.4 as a query (a title block that names no package is not compared):
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 # CQ 8.4: the drawings filed in another package than their title block names
 SELECT ?drawing ?named ?filed WHERE {
@@ -398,8 +398,8 @@ SELECT ?drawing ?named ?filed WHERE {
 CQ 9.1 and CQ 9.3 as queries:
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
-PREFIX aprov:    <https://w3id.org/adiro/aec_provenance#>
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
 
 # CQ 9.1: the file and the page of a drawing
 SELECT ?fileName ?pageNumber WHERE {
@@ -412,8 +412,8 @@ SELECT ?fileName ?pageNumber WHERE {
 ```
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
-PREFIX aprov:    <https://w3id.org/adiro/aec_provenance#>
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
 
 # CQ 9.3: the files that hold more than one drawing
 SELECT ?file (COUNT(DISTINCT ?drawing) AS ?drawings) WHERE {
@@ -440,8 +440,8 @@ The following example demonstrates that the term inventory is sufficient to answ
 **CQ-I 1:** *What sheets in project "X" contain a MEP Layout and were approved by "R. Jones" after March 2024?*
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
-PREFIX dcommon:  <https://w3id.org/adiro/aec_domain_common#>
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX dcommon:  <https://w3id.org/adiro/adiro_domain_common#>
 PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
 
 SELECT ?sheet ?drawingIdentifier WHERE {
@@ -465,9 +465,9 @@ SELECT ?sheet ?drawingIdentifier WHERE {
 
 Every filter condition maps to a defined property:
 
-- `metadata:DrawingSheet`, `metadata:drawingIdentifier`, `metadata:belongsToProject`, `metadata:hasRevision`, `metadata:contains` — reused / new in `aec_drawing_metadata`.
+- `metadata:DrawingSheet`, `metadata:drawingIdentifier`, `metadata:belongsToProject`, `metadata:hasRevision`, `metadata:contains` — reused / new in `adiro_drawing_metadata`.
 - `metadata:Layout`, `dcommon:hasDiscipline`, `dcommon:MEP` — reused; note the `rdf:type` check against the class hierarchy automatically matches `Mechanical`, `Electrical`, `Plumbing`, `Lighting` via `rdfs:subClassOf` reasoning.
-- `metadata:isApprovedBy`, `metadata:issueDate`, `metadata:personName` — new in `aec_drawing_metadata`.
+- `metadata:isApprovedBy`, `metadata:issueDate`, `metadata:personName` — new in `adiro_drawing_metadata`.
 
 The query is fully expressible, confirming that CQ-I 1 is covered by the current term inventory. The previous v0.2 placeholder prefix (`https://example.org/aec-ontology#`) is retired in favour of the real module namespaces.
 
@@ -478,7 +478,7 @@ CQ 1.3 and the scale questions CQ 1.4–1.7 are expressible without a reasoner. 
 **CQ 1.3:** *What drawing sheets are drawn at scale 1:50?* Only a sheet with a sheet-level scale is returned: a layout's scale is never copied to its sheet, so a sheet whose only scale is in the caption of its single layout is not returned.
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 SELECT ?sheet WHERE {
   ?sheet  a                                         metadata:DrawingSheet ;
@@ -489,7 +489,7 @@ SELECT ?sheet WHERE {
 **CQ 1.4:** *What scale applies to this layout: its own, or otherwise its sheet's?*
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 SELECT ?layout ?scale ?basis WHERE {
   ?sheet  a metadata:DrawingSheet ;
@@ -506,7 +506,7 @@ SELECT ?layout ?scale ?basis WHERE {
 **CQ 1.5:** *Which drawing sheets state no scale at all?*
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 SELECT ?sheet WHERE {
   ?sheet a metadata:DrawingSheet .
@@ -517,7 +517,7 @@ SELECT ?sheet WHERE {
 **CQ 1.6:** *Which layouts have no scale of their own and sit on a sheet with no scale, so that their scale cannot be determined?*
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 SELECT ?layout WHERE {
   ?sheet  a metadata:DrawingSheet ;
@@ -531,7 +531,7 @@ SELECT ?layout WHERE {
 **CQ 1.7:** *Which layouts are drawn at a different scale from their sheet?*
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/aec_drawing_metadata#>
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 SELECT ?layout ?own ?nominal WHERE {
   ?sheet  a metadata:DrawingSheet ;
@@ -551,53 +551,53 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 
 | OWL Term                       | Module                 | Action | CQ(s)                                          | FR(s)                              |
 | ------------------------------ | ---------------------- | ------ | ---------------------------------------------- | ---------------------------------- |
-| `metadata:DrawingSheet`        | `aec_drawing_metadata` | REUSE  | CQ 1.x, CQ 2.x, CQ 3.x, CQ 5.x, CQ 6.x, CQ 8.x | FR 1, FR 2, FR 3, FR 5, FR 6, FR 8 |
-| `metadata:Layout`              | `aec_drawing_metadata` | REUSE  | CQ 1.4, CQ 1.6, CQ 1.7, CQ 5.x, CQ 6.x, CQ-I 1, CQ-I 2, CQ-I 3         | FR 5, FR 6                         |
-| `metadata:LayoutContentType`   | `aec_drawing_metadata` | REUSE  | CQ 6.x, CQ-I 3                                 | FR 6                               |
-| `metadata:DrawingRevision`     | `aec_drawing_metadata` | NEW    | CQ 3.x, CQ 4.x, CQ 7.x                         | FR 3, FR 4, FR 7                   |
-| `metadata:Project`             | `aec_drawing_metadata` | NEW    | CQ 2.x, CQ-I 1                                 | FR 2                               |
-| `metadata:Person`              | `aec_drawing_metadata` | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
-| `dcommon:Discipline`           | `aec_domain_common`    | REUSE  | CQ 5.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 5                               |
-| `metadata:StatusCode`          | `aec_drawing_metadata` | NEW    | CQ 7.x, CQ 8.2                                 | FR 7                               |
-| `metadata:DrawingPackage`      | `aec_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
-| `metadata:contains`            | `aec_drawing_metadata` | REUSE  | CQ 1.4, CQ 1.6, CQ 1.7, CQ-I 1, CQ-I 2, CQ-I 3                         | (structural)                       |
-| `metadata:hasRevision`         | `aec_drawing_metadata` | NEW    | CQ 3.x                                         | FR 3                               |
-| `metadata:isAuthoredBy`           | `aec_drawing_metadata` | NEW    | CQ 4.1, CQ 4.4                                 | FR 4                               |
-| `metadata:isCheckedBy`          | `aec_drawing_metadata` | NEW    | CQ 4.2, CQ 4.5                                 | FR 4                               |
-| `metadata:isApprovedBy`         | `aec_drawing_metadata` | NEW    | CQ 4.3, CQ 4.5, CQ-I 1                         | FR 4                               |
-| `metadata:assertsRevision`      | `aec_drawing_metadata` | NEW    | CQ 3.4                                         | FR 3                               |
-| `metadata:hasStatusCode`       | `aec_drawing_metadata` | NEW    | CQ 7.x, CQ 8.2                                 | FR 7                               |
-| `metadata:belongsToProject`    | `aec_drawing_metadata` | NEW    | CQ 2.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 2                               |
-| `metadata:assertsProject`      | `aec_drawing_metadata` | NEW    | CQ 2.3, CQ 2.4                                 | FR 2                               |
-| `dcommon:hasDiscipline`        | `aec_domain_common`    | REUSE  | CQ 5.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 5                               |
-| `metadata:hasProperty`         | `aec_drawing_metadata` | REUSE  | CQ 6.x, CQ-I 3                                 | FR 6                               |
-| `metadata:belongsToPackage`    | `aec_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
-| `aprov:DrawingFile`            | `aec_provenance`       | NEW    | CQ 9.2, CQ 9.3                                 | FR 9                               |
-| `aprov:FilePage`               | `aec_provenance`       | NEW    | CQ 9.1, CQ 9.3                                 | FR 9                               |
-| `metadata:isOnPage`            | `aec_drawing_metadata` | NEW    | CQ 9.1, CQ 9.2, CQ 9.3, CQ 9.4                 | FR 9                               |
-| `aprov:belongsToFile`          | `aec_provenance`       | NEW    | CQ 9.1, CQ 9.2, CQ 9.3, CQ 9.4                 | FR 9                               |
-| `aprov:fileName`, `aprov:pageNumber` | `aec_provenance` | NEW    | CQ 9.1, CQ 9.2                                 | FR 9                               |
-| `aprov:fileModifiedAt`         | `aec_provenance`       | NEW    | CQ 9.4                                         | FR 9                               |
-| `aprov:storageLocation`, `aprov:contentHash`, `aprov:hashAlgorithm`, `aprov:mediaType`, `aprov:fileCreatedAt`, `aprov:fileCreatedBy`, `aprov:fileModifiedBy`, `aprov:pageCount`, `aprov:fileSize` | `aec_provenance` | NEW | none yet: they identify, locate and describe the file (the first set of the file brainstorm) | FR 9 |
-| `metadata:assertsPackage`      | `aec_drawing_metadata` | NEW    | CQ 8.3, CQ 8.4                                 | FR 8                               |
-| `metadata:drawingIdentifier`       | `aec_drawing_metadata` | NEW    | CQ 1.1, CQ 1.2                                 | FR 1                               |
-| `metadata:drawingTitle`        | `aec_drawing_metadata` | NEW    | CQ 1.2                                         | FR 1                               |
-| `metadata:hasScale`            | `aec_drawing_metadata` | NEW    | CQ 1.3–1.7, CQ-I 2                                 | FR 1                               |
-| `metadata:drawingScale`          | `aec_drawing_metadata` | NEW    | CQ 1.3–1.7, CQ-I 2 (directly, or through `hasScale` with entailment) | FR 1                               |
-| `metadata:layoutScale`         | `aec_drawing_metadata` | NEW    | CQ 1.4, CQ 1.6, CQ 1.7 (directly, or through `hasScale` with entailment) | FR 1                               |
-| `metadata:sheetSize`           | `aec_drawing_metadata` | NEW    | —                                              | FR 1                               |
-| `metadata:revisionCode`        | `aec_drawing_metadata` | NEW    | CQ 3.1, CQ 3.3                                 | FR 3                               |
-| `metadata:issueDate`           | `aec_drawing_metadata` | NEW    | CQ 3.2, CQ 3.3, CQ-I 1                         | FR 3                               |
-| `aprov:Person`                 | `aec_provenance`       | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
-| `aprov:AssertionOutcome` (`Empty`, `Illegible`, `NotPrinted`, `NotFound`), `aprov:hasOutcome` | `aec_provenance` | NEW | CQ 4.6 | FR 4 |
-| `aprov:AcceptanceStatus` (`Pending`, `Accepted`, `Rejected`), `aprov:hasAcceptance` | `aec_provenance` | NEW | CQ 4.6 | FR 4 |
-| `aprov:supersedes`             | `aec_provenance`       | NEW    | CQ 4.6                                         | FR 4                               |
-| `aprov:acceptedBy`, `aprov:acceptedAt`, `aprov:acceptedUnder` | `aec_provenance` | NEW | none yet: the record of an acceptance (the decision of #85), not asked by a question | FR 4 |
-| `metadata:personName`          | `aec_drawing_metadata` | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
-| `metadata:statusLabel`         | `aec_drawing_metadata` | NEW    | CQ 7.x                                         | FR 7                               |
-| `metadata:projectName`         | `aec_drawing_metadata` | NEW    | CQ 2.x                                         | FR 2                               |
-| `metadata:projectNumber`       | `aec_drawing_metadata` | NEW    | CQ 2.x                                         | FR 2                               |
-| `metadata:packageName`         | `aec_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
+| `metadata:DrawingSheet`        | `adiro_drawing_metadata` | REUSE  | CQ 1.x, CQ 2.x, CQ 3.x, CQ 5.x, CQ 6.x, CQ 8.x | FR 1, FR 2, FR 3, FR 5, FR 6, FR 8 |
+| `metadata:Layout`              | `adiro_drawing_metadata` | REUSE  | CQ 1.4, CQ 1.6, CQ 1.7, CQ 5.x, CQ 6.x, CQ-I 1, CQ-I 2, CQ-I 3         | FR 5, FR 6                         |
+| `metadata:LayoutContentType`   | `adiro_drawing_metadata` | REUSE  | CQ 6.x, CQ-I 3                                 | FR 6                               |
+| `metadata:DrawingRevision`     | `adiro_drawing_metadata` | NEW    | CQ 3.x, CQ 4.x, CQ 7.x                         | FR 3, FR 4, FR 7                   |
+| `metadata:Project`             | `adiro_drawing_metadata` | NEW    | CQ 2.x, CQ-I 1                                 | FR 2                               |
+| `metadata:Person`              | `adiro_drawing_metadata` | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
+| `dcommon:Discipline`           | `adiro_domain_common`    | REUSE  | CQ 5.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 5                               |
+| `metadata:StatusCode`          | `adiro_drawing_metadata` | NEW    | CQ 7.x, CQ 8.2                                 | FR 7                               |
+| `metadata:DrawingPackage`      | `adiro_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
+| `metadata:contains`            | `adiro_drawing_metadata` | REUSE  | CQ 1.4, CQ 1.6, CQ 1.7, CQ-I 1, CQ-I 2, CQ-I 3                         | (structural)                       |
+| `metadata:hasRevision`         | `adiro_drawing_metadata` | NEW    | CQ 3.x                                         | FR 3                               |
+| `metadata:isAuthoredBy`           | `adiro_drawing_metadata` | NEW    | CQ 4.1, CQ 4.4                                 | FR 4                               |
+| `metadata:isCheckedBy`          | `adiro_drawing_metadata` | NEW    | CQ 4.2, CQ 4.5                                 | FR 4                               |
+| `metadata:isApprovedBy`         | `adiro_drawing_metadata` | NEW    | CQ 4.3, CQ 4.5, CQ-I 1                         | FR 4                               |
+| `metadata:assertsRevision`      | `adiro_drawing_metadata` | NEW    | CQ 3.4                                         | FR 3                               |
+| `metadata:hasStatusCode`       | `adiro_drawing_metadata` | NEW    | CQ 7.x, CQ 8.2                                 | FR 7                               |
+| `metadata:belongsToProject`    | `adiro_drawing_metadata` | NEW    | CQ 2.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 2                               |
+| `metadata:assertsProject`      | `adiro_drawing_metadata` | NEW    | CQ 2.3, CQ 2.4                                 | FR 2                               |
+| `dcommon:hasDiscipline`        | `adiro_domain_common`    | REUSE  | CQ 5.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 5                               |
+| `metadata:hasProperty`         | `adiro_drawing_metadata` | REUSE  | CQ 6.x, CQ-I 3                                 | FR 6                               |
+| `metadata:belongsToPackage`    | `adiro_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
+| `aprov:DrawingFile`            | `adiro_provenance`       | NEW    | CQ 9.2, CQ 9.3                                 | FR 9                               |
+| `aprov:FilePage`               | `adiro_provenance`       | NEW    | CQ 9.1, CQ 9.3                                 | FR 9                               |
+| `metadata:isOnPage`            | `adiro_drawing_metadata` | NEW    | CQ 9.1, CQ 9.2, CQ 9.3, CQ 9.4                 | FR 9                               |
+| `aprov:belongsToFile`          | `adiro_provenance`       | NEW    | CQ 9.1, CQ 9.2, CQ 9.3, CQ 9.4                 | FR 9                               |
+| `aprov:fileName`, `aprov:pageNumber` | `adiro_provenance` | NEW    | CQ 9.1, CQ 9.2                                 | FR 9                               |
+| `aprov:fileModifiedAt`         | `adiro_provenance`       | NEW    | CQ 9.4                                         | FR 9                               |
+| `aprov:storageLocation`, `aprov:contentHash`, `aprov:hashAlgorithm`, `aprov:mediaType`, `aprov:fileCreatedAt`, `aprov:fileCreatedBy`, `aprov:fileModifiedBy`, `aprov:pageCount`, `aprov:fileSize` | `adiro_provenance` | NEW | none yet: they identify, locate and describe the file (the first set of the file brainstorm) | FR 9 |
+| `metadata:assertsPackage`      | `adiro_drawing_metadata` | NEW    | CQ 8.3, CQ 8.4                                 | FR 8                               |
+| `metadata:drawingIdentifier`       | `adiro_drawing_metadata` | NEW    | CQ 1.1, CQ 1.2                                 | FR 1                               |
+| `metadata:drawingTitle`        | `adiro_drawing_metadata` | NEW    | CQ 1.2                                         | FR 1                               |
+| `metadata:hasScale`            | `adiro_drawing_metadata` | NEW    | CQ 1.3–1.7, CQ-I 2                                 | FR 1                               |
+| `metadata:drawingScale`          | `adiro_drawing_metadata` | NEW    | CQ 1.3–1.7, CQ-I 2 (directly, or through `hasScale` with entailment) | FR 1                               |
+| `metadata:layoutScale`         | `adiro_drawing_metadata` | NEW    | CQ 1.4, CQ 1.6, CQ 1.7 (directly, or through `hasScale` with entailment) | FR 1                               |
+| `metadata:sheetSize`           | `adiro_drawing_metadata` | NEW    | —                                              | FR 1                               |
+| `metadata:revisionCode`        | `adiro_drawing_metadata` | NEW    | CQ 3.1, CQ 3.3                                 | FR 3                               |
+| `metadata:issueDate`           | `adiro_drawing_metadata` | NEW    | CQ 3.2, CQ 3.3, CQ-I 1                         | FR 3                               |
+| `aprov:Person`                 | `adiro_provenance`       | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
+| `aprov:AssertionOutcome` (`Empty`, `Illegible`, `NotPrinted`, `NotFound`), `aprov:hasOutcome` | `adiro_provenance` | NEW | CQ 4.6 | FR 4 |
+| `aprov:AcceptanceStatus` (`Pending`, `Accepted`, `Rejected`), `aprov:hasAcceptance` | `adiro_provenance` | NEW | CQ 4.6 | FR 4 |
+| `aprov:supersedes`             | `adiro_provenance`       | NEW    | CQ 4.6                                         | FR 4                               |
+| `aprov:acceptedBy`, `aprov:acceptedAt`, `aprov:acceptedUnder` | `adiro_provenance` | NEW | none yet: the record of an acceptance (the decision of #85), not asked by a question | FR 4 |
+| `metadata:personName`          | `adiro_drawing_metadata` | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
+| `metadata:statusLabel`         | `adiro_drawing_metadata` | NEW    | CQ 7.x                                         | FR 7                               |
+| `metadata:projectName`         | `adiro_drawing_metadata` | NEW    | CQ 2.x                                         | FR 2                               |
+| `metadata:projectNumber`       | `adiro_drawing_metadata` | NEW    | CQ 2.x                                         | FR 2                               |
+| `metadata:packageName`         | `adiro_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
 
 ---
 
@@ -608,29 +608,29 @@ This section makes the placement of every UC-01 term in the existing module hier
 **Module hierarchy** *(updated in [v0.6](#9-version-history))*:
 
 ```
-aec_provenance                      (NEW - foundational, domain-neutral)
+adiro_provenance                      (NEW - foundational, domain-neutral)
         |
-        +---- aec_geometry          (NEW - foundational: BoundingBox + CoordinateFrame; imports aec_provenance)
+        +---- adiro_geometry          (NEW - foundational: BoundingBox + CoordinateFrame; imports adiro_provenance)
                 |
-                +---- aec_drawing_metadata
+                +---- adiro_drawing_metadata
                         |
-                        +---- aec_common_symbols       (imports aec_drawing_metadata only)
+                        +---- adiro_common_symbols       (imports adiro_drawing_metadata only)
                         |
-                        +---- aec_domain_common        (imports aec_drawing_metadata only)
+                        +---- adiro_domain_common        (imports adiro_drawing_metadata only)
                                 |
-                                +---- aec_facade_domain   (also imports aec_drawing_metadata)
+                                +---- adiro_facade_domain   (also imports adiro_drawing_metadata)
 ```
 
 **Term placement:**
 
 | Module                 | UC-01 contribution                                                                                                                                                          |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `aec_drawing_metadata` | **New classes:** `DrawingRevision`, `Project`, `StatusCode`, `DrawingPackage`. **New properties:** all UC-01 datatype properties; `hasRevision` (⊂ `contains`), `hasStatusCode` (⊂ `hasProperty`), `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `isOnPage`. |
-| `aec_provenance`       | **New classes:** `DrawingFile`, `FilePage`, and the agents `Party`, `Person` and `Organisation` (moved here from `aec_drawing_metadata`), with the file and page properties of FR 9. **Reused (new module):** `FieldAssertion`, `InferenceMeta`, `hasConfidence`, `capturedCaption`, `assertedBy`, `inferredBy`/`inferredWith`/`inferredFrom`/`inferredAt`, and the `TitleblockFieldScheme` binding via `assertsFieldKind`. Carries **extracted** title-block values before validation - see the design note in §2.1. |
-| `aec_geometry`         | **Reused (new module):** the `Titleblock` region may carry a `BoundingBox` (via `hasBoundingBox`) interpreted by a `CoordinateFrame` (which reads the page the drawing is on, via `describesPage`) — i.e. *where the title block sits on the page*. The extracted field values are read from within that one region and are **not** individually localised. *(Added in [v0.5](#9-version-history).)* |
-| `aec_common_symbols`   | No UC-01 contribution.                                                                                                                                                      |
-| `aec_domain_common`    | **Reused:** `Discipline` and its subclasses; `hasDiscipline` (with proposed domain change from `LayoutContentType` to `Layout` — see G5).                                   |
-| `aec_facade_domain`    | No UC-01 contribution.                                                                                                                                                      |
+| `adiro_drawing_metadata` | **New classes:** `DrawingRevision`, `Project`, `StatusCode`, `DrawingPackage`. **New properties:** all UC-01 datatype properties; `hasRevision` (⊂ `contains`), `hasStatusCode` (⊂ `hasProperty`), `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `isOnPage`. |
+| `adiro_provenance`       | **New classes:** `DrawingFile`, `FilePage`, and the agents `Party`, `Person` and `Organisation` (moved here from `adiro_drawing_metadata`), with the file and page properties of FR 9. **Reused (new module):** `FieldAssertion`, `InferenceMeta`, `hasConfidence`, `capturedCaption`, `assertedBy`, `inferredBy`/`inferredWith`/`inferredFrom`/`inferredAt`, and the `TitleblockFieldScheme` binding via `assertsFieldKind`. Carries **extracted** title-block values before validation - see the design note in §2.1. |
+| `adiro_geometry`         | **Reused (new module):** the `Titleblock` region may carry a `BoundingBox` (via `hasBoundingBox`) interpreted by a `CoordinateFrame` (which reads the page the drawing is on, via `describesPage`) — i.e. *where the title block sits on the page*. The extracted field values are read from within that one region and are **not** individually localised. *(Added in [v0.5](#9-version-history).)* |
+| `adiro_common_symbols`   | No UC-01 contribution.                                                                                                                                                      |
+| `adiro_domain_common`    | **Reused:** `Discipline` and its subclasses; `hasDiscipline` (with proposed domain change from `LayoutContentType` to `Layout` — see G5).                                   |
+| `adiro_facade_domain`    | No UC-01 contribution.                                                                                                                                                      |
 
 **SubProperty wiring:**
 
@@ -655,7 +655,7 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 | G5  | Should `hasDiscipline` domain move from `LayoutContentType` to `Layout`? v0.3 proposes yes — discipline characterises the layout, not its content type.            |
 | G5b | Should `DrawingSheet` itself carry a `hasDiscipline` (a "primary discipline" for the whole sheet) in addition to Layout-level discipline?                          |
 | G11 | ~~**Direct properties vs `FieldAssertion`.**~~ **Resolved** ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85), [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)): a value is promoted when its assertion is accepted, by a pipeline rule or a person, with the acceptance recorded on the assertion; both layers are kept, and the direct properties are permanent. See the design note in §2.1. |
-| G12 | ~~**A missing person is two different facts.**~~ "The extraction did not find the author" and "the drawing names none" must be told apart (the first is retried or reviewed, the second is a defect of the drawing). Decided: record absence as a value-less `FieldAssertion` with an outcome. **Resolved**: the vocabulary is in `aec_provenance` (`hasOutcome`, `hasAcceptance`, [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)), and CQ 4.6 reports a drawing by cause. |
+| G12 | ~~**A missing person is two different facts.**~~ "The extraction did not find the author" and "the drawing names none" must be told apart (the first is retried or reviewed, the second is a defect of the drawing). Decided: record absence as a value-less `FieldAssertion` with an outcome. **Resolved**: the vocabulary is in `adiro_provenance` (`hasOutcome`, `hasAcceptance`, [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)), and CQ 4.6 reports a drawing by cause. |
 | G10 | ~~`:Metadata` class name misleading~~ — **resolved**: renamed to `:MetadataContainer` (team decision). The class models visual supporting regions (titleblock, legend, etc.), not semantic metadata. |
 | —   | ~~Project-wide convention for `owl:inverseOf`~~ — **resolved** in [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21): ADIRO does not declare inverse properties. `isRevisionOf` removed; use `^metadata:hasRevision`. |
 | —   | ~~"Civil" discipline~~ — **resolved**: `Civil` to be added as a direct subclass of `dcommon:Discipline` (team decision).                                           |
@@ -664,7 +664,11 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.11 (current — draft)
+### v0.12 (current — draft)
+
+Change from v0.11, made when the modules were renamed from `aec_*` to `adiro_*` ([#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171)). MINOR: no entity, attribute, relation or competency question changes, only the module names and the namespaces of the IRIs this document cites (the competency-question queries now use the `adiro_*` namespaces); the number stays in the 0.x series because the document is still a draft. The entries below keep the names of their time.
+
+### v0.11 (draft)
 
 Change from v0.10, made when the promotion rule was written down ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)). MINOR: an example added; the number stays in the 0.x series because the document is still a draft:
 

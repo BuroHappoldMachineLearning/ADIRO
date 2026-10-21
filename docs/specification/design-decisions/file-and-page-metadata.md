@@ -2,8 +2,8 @@
 
 !!! info "Status"
     In the ontology as unreleased changes ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)), published with the next
-    release of `aec_provenance`, `aec_geometry` and `aec_drawing_metadata`. The names below are those in `src/`. The change is a MAJOR one for
-    `aec_geometry` (five properties leave `CoordinateFrame`) and is released with the module rename of
+    release of `adiro_provenance`, `adiro_geometry` and `adiro_drawing_metadata`. The names below are those in `src/`. The change is a MAJOR one for
+    `adiro_geometry` (five properties leave `CoordinateFrame`) and is released with the module rename of
     [#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171).
 
 A drawing lives in a file, and a PDF holds many drawings, one per page. ADIRO therefore keeps three things apart: the drawing,
@@ -35,7 +35,7 @@ flowchart LR
   not to the file: one drawing can exist in several files (the PDF export, a scan, an earlier version) and one file holds many
   drawings.
 - **`Party`** (a person or an organisation), **`Person`** and **`Organisation`** are shared agent classes in
-  `aec_provenance`. `Party` is abstract and is the disjoint union of the other two, as in ISO 21597-1.
+  `adiro_provenance`. `Party` is abstract and is the disjoint union of the other two, as in ISO 21597-1.
 
 File metadata comes from the storage system, so it has no confidence and is not an `InferredEntity`; an extraction records the
 file it read through its provenance. Nothing in the ontology requires a value, and the values (a client's paths, the people who
@@ -50,13 +50,13 @@ saved a file) belong to private data, not to this repository.
 | `frameArtifactRef` (a string) | the file | replaced by `belongsToFile`, which reaches a `DrawingFile` with its content hash |
 | `pdfRotationDeg` | the page | `FilePage` |
 | `displayWidthPt`, `displayHeightPt` | the page, in points | `FilePage` |
-| `hasCoordinateFrame` (drawing to frame, in `aec_drawing_metadata`) | the link from a drawing to its frame | removed: the frames of a drawing are reached with `isOnPage` and `describesPage` |
+| `hasCoordinateFrame` (drawing to frame, in `adiro_drawing_metadata`) | the link from a drawing to its frame | removed: the frames of a drawing are reached with `isOnPage` and `describesPage` |
 
 The page size is the **measured** size of one page of one file after rotation and cropping, and is not `sheetSize`, which is
 the paper format the drawing is meant for (for example "A1"). They can disagree, and the disagreement is information: an A1
 drawing exported on an A3 page is a reduced copy, and a scan has a page size unrelated to the paper.
 
-`aec_drawing_metadata` keeps its import of `aec_geometry`: every `MetadataContainer` (the title block, a revision table, a legend, a key plan, a note) every `Layout` and every `DrawingElement` may carry a `BoundingBox` (`hasBoundingBox`, stated as a `min 0` restriction on each), and that region is read in the frame of the page the drawing is on.
+`adiro_drawing_metadata` keeps its import of `adiro_geometry`: every `MetadataContainer` (the title block, a revision table, a legend, a key plan, a note) every `Layout` and every `DrawingElement` may carry a `BoundingBox` (`hasBoundingBox`, stated as a `min 0` restriction on each), and that region is read in the frame of the page the drawing is on.
 
 A page is named by its file and its number, so a page can be written as an address with the page fragment of RFC 3778
 (`<file>#page=3`), whose pages also count from 1.

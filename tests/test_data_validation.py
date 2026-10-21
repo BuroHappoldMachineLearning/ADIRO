@@ -15,8 +15,8 @@ import validate_data as vd  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 PREFIXES = """@prefix : <https://ex.org/d#> .
-@prefix metadata: <https://w3id.org/adiro/aec_drawing_metadata#> .
-@prefix csymbol: <https://w3id.org/adiro/aec_common_symbols#> .
+@prefix metadata: <https://w3id.org/adiro/adiro_drawing_metadata#> .
+@prefix csymbol: <https://w3id.org/adiro/adiro_common_symbols#> .
 """
 
 
@@ -124,9 +124,9 @@ def test_every_adiro_term_a_shape_names_exists_in_the_ontology():
     declared = set(ontology.subjects())
     named = {
         o for s, p, o in vd.load_shapes(ROOT)
-        if isinstance(o, URIRef) and str(o).startswith("https://w3id.org/adiro/aec_")
+        if isinstance(o, URIRef) and str(o).startswith("https://w3id.org/adiro/adiro_")
     }
-    named |= {p for _, p, _ in vd.load_shapes(ROOT) if str(p).startswith("https://w3id.org/adiro/aec_")}
+    named |= {p for _, p, _ in vd.load_shapes(ROOT) if str(p).startswith("https://w3id.org/adiro/adiro_")}
     assert named, "the shapes name no ADIRO term"
     assert named - declared == set(), f"terms the ontology does not declare: {sorted(named - declared)}"
 
@@ -167,7 +167,7 @@ def test_the_checker_and_the_approver_are_optional():
 
 
 # --- field assertions: a value or an outcome, an agent when accepted, the same thing when superseding (#187) ----------
-APROV = "@prefix aprov: <https://w3id.org/adiro/aec_provenance#> .\n"
+APROV = "@prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .\n"
 
 
 def check_assertions(body):

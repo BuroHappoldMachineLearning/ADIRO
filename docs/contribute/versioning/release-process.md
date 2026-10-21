@@ -30,10 +30,10 @@ How the Release PR evolves as changes reach `main`:
 
 | Merged to `main` | The Release PR then shows |
 |---|---|
-| A PR adds a class to `aec_common_symbols` and writes its changelog entry | Opens: `aec_common_symbols` 3.0.0 → **3.1.0** (MINOR) |
-| A PR removes a property from `aec_common_symbols` | Same PR, updated: `aec_common_symbols` → **4.0.0** (MAJOR replaces MINOR) |
-| A PR adds `rdfs:comment` text to `aec_domain_common`, with no changelog entry | Same PR now lists both modules (`aec_domain_common` 2.0.0 → **2.0.1**, PATCH) and becomes a **draft**: its release notes would be empty |
-| A PR adds the missing `aec_domain_common` changelog entry | Same PR, ready for review again |
+| A PR adds a class to `adiro_common_symbols` and writes its changelog entry | Opens: `adiro_common_symbols` 3.0.0 → **3.1.0** (MINOR) |
+| A PR removes a property from `adiro_common_symbols` | Same PR, updated: `adiro_common_symbols` → **4.0.0** (MAJOR replaces MINOR) |
+| A PR adds `rdfs:comment` text to `adiro_domain_common`, with no changelog entry | Same PR now lists both modules (`adiro_domain_common` 2.0.0 → **2.0.1**, PATCH) and becomes a **draft**: its release notes would be empty |
+| A PR adds the missing `adiro_domain_common` changelog entry | Same PR, ready for review again |
 | You merge the Release PR | Both modules are tagged and released; the PR is closed |
 | The next ontology change reaches `main` | A new Release PR opens |
 
@@ -59,7 +59,7 @@ Everything after step 5 is automatic.
 
 - Verifies the tag's module/version match what `src/<module>.ttl` declares at that tag.
 - Snapshots `src/<module>.ttl` to `versions/<module>/<semver>/` and pushes the commit to `main`.
-- Sets the Release notes (`scripts/release_notes.py`). They start with a summary line with the SemVer bump (MAJOR / MINOR / PATCH, or first release), the previous → this version and a compare link, followed directly (no header) by three links, in this order: the module's [published documentation page](https://burohappoldmachinelearning.github.io/ADIRO/ontologies/aec_common_symbols/), `Ontology (latest)` and `This version` on `w3id.org/adiro`. Then the module's `changelogs/<module>.md` section; and the pull requests that changed `src/<module>.ttl` since the previous release (a bare commit is listed where there was no PR).
+- Sets the Release notes (`scripts/release_notes.py`). They start with a summary line with the SemVer bump (MAJOR / MINOR / PATCH, or first release), the previous → this version and a compare link, followed directly (no header) by three links, in this order: the module's [published documentation page](https://burohappoldmachinelearning.github.io/ADIRO/ontologies/adiro_common_symbols/), `Ontology (latest)` and `This version` on `w3id.org/adiro`. Then the module's `changelogs/<module>.md` section; and the pull requests that changed `src/<module>.ttl` since the previous release (a bare commit is listed where there was no PR).
 
 The job then dispatches **`generate-deploy-docs.yml`** explicitly (a push made with the default `GITHUB_TOKEN` does not start other workflows, so the snapshot push cannot trigger it). That workflow regenerates the docs, builds the MkDocs site (`--strict`, so a broken link would fail the build here), and deploys to GitHub Pages — publishing both the unversioned "latest" `…/<module>.ttl` and the new versioned snapshot `…/<module>/<semver>/<module>.ttl` as resolvable URLs.
 
@@ -79,8 +79,8 @@ The bump is the compat-diff minimum, and that tool compares the Turtle syntactic
 
 ```json
 {
-  "aec_domain_common": "minor",
-  "aec_facade_domain": "hold"
+  "adiro_domain_common": "minor",
+  "adiro_facade_domain": "hold"
 }
 ```
 
@@ -97,8 +97,8 @@ The classifier reads the Turtle, not the meaning. An override is for the cases w
 
 | Scenario | Set | What the Release PR shows | When it goes away |
 |---|---|---|---|
-| **A meaning changed with no structural footprint.** Ten `rdfs:comment` definitions in `aec_domain_common` are reworded and one changes what `Beam` means. The classifier sees annotation edits only (PATCH), but consumers should notice. | `"aec_domain_common": "minor"` (or `"major"` if consumers must change something) | The module's "Bump" column shows the raised level (`MINOR`), and its "Driven by" column ends with **override: raised from PATCH**. | At the release cut, automatically: a bump override applies to one release only. |
-| **Release one module, keep another back.** `aec_drawing_metadata` is needed now, while `aec_domain_common` holds unfinished work already merged to `main`. | `"aec_domain_common": "hold"` | `aec_drawing_metadata` is in the table. A **Held back** line lists `aec_domain_common` with the version and bump it would get. | Never automatically. Delete the line when the module is ready; the next rebuild then includes it. |
+| **A meaning changed with no structural footprint.** Ten `rdfs:comment` definitions in `adiro_domain_common` are reworded and one changes what `Beam` means. The classifier sees annotation edits only (PATCH), but consumers should notice. | `"adiro_domain_common": "minor"` (or `"major"` if consumers must change something) | The module's "Bump" column shows the raised level (`MINOR`), and its "Driven by" column ends with **override: raised from PATCH**. | At the release cut, automatically: a bump override applies to one release only. |
+| **Release one module, keep another back.** `adiro_drawing_metadata` is needed now, while `adiro_domain_common` holds unfinished work already merged to `main`. | `"adiro_domain_common": "hold"` | `adiro_drawing_metadata` is in the table. A **Held back** line lists `adiro_domain_common` with the version and bump it would get. | Never automatically. Delete the line when the module is ready; the next rebuild then includes it. |
 | **Release nothing yet.** A set of related changes should ship together, but half of it is merged. | `"hold"` on each pending module | The Release PR is closed (and its branch deleted) with "No release is pending on `main` any more". | Delete the `hold` lines; the next push to `main` opens a new Release PR. |
 | **Signal a bigger change than the classifier can see.** A class keeps its IRI but now means something different. | `"major"` for that module | **override: raised from MINOR** (or PATCH). | At the release cut. |
 

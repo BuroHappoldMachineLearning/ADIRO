@@ -66,6 +66,23 @@ INPUTS=()
 for f in src/*.ttl; do INPUTS+=(--input "$f"); done
 echo "Modules: ${INPUTS[*]}"
 
+# A module that a renamed one replaces (config/module_renames.json, #171) stays in src/ for one more cycle with every term of
+# its successor under the old IRIs. It is reasoned over with the rest, but left out of the advisory ROBOT report, where
+# each of its terms would repeat its successor's label (duplicate_label) and bury the findings that matter.
+REPORT_INPUTS=()
+SUPERSEDED=""
+if [ -f config/module_renames.json ]; then
+  while read -r old new; do
+    [ -f "src/$old.ttl" ] && [ -f "src/$new.ttl" ] && SUPERSEDED="$SUPERSEDED src/$old.ttl"
+  done < <(tr -d '\r' < config/module_renames.json \
+           | grep -o '"from": *"[a-z0-9_]*", *"to": *"[a-z0-9_]*"' \
+           | sed -E 's/"from": *"([a-z0-9_]*)", *"to": *"([a-z0-9_]*)"/\1 \2/')
+fi
+for f in src/*.ttl; do
+  case " $SUPERSEDED " in *" $f "*) ;; *) REPORT_INPUTS+=(--input "$f") ;; esac
+done
+[ -n "$SUPERSEDED" ] && echo "Left out of the ROBOT report (replaced by a renamed module):$SUPERSEDED"
+
 echo "== Consistency + unsatisfiable-class check (HermiT: '$REASONER') =="
 java -jar "$ROBOT_JAR" merge --catalog "$CATALOG" "${INPUTS[@]}" \
   reason --reasoner "$REASONER" --output "$OUT_DIR/reasoned.ttl" 2>&1 | tee "$OUT_DIR/reason.out"
@@ -94,7 +111,7 @@ echo "$REASON_RC" > "$OUT_DIR/reason.rc"
 echo "reason exit code: $REASON_RC"
 
 echo "== ROBOT report (logical / structural QC) =="
-java -jar "$ROBOT_JAR" merge --catalog "$CATALOG" "${INPUTS[@]}" \
+java -jar "$ROBOT_JAR" merge --catalog "$CATALOG" "${REPORT_INPUTS[@]}" \
   report --profile "$REPORT_PROFILE" --fail-on none --output "$OUT_DIR/report.tsv" 2>&1 | tee "$OUT_DIR/report.out" || true
 
 if [ -f "$OUT_DIR/report.tsv" ]; then

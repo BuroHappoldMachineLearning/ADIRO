@@ -1,3 +1,8 @@
+---
+search:
+  exclude: true
+---
+
 # Aec Common Symbols
 
 <div class="adiro-actions" markdown="span">
@@ -19,7 +24,7 @@
 
 !!! warning "Deprecated"
 
-    This module is deprecated and receives no further changes. It is replaced by `adiro_common_symbols`, which continues its version numbering. Every release of it stays published at its own IRI.
+    This module is deprecated and receives no further changes. It is replaced by [`adiro_common_symbols`](adiro_common_symbols.md), which continues its version numbering. Every release of it stays published at its own IRI.
 
 Reusable symbols that appear across disciplines, such as dimensions, grids, levels, and reference symbols. Every symbol is a kind of drawing element from the drawing-metadata module. The discipline modules build on these shared symbols.
 

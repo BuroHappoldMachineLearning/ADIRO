@@ -101,8 +101,8 @@ def section(text, version):
 
 
 def released_tags():
-    tags = git("tag", "-l", "aec_*-v*")
-    return [t for t in (tags or "").split() if re.fullmatch(r"aec_[a-z_]+-v\d+\.\d+\.\d+", t)]
+    tags = " ".join(git("tag", "-l", f"{p}_*-v*") or "" for p in ("aec", "adiro"))
+    return [t for t in (tags or "").split() if re.fullmatch(r"(?:aec|adiro)_[a-z_]+-v\d+\.\d+\.\d+", t)]
 
 
 def test_a_released_changelog_section_is_what_it_was_at_its_tag():
@@ -111,7 +111,7 @@ def test_a_released_changelog_section_is_what_it_was_at_its_tag():
         pytest.skip("no release tags in this checkout (fetch them to run this check)")
     changed = []
     for tag in tags:
-        module, version = re.fullmatch(r"(aec_[a-z_]+)-v(\d+\.\d+\.\d+)", tag).groups()
+        module, version = re.fullmatch(r"((?:aec|adiro)_[a-z_]+)-v(\d+\.\d+\.\d+)", tag).groups()
         at_tag, now = git("show", f"{tag}:changelogs/{module}.md"), (ROOT / "changelogs" / f"{module}.md").read_text(encoding="utf-8")
         if at_tag is None or section(at_tag, version) is None:
             continue  # no changelog entry was published at that tag

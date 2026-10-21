@@ -8,15 +8,15 @@ from rdflib import Graph, Literal, Namespace, RDF, RDFS, OWL
 
 
 ROOT = Path(__file__).resolve().parents[1]
-MD = Namespace("https://w3id.org/adiro/aec_drawing_metadata#")
-CS = Namespace("https://w3id.org/adiro/aec_common_symbols#")
+MD = Namespace("https://w3id.org/adiro/adiro_drawing_metadata#")
+CS = Namespace("https://w3id.org/adiro/adiro_common_symbols#")
 EX = Namespace("https://example.org/adiro/uc03-check#")
 
 
 def load_semantic_modules() -> Graph:
     graph = Graph()
-    graph.parse(ROOT / "src/aec_drawing_metadata.ttl", format="turtle")
-    graph.parse(ROOT / "src/aec_common_symbols.ttl", format="turtle")
+    graph.parse(ROOT / "src/adiro_drawing_metadata.ttl", format="turtle")
+    graph.parse(ROOT / "src/adiro_common_symbols.ttl", format="turtle")
     return graph
 
 
@@ -76,7 +76,7 @@ def test_sheet_mention_has_no_geometry_restriction() -> None:
         assert not list(graph.objects(value, OWL.onProperty))
     graph.add((EX.unlocalised, RDF.type, MD.DrawingIdentifierMention))
     graph.add((EX.unlocalised, MD.denotesDrawingSheet, EX.sheet))
-    assert list(graph.query('SELECT ?s WHERE { ?s <https://w3id.org/adiro/aec_drawing_metadata#denotesDrawingSheet> <https://example.org/adiro/uc03-check#sheet> }'))
+    assert list(graph.query('SELECT ?s WHERE { ?s <https://w3id.org/adiro/adiro_drawing_metadata#denotesDrawingSheet> <https://example.org/adiro/uc03-check#sheet> }'))
 
 
 if __name__ == '__main__':

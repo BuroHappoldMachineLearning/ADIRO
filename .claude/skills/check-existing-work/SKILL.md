@@ -16,7 +16,7 @@ the issue's closed state, so a search by title alone is not enough.
 
 ## 1. Pick the search terms
 
-Take 3 to 5 from the task: the **term names** (`layoutScale`, `ReferenceExpression`), the **module** (`aec_drawing_metadata`),
+Take 3 to 5 from the task: the **term names** (`layoutScale`, `ReferenceExpression`), the **module** (`adiro_drawing_metadata`),
 the **use case** (`UC-03`) and the plain words and synonyms for the idea ("scale", "units", "measuring system"). Search
 each separately: one broad query returns noise, and a decision may use a different word from yours.
 

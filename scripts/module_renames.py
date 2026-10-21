@@ -25,6 +25,8 @@ from pathlib import Path
 RENAMES_FILE = Path("config") / "module_renames.json"
 BASE = "https://w3id.org/adiro/"
 NAME_RE = re.compile(r"^[a-z][a-z0-9_]*$")
+VERSION_RE = re.compile(r"^/\d+\.\d+\.\d+(?:$|/)")  # a version IRI of a release, or a file under it
+TEXT_VERSION_RE = re.compile(r"/\d+\.\d+\.\d+(?![\w.])")  # the same, found in running text
 
 
 def load(root):
@@ -80,6 +82,20 @@ def lineage(renames, module):
     return out
 
 
+def names(renames, module):
+    """Every name of `module`'s history, whichever end it is given by: the lineage, then the modules that replaced it."""
+    out = lineage(renames, module)
+    while (later := successor(renames, out[0])) is not None and later not in out:
+        out.insert(0, later)
+    return out
+
+
+def superseded(renames, modules):
+    """The modules among `modules` whose successor is among them too: a renamed module's predecessor kept for its last cycle."""
+    present = set(modules)
+    return {m for m in present if successor(renames, m) in present}
+
+
 def iri_map(renames):
     """``{old ontology IRI: new ontology IRI}`` for every rename in the map."""
     return {f"{BASE}{old}": f"{BASE}{new}" for new, old in renames.items()}
@@ -88,19 +104,39 @@ def iri_map(renames):
 def rename_iri(iri, renames):
     """`iri` with a renamed module's ontology IRI or term namespace mapped to the new module's.
 
-    The ontology IRI (``…/adiro/<old>``) and its terms (``…/adiro/<old>#Term``) are mapped, through every later
-    rename. A version IRI (``…/adiro/<old>/<x.y.z>``) and any other address are left alone: an earlier release keeps
+    The ontology IRI (``…/adiro/<old>``), its terms (``…/adiro/<old>#Term``) and the files published under it (its
+    example images, ``…/adiro/<old>/exampleImage/…``) are mapped, through every later rename. A version IRI
+    (``…/adiro/<old>/<x.y.z>``, and what is under it) and any other address are left alone: an earlier release keeps
     its own IRI, and ``owl:priorVersion`` names it as it is.
     """
     mapping = iri_map(renames)
     for _ in range(len(mapping) + 1):  # follow a chain of renames
         for old, new in mapping.items():
-            if iri == old or iri.startswith(old + "#"):
-                iri = new + iri[len(old):]
+            rest = iri[len(old):] if iri.startswith(old) else None
+            if rest is not None and (rest == "" or rest.startswith("#")
+                                     or (rest.startswith("/") and not VERSION_RE.match(rest))):
+                iri = new + rest
                 break
         else:
             return iri
     return iri
+
+
+def rewrite_text(text, renames):
+    """`text` with every address of a renamed module mapped (see rename_iri), wherever it appears: an IRI in Turtle, a link
+    in a list, a value in JSON. A version IRI of an old release, and anything under it, keeps naming that release."""
+    if not renames:
+        return text
+    old = "|".join(re.escape(n) for n in sorted(renames.values(), key=len, reverse=True))
+    # a module name ends at a delimiter: `…/aec_geometry` is a module, `…/aec_geometry_x` is not
+    pattern = re.compile(r"%s(%s)(?![\w-])" % (re.escape(BASE), old))
+
+    def swap(match):
+        if TEXT_VERSION_RE.match(match.string, match.end()):  # `…/aec_x/1.0.0`: the old release, kept
+            return match.group(0)
+        return rename_iri(match.group(0), renames)
+
+    return pattern.sub(swap, text)
 
 
 def rewrite_graph(graph, renames):

@@ -52,14 +52,14 @@ plugins:
 
 # nav:
 #   - Home: index.md
-#   - Ontology Requirements (ORSD): ORSD_v1.3.md
+#   - Ontology Requirements (ORSD): ORSD_v1.4.md
 #   - Use Cases: uc-orsd/README.md
 #   - Ontologies:
 #     - ontologies/index.md
-#     - Aec Drawing Metadata: ontologies/aec_drawing_metadata.md
-#     - Aec Common Symbols: ontologies/aec_common_symbols.md
-#     - Aec Domain Common: ontologies/aec_domain_common.md
-#     - Aec Facade Domain: ontologies/aec_facade_domain.md
+#     - Aec Drawing Metadata: ontologies/adiro_drawing_metadata.md
+#     - Aec Common Symbols: ontologies/adiro_common_symbols.md
+#     - Aec Domain Common: ontologies/adiro_domain_common.md
+#     - Aec Facade Domain: ontologies/adiro_facade_domain.md
 #   - Contribute:
 #     - contribute/index.md
 #     - Adding New Ontologies: contribute/adding-ontologies.md

@@ -19,4 +19,10 @@
   <uri name="https://w3id.org/adiro/aec_common_symbols" uri="aec_common_symbols.ttl"/>
   <uri name="https://w3id.org/adiro/aec_domain_common" uri="aec_domain_common.ttl"/>
   <uri name="https://w3id.org/adiro/aec_facade_domain" uri="aec_facade_domain.ttl"/>
+  <uri name="https://w3id.org/adiro/adiro_provenance" uri="adiro_provenance.ttl"/>
+  <uri name="https://w3id.org/adiro/adiro_geometry" uri="adiro_geometry.ttl"/>
+  <uri name="https://w3id.org/adiro/adiro_drawing_metadata" uri="adiro_drawing_metadata.ttl"/>
+  <uri name="https://w3id.org/adiro/adiro_common_symbols" uri="adiro_common_symbols.ttl"/>
+  <uri name="https://w3id.org/adiro/adiro_domain_common" uri="adiro_domain_common.ttl"/>
+  <uri name="https://w3id.org/adiro/adiro_facade_domain" uri="adiro_facade_domain.ttl"/>
 </catalog>
