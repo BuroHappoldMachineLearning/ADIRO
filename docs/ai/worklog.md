@@ -17,6 +17,13 @@ against a reset branch on a bare remote, `find`'s polling and fork skip, the ver
 Replayed the real hand-resolved merge `3fab290` (fix/146 with main): the script produces the identical tree. Full suite 324 passed. Not run: the workflow itself (needs the app secrets and a real
 conflicting PR); the first real conflict after merge is the test. Not done: adding it to `alert-on-failure.yml` (it is not a release or publishing workflow; a failure is visible on the run).
 
+## 2026-10-21 - The migration rewrite keeps JSON-LD named graphs (review of #210)
+
+A review of [#210](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/210) (posted after the merge) found, and I reproduced, that `migrate_aec_to_adiro.py rewrite` read JSON-LD as a single graph:
+a file holding only a named graph came out as `[]`, and a mixed file lost its named graph. JSON-LD (`.jsonld`, `.json`) is now read as a dataset like TriG and N-Quads: the default graph and every named graph are
+rewritten, and a graph name that is an old IRI is renamed. Regressions in `tests/test_rename_to_adiro.py`: named-only and mixed, for both extensions, and TriG with a graph named by an old IRI; without the fix,
+the four JSON-LD cases fail. Not tested: rdflib 6 (the repository allows `>=6.0.0`; the code falls back to `default_context` there, and the test helper reads the graph name either way).
+
 ## 2026-10-21 - The rename: the adiro_* modules (#171, step 3)
 
 After the final `aec_*` releases (step 2, Release PR #193), `src/adiro_*.ttl` are the final releases under the new names (made by a one-off script, not kept: every `aec_<module>` name is mapped

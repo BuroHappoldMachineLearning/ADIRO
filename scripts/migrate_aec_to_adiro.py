@@ -30,6 +30,7 @@ ROOT = Path(__file__).resolve().parent.parent
 MAPPING = Path("migration") / "aec_to_adiro.ttl"
 FORMATS = {".ttl": "turtle", ".nt": "nt", ".rdf": "xml", ".owl": "xml", ".xml": "xml", ".jsonld": "json-ld",
            ".json": "json-ld", ".trig": "trig", ".nq": "nquads", ".n3": "n3"}
+DATASET_FORMATS = {"trig", "nquads", "json-ld"}  # the formats that can carry named graphs
 
 
 def final_release(root, module):
@@ -69,21 +70,32 @@ def mapping_turtle(root=ROOT):
 
 
 def rewrite_graph_file(source, target, root=ROOT):
-    """Parse an RDF file, map every IRI of a renamed module to its new name, and write it in the same format."""
-    from rdflib import Dataset, Graph
+    """Parse an RDF file, map every IRI of a renamed module to its new name, and write it in the same format.
+
+    A format that can carry named graphs (TriG, N-Quads, JSON-LD) is read as a dataset: the default graph and every named
+    graph are rewritten, and so is a graph name that is an old IRI. Reading JSON-LD as a single graph would silently drop
+    the triples of its named graphs (#210 review).
+    """
+    from rdflib import Dataset, Graph, URIRef
+    from rdflib.graph import DATASET_DEFAULT_GRAPH_ID
 
     fmt = FORMATS.get(Path(source).suffix.lower())
     if fmt is None:
         raise SystemExit(f"{source}: unknown RDF format; use `links` to rewrite it as text")
     renames = mr.load(root)
-    if fmt in ("trig", "nquads"):  # named graphs: rewrite each, and the graph names too
+    if fmt in DATASET_FORMATS:
         data, out = Dataset(), Dataset()
         data.parse(str(source), format=fmt)
+        for prefix, namespace in data.namespaces():
+            out.bind(prefix, mr.rewrite_text(str(namespace), renames), override=True, replace=True)
         for graph in data.graphs():
             name = graph.identifier
-            new_name = mr.rename_iri(str(name), renames) if not str(name).startswith("urn:x-rdflib:") else name
-            target_graph = out.graph(type(name)(new_name))
-            target_graph += mr.rewrite_graph(graph, renames)
+            if name == DATASET_DEFAULT_GRAPH_ID:
+                target_graph = getattr(out, "default_graph", None) or out.default_context  # rdflib 7 renamed it
+            else:
+                target_graph = out.graph(URIRef(mr.rename_iri(str(name), renames)) if isinstance(name, URIRef) else name)
+            for triple in mr.rewrite_graph(graph, renames):
+                target_graph.add(triple)
     else:
         out = mr.rewrite_graph(Graph().parse(str(source), format=fmt), renames)
     Path(target).write_text(out.serialize(format=fmt), encoding="utf-8")

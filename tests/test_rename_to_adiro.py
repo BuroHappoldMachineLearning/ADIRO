@@ -125,3 +125,47 @@ def test_the_import_pin_covers_the_new_modules():
     pin = json.loads((ROOT / "config" / "module_imports.json").read_text(encoding="utf-8"))
     for old, new in PAIRS:
         assert set(pin[new]) == {mr.successor(RENAMES, k) for k in pin[old]}  # the same imports, under the new names
+
+
+def quads(path, fmt):
+    from rdflib import Dataset
+
+    data = Dataset()
+    data.parse(str(path), format=fmt)
+    # rdflib 7 yields the graph name, older versions the graph
+    return {(str(s), str(p), str(o), str(getattr(c, "identifier", c))) for s, p, o, c in data.quads((None, None, None, None))}
+
+
+GEOM, PROV = W3ID + "aec_geometry#BoundingBox", W3ID + "aec_provenance#FieldAssertion"
+RDF_TYPE = str(RDF.type)
+JSONLD_CASES = {
+    # only a named graph: read as a single graph, it came out empty (#210 review)
+    "named": ('{"@id":"https://example.org/evidence","@graph":[{"@id":"https://example.org/box","@type":"%s"}]}' % GEOM,
+              {("https://example.org/box", RDF_TYPE, W3ID + "adiro_geometry#BoundingBox", "https://example.org/evidence")}),
+    # a default graph and a named graph: the named one was lost
+    "mixed": ('[{"@id":"https://example.org/a","@type":"%s"},'
+              '{"@id":"https://example.org/g","@graph":[{"@id":"https://example.org/b","@type":"%s"}]}]' % (GEOM, PROV),
+              {("https://example.org/a", RDF_TYPE, W3ID + "adiro_geometry#BoundingBox", "urn:x-rdflib:default"),
+               ("https://example.org/b", RDF_TYPE, W3ID + "adiro_provenance#FieldAssertion", "https://example.org/g")}),
+}
+
+
+@pytest.mark.parametrize("case", sorted(JSONLD_CASES))
+@pytest.mark.parametrize("suffix", [".jsonld", ".json"])
+def test_json_ld_keeps_its_default_and_named_graphs(tmp_path, case, suffix):
+    text, expected = JSONLD_CASES[case]
+    source = tmp_path / f"data{suffix}"
+    source.write_text(text, encoding="utf-8")
+    mig.main(["rewrite", str(source)])
+    assert quads(tmp_path / f"data.adiro{suffix}", "json-ld") == expected
+
+
+def test_trig_rewrites_a_graph_named_by_an_old_iri(tmp_path):
+    source = tmp_path / "data.trig"
+    source.write_text(
+        "<https://w3id.org/adiro/aec_geometry#Frames> { <https://example.org/f> a <https://w3id.org/adiro/aec_geometry#CoordinateFrame> }\n"
+        "<https://example.org/x> a <https://w3id.org/adiro/aec_geometry#BoundingBox> .\n", encoding="utf-8")
+    mig.main(["rewrite", str(source)])
+    assert quads(tmp_path / "data.adiro.trig", "trig") == {
+        ("https://example.org/f", RDF_TYPE, W3ID + "adiro_geometry#CoordinateFrame", W3ID + "adiro_geometry#Frames"),
+        ("https://example.org/x", RDF_TYPE, W3ID + "adiro_geometry#BoundingBox", "urn:x-rdflib:default")}
