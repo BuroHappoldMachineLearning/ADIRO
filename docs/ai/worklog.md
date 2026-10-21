@@ -6,6 +6,12 @@ Implemented [#146](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/14
 the heading and the schema.org block of each page against its Turtle, including the kept pages of earlier releases, which are not regenerated but get the rows. The check flagged exactly the 4.0.0, 4.0.1 and 5.0.0 pages of
 `aec_drawing_metadata`; they were refreshed once with the new `--refresh-module`. The 1.0.0 and 2.0.0 pages that show the legacy `github.io` IRI are right for their snapshot and were kept. CI's pytest commands now install pyLODE so the new tests run there.
 
+## 2026-10-20 - The promotion as a documented query
+
+Closed the last loose end of [#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85): the decision said ADIRO documents the promotion as a SPARQL `CONSTRUCT` that tooling runs. It is in the UC-01 ORSD §2.1 (v0.11) next to the design note: an accepted assertion that has a value, and that no later assertion supersedes, gives the direct statement
+its field kind maps to; a pending, rejected, outcome-only or superseded one gives nothing. `tests/test_uc01_competency_queries.py` runs it on small data (accepted literal and entity values promoted; pending, rejected, `NotPrinted` and a superseded assertion not). Not done: a conflict rule for
+two accepted, unsuperseded assertions that disagree about a single-valued field (both would be promoted; the field's cardinality is not in the ontology), and running it over real data ([#22](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/22)).
+
 ## 2026-10-20 - The first alert issues, and what they showed
 
 The alert watcher ([#175](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/175)) opened its first real issues, #197 and #201. #197: the post-deploy link check found 404s on the ISO 21597-1 namespace address used by the new stubs (ISO publishes no page there, only `Container.rdf`); fixed in #199 (`isDefinedBy` points at the document, the namespace is ignored by the check).

@@ -138,6 +138,25 @@ def test_cq_4_6_says_why_a_drawing_has_no_author():
     assert reasons == {"printed": "NotPrinted", "blank": "Empty", "waiting": "Pending", "unseen": "NotProcessed", "retried": "Illegible"}
 
 
+def test_the_promotion_gives_a_direct_statement_only_for_an_accepted_assertion_with_a_value():
+    from rdflib import Namespace
+
+    query = recorded_query("# Promotion")
+    data = """:kindTitle aprov:mapsToFieldProperty metadata:drawingTitle .
+:kindAuthor aprov:mapsToFieldProperty metadata:isAuthoredBy .
+:accepted a aprov:FieldAssertion ; aprov:assertedAbout :d1 ; aprov:assertsFieldKind :kindTitle ; aprov:hasAcceptance aprov:Accepted ; aprov:hasLiteralValue "Ground floor plan" .
+:entity a aprov:FieldAssertion ; aprov:assertedAbout :d1 ; aprov:assertsFieldKind :kindAuthor ; aprov:hasAcceptance aprov:Accepted ; aprov:hasValueEntity :jsmith .
+:pending a aprov:FieldAssertion ; aprov:assertedAbout :d2 ; aprov:assertsFieldKind :kindTitle ; aprov:hasAcceptance aprov:Pending ; aprov:hasLiteralValue "Not yet" .
+:rejected a aprov:FieldAssertion ; aprov:assertedAbout :d2 ; aprov:assertsFieldKind :kindTitle ; aprov:hasAcceptance aprov:Rejected ; aprov:hasLiteralValue "Wrong" .
+:absent a aprov:FieldAssertion ; aprov:assertedAbout :d3 ; aprov:assertsFieldKind :kindAuthor ; aprov:hasAcceptance aprov:Accepted ; aprov:hasOutcome aprov:NotPrinted .
+:old a aprov:FieldAssertion ; aprov:assertedAbout :d4 ; aprov:assertsFieldKind :kindTitle ; aprov:hasAcceptance aprov:Accepted ; aprov:hasLiteralValue "Old title" .
+:new a aprov:FieldAssertion ; aprov:assertedAbout :d4 ; aprov:assertsFieldKind :kindTitle ; aprov:hasAcceptance aprov:Accepted ; aprov:hasLiteralValue "Corrected title" ; aprov:supersedes :old .
+"""
+    graph = Graph().parse(data=PREFIXES + data, format="turtle")
+    promoted = {(str(s).rsplit("#", 1)[-1], str(p).rsplit("#", 1)[-1], str(o).rsplit("#", 1)[-1]) for s, p, o in graph.query(query)}
+    assert promoted == {("d1", "drawingTitle", "Ground floor plan"), ("d1", "isAuthoredBy", "jsmith"), ("d4", "drawingTitle", "Corrected title")}
+
+
 def test_a_table_asserts_every_revision_it_lists_and_the_ontology_declares_the_property():
     ontology = Graph().parse(str(ROOT / "src" / "aec_drawing_metadata.ttl"), format="turtle")
     names = {str(s).rsplit("#", 1)[-1] for s in ontology.subjects()}

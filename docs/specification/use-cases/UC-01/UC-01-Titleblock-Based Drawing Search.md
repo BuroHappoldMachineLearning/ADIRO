@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.10 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.11 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -49,6 +49,26 @@ Things that exist independently and will become OWL Classes.
 > **Design note — Discipline reuse:** UC-01 v0.2 introduced `:Discipline` plus a `:disciplineCode` string property. The existing `dcommon:Discipline` is already a full class hierarchy (`Structural`, `MEP > Mechanical / Electrical > Lighting / Plumbing`, `Architectural > Facade / FireLifeSafety`, `Masterplan`). v0.3 reuses it and drops `:disciplineCode` — discipline filtering uses `rdf:type` checks against the class hierarchy (e.g. `?disc a dcommon:MEP`), which automatically rolls up sub-disciplines via `rdfs:subClassOf` reasoning.
 
 > **Design note — curated values vs extracted assertions:** UC-01 attaches title-block information as datatype properties **directly on `DrawingSheet`** (`drawingIdentifier`, `drawingTitle`, …). That remains correct for a *validated* value. A second, parallel path exists for values that have been **machine-extracted and not yet validated**: an `aprov:FieldAssertion` reifies the claim - what was read, from which region (`assertedBy`), by what (`hasInferenceMeta`), with what confidence, and with the caption exactly as printed (`capturedCaption`) - bound to a field kind in the `TitleblockFieldScheme`. `aprov:mapsToFieldProperty` names the UC-01 property a validated assertion is promoted to. The two coexist: UC-01's properties are the query surface, the assertion layer is the extraction and provenance record. A value moves from the assertion to the direct property when its assertion is **accepted** (`aprov:hasAcceptance` `Accepted`), by a pipeline rule (a confidence threshold, named by `aprov:acceptedUnder`) or by a person, and the acceptance records who and when (`acceptedBy`, `acceptedAt`). The assertions are never deleted, and the direct properties stay as the permanent query surface of accepted values ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)). When a search finds no value, the assertion carries an outcome instead (`aprov:hasOutcome`: `Empty`, `Illegible`, `NotPrinted`, `NotFound`), and is never promoted. *(Added in [v0.4](#9-version-history); amended in [v0.10](#9-version-history).)*
+
+The promotion is a query that tooling runs on accepted assertions, not an inference. Each accepted assertion that has a value, and that no later assertion supersedes, gives one direct statement on its subject, with the property its field kind maps to (`aprov:mapsToFieldProperty`):
+
+```sparql
+PREFIX aprov: <https://w3id.org/adiro/aec_provenance#>
+
+# Promotion: the direct statements that accepted assertions give
+CONSTRUCT { ?subject ?property ?value }
+WHERE {
+  ?assertion a aprov:FieldAssertion ;
+             aprov:assertedAbout   ?subject ;
+             aprov:assertsFieldKind ?kind ;
+             aprov:hasAcceptance   aprov:Accepted .
+  ?kind aprov:mapsToFieldProperty ?property .
+  { ?assertion aprov:hasLiteralValue ?value } UNION { ?assertion aprov:hasValueEntity ?value }
+  FILTER NOT EXISTS { ?newer aprov:supersedes ?assertion }
+}
+```
+
+An assertion that is pending, rejected, outcome-only (`NotPrinted`, `Empty`, `Illegible`, `NotFound`) or superseded gives nothing. The query reads the field-kind concepts too, so it runs over the data together with the ontology. *(Added in [v0.11](#9-version-history).)*
 
 > **Design note — Person vs Role:** `Person` models what an individual *is*, not the role they play. Roles (Author, Checker, Approver) are expressed as distinct Object Properties, not as subclasses of `Person`. Each applies to a `DrawingSheet` (the person the drawing names, for example the title block's "drawn by") and to a `DrawingRevision` (the person who made, checked or approved that revision, who can differ from the one named for the drawing). This keeps `Person` reusable across roles. A drawing that records no author of its own is read as authored by the authors of its revisions (the path `metadata:isAuthoredBy|metadata:hasRevision/metadata:isAuthoredBy`); a drawing that records its own author keeps just that author, so this is a reading convention and not an OWL entailment. It applies to the author only. *(Amended in [v0.8](#9-version-history).)*
 
@@ -644,7 +664,13 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.10 (current — draft)
+### v0.11 (current — draft)
+
+Change from v0.10, made when the promotion rule was written down ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)). MINOR: an example added; the number stays in the 0.x series because the document is still a draft:
+
+- **The promotion is recorded as a SPARQL `CONSTRUCT`** after the design note in §2.1: an accepted assertion that has a value, and that no later assertion supersedes, gives the direct statement its field kind maps to. It runs on small data in `tests/test_uc01_competency_queries.py`. This is the "documented rule that the tooling runs" of the decision on #85.
+
+### v0.10 (draft)
 
 Changes from v0.9, made when the outcome and the acceptance of an assertion were modelled ([#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187), decided in [#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85) and [#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179)). MINOR: a design note amended, open issues resolved, one competency question added; the number stays in the 0.x series because the document is still a draft:
 
