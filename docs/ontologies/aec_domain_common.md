@@ -16,6 +16,10 @@
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/aec_domain_common.html){ .md-button }
 </div>
 
+!!! warning "Deprecated"
+
+    This module is deprecated and receives no further changes. It is replaced by `adiro_domain_common`, which continues its version numbering. Every release of it stays published at its own IRI.
+
 Concepts shared by several engineering domains. It sits between the common symbols and the discipline-specific modules, holding abstractions that more than one domain reuses, so they are defined once.
 
 - **IRI:** `https://w3id.org/adiro/aec_domain_common`

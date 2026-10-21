@@ -155,7 +155,7 @@ def maintain_page(ttl_file: Path, html_file: Path, module: str, version: str | N
     regenerating pyLODE's output. Returns False, after saying why, when the page shows the wrong IRI or heading.
     """
     page = html_file.read_text(encoding="utf-8")
-    with_links = pylode_metadata.add_links(page, module, version)
+    with_links = pylode_metadata.add_deprecation(pylode_metadata.add_links(page, module, version), ttl_file)
     if with_links != page:
         html_file.write_text(with_links, encoding="utf-8")
     problems = pylode_metadata.check(with_links, ttl_file)
@@ -602,6 +602,28 @@ def build_dependency_mermaid(
     return lines
 
 
+def deprecation_notice(ttl_file: Path, ttl_files: list[Path], earlier: bool) -> list[str]:
+    """A warning at the top of the page of a deprecated module (#171), naming the module that replaces it.
+
+    Read from the `owl:Ontology` header (`owl:deprecated true`, `dcterms:isReplacedBy`). The replacement is a link to its
+    page only when that page is generated in this run (its file is among `ttl_files`): before the new module exists, the
+    link would be broken, so its name is shown as code. Empty for a module that is not deprecated.
+    """
+    names = pylode_metadata.replacements(ttl_file)
+    if names is None:
+        return []
+    generated = {f.stem for f in ttl_files}
+    shown = [f"[`{n}`]({'../' if earlier else ''}{n}.md)" if n in generated else f"`{n}`" for n in names]
+    replaced = f" It is replaced by {', '.join(shown)}, which continues its version numbering." if shown else ""
+    return [
+        '!!! warning "Deprecated"',
+        "",
+        f"    This module is deprecated and receives no further changes.{replaced} Every release of it stays published "
+        "at its own IRI.",
+        "",
+    ]
+
+
 def _ontology_page(ttl_file: Path, ttl_files: list[Path], title: str, selected: str | None, versions: list[str],
                    renamed_from: list = ()) -> str:
     """The Markdown page of one version of one ontology (#124).
@@ -668,7 +690,8 @@ def _ontology_page(ttl_file: Path, ttl_files: list[Path], title: str, selected: 
     if versions:
         actions.append(selector_html(selected, versions, renamed_from))
     actions += [links_block, "</div>"]
-    page = "\n".join([body_lines[0], ""] + actions + [""] + rest).rstrip() + "\n"
+    notice = deprecation_notice(ttl_file, ttl_files, earlier)
+    page = "\n".join([body_lines[0], ""] + actions + [""] + notice + rest).rstrip() + "\n"
     return (version_page_front_matter() if earlier else "") + page
 
 

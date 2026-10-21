@@ -13,6 +13,10 @@
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/aec_geometry.html){ .md-button }
 </div>
 
+!!! warning "Deprecated"
+
+    This module is deprecated and receives no further changes. It is replaced by `adiro_geometry`, which continues its version numbering. Every release of it stays published at its own IRI.
+
 Foundational, domain-neutral module for geometry. It records where something sits on a drawing page as a bounding box, read against an explicit coordinate frame. Each box carries its own provenance and confidence. It reuses GeoSPARQL, is imported by the drawing modules, and is shared across use cases.
 
 - **IRI:** `https://w3id.org/adiro/aec_geometry`

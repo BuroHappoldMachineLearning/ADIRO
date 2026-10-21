@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+### Deprecated
+- **This module is deprecated, and this is its final release** ([#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171)). It is replaced by `adiro_geometry` (`https://w3id.org/adiro/adiro_geometry`), the same module under a name without the repeated "AEC", which continues this module's version numbering: its first release is this one plus a MAJOR. The `owl:Ontology` header says `owl:deprecated true` and `dcterms:isReplacedBy` `adiro_geometry`; nothing else changes. Every release of this module, this one included, stays published at its own IRI, and its terms keep their IRIs. The new module comes with a mapping from each term to its new IRI, and a script that rewrites a graph. Downstream consumers need to move to the new module.
+
 ### Changed
 - **BREAKING: a `CoordinateFrame` states only its coordinate convention** ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)). `pageIndex`, `frameArtifactRef`, `pdfRotationDeg`, `displayWidthPt` and `displayHeightPt` leave it: they are facts about a page of a file, and move to `aec_provenance:FilePage` (the page number is counted from 1, the file is a `DrawingFile` with its content hash). The frame points to its page with the new `describesPage`. A page can now have several frames (the primary `page_display_pt` in points, and `px` for raster evidence) without repeating the page. Downstream consumers that read these properties from a frame need to adjust.
 - `profileRef`'s comment no longer lists the page extent among what a profile defines, and `hasBoundingBox`'s says that every `MetadataContainer` may have one.

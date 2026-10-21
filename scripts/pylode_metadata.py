@@ -10,7 +10,8 @@ heading and a second schema.org block. ``graph_for_pylode`` hands pyLODE the mod
 enough: pyLODE shows no section of its own for the scheme or its concepts.
 
 The page also gets two rows, added by ``add_links`` to the page itself, not to the Turtle: the TTL source and the
-documentation page, both at ``w3id.org/adiro``. ``check`` compares a generated page with its Turtle, so a module (or an
+documentation page, both at ``w3id.org/adiro``. A deprecated module also gets a "Deprecated" row (``add_deprecation``,
+#171), because pyLODE shows neither ``owl:deprecated`` nor ``dcterms:isReplacedBy`` on the ontology. ``check`` compares a generated page with its Turtle, so a module (or an
 archived release) cannot publish the wrong IRI or heading.
 """
 import html as htmllib
@@ -29,6 +30,14 @@ ROW = (
     "            <dd>\n"
     '              <a href="{url}">{url}</a>\n'
     "            </dd>\n"
+    "          </div>\n"
+)
+TEXT_ROW = (
+    "<div>\n"
+    "            <dt>\n"
+    "              <strong>{label}</strong>\n"
+    "            </dt>\n"
+    "            <dd>{text}</dd>\n"
     "          </div>\n"
 )
 SECTION = re.compile(r'<div class="section" id="metadata">(.*?)(?=<div class="section"|\Z)', re.S)
@@ -62,6 +71,36 @@ def add_links(page, module, version=None):
     if not found:
         return page
     return page[:found.end()] + "          " + rows + page[found.end():]
+
+
+def replacements(ttl_file):
+    """None when the module is not deprecated; else the names of the modules that replace it (``dcterms:isReplacedBy``).
+
+    A deprecated module says ``owl:deprecated true`` on its ``owl:Ontology`` (#171).
+    """
+    graph = Graph().parse(str(ttl_file), format="turtle")
+    for ontology in graph.subjects(RDF.type, OWL.Ontology):
+        if any(str(v).lower() == "true" for v in graph.objects(ontology, OWL.deprecated)):
+            return sorted(str(o).rstrip("/").rsplit("/", 1)[-1] for o in graph.objects(ontology, DCTERMS.isReplacedBy))
+    return None
+
+
+def add_deprecation(page, ttl_file):
+    """The page with a "Deprecated" row after the IRI row when the module is deprecated (pyLODE shows neither
+    ``owl:deprecated`` nor ``dcterms:isReplacedBy`` on the ontology); unchanged otherwise or if the row is there already.
+
+    The replacement is named, not linked: it may not be published yet when the deprecated release is.
+    """
+    names = replacements(ttl_file)
+    section = SECTION.search(page)
+    if names is None or not section or "<strong>Deprecated</strong>" in section.group(1):
+        return page
+    found = IRI_ROW.search(page, section.start(1))
+    if not found:
+        return page
+    by = ", ".join(f"<code>{htmllib.escape(n)}</code>" for n in names)
+    text = f"Yes. Replaced by {by}, which continues its version numbering." if names else "Yes."
+    return page[:found.end()] + "          " + TEXT_ROW.format(label="Deprecated", text=text) + page[found.end():]
 
 
 def shown(page):
