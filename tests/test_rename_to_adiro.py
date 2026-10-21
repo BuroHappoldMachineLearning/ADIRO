@@ -26,11 +26,24 @@ def parse(path):
     return Graph().parse(str(path), format="turtle")
 
 
+def first_release(new):
+    """The new module as the rename made it: its first release once published, else src/ (the rename is not released yet).
+
+    src/ moves on after that release (new terms, new definitions), so a test of the rename compares the first release.
+    """
+    import ontology_versions as ov
+
+    released = ov.archived_versions(ROOT, new)
+    if released:
+        return ROOT / "versions" / new / released[0] / f"{new}.ttl"
+    return ROOT / "src" / f"{new}.ttl"
+
+
 @pytest.mark.parametrize("old,new", PAIRS)
 def test_the_new_module_is_the_old_final_release_under_the_new_names(old, new):
     """Apart from its header and the module names its definitions mention, a new module is its predecessor's final release."""
     final = mr.rewrite_graph(parse(cd.latest_snapshot(ROOT, old)), RENAMES)
-    current = parse(ROOT / "src" / f"{new}.ttl")
+    current = parse(first_release(new))
     ontology = URIRef(W3ID + new)
     _, only_final, only_current = graph_diff(to_isomorphic(final), to_isomorphic(current))
 
@@ -51,17 +64,28 @@ def test_the_new_module_is_the_old_final_release_under_the_new_names(old, new):
 
 
 @pytest.mark.parametrize("old,new", PAIRS)
-def test_the_new_module_starts_at_the_old_final_version_and_replaces_it(old, new):
-    current = parse(ROOT / "src" / f"{new}.ttl")
+def test_the_new_module_continues_the_old_numbering_and_replaces_it(old, new):
+    """The first release of a new module is the old final + 1 MAJOR.
+
+    Before the release cut, src/ declares the old final (the cut bumps it, as decided on #171); after the cut, the next
+    version; once released, that is the version of its first snapshot.
+    """
+    first = first_release(new)
+    current = parse(first)
     ontology = URIRef(W3ID + new)
     final_version = cd.version_of(parse(cd.latest_snapshot(ROOT, old)))
-    assert str(current.value(ontology, OWL.versionInfo)) == final_version
+    next_version = cd.apply_bump(final_version, cd.BUMP_MAJOR)
+    declared = str(current.value(ontology, OWL.versionInfo))
+    if first != ROOT / "src" / f"{new}.ttl":  # released
+        assert declared == next_version, "the first release of a renamed module is the old final + 1 MAJOR"
+    else:
+        assert declared in (final_version, next_version), "before the cut: the old final; after it: + 1 MAJOR"
+        result = cd.analyze_module(ROOT, new)
+        assert result["renamed_from"] == old and result["required_bump"] == cd.BUMP_MAJOR
+        assert result["prospective_version"] == next_version
     assert (ontology, URIRef("http://purl.org/dc/terms/replaces"), URIRef(W3ID + old)) in current
     assert (ontology, OWL.deprecated, None) not in current
     assert str(current.value(ontology, RDFS.label)).startswith("ADIRO ")
-    result = cd.analyze_module(ROOT, new)
-    assert result["renamed_from"] == old and result["required_bump"] == cd.BUMP_MAJOR
-    assert result["prospective_version"] == cd.apply_bump(final_version, cd.BUMP_MAJOR)
 
 
 @pytest.mark.parametrize("old,new", PAIRS)
@@ -79,7 +103,7 @@ def test_the_published_mapping_is_up_to_date_and_complete():
     replaced = {str(s): str(o) for s, _, o in graph}
     for old, new in PAIRS:
         assert replaced[W3ID + old] == W3ID + new
-        current = parse(ROOT / "src" / f"{new}.ttl")
+        current = parse(first_release(new))  # a term added after the rename has no old IRI
         defined = {str(s) for s in current.subjects(RDF.type, None) if str(s).startswith(W3ID + new + "#")}
         assert {mr.rename_iri(o, RENAMES) for o in replaced if o.startswith(W3ID + old + "#")} >= defined
 

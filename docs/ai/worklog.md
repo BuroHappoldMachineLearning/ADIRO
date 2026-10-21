@@ -17,6 +17,13 @@ against a reset branch on a bare remote, `find`'s polling and fork skip, the ver
 Replayed the real hand-resolved merge `3fab290` (fix/146 with main): the script produces the identical tree. Full suite 324 passed. Not run: the workflow itself (needs the app secrets and a real
 conflicting PR); the first real conflict after merge is the test. Not done: adding it to `alert-on-failure.yml` (it is not a release or publishing workflow; a failure is visible on the run).
 
+## 2026-10-21 - The rename tests hold before and after the release cut
+
+The Release PR for the `adiro_*` modules failed `validate`: a test of #210 asserted that each new module declares its predecessor's final version, which is true only until the cut bumps it to + 1
+MAJOR (as decided). Two other tests would have failed later, once a new module gained a term. The three now compare the module as the rename made it (its first release once published, `src/` until
+then) and accept the old final or the next version before the release. Run on `main` (before the cut), on `release/next` (after it) and on a copy of it with the snapshots taken (after the release):
+28 passed each time.
+
 ## 2026-10-21 - The migration rewrite keeps JSON-LD named graphs (review of #210)
 
 A review of [#210](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/210) (posted after the merge) found, and I reproduced, that `migrate_aec_to_adiro.py rewrite` read JSON-LD as a single graph:
