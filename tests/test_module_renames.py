@@ -274,3 +274,59 @@ def test_a_badge_says_deprecated_once_the_deprecated_release_is_out(repo):
     write(repo / "versions" / "aec_a" / "2.0.0" / "aec_a.ttl", ttl("aec_a", "2.0.0", [("aec_a", "1.0.0")], header=header))
     badge = rb.badge_json(repo, "aec_a")
     assert (badge["message"], badge["color"]) == ("2.0.0 (deprecated)", rb.COLOR_UNRELEASED)
+
+
+# --- the deprecation of a renamed module (step 2) -------------------------------------------------------------------
+
+DEPRECATED = '    owl:deprecated true ;\n    dcterms:isReplacedBy <https://w3id.org/adiro/adiro_a> ;\n'
+
+
+def deprecated_ttl():
+    return "@prefix dcterms: <http://purl.org/dc/terms/> .\n" + ttl("aec_a", "2.0.0", header=DEPRECATED)
+
+
+def generate_docs_module():
+    import types
+
+    for name in ("pylode", "pylode.profiles", "pylode.profiles.ontpub"):
+        sys.modules.setdefault(name, types.ModuleType(name))
+    sys.modules["pylode.profiles.ontpub"].__dict__.setdefault("OntPub", object)
+    import generate_docs as gd
+    return gd
+
+
+def test_the_page_of_a_deprecated_module_names_its_replacement(tmp_path):
+    import pylode_metadata as pm
+
+    gd = generate_docs_module()
+    write(tmp_path / "aec_a.ttl", deprecated_ttl())
+    assert pm.replacements(tmp_path / "aec_a.ttl") == ["adiro_a"]
+    alone = "\n".join(gd.deprecation_notice(tmp_path / "aec_a.ttl", [tmp_path / "aec_a.ttl"], False))
+    assert alone.startswith('!!! warning "Deprecated"') and "replaced by `adiro_a`" in alone  # no page yet: no link
+    both = [tmp_path / "aec_a.ttl", tmp_path / "adiro_a.ttl"]
+    assert "[`adiro_a`](adiro_a.md)" in "\n".join(gd.deprecation_notice(tmp_path / "aec_a.ttl", both, False))
+    assert "[`adiro_a`](../adiro_a.md)" in "\n".join(gd.deprecation_notice(tmp_path / "aec_a.ttl", both, True))
+    write(tmp_path / "aec_b.ttl", ttl("aec_b", "1.0.0"))
+    assert pm.replacements(tmp_path / "aec_b.ttl") is None and gd.deprecation_notice(tmp_path / "aec_b.ttl", both, False) == []
+
+
+def test_the_pylode_page_of_a_deprecated_module_gets_a_row(tmp_path):
+    import pylode_metadata as pm
+
+    write(tmp_path / "aec_a.ttl", deprecated_ttl())
+    write(tmp_path / "aec_b.ttl", ttl("aec_b", "1.0.0"))
+    page = ('<div class="section" id="metadata"><h1>A</h1><dl><div><dt><strong>IRI</strong></dt><dd><code>'
+            f"{W3ID}aec_a</code></dd></div></dl></div>")
+    once = pm.add_deprecation(page, tmp_path / "aec_a.ttl")
+    assert "<strong>Deprecated</strong>" in once and "<code>adiro_a</code>" in once
+    assert pm.add_deprecation(once, tmp_path / "aec_a.ttl") == once  # idempotent
+    assert pm.add_deprecation(page, tmp_path / "aec_b.ttl") == page  # not deprecated: unchanged
+
+
+def test_every_old_module_still_in_src_is_deprecated_and_names_its_successor():
+    import pylode_metadata as pm
+
+    for new, old in mr.load(ROOT).items():
+        src = ROOT / "src" / f"{old}.ttl"
+        if src.is_file():
+            assert pm.replacements(src) == [new], f"{old}: owl:deprecated true and dcterms:isReplacedBy <{W3ID}{new}>"

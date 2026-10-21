@@ -16,6 +16,10 @@
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/aec_facade_domain.html){ .md-button }
 </div>
 
+!!! warning "Deprecated"
+
+    This module is deprecated and receives no further changes. It is replaced by `adiro_facade_domain`, which continues its version numbering. Every release of it stays published at its own IRI.
+
 Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbol, and domain vocabularies.
 
 - **IRI:** `https://w3id.org/adiro/aec_facade_domain`

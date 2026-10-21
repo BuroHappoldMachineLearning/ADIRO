@@ -34,6 +34,11 @@ Ontology sources live in `src/` as independently versioned modules (dependency o
 5. `aec_domain_common` — concepts shared across a set of domains.
 6. `aec_facade_domain` — facade-engineering discipline-specific concepts (`:FacadeComponent`, `:DGU`, …).
 
+The six modules are being renamed from `aec_*` to `adiro_*` ([#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171); the
+plan is on the issue). Each `aec_*` module says `owl:deprecated true` and `dcterms:isReplacedBy` its `adiro_*` successor in its
+`owl:Ontology` header, and its next release is its last; its documentation pages say so (a warning on the Markdown page, a
+"Deprecated" row on the pyLODE page, both generated from the header).
+
 DAnO is **not** part of the suite: ADIRO ships no DAnO artifact — no module, no import, no annotation-level
 crosswalk. The comparison with DAnO, and the reasons ADIRO mints its own terms rather than importing or aligning
 to it, are **documentation only** — see `docs/specification/design-decisions/dano-comparison.md` and

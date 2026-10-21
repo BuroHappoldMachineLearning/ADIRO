@@ -1,3 +1,17 @@
+## 2026-10-21 - The final, deprecated release of the aec_* modules (#171, step 2)
+
+Each `src/aec_*.ttl` header gains `owl:deprecated true` and `dcterms:isReplacedBy <https://w3id.org/adiro/adiro_*>` (nothing else changes, terms included), and each changelog a "Deprecated"
+entry at the top of `[Unreleased]`. The Release PR then releases all six: `aec_provenance` 1.1.0, `aec_geometry` 2.0.0, `aec_drawing_metadata` 6.0.0 (already pending) and `aec_common_symbols` 4.0.1,
+`aec_domain_common` 3.0.1, `aec_facade_domain` 3.0.1 (a header change is a PATCH). The new modules will then be 2.0.0, 3.0.0, 7.0.0, 5.0.0, 4.0.0, 4.0.0, as the plan says. The docs show it, from the
+header: a "Deprecated" warning on the Markdown page (`generate_docs.deprecation_notice`) and a "Deprecated" row in the pyLODE Metadata block (`pylode_metadata.add_deprecation`; pyLODE shows neither
+annotation). The replacement is a link only when its page is generated in the same run, so nothing links to an `adiro_*` address before step 3 publishes it (the link check would fail the deploy).
+
+Verified: full suite 341 passed (new tests for the notice, the pyLODE row and a guard that every old module still in `src/` is deprecated and names its successor from the map); `validate_ontology.py`
+clean; `ENFORCE=1 run_reasoning.sh` passes; `mkdocs build --strict` passes. ROBOT's advisory `missing_obsolete_label` now flags `aec_common_symbols` (an OBO convention that a deprecated entity's
+label starts with "obsolete"): left as it is, ADIRO marks deprecation with `owl:deprecated` and keeps the title. Not deprecated term by term: the step-3 mapping (old term IRI to new) carries that.
+
+Next: merge this, then the Release PR (the final `aec_*` releases), then step 3 (the rename), merged together with the Release PR that follows it.
+
 ## 2026-10-21 - The rename map and the tooling that follows it (#171, step 1)
 
 Step 1 of the plan on [#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171) (decided on the issue: `aec_` becomes `adiro_`, the numbering continues as the old final + 1 MAJOR,

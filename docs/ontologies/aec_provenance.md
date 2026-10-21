@@ -13,6 +13,10 @@
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/aec_provenance.html){ .md-button }
 </div>
 
+!!! warning "Deprecated"
+
+    This module is deprecated and receives no further changes. It is replaced by `adiro_provenance`, which continues its version numbering. Every release of it stays published at its own IRI.
+
 Foundational, domain-neutral module for provenance. It lets any value inferred from a drawing be recorded as an assertion that carries its own source, confidence, and how it was produced, aligned to W3C PROV-O. The drawing modules import it.
 
 - **IRI:** `https://w3id.org/adiro/aec_provenance`
