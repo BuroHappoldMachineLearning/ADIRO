@@ -46,13 +46,16 @@ def version_list(archived, declared):
     return sorted(versions, key=version_key, reverse=True)
 
 
-def status(selected, latest):
-    """'latest' for the newest version, '<latest> available' for any other."""
+def status(selected, latest, later=()):
+    """'latest' for the newest version, '<latest> available' for any other; for a module a renamed one replaced (#171),
+    '<new module> <its latest> available' whatever the version."""
+    if later:
+        return f"{later[0][0]} {later[0][1][0]} available"
     return "latest" if selected == latest else f"{latest} available"
 
 
-def button_text(selected, latest):
-    return f"Version {selected} ({status(selected, latest)})"
+def button_text(selected, latest, later=()):
+    return f"Version {selected} ({status(selected, latest, later)})"
 
 
 def _href(selected, latest, target):
@@ -86,21 +89,47 @@ def earlier_names(repo_root, module):
     return out
 
 
+def later_names(repo_root, module):
+    """``[(name, versions newest first)]`` for each module that replaced `module`, the newest name first (#171).
+
+    A retired module's pages say which module replaced it and list that module's versions, so its own last version is
+    not mistaken for the latest of the line.
+    """
+    import module_renames as mr
+
+    names = mr.names(mr.load(repo_root), module)
+    out = []
+    for name in names[: names.index(module)]:
+        src = Path(repo_root) / "src" / f"{name}.ttl"
+        versions = version_list(archived_versions(repo_root, name), declared_version(src) if src.is_file() else None)
+        if versions:
+            out.append((name, versions))
+    return out
+
+
 def _earlier_name_href(selected, latest, name, version, versions):
     """Relative link from the page of `selected` to the page of `version` of the module `name` replaced."""
     up = "../" if selected == latest else "../../"
     return f"{up}{name}/" if version == versions[0] else f"{up}{name}/{version}/"
 
 
-def selector_html(selected, versions, earlier=()):
+def selector_html(selected, versions, earlier=(), later=()):
     """The dropdown button and its list of versions. One element per line, no blank line (it is embedded in Markdown).
 
     ``earlier`` (from earlier_names) adds the releases of the modules this one replaced, after its own, by name.
+    ``later`` (from later_names) is set for a module that a renamed one replaced: the button then says which version of
+    the new module is available, the new module's versions come first, and this module's last version is its "final".
     """
     latest = versions[0]
     items = []
+    for name, name_versions in later:
+        for version in name_versions:
+            href = _earlier_name_href(selected, latest, name, version, name_versions)
+            newest = name == later[0][0] and version == name_versions[0]
+            items.append(f'<li><a href="{href}">{html.escape(f"{name} {version}" + (" (latest)" if newest else ""))}</a></li>')
     for version in versions:
-        label = html.escape(version + (" (latest)" if version == latest else ""))
+        mark = (" (final)" if later else " (latest)") if version == latest else ""
+        label = html.escape(version + mark)
         current = ' class="adiro-version-current" aria-current="page"' if version == selected else ""
         items.append(f'<li><a href="{_href(selected, latest, version)}"{current}>{label}</a></li>')
     for name, name_versions in earlier:
@@ -109,7 +138,7 @@ def selector_html(selected, versions, earlier=()):
             items.append(f'<li><a href="{href}">{html.escape(f"{name} {version}")}</a></li>')
     return "\n".join([
         '<details class="adiro-version">',
-        f'<summary class="md-button">{html.escape(button_text(selected, latest))}</summary>',
+        f'<summary class="md-button">{html.escape(button_text(selected, latest, later))}</summary>',
         "<ul>",
         *items,
         "</ul>",

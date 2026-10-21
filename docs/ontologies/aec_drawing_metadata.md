@@ -7,9 +7,10 @@ search:
 
 <div class="adiro-actions" markdown="span">
 <details class="adiro-version">
-<summary class="md-button">Version 6.0.0 (latest)</summary>
+<summary class="md-button">Version 6.0.0 (adiro_drawing_metadata 7.0.0 available)</summary>
 <ul>
-<li><a href="./" class="adiro-version-current" aria-current="page">6.0.0 (latest)</a></li>
+<li><a href="../adiro_drawing_metadata/">adiro_drawing_metadata 7.0.0 (latest)</a></li>
+<li><a href="./" class="adiro-version-current" aria-current="page">6.0.0 (final)</a></li>
 <li><a href="5.0.1/">5.0.1</a></li>
 <li><a href="5.0.0/">5.0.0</a></li>
 <li><a href="4.0.1/">4.0.1</a></li>

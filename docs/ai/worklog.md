@@ -1,3 +1,7 @@
+## 2026-10-21 - A replaced module's version dropdown no longer says "latest"
+
+Reported by the user after step 4: the page of `aec_provenance` 1.1.0 said "Version 1.1.0 (latest)", because a module's dropdown only compared its own versions. `ontology_versions.later_names` gives the modules that replaced a module; on such a page the button says "<new module> <its latest> available", the new module's versions come first and the module's own last version is marked "(final)". The README's "Formerly aec_*" line is removed (the user's request). Verified: the regenerated pages (`aec_provenance`, `aec_geometry/1.0.0`, `adiro_provenance` checked by eye), a new test, suite 387 passed.
+
 ## 2026-10-21 - The ADIRO Bot resolves worklog-only conflicts on pull requests
 
 Implemented option 1 of [#206](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/206) (chosen by the maintainer over one file per entry, a union merge driver and generated entries), with the
