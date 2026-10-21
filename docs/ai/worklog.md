@@ -1,3 +1,9 @@
+## 2026-10-20 - The promotion as a documented query
+
+Closed the last loose end of [#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85): the decision said ADIRO documents the promotion as a SPARQL `CONSTRUCT` that tooling runs. It is in the UC-01 ORSD §2.1 (v0.11) next to the design note: an accepted assertion that has a value, and that no later assertion supersedes, gives the direct statement
+its field kind maps to; a pending, rejected, outcome-only or superseded one gives nothing. `tests/test_uc01_competency_queries.py` runs it on small data (accepted literal and entity values promoted; pending, rejected, `NotPrinted` and a superseded assertion not). Not done: a conflict rule for
+two accepted, unsuperseded assertions that disagree about a single-valued field (both would be promoted; the field's cardinality is not in the ontology), and running it over real data ([#22](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/22)).
+
 ## 2026-10-20 - The first alert issues, and what they showed
 
 The alert watcher ([#175](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/175)) opened its first real issues, #197 and #201. #197: the post-deploy link check found 404s on the ISO 21597-1 namespace address used by the new stubs (ISO publishes no page there, only `Container.rdf`); fixed in #199 (`isDefinedBy` points at the document, the namespace is ignored by the check).
