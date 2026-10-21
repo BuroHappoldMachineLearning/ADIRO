@@ -66,7 +66,11 @@ a correct statement about one query-layer module read as though it settled the m
 Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachinelearning.github.io/ADIRO/**.
 
 - **Deploy workflow:** `.github/workflows/generate-deploy-docs.yml`. Triggers on push to `main`/`master` and
-  manual `workflow_dispatch`. Jobs: `validate` + `test-ttl2md` + `test-docs` → `generate-docs` → `deploy`.
+  manual `workflow_dispatch`. Jobs: `validate` + `test-ttl2md` + `test-docs` → `generate-docs` → `deploy`. Its runs are
+  serialised; the checks of the published site run after it in **`post-deploy-checks.yml`** ([#217](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/217)): started by
+  `workflow_run` when a deploy of `main` succeeds, with its own queue (a newer deploy cancels the checks of an older one), so a
+  deploy never waits for the previous deploy's checks. Its jobs are `check-links` (lychee, external links of the built site,
+  read from the deploy's artifact) and `verify-prior-versions` (below).
 - **Direct pushes to `main` need a ruleset bypass** ([#173](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/173)).
   Two workflows commit straight to `main`: `generate-deploy-docs.yml` commits the regenerated `docs/` back, and
   `backup-version.yml` commits a release snapshot to `versions/`. A repository ruleset on the default branch that requires a
@@ -127,7 +131,7 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)); advisory, and `ENFORCE_CHANGELOG=1`
   makes it blocking. The warning appears in the QC comment (`ontology-reasoning.yml`). It also requires every module's
   `owl:priorVersion` list to name all earlier archived releases ([#122](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/122)),
-  and after each deploy `scripts/check_prior_versions.py` confirms those IRIs resolve and that every archived release's
+  and after each deploy `scripts/check_prior_versions.py` (`post-deploy-checks.yml`) confirms those IRIs resolve and that every archived release's
   display config is served ([#140](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/140); see `docs/contribute/versioning/`), and that every example image an archived release names is served, a taken-down one as its placeholder ([#154](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/154)); a failure
   also opens one tracking issue, "Published release IRIs and display configs do not resolve", which the next passing deploy closes.
 - **`.github/workflows/compat-diff-comment.yml`** — on PRs touching `src/**.ttl` (RES-67), posts a sticky
@@ -150,10 +154,10 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   main" (as the ADIRO Bot, so the issue mirror sees it), comments on it while later runs keep failing, and closes it when
   a run passes.
 - **`.github/workflows/alert-on-failure.yml`** ([#173](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/173)) — watches
-  the docs deploy, the release snapshot (`backup-version.yml`) and the Release PR workflows from outside, so a failure that
+  the docs deploy, the post-deploy checks, the release snapshot (`backup-version.yml`) and the Release PR workflows from outside, so a failure that
   the workflow itself would not report (a skipped later job, a failed push) is still visible. A failed run on `main` opens
-  **one** tracking issue per workflow ("Docs deploy fails on main", "Release snapshot fails", "Release PR automation
-  fails"; as the ADIRO Bot) and comments on it while later runs fail. A later passing run closes the deploy and Release PR
+  **one** tracking issue per workflow ("Docs deploy fails on main", "Post-deploy checks fail on main", "Release snapshot
+  fails", "Release PR automation fails"; as the ADIRO Bot) and comments on it while later runs fail. A later passing run closes the deploy and Release PR
   issues; the snapshot issue is closed by hand once every failed tag is published, because one tag's success says nothing
   about another's. A new release or publishing workflow is added to its `workflows:` list. **A workflow dispatched with
   `GITHUB_TOKEN` is invisible to the watcher** (GitHub starts no `workflow_run` workflow for a run created that way), so a

@@ -14,6 +14,7 @@ on:
   workflow_run:
     workflows:
       - Generate and Deploy Documentation
+      - Post-deploy checks
       - Backup Ontology Version
       - Release PR
     types: [completed]
@@ -57,6 +58,9 @@ jobs:
             "Generate and Deploy Documentation")
               TITLE="Docs deploy fails on main"; AUTOCLOSE=1
               NEXT="The site, the badges and the version pages are not republished while this fails. Open the run, find the failed job, fix it forward in a PR, or re-run the workflow (\`gh workflow run generate-deploy-docs.yml\`) once the cause is gone." ;;
+            "Post-deploy checks")
+              TITLE="Post-deploy checks fail on main"; AUTOCLOSE=1
+              NEXT="The site is published, but a check of it failed: a broken external link, or a release IRI, display config or example image that does not resolve. Open the run and find the failed job. Fix the cause in a PR; the checks run again after the next deploy, or now with \`gh workflow run post-deploy-checks.yml\`." ;;
             "Backup Ontology Version")
               TITLE="Release snapshot fails"; AUTOCLOSE=0
               NEXT="A release whose snapshot failed has no \`versions/<module>/<semver>/\` archive and no published site pages or badge. Fix the cause, then run \`gh workflow run backup-version.yml -f tag=<module>-v<semver>\` for the tag of each failed run. Close this issue when every failed tag is published; a later success for another tag does not close it." ;;

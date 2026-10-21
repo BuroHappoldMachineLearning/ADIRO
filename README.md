@@ -20,6 +20,7 @@
     <td align="left" valign="middle">
       <b>Build status</b><br>
       <a href="https://burohappoldmachinelearning.github.io/ADIRO/contribute/build-status/#build-and-tests"><img src="https://img.shields.io/github/actions/workflow/status/BuroHappoldMachineLearning/ADIRO/generate-deploy-docs.yml?branch=main&label=build%20%26%20tests" alt="build and tests"></a><br>
+      <a href="https://burohappoldmachinelearning.github.io/ADIRO/contribute/build-status/#post-deploy-checks"><img src="https://img.shields.io/github/actions/workflow/status/BuroHappoldMachineLearning/ADIRO/post-deploy-checks.yml?branch=main&label=site%20checks" alt="site checks"></a><br>
       <a href="https://burohappoldmachinelearning.github.io/ADIRO/contribute/build-status/#release-pr"><img src="https://img.shields.io/github/actions/workflow/status/BuroHappoldMachineLearning/ADIRO/release-pr.yml?branch=main&label=release%20PR" alt="release PR"></a><br>
       <a href="https://burohappoldmachinelearning.github.io/ADIRO/contribute/build-status/#snapshot"><img src="https://img.shields.io/github/actions/workflow/status/BuroHappoldMachineLearning/ADIRO/backup-version.yml?label=snapshot" alt="release snapshot"></a><br>
       <a href="https://burohappoldmachinelearning.github.io/ADIRO/contribute/build-status/#reasoning"><img src="https://img.shields.io/github/actions/workflow/status/BuroHappoldMachineLearning/ADIRO/reasoning-main.yml?branch=main&label=reasoning" alt="reasoning"></a><br>

@@ -11,10 +11,22 @@ tracking issue labelled `ci-alert` is also opened
 [Latest runs on `main`](https://github.com/BuroHappoldMachineLearning/ADIRO/actions/workflows/generate-deploy-docs.yml?query=branch%3Amain)
 
 - **Shows:** the latest run of *Generate and Deploy Documentation* on `main`: validation of the ontologies, the unit tests, the
-  docs build, the deploy to GitHub Pages and the post-deploy checks (the published IRIs and display configs resolve, the links work).
+  docs build and the deploy to GitHub Pages. The checks of the published site are [their own badge](#post-deploy-checks).
 - **Red means:** a test, the validation, the build, the commit-back of the generated `docs/` or the deploy failed. The site, the
   release badges and the version pages stay on the previous state.
 - **What to do:** open the run, find the failed job, fix it forward in a pull request.
+
+## Site checks { #post-deploy-checks }
+
+[Latest runs](https://github.com/BuroHappoldMachineLearning/ADIRO/actions/workflows/post-deploy-checks.yml)
+
+- **Shows:** the latest run of *Post-deploy checks*, which runs after each successful deploy of `main`: the external links of
+  the site work, and every published release IRI, archived display config and archived example image resolves. It has its own
+  queue, so a deploy does not wait for it; a newer deploy cancels the checks of an older one
+  ([#217](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/217)).
+- **Red means:** the site is published, but a link is broken or an earlier release no longer resolves.
+- **What to do:** open the run and find the failed job, then fix the cause in a pull request. The checks run again after the
+  next deploy, or now with `gh workflow run post-deploy-checks.yml`.
 
 ## Release PR { #release-pr }
 
