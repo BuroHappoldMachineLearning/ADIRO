@@ -17,6 +17,20 @@ against a reset branch on a bare remote, `find`'s polling and fork skip, the ver
 Replayed the real hand-resolved merge `3fab290` (fix/146 with main): the script produces the identical tree. Full suite 324 passed. Not run: the workflow itself (needs the app secrets and a real
 conflicting PR); the first real conflict after merge is the test. Not done: adding it to `alert-on-failure.yml` (it is not a release or publishing workflow; a failure is visible on the run).
 
+## 2026-10-21 - The aec_* modules leave src/ (#171, step 4)
+
+After the `adiro_*` releases (Release PR #211: `adiro_provenance` 2.0.0, `adiro_geometry` 3.0.0, `adiro_drawing_metadata` 7.0.0, `adiro_common_symbols` 5.0.0, `adiro_domain_common` 4.0.0,
+`adiro_facade_domain` 4.0.0; the post-deploy check resolved 192 IRIs, configs and images, the link check passed), the user asked to go straight to step 4 instead of waiting a cycle. `src/aec_*.ttl`
+and their display configs are removed (each was byte-identical to its final release; the provenance display config differed in line endings only), with their catalog and import-pin entries.
+`module_renames.retired()` names them. Their pages stay: `generate_docs.find_ttl_files` adds each final release as the module's latest file, so the latest page, the pyLODE page and the earlier-release
+pages are still built, unlisted, with the deprecation notice (regenerating changed no page). `missing_changelog_modules` and the guidance bot skip a retired module (no "removed" finding, no
+import or exampleImage caution, no changelog request); the version-impact report shows `MODULE_RETIRED` (no bump). Tests: a retired module is documented from its final release, needs no changelog
+entry; the rename-equivalence test of the imports now compares the real `owl:imports` of the first release with the final one. Verified: suite 386 passed; `validate_ontology.py` clean; reasoning
+passes; `mkdocs build --strict`; the guidance bot (local, vs `main`) reports nothing; `prepare_release.py plan`: no release pending.
+
+Kept as they are: the old changelogs, tags, `versions/aec_*`, `assets/aec_*` (images served for the archived releases), `docs/badges/aec_*.json` (no longer regenerated, they say "(deprecated)"),
+the README "formerly aec_*" line. Lost: the offline check of the archived images of the old modules (it ran per src module); the post-deploy check still checks every archived release.
+
 ## 2026-10-21 - The rename tests hold before and after the release cut
 
 The Release PR for the `adiro_*` modules failed `validate`: a test of #210 asserted that each new module declares its predecessor's final version, which is true only until the cut bumps it to + 1

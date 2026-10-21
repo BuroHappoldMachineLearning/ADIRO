@@ -41,12 +41,23 @@ from ontology_versions import (
 
 
 def find_ttl_files(root_dir: Path) -> list[Path]:
-    """Find all .ttl files in the src directory."""
+    """Find all .ttl files in the src directory, and the final release of each module a renamed one replaced (#171).
+
+    A retired module has left src/, but its pages stay on the site, generated from its final release: that snapshot plays
+    the part of its src/ file, so the latest page, the pyLODE page and the earlier-release pages keep being built.
+    """
     src_dir = root_dir / "src"
     if not src_dir.exists():
         return []
     ttl_files = list(src_dir.glob("*.ttl"))
-    return sorted(ttl_files)
+    renames = module_renames.load(root_dir)
+    for old in sorted(module_renames.retired(renames, [f.stem for f in ttl_files])):
+        from compat_diff import latest_snapshot
+
+        final = latest_snapshot(root_dir, old)
+        if final is not None:
+            ttl_files.append(final)
+    return sorted(ttl_files, key=lambda f: f.stem)
 
 
 def sort_by_dependency(ttl_files: list[Path]) -> list[Path]:
@@ -80,7 +91,7 @@ def sort_by_dependency(ttl_files: list[Path]) -> list[Path]:
     def get_order(file_path: Path) -> int:
         """Get the dependency order for a file; a module and the one it replaced, or that replaced it, share a place (#171)."""
         try:
-            names = module_renames.names(module_renames.load(file_path.parent.parent), file_path.stem)
+            names = module_renames.names(module_renames.load(Path(__file__).resolve().parent.parent), file_path.stem)
         except ValueError:
             names = [file_path.stem]
         return next((dependency_order[n] for n in names if n in dependency_order), 999)  # Unknown files go to end

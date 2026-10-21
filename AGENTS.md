@@ -37,9 +37,9 @@ Ontology sources live in `src/` as independently versioned modules (dependency o
 The modules were called `aec_*` until their final releases (`aec_provenance` 1.1.0, `aec_geometry` 2.0.0,
 `aec_drawing_metadata` 6.0.0, `aec_common_symbols` 4.0.1, `aec_domain_common` 3.0.1, `aec_facade_domain` 3.0.1), which are
 deprecated and replaced by the `adiro_*` modules ([#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171)). The
-`aec_*` files stay in `src/` for one more cycle, unchanged: their pages are generated (with a "Deprecated" warning, and a row
-on the pyLODE page) but they are left out of the navigation, the index, the diagrams, the search, the README badges, the
-guidance bot's label comparison and the advisory ROBOT report (the reasoner still covers them). Never edit them; change the `adiro_*` module. `migration/aec_to_adiro.ttl` and
+`aec_*` files have left `src/`; their releases, tags, snapshots, changelogs and example images stay. Their pages stay on the
+site, generated from each final release (`generate_docs.find_ttl_files` adds it as the module's latest file), with a
+"Deprecated" warning and row, out of the navigation, the index, the diagrams and the search. `migration/aec_to_adiro.ttl` and
 `scripts/migrate_aec_to_adiro.py` move data and links to the new IRIs (`docs/migrating-from-aec.md`), and
 `tests/test_rename_to_adiro.py` checks that each new module is its predecessor's final release under the new names.
 

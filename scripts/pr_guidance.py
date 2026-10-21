@@ -314,7 +314,7 @@ def main(argv=None):
     spec = args.base_ref if args.worktree else f"{args.base_ref}...HEAD"
     changed = subprocess.run(["git", "diff", "--name-only", "--no-renames", spec, "--", "src", "changelogs"],
                              capture_output=True, text=True, cwd=root).stdout.split()
-    no_changelog = set(missing_changelog_modules(changed))  # the same check as validate_ontology.py (#105)
+    no_changelog = set(missing_changelog_modules(changed, root))  # the same check as validate_ontology.py (#105)
     texts = {f"src/{p.name}": p.read_text(encoding="utf-8") for p in sorted((root / "src").glob("*.ttl"))}
     # A module that a renamed one replaces, kept in src/ for one more cycle, repeats every term of its successor under
     # the old IRIs (#171): its labels are not clashes, so the suite the labels are compared in leaves it out.
@@ -327,8 +327,11 @@ def main(argv=None):
 
     changes = []
     findings, previews = [], []  # findings: (kind key, item Markdown); each kind's advice is said once by render()
+    retired = module_renames.retired(renames, [Path(p).stem for p in texts])
     for path in (p for p in changed if re.fullmatch(r"src/[^/]+\.ttl", p)):  # includes deleted modules
         module = Path(path).stem
+        if module in retired:  # replaced by a renamed module (#171): its releases stay published, nothing to fix or flag
+            continue
         head = _load(texts.get(path))
         base_text = _git_show(base_commit, path, root)
         old_name = module_renames.predecessor(renames, module)

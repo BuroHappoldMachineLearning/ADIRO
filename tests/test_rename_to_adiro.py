@@ -145,10 +145,13 @@ def test_the_new_shapes_and_tooling_read_the_new_namespace():
         assert W3ID + "aec_" not in shapes.read_text(encoding="utf-8"), shapes.name
 
 
-def test_the_import_pin_covers_the_new_modules():
+def test_the_new_modules_import_what_the_old_ones_did_under_the_new_names():
     pin = json.loads((ROOT / "config" / "module_imports.json").read_text(encoding="utf-8"))
     for old, new in PAIRS:
-        assert set(pin[new]) == {mr.successor(RENAMES, k) for k in pin[old]}  # the same imports, under the new names
+        final = {str(o) for o in parse(cd.latest_snapshot(ROOT, old)).objects(None, OWL.imports)}
+        first = {str(o) for o in parse(first_release(new)).objects(None, OWL.imports)}
+        assert first == {mr.rename_iri(i, RENAMES) for i in final}
+        assert new in pin and not any(k.startswith("aec_") for k in pin[new])
 
 
 def quads(path, fmt):
