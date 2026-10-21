@@ -96,6 +96,13 @@ def superseded(renames, modules):
     return {m for m in present if successor(renames, m) in present}
 
 
+def retired(renames, modules):
+    """The modules a renamed one replaced that have left `modules` (src/) while their successor is there: their releases stay
+    published, and their pages are generated from their final release."""
+    present = set(modules)
+    return {old for new, old in renames.items() if old not in present and new in present}
+
+
 def iri_map(renames):
     """``{old ontology IRI: new ontology IRI}`` for every rename in the map."""
     return {f"{BASE}{old}": f"{BASE}{new}" for new, old in renames.items()}

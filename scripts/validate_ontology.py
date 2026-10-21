@@ -213,7 +213,7 @@ def find_undescribed_terms(graph) -> list[str]:
     return sorted(set(undescribed))
 
 
-def missing_changelog_modules(changed_paths) -> list[str]:
+def missing_changelog_modules(changed_paths, repo_root: Path | None = None) -> list[str]:
     """
     Modules whose `src/<module>.ttl` changed (added, edited or deleted) while
     `changelogs/<module>.md` did not (#105).
@@ -222,10 +222,15 @@ def missing_changelog_modules(changed_paths) -> list[str]:
     changes the module; nothing else checks that it was written, and the omission
     otherwise surfaces at release time. The release cut passes, because it moves the
     changelog in the same commit as it bumps the TTL.
+
+    A module retired after a rename (deleted from `src/` while the module that replaced it is there, #171) needs no
+    entry: it is not released again, and its changelog stays as it was at its final release.
     """
+    root = Path(repo_root) if repo_root else Path(__file__).resolve().parent.parent
     changed = set(changed_paths)
     modules = sorted(Path(p).stem for p in changed if re.fullmatch(r"src/[^/]+\.ttl", p))
-    return [m for m in modules if f"changelogs/{m}.md" not in changed]
+    gone = module_renames.retired(module_renames.load(root), [p.stem for p in (root / "src").glob("*.ttl")])
+    return [m for m in modules if f"changelogs/{m}.md" not in changed and m not in gone]
 
 
 def changed_paths_vs_base(base_ref: str, repo_root: Path) -> list[str] | None:
@@ -585,7 +590,7 @@ def main():
             print(f"  [{'ERROR' if enforce else 'WARN'}] {msg}")
             all_valid = all_valid and not enforce
         else:
-            for module in missing_changelog_modules(changed):
+            for module in missing_changelog_modules(changed, repo_root):
                 msg = (f"changelogs/{module}.md was not changed, but src/{module}.ttl was: add an entry under "
                        "[Unreleased] (it becomes the release notes)")
                 row = next((r for r in results if r[0] == module), None)

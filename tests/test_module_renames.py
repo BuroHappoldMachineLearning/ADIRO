@@ -337,3 +337,25 @@ def test_every_old_module_still_in_src_is_deprecated_and_names_its_successor():
         src = ROOT / "src" / f"{old}.ttl"
         if src.is_file():
             assert pm.replacements(src) == [new], f"{old}: owl:deprecated true and dcterms:isReplacedBy <{W3ID}{new}>"
+
+
+# --- the old module leaves src/ (step 4) ----------------------------------------------------------------------------
+
+def test_a_retired_module_is_documented_from_its_final_release(repo):
+    gd = generate_docs_module()
+    (repo / "src" / "aec_a.ttl").unlink()
+    assert mr.retired(mr.load(repo), [p.stem for p in (repo / "src").glob("*.ttl")]) == {"aec_a"}
+    files = gd.find_ttl_files(repo)
+    assert repo / "versions" / "aec_a" / "2.0.0" / "aec_a.ttl" in files  # its final release plays its src/ file
+    gd.generate_ontology_markdown_pages(gd.sort_by_dependency(files), repo / "docs", repo)
+    page = (repo / "docs" / "ontologies" / "aec_a.md").read_text(encoding="utf-8")
+    assert page.startswith("---\nsearch:\n  exclude: true") and "Version 2.0.0 (latest)" in page
+    assert "aec_a.md" not in (repo / "docs" / "ontologies" / ".pages").read_text(encoding="utf-8")
+    assert '<a href="../aec_a/">aec_a 2.0.0</a>' in (repo / "docs" / "ontologies" / "adiro_a.md").read_text(encoding="utf-8")
+
+
+def test_a_retired_module_needs_no_changelog_entry(repo):
+    (repo / "src" / "aec_a.ttl").unlink()
+    assert vo.missing_changelog_modules(["src/aec_a.ttl"], repo) == []
+    (repo / "src" / "adiro_a.ttl").unlink()  # no successor: a removal, which needs one
+    assert vo.missing_changelog_modules(["src/aec_a.ttl", "src/adiro_a.ttl"], repo) == ["adiro_a", "aec_a"]

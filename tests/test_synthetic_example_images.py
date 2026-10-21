@@ -19,7 +19,13 @@ ALL = [(module, name) for module, drawings in syn.DRAWINGS.items() for name in s
 
 
 def graph_of(module):
-    return Graph().parse(str(ROOT / "src" / f"{module}.ttl"), format="turtle")
+    """The module in src/, or, for a module retired after a rename (#171), its final release."""
+    path = ROOT / "src" / f"{module}.ttl"
+    if not path.is_file():
+        import compat_diff
+
+        path = compat_diff.latest_snapshot(ROOT, module)
+    return Graph().parse(str(path), format="turtle")
 
 
 @pytest.mark.parametrize("module,name", ALL)
