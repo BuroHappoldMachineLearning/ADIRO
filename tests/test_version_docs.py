@@ -116,10 +116,36 @@ def test_an_existing_pyLODE_page_of_an_archived_release_is_kept_not_regenerated(
     existing = repo / "docs" / "aec_x" / "1.0.0" / "aec_x.html"
     existing.parent.mkdir(parents=True)
     existing.write_text("committed page", encoding="utf-8")
-    calls = []
+    calls, kept = [], []
     monkeypatch.setattr(gd, "generate_documentation", lambda ttl, out, copy_ttl=True: calls.append(out) or True)
+    # a kept page still gets the two links and is checked (#146); here the check is stubbed, the page left as it is
+    monkeypatch.setattr(gd, "maintain_page", lambda ttl, page, module, version: kept.append((ttl, page, module, version)) or True)
     assert gd.generate_version_documentation([repo / "src" / "aec_x.ttl"], repo, repo / "docs") == 0
     assert calls == [] and existing.read_text(encoding="utf-8") == "committed page"
+    assert kept == [(repo / "versions" / "aec_x" / "1.0.0" / "aec_x.ttl", existing, "aec_x", "1.0.0")]
+
+
+def test_a_kept_page_that_fails_the_metadata_check_is_counted(tmp_path, monkeypatch):
+    repo = make_repo(tmp_path, "2.0.0", ["1.0.0", "2.0.0"])
+    existing = repo / "docs" / "aec_x" / "1.0.0" / "aec_x.html"
+    existing.parent.mkdir(parents=True)
+    existing.write_text("committed page", encoding="utf-8")
+    monkeypatch.setattr(gd, "generate_documentation", lambda ttl, out, copy_ttl=True: True)
+    assert gd.generate_version_documentation([repo / "src" / "aec_x.ttl"], repo, repo / "docs") == 1  # not a pyLODE page: no Metadata block
+
+
+def test_refresh_module_regenerates_only_the_named_modules_pages(tmp_path, monkeypatch):
+    repo = make_repo(tmp_path, "2.0.0", ["1.0.0", "2.0.0"])
+    existing = repo / "docs" / "aec_x" / "1.0.0" / "aec_x.html"
+    existing.parent.mkdir(parents=True)
+    existing.write_text("committed page", encoding="utf-8")
+    calls = []
+    monkeypatch.setattr(gd, "generate_documentation", lambda ttl, out, copy_ttl=True: calls.append(out) or True)
+    monkeypatch.setattr(gd, "maintain_page", lambda *a: True)
+    gd.generate_version_documentation([repo / "src" / "aec_x.ttl"], repo, repo / "docs", refresh={"aec_other"})
+    assert calls == []
+    gd.generate_version_documentation([repo / "src" / "aec_x.ttl"], repo, repo / "docs", refresh={"aec_x"})
+    assert calls == [repo / "docs" / "aec_x" / "1.0.0"]
 
 
 def test_the_refresh_flag_regenerates_existing_pyLODE_pages(tmp_path, monkeypatch):

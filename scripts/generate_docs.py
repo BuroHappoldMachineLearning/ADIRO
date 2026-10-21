@@ -25,6 +25,7 @@ _TTL2MD_SRC = Path(__file__).parent.parent / "ttl2md" / "src"
 if _TTL2MD_SRC.exists() and str(_TTL2MD_SRC) not in sys.path:
     sys.path.insert(0, str(_TTL2MD_SRC))
 import ttl2md
+import pylode_metadata
 from release_badges import write_release_badges
 from example_images import stage as stage_example_images
 from ontology_versions import (
@@ -113,11 +114,19 @@ def generate_documentation(ttl_file: Path, output_dir: Path, copy_ttl: bool = Tr
         print(f"Generating documentation for {ttl_file.name}...")
         
         # Use pyLODE's OntPub profile to generate HTML
-        od = OntPub(ontology=str(ttl_file))
+        # (pyLODE gets the module's graph without the type skos:ConceptScheme: it would read the scheme as a second
+        # ontology and show its IRI and title in the Metadata block; see scripts/pylode_metadata.py, #146)
+        od = OntPub(ontology=pylode_metadata.graph_for_pylode(ttl_file))
         od.make_html(destination=str(output_file))
 
         # Post-process HTML to render example images inline (if present)
         inject_example_images(ttl_file=ttl_file, html_file=output_file)
+
+        # The TTL source and documentation rows of the Metadata block, and the check that the page shows the module's own
+        # IRI and title (a wrong page fails the build)
+        module, version = pylode_metadata.module_and_version(ttl_file, output_dir)
+        if not maintain_page(ttl_file, output_file, module, version):
+            return False
         
         print(f"  [OK] Generated: {output_file}")
         
@@ -132,6 +141,22 @@ def generate_documentation(ttl_file: Path, output_dir: Path, copy_ttl: bool = Tr
     except Exception as e:
         print(f"  [ERROR] Error processing {ttl_file.name}: {e}", file=sys.stderr)
         return False
+
+
+def maintain_page(ttl_file: Path, html_file: Path, module: str, version: str | None) -> bool:
+    """Add the two links to a pyLODE page (if they are not there) and check its Metadata block against the Turtle (#146).
+
+    Used for a page just generated and for an earlier release's page that is kept: the links are added to it without
+    regenerating pyLODE's output. Returns False, after saying why, when the page shows the wrong IRI or heading.
+    """
+    page = html_file.read_text(encoding="utf-8")
+    with_links = pylode_metadata.add_links(page, module, version)
+    if with_links != page:
+        html_file.write_text(with_links, encoding="utf-8")
+    problems = pylode_metadata.check(with_links, ttl_file)
+    for problem in problems:
+        print(f"  [ERROR] {html_file}: {problem}", file=sys.stderr)
+    return not problems
 
 
 def _local_name(term_iri: str) -> str | None:
@@ -248,7 +273,7 @@ def inject_example_images(ttl_file: Path, html_file: Path) -> None:
     html_file.write_text(html, encoding="utf-8")
 
 
-def generate_version_documentation(ttl_files: list[Path], repo_root: Path, output_dir: Path, refresh: bool = False) -> int:
+def generate_version_documentation(ttl_files: list[Path], repo_root: Path, output_dir: Path, refresh: bool | set = False) -> int:
     """pyLODE HTML for every earlier release of each module (#124), at ``<module>/<version>/<module>.html``.
 
     That is next to the archived Turtle the deploy publishes at the same path, so a version's page can link to
@@ -256,8 +281,11 @@ def generate_version_documentation(ttl_files: list[Path], repo_root: Path, outpu
 
     An archived release never changes, and pyLODE does not order some of its output stably (two runs on the same
     file can swap two links), so a page that is already there is kept rather than regenerated: regenerating would
-    only add noise to every deploy commit. ``refresh`` regenerates them anyway (``generate_docs.py --refresh-versions``,
-    for example after a pyLODE upgrade). Returns the number of failures.
+    only add noise to every deploy commit. ``refresh`` regenerates them anyway: all of them
+    (``generate_docs.py --refresh-versions``, for example after a pyLODE upgrade) or those of the named modules
+    (``--refresh-module <module>``, once, for example to correct a page that shows the wrong IRI). A kept page still gets
+    the TTL source and documentation rows, and its Metadata block is checked against its Turtle (#146), so a wrong page
+    fails the build until it is refreshed. Returns the number of failures.
     """
     failures = 0
     for ttl_file in ttl_files:
@@ -272,9 +300,12 @@ def generate_version_documentation(ttl_files: list[Path], repo_root: Path, outpu
                 if old.is_dir() and SEMVER_RE.match(old.name) and old.name not in needed:
                     shutil.rmtree(old)
         for version in sorted(needed):
-            if (module_dir / version / f"{stem}.html").is_file() and not refresh:
-                continue
             snapshot = repo_root / "versions" / stem / version / f"{stem}.ttl"
+            page = module_dir / version / f"{stem}.html"
+            if page.is_file() and not (refresh is True or (refresh and stem in refresh)):
+                if not maintain_page(snapshot, page, stem, version):
+                    failures += 1
+                continue
             if not generate_documentation(snapshot, module_dir / version, copy_ttl=False):
                 failures += 1
     return failures
@@ -770,7 +801,10 @@ def main():
             success_count += 1
 
     # pyLODE HTML for each earlier release, next to its archived Turtle (#124)
-    version_failures = generate_version_documentation(ttl_files, repo_root, output_dir, refresh="--refresh-versions" in sys.argv[1:])
+    args = sys.argv[1:]
+    refresh_modules = {args[i + 1] for i, a in enumerate(args[:-1]) if a == "--refresh-module"}
+    version_failures = generate_version_documentation(ttl_files, repo_root, output_dir,
+                                                      refresh=True if "--refresh-versions" in args else refresh_modules)
     
     # Generate index.html
     print("-" * 60)
