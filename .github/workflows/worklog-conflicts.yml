@@ -6,23 +6,27 @@ name: Worklog conflicts
 # both entries kept, checks the result, and pushes the merge commit as the ADIRO Bot. Anything else is left to the author.
 # All logic is scripts/worklog_conflicts.py.
 #
-# A pull request starts to conflict when ANOTHER one merges, so the main trigger is a push to main; `pull_request`
-# covers one that already conflicts when it is opened or pushed to.
+# A pull request starts to conflict when ANOTHER one merges, so the main trigger is a push to main;
+# `pull_request_target` covers one that already conflicts when it is opened or pushed to. It is `pull_request_target`,
+# not `pull_request`, for two reasons: GitHub does not run a `pull_request` workflow while the pull request has a merge
+# conflict, and `pull_request_target` always runs THIS file as it is on main, so a pull request cannot change the
+# workflow that receives the bot's secrets. There is no `workflow_dispatch` for the same reason (a dispatch runs the
+# file of the branch it names).
 #
 # The three jobs keep the bot token away from the pull request's code:
 #   find  - read-only GITHUB_TOKEN; lists the conflicting pull requests.
 #   merge - NO secrets; merges and runs the validation and the tests of the merged tree (this runs the PR's code).
 #   push  - the ADIRO Bot token; runs only main's copy of the script, redoes the same merge without running anything
-#           from the branch, pushes it only if the tree is the one `merge` verified, and never forces: a branch that
-#           moved meanwhile rejects the push and is left alone. A push with the app token starts the PR checks again.
+#           from the branch, pushes it only if the tree is the one `merge` verified, with a lease on the head `find`
+#           saw: a branch that moved meanwhile (a new commit, a rebase or a reset) rejects the push and is left alone.
+#           A push with the app token starts the PR checks again.
 # Fork pull requests are skipped (the bot cannot push to a fork); the find job's log says so.
 
 on:
   push:
     branches: [main]
-  pull_request:
+  pull_request_target:
     types: [opened, reopened, synchronize, ready_for_review]
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -34,7 +38,7 @@ concurrency:
 
 jobs:
   find:
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event_name != 'pull_request_target' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     outputs:
       prs: ${{ steps.find.outputs.prs }}
@@ -42,7 +46,7 @@ jobs:
       - name: Checkout the default branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.repository.default_branch }}   # main's script, also on a pull_request event
+          ref: ${{ github.event.repository.default_branch }}   # main's script (pull_request_target checks out main anyway)
           persist-credentials: false
 
       - name: List the conflicting pull requests
@@ -77,6 +81,7 @@ jobs:
         uses: astral-sh/setup-uv@v4
         with:
           version: "latest"
+          enable-cache: false   # this job runs the pull request's code: it must not write a cache that main's runs read
 
       - name: Set up Python
         run: uv python install 3.12
@@ -156,10 +161,14 @@ jobs:
         env:
           TOKEN: ${{ steps.app-token.outputs.token }}
           BRANCH: ${{ matrix.pr.branch }}
+          HEAD_SHA: ${{ matrix.pr.head_sha }}
         run: |
-          # Not forced: if the branch moved since the run started, the push is rejected and the branch is left alone.
-          if git -C "$RUNNER_TEMP/merge" -c core.hooksPath=/dev/null push "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
-               "HEAD:refs/heads/${BRANCH}"; then
+          # Leased on the head `find` saw: if the branch moved since (a new commit, a rebase, or a reset to an earlier
+          # commit, which a plain push would silently undo by fast-forwarding), the push is rejected and the branch is
+          # left alone.
+          if git -C "$RUNNER_TEMP/merge" -c core.hooksPath=/dev/null push \
+               --force-with-lease="refs/heads/${BRANCH}:${HEAD_SHA}" \
+               "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/${BRANCH}"; then
             echo "Merged main into $BRANCH with both worklog entries kept." >> "$GITHUB_STEP_SUMMARY"
           else
             echo "The branch $BRANCH moved while this ran; left to its author." >> "$GITHUB_STEP_SUMMARY"

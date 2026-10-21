@@ -147,9 +147,43 @@ def test_the_job_that_runs_the_pull_request_code_has_no_secrets():
     assert "persist-credentials: false" in merge
 
 
-def test_the_push_is_never_forced_and_the_bot_token_job_checks_out_main():
+def test_the_push_is_leased_on_the_head_find_saw_and_the_bot_token_job_checks_out_main():
     text = WORKFLOW.read_text(encoding="utf-8")
     push = job(text, "push")
-    assert "--force" not in push and "+HEAD" not in push
+    assert '--force-with-lease="refs/heads/${BRANCH}:${HEAD_SHA}"' in push
+    assert not re.search(r"--force(?!-with-lease=)", push) and "+HEAD" not in push, "no bare --force and no + refspec"
     assert "ref: ${{ github.event.repository.default_branch }}" in push
     assert 'git worktree add --quiet --detach "$RUNNER_TEMP/merge"' in push, "the checkout that loads the local action stays on main"
+
+
+def test_the_workflow_runs_main_s_copy_of_itself_and_runs_on_a_conflicting_pull_request():
+    """`pull_request` does not run while a pull request conflicts, and runs the pull request's own copy of the file."""
+    triggers = WORKFLOW.read_text(encoding="utf-8").split("\npermissions:")[0]
+    assert "pull_request_target:" in triggers
+    assert not re.search(r"^\s+pull_request:", triggers, re.M)
+    assert "workflow_dispatch" not in triggers.split("\non:")[1], "a dispatch runs the file of the branch it names"
+    assert "enable-cache: false" in job(WORKFLOW.read_text(encoding="utf-8"), "merge")
+
+
+def test_a_lease_rejects_a_branch_reset_to_an_earlier_commit(tmp_path):
+    """A plain push fast-forwards a branch reset during the run, putting back the commits the reset dropped."""
+    remote = tmp_path / "remote.git"
+    subprocess.run(["git", "init", "--quiet", "--bare", str(remote)], check=True)
+    repo = make_repo(tmp_path, {wc.WORKLOG: entry("PR") + OLD}, {wc.WORKLOG: entry("Main") + OLD})
+    seen = git(repo, "rev-parse", "pr")
+    git(repo, "push", "--quiet", str(remote), "pr:refs/heads/pr")
+    git(repo, "push", "--quiet", "--force", str(remote), "pr~1:refs/heads/pr")  # the author resets meanwhile
+    wc.merge(repo, "pr", "main", "pr")
+    leased = subprocess.run(["git", "-C", str(repo), "push", "--quiet", f"--force-with-lease=refs/heads/pr:{seen}",
+                             str(remote), "HEAD:refs/heads/pr"], capture_output=True)
+    assert leased.returncode != 0
+    assert git(remote, "rev-parse", "pr") == git(repo, "rev-parse", "pr~1"), "the reset stands"
+
+
+def test_a_line_that_ends_both_entries_stays_in_both(tmp_path):
+    """`git merge-file` kept a shared closing line once, under the second entry."""
+    pr = "## 2026-10-21 - PR\n\nPR text.\nVerified: tests passed.\n\n"
+    main = "## 2026-10-21 - Main\n\nMain text.\nVerified: tests passed.\n\n"
+    repo = make_repo(tmp_path, {wc.WORKLOG: pr + OLD}, {wc.WORKLOG: main + OLD})
+    assert wc.merge(repo, "pr", "main", "pr")["status"] == wc.READY
+    assert git(repo, "show", f"HEAD:{wc.WORKLOG}") + "\n" == pr + main + OLD

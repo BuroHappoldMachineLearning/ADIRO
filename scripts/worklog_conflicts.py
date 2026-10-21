@@ -10,7 +10,8 @@ merges. The conflict carries no information: both sides add a new, independent e
              because it merges last), commits, and with ``--verify`` runs the validation and the tests on the merged tree.
              This step runs the pull request's code, so the workflow gives it no secrets.
 - ``push``   is the same merge without ``--verify``, run from the default branch's copy of this script: it checks the tree
-             equals the one the ``merge`` step verified, and the workflow then pushes it (not forced) as the ADIRO Bot.
+             equals the one the ``merge`` step verified, and the workflow then pushes it as the ADIRO Bot, leased on the
+             head ``find`` saw, so a branch that moved meanwhile is left alone.
 
 Any other conflict, a worklog edit that is not a pure addition, or a failing check is left to the author.
 Standard library only, so the workflow runs it with the runner's ``python3``.
@@ -19,9 +20,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 import sys
-import tempfile
 import time
 from pathlib import Path
 
@@ -83,50 +84,43 @@ def candidates(prs: list[dict]) -> tuple[list[dict], list[int]]:
 
 # --- merge ----------------------------------------------------------------------------------------------------------
 
-def only_adds(repo: Path, base: str, side: str) -> bool:
-    """True when `side` changes the worklog by adding lines only (no line removed or rewritten) since `base`."""
-    out = git(repo, "diff", "--numstat", base, side, "--", WORKLOG).stdout.split()
-    return not out or out[1] == "0"
+HUNK = re.compile(r"^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@", re.M)
 
 
-MARKER = 31  # longer than any line of `=` or `<` the worklog itself might contain
+def show(repo: Path, rev: str) -> list[str]:
+    return git(repo, "show", f"{rev}:{WORKLOG}").stdout.splitlines(keepends=True)
 
 
-def keep_both(merged: str) -> str:
-    """Resolve each conflict block of `merged` to both sides, ours first, with a blank line between them.
+def insertions(repo: Path, base: str, side: str) -> dict[int, list[str]] | None:
+    """The lines `side` adds to the worklog since `base`, keyed by the base line they follow (0 = the top).
 
-    `git merge-file --union` would do the same, but both entries end in a blank line that diff treats as shared, so the
-    union runs the two entries together; a blank line is added where one side does not end in one.
+    None when `side` also removes or rewrites a line: then it is not a pure addition and the bot leaves it alone.
     """
-    out, ours, theirs, side = [], [], [], None
-    for line in merged.splitlines(keepends=True):
-        if line.startswith("<" * MARKER):
-            side = ours
-        elif line.startswith("=" * MARKER) and side is ours:
-            side = theirs
-        elif line.startswith(">" * MARKER) and side is theirs:
-            gap = ["\n"] if ours and theirs and ours[-1].strip() else []
-            out += ours + gap + theirs
-            ours, theirs, side = [], [], None
-        elif side is not None:
-            side.append(line)
-        else:
-            out.append(line)
+    diff = git(repo, "diff", "--no-ext-diff", "--no-color", "-U0", base, side, "--", WORKLOG).stdout
+    lines = show(repo, side)
+    added = {}
+    for old_start, old_count, new_start, new_count in HUNK.findall(diff):
+        if old_count != "0":
+            return None
+        start, count = int(new_start), int(new_count or 1)
+        added[int(old_start)] = lines[start - 1:start - 1 + count]
+    return added
+
+
+def keep_both(base: list[str], ours: dict[int, list[str]], theirs: dict[int, list[str]]) -> str:
+    """The base worklog with both sides' additions, ours (the pull request's) first where both add at the same point.
+
+    Built from the two sides' insertions rather than from `git merge-file`, which treats a line that ends both new entries
+    (a blank line, or the same closing sentence) as shared and keeps it once, under the second entry.
+    """
+    out = []
+    for i in range(len(base) + 1):
+        a, b = ours.get(i, []), theirs.get(i, [])
+        gap = ["\n"] if a and b and a[-1].strip() else []
+        out += a + gap + b
+        if i < len(base):
+            out.append(base[i])
     return "".join(out)
-
-
-def union(repo: Path) -> str:
-    """The worklog with both sides of every conflict kept, the pull request's side (ours) first."""
-    with tempfile.TemporaryDirectory() as tmp:
-        paths = []
-        for stage, name in ((2, "ours"), (1, "base"), (3, "theirs")):
-            path = Path(tmp) / name
-            path.write_bytes(subprocess.run(["git", "-C", str(repo), "show", f":{stage}:{WORKLOG}"],
-                                            capture_output=True, check=True).stdout)
-            paths.append(str(path))
-        merged = subprocess.run(["git", "merge-file", "-p", f"--marker-size={MARKER}", *paths],
-                                capture_output=True, text=True, encoding="utf-8").stdout
-        return keep_both(merged)
 
 
 def merge(repo: Path, head: str, base: str, branch: str, verify=None, runner=subprocess.run) -> dict:
@@ -148,11 +142,12 @@ def merge(repo: Path, head: str, base: str, branch: str, verify=None, runner=sub
         git(repo, "merge", "--abort", check=False)
         return {**result, "status": OTHER, "files": conflicts}
     fork_point = git(repo, "merge-base", head_sha, base_sha).stdout.strip()
-    if not (only_adds(repo, fork_point, head_sha) and only_adds(repo, fork_point, base_sha)):
+    ours, theirs = insertions(repo, fork_point, head_sha), insertions(repo, fork_point, base_sha)
+    if ours is None or theirs is None:
         git(repo, "merge", "--abort", check=False)
         return {**result, "status": EDITED}
 
-    (repo / WORKLOG).write_text(union(repo), encoding="utf-8", newline="")
+    (repo / WORKLOG).write_text(keep_both(show(repo, fork_point), ours, theirs), encoding="utf-8", newline="")
     git(repo, "add", WORKLOG)
     message = (f"Merge main into {branch}: keep both worklog entries\n\n"
                f"The only conflict was {WORKLOG}, where both sides add an entry, so both are kept (#206).")

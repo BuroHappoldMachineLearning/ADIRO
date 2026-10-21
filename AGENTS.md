@@ -154,11 +154,12 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   label, which the README's "Build status" column counts (`docs/contribute/build-status.md` explains each badge).
 - **`.github/workflows/worklog-conflicts.yml`** ([#206](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/206)) — every
   pull request adds a worklog entry at the top of `docs/ai/worklog.md`, so two open pull requests conflict there once one merges. After
-  every push to `main` (and when a pull request is opened or pushed to), the **ADIRO Bot** merges `main` into each open same-repository
+  every push to `main` (and when a pull request is opened or pushed to, through `pull_request_target`, which runs even on a conflicting pull
+  request and always runs `main`'s copy of the workflow), the **ADIRO Bot** merges `main` into each open same-repository
   pull request whose **only** conflicting file is the worklog and whose two sides only *add* lines to it, keeping both entries (the pull
   request's first), and pushes the merge commit, which starts the checks again. It pushes only after the validation and the tests pass on
   the merged tree; if one fails, it pushes nothing and says so in a comment on the pull request. Any other conflict, a fork pull request
-  and a branch that moved during the run are left to the author (the push is never forced). The job that runs the pull request's code
+  and a branch that moved during the run are left to the author (the push is leased on the head the run saw). The job that runs the pull request's code
   has no secrets; the job that pushes runs only `main`'s `scripts/worklog_conflicts.py` and pushes only the tree that was verified.
 
 - **`data-validation/` + `scripts/validate_data.py`** ([#168](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/168)) — SHACL files
