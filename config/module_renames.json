@@ -1,0 +1,10 @@
+{
+  "renames": [
+    {"from": "aec_provenance", "to": "adiro_provenance", "reason": "#171: the aec_ prefix repeats the A of ADIRO"},
+    {"from": "aec_geometry", "to": "adiro_geometry", "reason": "#171: the aec_ prefix repeats the A of ADIRO"},
+    {"from": "aec_drawing_metadata", "to": "adiro_drawing_metadata", "reason": "#171: the aec_ prefix repeats the A of ADIRO"},
+    {"from": "aec_common_symbols", "to": "adiro_common_symbols", "reason": "#171: the aec_ prefix repeats the A of ADIRO"},
+    {"from": "aec_domain_common", "to": "adiro_domain_common", "reason": "#171: the aec_ prefix repeats the A of ADIRO"},
+    {"from": "aec_facade_domain", "to": "adiro_facade_domain", "reason": "#171: the aec_ prefix repeats the A of ADIRO"}
+  ]
+}

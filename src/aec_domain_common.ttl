@@ -15,6 +15,8 @@
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
+    owl:deprecated true ;
+    dcterms:isReplacedBy <https://w3id.org/adiro/adiro_domain_common> ;
     owl:priorVersion <https://w3id.org/adiro/aec_domain_common/1.0.0> ;
     owl:priorVersion <https://w3id.org/adiro/aec_domain_common/2.0.0> ;
     owl:priorVersion <https://w3id.org/adiro/aec_domain_common/2.0.1> ;

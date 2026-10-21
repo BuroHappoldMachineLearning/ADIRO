@@ -17,6 +17,41 @@ against a reset branch on a bare remote, `find`'s polling and fork skip, the ver
 Replayed the real hand-resolved merge `3fab290` (fix/146 with main): the script produces the identical tree. Full suite 324 passed. Not run: the workflow itself (needs the app secrets and a real
 conflicting PR); the first real conflict after merge is the test. Not done: adding it to `alert-on-failure.yml` (it is not a release or publishing workflow; a failure is visible on the run).
 
+## 2026-10-21 - The final, deprecated release of the aec_* modules (#171, step 2)
+
+Each `src/aec_*.ttl` header gains `owl:deprecated true` and `dcterms:isReplacedBy <https://w3id.org/adiro/adiro_*>` (nothing else changes, terms included), and each changelog a "Deprecated"
+entry at the top of `[Unreleased]`. The Release PR then releases all six: `aec_provenance` 1.1.0, `aec_geometry` 2.0.0, `aec_drawing_metadata` 6.0.0 (already pending) and `aec_common_symbols` 4.0.1,
+`aec_domain_common` 3.0.1, `aec_facade_domain` 3.0.1 (a header change is a PATCH). The new modules will then be 2.0.0, 3.0.0, 7.0.0, 5.0.0, 4.0.0, 4.0.0, as the plan says. The docs show it, from the
+header: a "Deprecated" warning on the Markdown page (`generate_docs.deprecation_notice`) and a "Deprecated" row in the pyLODE Metadata block (`pylode_metadata.add_deprecation`; pyLODE shows neither
+annotation). The replacement is a link only when its page is generated in the same run, so nothing links to an `adiro_*` address before step 3 publishes it (the link check would fail the deploy).
+
+Verified: full suite 341 passed (new tests for the notice, the pyLODE row and a guard that every old module still in `src/` is deprecated and names its successor from the map); `validate_ontology.py`
+clean; `ENFORCE=1 run_reasoning.sh` passes; `mkdocs build --strict` passes. ROBOT's advisory `missing_obsolete_label` now flags `aec_common_symbols` (an OBO convention that a deprecated entity's
+label starts with "obsolete"): left as it is, ADIRO marks deprecation with `owl:deprecated` and keeps the title. Not deprecated term by term: the step-3 mapping (old term IRI to new) carries that.
+
+Next: merge this, then the Release PR (the final `aec_*` releases), then step 3 (the rename), merged together with the Release PR that follows it.
+
+## 2026-10-21 - The rename map and the tooling that follows it (#171, step 1)
+
+Step 1 of the plan on [#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171) (decided on the issue: `aec_` becomes `adiro_`, the numbering continues as the old final + 1 MAJOR,
+two releases: the final deprecated `aec_*` release first, then the rename). No module is renamed yet. `config/module_renames.json` holds the six renames; `scripts/module_renames.py` loads and checks it
+(no module renamed twice, no two renamed to one, no cycle) and maps IRIs (the ontology IRI and its `#` terms, through a chain of renames; a version IRI is left alone). Followed by:
+`compat_diff.py` (baseline = the old module's last release when the new one has none, compared under the new names, one `MODULE_RENAMED` (breaking) plus what really changed; the old module leaving
+`src/` while its successor is there is `MODULE_RETIRED`, no bump; the PR-diff section does the same against the base branch), `prepare_release.py` (`released_module`, `owl:priorVersion` across the lineage,
+the PR list from the old module's tag, the order and the AGENTS versions line regex), `validate_ontology.py` (priorVersion IRIs of a module it replaced are accepted and required), `check_prior_versions.py`
+(module taken from the IRI), `release_notes.py` (previous release and compare link across the rename, both files' commits), `ontology_versions.py` + `generate_docs.py` (the dropdown lists the old module's
+releases after its own; the dependency order puts the new module in the old one's place) and `release_badges.py` ("(deprecated)" once the latest *released* file says `owl:deprecated true`). Docs:
+`docs/contribute/versioning/index.md` "Renaming a module", the diff spec, `AGENTS.md`.
+
+Verified: `tests/test_module_renames.py` (28 tests, a toy two-module rename end to end, including the generated page); reverting each changed script in turn makes at least one of them fail. Full suite 338 passed.
+`compat_diff.py` and `prepare_release.py plan` give the same output on the real repository before and after (nothing is renamed yet). Not run: the workflows themselves (no change to them; the tag pattern
+in `backup-version.yml` already accepts `adiro_*`).
+
+Decisions in the code: a renamed module enters `src/` declaring the old module's last released version (its version IRI `…/adiro_x/<that version>` is transient, replaced by the release cut), so the cut
+yields old + 1 MAJOR with no special case. Left for later steps: the deprecation of the old modules (step 2); the new files, `catalog-v001.xml`, the images, the migration mapping and script (step 3);
+the old modules' pages once they leave `src/` (step 4: the generator only builds pages for modules in `src/`, and the dropdown links to `ontologies/<old>/`, so those pages must stay generated, pinned to
+the final release).
+
 ## 2026-10-20 - The pyLODE Metadata block shows the module's own IRI and title
 
 Implemented [#146](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/146). Cause, read in pyLODE's source: `OntPub._make_metadata` merges every `owl:Ontology`, `skos:ConceptScheme` and `prof:Profile` and keeps the last subject's IRI, so

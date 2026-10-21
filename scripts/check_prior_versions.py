@@ -39,14 +39,19 @@ SITE = "https://w3id.org/adiro"
 
 
 def prior_versions(src_dir):
-    """(module, iri, version) for every owl:priorVersion in the ontology files under `src_dir`."""
+    """(module, iri, version) for every owl:priorVersion in the ontology files under `src_dir`.
+
+    The module is the one the IRI names (``…/<module>/<version>``), not the file's: a renamed module also names the
+    releases of the module it replaced (#171).
+    """
     found = []
     for ttl in sorted(Path(src_dir).glob("*.ttl")):
         graph = Graph()
         graph.parse(str(ttl), format="turtle")
         for ont in graph.subjects(RDF.type, OWL.Ontology):
             for iri in sorted(str(o) for o in graph.objects(ont, OWL.priorVersion)):
-                found.append((ttl.stem, iri, iri.rsplit("/", 1)[-1]))
+                module, version = iri.rsplit("/", 2)[-2:]
+                found.append((module, iri, version))
     return found
 
 

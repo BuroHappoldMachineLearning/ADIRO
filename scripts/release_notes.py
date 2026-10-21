@@ -69,21 +69,26 @@ def bump_kind(previous, version):
     return "MAJOR" if new[0] > old[0] else "MINOR" if new[1] > old[1] else "PATCH"
 
 
-def render(module, version, previous, changelog, changes, repo, previous_tagged=True):
-    """The Release body. `changes` is a list of (reference, text) pairs; reference is '#N' or a short SHA."""
+def render(module, version, previous, changelog, changes, repo, previous_tagged=True, previous_module=None):
+    """The Release body. `changes` is a list of (reference, text) pairs; reference is '#N' or a short SHA.
+
+    `previous_module` is the module a renamed module replaced (#171), when `previous` is that module's release.
+    """
     docs = f"{SITE}/ontologies/{module}/"
     kind = bump_kind(previous, version)
+    old = previous_module or module
     parts = [f"**{'First release' if kind == 'FIRST' else kind + ' release'}**"]
     if previous:
-        parts.append(f"{previous} → {version}")
+        parts.append(f"`{old}` {previous} → `{module}` {version}" if previous_module else f"{previous} → {version}")
     if previous and previous_tagged:
-        parts.append(f"[Compare](https://github.com/{repo}/compare/{module}-v{previous}...{module}-v{version})")
+        parts.append(f"[Compare](https://github.com/{repo}/compare/{old}-v{previous}...{module}-v{version})")
     lines = [
         " · ".join(parts),
         "",
         f"- Documentation: {docs}",
         f"- Ontology (latest): {W3ID}/{module}",
         f"- This version ({version}): {W3ID}/{module}/{version}",
+        *([f"- Renamed from `{previous_module}`: its releases keep their own IRIs, at {W3ID}/{previous_module}"] if previous_module else []),
         "",
         changelog,
         "",
@@ -103,11 +108,16 @@ def _run(args, root):
     return subprocess.run(args, cwd=root, capture_output=True, text=True)
 
 
-def collect_changes(root, repo, module, previous, tag):
-    """(reference, text) per PR (or bare commit) that changed the module's ontology file between the previous tag and `tag`."""
+def collect_changes(root, repo, module, previous, tag, previous_module=None):
+    """(reference, text) per PR (or bare commit) that changed the module's ontology file between the previous tag and `tag`.
+
+    For a renamed module (#171) the previous tag is the old module's (`previous_module`), and both files count.
+    """
     if previous is None:
         return []
-    log = _run(["git", "log", "--format=%H%x09%s", f"{module}-v{previous}..{tag}", "--", f"src/{module}.ttl"], root)
+    old = previous_module or module
+    paths = [f"src/{module}.ttl"] + ([f"src/{old}.ttl"] if old != module else [])
+    log = _run(["git", "log", "--format=%H%x09%s", f"{old}-v{previous}..{tag}", "--", *paths], root)
     seen, changes = set(), []
     for line in log.stdout.splitlines():
         sha, _, subject = line.partition("\t")
@@ -139,16 +149,38 @@ def main(argv=None):
     args = ap.parse_args(argv)
     root = Path(args.root)
 
-    tags = _run(["git", "tag", "--list", f"{args.module}-v*"], root).stdout.split()
     cl = root / "changelogs" / f"{args.module}.md"
     cl_text = cl.read_text(encoding="utf-8") if cl.is_file() else ""
-    previous = previous_released(tags, cl_text, args.module, args.version)
-    previous_tagged = bool(previous) and f"{args.module}-v{previous}" in tags
+    previous_module, previous, tags = previous_across_renames(root, args.module, args.version, cl_text)
+    previous_tagged = bool(previous) and f"{previous_module}-v{previous}" in tags
     text = section(cl_text, args.version) if cl_text else None
     changelog = text or f"_No changelog entry for {args.version}._"
-    changes = collect_changes(root, args.repo, args.module, previous, f"{args.module}-v{args.version}") if previous_tagged else []
+    renamed = previous_module if previous_module != args.module else None
+    changes = (collect_changes(root, args.repo, args.module, previous, f"{args.module}-v{args.version}", renamed)
+               if previous_tagged else [])
     sys.stdout.buffer.write(
-        render(args.module, args.version, previous, changelog, changes, args.repo, previous_tagged).encode("utf-8"))
+        render(args.module, args.version, previous, changelog, changes, args.repo, previous_tagged, renamed).encode("utf-8"))
+
+
+def previous_across_renames(root, module, version, changelog_text, tag_lister=None):
+    """(module, previous version, its tags): the previous release of `module`, or, for a renamed module's first
+    release, the last release of the module it replaced (config/module_renames.json, #171)."""
+    import module_renames as mr
+
+    def list_tags(name):
+        return tag_lister(name) if tag_lister else _run(["git", "tag", "--list", f"{name}-v*"], root).stdout.split()
+
+    names = mr.lineage(mr.load(root), module)
+    for name in names:
+        tags = list_tags(name)
+        text = changelog_text
+        if name != module:
+            old_log = Path(root) / "changelogs" / f"{name}.md"
+            text = old_log.read_text(encoding="utf-8") if old_log.is_file() else ""
+        previous = previous_released(tags, text, name, version)
+        if previous:
+            return name, previous, tags
+    return module, None, list_tags(module)
 
 
 if __name__ == "__main__":

@@ -26,6 +26,9 @@ from pathlib import Path
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.namespace import OWL, RDF, RDFS, XSD
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import module_renames as mr  # noqa: E402
+
 SEMVER_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
 
 # --- severity (spec Step 5) ---------------------------------------------------
@@ -50,6 +53,11 @@ DELTA_SEVERITY = {
     "TERM_REMOVED": BREAKING,
     "TYPE_CHANGED": BREAKING,
     "SUPERPROPERTY_CHANGED": BREAKING,
+    # A rename (config/module_renames.json, #171) changes every term IRI of the module: one MAJOR change. The terms
+    # are compared with the old IRIs mapped to the new ones, so only what changed besides the name is listed with it.
+    "MODULE_RENAMED": BREAKING,
+    # A module that a renamed one replaced leaves src/: its releases stay published, so nothing changes for a consumer.
+    "MODULE_RETIRED": NON_BREAKING,
 }
 
 # --- SemVer bump levels -------------------------------------------------------
@@ -387,7 +395,7 @@ def apply_bump(version, bump):
 
 
 def latest_snapshot(repo_root, module):
-    base = repo_root / "versions" / module
+    base = Path(repo_root) / "versions" / module
     if not base.is_dir():
         return None
     versions = []
@@ -400,24 +408,52 @@ def latest_snapshot(repo_root, module):
     return max(versions, key=lambda t: t[0])[1]
 
 
+def baseline(repo_root, module, renames=None):
+    """(module, snapshot) of the release to compare `module` with, or (None, None).
+
+    The module's own last release; for a renamed module that has none yet, the last release of the module it replaced
+    (config/module_renames.json, #171), so the new name continues the old one's numbering.
+    """
+    renames = mr.load(repo_root) if renames is None else renames
+    for name in mr.lineage(renames, module):
+        snapshot = latest_snapshot(repo_root, name)
+        if snapshot is not None:
+            return name, snapshot
+    return None, None
+
+
 def analyze_module(repo_root, module):
+    repo_root = Path(repo_root)
+    renames = mr.load(repo_root)
     new_file = repo_root / "src" / f"{module}.ttl"
-    old_file = latest_snapshot(repo_root, module)
+    base_module, old_file = baseline(repo_root, module, renames)
     if old_file is None:
         return {"module": module, "status": "no-baseline"}
 
     old_g, new_g = Graph(), Graph()
     old_g.parse(str(old_file), format="turtle")
+    renamed = base_module != module
+    if renamed:  # compare under the new names, so the rename is one change and the rest is what really changed
+        old_g = mr.rewrite_graph(old_g, renames)
     removed = not new_file.is_file()  # the module was deleted or renamed: every released term is gone
     if not removed:
         new_g.parse(str(new_file), format="turtle")
+    replaced_by = mr.successor(renames, module) if removed else None
+    retired = bool(replaced_by) and (repo_root / "src" / f"{replaced_by}.ttl").is_file()
 
-    deltas = compute_deltas(build_symbols(old_g), build_symbols(new_g))
+    if retired:  # its successor carries the history on; the old releases stay published
+        deltas = [("MODULE_RETIRED", mr.BASE + module)]
+    else:
+        deltas = compute_deltas(build_symbols(old_g), build_symbols(new_g))
+        if renamed and not removed:
+            deltas.insert(0, ("MODULE_RENAMED", mr.BASE + module))
     req = required_bump(deltas)
     old_v, new_v = version_of(old_g), version_of(new_g)
     decl = None if removed else declared_bump(old_v, new_v)
 
-    if removed:
+    if retired:
+        verdict = "MODULE_RETIRED"
+    elif removed:
         verdict = "MODULE_REMOVED"
     elif decl == "decreased":
         verdict = "VERSION_DECREASED"
@@ -448,6 +484,10 @@ def analyze_module(repo_root, module):
         "prospective_version": apply_bump(old_v, req),
         "verdict": verdict,
         "deltas": deltas,
+        # the module whose release is the baseline: the module itself, or the one it replaced (#171)
+        "baseline_module": base_module,
+        "renamed_from": base_module if renamed else None,
+        "replaced_by": replaced_by if retired else None,
     }
 
 
@@ -456,12 +496,24 @@ def analyze_pr_change(repo_root, base_dir, module):
 
     Returns {module, deltas, required_bump}, or None if the module is in neither place. A module
     absent from base_dir (new in this PR) diffs as all-added; one absent from `src/` (deleted or
-    renamed) diffs as all-removed.
+    renamed) diffs as all-removed. The rename map (#171) refines both: a new module that replaces one in the
+    base diffs against it under the new names, plus one MODULE_RENAMED change, and a module that leaves `src/`
+    while its successor is there is one MODULE_RETIRED change.
     """
+    repo_root = Path(repo_root)
+    renames = mr.load(repo_root)
     new_file = repo_root / "src" / f"{module}.ttl"
     old_file = Path(base_dir) / f"{module}.ttl"
     if not new_file.is_file() and not old_file.is_file():
         return None
+    replaced_by = mr.successor(renames, module)
+    if old_file.is_file() and not new_file.is_file() and replaced_by and (repo_root / "src" / f"{replaced_by}.ttl").is_file():
+        deltas = [("MODULE_RETIRED", mr.BASE + module)]
+        return {"module": module, "deltas": deltas, "required_bump": required_bump(deltas), "details": {}}
+    renamed_from = None
+    old_name = mr.predecessor(renames, module)
+    if not old_file.is_file() and old_name and (Path(base_dir) / f"{old_name}.ttl").is_file():
+        renamed_from, old_file = old_name, Path(base_dir) / f"{old_name}.ttl"
     new_syms = {}
     if new_file.is_file():
         new_g = Graph()
@@ -471,11 +523,15 @@ def analyze_pr_change(repo_root, base_dir, module):
     if old_file.is_file():
         old_g = Graph()
         old_g.parse(str(old_file), format="turtle")
+        if renamed_from:
+            old_g = mr.rewrite_graph(old_g, renames)
         old_syms = build_symbols(old_g)
     # a module present in the base but not in the PR is deleted/renamed: every term diffs as removed
     deltas = compute_deltas(old_syms, new_syms)
+    if renamed_from:
+        deltas.insert(0, ("MODULE_RENAMED", mr.BASE + module))
     return {"module": module, "deltas": deltas, "required_bump": required_bump(deltas),
-            "details": annotation_details(old_syms, new_syms)}
+            "details": annotation_details(old_syms, new_syms), "renamed_from": renamed_from}
 
 
 def print_report(result):
@@ -487,8 +543,9 @@ def print_report(result):
     by_sev = {}
     for d, iri in deltas:
         by_sev.setdefault(DELTA_SEVERITY[d], []).append((d, iri))
+    renamed = f" (renamed from {result['renamed_from']})" if result.get("renamed_from") else ""
     print(
-        f"  {m}: {result['old_version']} -> {result['new_version']} | "
+        f"  {m}{renamed}: {result['old_version']} -> {result['new_version']} | "
         f"required bump: {result['required_bump'].upper()} | "
         f"declared: {(result['declared_bump'] or 'n/a')} | {result['verdict']}"
     )
@@ -589,10 +646,26 @@ def to_markdown(results, pr_results=None, links=None):
         out.append("| Module | Current | → Next version |")
         out.append("|---|:--:|:--:|")
         for r in changed:
+            current = f"`{r['renamed_from']}` `{r['old_version']}`" if r.get("renamed_from") else f"`{r['old_version']}`"
             out.append(
-                f"| `{r['module']}` | `{r['old_version']}` | "
+                f"| `{r['module']}` | {current} | "
                 f"**`{r['prospective_version']}`** ({_BUMP_LABEL[r['required_bump']]}) |"
             )
+
+    renamed = [r for r in changed if r.get("renamed_from")]
+    if renamed:
+        out.append("")
+        out.append(
+            "> ℹ️ Renamed (`config/module_renames.json`): "
+            + ", ".join(f"`{r['module']}` replaces `{r['renamed_from']}`" for r in renamed)
+            + ". A renamed module continues the old one's numbering: its next version is the old module's last release "
+            "plus a MAJOR, and its terms are compared with the old IRIs mapped to the new ones."
+        )
+    retired = [r for r in analyzed if r.get("replaced_by")]
+    if retired:
+        out.append("")
+        out.append("> ℹ️ Retired from `src/` (its releases stay published): "
+                   + ", ".join(f"`{r['module']}` (replaced by `{r['replaced_by']}`)" for r in retired) + ".")
 
     if skipped:
         names = ", ".join(f"`{r['module']}`" for r in skipped)

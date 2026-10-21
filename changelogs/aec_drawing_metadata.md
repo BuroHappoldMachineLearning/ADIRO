@@ -7,6 +7,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 _Pending changes accumulate here. `owl:versionInfo` / `owl:versionIRI` are bumped only at a release cut._
 
+### Deprecated
+- **This module is deprecated, and this is its final release** ([#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171)). It is replaced by `adiro_drawing_metadata` (`https://w3id.org/adiro/adiro_drawing_metadata`), the same module under a name without the repeated "AEC", which continues this module's version numbering: its first release is this one plus a MAJOR. The `owl:Ontology` header says `owl:deprecated true` and `dcterms:isReplacedBy` `adiro_drawing_metadata`; nothing else changes. Every release of this module, this one included, stays published at its own IRI, and its terms keep their IRIs. The new module comes with a mapping from each term to its new IRI, and a script that rewrites a graph. Downstream consumers need to move to the new module.
+
 ### Added
 - **`isOnPage`** ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)): from a `DrawingSheet` to the `aprov:FilePage` it is on. One drawing can be on a page of several files and one file holds many drawings, so the page belongs to this link. The frames that read the page are reached with the inverse path `^describesPage` (`aec_geometry`).
 - **A `MetadataContainer`, a `Layout` and a `DrawingElement` may carry a `BoundingBox`** ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)): an explicit `min 0` restriction on `geom:hasBoundingBox` on each, inherited by `Titleblock`, `RevisionTable`, `Legend`, `KeyPlan` and `Note` for the first and by every symbol and component for the last, so the region of each (which what is read from it is located by) is stated in this module and not only in the documentation; the import of `aec_geometry` stays.
