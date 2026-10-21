@@ -24,8 +24,9 @@
     dcterms:isReplacedBy <https://w3id.org/adiro/adiro_geometry> ;
     owl:imports <https://w3id.org/adiro/aec_provenance> ;
     owl:priorVersion <https://w3id.org/adiro/aec_geometry/1.0.0> ;
-    owl:versionIRI <https://w3id.org/adiro/aec_geometry/1.0.1> ;
-    owl:versionInfo "1.0.1" .
+    owl:priorVersion <https://w3id.org/adiro/aec_geometry/1.0.1> ;
+    owl:versionIRI <https://w3id.org/adiro/aec_geometry/2.0.0> ;
+    owl:versionInfo "2.0.0" .
 
 #################################################################
 #    GeoSPARQL term reused for alignment

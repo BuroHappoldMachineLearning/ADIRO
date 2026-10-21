@@ -5,6 +5,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [1.1.0] — 2026-10-21
+
 ### Deprecated
 - **This module is deprecated, and this is its final release** ([#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171)). It is replaced by `adiro_provenance` (`https://w3id.org/adiro/adiro_provenance`), the same module under a name without the repeated "AEC", which continues this module's version numbering: its first release is this one plus a MAJOR. The `owl:Ontology` header says `owl:deprecated true` and `dcterms:isReplacedBy` `adiro_provenance`; nothing else changes. Every release of this module, this one included, stays published at its own IRI, and its terms keep their IRIs. The new module comes with a mapping from each term to its new IRI, and a script that rewrites a graph. Downstream consumers need to move to the new module.
 
