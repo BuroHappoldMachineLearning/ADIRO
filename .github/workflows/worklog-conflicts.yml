@@ -1,0 +1,184 @@
+name: Worklog conflicts
+
+# #206. Every pull request adds an entry at the top of docs/ai/worklog.md, so two open pull requests conflict there as
+# soon as one merges, and the resolution is always "keep both". This workflow does that merge for the author: for each
+# open same-repository pull request into main whose ONLY conflict is the worklog, it merges main into the branch with
+# both entries kept, checks the result, and pushes the merge commit as the ADIRO Bot. Anything else is left to the author.
+# All logic is scripts/worklog_conflicts.py.
+#
+# A pull request starts to conflict when ANOTHER one merges, so the main trigger is a push to main;
+# `pull_request_target` covers one that already conflicts when it is opened or pushed to. It is `pull_request_target`,
+# not `pull_request`, for two reasons: GitHub does not run a `pull_request` workflow while the pull request has a merge
+# conflict, and `pull_request_target` always runs THIS file as it is on main, so a pull request cannot change the
+# workflow that receives the bot's secrets. There is no `workflow_dispatch` for the same reason (a dispatch runs the
+# file of the branch it names).
+#
+# The three jobs keep the bot token away from the pull request's code:
+#   find  - read-only GITHUB_TOKEN; lists the conflicting pull requests.
+#   merge - NO secrets; merges and runs the validation and the tests of the merged tree (this runs the PR's code).
+#   push  - the ADIRO Bot token; runs only main's copy of the script, redoes the same merge without running anything
+#           from the branch, pushes it only if the tree is the one `merge` verified, with a lease on the head `find`
+#           saw: a branch that moved meanwhile (a new commit, a rebase or a reset) rejects the push and is left alone.
+#           A push with the app token starts the PR checks again.
+# Fork pull requests are skipped (the bot cannot push to a fork); the find job's log says so.
+
+on:
+  push:
+    branches: [main]
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: worklog-conflicts-${{ github.event.pull_request.number || 'main' }}
+  cancel-in-progress: false
+
+jobs:
+  find:
+    if: github.event_name != 'pull_request_target' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    outputs:
+      prs: ${{ steps.find.outputs.prs }}
+    steps:
+      - name: Checkout the default branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}   # main's script (pull_request_target checks out main anyway)
+          persist-credentials: false
+
+      - name: List the conflicting pull requests
+        id: find
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          BASE: ${{ github.event.repository.default_branch }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          prs="$(python3 scripts/worklog_conflicts.py find --base "$BASE" ${PR:+--pr "$PR"})"
+          echo "Conflicting pull requests: $prs"
+          echo "prs=$prs" >> "$GITHUB_OUTPUT"
+
+  merge:
+    needs: find
+    if: needs.find.outputs.prs != '' && needs.find.outputs.prs != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        pr: ${{ fromJSON(needs.find.outputs.prs) }}
+    steps:
+      - name: Checkout the default branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+          enable-cache: false   # this job runs the pull request's code: it must not write a cache that main's runs read
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Merge, resolve the worklog and verify
+        env:
+          BASE: ${{ github.event.repository.default_branch }}
+          BRANCH: ${{ matrix.pr.branch }}
+          HEAD_SHA: ${{ matrix.pr.head_sha }}
+        run: |
+          # Run main's copy of the script: the merge checks out the branch, whose scripts/ may differ.
+          cp scripts/worklog_conflicts.py "$RUNNER_TEMP/worklog_conflicts.py"
+          git fetch --quiet origin "$HEAD_SHA"
+          python3 "$RUNNER_TEMP/worklog_conflicts.py" merge --head "$HEAD_SHA" --base "origin/$BASE" \
+            --branch "$BRANCH" --out "$RUNNER_TEMP/result/status.json"
+
+      - name: Keep the result for the push job
+        uses: actions/upload-artifact@v4
+        with:
+          name: worklog-merge-${{ matrix.pr.number }}
+          path: ${{ runner.temp }}/result/status.json
+          retention-days: 1
+
+  push:
+    needs: [find, merge]
+    if: always() && needs.find.outputs.prs != '' && needs.find.outputs.prs != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        pr: ${{ fromJSON(needs.find.outputs.prs) }}
+    steps:
+      - name: Fetch the verified result
+        uses: actions/download-artifact@v4
+        continue-on-error: true   # no result (the merge job failed): the script then pushes nothing
+        with:
+          name: worklog-merge-${{ matrix.pr.number }}
+          path: ${{ runner.temp }}/result
+
+      - name: Checkout the default branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Redo the merge and compare it with the verified one
+        id: prepare
+        env:
+          BASE: ${{ github.event.repository.default_branch }}
+          BRANCH: ${{ matrix.pr.branch }}
+          HEAD_SHA: ${{ matrix.pr.head_sha }}
+        run: |
+          cp scripts/worklog_conflicts.py "$RUNNER_TEMP/worklog_conflicts.py"
+          python3 "$RUNNER_TEMP/worklog_conflicts.py" comment "$RUNNER_TEMP/result/status.json" \
+            --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" > "$RUNNER_TEMP/comment.md"
+          git fetch --quiet origin "$HEAD_SHA"
+          # Merge in a separate worktree: this checkout must stay on main, because the comment step loads
+          # ./.github/actions/sticky-comment from it with the bot token.
+          git worktree add --quiet --detach "$RUNNER_TEMP/merge" "origin/$BASE"
+          if python3 "$RUNNER_TEMP/worklog_conflicts.py" push --repo "$RUNNER_TEMP/merge" --head "$HEAD_SHA" \
+               --base "origin/$BASE" --branch "$BRANCH" --out "$RUNNER_TEMP/result/status.json"; then
+            echo "push=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create ADIRO Bot token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ADIRO_BOT_APP_ID }}
+          private-key: ${{ secrets.ADIRO_BOT_PRIVATE_KEY }}
+          permission-contents: write        # push the merge commit
+          permission-pull-requests: write   # the comment when a check fails
+
+      - name: Push the merge commit
+        if: steps.prepare.outputs.push == 'true'
+        env:
+          TOKEN: ${{ steps.app-token.outputs.token }}
+          BRANCH: ${{ matrix.pr.branch }}
+          HEAD_SHA: ${{ matrix.pr.head_sha }}
+        run: |
+          # Leased on the head `find` saw: if the branch moved since (a new commit, a rebase, or a reset to an earlier
+          # commit, which a plain push would silently undo by fast-forwarding), the push is rejected and the branch is
+          # left alone.
+          if git -C "$RUNNER_TEMP/merge" -c core.hooksPath=/dev/null push \
+               --force-with-lease="refs/heads/${BRANCH}:${HEAD_SHA}" \
+               "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/${BRANCH}"; then
+            echo "Merged main into $BRANCH with both worklog entries kept." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "The branch $BRANCH moved while this ran; left to its author." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Report a failing check on the pull request
+        uses: ./.github/actions/sticky-comment
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          marker: "<!-- worklog-conflict -->"
+          file: ${{ runner.temp }}/comment.md
+          pr-number: ${{ matrix.pr.number }}
+          head-sha: ${{ matrix.pr.head_sha }}

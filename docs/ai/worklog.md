@@ -1,3 +1,22 @@
+## 2026-10-21 - The ADIRO Bot resolves worklog-only conflicts on pull requests
+
+Implemented option 1 of [#206](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/206) (chosen by the maintainer over one file per entry, a union merge driver and generated entries), with the
+narrow filter and mitigation (a), verify before pushing. `.github/workflows/worklog-conflicts.yml` runs on a push to `main` and on `pull_request_target` opened/reopened/synchronize/ready_for_review;
+logic in `scripts/worklog_conflicts.py` (standard library only). Three jobs, so the bot token never meets the pull request's code: `find` (read-only token; open same-repo PRs into `main` that are
+`CONFLICTING`, polling while `mergeable` is `UNKNOWN`), `merge` (no secrets, no uv cache; acts only if the worklog is the sole conflict and both sides only add lines to it, keeps both, PR's entry
+first, runs `uv sync`, `validate_ontology.py` and the same pytest command as `validate-ontology.yml`), `push` (bot token; main's script redoes the merge in a separate worktree, pushes only if the tree
+equals the verified one, leased on the head `find` saw; a sticky comment reports a failing check and is removed after a successful push). The worklog is merged from each side's insertions against
+the merge base, not with `git merge-file`, which runs two entries together and keeps a line that ends both (a blank line, a shared closing sentence) only once.
+
+Review of [#209](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/209) (all three accepted): `pull_request` does not run while a PR conflicts and runs the PR's own copy of the workflow with
+secrets, so the trigger is `pull_request_target` and `workflow_dispatch` is gone; a plain push fast-forwards a branch the author reset meanwhile, so the push is leased; the shared-ending loss led
+to the insertion merge.
+
+Verified: `tests/test_worklog_conflicts.py` (14 tests: a toy repository for the merge, the other-conflict, rewritten-entry, clean, shared-ending and failing-check cases, the push guard, a lease
+against a reset branch on a bare remote, `find`'s polling and fork skip, the verify command matching CI, the triggers, no secrets in the merge job). The three review tests fail on the first version.
+Replayed the real hand-resolved merge `3fab290` (fix/146 with main): the script produces the identical tree. Full suite 324 passed. Not run: the workflow itself (needs the app secrets and a real
+conflicting PR); the first real conflict after merge is the test. Not done: adding it to `alert-on-failure.yml` (it is not a release or publishing workflow; a failure is visible on the run).
+
 ## 2026-10-21 - The final, deprecated release of the aec_* modules (#171, step 2)
 
 Each `src/aec_*.ttl` header gains `owl:deprecated true` and `dcterms:isReplacedBy <https://w3id.org/adiro/adiro_*>` (nothing else changes, terms included), and each changelog a "Deprecated"
