@@ -1,56 +1,166 @@
 {
   "version": 1,
   "nodePositions": {
-    "Entity": {
-      "x": 368,
-      "y": 236
-    },
-    "Activity": {
-      "x": 7,
-      "y": 361
-    },
-    "Agent": {
-      "x": 6,
-      "y": 879
-    },
     "InferredEntity": {
-      "x": 366,
-      "y": 415
+      "x": 849,
+      "y": 423
     },
     "FieldAssertion": {
-      "x": 435,
-      "y": 626
+      "x": 845,
+      "y": 819
     },
     "InferenceMeta": {
-      "x": 8,
-      "y": 619
+      "x": -593,
+      "y": 425
+    },
+    "Party": {
+      "x": -97,
+      "y": 1369
+    },
+    "Person": {
+      "x": 290,
+      "y": 1375
+    },
+    "Organisation": {
+      "x": -584,
+      "y": 1372
+    },
+    "DrawingFile": {
+      "x": -9,
+      "y": 559
+    },
+    "FilePage": {
+      "x": 441,
+      "y": 563
+    },
+    "AssertionOutcome": {
+      "x": 1336,
+      "y": 714
+    },
+    "AcceptanceStatus": {
+      "x": 1331,
+      "y": 1082
+    },
+    "Entity": {
+      "x": 463,
+      "y": 220
+    },
+    "Activity": {
+      "x": -588,
+      "y": 179
+    },
+    "Agent": {
+      "x": -592,
+      "y": 820
+    },
+    "Document": {
+      "x": -9,
+      "y": 192
     },
     "http://www.w3.org/2004/02/skos/core#Concept": {
-      "x": 435,
-      "y": 904
+      "x": 1326,
+      "y": 901
+    },
+    "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Party": {
+      "x": -100,
+      "y": 1129
+    },
+    "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Person": {
+      "x": 295,
+      "y": 1162
+    },
+    "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Organisation": {
+      "x": -580,
+      "y": 1168
+    },
+    "__dataprop__FieldAssertion__acceptedAt": {
+      "x": 766,
+      "y": 911
+    },
+    "__dataprop__FieldAssertion__acceptedUnder": {
+      "x": 904,
+      "y": 911
     },
     "__dataprop__FieldAssertion__capturedCaption": {
-      "x": 310,
-      "y": 694
+      "x": 789,
+      "y": 975
     },
     "__dataprop__FieldAssertion__hasLiteralValue": {
-      "x": 567,
-      "y": 696
+      "x": 907,
+      "y": 976
+    },
+    "__dataprop__DrawingFile__contentHash": {
+      "x": -126,
+      "y": 646
+    },
+    "__dataprop__DrawingFile__fileCreatedAt": {
+      "x": 21,
+      "y": 656
+    },
+    "__dataprop__DrawingFile__fileModifiedAt": {
+      "x": 131,
+      "y": 651
+    },
+    "__dataprop__DrawingFile__fileName": {
+      "x": -224,
+      "y": 646
+    },
+    "__dataprop__DrawingFile__fileSize": {
+      "x": -88,
+      "y": 694
+    },
+    "__dataprop__DrawingFile__hashAlgorithm": {
+      "x": 64,
+      "y": 708
+    },
+    "__dataprop__DrawingFile__mediaType": {
+      "x": 170,
+      "y": 699
+    },
+    "__dataprop__DrawingFile__pageCount": {
+      "x": -79,
+      "y": 746
+    },
+    "__dataprop__DrawingFile__storageLocation": {
+      "x": 49,
+      "y": 751
+    },
+    "__dataprop__FilePage__displayHeightPt": {
+      "x": 300,
+      "y": 655
+    },
+    "__dataprop__FilePage__displayWidthPt": {
+      "x": 509,
+      "y": 654
+    },
+    "__dataprop__FilePage__pageNumber": {
+      "x": 641,
+      "y": 651
+    },
+    "__dataprop__FilePage__pdfRotationDeg": {
+      "x": 407,
+      "y": 654
     },
     "__dataprop__InferredEntity__hasConfidence": {
-      "x": 366,
-      "y": 534
+      "x": 844,
+      "y": 543
     },
     "__dataprop__InferenceMeta__inferredAt": {
-      "x": 120,
-      "y": 740
+      "x": -502,
+      "y": 547
     },
     "__dataprop__unattached__endedAtTime": {
-      "x": 220,
-      "y": 1024
+      "x": 419,
+      "y": 940
     }
   },
   "edgeStyleConfig": {
+    "acceptedBy": {
+      "show": true,
+      "showLabel": true,
+      "color": "#8026d9",
+      "lineType": "solid"
+    },
     "assertedAbout": {
       "show": true,
       "showLabel": true,
@@ -69,22 +179,70 @@
       "color": "#264ad9",
       "lineType": "solid"
     },
+    "belongsToFile": {
+      "show": true,
+      "showLabel": true,
+      "color": "#2670d9",
+      "lineType": "solid"
+    },
+    "fileCreatedBy": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26afd9",
+      "lineType": "solid"
+    },
+    "fileModifiedBy": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26d9c4",
+      "lineType": "solid"
+    },
+    "hasAcceptance": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26d985",
+      "lineType": "solid"
+    },
+    "hasInferenceMeta": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26d946",
+      "lineType": "solid"
+    },
+    "hasOutcome": {
+      "show": true,
+      "showLabel": true,
+      "color": "#46d926",
+      "lineType": "solid"
+    },
     "hasValueEntity": {
       "show": true,
       "showLabel": true,
       "color": "#26b5d9",
       "lineType": "solid"
     },
-    "https://w3id.org/adiro/adiro_provenance#hasInferenceMeta": {
+    "http://www.w3.org/ns/prov#used": {
       "show": true,
       "showLabel": true,
-      "color": "#26d991",
+      "color": "#d99126",
       "lineType": "solid"
     },
-    "https://w3id.org/adiro/adiro_provenance#inferredBy": {
+    "http://www.w3.org/ns/prov#wasAssociatedWith": {
       "show": true,
       "showLabel": true,
-      "color": "#26d926",
+      "color": "#d95c26",
+      "lineType": "solid"
+    },
+    "http://www.w3.org/ns/prov#wasGeneratedBy": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d92626",
+      "lineType": "solid"
+    },
+    "inferredBy": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d98526",
       "lineType": "solid"
     },
     "inferredFrom": {
@@ -105,22 +263,16 @@
       "color": "#000000",
       "lineType": "solid"
     },
-    "used": {
-      "show": true,
-      "showLabel": true,
-      "color": "#d99126",
-      "lineType": "solid"
-    },
-    "wasAssociatedWith": {
-      "show": true,
-      "showLabel": true,
-      "color": "#d95c26",
-      "lineType": "solid"
-    },
-    "wasGeneratedBy": {
+    "supersedes": {
       "show": true,
       "showLabel": true,
       "color": "#d92626",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/adiro_provenance#acceptedBy": {
+      "show": true,
+      "showLabel": true,
+      "color": "#8026d9",
       "lineType": "solid"
     },
     "https://w3id.org/adiro/adiro_provenance#assertedAbout": {
@@ -141,10 +293,52 @@
       "color": "#264ad9",
       "lineType": "solid"
     },
+    "https://w3id.org/adiro/adiro_provenance#belongsToFile": {
+      "show": true,
+      "showLabel": true,
+      "color": "#2670d9",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/adiro_provenance#fileCreatedBy": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26afd9",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/adiro_provenance#fileModifiedBy": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26d9c4",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/adiro_provenance#hasAcceptance": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26d985",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/adiro_provenance#hasInferenceMeta": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26d946",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/adiro_provenance#hasOutcome": {
+      "show": true,
+      "showLabel": true,
+      "color": "#46d926",
+      "lineType": "solid"
+    },
     "https://w3id.org/adiro/adiro_provenance#hasValueEntity": {
       "show": true,
       "showLabel": true,
       "color": "#26b5d9",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/adiro_provenance#inferredBy": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d98526",
       "lineType": "solid"
     },
     "https://w3id.org/adiro/adiro_provenance#inferredFrom": {
@@ -159,19 +353,7 @@
       "color": "#d9c726",
       "lineType": "solid"
     },
-    "http://www.w3.org/ns/prov#used": {
-      "show": true,
-      "showLabel": true,
-      "color": "#d99126",
-      "lineType": "solid"
-    },
-    "http://www.w3.org/ns/prov#wasAssociatedWith": {
-      "show": true,
-      "showLabel": true,
-      "color": "#d95c26",
-      "lineType": "solid"
-    },
-    "http://www.w3.org/ns/prov#wasGeneratedBy": {
+    "https://w3id.org/adiro/adiro_provenance#supersedes": {
       "show": true,
       "showLabel": true,
       "color": "#d92626",
@@ -185,6 +367,7 @@
   "dataPropertyFontSize": 12,
   "layoutMode": "hierarchical-dag",
   "searchQuery": "",
+  "searchScope": "matches",
   "includeNeighbors": false,
   "exactMatch": true,
   "annotationStyleConfig": {
@@ -196,13 +379,19 @@
       "description": {
         "rules": []
       },
-      "expectedRange": {
-        "rules": []
-      },
       "license": {
         "rules": []
       },
-      "mapsToFieldProperty": {
+      "publisher": {
+        "rules": []
+      },
+      "replaces": {
+        "rules": []
+      },
+      "title": {
+        "rules": []
+      },
+      "closeMatch": {
         "rules": []
       },
       "maxInclusive": {
@@ -211,10 +400,10 @@
       "minInclusive": {
         "rules": []
       },
-      "publisher": {
+      "expectedRange": {
         "rules": []
       },
-      "title": {
+      "mapsToFieldProperty": {
         "rules": []
       }
     },
@@ -227,21 +416,28 @@
   "annotationPropertyOrder": [
     "creator",
     "description",
-    "expectedRange",
     "license",
-    "mapsToFieldProperty",
+    "publisher",
+    "replaces",
+    "title",
+    "closeMatch",
     "maxInclusive",
     "minInclusive",
-    "publisher",
-    "title"
+    "expectedRange",
+    "mapsToFieldProperty"
   ],
   "viewState": {
-    "scale": 0.8312785388127856,
+    "scale": 0.7575155775845527,
     "position": {
-      "x": 372.10649562920577,
-      "y": 588.1658884921724
+      "x": 346.45565250512607,
+      "y": 1011.9144275744636
     }
   },
   "displayExternalReferences": true,
-  "externalNodeLayout": "auto"
+  "clusterThingDataProperties": true,
+  "stackLeaves": true,
+  "externalNodeLayout": "auto",
+  "hierarchyRelationships": [
+    "subClassOf"
+  ]
 }
