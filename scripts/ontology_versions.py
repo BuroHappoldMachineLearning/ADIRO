@@ -68,14 +68,45 @@ def _href(selected, latest, target):
     return "../" if target == latest else f"../{target}/"
 
 
-def selector_html(selected, versions):
-    """The dropdown button and its list of versions. One element per line, no blank line (it is embedded in Markdown)."""
+def earlier_names(repo_root, module):
+    """``[(name, versions newest first)]`` for each module that `module` replaced, most recent rename first (#171).
+
+    A renamed module continues the numbering of the module it replaced, so its dropdown also lists those releases,
+    which keep their own pages under the old name: the newest at ``/ontologies/<name>/``, every other at
+    ``/ontologies/<name>/<version>/``.
+    """
+    import module_renames as mr
+
+    out = []
+    for name in mr.lineage(mr.load(repo_root), module)[1:]:
+        src = Path(repo_root) / "src" / f"{name}.ttl"
+        versions = version_list(archived_versions(repo_root, name), declared_version(src) if src.is_file() else None)
+        if versions:
+            out.append((name, versions))
+    return out
+
+
+def _earlier_name_href(selected, latest, name, version, versions):
+    """Relative link from the page of `selected` to the page of `version` of the module `name` replaced."""
+    up = "../" if selected == latest else "../../"
+    return f"{up}{name}/" if version == versions[0] else f"{up}{name}/{version}/"
+
+
+def selector_html(selected, versions, earlier=()):
+    """The dropdown button and its list of versions. One element per line, no blank line (it is embedded in Markdown).
+
+    ``earlier`` (from earlier_names) adds the releases of the modules this one replaced, after its own, by name.
+    """
     latest = versions[0]
     items = []
     for version in versions:
         label = html.escape(version + (" (latest)" if version == latest else ""))
         current = ' class="adiro-version-current" aria-current="page"' if version == selected else ""
         items.append(f'<li><a href="{_href(selected, latest, version)}"{current}>{label}</a></li>')
+    for name, name_versions in earlier:
+        for version in name_versions:
+            href = _earlier_name_href(selected, latest, name, version, name_versions)
+            items.append(f'<li><a href="{href}">{html.escape(f"{name} {version}")}</a></li>')
     return "\n".join([
         '<details class="adiro-version">',
         f'<summary class="md-button">{html.escape(button_text(selected, latest))}</summary>',

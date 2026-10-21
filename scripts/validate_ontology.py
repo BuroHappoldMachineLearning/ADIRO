@@ -21,6 +21,7 @@ from rdflib.term import BNode
 from collections import defaultdict, deque
 
 import example_images
+import module_renames
 
 
 # Every ADIRO term must carry a human-readable description. ADIRO's definition
@@ -260,40 +261,52 @@ def find_prior_version_problems(graph, ttl_file: Path) -> list[str]:
       whose owl:versionIRI is that IRI (or its legacy host form, see LEGACY_VERSION_IRI_HOST);
     - every earlier archived release is named.
 
+    A renamed module (config/module_renames.json, #171) continues the history of the module it replaced, so the
+    releases of that module count as its own: they may be named, by their own IRIs, and they must be.
+
     Returns error strings (empty if consistent).
     """
     errors = []
     module = ttl_file.stem
-    archive_root = ttl_file.parent.parent / "versions" / module
+    repo_root = ttl_file.parent.parent
+    try:
+        names = module_renames.lineage(module_renames.load(repo_root), module)
+    except ValueError as err:
+        return [str(err)]
     for ont in graph.subjects(RDF.type, OWL.Ontology):
         base = str(ont)
+        bases = {name: (base if name == module else f"{module_renames.BASE}{name}") for name in names}
         version = graph.value(ont, OWL.versionInfo)
         own = _semver(str(version)) if version is not None else None
         listed = set()
         for iri in sorted(str(o) for o in graph.objects(ont, OWL.priorVersion)):
-            tail = iri[len(base) + 1:] if iri.startswith(base + "/") else ""
+            name, tail = next(((n, iri[len(b) + 1:]) for n, b in bases.items() if iri.startswith(b + "/")), (None, ""))
             if _semver(tail) is None:
-                errors.append(f"owl:priorVersion <{iri}> must be a version IRI of this ontology ({base}/<major>.<minor>.<patch>)")
+                also = f", or of {', '.join(names[1:])} which it replaced" if len(names) > 1 else ""
+                errors.append(f"owl:priorVersion <{iri}> must be a version IRI of this ontology ({base}/<major>.<minor>.<patch>{also})")
                 continue
-            listed.add(tail)
+            listed.add((name, tail))
             if own is not None and _semver(tail) >= own:
                 errors.append(f"owl:priorVersion <{iri}> is not earlier than this ontology's version {version}")
-            archived = archive_root / tail / f"{module}.ttl"
+            archived = repo_root / "versions" / name / tail / f"{name}.ttl"
             if not archived.is_file():
-                errors.append(f"owl:priorVersion <{iri}>: no archived release at versions/{module}/{tail}/ (only published versions can be named)")
+                errors.append(f"owl:priorVersion <{iri}>: no archived release at versions/{name}/{tail}/ (only published versions can be named)")
                 continue
             prior = Graph()
             prior.parse(str(archived), format="turtle")
             declared = {str(o) for o in prior.objects(None, OWL.versionIRI)}
-            if not declared & accepted_version_iris(module, tail):
-                errors.append(f"versions/{module}/{tail}/{module}.ttl declares owl:versionIRI {sorted(declared)}, not <{iri}>")
-        if own is not None and archive_root.is_dir():
+            if not declared & accepted_version_iris(name, tail):
+                errors.append(f"versions/{name}/{tail}/{name}.ttl declares owl:versionIRI {sorted(declared)}, not <{iri}>")
+        for name, name_base in bases.items():
+            archive_root = repo_root / "versions" / name
+            if own is None or not archive_root.is_dir():
+                continue
             for folder in sorted(archive_root.iterdir()):
                 v = _semver(folder.name)
-                if folder.is_dir() and v is not None and v < own and (folder / f"{module}.ttl").is_file() and folder.name not in listed:
+                if folder.is_dir() and v is not None and v < own and (folder / f"{name}.ttl").is_file() and (name, folder.name) not in listed:
                     errors.append(
-                        f"release {folder.name} is archived but not named by owl:priorVersion <{base}/{folder.name}>: "
-                        "every release names all earlier versions")
+                        f"release {folder.name}{'' if name == module else ' of ' + name} is archived but not named by "
+                        f"owl:priorVersion <{name_base}/{folder.name}>: every release names all earlier versions")
     return errors
 
 
