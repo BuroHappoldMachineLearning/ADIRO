@@ -34,6 +34,7 @@ from ontology_versions import (
     archived_versions,
     declared_version,
     earlier_names,
+    later_names,
     selector_html,
     version_list,
     version_page_front_matter,
@@ -635,7 +636,8 @@ def deprecation_notice(ttl_file: Path, ttl_files: list[Path], earlier: bool) -> 
 
 
 def _ontology_page(ttl_file: Path, ttl_files: list[Path], title: str, selected: str | None, versions: list[str],
-                   renamed_from: list = (), all_files: list[Path] | None = None, unlisted: bool = False) -> str:
+                   renamed_from: list = (), all_files: list[Path] | None = None, unlisted: bool = False,
+                   replaced_by: list = ()) -> str:
     """The Markdown page of one version of one ontology (#124).
 
     ``selected`` is the version the page documents; ``versions`` is every version of the module, newest first.
@@ -702,7 +704,7 @@ def _ontology_page(ttl_file: Path, ttl_files: list[Path], title: str, selected: 
     # icons) working inside the wrapper while the raw <details> stays inline, so everything sits on the same line.
     actions = ['<div class="adiro-actions" markdown="span">']
     if versions:
-        actions.append(selector_html(selected, versions, renamed_from))
+        actions.append(selector_html(selected, versions, renamed_from, replaced_by))
     actions += [links_block, "</div>"]
     notice = deprecation_notice(ttl_file, all_files or ttl_files, earlier)
     page = "\n".join([body_lines[0], ""] + actions + [""] + notice + rest).rstrip() + "\n"
@@ -762,11 +764,12 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path, re
         versions = version_list(archived, declared_version(ttl_file))
         latest = versions[0] if versions else None
         renamed_from = earlier_names(repo_root, stem)  # a renamed module's dropdown also lists the old name's releases (#171)
+        replaced_by = later_names(repo_root, stem)  # and a replaced module's lists the new name's, and is not "latest"
         peers = retired_files if stem in retiring else listed  # the diagram shows the modules of the same name set
 
         page_file = ontologies_dir / f"{stem}.md"
         page_file.write_text(_ontology_page(ttl_file, peers, title, latest, versions, renamed_from, ttl_files,
-                                            unlisted=stem in retiring), encoding="utf-8")
+                                            unlisted=stem in retiring, replaced_by=replaced_by), encoding="utf-8")
         print(f"  [OK] Generated ontology page: {page_file}")
 
         version_dir = ontologies_dir / stem
@@ -778,7 +781,8 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path, re
             diagram_files = [snapshot if f.stem == stem else f for f in peers]  # this version's own imports
             version_dir.mkdir(parents=True, exist_ok=True)
             version_file = version_dir / f"{version}.md"
-            version_file.write_text(_ontology_page(snapshot, diagram_files, title, version, versions, renamed_from, ttl_files),
+            version_file.write_text(_ontology_page(snapshot, diagram_files, title, version, versions, renamed_from, ttl_files,
+                                                   replaced_by=replaced_by),
                                     encoding="utf-8")
             print(f"  [OK] Generated ontology page: {version_file}")
 

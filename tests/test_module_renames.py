@@ -349,7 +349,7 @@ def test_a_retired_module_is_documented_from_its_final_release(repo):
     assert repo / "versions" / "aec_a" / "2.0.0" / "aec_a.ttl" in files  # its final release plays its src/ file
     gd.generate_ontology_markdown_pages(gd.sort_by_dependency(files), repo / "docs", repo)
     page = (repo / "docs" / "ontologies" / "aec_a.md").read_text(encoding="utf-8")
-    assert page.startswith("---\nsearch:\n  exclude: true") and "Version 2.0.0 (latest)" in page
+    assert page.startswith("---\nsearch:\n  exclude: true") and "Version 2.0.0 (adiro_a 2.0.0 available)" in page
     assert "aec_a.md" not in (repo / "docs" / "ontologies" / ".pages").read_text(encoding="utf-8")
     assert '<a href="../aec_a/">aec_a 2.0.0</a>' in (repo / "docs" / "ontologies" / "adiro_a.md").read_text(encoding="utf-8")
 
@@ -359,3 +359,14 @@ def test_a_retired_module_needs_no_changelog_entry(repo):
     assert vo.missing_changelog_modules(["src/aec_a.ttl"], repo) == []
     (repo / "src" / "adiro_a.ttl").unlink()  # no successor: a removal, which needs one
     assert vo.missing_changelog_modules(["src/aec_a.ttl", "src/adiro_a.ttl"], repo) == ["adiro_a", "aec_a"]
+
+
+def test_a_replaced_modules_dropdown_points_to_the_new_module_and_is_never_latest(repo):
+    later = ov.later_names(repo, "aec_a")
+    assert later == [("adiro_a", ["2.0.0"])] and ov.later_names(repo, "adiro_a") == []
+    page = ov.selector_html("2.0.0", ["2.0.0", "1.0.0"], later=later)  # the old module's last version
+    assert "Version 2.0.0 (adiro_a 2.0.0 available)" in page and "(latest)</a>" in page
+    assert '<a href="../adiro_a/">adiro_a 2.0.0 (latest)</a>' in page and ">2.0.0 (final)</a>" in page
+    assert page.index("adiro_a 2.0.0 (latest)") < page.index("2.0.0 (final)")
+    older = ov.selector_html("1.0.0", ["2.0.0", "1.0.0"], later=later)  # an earlier page, one directory deeper
+    assert "Version 1.0.0 (adiro_a 2.0.0 available)" in older and '<a href="../../adiro_a/">' in older

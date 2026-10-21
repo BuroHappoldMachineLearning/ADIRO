@@ -16,7 +16,6 @@
       <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_common_symbols-v5.0.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_common_symbols.json" alt="adiro_common_symbols"></a><br>
       <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_domain_common-v4.0.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_domain_common.json" alt="adiro_domain_common"></a><br>
       <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_facade_domain-v4.0.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_facade_domain.json" alt="adiro_facade_domain"></a><br>
-      <sub>Formerly <code>aec_*</code>: <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171">renamed</a>; the old releases stay published.</sub><br>
     </td>
     <td align="left" valign="middle">
       <b>Build status</b><br>
