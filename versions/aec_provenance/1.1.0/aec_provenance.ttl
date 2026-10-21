@@ -1,0 +1,475 @@
+@prefix : <https://w3id.org/adiro/aec_provenance#> .
+@base <https://w3id.org/adiro/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix ct: <https://standards.iso.org/iso/21597/-1/ed-1/en/Container#> .
+
+#################################################################
+#    Ontology
+#################################################################
+
+<https://w3id.org/adiro/aec_provenance> rdf:type owl:Ontology ;
+    rdfs:label "AEC Provenance Ontology" ;
+    rdfs:comment "Foundational, domain-neutral module for provenance. It lets any value inferred from a drawing be recorded as an assertion that carries its own source, confidence, and how it was produced, aligned to W3C PROV-O. The drawing modules import it." ;
+    dcterms:title "AEC Provenance Ontology" ;
+    dcterms:description "Reified assertion + inference provenance + confidence for AEC drawing extraction. Domain-neutral; PROV-O-aligned." ;
+    dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
+    dcterms:creator "Buro Happold - Machine Learning R&D" ;
+    dcterms:publisher "Buro Happold" ;
+    owl:deprecated true ;
+    dcterms:isReplacedBy <https://w3id.org/adiro/adiro_provenance> ;
+    owl:priorVersion <https://w3id.org/adiro/aec_provenance/1.0.0> ;
+    owl:priorVersion <https://w3id.org/adiro/aec_provenance/1.0.1> ;
+    owl:versionIRI <https://w3id.org/adiro/aec_provenance/1.1.0> ;
+    owl:versionInfo "1.1.0" .
+
+#################################################################
+#    PROV-O terms referenced for alignment
+#
+#    Declared locally (not owl:imports) so the module stays self-contained
+#    and the reasoning CI resolves everything offline via catalog-v001.xml
+#    without fetching PROV-O over the network. These are minimal typing stubs
+#    for the handful of PROV-O terms our alignment axioms point at; the
+#    authoritative definitions live at http://www.w3.org/ns/prov#.
+#    Credit: PROV-O alignment first suggested by Tianyang Huang.
+#################################################################
+
+prov:Entity rdf:type owl:Class ;
+    rdfs:label "Entity" ;
+    rdfs:comment "Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. PROV-O declares prov:Entity owl:disjointWith prov:Activity, which is why the alignment below is seated carefully: a FieldAssertion is the Entity produced, an InferenceMeta is the Activity that produced it, and nothing may be both." ;
+    rdfs:isDefinedBy <http://www.w3.org/ns/prov#> .
+
+prov:Activity rdf:type owl:Class ;
+    rdfs:label "Activity" ;
+    rdfs:comment "Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. Disjoint with prov:Entity in PROV-O - see prov:Entity above." ;
+    rdfs:isDefinedBy <http://www.w3.org/ns/prov#> .
+
+prov:Agent rdf:type owl:Class ;
+    rdfs:label "Agent" ;
+    rdfs:comment "Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at." ;
+    rdfs:isDefinedBy <http://www.w3.org/ns/prov#> .
+
+prov:wasGeneratedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "wasGeneratedBy" ;
+    rdfs:comment "Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Entity, rdfs:range prov:Activity)" ;
+    rdfs:isDefinedBy <http://www.w3.org/ns/prov#> .
+
+prov:wasAssociatedWith rdf:type owl:ObjectProperty ;
+    rdfs:label "wasAssociatedWith" ;
+    rdfs:comment "Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range prov:Agent)" ;
+    rdfs:isDefinedBy <http://www.w3.org/ns/prov#> .
+
+prov:used rdf:type owl:ObjectProperty ;
+    rdfs:label "used" ;
+    rdfs:comment "Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range prov:Entity)" ;
+    rdfs:isDefinedBy <http://www.w3.org/ns/prov#> .
+
+prov:endedAtTime rdf:type owl:DatatypeProperty ;
+    rdfs:label "endedAtTime" ;
+    rdfs:comment "Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range xsd:dateTime). ADIRO's own :inferredAt declares rdfs:range xsd:dateTime, so the precision is asserted where it belongs - on the term this suite owns." ;
+    rdfs:isDefinedBy <http://www.w3.org/ns/prov#> .
+
+#################################################################
+#    Annotation Properties - field-kind metadata
+#
+#    A "field kind" is a skos:Concept in a field-kind scheme (defined by the
+#    importing module, e.g. the TitleblockFieldScheme in aec_drawing_metadata).
+#    These annotations describe such a concept; they carry no reasoning weight.
+#################################################################
+
+:expectedRange rdf:type owl:AnnotationProperty ;
+    rdfs:label "expectedRange" ;
+    rdfs:comment "On a field-kind concept: the expected type of its asserted value - a datatype (e.g. xsd:string, xsd:date) for literal-valued fields, or a class (e.g. Person, Organisation) for object-valued fields. Signals whether an assertion of this kind uses hasLiteralValue or hasValueEntity." .
+
+:mapsToFieldProperty rdf:type owl:AnnotationProperty ;
+    rdfs:label "mapsToFieldProperty" ;
+    rdfs:comment "On a field-kind concept: the canonical ADIRO property that an accepted assertion (hasAcceptance Accepted) of this field kind, one that has a value, is promoted to (the bridge from the reified assertion to a direct statement on the subject). The subject is the assertion's assertedAbout, so a promotion is: ?a assertedAbout ?subject ; assertsFieldKind ?k . ?k mapsToFieldProperty ?p  =>  ?subject ?p <value>. Annotation only - the promotion is performed by tooling on acceptance, not by reasoning." .
+
+#################################################################
+#    Classes
+#################################################################
+
+:InferredEntity rdf:type owl:Class ;
+    rdfs:label "Inferred Entity" ;
+    rdfs:comment "Anything ADIRO infers or extracts that carries its own provenance and confidence - the shared superclass of everything an inference/extraction step produces as a first-class, provenance-bearing individual. A field-value claim (FieldAssertion, here) is one; a spatial localisation (a BoundingBox, in aec_geometry) is another. It exists so that hasInferenceMeta and hasConfidence apply uniformly to any such product, not only to a field-value claim: a detected box is an inferred entity with its own producer and score, distinct from the confidence in the value read at that box. In PROV-O terms this is the prov:Entity an inference activity generated. The producing step can be a model or a person: a human annotation (a box drawn by hand, a field typed in) is an inference step performed by a person, recorded with inferredBy that person (an aprov:Person) and no inferredWith, and it carries a confidence only if one is given. A model's output and a person's label are told apart by who inferredBy is." ;
+    rdfs:subClassOf prov:Entity .
+
+:FieldAssertion rdf:type owl:Class ;
+    rdfs:label "Field Assertion" ;
+    rdfs:comment "A single reified assertion that some source makes a value-claim about a field kind. Reifying the claim (rather than attaching the value straight to a subject) lets each printed occurrence carry its own provenance - which region asserted it (assertedBy), what produced it (hasInferenceMeta), and with what confidence (hasConfidence) - independently of the value it states. The value is a literal (hasLiteralValue) for datatype-valued fields or an entity (hasValueEntity) for object-valued fields. An assertion has a value or, when none was found, an outcome (hasOutcome); it is promoted to a direct statement on its subject only once it is Accepted (hasAcceptance), by tooling and never by reasoning. Conflicting assertions across sources are surfaced, not silently merged, and a later one that replaces an earlier says so with supersedes. A kind of InferredEntity, so it carries the shared provenance/confidence; in PROV-O terms the prov:Entity an extraction produced, which is why the PROV alignment is seated across two classes rather than all on one." ;
+    rdfs:subClassOf :InferredEntity .
+
+:InferenceMeta rdf:type owl:Class ;
+    rdfs:label "Inference Meta" ;
+    rdfs:comment "Provenance metadata for an inferred or extracted assertion: what produced it (inferredBy / inferredWith), the source it was derived from (inferredFrom), and when (inferredAt). Modelled as a separate object so several assertions can share one inference record and so provenance can be added without touching the value. Analogous to DANO's DrawingElementMeta, but aligned to PROV-O: this is the prov:Activity that produced the assertion, NOT a prov:Entity. PROV-O declares those two owl:disjointWith, so the distinction is load-bearing rather than stylistic." ;
+    rdfs:subClassOf prov:Activity .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+:assertsFieldKind rdf:type owl:ObjectProperty ;
+    rdfs:label "assertsFieldKind" ;
+    rdfs:comment "The field kind (a SKOS concept in a field-kind scheme, e.g. a title-block field such as Scale or Client) that this assertion is about. Keeping the kind as a referenced concept - rather than a bespoke property per field - is what lets names/synonyms live on the concept and keeps the number of relationships small." ;
+    rdfs:domain :FieldAssertion ;
+    rdfs:range skos:Concept .
+
+:assertedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "assertedBy" ;
+    rdfs:comment "The source that makes this assertion - typically the drawing region it was read from (e.g. a Titleblock or a Layout). This is the provenance that lets the same field kind asserted by different regions be distinguished (e.g. a sheet's scale read from the title block versus the same sheet's scale read from a general note), which a fixed domain on a per-field property cannot express." ;
+    rdfs:domain :FieldAssertion .
+
+:assertedAbout rdf:type owl:ObjectProperty ;
+    rdfs:label "assertedAbout" ;
+    rdfs:comment "The subject the claim is ABOUT - the thing a validated assertion is promoted onto. Distinct from assertedBy, which records where the claim was read FROM: a drawn-by name is read from a title-block region (assertedBy) but is a claim about a particular DrawingRevision (assertedAbout), and a sheet has many revisions, so the subject cannot be recovered from the region alone. Without it, mapsToFieldProperty names a property but nothing names the individual to hang it on, and promotion is not expressible. No rdfs:range is asserted: the subjects differ per field kind - Titleblock, DrawingSheet, DrawingRevision, DrawingPackage, Project - and a narrower range would entail those subjects are of a type they are not." ;
+    rdfs:domain :FieldAssertion .
+
+:hasValueEntity rdf:type owl:ObjectProperty ;
+    rdfs:label "hasValueEntity" ;
+    rdfs:comment "For object-valued field kinds, the entity that is the asserted value - e.g. a Person or Organisation. Used instead of hasLiteralValue when the field references a thing rather than states a string, which is what makes cross-sheet questions ('everything checked by X') answerable." ;
+    rdfs:domain :FieldAssertion .
+
+:hasInferenceMeta rdf:type owl:ObjectProperty ;
+    rdfs:label "hasInferenceMeta" ;
+    rdfs:comment "Links an inferred entity (a FieldAssertion, a BoundingBox, ...) to the InferenceMeta describing what produced it, from where, and when. Aligned to prov:wasGeneratedBy: the entity (a prov:Entity) was generated by the inference (a prov:Activity)." ;
+    rdfs:subPropertyOf prov:wasGeneratedBy ;
+    rdfs:domain :InferredEntity ;
+    rdfs:range :InferenceMeta .
+
+:inferredBy rdf:type owl:ObjectProperty ;
+    rdfs:label "inferredBy" ;
+    rdfs:comment "The actor, organisation or software that produced this inference: a person (an aprov:Person) when a human annotated, a software agent when a model predicted. Aligned to prov:wasAssociatedWith - the agent the inference activity was associated with." ;
+    rdfs:subPropertyOf prov:wasAssociatedWith ;
+    rdfs:domain :InferenceMeta ;
+    rdfs:range prov:Agent .
+
+:inferredWith rdf:type owl:ObjectProperty ;
+    rdfs:label "inferredWith" ;
+    rdfs:subPropertyOf prov:used ;
+    rdfs:comment "The algorithm or model (ideally with version) used to produce this inference. Distinct from inferredBy, which names the responsible actor; inferredWith names the tool. Aligned to prov:used - the activity used this model." ;
+    rdfs:domain :InferenceMeta .
+
+:inferredFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "inferredFrom" ;
+    rdfs:comment "The source the value was derived from - e.g. the origin file, page or region. Aligned to prov:used - the activity used this source." ;
+    rdfs:subPropertyOf prov:used ;
+    rdfs:domain :InferenceMeta .
+
+#################################################################
+#    Datatype Properties
+#################################################################
+
+:hasLiteralValue rdf:type owl:DatatypeProperty ;
+    rdfs:label "hasLiteralValue" ;
+    rdfs:comment "For datatype-valued field kinds, the literal value asserted, kept verbatim (not normalised, expanded or translated at extraction time)." ;
+    rdfs:domain :FieldAssertion ;
+    rdfs:range rdfs:Literal .
+
+:capturedCaption rdf:type owl:DatatypeProperty ;
+    rdfs:label "capturedCaption" ;
+    rdfs:comment "The caption/label text exactly as printed on the drawing for this assertion (e.g. 'Verfasser', 'Dwg. Desc.'). Retained even when the field kind is uncertain, so the ground truth of what was on the sheet is never lost and mapping can be revisited later." ;
+    rdfs:domain :FieldAssertion ;
+    rdfs:range xsd:string .
+
+:hasConfidence rdf:type owl:DatatypeProperty ;
+    rdfs:label "hasConfidence" ;
+    rdfs:comment "Confidence of the inference behind an inferred entity, as a decimal in [0,1]: the score a model gives, or, for a human annotation, absent (or 1 when the annotator is taken as certain). Applies to any InferredEntity - the confidence in a field-value claim (FieldAssertion) and the confidence in a detected localisation (a BoundingBox in aec_geometry) are separate values, each carried on the individual it belongs to. Carried on the individual rather than on a triple, which keeps confidence in the graph without requiring RDF-star or statement reification. The range is an OWL 2 datatype restriction on xsd:decimal with minInclusive 0 and maxInclusive 1, so the [0,1] bound is asserted rather than only described in prose. Note this cannot fire in CI today: the reasoning gate runs over the T-Box in src/ and the repository holds no instance data, so the bound becomes enforceable when an A-Box exists (GitHub issue #22)." ;
+    rdfs:domain :InferredEntity ;
+    rdfs:range [ rdf:type rdfs:Datatype ;
+                 owl:onDatatype xsd:decimal ;
+                 owl:withRestrictions ( [ xsd:minInclusive "0.0"^^xsd:decimal ]
+                                        [ xsd:maxInclusive "1.0"^^xsd:decimal ] ) ] .
+
+:inferredAt rdf:type owl:DatatypeProperty ;
+    rdfs:label "inferredAt" ;
+    rdfs:comment "The time the inference was produced. Aligned to prov:endedAtTime - when the inference activity ended." ;
+    rdfs:subPropertyOf prov:endedAtTime ;
+    rdfs:domain :InferenceMeta ;
+    rdfs:range xsd:dateTime .
+
+#################################################################
+#    ISO 21597-1 (ICDD) terms referenced for alignment
+#
+#    Declared locally (not owl:imports), for the same reason as the PROV-O
+#    stubs above. They are typing stubs of the terms of edition 1 of the
+#    standard (the edition is part of its namespace); a stub is a name, not
+#    a definition, and carries none of the standard's axioms. The classes
+#    below are subclasses of them; the properties are related to the
+#    standard's by skos:closeMatch only, because every ICDD property is
+#    functional and createdBy has the container as its domain.
+#################################################################
+
+ct:Document rdf:type owl:Class ;
+    rdfs:label "Document (ISO 21597-1)" ;
+    rdfs:comment "Typing stub for the ISO 21597-1 (ICDD) term Document, edition 1: an abstract reference to a document inside or outside a container. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at." ;
+    rdfs:isDefinedBy <https://standards.iso.org/iso/21597/-1/ed-1/en/Container.rdf> .
+
+ct:Party rdf:type owl:Class ;
+    rdfs:label "Party (ISO 21597-1)" ;
+    rdfs:comment "Typing stub for the ISO 21597-1 (ICDD) term Party, edition 1: the generalisation of an organisation and a person. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at." ;
+    rdfs:isDefinedBy <https://standards.iso.org/iso/21597/-1/ed-1/en/Container.rdf> .
+
+ct:Person rdf:type owl:Class ;
+    rdfs:label "Person (ISO 21597-1)" ;
+    rdfs:comment "Typing stub for the ISO 21597-1 (ICDD) term Person, edition 1. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at." ;
+    rdfs:isDefinedBy <https://standards.iso.org/iso/21597/-1/ed-1/en/Container.rdf> .
+
+ct:Organisation rdf:type owl:Class ;
+    rdfs:label "Organisation (ISO 21597-1)" ;
+    rdfs:comment "Typing stub for the ISO 21597-1 (ICDD) term Organisation, edition 1. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at." ;
+    rdfs:isDefinedBy <https://standards.iso.org/iso/21597/-1/ed-1/en/Container.rdf> .
+
+#################################################################
+#    Classes - agents
+#################################################################
+
+:Party rdf:type owl:Class ;
+    rdfs:label "Party" ;
+    rdfs:comment "A person or an organisation: whoever made, saved or is named on something. Abstract: every party is exactly a Person or an Organisation, never both and never neither (their disjoint union), as in ISO 21597-1. Software that produced a file is not a party; a PROV activity records it." ;
+    owl:disjointUnionOf ( :Person :Organisation ) ;
+    rdfs:subClassOf prov:Agent , ct:Party .
+
+:Person rdf:type owl:Class ;
+    rdfs:label "Person" ;
+    rdfs:comment "A named individual: a person named on a drawing (the author, a checker, an approver) or who made or saved a file. Transcribed as printed, so possibly only initials. The role is expressed by the property that points to the person, not by subclassing." ;
+    rdfs:subClassOf :Party , ct:Person .
+
+:Organisation rdf:type owl:Class ;
+    rdfs:label "Organisation" ;
+    rdfs:comment "A legal entity: the client, the originator, a legal owner or a responsible department named on a drawing, or the organisation that made or saved a file. Modelled as a class rather than a string so that one organisation recurring across many drawings is a single individual, which is what makes cross-drawing questions answerable." ;
+    rdfs:subClassOf :Party , ct:Organisation .
+
+#################################################################
+#    Classes - files and pages
+#
+#    A drawing lives in a file, and a PDF holds many drawings, one per
+#    page. The file, the page of it, and the coordinate frame (in
+#    aec_geometry) that reads the page are kept apart so that nothing is
+#    stated twice. File metadata comes from the storage system, so it
+#    carries no confidence: these are not InferredEntity.
+#################################################################
+
+:DrawingFile rdf:type owl:Class ;
+    rdfs:label "Drawing File" ;
+    rdfs:comment "A reference to a document in which drawings are stored: not the bytes, but what identifies and locates them (name, media type, content hash, where it is stored, when and by whom it was made and last changed, how many pages it has). The content hash is its identity; the storage location is a fact that changes when the file is moved, and more than one is allowed (copies). A subclass of the ISO 21597-1 Document, which is likewise a reference." ;
+    rdfs:subClassOf prov:Entity , ct:Document .
+
+:FilePage rdf:type owl:Class ;
+    rdfs:label "File Page" ;
+    rdfs:comment "One page of one DrawingFile, counted from 1; a single-page or raster file has page 1. It holds what is true of the page itself: its number, the file it belongs to, its rotation and its display size in points. A drawing is linked to the page it is on, and a coordinate frame reads the page in one coordinate convention." ;
+    rdfs:subClassOf prov:Entity .
+
+#################################################################
+#    Properties - files
+#
+#    Names follow ISO 21597-1 where the meaning is the same; each is related
+#    to the standard's term, to Dublin Core terms (ISO 15836-2) and to DCAT
+#    by skos:closeMatch, never as a subproperty.
+#################################################################
+
+:fileName rdf:type owl:DatatypeProperty ;
+    rdfs:label "fileName" ;
+    rdfs:comment "The name of the file, with its extension, as the storage system gives it." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:string ;
+    skos:closeMatch ct:name , dcterms:title .
+
+:mediaType rdf:type owl:DatatypeProperty ;
+    rdfs:comment "The IANA media type of the file, for example application/pdf or image/tiff." ;
+    rdfs:label "mediaType" ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:string ;
+    skos:closeMatch ct:format , dcterms:format , dcat:mediaType .
+
+:contentHash rdf:type owl:DatatypeProperty ;
+    rdfs:label "contentHash" ;
+    rdfs:comment "The hash of the bytes of the file, as a hexadecimal string. It identifies the content: two files with the same hash and algorithm are the same bytes, wherever they are stored, and a hash that no longer matches means an extraction was made from other bytes." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:string ;
+    skos:closeMatch ct:checksum .
+
+:hashAlgorithm rdf:type owl:DatatypeProperty ;
+    rdfs:label "hashAlgorithm" ;
+    rdfs:comment "The algorithm that produced the contentHash, for example sha256." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:string ;
+    skos:closeMatch ct:checksumAlgorithm .
+
+:storageLocation rdf:type owl:DatatypeProperty ;
+    rdfs:label "storageLocation" ;
+    rdfs:comment "Where a copy of the file is stored: an address in a document-management or cloud storage system, or a path as a file address. More than one is allowed, and a location changes when the file is moved; the contentHash is what stays the same." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:anyURI ;
+    skos:closeMatch ct:url , dcat:downloadURL .
+
+:fileCreatedAt rdf:type owl:DatatypeProperty ;
+    rdfs:label "fileCreatedAt" ;
+    rdfs:comment "When the file was created, as the storage system records it. Not the drawing's issue date (issueDate)." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:dateTime ;
+    skos:closeMatch ct:creationDate , dcterms:created .
+
+:fileModifiedAt rdf:type owl:DatatypeProperty ;
+    rdfs:label "fileModifiedAt" ;
+    rdfs:comment "When the file was last modified, as the storage system records it." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:dateTime ;
+    skos:closeMatch ct:modificationDate , dcterms:modified .
+
+:fileCreatedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "fileCreatedBy" ;
+    rdfs:comment "The party that made the file in the storage system, usually whoever saved it. Not the drawing's author, which is isAuthoredBy in aec_drawing_metadata; a close match to, not the same as, Dublin Core creator and ICDD createdBy." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range :Party ;
+    skos:closeMatch ct:createdBy , dcterms:creator .
+
+:fileModifiedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "fileModifiedBy" ;
+    rdfs:comment "A party that modified the file in the storage system. More than one is allowed." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range :Party ;
+    skos:closeMatch ct:modifiedBy , dcterms:contributor .
+
+:pageCount rdf:type owl:DatatypeProperty ;
+    rdfs:label "pageCount" ;
+    rdfs:comment "The number of pages of the file: 1 for a single-page or raster file." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:positiveInteger ;
+    skos:closeMatch dcterms:extent .
+
+:fileSize rdf:type owl:DatatypeProperty ;
+    rdfs:label "fileSize" ;
+    rdfs:comment "The size of the file in bytes." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:nonNegativeInteger ;
+    skos:closeMatch dcat:byteSize , dcterms:extent .
+
+#################################################################
+#    Properties - pages
+#################################################################
+
+:belongsToFile rdf:type owl:ObjectProperty ;
+    rdfs:label "belongsToFile" ;
+    rdfs:comment "The DrawingFile that a FilePage is a page of. To go from a file to its pages, use the inverse path ^aprov:belongsToFile (ADIRO declares no named inverse properties)." ;
+    rdfs:domain :FilePage ;
+    rdfs:range :DrawingFile .
+
+:pageNumber rdf:type owl:DatatypeProperty ;
+    rdfs:label "pageNumber" ;
+    rdfs:comment "The number of the page within its file, counted from 1; a single-page or raster file has page 1. A page can be written as an address with the page fragment of RFC 3778 (the file's address followed by #page=3), which counts from 1 as well. A zero-based index, where a program needs one, is this number minus one." ;
+    rdfs:domain :FilePage ;
+    rdfs:range xsd:positiveInteger .
+
+:displayWidthPt rdf:type owl:DatatypeProperty ;
+    rdfs:label "displayWidthPt" ;
+    rdfs:comment "The effective width of the page in points after the recorded page mapping (rotation and cropping); supports bounds checks on coordinates. The measured size of this page of this file, not the paper format the drawing is meant for (sheetSize)." ;
+    rdfs:domain :FilePage ;
+    rdfs:range xsd:decimal .
+
+:displayHeightPt rdf:type owl:DatatypeProperty ;
+    rdfs:label "displayHeightPt" ;
+    rdfs:comment "The effective height of the page in points after the recorded page mapping (rotation and cropping); supports bounds checks on coordinates. The measured size of this page of this file, not the paper format the drawing is meant for (sheetSize)." ;
+    rdfs:domain :FilePage ;
+    rdfs:range xsd:decimal .
+
+:pdfRotationDeg rdf:type owl:DatatypeProperty ;
+    rdfs:label "pdfRotationDeg" ;
+    rdfs:comment "The rotation recorded for the page, in degrees. The page_display_pt coordinates of a coordinate frame already include the recorded page mapping, so this is for interpretation and validation: do not apply the rotation to the coordinates again." ;
+    rdfs:domain :FilePage ;
+    rdfs:range xsd:integer .
+
+#################################################################
+#    Classes - the outcome and the acceptance of an assertion
+#
+#    Two independent axes. The OUTCOME says what a search for a field found
+#    when it found no value; an assertion that has a value needs none. The
+#    ACCEPTANCE says whether the assertion was taken into the direct
+#    properties (see mapsToFieldProperty). The values of the outcome follow
+#    the ground-truth observation statuses (present, empty, illegible,
+#    absent). Both lists are closed enumerations.
+#################################################################
+
+:AssertionOutcome rdf:type owl:Class ;
+    rdfs:label "Assertion Outcome" ;
+    rdfs:comment "What a search for a field found, when it found no value: Empty, Illegible, NotPrinted or NotFound. An assertion that has a value needs no outcome (the value is its outcome), and an assertion has a value or an outcome, never both." ;
+    owl:oneOf ( :Empty :Illegible :NotPrinted :NotFound ) .
+
+:Empty rdf:type owl:NamedIndividual , :AssertionOutcome ;
+    rdfs:label "Empty" ;
+    rdfs:comment "The field is printed on the drawing but holds no value (a blank cell). The ground-truth observation status 'empty'." .
+
+:Illegible rdf:type owl:NamedIndividual , :AssertionOutcome ;
+    rdfs:label "Illegible" ;
+    rdfs:comment "The field is printed on the drawing but cannot be read. The ground-truth observation status 'illegible'." .
+
+:NotPrinted rdf:type owl:NamedIndividual , :AssertionOutcome ;
+    rdfs:label "Not printed" ;
+    rdfs:comment "The drawing does not print the field at all, confirmed by a person (a reviewer or a ground-truth label). The ground-truth observation status 'absent'. For a field every drawing must have, such as the author, this is a defect of the drawing and not of the extraction." .
+
+:NotFound rdf:type owl:NamedIndividual , :AssertionOutcome ;
+    rdfs:label "Not found" ;
+    rdfs:comment "A model searched where the field is expected and matched nothing. Not confirmed: the field may be missing from the drawing or merely missed, so it is retried or reviewed; it says nothing yet about the drawing." .
+
+:AcceptanceStatus rdf:type owl:Class ;
+    rdfs:label "Acceptance Status" ;
+    rdfs:comment "Whether an assertion was taken into the direct properties of its subject: Pending (not yet decided), Accepted or Rejected. Only an Accepted assertion that has a value is promoted by mapsToFieldProperty." ;
+    owl:oneOf ( :Pending :Accepted :Rejected ) .
+
+:Pending rdf:type owl:NamedIndividual , :AcceptanceStatus ;
+    rdfs:label "Pending" ;
+    rdfs:comment "Not yet accepted or rejected: the assertion is the extraction's record and its value is not yet a direct property." .
+
+:Accepted rdf:type owl:NamedIndividual , :AcceptanceStatus ;
+    rdfs:label "Accepted" ;
+    rdfs:comment "Taken in, by a pipeline rule (a confidence threshold, named by acceptedUnder) or by a person. An accepted assertion that has a value is promoted to a direct property." .
+
+:Rejected rdf:type owl:NamedIndividual , :AcceptanceStatus ;
+    rdfs:label "Rejected" ;
+    rdfs:comment "Decided against: the assertion stays as a record but is not promoted." .
+
+#################################################################
+#    Properties - the outcome and the acceptance of an assertion
+#################################################################
+
+:hasOutcome rdf:type owl:ObjectProperty ;
+    rdfs:label "hasOutcome" ;
+    rdfs:comment "What the search for this field found, when it found no value (an AssertionOutcome). An assertion with a hasLiteralValue or a hasValueEntity has no outcome." ;
+    rdfs:domain :FieldAssertion ;
+    rdfs:range :AssertionOutcome .
+
+:hasAcceptance rdf:type owl:ObjectProperty ;
+    rdfs:label "hasAcceptance" ;
+    rdfs:comment "Whether this assertion was taken into the direct properties of its subject (an AcceptanceStatus). An assertion with no acceptance recorded is as good as Pending." ;
+    rdfs:domain :FieldAssertion ;
+    rdfs:range :AcceptanceStatus .
+
+:acceptedBy rdf:type owl:ObjectProperty ;
+    rdfs:label "acceptedBy" ;
+    rdfs:comment "The agent that accepted or rejected this assertion: a person for a review, or a software agent for a pipeline rule." ;
+    rdfs:domain :FieldAssertion ;
+    rdfs:range prov:Agent .
+
+:acceptedAt rdf:type owl:DatatypeProperty ;
+    rdfs:label "acceptedAt" ;
+    rdfs:comment "When this assertion was accepted or rejected." ;
+    rdfs:domain :FieldAssertion ;
+    rdfs:range xsd:dateTime .
+
+:acceptedUnder rdf:type owl:DatatypeProperty ;
+    rdfs:label "acceptedUnder" ;
+    rdfs:comment "An IRI naming the versioned policy under which this assertion was accepted: a confidence-threshold rule of the pipeline, or the annotation protocol and mapping version of a ground-truth campaign. The threshold itself lives in the policy, not on each assertion, so a policy can be re-evaluated later." ;
+    rdfs:domain :FieldAssertion ;
+    rdfs:range xsd:anyURI .
+
+:supersedes rdf:type owl:ObjectProperty ;
+    rdfs:label "supersedes" ;
+    rdfs:comment "The earlier assertion that this one replaces about the same field of the same subject: a person's correction of a model's value, or a later value after a not-found. The earlier one stays as a record. Explicit, so a query does not depend on timestamps." ;
+    rdfs:domain :FieldAssertion ;
+    rdfs:range :FieldAssertion ;
+    skos:closeMatch prov:wasRevisionOf .
