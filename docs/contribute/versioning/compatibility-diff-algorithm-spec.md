@@ -89,15 +89,17 @@ Detect the following delta records:
 - `ONTOLOGY_HEADER_CHANGED` (an annotation on the `owl:Ontology` header changed: its label, description, `owl:priorVersion`, ...; `owl:versionIRI`, `owl:versionInfo` and `owl:imports` are not compared here)
 - `IMPORTS_CHANGED` (an `owl:imports` was added or removed on the `owl:Ontology` header)
 - `LABELLING_CHANGED` (a boolean flag in the `aec_drawing_metadata` namespace, such as `isComputerVisionLabel` or `isComputerVisionOptionalLabel`, was added, removed or changed on an existing term)
+- `MODULE_RENAMED` (the module replaces another one listed in `config/module_renames.json`, whose last release is the baseline; the baseline's IRIs are mapped to the new names before the other deltas are computed, so they list only what changed besides the name. See [Renaming a module](index.md#renaming-a-module))
+- `MODULE_RETIRED` (a module that a renamed one replaced has left `src/`; its releases stay published)
 
 ## Step 5 — Severity Classification
 Default mapping:
 - Non-breaking:
-  - `TERM_ADDED`, `ANNOTATION_CHANGED`, `ONTOLOGY_HEADER_CHANGED`, `IMPORTS_CHANGED`, `RESTRICTION_LOOSENED`
+  - `TERM_ADDED`, `ANNOTATION_CHANGED`, `ONTOLOGY_HEADER_CHANGED`, `IMPORTS_CHANGED`, `RESTRICTION_LOOSENED`, `MODULE_RETIRED` (needs no release)
 - Potentially-breaking:
   - `DOMAIN_CHANGED`, `RANGE_CHANGED`, `SUPERCLASS_CHANGED`, `LABELLING_CHANGED`, `RESTRICTION_ADDED`, `RESTRICTION_TIGHTENED`
 - Breaking:
-  - `TERM_REMOVED`, `TERM_RENAMED`, `NAMESPACE_MOVED`, `TYPE_CHANGED`, `SUPERPROPERTY_CHANGED` (if constraints imply old assertions become invalid)
+  - `TERM_REMOVED`, `TERM_RENAMED`, `NAMESPACE_MOVED`, `MODULE_RENAMED`, `TYPE_CHANGED`, `SUPERPROPERTY_CHANGED` (if constraints imply old assertions become invalid)
 
 Note: implementers may override with policy rules file.
 

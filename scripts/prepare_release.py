@@ -43,6 +43,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import compat_diff as cd  # noqa: E402
+import module_renames as mr  # noqa: E402
 import release_notes as rn  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -64,7 +65,7 @@ MARKER = "<!-- release-pr -->"
 UNRELEASED_RE = re.compile(r"## \[Unreleased\]([\r\n]+)(_Pending changes[^\r\n]*[\r\n]+)?")
 NEXT_HEADING_RE = re.compile(r"^## \[", re.M)
 VERSION_INFO_RE = re.compile(r'owl:versionInfo\s+"([^"]+)"')
-AGENTS_VERSIONS_RE = re.compile(r"\(currently `aec_.*?\)\.", re.S)
+AGENTS_VERSIONS_RE = re.compile(r"\(currently `[a-z]\w*` \d.*?\)\.", re.S)  # any module names, also after a rename (#171)
 
 
 def _read(path):
@@ -75,9 +76,17 @@ def _write(path, text):
     Path(path).write_bytes(text.encode("utf-8"))
 
 
+def order_key(module, renames=None):
+    """Dependency position of `module`; a renamed module takes the place of the module it replaced (#171)."""
+    names = mr.lineage(renames or {}, module)
+    position = next((MODULE_ORDER.index(n) for n in names if n in MODULE_ORDER), len(MODULE_ORDER))
+    return (position, module)
+
+
 def modules(root=ROOT):
     names = [p.stem for p in (Path(root) / "src").glob("*.ttl")]
-    return sorted(names, key=lambda m: (MODULE_ORDER.index(m) if m in MODULE_ORDER else len(MODULE_ORDER), m))
+    renames = mr.load(root)
+    return sorted(names, key=lambda m: order_key(m, renames))
 
 
 def src_version(root, module):
@@ -132,6 +141,8 @@ def _pending(root):
         entries.append(
             {
                 "module": module,
+                # the module whose release `released` is: the module itself, or the one it replaced (#171)
+                "released_module": res.get("baseline_module") or module,
                 "released": released,
                 "declared": current,
                 "next": nxt,
@@ -207,9 +218,15 @@ def archived_versions(root, module):
 
 
 def prior_version_iris(root, module, below):
-    """The version IRIs a release of `below` must name with owl:priorVersion: every earlier archived version."""
+    """The version IRIs a release of `below` must name with owl:priorVersion: every earlier archived version.
+
+    A renamed module's history includes the releases of the module it replaced (config/module_renames.json, #171),
+    named by their own IRIs: the numbering continues across the rename, so they all sort below the new versions.
+    """
     cutoff = _semver_key(below)
-    return [f"https://w3id.org/adiro/{module}/{v}" for v in archived_versions(root, module) if _semver_key(v) < cutoff]
+    found = [(_semver_key(v), name, v) for name in mr.lineage(mr.load(root), module)
+             for v in archived_versions(root, name) if _semver_key(v) < cutoff]
+    return [f"https://w3id.org/adiro/{name}/{v}" for _, name, v in sorted(found)]
 
 
 def _set_prior_versions(text, iris):
@@ -329,9 +346,12 @@ def merged_changes(root, entries, repo, collect=rn.collect_changes):
     """
     changes = {}
     for e in entries:
-        released = e["released"]
-        if released and _tag_exists(root, f"{e['module']}-v{released}"):
-            changes[e["module"]] = collect(root, repo, e["module"], released, "HEAD")
+        released, released_module = e["released"], e.get("released_module") or e["module"]
+        if released and _tag_exists(root, f"{released_module}-v{released}"):
+            if released_module == e["module"]:
+                changes[e["module"]] = collect(root, repo, e["module"], released, "HEAD")
+            else:  # a renamed module: from the old module's last tag, over both files (#171)
+                changes[e["module"]] = collect(root, repo, e["module"], released, "HEAD", previous_module=released_module)
         else:
             changes[e["module"]] = None
     return changes
@@ -343,7 +363,7 @@ def _changes_section(entries, changes, repo):
            "every merge, so a PR merged while this one is open appears here on the next rebuild."]
     for e in entries:
         items = changes.get(e["module"])
-        head = f"**`{e['module']}`** {e['released'] or 'never released'} → {e['next']}"
+        head = f"**`{e['module']}`** {_released_text(e)} → {e['next']}"
         if items is None:
             why = "this is its first release" if not e["released"] else f"its previous release ({e['released']}) was not tagged"
             out += ["", f"{head}: _no list, because {why}._"]
@@ -355,6 +375,14 @@ def _changes_section(entries, changes, repo):
                 link = f"[{ref}](https://github.com/{repo}/pull/{ref[1:]})" if ref.startswith("#") else f"`{ref}`"
                 out.append(f"- {link} {text}")
     return out
+
+
+def _released_text(e):
+    """The last release, naming the module it belongs to when that is the module a renamed one replaced (#171)."""
+    if not e["released"]:
+        return "never released"
+    released_module = e.get("released_module") or e["module"]
+    return e["released"] if released_module == e["module"] else f"`{released_module}` {e['released']}"
 
 
 def body(entries, root=ROOT, held_entries=(), changes=None, repo=None):
@@ -369,7 +397,7 @@ def body(entries, root=ROOT, held_entries=(), changes=None, repo=None):
     out += ["", "| Module | Released | Next | Bump | Driven by |", "|---|---|---|---|---|"]
     for e in entries:
         out.append(
-            f"| `{e['module']}` | {e['released'] or 'never'} | **{e['next']}** | {e['bump'].upper()} | "
+            f"| `{e['module']}` | {_released_text(e) if e['released'] else 'never'} | **{e['next']}** | {e['bump'].upper()} | "
             f"{_delta_summary(e)}{' — **override:** ' + e['override'] if e['override'] else ''} |"
         )
     if held_entries:

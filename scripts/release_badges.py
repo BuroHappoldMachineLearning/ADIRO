@@ -35,13 +35,26 @@ def latest_released_version(repo_root, module):
     return max(found)[1] if found else None
 
 
+def is_deprecated(ttl_file):
+    """True when the file's owl:Ontology says owl:deprecated true: a module a renamed one replaces (#171)."""
+    from rdflib import Graph, Literal
+    from rdflib.namespace import OWL, RDF
+
+    graph = Graph()
+    graph.parse(str(ttl_file), format="turtle")
+    return any(value == Literal(True) or str(value).lower() == "true"
+               for ont in graph.subjects(RDF.type, OWL.Ontology) for value in graph.objects(ont, OWL.deprecated))
+
+
 def badge_json(repo_root, module):
     version = latest_released_version(repo_root, module)
+    # the released file, not src/: a deprecation merged but not yet released does not change what the badge points at
+    deprecated = bool(version) and is_deprecated(Path(repo_root) / "versions" / module / version / f"{module}.ttl")
     return {
         "schemaVersion": 1,
         "label": module,
-        "message": version or "unreleased",
-        "color": COLOR_RELEASED if version else COLOR_UNRELEASED,
+        "message": f"{version} (deprecated)" if deprecated else (version or "unreleased"),
+        "color": COLOR_UNRELEASED if deprecated or not version else COLOR_RELEASED,
     }
 
 

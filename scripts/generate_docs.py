@@ -25,6 +25,7 @@ _TTL2MD_SRC = Path(__file__).parent.parent / "ttl2md" / "src"
 if _TTL2MD_SRC.exists() and str(_TTL2MD_SRC) not in sys.path:
     sys.path.insert(0, str(_TTL2MD_SRC))
 import ttl2md
+import module_renames
 import pylode_metadata
 from release_badges import write_release_badges
 from example_images import stage as stage_example_images
@@ -32,6 +33,7 @@ from ontology_versions import (
     SEMVER_RE,
     archived_versions,
     declared_version,
+    earlier_names,
     selector_html,
     version_list,
     version_page_front_matter,
@@ -77,9 +79,12 @@ def sort_by_dependency(ttl_files: list[Path]) -> list[Path]:
     }
     
     def get_order(file_path: Path) -> int:
-        """Get the dependency order for a file."""
-        stem = file_path.stem
-        return dependency_order.get(stem, 999)  # Unknown files go to end
+        """Get the dependency order for a file; a renamed module takes the place of the module it replaced (#171)."""
+        try:
+            names = module_renames.lineage(module_renames.load(file_path.parent.parent), file_path.stem)
+        except ValueError:
+            names = [file_path.stem]
+        return next((dependency_order[n] for n in names if n in dependency_order), 999)  # Unknown files go to end
     
     return sorted(ttl_files, key=get_order)
 
@@ -597,7 +602,8 @@ def build_dependency_mermaid(
     return lines
 
 
-def _ontology_page(ttl_file: Path, ttl_files: list[Path], title: str, selected: str | None, versions: list[str]) -> str:
+def _ontology_page(ttl_file: Path, ttl_files: list[Path], title: str, selected: str | None, versions: list[str],
+                   renamed_from: list = ()) -> str:
     """The Markdown page of one version of one ontology (#124).
 
     ``selected`` is the version the page documents; ``versions`` is every version of the module, newest first.
@@ -660,7 +666,7 @@ def _ontology_page(ttl_file: Path, ttl_files: list[Path], title: str, selected: 
     # icons) working inside the wrapper while the raw <details> stays inline, so everything sits on the same line.
     actions = ['<div class="adiro-actions" markdown="span">']
     if versions:
-        actions.append(selector_html(selected, versions))
+        actions.append(selector_html(selected, versions, renamed_from))
     actions += [links_block, "</div>"]
     page = "\n".join([body_lines[0], ""] + actions + [""] + rest).rstrip() + "\n"
     return (version_page_front_matter() if earlier else "") + page
@@ -712,9 +718,10 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path, re
         archived = archived_versions(repo_root, stem)
         versions = version_list(archived, declared_version(ttl_file))
         latest = versions[0] if versions else None
+        renamed_from = earlier_names(repo_root, stem)  # a renamed module's dropdown also lists the old name's releases (#171)
 
         page_file = ontologies_dir / f"{stem}.md"
-        page_file.write_text(_ontology_page(ttl_file, ttl_files, title, latest, versions), encoding="utf-8")
+        page_file.write_text(_ontology_page(ttl_file, ttl_files, title, latest, versions, renamed_from), encoding="utf-8")
         print(f"  [OK] Generated ontology page: {page_file}")
 
         version_dir = ontologies_dir / stem
@@ -726,7 +733,7 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path, re
             diagram_files = [snapshot if f.stem == stem else f for f in ttl_files]  # this version's own imports
             version_dir.mkdir(parents=True, exist_ok=True)
             version_file = version_dir / f"{version}.md"
-            version_file.write_text(_ontology_page(snapshot, diagram_files, title, version, versions), encoding="utf-8")
+            version_file.write_text(_ontology_page(snapshot, diagram_files, title, version, versions, renamed_from), encoding="utf-8")
             print(f"  [OK] Generated ontology page: {version_file}")
 
         comment = extract_ontology_comment(ttl_file)

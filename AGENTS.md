@@ -226,6 +226,13 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   branch (it is regenerated); do not bump versions by hand except in a manual cut. To raise a module's bump or
   leave it out of the next release, set `"minor"`/`"major"`/`"patch"` or `"hold"` for it in
   `config/release_overrides.json` on `main` (a bump override is consumed by the cut; see `release-process.md`).
+- **A renamed module continues the old one's history** ([#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171)).
+  `config/module_renames.json` (read by `scripts/module_renames.py`) maps each new module to the one it replaces. The compatibility
+  diff, the release cut, the `owl:priorVersion` checks, the release notes, the version dropdown, the docs order and the badges follow
+  it: the new module enters `src/` at the old module's last released version and is released at that + 1 MAJOR (one `MODULE_RENAMED`
+  change, its terms compared under the new names), its `owl:priorVersion` lines name the old module's releases by their own IRIs, and
+  the old module, released once more as deprecated, is `MODULE_RETIRED` when it leaves `src/`. Full rules:
+  `docs/contribute/versioning/index.md` ("Renaming a module").
 - **Releases are per-module:** tag `<module>-v<semver>` (e.g. `aec_common_symbols-v1.2.0`) →
   `.github/workflows/backup-version.yml` snapshots that module to `versions/<module>/<semver>/` (the `.ttl` and its
   `<module>.display.json` at the tag, via `scripts/archive_display_config.py`,
