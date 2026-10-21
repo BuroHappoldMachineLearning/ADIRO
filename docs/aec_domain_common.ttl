@@ -21,8 +21,9 @@
     owl:priorVersion <https://w3id.org/adiro/aec_domain_common/2.0.0> ;
     owl:priorVersion <https://w3id.org/adiro/aec_domain_common/2.0.1> ;
     owl:priorVersion <https://w3id.org/adiro/aec_domain_common/2.0.2> ;
-    owl:versionIRI <https://w3id.org/adiro/aec_domain_common/3.0.0> ;
-    owl:versionInfo "3.0.0" ;
+    owl:priorVersion <https://w3id.org/adiro/aec_domain_common/3.0.0> ;
+    owl:versionIRI <https://w3id.org/adiro/aec_domain_common/3.0.1> ;
+    owl:versionInfo "3.0.1" ;
     owl:imports <https://w3id.org/adiro/aec_drawing_metadata> .
 
 #################################################################

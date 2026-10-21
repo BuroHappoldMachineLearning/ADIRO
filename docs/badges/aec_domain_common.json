@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
   "label": "aec_domain_common",
-  "message": "3.0.0",
-  "color": "16305f"
+  "message": "3.0.1 (deprecated)",
+  "color": "lightgrey"
 }

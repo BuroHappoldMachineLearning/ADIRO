@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
   "label": "aec_provenance",
-  "message": "1.0.1",
-  "color": "16305f"
+  "message": "1.1.0 (deprecated)",
+  "color": "lightgrey"
 }
