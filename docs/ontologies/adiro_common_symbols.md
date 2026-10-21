@@ -2,9 +2,9 @@
 
 <div class="adiro-actions" markdown="span">
 <details class="adiro-version">
-<summary class="md-button">Version 4.0.1 (latest)</summary>
+<summary class="md-button">Version 5.0.0 (latest)</summary>
 <ul>
-<li><a href="./" class="adiro-version-current" aria-current="page">4.0.1 (latest)</a></li>
+<li><a href="./" class="adiro-version-current" aria-current="page">5.0.0 (latest)</a></li>
 <li><a href="../aec_common_symbols/">aec_common_symbols 4.0.1</a></li>
 <li><a href="../aec_common_symbols/4.0.0/">aec_common_symbols 4.0.0</a></li>
 <li><a href="../aec_common_symbols/3.0.1/">aec_common_symbols 3.0.1</a></li>
@@ -21,7 +21,7 @@
 Reusable symbols that appear across disciplines, such as dimensions, grids, levels, and reference symbols. Every symbol is a kind of drawing element from the drawing-metadata module. The discipline modules build on these shared symbols.
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols`
-- **Versioned IRI:** `https://w3id.org/adiro/adiro_common_symbols/4.0.1`
+- **Versioned IRI:** `https://w3id.org/adiro/adiro_common_symbols/5.0.0`
 - **Imports:** `adiro_drawing_metadata`
 
 ## Interactive view
