@@ -69,19 +69,18 @@ def sort_by_dependency(ttl_files: list[Path]) -> list[Path]:
     """
     # Define dependency order (lower number = fewer dependencies)
     dependency_order = {
-        'aec_provenance': 0,
-        'aec_geometry': 1,       # foundational, imports aec_provenance
-        'aec_drawing_metadata': 2,
-        'aec_common_symbols': 3,
-        'aec_domain_common': 4,
-        'aec_facade_domain': 5,
-        'aec_drawing_ontology': 6,  # Monolith, put last
+        'adiro_provenance': 0,
+        'adiro_geometry': 1,       # foundational, imports adiro_provenance
+        'adiro_drawing_metadata': 2,
+        'adiro_common_symbols': 3,
+        'adiro_domain_common': 4,
+        'adiro_facade_domain': 5,
     }
     
     def get_order(file_path: Path) -> int:
-        """Get the dependency order for a file; a renamed module takes the place of the module it replaced (#171)."""
+        """Get the dependency order for a file; a module and the one it replaced, or that replaced it, share a place (#171)."""
         try:
-            names = module_renames.lineage(module_renames.load(file_path.parent.parent), file_path.stem)
+            names = module_renames.names(module_renames.load(file_path.parent.parent), file_path.stem)
         except ValueError:
             names = [file_path.stem]
         return next((dependency_order[n] for n in names if n in dependency_order), 999)  # Unknown files go to end
@@ -481,7 +480,7 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
         "users and uses, and the functional/non-functional requirements."
     )
     lines.append("")
-    lines.append("    [:octicons-arrow-right-24: ORSD](specification/ORSD_v1.3.md)")
+    lines.append("    [:octicons-arrow-right-24: ORSD](specification/ORSD_v1.4.md)")
     lines.append("")
     lines.append("-   :material-clipboard-list-outline: __Use Cases__")
     lines.append("")
@@ -625,13 +624,17 @@ def deprecation_notice(ttl_file: Path, ttl_files: list[Path], earlier: bool) -> 
 
 
 def _ontology_page(ttl_file: Path, ttl_files: list[Path], title: str, selected: str | None, versions: list[str],
-                   renamed_from: list = ()) -> str:
+                   renamed_from: list = (), all_files: list[Path] | None = None, unlisted: bool = False) -> str:
     """The Markdown page of one version of one ontology (#124).
 
     ``selected`` is the version the page documents; ``versions`` is every version of the module, newest first.
     The newest one is the module's latest page (ontologies/<module>/), generated from ``src/``; every other is
     an earlier-release page (ontologies/<module>/<version>/), generated from its archived snapshot, and
     everything on it (title, term reference, links, OntoCanvas view, dependency diagram) is that version's.
+
+    ``ttl_files`` are the modules of the page's dependency diagram; ``all_files`` every module whose page this run
+    generates (for the link to a replacement, #171). ``unlisted`` keeps a latest page out of the site search, like an
+    earlier-release page: the page of a module kept in ``src/`` for one more cycle after a rename.
     """
     stem = ttl_file.stem
     earlier = bool(versions) and selected != versions[0]
@@ -690,9 +693,9 @@ def _ontology_page(ttl_file: Path, ttl_files: list[Path], title: str, selected: 
     if versions:
         actions.append(selector_html(selected, versions, renamed_from))
     actions += [links_block, "</div>"]
-    notice = deprecation_notice(ttl_file, ttl_files, earlier)
+    notice = deprecation_notice(ttl_file, all_files or ttl_files, earlier)
     page = "\n".join([body_lines[0], ""] + actions + [""] + notice + rest).rstrip() + "\n"
-    return (version_page_front_matter() if earlier else "") + page
+    return (version_page_front_matter() if earlier or unlisted else "") + page
 
 
 def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path, repo_root: Path | None = None) -> None:
@@ -711,6 +714,12 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path, re
     ontologies_dir = output_dir / "ontologies"
     ontologies_dir.mkdir(parents=True, exist_ok=True)
 
+    # A module kept in src/ for one more cycle after a rename (its successor is there too, #171) still gets its pages, but
+    # the index, the diagrams, the navigation and the search list the current modules only.
+    retiring = module_renames.superseded(module_renames.load(repo_root), [f.stem for f in ttl_files])
+    listed = [f for f in ttl_files if f.stem not in retiring]
+    retired_files = [f for f in ttl_files if f.stem in retiring]
+
     index_lines: list[str] = [
         "# Ontologies",
         "",
@@ -724,7 +733,7 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path, re
         "`owl:imports`. Arrows point from an ontology to the ontologies it "
         "imports.",
         "",
-        *build_dependency_mermaid(ttl_files),
+        *build_dependency_mermaid(listed),
         "",
         "## Available ontologies",
         "",
@@ -742,9 +751,11 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path, re
         versions = version_list(archived, declared_version(ttl_file))
         latest = versions[0] if versions else None
         renamed_from = earlier_names(repo_root, stem)  # a renamed module's dropdown also lists the old name's releases (#171)
+        peers = retired_files if stem in retiring else listed  # the diagram shows the modules of the same name set
 
         page_file = ontologies_dir / f"{stem}.md"
-        page_file.write_text(_ontology_page(ttl_file, ttl_files, title, latest, versions, renamed_from), encoding="utf-8")
+        page_file.write_text(_ontology_page(ttl_file, peers, title, latest, versions, renamed_from, ttl_files,
+                                            unlisted=stem in retiring), encoding="utf-8")
         print(f"  [OK] Generated ontology page: {page_file}")
 
         version_dir = ontologies_dir / stem
@@ -753,12 +764,15 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path, re
             if version == latest:
                 continue
             snapshot = repo_root / "versions" / stem / version / f"{stem}.ttl"
-            diagram_files = [snapshot if f.stem == stem else f for f in ttl_files]  # this version's own imports
+            diagram_files = [snapshot if f.stem == stem else f for f in peers]  # this version's own imports
             version_dir.mkdir(parents=True, exist_ok=True)
             version_file = version_dir / f"{version}.md"
-            version_file.write_text(_ontology_page(snapshot, diagram_files, title, version, versions, renamed_from), encoding="utf-8")
+            version_file.write_text(_ontology_page(snapshot, diagram_files, title, version, versions, renamed_from, ttl_files),
+                                    encoding="utf-8")
             print(f"  [OK] Generated ontology page: {version_file}")
 
+        if stem in retiring:
+            continue
         comment = extract_ontology_comment(ttl_file)
         dependencies = extract_adiro_dependencies(ttl_file)
         index_lines.append(f"-   ### [{title}]({stem}.md)")
@@ -778,12 +792,12 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path, re
     print(f"  [OK] Generated ontologies index: {index_file}")
 
     # Order the left-nav sidebar (awesome-pages `.pages`) to follow the module
-    # dependency chain — aec_provenance, aec_geometry, aec_drawing_metadata,
-    # aec_common_symbols, aec_domain_common, aec_facade_domain — rather than the
+    # dependency chain — adiro_provenance, adiro_geometry, adiro_drawing_metadata,
+    # adiro_common_symbols, adiro_domain_common, adiro_facade_domain — rather than the
     # default alphabetical order, so the nav mirrors the `owl:imports` graph.
     # ttl_files is already dependency-sorted. See AGENTS.md / the deploy skill.
     pages_lines = ["nav:", "  - index.md"]
-    pages_lines += [f"  - {ttl_file.stem}.md" for ttl_file in ttl_files]
+    pages_lines += [f"  - {ttl_file.stem}.md" for ttl_file in listed]
     pages_file = ontologies_dir / ".pages"
     pages_file.write_text("\n".join(pages_lines) + "\n", encoding="utf-8")
     print(f"  [OK] Generated ontologies nav order: {pages_file}")
@@ -838,7 +852,8 @@ def main():
     
     # Generate index.html
     print("-" * 60)
-    generate_index(ttl_files, output_dir)
+    retiring = module_renames.superseded(module_renames.load(repo_root), [f.stem for f in ttl_files])
+    generate_index([f for f in ttl_files if f.stem not in retiring], output_dir)  # the current modules only (#171)
 
     # Generate native Markdown ontology pages (Ontologies nav section)
     generate_ontology_markdown_pages(ttl_files, output_dir, repo_root)
@@ -852,7 +867,14 @@ def main():
         display_json_output = output_dir / display_json_file.name
         shutil.copy2(display_json_file, display_json_output)
         print(f"  [OK] Copied display JSON: {display_json_output}")
-    
+
+    # The published migration mappings (#171): migration/aec_to_adiro.ttl is served at w3id.org/adiro/migration/…
+    for mapping in sorted((repo_root / "migration").glob("*.ttl")):
+        target = output_dir / "migration" / mapping.name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(mapping, target)
+        print(f"  [OK] Copied migration mapping: {target}")
+
     print("-" * 60)
     print(f"Documentation generation complete: {success_count}/{len(ttl_files)} files processed successfully.")
     

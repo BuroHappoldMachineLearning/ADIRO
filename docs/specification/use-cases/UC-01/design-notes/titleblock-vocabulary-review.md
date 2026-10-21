@@ -87,7 +87,7 @@ conversation in the whole plan.
 
 Consolidating the four ORSD traceability matrices, the terms with a CQ behind them are:
 
-| Use case | Status | Terms it needs (all already in `aec_drawing_metadata` / `aec_domain_common` / `aec_common_symbols`) |
+| Use case | Status | Terms it needs (all already in `adiro_drawing_metadata` / `adiro_domain_common` / `adiro_common_symbols`) |
 | --- | --- | --- |
 | **UC-01** Titleblock search | ✅ implemented | `DrawingSheet`, `Layout`, `LayoutContentType`, `DrawingRevision`, `Project`, `Person`, `StatusCode`, `DrawingPackage`, `dcommon:Discipline`; `drawingIdentifier`, `drawingTitle`, `hasScale`, `sheetSize`, `revisionCode`, `issueDate`, `personName`, `projectName`, `projectNumber`, `packageName`, `statusLabel`; `contains`, `hasProperty`, `hasDiscipline`, `hasRevision`, `isRevisionOf`, `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `hasStatusCode` |
 | **UC-03** Cross-sheet linking | ✅ implemented | `csymbol:ReferenceSymbol`, `hasReferenceSymbol`, `referencesLayout`, `layoutIdentifier` |

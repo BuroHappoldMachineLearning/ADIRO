@@ -27,8 +27,8 @@ def test_the_modules_declare_depiction_as_an_annotation_property_and_import_no_f
 
 
 def test_example_image_is_a_subproperty_of_the_standard_depiction():
-    metadata = Graph().parse(str(ROOT / "src" / "aec_drawing_metadata.ttl"), format="turtle")
-    example = URIRef("https://w3id.org/adiro/aec_drawing_metadata#exampleImage")
+    metadata = Graph().parse(str(ROOT / "src" / "adiro_drawing_metadata.ttl"), format="turtle")
+    example = URIRef("https://w3id.org/adiro/adiro_drawing_metadata#exampleImage")
     depiction = URIRef("http://xmlns.com/foaf/0.1/depiction")
     assert (example, RDFS.subPropertyOf, depiction) in metadata
     assert (depiction, URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), OWL.AnnotationProperty) in metadata

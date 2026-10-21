@@ -90,7 +90,7 @@ A core module may reference an external vocabulary directly only when **all thre
 3. **The entailments it carries are ones we want.** An alignment we would rather a reasoner ignored is not a
    core concern.
 
-`aec_provenance` references PROV-O in the core and passes all three: a W3C Recommendation, a genuine
+`adiro_provenance` references PROV-O in the core and passes all three: a W3C Recommendation, a genuine
 sub-property relationship, and PROV-awareness is exactly the intent.
 
 Otherwise the reference goes in an **optional compatibility layer** — a module carrying annotation-level
@@ -102,7 +102,7 @@ mapping be deprecated wholesale without touching a core module.
 
 The load-bearing reason is **lifecycle**. A core module should not take version churn from a third-party
 vocabulary, least of all an unreleased one: with the mappings inline, a rename in DAnO would mean cutting a new
-`aec_provenance` — a module downstream consumers pin — for a reason that has nothing to do with its content.
+`adiro_provenance` — a module downstream consumers pin — for a reason that has nothing to do with its content.
 The second reason is **scale**: crosswalks to DiCon, ifcOWL, BOT and GeoSPARQL would otherwise accumulate inside
 two core modules.
 
@@ -137,9 +137,9 @@ ENFORCE=1 bash scripts/run_reasoning.sh # fail on inconsistency / unsatisfiable 
 This is the concrete defence against the failure mode documented for the Experimental Factor Ontology, where
 selectively-referenced imports left the merged result inconsistent with large numbers of unsatisfiable classes.
 
-## Worked example — PROV-O in `aec_provenance`
+## Worked example — PROV-O in `adiro_provenance`
 
-`aec_provenance` needs PROV-O only as an *alignment target*: its own axioms carry the logic. So it takes
+`adiro_provenance` needs PROV-O only as an *alignment target*: its own axioms carry the logic. So it takes
 **option 1** — minimal local typing stubs plus `rdfs:isDefinedBy`, with no `owl:imports`:
 
 ```turtle
@@ -155,7 +155,7 @@ PROV-O IRI.
 
 | Vocabulary | Status |
 |---|---|
-| **PROV-O** | Option 1A (external IRI reused as a local stub) in `aec_provenance`, referenced from the core. |
-| **GeoSPARQL** | **Reused as a local stub (option 1A)** in `aec_geometry`: `geo:Geometry` is the supertype of `aec_geometry:BoundingBox`. No `owl:imports` — declared locally, resolved offline via `catalog-v001.xml` (the same pattern as PROV-O). WKT serialisation and spatial queries remain deferred ([#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36)). |
-| **DAnO** | **Decided: no import, no extraction, and no compatibility layer.** ADIRO mints its own terms; the comparison is documentation-only. Coverage of `aec_common_symbols` is still open. See the [DAnO comparison](dano-comparison.md) and [#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77). |
+| **PROV-O** | Option 1A (external IRI reused as a local stub) in `adiro_provenance`, referenced from the core. |
+| **GeoSPARQL** | **Reused as a local stub (option 1A)** in `adiro_geometry`: `geo:Geometry` is the supertype of `adiro_geometry:BoundingBox`. No `owl:imports` — declared locally, resolved offline via `catalog-v001.xml` (the same pattern as PROV-O). WKT serialisation and spatial queries remain deferred ([#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36)). |
+| **DAnO** | **Decided: no import, no extraction, and no compatibility layer.** ADIRO mints its own terms; the comparison is documentation-only. Coverage of `adiro_common_symbols` is still open. See the [DAnO comparison](dano-comparison.md) and [#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77). |
 | **ifcOWL / BEO** | Surveyed only — see [Discussion #70](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/70). |

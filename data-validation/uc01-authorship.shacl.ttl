@@ -16,7 +16,7 @@
 # (the extraction missed it, or the drawing names none): telling those apart is the vocabulary of #187.
 
 @prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix metadata: <https://w3id.org/adiro/aec_drawing_metadata#> .
+@prefix metadata: <https://w3id.org/adiro/adiro_drawing_metadata#> .
 @prefix dv: <https://w3id.org/adiro/data-validation/uc01-authorship#> .
 
 dv:DrawingAuthor a sh:NodeShape ;

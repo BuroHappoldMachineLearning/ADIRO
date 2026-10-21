@@ -1,7 +1,7 @@
-@prefix : <https://w3id.org/adiro/aec_common_symbols#> .
+@prefix : <https://w3id.org/adiro/adiro_common_symbols#> .
 @base <https://w3id.org/adiro/> .
-@prefix metadata: <https://w3id.org/adiro/aec_drawing_metadata#> .
-@prefix csymbol: <https://w3id.org/adiro/aec_common_symbols#> .
+@prefix metadata: <https://w3id.org/adiro/adiro_drawing_metadata#> .
+@prefix csymbol: <https://w3id.org/adiro/adiro_common_symbols#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -10,12 +10,12 @@
 #################################################################
 #  HISTORICAL UC-03 GRAPHICAL-SYMBOL CORE FOR VISUALIZATION
 #  This focused projection predates the v0.5 textual-reference extension.
-#  For the current ontology, use the generated aec_drawing_metadata
-#  and aec_common_symbols reference pages sourced from src/*.ttl.
+#  For the current ontology, use the generated adiro_drawing_metadata
+#  and adiro_common_symbols reference pages sourced from src/*.ttl.
 #
 #  Scope: only the core concepts of UC-03 (Reference Symbol
 #  Cross-Sheet Linking), plus the minimum context from
-#  aec_drawing_metadata needed to make the visualisation
+#  adiro_drawing_metadata needed to make the visualisation
 #  coherent.
 #
 #  Design principle:
@@ -64,7 +64,7 @@
 
 
 #################################################################
-#  PART 1 — Minimum context from aec_drawing_metadata
+#  PART 1 — Minimum context from adiro_drawing_metadata
 #  (only what's needed to make UC-03 readable)
 #################################################################
 
@@ -86,7 +86,7 @@ metadata:hasProperty rdf:type owl:ObjectProperty ;
     rdfs:comment "Generic characterising-quality relationship." .
 
 
-###  Core classes (REUSE from aec_drawing_metadata)
+###  Core classes (REUSE from adiro_drawing_metadata)
 
 metadata:DrawingSheet rdf:type owl:Class ;
     rdfs:label "DrawingSheet" ;
@@ -163,7 +163,7 @@ metadata:hasLayoutContentType rdf:type owl:ObjectProperty ;
 #  PART 2 — UC-03 core: ReferenceSymbol
 #
 #  Replaces the original csymbol:Callout class. Sits in the
-#  aec_common_symbols module as a subclass of DrawingElement.
+#  adiro_common_symbols module as a subclass of DrawingElement.
 #################################################################
 
 csymbol:ReferenceSymbol rdf:type owl:Class ;

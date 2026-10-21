@@ -816,7 +816,7 @@ METADATA = {
 # Images that no current term links but that an earlier release names, so their address must keep answering with
 # the same picture ("a released version never changes", docs/contribute/example-images.md). Still drawn, so a
 # regeneration reproduces them.
-ARCHIVED = {  # module -> {file name -> function returning the PNG bytes}
+ARCHIVED = {  # module -> {file name -> function returning the PNG bytes}; the aec_* folders keep what their releases named (#171)
     "aec_drawing_metadata": {"Layout_01.png": layout},
 }
 
@@ -847,20 +847,20 @@ FACADE = {
 }
 
 DRAWINGS = {  # module -> {file name -> function returning the PNG bytes}
-    "aec_drawing_metadata": METADATA,
-    "aec_common_symbols": COMMON_SYMBOLS,
-    "aec_domain_common": DOMAIN_COMMON,
-    "aec_facade_domain": FACADE,
+    "adiro_drawing_metadata": METADATA,
+    "adiro_common_symbols": COMMON_SYMBOLS,
+    "adiro_domain_common": DOMAIN_COMMON,
+    "adiro_facade_domain": FACADE,
 }
 
 
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
     assets = Path(argv[0]) if argv else DEFAULT_ASSETS
-    for module, drawings in DRAWINGS.items():
+    for module in [*DRAWINGS, *(m for m in ARCHIVED if m not in DRAWINGS)]:
         out = assets / module / "exampleImage"
         out.mkdir(parents=True, exist_ok=True)
-        for name, draw in {**drawings, **ARCHIVED.get(module, {})}.items():
+        for name, draw in {**DRAWINGS.get(module, {}), **ARCHIVED.get(module, {})}.items():
             data = draw()
             (out / name).write_bytes(data)
             print(f"wrote {module}/{name} ({len(data) // 1024} KB)")

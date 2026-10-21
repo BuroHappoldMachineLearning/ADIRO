@@ -1,7 +1,7 @@
-@prefix : <https://w3id.org/adiro/aec_drawing_metadata#> .
+@prefix : <https://w3id.org/adiro/adiro_drawing_metadata#> .
 @base <https://w3id.org/adiro/> .
-@prefix metadata: <https://w3id.org/adiro/aec_drawing_metadata#> .
-@prefix dcommon: <https://w3id.org/adiro/aec_domain_common#> .
+@prefix metadata: <https://w3id.org/adiro/adiro_drawing_metadata#> .
+@prefix dcommon: <https://w3id.org/adiro/adiro_domain_common#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace#> .
@@ -14,9 +14,9 @@
 #  This file consolidates three sources into a single TTL for
 #  visualization purposes (e.g. WebVOWL, Protégé):
 #
-#    1. The existing aec_drawing_metadata.ttl (sheet/layout
+#    1. The existing adiro_drawing_metadata.ttl (sheet/layout
 #       structure, content types, visual regions).
-#    2. The relevant slice of aec_domain_common.ttl: the
+#    2. The relevant slice of adiro_domain_common.ttl: the
 #       Discipline class hierarchy and the hasDiscipline
 #       object property, which UC-01 reuses.
 #    3. UC-01 extensions (DrawingRevision, Project, Person,
@@ -30,11 +30,11 @@
 #
 #  A snapshot of that version: it is not kept in step with later terms (for
 #  example the layout identifier and title fields, or the split of the
-#  scale into drawingScale and layoutScale). The aec_drawing_metadata
+#  scale into drawingScale and layoutScale). The adiro_drawing_metadata
 #  module is authoritative; do not update this file's content.
 #################################################################
 
-<https://w3id.org/adiro/aec_drawing_metadata> rdf:type owl:Ontology ;
+<https://w3id.org/adiro/adiro_drawing_metadata> rdf:type owl:Ontology ;
     rdfs:label "AEC Drawing Metadata Ontology (UC-01 merged view)" ;
     rdfs:comment "Merged view: drawing-metadata module + Discipline slice from dcommon + UC-01 extensions." ;
     owl:versionIRI <https://w3id.org/adiro/aec_drawing_metadata/1.0.0> ;
@@ -47,7 +47,7 @@
 
 
 #################################################################
-#  PART 1 — ORIGINAL aec_drawing_metadata.ttl
+#  PART 1 — ORIGINAL adiro_drawing_metadata.ttl
 #################################################################
 
 ###  Annotation properties
@@ -227,7 +227,7 @@
 
 
 #################################################################
-#  PART 2 — DISCIPLINE SLICE (reused from aec_domain_common)
+#  PART 2 — DISCIPLINE SLICE (reused from adiro_domain_common)
 #  Per UC-01 Decision G3: reuse the existing class hierarchy.
 #  Per UC-01 Decision G5: hasDiscipline domain remains
 #  LayoutContentType (open issue — pending team review).

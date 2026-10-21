@@ -1,8 +1,8 @@
 nav:
   - index.md
-  - aec_provenance.md
-  - aec_geometry.md
-  - aec_drawing_metadata.md
-  - aec_common_symbols.md
-  - aec_domain_common.md
-  - aec_facade_domain.md
+  - adiro_provenance.md
+  - adiro_geometry.md
+  - adiro_drawing_metadata.md
+  - adiro_common_symbols.md
+  - adiro_domain_common.md
+  - adiro_facade_domain.md

@@ -3,16 +3,16 @@
 #
 # They check DATA (what an extraction pipeline or a ground-truth import produces), not the ontology: OWL cannot say "never both"
 # or "if accepted, then by someone", under the open-world assumption. What is read here is documented in
-# docs/contribute/data-validation.md and the vocabulary is that of aec_provenance.
+# docs/contribute/data-validation.md and the vocabulary is that of adiro_provenance.
 #
 # Severity: sh:Violation. Each condition is structural: an assertion that breaks one cannot be read unambiguously.
 
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix aprov: <https://w3id.org/adiro/aec_provenance#> .
+@prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .
 @prefix dv: <https://w3id.org/adiro/data-validation/assertions#> .
 
-dv: sh:declare [ sh:prefix "aprov" ; sh:namespace "https://w3id.org/adiro/aec_provenance#"^^xsd:anyURI ] .
+dv: sh:declare [ sh:prefix "aprov" ; sh:namespace "https://w3id.org/adiro/adiro_provenance#"^^xsd:anyURI ] .
 
 # An assertion has a value or an outcome, never both. (An assertion with neither is allowed: it may still be being filled in.)
 dv:ValueOrOutcome a sh:NodeShape ;

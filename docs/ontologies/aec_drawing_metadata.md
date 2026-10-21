@@ -1,3 +1,8 @@
+---
+search:
+  exclude: true
+---
+
 # Aec Drawing Metadata
 
 <div class="adiro-actions" markdown="span">
@@ -20,7 +25,7 @@
 
 !!! warning "Deprecated"
 
-    This module is deprecated and receives no further changes. It is replaced by `adiro_drawing_metadata`, which continues its version numbering. Every release of it stays published at its own IRI.
+    This module is deprecated and receives no further changes. It is replaced by [`adiro_drawing_metadata`](adiro_drawing_metadata.md), which continues its version numbering. Every release of it stays published at its own IRI.
 
 The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance module (which also holds the file, the page and the agents) and the geometry module (where a title block's region is located), and the discipline modules build on it.
 

@@ -1,6 +1,6 @@
 # AEC Drawing Ontologies
 
-<!-- Latest-release badges: one per module in src/ (checked by tests/test_readme_badges.py). Each reads
+<!-- Latest-release badges: one per module in src/ (not a module a renamed one replaces) (checked by tests/test_readme_badges.py). Each reads
      badges/<module>.json from the docs site (scripts/release_badges.py), which every docs deploy refreshes
      from versions/, so the badges update after a release is published. Each badge links to its latest
      release page; the Release PR (scripts/prepare_release.py) bumps those links at the release cut.
@@ -10,12 +10,13 @@
     <td><img src="docs/img/adiro_banner.png" alt="ADIRO" width="320"></td>
     <td align="left" valign="middle">
       <b>Latest releases</b><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/aec_provenance-v1.1.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_provenance.json" alt="aec_provenance"></a><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/aec_geometry-v2.0.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_geometry.json" alt="aec_geometry"></a><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/aec_drawing_metadata-v6.0.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_drawing_metadata.json" alt="aec_drawing_metadata"></a><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/aec_common_symbols-v4.0.1"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_common_symbols.json" alt="aec_common_symbols"></a><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/aec_domain_common-v3.0.1"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_domain_common.json" alt="aec_domain_common"></a><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/aec_facade_domain-v3.0.1"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Faec_facade_domain.json" alt="aec_facade_domain"></a><br>
+      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_provenance-v1.1.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_provenance.json" alt="adiro_provenance"></a><br>
+      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_geometry-v2.0.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_geometry.json" alt="adiro_geometry"></a><br>
+      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_drawing_metadata-v6.0.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_drawing_metadata.json" alt="adiro_drawing_metadata"></a><br>
+      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_common_symbols-v4.0.1"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_common_symbols.json" alt="adiro_common_symbols"></a><br>
+      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_domain_common-v3.0.1"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_domain_common.json" alt="adiro_domain_common"></a><br>
+      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_facade_domain-v3.0.1"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_facade_domain.json" alt="adiro_facade_domain"></a><br>
+      <sub>Formerly <code>aec_*</code>: <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171">renamed</a>; the old releases stay published.</sub><br>
     </td>
     <td align="left" valign="middle">
       <b>Build status</b><br>
@@ -50,7 +51,7 @@ The documentation site is built with **[Material for MkDocs](https://squidfunk.g
 - Changes are pushed to the `main` or `master` branch
 - The workflow is manually triggered from the GitHub Actions tab
 
-The site provides a landing page (`docs/index.md`), a **Use Cases** page (`docs/specification/use-cases/README.md`), an **Ontology Requirements (ORSD)** page (`docs/specification/ORSD_v1.3.md`), and a detailed per-ontology reference page for each ontology, generated with **[pyLODE](https://github.com/RDFLib/pyLODE)**.
+The site provides a landing page (`docs/index.md`), a **Use Cases** page (`docs/specification/use-cases/README.md`), an **Ontology Requirements (ORSD)** page (`docs/specification/ORSD_v1.4.md`), and a detailed per-ontology reference page for each ontology, generated with **[pyLODE](https://github.com/RDFLib/pyLODE)**.
 
 
 ### Documentation website automation

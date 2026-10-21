@@ -37,7 +37,7 @@ Each module has one folder, named like the annotation property:
 assets/<module>/exampleImage/<LocalName>_NN.<ext>
 ```
 
-- `<module>` is the ontology module, for example `aec_drawing_metadata`.
+- `<module>` is the ontology module, for example `adiro_drawing_metadata`.
 - `<LocalName>` is the local name of the class or relationship the image shows, exactly as in its IRI.
 - `NN` is a two-digit number, always present, starting at `01`: even a term's only image is `Titleblock_01.png`. The
   number is the display order (a preview takes `_01`), and a new image takes the next free number. Numbers need not be
@@ -53,14 +53,14 @@ The value of `exampleImage` is the full URI of the image. Declare one prefix for
 part only:
 
 ```turtle
-@prefix img: <https://w3id.org/adiro/aec_drawing_metadata/exampleImage/> .
+@prefix img: <https://w3id.org/adiro/adiro_drawing_metadata/exampleImage/> .
 
 :Titleblock a owl:Class ;
     :exampleImage img:Titleblock_01.png , img:Titleblock_02.png .
 ```
 
 The prefix expands to the full IRI, so `img:Titleblock_01.png` is
-`<https://w3id.org/adiro/aec_drawing_metadata/exampleImage/Titleblock_01.png>`. The value is an IRI, not a text literal.
+`<https://w3id.org/adiro/adiro_drawing_metadata/exampleImage/Titleblock_01.png>`. The value is an IRI, not a text literal.
 
 ## The statement in the pull request
 

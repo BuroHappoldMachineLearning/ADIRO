@@ -5,9 +5,9 @@ one ADIRO suite**, not three databases or three new UC-03 ontology modules.
 
 | Responsibility | Question it answers | ADIRO location and current state |
 |---|---|---|
-| Semantic | Which evidenced source reference exists, how is it composed, and which Sheet or Layout target has been accepted? | Existing `aec_drawing_metadata` and `aec_common_symbols`, extended under [#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95); see [semantic references](uc03-semantic-references.md) |
-| Geometry | Where are the source text, whole symbol, and actual output link region, and which artifact/page/coordinate frame interprets their numbers? | Shared `aec_geometry` foundation in [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76); UC-03 roles and transforms tracked in [#93](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/93) |
-| Provenance | Which exact input, run, policy, evidence and revision produced or accepted the result? | Shared `aec_provenance` foundation in PR #76; UC-03 [application profile](uc03-provenance-profile.md) under [#96](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/96) |
+| Semantic | Which evidenced source reference exists, how is it composed, and which Sheet or Layout target has been accepted? | Existing `adiro_drawing_metadata` and `adiro_common_symbols`, extended under [#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95); see [semantic references](uc03-semantic-references.md) |
+| Geometry | Where are the source text, whole symbol, and actual output link region, and which artifact/page/coordinate frame interprets their numbers? | Shared `adiro_geometry` foundation in [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76); UC-03 roles and transforms tracked in [#93](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/93) |
+| Provenance | Which exact input, run, policy, evidence and revision produced or accepted the result? | Shared `adiro_provenance` foundation in PR #76; UC-03 [application profile](uc03-provenance-profile.md) under [#96](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/96) |
 
 An accepted target relationship belongs to Semantic. A bounding box alone does not resolve a target; a
 resolved target alone does not prove that a clickable link was written to an output PDF. A detector's box

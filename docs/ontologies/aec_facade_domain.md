@@ -1,3 +1,8 @@
+---
+search:
+  exclude: true
+---
+
 # Aec Facade Domain
 
 <div class="adiro-actions" markdown="span">
@@ -19,7 +24,7 @@
 
 !!! warning "Deprecated"
 
-    This module is deprecated and receives no further changes. It is replaced by `adiro_facade_domain`, which continues its version numbering. Every release of it stays published at its own IRI.
+    This module is deprecated and receives no further changes. It is replaced by [`adiro_facade_domain`](adiro_facade_domain.md), which continues its version numbering. Every release of it stays published at its own IRI.
 
 Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbol, and domain vocabularies.
 

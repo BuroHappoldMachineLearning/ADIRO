@@ -9,9 +9,9 @@ from rdflib.collection import Collection  # noqa: E402
 from rdflib.namespace import OWL, RDF, RDFS, SKOS, XSD  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
-APROV = Namespace("https://w3id.org/adiro/aec_provenance#")
-GEOM = Namespace("https://w3id.org/adiro/aec_geometry#")
-META = Namespace("https://w3id.org/adiro/aec_drawing_metadata#")
+APROV = Namespace("https://w3id.org/adiro/adiro_provenance#")
+GEOM = Namespace("https://w3id.org/adiro/adiro_geometry#")
+META = Namespace("https://w3id.org/adiro/adiro_drawing_metadata#")
 CT = Namespace("https://standards.iso.org/iso/21597/-1/ed-1/en/Container#")
 PROV = Namespace("http://www.w3.org/ns/prov#")
 
@@ -20,7 +20,7 @@ def load(module):
     return Graph().parse(str(ROOT / "src" / f"{module}.ttl"), format="turtle")
 
 
-PROVENANCE, GEOMETRY, METADATA = load("aec_provenance"), load("aec_geometry"), load("aec_drawing_metadata")
+PROVENANCE, GEOMETRY, METADATA = load("adiro_provenance"), load("adiro_geometry"), load("adiro_drawing_metadata")
 
 
 def test_the_classes_are_subclasses_of_the_iso_21597_terms_and_of_prov():
@@ -74,7 +74,7 @@ def test_a_drawing_is_linked_to_its_page_and_no_longer_to_its_frame():
     assert METADATA.value(META.isOnPage, RDFS.range) == APROV.FilePage
     assert (META.hasCoordinateFrame, None, None) not in METADATA
     imports = {str(o) for o in METADATA.objects(None, OWL.imports)}
-    assert "https://w3id.org/adiro/aec_geometry" in imports, "a title block's region is located with the geometry module"
+    assert "https://w3id.org/adiro/adiro_geometry" in imports, "a title block's region is located with the geometry module"
 
 
 def test_every_metadata_container_may_carry_a_bounding_box_and_that_use_is_stated_in_the_module():

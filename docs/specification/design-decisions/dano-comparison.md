@@ -24,7 +24,7 @@ its own terms and records the correspondence with DAnO here, in documentation �
 artifact.
 
 This page is deliberately explicit about where DAnO is ahead, because the module where that is true
-(`aec_common_symbols`) is the one due for work next, under UC-03 and UC-07.
+(`adiro_common_symbols`) is the one due for work next, under UC-03 and UC-07.
 
 ## 1. What DAnO is
 
@@ -52,14 +52,14 @@ than in the aggregate is the only way to get it right.
 
 | ADIRO module | DAnO counterpart | Relationship |
 |---|---|---|
-| `aec_provenance` | `DrawingElementMeta`, `inferredAt/By/From/With`, `hasConfidence` | **Overlapping.** ADIRO supersedes - see §3 |
-| `aec_drawing_metadata` - sheets, layouts, revisions, projects, parties, title block | `TextField`, `TextElement` only | **Largely complementary.** DAnO models no document structure, no parties, no revisions |
-| `aec_common_symbols` - `Dimension`, `Grid`, `ReferenceSymbol` | `Dimension`, `DimensionChain`, `DimensionLine`, `AxisLine`, `Terminator`, `SectionSymbol`, `Symbol`, `EquipmentSymbol` | **Directly competing, same layer.** DAnO is currently richer - see §4 |
-| `aec_domain_common`, `aec_facade_domain` | none | **No overlap.** DAnO has no discipline or domain modelling |
+| `adiro_provenance` | `DrawingElementMeta`, `inferredAt/By/From/With`, `hasConfidence` | **Overlapping.** ADIRO supersedes - see §3 |
+| `adiro_drawing_metadata` - sheets, layouts, revisions, projects, parties, title block | `TextField`, `TextElement` only | **Largely complementary.** DAnO models no document structure, no parties, no revisions |
+| `adiro_common_symbols` - `Dimension`, `Grid`, `ReferenceSymbol` | `Dimension`, `DimensionChain`, `DimensionLine`, `AxisLine`, `Terminator`, `SectionSymbol`, `Symbol`, `EquipmentSymbol` | **Directly competing, same layer.** DAnO is currently richer - see §4 |
+| `adiro_domain_common`, `adiro_facade_domain` | none | **No overlap.** DAnO has no discipline or domain modelling |
 
 An earlier framing described the two as occupying different layers - DAnO for what was seen, ADIRO for what it
 means. That holds for the title-block vocabulary it was written about, and it does **not** generalise to the
-suite: `aec_common_symbols` sits squarely in DAnO's layer and models the same objects.
+suite: `adiro_common_symbols` sits squarely in DAnO's layer and models the same objects.
 
 The **documented correspondence** (§10) is the best measurement of the overlap: **six** provenance terms, and
 nothing else. Nothing corresponds to sheets, layouts, revisions or parties, because DAnO has no counterpart.
@@ -98,7 +98,7 @@ PROV-aware tooling understands it without bespoke mapping.
 
 ## 4. Where DAnO goes further: drawing-mark decomposition
 
-`aec_common_symbols` currently declares three classes - `Dimension`, `Grid`, `ReferenceSymbol`. DAnO declares
+`adiro_common_symbols` currently declares three classes - `Dimension`, `Grid`, `ReferenceSymbol`. DAnO declares
 eight or so in the same territory, and decomposes a dimension into its parts: `dano:Dimension` is a composite
 of exactly one `DimensionLine`, two `Terminator`s and one `TextElement`, with `DimensionChain` above it and
 `AxisLine` alongside.
@@ -192,7 +192,7 @@ carried maintenance cost for no current consumer.
 own properties and classes, and DAnO's — is a `skos:Concept`. Nothing errors (OWL 2 DL permits punning), but the
 statements are false: these are properties and classes, not concepts. That is the **same silent domain leakage**
 this page rejects `dano:hasConfidence` for (§7), landing on exactly the consumers a crosswalk exists to serve —
-anyone deliberately loading a crosswalk is likely to have SKOS in their graph, and `aec_drawing_metadata` is
+anyone deliberately loading a crosswalk is likely to have SKOS in their graph, and `adiro_drawing_metadata` is
 itself a SKOS vocabulary.
 
 The general lesson outlives the decision: **a property is annotation-level because it is *declared* one, not
@@ -206,20 +206,20 @@ in §10 for a human or a crosswalk author to read.
 
 !!! note "Option 1 is really two moves"
     The published rule folds both under "local stub + alignment", but they differ in which IRI is the subject.
-    **Move A - reuse the external IRI as a stub** (`prov:Agent` in `aec_provenance`): the external term stays
+    **Move A - reuse the external IRI as a stub** (`prov:Agent` in `adiro_provenance`): the external term stays
     the subject and ADIRO's axioms point at it. **Move B - mint an ADIRO term and relate it** (everything on
     this page): the ADIRO IRI is the subject and the external term appears only as an annotation value, or — as
     for DAnO — only as a documented correspondence. Move B is the right one whenever the external term's own
     axioms are incompatible with ADIRO's.
 
-## 8. Open: `aec_common_symbols`, and what this strategy does and does not constrain
+## 8. Open: `adiro_common_symbols`, and what this strategy does and does not constrain
 
-`aec_common_symbols` is the one module where ADIRO and DAnO compete, and it is next in line for work. Nothing
+`adiro_common_symbols` is the one module where ADIRO and DAnO compete, and it is next in line for work. Nothing
 on this page decides it; the decision is tracked in [#79](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/79). What follows is the procedure it
 inherits.
 
 **When may a core module reference an external vocabulary directly?** The test is not "external or not" -
-`aec_provenance` references PROV-O in the core and should. The test is:
+`adiro_provenance` references PROV-O in the core and should. The test is:
 
 | Condition | PROV-O | DAnO |
 |---|---|---|
@@ -234,7 +234,7 @@ the external vocabulary from a core module at all; a machine-readable crosswalk,
 optional layer that carries no logical force and consumers opt in. For DAnO even that was judged unnecessary —
 the correspondence is documentation-only.*
 
-**What that permits for `aec_common_symbols`:**
+**What that permits for `adiro_common_symbols`:**
 
 - **Minting ADIRO terms that parallel DAnO's decomposition** - `DimensionLine`, `Terminator`, `AxisLine` and
   so on - and documenting their correspondence to DAnO here (a machine-readable crosswalk remains an option but
@@ -313,7 +313,7 @@ This is the pattern worth keeping: **adopt the shape, mint the terms, map the na
 | `dano:DrawingElementMeta` | Superseded by `aprov:InferenceMeta` (documented correspondence) | Same pattern, PROV-aligned |
 | `dano:depicts` | **Not reused, and no ADIRO counterpart minted yet** | Domain `dano:DisplayElement` is wrong for a class that also covers dimensions and grids. The ADIRO term is unminted because its consumers specify their own - [#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80) |
 | `dano:isDepictedBy` | Not reused | Same as `dano:depicts` - [#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80) |
-| `dano:Dimension`, `DimensionChain`, `DimensionLine`, `AxisLine`, `Terminator`, `SectionSymbol` | **Open**, but reuse of the IRIs is disfavoured | `aec_common_symbols` / UC-03 / UC-07 - see §8, [#79](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/79). `dano:Dimension`'s exact cardinalities would infer undetected parts into existence on clipped drawings - [#84](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/84) |
+| `dano:Dimension`, `DimensionChain`, `DimensionLine`, `AxisLine`, `Terminator`, `SectionSymbol` | **Open**, but reuse of the IRIs is disfavoured | `adiro_common_symbols` / UC-03 / UC-07 - see §8, [#79](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/79). `dano:Dimension`'s exact cardinalities would infer undetected parts into existence on clipped drawings - [#84](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/84) |
 | `dano:DisplayElement` vs `DescriptionElement` | **Open** | The split may be worth minting as ADIRO's own; ADIRO's `DrawingElement` currently spans both - [#83](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/83) |
 | `dano:hasGeometry`, `defaultGeometry` | Deferred | Gated on the GeoSPARQL decision, [#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36) |
 | `dano:hasIfcRepresentation` | Not assessed | Possible cheap alternative to IFC alignment axioms |
@@ -370,7 +370,7 @@ generated specification and explicitly flagged that domains and ranges should be
 before any alignment axiom was written. They now have been, and the recommendation does not survive the check.
 
 **Corrects:** an earlier framing of the two ontologies as occupying different layers. That holds for the
-title-block vocabulary it was written about; it does not hold for `aec_common_symbols`.
+title-block vocabulary it was written about; it does not hold for `adiro_common_symbols`.
 
 **Not claimed:** that DAnO's modelling is wrong for DAnO's purpose. Every objection here concerns what ADIRO
 can safely depend on, given a blocking DL gate and a different set of competency questions.

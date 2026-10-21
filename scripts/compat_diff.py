@@ -69,7 +69,7 @@ _MINOR_DELTAS = {"TERM_ADDED", "RESTRICTION_LOOSENED", "RESTRICTION_REMOVED"}
 
 # Boolean flags that the metadata module defines (isComputerVisionLabel, isComputerVisionOptionalLabel, ...) are read by the downstream annotation
 # tooling to build its label set, so changing one on an existing term can break a consumer although no axiom changed.
-_FLAG_NS = "https://w3id.org/adiro/aec_drawing_metadata#"
+_FLAG_NS = ("https://w3id.org/adiro/adiro_drawing_metadata#", "https://w3id.org/adiro/aec_drawing_metadata#")  # its names (#171)
 
 _PROP_KINDS = {"object-property", "datatype-property", "annotation-property"}
 

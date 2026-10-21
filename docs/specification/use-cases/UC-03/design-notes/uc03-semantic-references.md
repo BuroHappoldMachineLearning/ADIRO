@@ -3,7 +3,7 @@
 This page explains the UC-03 semantic extension tracked in
 [#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95). It complements the
 [UC-03 specification](../UC-03-Reference%20Symbol%20Cross-Sheet%20Linking.md).
-The existing `aec_common_symbols:ReferenceSymbol` and its Layout-to-Layout link remain in place. The new terms
+The existing `adiro_common_symbols:ReferenceSymbol` and its Layout-to-Layout link remain in place. The new terms
 describe source text occurrences and complete inline or standalone references that the original symbol-only
 model could not distinguish.
 
@@ -47,7 +47,7 @@ symbol. Source membership is left unset when the evidence supports only a page l
 For example, after one inline member has been accepted:
 
 ```turtle
-@prefix md: <https://w3id.org/adiro/aec_drawing_metadata#> .
+@prefix md: <https://w3id.org/adiro/adiro_drawing_metadata#> .
 @prefix ex: <https://example.org/adiro/demo#> .
 
 ex:sheet-S601 a md:DrawingSheet ;

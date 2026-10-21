@@ -14,7 +14,7 @@ The first version of ADIRO followed these modules, to which we progressively wil
 
 **Imports**: None (foundation layer)
 
-### 2. Drawing Metadata Ontology (`aec_drawing_metadata.ttl`)
+### 2. Drawing Metadata Ontology (`adiro_drawing_metadata.ttl`)
 **Namespace**: `https://burohappoldmachinelearning.github.io/ADIRO/aec-drawing-metadata#`
 
 **Contents**:
@@ -27,7 +27,7 @@ The first version of ADIRO followed these modules, to which we progressively wil
 
 **Imports**: Core, Common Symbols
 
-### 3. Common Symbols Ontology (`aec_common_symbols.ttl`)
+### 3. Common Symbols Ontology (`adiro_common_symbols.ttl`)
 **Namespace**: `https://burohappoldmachinelearning.github.io/ADIRO/aec-common-symbols#`
 
 **Contents**:
@@ -36,7 +36,7 @@ The first version of ADIRO followed these modules, to which we progressively wil
 
 **Imports**: Core, Drawing Metadata
 
-### 4. Domain-common Ontology (`aec_domain_common.ttl`)
+### 4. Domain-common Ontology (`adiro_domain_common.ttl`)
 **Namespace**: `https://burohappoldmachinelearning.github.io/ADIRO/aec-domain-common#`
 
 **Contents**:
@@ -49,7 +49,7 @@ The first version of ADIRO followed these modules, to which we progressively wil
 
 **Imports**: Core, Drawing Metadata
 
-### 5. Facade Domain Ontology (`aec_facade_domain.ttl`)
+### 5. Facade Domain Ontology (`adiro_facade_domain.ttl`)
 **Namespace**: `https://burohappoldmachinelearning.github.io/ADIRO/aec-facade-domain#`
 
 **Contents**:

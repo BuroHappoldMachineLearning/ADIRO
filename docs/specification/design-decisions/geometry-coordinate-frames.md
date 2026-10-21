@@ -1,6 +1,6 @@
 # Locating a title block: bounding boxes, coordinate frames and provenance — a worked example
 
-> Companion to the [`aec_geometry`](../../ontologies/aec_geometry.md) and [`aec_provenance`](../../ontologies/aec_provenance.md)
+> Companion to the [`adiro_geometry`](../../ontologies/adiro_geometry.md) and [`adiro_provenance`](../../ontologies/adiro_provenance.md)
 > reference pages. It shows, end to end, how a title block's **region**, its **coordinate frame**, and an
 > extracted **field value** fit together — and how the page coordinates are meant to be read. Introduced with
 > [#90](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/90); the model is shared with the UC-03
@@ -12,9 +12,9 @@ An extraction pipeline reads an A1 landscape sheet, detects the title-block regi
 from inside it. In ADIRO that is:
 
 ```turtle
-@prefix geom:  <https://w3id.org/adiro/aec_geometry#> .
-@prefix aprov: <https://w3id.org/adiro/aec_provenance#> .
-@prefix md:    <https://w3id.org/adiro/aec_drawing_metadata#> .
+@prefix geom:  <https://w3id.org/adiro/adiro_geometry#> .
+@prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .
+@prefix md:    <https://w3id.org/adiro/adiro_drawing_metadata#> .
 @prefix ex:    <https://example.org/adiro/demo#> .
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 

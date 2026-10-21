@@ -17,6 +17,30 @@ against a reset branch on a bare remote, `find`'s polling and fork skip, the ver
 Replayed the real hand-resolved merge `3fab290` (fix/146 with main): the script produces the identical tree. Full suite 324 passed. Not run: the workflow itself (needs the app secrets and a real
 conflicting PR); the first real conflict after merge is the test. Not done: adding it to `alert-on-failure.yml` (it is not a release or publishing workflow; a failure is visible on the run).
 
+## 2026-10-21 - The rename: the adiro_* modules (#171, step 3)
+
+After the final `aec_*` releases (step 2, Release PR #193), `src/adiro_*.ttl` are the final releases under the new names (made by a one-off script, not kept: every `aec_<module>` name is mapped
+except an old release's version IRI; `owl:priorVersion` rewritten by `prepare_release.py priors` across the rename; `dcterms:replaces` the old module; titles "ADIRO …"; version = the old final, so the cut gives old + 1 MAJOR:
+2.0.0, 3.0.0, 7.0.0, 5.0.0, 4.0.0, 4.0.0). Also: display configs, example images copied to `assets/adiro_*/` (the old folders stay for the archived releases), new changelogs, catalog, import pin, README badges
+(new modules only, a "formerly aec_*" line; the badge test skips a superseded module), the rollup (current and former tables), the data-validation shapes, the image generator, and the hand-written docs
+(module names in the bodies; version histories and old-release mentions kept): ORSD 1.3 -> 1.4 (file renamed, references fixed), UC-01 0.11 -> 0.12, UC-03 0.7 -> 0.8, the use-case table.
+
+Tooling for the cycle in which both sets are in `src/` (`module_renames.superseded`): the old modules' pages are built (deprecation warning, now linking the successor) but left out of the nav, index, diagrams and
+search; `pr_guidance.py` compares a renamed module with its predecessor under the new names and leaves superseded modules out of the label comparison (without that it reported 70 undescribed terms, 314 label
+clashes and 162 image suggestions, none caused by the PR); `run_reasoning.sh` reasons over all twelve but leaves them out of the advisory ROBOT report (628 duplicate_label otherwise); `example_images` and
+`compat_diff` read the `exampleImage` property and the labelling flags under both namespaces; `rename_iri` also maps a module's image addresses. Migration for consumers: `migration/aec_to_adiro.ttl`
+(published at w3id.org/adiro/migration/, `dcterms:isReplacedBy` per ontology and term) and `scripts/migrate_aec_to_adiro.py` (`mapping`, `rewrite` a graph in its own format, `links` in any text); guide
+`docs/migrating-from-aec.md`.
+
+Verified: `tests/test_rename_to_adiro.py` (each new module is its predecessor's final release under the new names, apart from the header and the module names its definitions mention; the version and
+`dcterms:replaces`; no old name except history; the mapping is current and complete; the text and graph rewrites; the import pin); full suite 385 passed, ttl2md 30; `validate_ontology.py` clean;
+`ENFORCE=1 run_reasoning.sh` passes (ROBOT report empty); `mkdocs build --strict` passes; the guidance bot run locally reports nothing; `compat_diff`/`prepare_release plan` give old + 1 MAJOR for all six.
+
+Not done (said in the PR): the structural migration of data written against an `aec_*` release older than the final one (a frame with page properties, `Person` in the metadata namespace,
+`hasCoordinateFrame`, `appearsOnLayout`); the plan on #171 listed it, but it is a migration between `aec_*` releases, not part of the rename. Mishap, no harm: a pathspec `git stash` during the guidance
+comparison recorded the whole index; only that one file was reset, and it was restored. Next: merge this and the Release PR straight after; step 4 (the old files leave `src/`, their pages pinned to the
+final releases).
+
 ## 2026-10-21 - The final, deprecated release of the aec_* modules (#171, step 2)
 
 Each `src/aec_*.ttl` header gains `owl:deprecated true` and `dcterms:isReplacedBy <https://w3id.org/adiro/adiro_*>` (nothing else changes, terms included), and each changelog a "Deprecated"

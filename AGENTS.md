@@ -22,22 +22,26 @@ its own competency questions, and a statement that is true of one is routinely f
 whole `src/` listing before generalising, and say *which module* you mean.
 
 Ontology sources live in `src/` as independently versioned modules (dependency order):
-1. `aec_provenance` — foundational, domain-neutral: reified `FieldAssertion` + `InferenceMeta` carrying
+1. `adiro_provenance` — foundational, domain-neutral: reified `FieldAssertion` + `InferenceMeta` carrying
    extraction provenance and confidence; PROV-O-aligned. Also defines `InferredEntity`, the superclass of
    anything ADIRO infers that bears provenance/confidence. Also holds the file a drawing is stored in (`DrawingFile`,
    `FilePage`) and the agents (`Party`, `Person`, `Organisation`), aligned to ISO 21597-1 (ICDD). Imported by the drawing modules.
-2. `aec_geometry` — foundational, domain-neutral: `BoundingBox` (a provenance-bearing `InferredEntity`, and a
+2. `adiro_geometry` — foundational, domain-neutral: `BoundingBox` (a provenance-bearing `InferredEntity`, and a
    GeoSPARQL `geo:Geometry`) + `CoordinateFrame` (a page of a file read in one coordinate convention: named space, unit, profile). Imports
-   `aec_provenance`, which holds the page; used by UC-01 and UC-03.
-3. `aec_drawing_metadata` — drawing/layout/document structure (titleblock, legend, revision table, drawing types…).
-4. `aec_common_symbols` — cross-discipline reusable symbols (dimensions, callouts, grids, levels…).
-5. `aec_domain_common` — concepts shared across a set of domains.
-6. `aec_facade_domain` — facade-engineering discipline-specific concepts (`:FacadeComponent`, `:DGU`, …).
+   `adiro_provenance`, which holds the page; used by UC-01 and UC-03.
+3. `adiro_drawing_metadata` — drawing/layout/document structure (titleblock, legend, revision table, drawing types…).
+4. `adiro_common_symbols` — cross-discipline reusable symbols (dimensions, callouts, grids, levels…).
+5. `adiro_domain_common` — concepts shared across a set of domains.
+6. `adiro_facade_domain` — facade-engineering discipline-specific concepts (`:FacadeComponent`, `:DGU`, …).
 
-The six modules are being renamed from `aec_*` to `adiro_*` ([#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171); the
-plan is on the issue). Each `aec_*` module says `owl:deprecated true` and `dcterms:isReplacedBy` its `adiro_*` successor in its
-`owl:Ontology` header, and its next release is its last; its documentation pages say so (a warning on the Markdown page, a
-"Deprecated" row on the pyLODE page, both generated from the header).
+The modules were called `aec_*` until their final releases (`aec_provenance` 1.1.0, `aec_geometry` 2.0.0,
+`aec_drawing_metadata` 6.0.0, `aec_common_symbols` 4.0.1, `aec_domain_common` 3.0.1, `aec_facade_domain` 3.0.1), which are
+deprecated and replaced by the `adiro_*` modules ([#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171)). The
+`aec_*` files stay in `src/` for one more cycle, unchanged: their pages are generated (with a "Deprecated" warning, and a row
+on the pyLODE page) but they are left out of the navigation, the index, the diagrams, the search, the README badges, the
+guidance bot's label comparison and the advisory ROBOT report (the reasoner still covers them). Never edit them; change the `adiro_*` module. `migration/aec_to_adiro.ttl` and
+`scripts/migrate_aec_to_adiro.py` move data and links to the new IRIs (`docs/migrating-from-aec.md`), and
+`tests/test_rename_to_adiro.py` checks that each new module is its predecessor's final release under the new names.
 
 DAnO is **not** part of the suite: ADIRO ships no DAnO artifact — no module, no import, no annotation-level
 crosswalk. The comparison with DAnO, and the reasons ADIRO mints its own terms rather than importing or aligning
@@ -49,7 +53,7 @@ all, and the optional-compatibility-layer pattern ADIRO does not currently use).
 doc, a PR description, a comparison with another ontology, or an answer to a question — check it against
 **every** module, not the one in front of you. Two real errors came from ignoring this: a DAnO comparison
 asserted that ADIRO and DAnO occupy "different layers", true of the title-block vocabulary it was written
-about but false for `aec_common_symbols`; and UC-03's design decision 1 placed provenance "upstream/elsewhere",
+about but false for `aec_common_symbols` (now `adiro_common_symbols`); and UC-03's design decision 1 placed provenance "upstream/elsewhere",
 a correct statement about one query-layer module read as though it settled the matter for the whole suite.
 
 ## Stack
@@ -247,7 +251,7 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   change, its terms compared under the new names), its `owl:priorVersion` lines name the old module's releases by their own IRIs, and
   the old module, released once more as deprecated, is `MODULE_RETIRED` when it leaves `src/`. Full rules:
   `docs/contribute/versioning/index.md` ("Renaming a module").
-- **Releases are per-module:** tag `<module>-v<semver>` (e.g. `aec_common_symbols-v1.2.0`) →
+- **Releases are per-module:** tag `<module>-v<semver>` (e.g. `adiro_common_symbols-v5.1.0`) →
   `.github/workflows/backup-version.yml` snapshots that module to `versions/<module>/<semver>/` (the `.ttl` and its
   `<module>.display.json` at the tag, via `scripts/archive_display_config.py`,
   [#140](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/140)), then

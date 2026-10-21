@@ -210,10 +210,17 @@ def test_the_release_pr_lists_the_changes_since_the_old_modules_last_tag(repo, m
     assert calls == [(("adiro_a", "2.0.0", "HEAD"), {"previous_module": "aec_a"})]
 
 
-def test_the_order_puts_a_renamed_module_where_the_old_one_was():
+def test_the_order_puts_a_module_and_the_one_it_replaced_in_the_same_place():
     renames = {"adiro_provenance": "aec_provenance", "adiro_facade_domain": "aec_facade_domain"}
-    names = ["adiro_facade_domain", "aec_geometry", "adiro_provenance"]
-    assert sorted(names, key=lambda m: pr.order_key(m, renames)) == ["adiro_provenance", "aec_geometry", "adiro_facade_domain"]
+    names = ["aec_facade_domain", "adiro_geometry", "aec_provenance", "adiro_provenance"]
+    assert sorted(names, key=lambda m: pr.order_key(m, renames)) == \
+        ["adiro_provenance", "aec_provenance", "adiro_geometry", "aec_facade_domain"]
+
+
+def test_the_names_of_a_module_and_the_superseded_modules():
+    renames = {"adiro_a": "aec_a", "adiro_b": "aec_b"}
+    assert mr.names(renames, "aec_a") == ["adiro_a", "aec_a"] and mr.names(renames, "adiro_a") == ["adiro_a", "aec_a"]
+    assert mr.superseded(renames, ["aec_a", "adiro_a", "aec_b"]) == {"aec_a"}  # aec_b's successor is not there
 
 
 # --- release notes, published checks, documentation, badges --------------------------------------------------------

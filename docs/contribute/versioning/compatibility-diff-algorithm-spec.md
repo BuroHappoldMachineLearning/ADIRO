@@ -88,7 +88,7 @@ Detect the following delta records:
 - `ANNOTATION_CHANGED` (a label, a comment, the `exampleImage` values of a term, or the domain, range or super-property of an annotation property, which carry no logical meaning)
 - `ONTOLOGY_HEADER_CHANGED` (an annotation on the `owl:Ontology` header changed: its label, description, `owl:priorVersion`, ...; `owl:versionIRI`, `owl:versionInfo` and `owl:imports` are not compared here)
 - `IMPORTS_CHANGED` (an `owl:imports` was added or removed on the `owl:Ontology` header)
-- `LABELLING_CHANGED` (a boolean flag in the `aec_drawing_metadata` namespace, such as `isComputerVisionLabel` or `isComputerVisionOptionalLabel`, was added, removed or changed on an existing term)
+- `LABELLING_CHANGED` (a boolean flag in the `adiro_drawing_metadata` namespace, such as `isComputerVisionLabel` or `isComputerVisionOptionalLabel`, was added, removed or changed on an existing term)
 - `MODULE_RENAMED` (the module replaces another one listed in `config/module_renames.json`, whose last release is the baseline; the baseline's IRIs are mapped to the new names before the other deltas are computed, so they list only what changed besides the name. See [Renaming a module](index.md#renaming-a-module))
 - `MODULE_RETIRED` (a module that a renamed one replaced has left `src/`; its releases stay published)
 
