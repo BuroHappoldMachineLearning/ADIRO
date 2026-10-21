@@ -25,8 +25,9 @@
     owl:deprecated true ;
     dcterms:isReplacedBy <https://w3id.org/adiro/adiro_provenance> ;
     owl:priorVersion <https://w3id.org/adiro/aec_provenance/1.0.0> ;
-    owl:versionIRI <https://w3id.org/adiro/aec_provenance/1.0.1> ;
-    owl:versionInfo "1.0.1" .
+    owl:priorVersion <https://w3id.org/adiro/aec_provenance/1.0.1> ;
+    owl:versionIRI <https://w3id.org/adiro/aec_provenance/1.1.0> ;
+    owl:versionInfo "1.1.0" .
 
 #################################################################
 #    PROV-O terms referenced for alignment
