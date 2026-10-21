@@ -6,6 +6,12 @@ Implemented [#146](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/14
 the heading and the schema.org block of each page against its Turtle, including the kept pages of earlier releases, which are not regenerated but get the rows. The check flagged exactly the 4.0.0, 4.0.1 and 5.0.0 pages of
 `aec_drawing_metadata`; they were refreshed once with the new `--refresh-module`. The 1.0.0 and 2.0.0 pages that show the legacy `github.io` IRI are right for their snapshot and were kept. CI's pytest commands now install pyLODE so the new tests run there.
 
+## 2026-10-20 - The first alert issues, and what they showed
+
+The alert watcher ([#175](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/175)) opened its first real issues, #197 and #201. #197: the post-deploy link check found 404s on the ISO 21597-1 namespace address used by the new stubs (ISO publishes no page there, only `Container.rdf`); fixed in #199 (`isDefinedBy` points at the document, the namespace is ignored by the check).
+#201: the next deploy failed again, on ten `503`/`504` from `github.com` itself (a transient GitHub problem, on our own issue and edit pages), and the issue was a duplicate because #199's `Closes #197` had closed #197 on merge, before the deploy that followed finished. The run after that passed and the watcher closed #201.
+[#202](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/202): the link check accepts `502`-`504` as "could not verify" and limits its concurrency (a `404` still fails), a test keeps it, and `AGENTS.md` says a pull request that fixes the cause of an alert issue says `Related #N`, never a closing keyword. Not verified: a deploy that actually meets a 5xx from GitHub.
+
 ## 2026-10-20 - appearsOnLayout removed
 
 Implemented [#170](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/170) (decided by the maintainer: remove, in the MAJOR cut): `appearsOnLayout` is gone from `aec_drawing_metadata`. The source layout of any reference expression is `contains` from the layout, read back with `^contains`. Amended the UC-03 design note

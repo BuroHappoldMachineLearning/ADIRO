@@ -148,7 +148,9 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   issues; the snapshot issue is closed by hand once every failed tag is published, because one tag's success says nothing
   about another's. A new release or publishing workflow is added to its `workflows:` list. **A workflow dispatched with
   `GITHUB_TOKEN` is invisible to the watcher** (GitHub starts no `workflow_run` workflow for a run created that way), so a
-  step that runs `gh workflow run` uses the ADIRO Bot token; `tests/test_workflow_tokens.py` enforces it ([#190](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/190)). Each issue carries the `ci-alert`
+  step that runs `gh workflow run` uses the ADIRO Bot token; `tests/test_workflow_tokens.py` enforces it ([#190](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/190)). **A pull request that fixes the cause of an alert
+  issue says `Related #N`, never a closing keyword**: the watcher closes the issue when a later run passes, and a keyword closes it on merge, while the deploy that
+  follows may still fail, which hides the failure and opens a duplicate ([#202](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/202)). Each issue carries the `ci-alert`
   label, which the README's "Build status" column counts (`docs/contribute/build-status.md` explains each badge).
 
 - **`data-validation/` + `scripts/validate_data.py`** ([#168](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/168)) — SHACL files
