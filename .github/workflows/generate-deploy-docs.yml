@@ -163,7 +163,9 @@ jobs:
         with:
           name: docs
           path: site/
-          retention-days: 1
+          # A week, not a day: post-deploy-checks.yml reads it after the run, and a manual run of it checks the latest
+          # successful deploy, which can be days old (#217)
+          retention-days: 7
   
   deploy:
     needs: generate-docs

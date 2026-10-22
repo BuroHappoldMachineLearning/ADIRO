@@ -20,8 +20,16 @@ permissions:
   contents: read
   actions: read   # download the artifact of the deploy run
 
+# Only a run that checks a site joins the queue. The group is applied before the `if` of `deployed`, so a run for a failed or
+# cancelled deploy, or a deploy of another branch, would otherwise cancel the checks of the site that is live and then skip
+# everything; it gets a group of its own instead.
 concurrency:
-  group: post-deploy-checks
+  group: >-
+    post-deploy-checks-${{
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_branch == github.event.repository.default_branch))
+      && 'site' || github.run_id }}
   cancel-in-progress: true
 
 jobs:

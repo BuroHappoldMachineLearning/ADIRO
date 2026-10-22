@@ -22,11 +22,13 @@ tracking issue labelled `ci-alert` is also opened
 
 - **Shows:** the latest run of *Post-deploy checks*, which runs after each successful deploy of `main`: the external links of
   the site work, and every published release IRI, archived display config and archived example image resolves. It has its own
-  queue, so a deploy does not wait for it; a newer deploy cancels the checks of an older one
+  queue, so a deploy does not wait for it; a newer successful deploy cancels the checks of an older one, and a failed deploy
+  cancels nothing, because the live site is still the previous one
   ([#217](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/217)).
 - **Red means:** the site is published, but a link is broken or an earlier release no longer resolves.
 - **What to do:** open the run and find the failed job, then fix the cause in a pull request. The checks run again after the
-  next deploy, or now with `gh workflow run post-deploy-checks.yml`.
+  next deploy, or now with `gh workflow run post-deploy-checks.yml`, which checks the latest successful deploy (its built site
+  is kept for a week).
 
 ## Release PR { #release-pr }
 

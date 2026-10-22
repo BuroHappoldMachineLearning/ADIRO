@@ -68,7 +68,7 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
 - **Deploy workflow:** `.github/workflows/generate-deploy-docs.yml`. Triggers on push to `main`/`master` and
   manual `workflow_dispatch`. Jobs: `validate` + `test-ttl2md` + `test-docs` → `generate-docs` → `deploy`. Its runs are
   serialised; the checks of the published site run after it in **`post-deploy-checks.yml`** ([#217](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/217)): started by
-  `workflow_run` when a deploy of `main` succeeds, with its own queue (a newer deploy cancels the checks of an older one), so a
+  `workflow_run` when a deploy of `main` succeeds, with its own queue (a newer successful deploy cancels the checks of an older one; a failed one cancels nothing), so a
   deploy never waits for the previous deploy's checks. Its jobs are `check-links` (lychee, external links of the built site,
   read from the deploy's artifact) and `verify-prior-versions` (below).
 - **Direct pushes to `main` need a ruleset bypass** ([#173](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/173)).

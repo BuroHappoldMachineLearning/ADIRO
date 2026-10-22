@@ -62,5 +62,11 @@ def test_deploys_do_not_wait_for_the_checks_of_the_published_site():
     assert on["workflow_run"]["workflows"] == [deploy["name"]] and on["workflow_run"]["types"] == ["completed"]
     assert checks["concurrency"]["cancel-in-progress"] is True, "a newer deploy cancels the checks of an older one"
     assert "conclusion == 'success'" in checks["jobs"]["deployed"]["if"] and "default_branch" in checks["jobs"]["deployed"]["if"]
+    # a run for a failed deploy, or another branch's, must not cancel the checks of the live site: it gets its own group
+    group = checks["concurrency"]["group"]
+    assert "conclusion == 'success'" in group and "default_branch" in group and "github.run_id" in group
+    # a manual run reads the artifact of the latest successful deploy, which can be days old
+    upload = next(s for j in deploy["jobs"].values() for s in j.get("steps", []) if str(s.get("uses", "")).startswith("actions/upload-artifact") and s["with"]["name"] == "docs")
+    assert upload["with"]["retention-days"] >= 7
     watched = (WORKFLOWS / "alert-on-failure.yml").read_text(encoding="utf-8")
     assert f"- {checks['name']}" in watched, "the alert watcher watches the checks"
