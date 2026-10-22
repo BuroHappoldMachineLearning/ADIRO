@@ -38,7 +38,7 @@ def test_the_commit_back_job_starts_from_the_tip_of_the_branch():
 
 
 def test_the_link_check_tolerates_a_transient_server_error_but_not_a_missing_page():
-    text = (WORKFLOWS / "generate-deploy-docs.yml").read_text(encoding="utf-8")
+    text = (WORKFLOWS / "post-deploy-checks.yml").read_text(encoding="utf-8")
     accepted = re.search(r"--accept '([^']+)'", text).group(1)
     codes = set()
     for part in accepted.split(","):
@@ -47,3 +47,26 @@ def test_the_link_check_tolerates_a_transient_server_error_but_not_a_missing_pag
     assert {502, 503, 504} <= codes, "a transient 5xx from GitHub must not fail the deploy (#202)"
     assert 404 not in codes and 410 not in codes, "a missing page must still fail: it is how a wrong issue number is caught"
     assert re.search(r"--max-concurrency \d+", text), "the link check limits its concurrency instead of using lychee's default of 128"
+
+
+def test_deploys_do_not_wait_for_the_checks_of_the_published_site():
+    """The link and release-IRI checks run in their own workflow, after a successful deploy of the default branch (#217)."""
+    import yaml
+
+    deploy = yaml.safe_load((WORKFLOWS / "generate-deploy-docs.yml").read_text(encoding="utf-8"))
+    checks_text = (WORKFLOWS / "post-deploy-checks.yml").read_text(encoding="utf-8")
+    checks = yaml.safe_load(checks_text)
+    assert not {"check-links", "verify-prior-versions"} & set(deploy["jobs"]), "the checks are not in the deploy's queue"
+    assert {"check-links", "verify-prior-versions"} <= set(checks["jobs"])
+    on = checks.get("on", checks.get(True))  # PyYAML reads the key `on` as True
+    assert on["workflow_run"]["workflows"] == [deploy["name"]] and on["workflow_run"]["types"] == ["completed"]
+    assert checks["concurrency"]["cancel-in-progress"] is True, "a newer deploy cancels the checks of an older one"
+    assert "conclusion == 'success'" in checks["jobs"]["deployed"]["if"] and "default_branch" in checks["jobs"]["deployed"]["if"]
+    # a run for a failed deploy, or another branch's, must not cancel the checks of the live site: it gets its own group
+    group = checks["concurrency"]["group"]
+    assert "conclusion == 'success'" in group and "default_branch" in group and "github.run_id" in group
+    # a manual run reads the artifact of the latest successful deploy, which can be days old
+    upload = next(s for j in deploy["jobs"].values() for s in j.get("steps", []) if str(s.get("uses", "")).startswith("actions/upload-artifact") and s["with"]["name"] == "docs")
+    assert upload["with"]["retention-days"] >= 7
+    watched = (WORKFLOWS / "alert-on-failure.yml").read_text(encoding="utf-8")
+    assert f"- {checks['name']}" in watched, "the alert watcher watches the checks"
