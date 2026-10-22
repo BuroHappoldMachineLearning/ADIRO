@@ -295,7 +295,7 @@ SELECT ?drawing ?named ?filed WHERE {
 | CQ 4.3 | For sheet "ST-101 Rev C", who was the approving authority?   |
 | CQ 4.4 | Which drawings have no recorded author, neither their own nor a revision's? *(Added in [v0.8](#9-version-history).)* |
 | CQ 4.5 | Which drawings have no recorded checker, or no recorded approver? *(Added in [v0.8](#9-version-history).)* |
-| CQ 4.6 | For each drawing with no recorded author, why: not printed, empty, illegible, not found, awaiting acceptance, rejected, or accepted and not yet promoted? *(Added in [v0.10](#9-version-history), amended in [v0.13](#9-version-history).)* |
+| CQ 4.6 | For each drawing with no recorded author, why: not printed, empty, illegible, not found, awaiting acceptance, rejected, accepted and not yet promoted, or recorded with no value? *(Added in [v0.10](#9-version-history), amended in [v0.13](#9-version-history).)* |
 
 CQ 3.4 and CQ 4.4 as queries (CQ 4.5 is the same pattern with `isCheckedBy` or `isApprovedBy` alone, without the path through the revisions, which is for the author only):
 
@@ -343,16 +343,18 @@ SELECT ?drawing ?subject ?assertion ?value ?outcome ?acceptance ?reason WHERE {
   BIND (IF(!BOUND(?assertion), "NotProcessed",
         IF(?acceptance = "Rejected", "Rejected",
         IF(BOUND(?outcome), ?outcome,
-        IF(?acceptance = "Accepted", "AcceptedNotPromoted", "Pending")))) AS ?reason)
+        IF(!BOUND(?value), "NoValue",
+        IF(?acceptance = "Accepted", "AcceptedNotPromoted", "Pending"))))) AS ?reason)
 }
 ```
 
-The query reads the assertions about the drawing and about each of its revisions, following the reading convention of CQ 4.4, and gives one row per assertion, with its subject, so the causes of several revisions stay apart. A superseded assertion is not read. The acceptance and the outcome are separate columns; an assertion with no acceptance recorded is `Pending`. The reason:
+The query reads the assertions about the drawing and about each of its revisions, following the reading convention of CQ 4.4, and gives one row per assertion, with its subject, so the causes of several revisions stay apart. An assertion has one value or one outcome, and one acceptance; one that records two (malformed data) gives a row for each, so the disagreement is visible. A superseded assertion is not read. The acceptance and the outcome are separate columns; an assertion with no acceptance recorded is `Pending`. The reason:
 
 - `NotPrinted` is a defect of the drawing; `NotFound` is retried; `Empty` and `Illegible` are reviewed. The acceptance column says whether that finding was accepted or still awaits review.
 - `Pending` is a value found and awaiting acceptance.
 - `Rejected` is an assertion a person or a rule rejected; its value or outcome is in its columns for inspection, and it is neither a finding nor awaiting review.
 - `AcceptedNotPromoted` is an accepted value that the [promotion](#21-entities) has not yet turned into `isAuthoredBy`.
+- `NoValue` is an assertion with neither a value nor an outcome (malformed data): nothing can be promoted from it, so it is corrected, not awaited.
 - `NotProcessed` means no assertion about the author of the drawing or its revisions exists, so the field was not looked at.
 
 *(Amended in [v0.13](#9-version-history).)*
@@ -684,7 +686,7 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 Change from v0.12, made when the CQ 4.6 query was found to misreport two cases ([#219](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/219)). MINOR: a correction of a recorded query, no entity, attribute or relation changes; the number stays in the 0.x series because the document is still a draft:
 
-- **CQ 4.6 reads the acceptance.** It reported a rejected value as `Pending`, because it took any assertion without an outcome to be awaiting acceptance, and a rejected `NotPrinted` as a finding that the drawing names no author. A rejected assertion is now `Rejected`, and an accepted value not yet promoted is `AcceptedNotPromoted`; the acceptance and the outcome are separate columns.
+- **CQ 4.6 reads the acceptance.** It reported a rejected value as `Pending`, because it took any assertion without an outcome to be awaiting acceptance, and a rejected `NotPrinted` as a finding that the drawing names no author. A rejected assertion is now `Rejected`, and an accepted value not yet promoted is `AcceptedNotPromoted`; an assertion with neither a value nor an outcome, which can never be promoted, is `NoValue`. The acceptance and the outcome are separate columns.
 - **CQ 4.6 reads the assertions about the revisions.** CQ 4.4 counts a revision's author, but CQ 4.6 looked only at the assertions about the drawing, so a drawing whose revision's author was illegible was `NotProcessed`. It now gives one row per assertion about the drawing or one of its revisions, with its subject.
 
 ### v0.12 (draft)

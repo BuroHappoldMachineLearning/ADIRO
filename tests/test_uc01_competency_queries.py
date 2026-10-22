@@ -131,16 +131,19 @@ def test_cq_4_6_says_why_a_drawing_has_no_author():
 :newer a aprov:FieldAssertion ; aprov:assertedAbout :retried ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:Illegible ; aprov:supersedes :old .
 :done a metadata:DrawingSheet ; metadata:isAuthoredBy :jsmith .
 """
-    reasons = {d: r for d, _, _, r in cq_4_6(data)}
+    rows = cq_4_6(data)
+    reasons = {d: r for d, _, _, r in rows}
+    assert len(rows) == len(reasons), "one row per drawing here"
     # the latest assertion decides (a superseded one is not read), a value awaiting acceptance is Pending, no assertion is NotProcessed
     assert reasons == {"printed": "NotPrinted", "blank": "Empty", "waiting": "Pending", "unseen": "NotProcessed", "retried": "Illegible"}
 
 
 def cq_4_6(data):
-    """The rows of the recorded CQ 4.6 query, as (drawing, subject, acceptance, reason), local names."""
+    """Every row of the recorded CQ 4.6 query, as (drawing, subject, acceptance, reason), local names, sorted: a list, so
+    a change that multiplies the rows is seen."""
     graph = Graph().parse(data=PREFIXES + data, format="turtle")
-    local = lambda term: None if term is None else str(term).rsplit("#", 1)[-1]  # noqa: E731
-    return {(local(r.drawing), local(r.subject), local(r.acceptance), local(r.reason)) for r in graph.query(recorded_query("# CQ 4.6"))}
+    local = lambda term: "" if term is None else str(term).rsplit("#", 1)[-1]  # noqa: E731
+    return sorted((local(r.drawing), local(r.subject), local(r.acceptance), local(r.reason)) for r in graph.query(recorded_query("# CQ 4.6")))
 
 
 def test_cq_4_6_reports_a_rejected_assertion_as_rejected_with_its_value_or_outcome():
@@ -159,7 +162,9 @@ def test_cq_4_6_reports_a_rejected_assertion_as_rejected_with_its_value_or_outco
 :a6 a aprov:FieldAssertion ; aprov:assertedAbout :promoted ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasValueEntity :jsmith ; aprov:hasAcceptance aprov:Accepted .
 """
     graph = Graph().parse(data=PREFIXES + data, format="turtle")
-    rows = {str(r.drawing).rsplit("#", 1)[-1]: r for r in graph.query(recorded_query("# CQ 4.6"))}
+    result = list(graph.query(recorded_query("# CQ 4.6")))
+    rows = {str(r.drawing).rsplit("#", 1)[-1]: r for r in result}
+    assert len(result) == len(rows), "one row per drawing here"
     assert {d: (str(r.acceptance), str(r.reason)) for d, r in rows.items()} == {
         "rejected": ("Rejected", "Rejected"),
         "rejectedAbsence": ("Rejected", "Rejected"),
@@ -185,12 +190,30 @@ def test_cq_4_6_reads_the_assertions_about_the_revisions_one_row_each():
 :none a metadata:DrawingSheet ; metadata:hasRevision :rn .
 :rn a metadata:DrawingRevision .
 """
-    assert cq_4_6(data) == {
+    assert cq_4_6(data) == [
         ("d", "rb", "Pending", "Illegible"),
         ("d", "rc", "Pending", "Pending"),
+        ("none", "", "", "NotProcessed"),
         ("own", "own", "Pending", "NotFound"),
-        ("none", None, None, "NotProcessed"),
-    }
+    ]
+
+
+def test_cq_4_6_reports_an_assertion_with_nothing_to_promote_and_shows_a_disagreement():
+    # review of #222: an accepted assertion with no value is NoValue, not AcceptedNotPromoted (it can never be promoted);
+    # an assertion that records two values or two statuses (malformed) gives a row for each, so the disagreement is seen
+    data = """:empty a metadata:DrawingSheet .
+:a1 a aprov:FieldAssertion ; aprov:assertedAbout :empty ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasAcceptance aprov:Accepted .
+:bare a metadata:DrawingSheet .
+:a2 a aprov:FieldAssertion ; aprov:assertedAbout :bare ; aprov:assertsFieldKind metadata:DrawnByField .
+:twoStatuses a metadata:DrawingSheet .
+:a3 a aprov:FieldAssertion ; aprov:assertedAbout :twoStatuses ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasLiteralValue "J. Smith" ; aprov:hasAcceptance aprov:Pending , aprov:Accepted .
+"""
+    assert cq_4_6(data) == [
+        ("bare", "bare", "Pending", "NoValue"),
+        ("empty", "empty", "Accepted", "NoValue"),
+        ("twoStatuses", "twoStatuses", "Accepted", "AcceptedNotPromoted"),
+        ("twoStatuses", "twoStatuses", "Pending", "Pending"),
+    ]
 
 
 def test_the_promotion_gives_a_direct_statement_only_for_an_accepted_assertion_with_a_value():
