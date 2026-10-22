@@ -2,7 +2,7 @@
 """
 Check that every owl:priorVersion IRI in src/*.ttl resolves to the release it names (#122).
 
-Run after a deploy (generate-deploy-docs.yml, job `verify-prior-versions`), because only the published
+Run after a deploy (post-deploy-checks.yml, job `verify-prior-versions`, #217), because only the published
 site can answer "does this IRI resolve?". For each owl:priorVersion IRI it requests the IRI with
 `Accept: text/turtle`, follows the redirects, requires HTTP 200, parses the answer and requires the
 file's owl:versionIRI to be that IRI (or its legacy host form, see validate_ontology.py). The offline
