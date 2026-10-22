@@ -119,7 +119,6 @@ def test_cq_9_3_lists_the_files_that_hold_more_than_one_drawing():
 
 
 def test_cq_4_6_says_why_a_drawing_has_no_author():
-    query = recorded_query("# CQ 4.6")
     data = """:printed a metadata:DrawingSheet .
 :a1 a aprov:FieldAssertion ; aprov:assertedAbout :printed ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:NotPrinted .
 :blank a metadata:DrawingSheet .
@@ -132,10 +131,66 @@ def test_cq_4_6_says_why_a_drawing_has_no_author():
 :newer a aprov:FieldAssertion ; aprov:assertedAbout :retried ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:Illegible ; aprov:supersedes :old .
 :done a metadata:DrawingSheet ; metadata:isAuthoredBy :jsmith .
 """
-    graph = Graph().parse(data=PREFIXES + data, format="turtle")
-    reasons = {str(r[0]).rsplit("#", 1)[-1]: str(r[1]) for r in graph.query(query)}
+    reasons = {d: r for d, _, _, r in cq_4_6(data)}
     # the latest assertion decides (a superseded one is not read), a value awaiting acceptance is Pending, no assertion is NotProcessed
     assert reasons == {"printed": "NotPrinted", "blank": "Empty", "waiting": "Pending", "unseen": "NotProcessed", "retried": "Illegible"}
+
+
+def cq_4_6(data):
+    """The rows of the recorded CQ 4.6 query, as (drawing, subject, acceptance, reason), local names."""
+    graph = Graph().parse(data=PREFIXES + data, format="turtle")
+    local = lambda term: None if term is None else str(term).rsplit("#", 1)[-1]  # noqa: E731
+    return {(local(r.drawing), local(r.subject), local(r.acceptance), local(r.reason)) for r in graph.query(recorded_query("# CQ 4.6"))}
+
+
+def test_cq_4_6_reports_a_rejected_assertion_as_rejected_with_its_value_or_outcome():
+    # #219: a rejected value was reported Pending, and a rejected NotPrinted as a finding that the drawing names no author
+    data = """:rejected a metadata:DrawingSheet .
+:a1 a aprov:FieldAssertion ; aprov:assertedAbout :rejected ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasValueEntity :candidate ; aprov:hasAcceptance aprov:Rejected .
+:rejectedAbsence a metadata:DrawingSheet .
+:a2 a aprov:FieldAssertion ; aprov:assertedAbout :rejectedAbsence ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:NotPrinted ; aprov:hasAcceptance aprov:Rejected .
+:acceptedAbsence a metadata:DrawingSheet .
+:a3 a aprov:FieldAssertion ; aprov:assertedAbout :acceptedAbsence ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:NotPrinted ; aprov:hasAcceptance aprov:Accepted .
+:explicitPending a metadata:DrawingSheet .
+:a4 a aprov:FieldAssertion ; aprov:assertedAbout :explicitPending ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasLiteralValue "J. Smith" ; aprov:hasAcceptance aprov:Pending .
+:notPromoted a metadata:DrawingSheet .
+:a5 a aprov:FieldAssertion ; aprov:assertedAbout :notPromoted ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasValueEntity :jsmith ; aprov:hasAcceptance aprov:Accepted .
+:promoted a metadata:DrawingSheet ; metadata:isAuthoredBy :jsmith .
+:a6 a aprov:FieldAssertion ; aprov:assertedAbout :promoted ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasValueEntity :jsmith ; aprov:hasAcceptance aprov:Accepted .
+"""
+    graph = Graph().parse(data=PREFIXES + data, format="turtle")
+    rows = {str(r.drawing).rsplit("#", 1)[-1]: r for r in graph.query(recorded_query("# CQ 4.6"))}
+    assert {d: (str(r.acceptance), str(r.reason)) for d, r in rows.items()} == {
+        "rejected": ("Rejected", "Rejected"),
+        "rejectedAbsence": ("Rejected", "Rejected"),
+        "acceptedAbsence": ("Accepted", "NotPrinted"),
+        "explicitPending": ("Pending", "Pending"),
+        "notPromoted": ("Accepted", "AcceptedNotPromoted"),
+    }  # a drawing whose author is already promoted is not listed
+    # the rejected value and outcome stay visible for inspection
+    assert str(rows["rejected"].value).endswith("#candidate") and rows["rejected"].outcome is None
+    assert str(rows["rejectedAbsence"].outcome) == "NotPrinted"
+
+
+def test_cq_4_6_reads_the_assertions_about_the_revisions_one_row_each():
+    # #219: an assertion about a revision was missed, and the drawing reported NotProcessed
+    data = """:d a metadata:DrawingSheet ; metadata:hasRevision :rb , :rc .
+:rb a metadata:DrawingRevision .
+:rc a metadata:DrawingRevision .
+:ab a aprov:FieldAssertion ; aprov:assertedAbout :rb ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:Illegible .
+:ac a aprov:FieldAssertion ; aprov:assertedAbout :rc ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasLiteralValue "A. Chen" .
+:own a metadata:DrawingSheet ; metadata:hasRevision :ro .
+:ro a metadata:DrawingRevision .
+:ao a aprov:FieldAssertion ; aprov:assertedAbout :own ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:NotFound .
+:none a metadata:DrawingSheet ; metadata:hasRevision :rn .
+:rn a metadata:DrawingRevision .
+"""
+    assert cq_4_6(data) == {
+        ("d", "rb", "Pending", "Illegible"),
+        ("d", "rc", "Pending", "Pending"),
+        ("own", "own", "Pending", "NotFound"),
+        ("none", None, None, "NotProcessed"),
+    }
 
 
 def test_the_promotion_gives_a_direct_statement_only_for_an_accepted_assertion_with_a_value():
