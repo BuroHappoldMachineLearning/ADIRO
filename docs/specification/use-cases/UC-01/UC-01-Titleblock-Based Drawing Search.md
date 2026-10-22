@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.12 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.13 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -295,7 +295,7 @@ SELECT ?drawing ?named ?filed WHERE {
 | CQ 4.3 | For sheet "ST-101 Rev C", who was the approving authority?   |
 | CQ 4.4 | Which drawings have no recorded author, neither their own nor a revision's? *(Added in [v0.8](#9-version-history).)* |
 | CQ 4.5 | Which drawings have no recorded checker, or no recorded approver? *(Added in [v0.8](#9-version-history).)* |
-| CQ 4.6 | For each drawing with no recorded author, why: not printed, empty, illegible, not found, or awaiting acceptance? *(Added in [v0.10](#9-version-history).)* |
+| CQ 4.6 | For each drawing with no recorded author, why: not printed, empty, illegible, not found, awaiting acceptance, rejected, accepted and not yet promoted, or recorded with no value? *(Added in [v0.10](#9-version-history), amended in [v0.13](#9-version-history).)* |
 
 CQ 3.4 and CQ 4.4 as queries (CQ 4.5 is the same pattern with `isCheckedBy` or `isApprovedBy` alone, without the path through the revisions, which is for the author only):
 
@@ -326,20 +326,38 @@ A drawing must have an author; whether it was checked or approved varies, so CQ 
 PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
 PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
 
-# CQ 4.6: why a drawing has no recorded author
-SELECT ?drawing ?reason WHERE {
+# CQ 4.6: why a drawing has no recorded author, one row per assertion about it or one of its revisions
+SELECT ?drawing ?subject ?assertion ?value ?outcome ?acceptance ?reason WHERE {
   ?drawing a metadata:DrawingSheet .
   FILTER NOT EXISTS { ?drawing metadata:isAuthoredBy|(metadata:hasRevision/metadata:isAuthoredBy) ?person }
   OPTIONAL {
-    ?a aprov:assertedAbout ?drawing ; aprov:assertsFieldKind metadata:DrawnByField .
-    FILTER NOT EXISTS { ?newer aprov:supersedes ?a }
-    OPTIONAL { ?a aprov:hasOutcome ?outcome }
+    ?drawing (metadata:hasRevision)? ?subject .
+    ?assertion aprov:assertedAbout ?subject ; aprov:assertsFieldKind metadata:DrawnByField .
+    FILTER NOT EXISTS { ?newer aprov:supersedes ?assertion }
+    OPTIONAL { ?assertion aprov:hasLiteralValue|aprov:hasValueEntity ?value }
+    OPTIONAL { ?assertion aprov:hasOutcome ?o }
+    OPTIONAL { ?assertion aprov:hasAcceptance ?s }
+    BIND (STRAFTER(STR(?o), "#") AS ?outcome)
+    BIND (STRAFTER(STR(COALESCE(?s, aprov:Pending)), "#") AS ?acceptance)
   }
-  BIND (IF(BOUND(?outcome), STRAFTER(STR(?outcome), "#"), IF(BOUND(?a), "Pending", "NotProcessed")) AS ?reason)
+  BIND (IF(!BOUND(?assertion), "NotProcessed",
+        IF(?acceptance = "Rejected", "Rejected",
+        IF(BOUND(?outcome), ?outcome,
+        IF(!BOUND(?value), "NoValue",
+        IF(?acceptance = "Accepted", "AcceptedNotPromoted", "Pending"))))) AS ?reason)
 }
 ```
 
-`NotPrinted` is a defect of the drawing; `NotFound` is retried; `Empty` and `Illegible` are reviewed; `Pending` is a value found and awaiting acceptance; `NotProcessed` means no assertion about the author exists, so the field was not looked at.
+The query reads the assertions about the drawing and about each of its revisions, following the reading convention of CQ 4.4, and gives one row per assertion, with its subject, so the causes of several revisions stay apart. An assertion has one value or one outcome, and one acceptance; one that records two (malformed data) gives a row for each, so the disagreement is visible. A superseded assertion is not read. The acceptance and the outcome are separate columns; an assertion with no acceptance recorded is `Pending`. The reason:
+
+- `NotPrinted` is a defect of the drawing; `NotFound` is retried; `Empty` and `Illegible` are reviewed. The acceptance column says whether that finding was accepted or still awaits review.
+- `Pending` is a value found and awaiting acceptance.
+- `Rejected` is an assertion a person or a rule rejected; its value or outcome is in its columns for inspection, and it is neither a finding nor awaiting review.
+- `AcceptedNotPromoted` is an accepted value that the [promotion](#21-entities) has not yet turned into `isAuthoredBy`.
+- `NoValue` is an assertion with neither a value nor an outcome (malformed data): nothing can be promoted from it, so it is corrected, not awaited.
+- `NotProcessed` means no assertion about the author of the drawing or its revisions exists, so the field was not looked at.
+
+*(Amended in [v0.13](#9-version-history).)*
 
 ### CQ Group 5 — Discipline (validates FR 5)
 
@@ -664,7 +682,14 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.12 (current — draft)
+### v0.13 (current — draft)
+
+Change from v0.12, made when the CQ 4.6 query was found to misreport two cases ([#219](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/219)). MINOR: a correction of a recorded query, no entity, attribute or relation changes; the number stays in the 0.x series because the document is still a draft:
+
+- **CQ 4.6 reads the acceptance.** It reported a rejected value as `Pending`, because it took any assertion without an outcome to be awaiting acceptance, and a rejected `NotPrinted` as a finding that the drawing names no author. A rejected assertion is now `Rejected`, and an accepted value not yet promoted is `AcceptedNotPromoted`; an assertion with neither a value nor an outcome, which can never be promoted, is `NoValue`. The acceptance and the outcome are separate columns.
+- **CQ 4.6 reads the assertions about the revisions.** CQ 4.4 counts a revision's author, but CQ 4.6 looked only at the assertions about the drawing, so a drawing whose revision's author was illegible was `NotProcessed`. It now gives one row per assertion about the drawing or one of its revisions, with its subject.
+
+### v0.12 (draft)
 
 Change from v0.11, made when the modules were renamed from `aec_*` to `adiro_*` ([#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171)). MINOR: no entity, attribute, relation or competency question changes, only the module names and the namespaces of the IRIs this document cites (the competency-question queries now use the `adiro_*` namespaces); the number stays in the 0.x series because the document is still a draft. The entries below keep the names of their time.
 
