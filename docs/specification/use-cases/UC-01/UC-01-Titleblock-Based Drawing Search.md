@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.13 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.14 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -68,7 +68,7 @@ WHERE {
 }
 ```
 
-An assertion that is pending, rejected, outcome-only (`NotPrinted`, `Empty`, `Illegible`, `NotFound`) or superseded gives nothing. The query reads the field-kind concepts too, so it runs over the data together with the ontology. *(Added in [v0.11](#9-version-history).)*
+An assertion that is pending, rejected, outcome-only (`NotPrinted`, `Empty`, `Illegible`, `NotFound`) or superseded gives nothing. This holds for data that passes [`assertions.shacl.ttl`](https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/data-validation/assertions.shacl.ttl), which allows an assertion one acceptance status and at most one outcome: the query itself promotes an assertion that carries `Accepted` among several statuses. The query reads the field-kind concepts too, so it runs over the data together with the ontology. *(Added in [v0.11](#9-version-history), amended in [v0.14](#9-version-history).)*
 
 > **Design note — Person vs Role:** `Person` models what an individual *is*, not the role they play. Roles (Author, Checker, Approver) are expressed as distinct Object Properties, not as subclasses of `Person`. Each applies to a `DrawingSheet` (the person the drawing names, for example the title block's "drawn by") and to a `DrawingRevision` (the person who made, checked or approved that revision, who can differ from the one named for the drawing). This keeps `Person` reusable across roles. A drawing that records no author of its own is read as authored by the authors of its revisions (the path `metadata:isAuthoredBy|metadata:hasRevision/metadata:isAuthoredBy`); a drawing that records its own author keeps just that author, so this is a reading convention and not an OWL entailment. It applies to the author only. *(Amended in [v0.8](#9-version-history).)*
 
@@ -682,7 +682,13 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.13 (current — draft)
+### v0.14 (current — draft)
+
+Change from v0.13, made when the data checks of an assertion's status and outcome were added ([#220](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/220)). MINOR: a clarification, no entity, attribute, relation or competency question changes; the number stays in the 0.x series because the document is still a draft:
+
+- **The promotion statement is tied to validated data.** The sentence after the promotion query said that a pending, rejected, outcome-only or superseded assertion gives nothing, without condition. The query promotes any assertion that has `Accepted` among its statuses, so an assertion both `Accepted` and `Rejected` was promoted. The shapes now report such an assertion, and the sentence says it holds for data that passes them.
+
+### v0.13 (draft)
 
 Change from v0.12, made when the CQ 4.6 query was found to misreport two cases ([#219](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/219)). MINOR: a correction of a recorded query, no entity, attribute or relation changes; the number stays in the 0.x series because the document is still a draft:
 
