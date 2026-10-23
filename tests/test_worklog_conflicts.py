@@ -1,4 +1,5 @@
 """The ADIRO Bot merges main into a pull request whose only conflict is the worklog (#206)."""
+import json
 import re
 import subprocess
 import sys
@@ -109,8 +110,51 @@ def test_push_refuses_a_merge_that_is_not_the_verified_one(tmp_path):
     out.write_text('{"status": "verify-failed"}', encoding="utf-8")
     assert wc.main(["push", *args]) == 1
     good = wc.merge(repo, "pr", "main", "pr")
-    out.write_text(f'{{"status": "ready", "tree": "{good["tree"]}", "head_sha": "{good["head_sha"]}"}}', encoding="utf-8")
+    out.write_text(json.dumps({k: good[k] for k in ("status", "tree", "head_sha", "base_sha")}), encoding="utf-8")
     assert wc.main(["push", *args]) == 0
+
+
+def test_push_merges_the_verified_main_commit_when_main_moved_on_meanwhile(tmp_path, capsys):
+    # #224: the docs deploy commits to main between the merge and the push jobs; the verified merge is still pushed
+    repo = make_repo(tmp_path, {wc.WORKLOG: entry("PR") + OLD}, {wc.WORKLOG: entry("Main") + OLD})
+    verified = wc.merge(repo, "pr", "main", "pr")
+    git(repo, "checkout", "--quiet", "main")
+    commit(repo, {"docs/generated.md": "regenerated\n"}, "docs: Auto-generate ontology documentation [skip actions]")
+    out = tmp_path / "status.json"
+    out.write_text(json.dumps(verified), encoding="utf-8")
+    assert wc.main(["push", "--repo", str(repo), "--head", "pr", "--base", "main", "--branch", "pr", "--out", str(out)]) == 0
+    assert git(repo, "rev-parse", "HEAD^{tree}") == verified["tree"], "the pushed tree is the verified one"
+    assert git(repo, "rev-parse", "HEAD^2") == verified["base_sha"]
+    assert "moved on since" in capsys.readouterr().out
+
+
+def test_push_refuses_a_main_commit_that_is_not_on_main(tmp_path, capsys):
+    # the status file comes from the job that runs the pull request's code: its main commit must be a commit of main
+    repo = make_repo(tmp_path, {wc.WORKLOG: entry("PR") + OLD}, {wc.WORKLOG: entry("Main") + OLD})
+    git(repo, "checkout", "--quiet", "-b", "other", "main~1")
+    elsewhere = commit(repo, {wc.WORKLOG: entry("Elsewhere") + OLD}, "not on main")
+    verified = wc.merge(repo, "pr", elsewhere, "pr")
+    assert verified["status"] == wc.READY
+    out = tmp_path / "status.json"
+    args = ["push", "--repo", str(repo), "--head", "pr", "--base", "main", "--branch", "pr", "--out", str(out)]
+    for base_sha in (elsewhere, "--upload-pack=x", ""):
+        out.write_text(json.dumps({**verified, "base_sha": base_sha}), encoding="utf-8")
+        assert wc.main(args) == 1
+        assert "not a commit of main" in capsys.readouterr().out
+
+
+def test_push_says_why_it_does_not_push(capsys):
+    for status, words in [(wc.OTHER, "other files"), (wc.FAILED, "a check fails"), (None, "left no result")]:
+        assert wc.push(Path("."), "pr", "main", "pr", Path("does-not-exist") if status is None else _status(status)) == 1
+        assert words in capsys.readouterr().out
+
+
+def _status(status):
+    import tempfile
+
+    path = Path(tempfile.mkdtemp()) / "status.json"
+    path.write_text(json.dumps({"status": status}), encoding="utf-8")
+    return path
 
 
 def test_find_waits_for_github_to_compute_mergeable_and_skips_forks():
