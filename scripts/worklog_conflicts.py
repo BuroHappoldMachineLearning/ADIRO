@@ -9,9 +9,13 @@ merges. The conflict carries no information: both sides add a new, independent e
              conflicting file and both sides only *add* lines to it; it then keeps both sides (the pull request's entry first,
              because it merges last), commits, and with ``--verify`` runs the validation and the tests on the merged tree.
              This step runs the pull request's code, so the workflow gives it no secrets.
-- ``push``   is the same merge without ``--verify``, run from the default branch's copy of this script: it checks the tree
-             equals the one the ``merge`` step verified, and the workflow then pushes it as the ADIRO Bot, leased on the
-             head ``find`` saw, so a branch that moved meanwhile is left alone.
+- ``push``   is the same merge without ``--verify``, run from the default branch's copy of this script, with the default
+             branch's commit that the ``merge`` step merged (#224: the docs deploy commits to the default branch about a minute
+             after every merge, usually between the two steps, so merging the branch's tip by then gives a tree that was never
+             verified). That commit comes from the ``merge`` step, which runs the pull request's code, so it is accepted only if
+             it is a commit of the default branch. The step checks the tree equals the verified one, and the workflow then
+             pushes it as the ADIRO Bot, leased on the head ``find`` saw, so a branch that moved meanwhile is left alone. A
+             default branch that moved on is merged by the next run.
 
 Any other conflict, a worklog edit that is not a pure addition, or a failing check is left to the author.
 Standard library only, so the workflow runs it with the runner's ``python3``.
@@ -40,6 +44,15 @@ VERIFY = [
 
 # Statuses of `merge`: only "ready" is pushed.
 READY, CLEAN, OTHER, EDITED, FAILED = "ready", "clean", "other-conflicts", "worklog-edited", "verify-failed"
+
+# Why a pull request is not pushed, for the run summary (#224: a run that pushes nothing must say why).
+REASONS = {
+    CLEAN: "it no longer conflicts with the default branch",
+    OTHER: "it conflicts in other files than the worklog; left to its author",
+    EDITED: "its worklog change is not a pure addition; left to its author",
+    FAILED: "a check fails on the merged tree; the comment on the pull request says which",
+}
+SHA_RE = re.compile(r"[0-9a-f]{40}")
 
 
 def git(repo: Path, *args: str, check: bool = True) -> subprocess.CompletedProcess:
@@ -213,16 +226,32 @@ def main(argv: list[str] | None = None) -> int:
         args.out.write_text(json.dumps(status), encoding="utf-8")
         print(json.dumps(status))
         return 0
-    # push: redo the merge without running anything from the pull request, and accept it only if it is the verified tree.
-    verified = json.loads(args.out.read_text(encoding="utf-8")) if args.out.exists() else {}
-    if verified.get("status") != READY:
-        print(f"Not pushing: the verified status is {verified.get('status', 'missing')}.")
+    return push(args.repo, args.head, args.base, args.branch, args.out)
+
+
+def push(repo: Path, head: str, base: str, branch: str, out: Path) -> int:
+    """Redo the verified merge without running anything from the pull request; 0 if it is the verified tree.
+
+    The merge uses the default branch's commit the `merge` step merged, not `base`'s tip, which may have moved since (#224).
+    The status file was written by a job that runs the pull request's code, so its commit is accepted only if it is a
+    commit of `base`: the pushed merge then holds only the pull request and the default branch's own history.
+    """
+    verified = json.loads(out.read_text(encoding="utf-8")) if out.exists() else {}
+    state = verified.get("status")
+    if state != READY:
+        print(f"Not pushing: {REASONS.get(state, 'the merge step left no result (it failed or did not run)')}.")
         return 1
-    status = merge(args.repo, args.head, args.base, args.branch)
+    base_sha = str(verified.get("base_sha", ""))
+    if not SHA_RE.fullmatch(base_sha) or git(repo, "merge-base", "--is-ancestor", base_sha, base, check=False).returncode != 0:
+        print(f"Not pushing: the verified merge names {base_sha or 'no commit'} as the default branch, which is not a commit of {base}.")
+        return 1
+    status = merge(repo, head, base_sha, branch)
     if status["status"] != READY or status.get("tree") != verified.get("tree") or status["head_sha"] != verified.get("head_sha"):
         print(f"Not pushing: the merge here ({status}) is not the one that was verified ({verified}).")
         return 1
-    print(f"Ready to push {status['merge_sha']} onto {args.branch}.")
+    moved = git(repo, "rev-parse", base).stdout.strip() != base_sha
+    print(f"Ready to push {status['merge_sha']} onto {branch}, with the default branch at {base_sha[:7]}"
+          + (" (it has moved on since; the next run merges the rest)." if moved else "."))
     return 0
 
 

@@ -171,7 +171,10 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   request and always runs `main`'s copy of the workflow), the **ADIRO Bot** merges `main` into each open same-repository
   pull request whose **only** conflicting file is the worklog and whose two sides only *add* lines to it, keeping both entries (the pull
   request's first), and pushes the merge commit, which starts the checks again. It pushes only after the validation and the tests pass on
-  the merged tree; if one fails, it pushes nothing and says so in a comment on the pull request. Any other conflict, a fork pull request
+  the merged tree; if one fails, it pushes nothing and says so in a comment on the pull request. It pushes the merge with the `main`
+  commit it verified, even when `main` has moved on since, because the docs deploy commits to `main` about a minute after every merge
+  ([#224](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/224)), and accepts that commit only if it is a commit of `main`;
+  the next run merges the rest. The run summary says, for each pull request (forks included), what it did or why it did not push; a push that fails for another reason than a moved branch fails the job, with git's error. Any other conflict, a fork pull request
   and a branch that moved during the run are left to the author (the push is leased on the head the run saw). The job that runs the pull request's code
   has no secrets; the job that pushes runs only `main`'s `scripts/worklog_conflicts.py` and pushes only the tree that was verified.
 
