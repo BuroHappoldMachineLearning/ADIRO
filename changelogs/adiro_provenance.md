@@ -5,6 +5,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+- **`supersedes` takes effect when the superseding assertion is accepted** ([#221](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/221)). Its definition now says so: until then the earlier assertion stays in force, and an accepted assertion replaces every assertion it supersedes, directly or through others. A pending or rejected re-extraction no longer withdraws an accepted value. No term, domain or range changes; tooling that reads `supersedes` as an immediate withdrawal should follow the new rule.
+
 ## [2.0.0] — 2026-10-21
 
 ### Changed
