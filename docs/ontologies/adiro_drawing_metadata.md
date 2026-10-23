@@ -14,7 +14,7 @@
 <li><a href="../aec_drawing_metadata/2.0.0/">aec_drawing_metadata 2.0.0</a></li>
 </ul>
 </details>
-[![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_drawing_metadata.html){ .md-button target=_blank }
+[![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_drawing_metadata.html){ .md-button target=_blank }
 [:material-file-document-outline: TTL source](https://w3id.org/adiro/adiro_drawing_metadata.ttl){ .md-button }
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/adiro_drawing_metadata.html){ .md-button }
 </div>
@@ -27,7 +27,7 @@ The core drawing vocabulary. It describes the structure of a drawing sheet: its 
 
 ## Interactive view
 
-<iframe src="https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_drawing_metadata.html" title="Adiro Drawing Metadata in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
+<iframe src="https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_drawing_metadata.html" title="Adiro Drawing Metadata in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
 
 ## Dependencies
 

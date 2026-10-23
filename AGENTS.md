@@ -607,7 +607,7 @@ only read a diff of Turtle. One row per `.ttl` this PR adds or changes, pointing
 `docs/` through raw GitHub:
 
 ```
-https://alelom.github.io/OntoCanvas/?onto=<url-encoded raw URL>
+https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=<url-encoded raw URL>
 ```
 ```
 https://raw.githubusercontent.com/BuroHappoldMachineLearning/ADIRO/<branch>/docs/<module>.ttl

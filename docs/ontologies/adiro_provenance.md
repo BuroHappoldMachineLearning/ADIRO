@@ -10,7 +10,7 @@
 <li><a href="../aec_provenance/1.0.0/">aec_provenance 1.0.0</a></li>
 </ul>
 </details>
-[![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_provenance.html){ .md-button target=_blank }
+[![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_provenance.html){ .md-button target=_blank }
 [:material-file-document-outline: TTL source](https://w3id.org/adiro/adiro_provenance.ttl){ .md-button }
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/adiro_provenance.html){ .md-button }
 </div>
@@ -22,7 +22,7 @@ Foundational, domain-neutral module for provenance. It lets any value inferred f
 
 ## Interactive view
 
-<iframe src="https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_provenance.html" title="Adiro Provenance in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
+<iframe src="https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_provenance.html" title="Adiro Provenance in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
 
 ## Dependencies
 
