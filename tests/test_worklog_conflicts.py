@@ -143,18 +143,15 @@ def test_push_refuses_a_main_commit_that_is_not_on_main(tmp_path, capsys):
         assert "not a commit of main" in capsys.readouterr().out
 
 
-def test_push_says_why_it_does_not_push(capsys):
+def test_push_says_why_it_does_not_push(tmp_path, capsys):
+    out = tmp_path / "status.json"
     for status, words in [(wc.OTHER, "other files"), (wc.FAILED, "a check fails"), (None, "left no result")]:
-        assert wc.push(Path("."), "pr", "main", "pr", Path("does-not-exist") if status is None else _status(status)) == 1
+        if status is None:
+            out.unlink()
+        else:
+            out.write_text(json.dumps({"status": status}), encoding="utf-8")
+        assert wc.push(tmp_path, "pr", "main", "pr", out) == 1
         assert words in capsys.readouterr().out
-
-
-def _status(status):
-    import tempfile
-
-    path = Path(tempfile.mkdtemp()) / "status.json"
-    path.write_text(json.dumps({"status": status}), encoding="utf-8")
-    return path
 
 
 def test_find_waits_for_github_to_compute_mergeable_and_skips_forks():

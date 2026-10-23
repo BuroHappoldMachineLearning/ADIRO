@@ -22,7 +22,7 @@ name: Worklog conflicts
 #           saw: a branch that moved meanwhile (a new commit, a rebase or a reset) rejects the push and is left alone.
 #           A push with the app token starts the PR checks again. The run summary says, per pull request, what was
 #           done or why nothing was.
-# Fork pull requests are skipped (the bot cannot push to a fork); the find job's log says so.
+# Fork pull requests are skipped (the bot cannot push to a fork); the run summary says so.
 
 on:
   push:
@@ -59,7 +59,12 @@ jobs:
           BASE: ${{ github.event.repository.default_branch }}
           PR: ${{ github.event.pull_request.number }}
         run: |
-          prs="$(python3 scripts/worklog_conflicts.py find --base "$BASE" ${PR:+--pr "$PR"})"
+          if ! prs="$(python3 scripts/worklog_conflicts.py find --base "$BASE" ${PR:+--pr "$PR"} 2> "$RUNNER_TEMP/find.err")"; then
+            cat "$RUNNER_TEMP/find.err" >&2
+            exit 1
+          fi
+          # The pull requests left alone here (forks) go in the run summary, which says per pull request what was done.
+          cat "$RUNNER_TEMP/find.err" | tee -a "$GITHUB_STEP_SUMMARY" >&2
           echo "Conflicting pull requests: $prs"
           echo "prs=$prs" >> "$GITHUB_OUTPUT"
 
@@ -150,7 +155,8 @@ jobs:
             echo "push=true" >> "$GITHUB_OUTPUT"
           fi
           echo "$result"
-          echo "#${PR} (\`$BRANCH\`): $result" >> "$GITHUB_STEP_SUMMARY"
+          # If the script raised instead of returning, its traceback is in the log and $result is empty.
+          echo "#${PR} (\`$BRANCH\`): ${result:-the push step failed; see the job log.}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Create ADIRO Bot token
         id: app-token
@@ -170,13 +176,22 @@ jobs:
         run: |
           # Leased on the head `find` saw: if the branch moved since (a new commit, a rebase, or a reset to an earlier
           # commit, which a plain push would silently undo by fast-forwarding), the push is rejected and the branch is
-          # left alone.
+          # left alone. Any other failure (a ruleset, the token, the network) starts no new run: the job fails, with git's
+          # error in the summary.
           if git -C "$RUNNER_TEMP/merge" -c core.hooksPath=/dev/null push \
                --force-with-lease="refs/heads/${BRANCH}:${HEAD_SHA}" \
-               "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/${BRANCH}"; then
+               "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/${BRANCH}" \
+               2> "$RUNNER_TEMP/push.err"; then
             echo "Pushed: merged main into $BRANCH with both worklog entries kept." >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "Not pushed: the branch $BRANCH moved while this ran; the run its push starts tries again." >> "$GITHUB_STEP_SUMMARY"
+            error="$(sed 's#x-access-token:[^@]*@#***@#g' "$RUNNER_TEMP/push.err")"
+            echo "$error" >&2
+            if grep -q 'stale info' <<< "$error"; then
+              echo "Not pushed: the branch $BRANCH moved while this ran; the run its push starts tries again." >> "$GITHUB_STEP_SUMMARY"
+            else
+              { echo "Not pushed: git push to $BRANCH failed:"; echo '```'; echo "$error"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+              exit 1
+            fi
           fi
 
       - name: Report a failing check on the pull request
