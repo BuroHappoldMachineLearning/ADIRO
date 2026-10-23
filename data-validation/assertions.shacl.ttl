@@ -1,5 +1,5 @@
-# Rules for field assertions: a value or an outcome, an accepted assertion has an agent, a superseding assertion
-# is about the same thing (#187).
+# Rules for field assertions: one allowed acceptance status and outcome (#220), a value or an outcome, an accepted assertion
+# has an agent, a superseding assertion is about the same thing (#187).
 #
 # They check DATA (what an extraction pipeline or a ground-truth import produces), not the ontology: OWL cannot say "never both"
 # or "if accepted, then by someone", under the open-world assumption. What is read here is documented in
@@ -27,6 +27,34 @@ dv:ValueOrOutcome a sh:NodeShape ;
                 [ sh:property [ sh:path aprov:hasValueEntity ; sh:minCount 1 ] ]
             ) ]
         )
+    ] .
+
+# An assertion has one current acceptance status and at most one outcome, each from its published list (#220). A second
+# status is not a history (Accepted then Rejected): RDF keeps both triples, and Accepted would still be promoted. A different
+# result is a different assertion. No minimum: an assertion with no acceptance is Pending, and one with a value has no outcome.
+dv:OneAllowedStatusAndOutcome a sh:NodeShape ;
+    sh:targetClass aprov:FieldAssertion ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path aprov:hasAcceptance ;
+        sh:maxCount 1 ;
+        sh:message "An assertion has at most one acceptance status." ;
+        sh:severity sh:Violation ;
+    ] , [
+        sh:path aprov:hasAcceptance ;
+        sh:in ( aprov:Pending aprov:Accepted aprov:Rejected ) ;
+        sh:message "An acceptance status is Pending, Accepted or Rejected." ;
+        sh:severity sh:Violation ;
+    ] , [
+        sh:path aprov:hasOutcome ;
+        sh:maxCount 1 ;
+        sh:message "An assertion has at most one outcome." ;
+        sh:severity sh:Violation ;
+    ] , [
+        sh:path aprov:hasOutcome ;
+        sh:in ( aprov:Empty aprov:Illegible aprov:NotPrinted aprov:NotFound ) ;
+        sh:message "An outcome is Empty, Illegible, NotPrinted or NotFound." ;
+        sh:severity sh:Violation ;
     ] .
 
 # An accepted assertion says who accepted it.

@@ -205,3 +205,69 @@ def test_a_superseding_assertion_is_about_the_same_subject_and_kind():
     assert [r["message"] for r in check_assertions(other_kind)] == ["An assertion supersedes another about the same subject and the same field kind."]
     other_subject = same.replace(":new a aprov:FieldAssertion ; aprov:assertedAbout :d", ":new a aprov:FieldAssertion ; aprov:assertedAbout :e")
     assert len(check_assertions(other_subject)) == 1
+
+
+# --- one acceptance status and at most one outcome, each from its published list (#220) ------------------------------
+STATUS = "An acceptance status is Pending, Accepted or Rejected."
+OUTCOME = "An outcome is Empty, Illegible, NotPrinted or NotFound."
+
+
+def test_an_assertion_accepted_and_rejected_is_reported_even_with_an_agent():
+    both = (':a a aprov:FieldAssertion ; aprov:hasLiteralValue "Ground Floor Plan" ;'
+            " aprov:hasAcceptance aprov:Accepted , aprov:Rejected ; aprov:acceptedBy :reviewer .\n")
+    assert messages_of(both) == ["An assertion has at most one acceptance status."]
+
+
+def test_an_assertion_with_two_outcomes_is_reported():
+    assert messages_of(":a a aprov:FieldAssertion ; aprov:hasOutcome aprov:NotPrinted , aprov:Illegible .\n") == [
+        "An assertion has at most one outcome."]
+
+
+def test_a_status_or_an_outcome_outside_its_list_is_reported():
+    assert messages_of(":a a aprov:FieldAssertion ; aprov:hasAcceptance :Acceptted .\n") == [STATUS]
+    assert messages_of(':a a aprov:FieldAssertion ; aprov:hasAcceptance "Accepted" .\n') == [STATUS]
+    assert messages_of(":a a aprov:FieldAssertion ; aprov:hasAcceptance aprov:NotPrinted .\n") == [STATUS]  # an outcome
+    assert messages_of(":a a aprov:FieldAssertion ; aprov:hasOutcome :NotPrnted .\n") == [OUTCOME]
+    assert messages_of(':a a aprov:FieldAssertion ; aprov:hasOutcome "NotPrinted" .\n') == [OUTCOME]
+    assert messages_of(":a a aprov:FieldAssertion ; aprov:hasOutcome aprov:Rejected .\n") == [OUTCOME]  # a status
+
+
+def test_each_allowed_status_and_outcome_conforms():
+    for status in ("Pending", "Rejected"):
+        assert check_assertions(f':a a aprov:FieldAssertion ; aprov:hasLiteralValue "X" ; aprov:hasAcceptance aprov:{status} .\n') == []
+    accepted = ':a a aprov:FieldAssertion ; aprov:hasLiteralValue "X" ; aprov:hasAcceptance aprov:Accepted'
+    assert check_assertions(accepted + " ; aprov:acceptedBy :reviewer .\n") == []
+    assert messages_of(accepted + " .\n") == ["An accepted assertion has an acceptedBy."]
+    for outcome in ("Empty", "Illegible", "NotPrinted", "NotFound"):
+        assert check_assertions(f":a a aprov:FieldAssertion ; aprov:hasOutcome aprov:{outcome} ; aprov:hasAcceptance aprov:Pending .\n") == []
+
+
+def test_different_assertions_about_one_field_may_disagree():
+    # disagreement or history is kept as separate assertions, each with its own current status
+    two = """:a1 a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind :k ; aprov:hasLiteralValue "Plan" ;
+    aprov:hasAcceptance aprov:Accepted ; aprov:acceptedBy :reviewer .
+:a2 a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind :k ; aprov:hasOutcome aprov:Illegible ;
+    aprov:hasAcceptance aprov:Rejected .
+:a3 a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind :k ; aprov:hasOutcome aprov:NotPrinted .
+"""
+    assert check_assertions(two) == []
+
+
+def test_the_cli_reports_the_cases_of_the_issue(tmp_path, capsys):
+    data = tmp_path / "assertion-cases.ttl"
+    data.write_text(PREFIXES + APROV + """
+:bothStatuses a aprov:FieldAssertion ; aprov:assertedAbout :drawing ; aprov:hasLiteralValue "Ground Floor Plan" ;
+    aprov:hasAcceptance aprov:Accepted , aprov:Rejected ; aprov:acceptedBy :reviewer .
+:bothOutcomes a aprov:FieldAssertion ; aprov:hasOutcome aprov:NotPrinted , aprov:Illegible .
+:unknownStatus a aprov:FieldAssertion ; aprov:hasAcceptance :Acceptted .
+:unknownOutcome a aprov:FieldAssertion ; aprov:hasOutcome :NotPrnted .
+""", encoding="utf-8")
+    assert vd.main([str(data)]) == 1
+    out = capsys.readouterr().out
+    for name in ("bothStatuses", "bothOutcomes", "unknownStatus", "unknownOutcome"):
+        assert f"[Violation] https://ex.org/d#{name}:" in out
+    assert "4 result(s), 4 violation(s)" in out
+
+
+def messages_of(body):
+    return [r["message"] for r in check_assertions(body)]
