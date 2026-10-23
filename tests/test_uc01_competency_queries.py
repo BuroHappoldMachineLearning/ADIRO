@@ -128,13 +128,14 @@ def test_cq_4_6_says_why_a_drawing_has_no_author():
 :unseen a metadata:DrawingSheet .
 :retried a metadata:DrawingSheet .
 :old a aprov:FieldAssertion ; aprov:assertedAbout :retried ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:NotFound .
-:newer a aprov:FieldAssertion ; aprov:assertedAbout :retried ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:Illegible ; aprov:supersedes :old .
+:newer a aprov:FieldAssertion ; aprov:assertedAbout :retried ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:Illegible ;
+    aprov:hasAcceptance aprov:Accepted ; aprov:acceptedBy :reviewer ; aprov:supersedes :old .
 :done a metadata:DrawingSheet ; metadata:isAuthoredBy :jsmith .
 """
     rows = cq_4_6(data)
     reasons = {d: r for d, _, _, r in rows}
     assert len(rows) == len(reasons), "one row per drawing here"
-    # the latest assertion decides (a superseded one is not read), a value awaiting acceptance is Pending, no assertion is NotProcessed
+    # an accepted assertion decides (the one it supersedes is not read), a value awaiting acceptance is Pending, no assertion is NotProcessed
     assert reasons == {"printed": "NotPrinted", "blank": "Empty", "waiting": "Pending", "unseen": "NotProcessed", "retried": "Illegible"}
 
 
@@ -233,6 +234,59 @@ def test_the_promotion_gives_a_direct_statement_only_for_an_accepted_assertion_w
     graph = Graph().parse(data=PREFIXES + data, format="turtle")
     promoted = {(str(s).rsplit("#", 1)[-1], str(p).rsplit("#", 1)[-1], str(o).rsplit("#", 1)[-1]) for s, p, o in graph.query(query)}
     assert promoted == {("d1", "drawingTitle", "Ground floor plan"), ("d1", "isAuthoredBy", "jsmith"), ("d4", "drawingTitle", "Corrected title")}
+
+
+# --- supersession takes effect when the superseding assertion is accepted, through a chain (#221) --------------------
+TITLE = ":kindTitle aprov:mapsToFieldProperty metadata:drawingTitle .\n"
+ACCEPTED = "aprov:hasAcceptance aprov:Accepted ; aprov:acceptedBy :reviewer"
+
+
+def promoted_titles(data):
+    graph = Graph().parse(data=PREFIXES + TITLE + data, format="turtle")
+    return {str(o) for _, _, o in graph.query(recorded_query("# Promotion"))}
+
+
+def assertion(name, about, rest):
+    return f":{name} a aprov:FieldAssertion ; aprov:assertedAbout :{about} ; aprov:assertsFieldKind :kindTitle ; {rest} .\n"
+
+
+@pytest.mark.parametrize("b, promoted", [
+    ('aprov:hasAcceptance aprov:Pending ; aprov:hasLiteralValue "First Floor Plan"', {"Ground Floor Plan"}),
+    ('aprov:hasAcceptance aprov:Rejected ; aprov:hasLiteralValue "First Floor Plan"', {"Ground Floor Plan"}),
+    ('aprov:hasLiteralValue "First Floor Plan"', {"Ground Floor Plan"}),  # no acceptance recorded: Pending
+    (f'{ACCEPTED} ; aprov:hasLiteralValue "First Floor Plan"', {"First Floor Plan"}),
+    (f"{ACCEPTED} ; aprov:hasOutcome aprov:NotPrinted", set()),  # an accepted outcome-only replacement withdraws the value
+])
+def test_supersession_takes_effect_when_the_new_assertion_is_accepted(b, promoted):
+    a = assertion("a", "d", f'{ACCEPTED} ; aprov:hasLiteralValue "Ground Floor Plan"')
+    assert promoted_titles(a + assertion("b", "d", f"{b} ; aprov:supersedes :a")) == promoted
+
+
+def test_a_rejected_value_is_withdrawn_without_a_replacement():
+    a = assertion("a", "d", 'aprov:hasAcceptance aprov:Rejected ; aprov:hasLiteralValue "Ground Floor Plan"')
+    b = assertion("b", "d", 'aprov:hasAcceptance aprov:Pending ; aprov:hasLiteralValue "First Floor Plan" ; aprov:supersedes :a')
+    assert promoted_titles(a + b) == set()
+
+
+def test_an_accepted_correction_withdraws_the_whole_chain_it_ends():
+    a = assertion("a", "d", f'{ACCEPTED} ; aprov:hasLiteralValue "A"')
+    for middle in ("aprov:hasAcceptance aprov:Pending", "aprov:hasAcceptance aprov:Rejected", ACCEPTED):
+        b = assertion("b", "d", f'{middle} ; aprov:hasLiteralValue "B" ; aprov:supersedes :a')
+        c = assertion("c", "d", f'{ACCEPTED} ; aprov:hasLiteralValue "C" ; aprov:supersedes :b')
+        assert promoted_titles(a + b + c) == {"C"}, middle
+    # until the end of the chain is accepted, the latest accepted assertion before it stays in force
+    b = assertion("b", "d", f'{ACCEPTED} ; aprov:hasLiteralValue "B" ; aprov:supersedes :a')
+    c = assertion("c", "d", 'aprov:hasAcceptance aprov:Pending ; aprov:hasLiteralValue "C" ; aprov:supersedes :b')
+    assert promoted_titles(a + b + c) == {"B"}
+
+
+def test_cq_4_6_reads_an_assertion_superseded_only_by_an_unaccepted_one():
+    data = """:d a metadata:DrawingSheet .
+:old a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:NotFound .
+:new a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:Illegible ;
+    aprov:hasAcceptance aprov:Rejected ; aprov:supersedes :old .
+"""
+    assert cq_4_6(data) == [("d", "d", "Pending", "NotFound"), ("d", "d", "Rejected", "Rejected")]
 
 
 def test_a_table_asserts_every_revision_it_lists_and_the_ontology_declares_the_property():

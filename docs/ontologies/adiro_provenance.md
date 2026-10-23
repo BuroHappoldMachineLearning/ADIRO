@@ -300,7 +300,7 @@ The algorithm or model (ideally with version) used to produce this inference. Di
 
 ### supersedes {#supersedes}
 
-The earlier assertion that this one replaces about the same field of the same subject: a person's correction of a model's value, or a later value after a not-found. The earlier one stays as a record. Explicit, so a query does not depend on timestamps.
+The earlier assertion that this one replaces about the same field of the same subject: a person's correction of a model's value, or a later value after a not-found. It takes effect when this assertion is accepted: until then the earlier one stays in force, and an accepted assertion replaces every one it supersedes, directly or through others. The earlier one stays as a record. Explicit, so a query does not depend on timestamps.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#supersedes`
 - **Domain:** [Field Assertion](#FieldAssertion)

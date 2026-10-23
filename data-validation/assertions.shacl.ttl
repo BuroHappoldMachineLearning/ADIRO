@@ -84,3 +84,16 @@ dv:SupersedesTheSameThing a sh:NodeShape ;
             }
         """
     ] .
+
+# Supersession follows a chain (#221): an assertion that supersedes itself through others would withdraw itself once accepted.
+dv:NoSupersessionCycle a sh:NodeShape ;
+    sh:targetClass aprov:FieldAssertion ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "An assertion does not supersede itself, directly or through other assertions." ;
+        sh:prefixes dv: ;
+        sh:select """
+            SELECT $this WHERE { $this aprov:supersedes+ $this }
+        """
+    ] .
