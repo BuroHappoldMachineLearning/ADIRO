@@ -88,7 +88,7 @@ def test_render_lists_findings_and_previews():
     assert "- `B` (`aec_x`)" in text
     assert "[ ]" not in text and "recomputes" not in text
     assert "[#7](https://github.com/o/r/issues/7)" in text and "closing keyword that GitHub did not link" in text
-    assert "https://alelom.github.io/OntoCanvas/?onto=https%3A%2F%2Fraw.githubusercontent.com%2Fo%2Fr%2Ffeat%2Fx%2Fdocs%2Faec_x.ttl" in text
+    assert "https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https%3A%2F%2Fraw.githubusercontent.com%2Fo%2Fr%2Ffeat%2Fx%2Fdocs%2Faec_x.ttl" in text
 
 
 def test_render_with_only_a_preview_posts_no_comment():

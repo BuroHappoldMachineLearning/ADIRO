@@ -122,7 +122,7 @@ def unregistered_closing(body, registered):
 
 def preview_url(repo, head_ref, module):
     raw = f"https://raw.githubusercontent.com/{repo}/{head_ref}/docs/{module}.ttl"
-    return "https://alelom.github.io/OntoCanvas/?onto=" + urllib.parse.quote(raw, safe="")
+    return "https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=" + urllib.parse.quote(raw, safe="")
 
 
 # One entry per issue type. A finding is a (kind, item) pair; render() says the advice once per kind and lists the items,

@@ -120,7 +120,7 @@ Every release names **all** of its earlier published versions with `owl:priorVer
     owl:versionInfo "4.0.1" .
 ```
 
-The list is complete, not just the previous version, because a tool such as [OntoCanvas](https://alelom.github.io/OntoCanvas/) reads the open file and the latest release (fetched from the ontology IRI) and does not follow a chain of releases: the latest release has to say which versions exist, so that a person can list and open each of them.
+The list is complete, not just the previous version, because a tool such as [OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/) reads the open file and the latest release (fetched from the ontology IRI) and does not follow a chain of releases: the latest release has to say which versions exist, so that a person can list and open each of them.
 
 - **The release cut writes it.** `scripts/prepare_release.py` rewrites the lines for each module it releases, from the releases archived under `versions/<module>/`. They are not edited by hand, and a hand-made release runs `uv run python scripts/prepare_release.py priors` after bumping the version.
 - **Only published releases are named.** A version is listed when it is archived under `versions/`, which is what the deploy publishes, so its IRI resolves. A module's first release has nothing to list. `aec_drawing_metadata` 1.0.0 was never published under a resolvable version IRI (no archive, and neither its `w3id.org` nor its old host IRI answers), so it is not listed.
