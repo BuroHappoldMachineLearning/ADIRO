@@ -111,3 +111,20 @@ def test_the_agents_live_in_the_provenance_module_and_the_drawing_module_uses_th
         assert METADATA.value(META[role], RDFS.range) == APROV.Person
     for role in ("assertsClient", "assertsOriginator"):
         assert METADATA.value(META[role], RDFS.range) == APROV.Organisation
+
+
+def test_a_file_records_where_it_came_from_apart_from_where_its_copies_are():
+    # #229: the origin is one fixed fact; the storage locations are copies that move
+    for prop in ("sourceLocation", "sourcePage", "storageLocation"):
+        assert (APROV[prop], RDF.type, OWL.DatatypeProperty) in PROVENANCE
+        assert PROVENANCE.value(APROV[prop], RDFS.domain) == APROV.DrawingFile
+        assert PROVENANCE.value(APROV[prop], RDFS.range) == XSD.anyURI
+    assert APROV.sourceLocation != APROV.storageLocation
+    assert URIRef("http://www.w3.org/ns/dcat#landingPage") in set(PROVENANCE.objects(APROV.sourcePage, SKOS.closeMatch))
+
+
+def test_a_derived_file_points_back_with_the_prov_stub_which_carries_no_axioms():
+    assert (PROV.wasDerivedFrom, RDF.type, OWL.ObjectProperty) in PROVENANCE
+    assert PROVENANCE.value(PROV.wasDerivedFrom, RDFS.isDefinedBy) == URIRef("http://www.w3.org/ns/prov#")
+    axioms = [p for p, _ in PROVENANCE.predicate_objects(PROV.wasDerivedFrom) if p in (RDFS.domain, RDFS.range, RDFS.subPropertyOf)]
+    assert axioms == []

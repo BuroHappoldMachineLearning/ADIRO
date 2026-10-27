@@ -99,7 +99,7 @@ Typing stub for the ISO 21597-1 (ICDD) term Document, edition 1: an abstract ref
 
 ### Drawing File {#DrawingFile}
 
-A reference to a document in which drawings are stored: not the bytes, but what identifies and locates them (name, media type, content hash, where it is stored, when and by whom it was made and last changed, how many pages it has). The content hash is its identity; the storage location is a fact that changes when the file is moved, and more than one is allowed (copies). A subclass of the ISO 21597-1 Document, which is likewise a reference.
+A reference to a document in which drawings are stored: not the bytes, but what identifies and locates them (name, media type, content hash, where it was obtained from, where it is stored, when and by whom it was made and last changed, how many pages it has). The content hash is its identity; the storage location is a fact that changes when the file is moved, and more than one is allowed (copies), while the source location is where the file came from. A subclass of the ISO 21597-1 Document, which is likewise a reference.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#DrawingFile`
 - **Sub class of:**
@@ -318,6 +318,12 @@ Typing stub for the PROV-O term of the same name, declared locally so this modul
 
 - **IRI:** `http://www.w3.org/ns/prov#wasAssociatedWith`
 
+### wasDerivedFrom {#wasDerivedFrom}
+
+Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Entity, rdfs:range prov:Entity). ADIRO uses it between two DrawingFiles: a file made from another one (a format conversion, a page split out of a PDF) was derived from it, and only the original records a sourceLocation.
+
+- **IRI:** `http://www.w3.org/ns/prov#wasDerivedFrom`
+
 ### wasGeneratedBy {#wasGeneratedBy}
 
 Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Entity, rdfs:range prov:Activity)
@@ -476,6 +482,22 @@ The rotation recorded for the page, in degrees. The page_display_pt coordinates 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#pdfRotationDeg`
 - **Domain:** [File Page](#FilePage)
 - **Range:** `xsd:integer`
+
+### sourceLocation {#sourceLocation}
+
+Where the file was obtained from: the address its bytes were fetched from, such as a public archive's download address, or the address in an organisation's own storage when that is the only known origin. Unlike storageLocation, it does not change when copies are moved. A file made from another file (converted, split into pages) records its origin through prov:wasDerivedFrom to that file, not a sourceLocation of its own.
+
+- **IRI:** `https://w3id.org/adiro/adiro_provenance#sourceLocation`
+- **Domain:** [Drawing File](#DrawingFile)
+- **Range:** `xsd:anyURI`
+
+### sourcePage {#sourcePage}
+
+The page at the file's origin that describes it, such as a catalogue record or a landing page, which is often a more lasting address than the file's own sourceLocation.
+
+- **IRI:** `https://w3id.org/adiro/adiro_provenance#sourcePage`
+- **Domain:** [Drawing File](#DrawingFile)
+- **Range:** `xsd:anyURI`
 
 ### storageLocation {#storageLocation}
 

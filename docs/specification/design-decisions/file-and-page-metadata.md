@@ -1,10 +1,10 @@
 # The file a drawing is stored in: the model and its alignment
 
 !!! info "Status"
-    In the ontology as unreleased changes ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)), published with the next
-    release of `adiro_provenance`, `adiro_geometry` and `adiro_drawing_metadata`. The names below are those in `src/`. The change is a MAJOR one for
-    `adiro_geometry` (five properties leave `CoordinateFrame`) and is released with the module rename of
-    [#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171).
+    Released ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)) in `adiro_provenance` 2.0.0, `adiro_geometry` 3.0.0
+    and `adiro_drawing_metadata` 7.0.0, with the module rename of [#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171).
+    [Where a file came from](#where-a-file-came-from) ([#229](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/229)) is in `src/`
+    as an unreleased change, published with the next release of `adiro_provenance`. The names below are those in `src/`.
 
 A drawing lives in a file, and a PDF holds many drawings, one per page. ADIRO therefore keeps three things apart: the drawing,
 the file it is stored in, and the page of that file it is on.
@@ -25,7 +25,8 @@ flowchart LR
 - **`DrawingFile`** is a **reference to a document**, not the bytes. It carries what identifies and locates the document: a
   name, a media type, a content hash and the algorithm that produced it, where it is stored, when it was created and last
   modified and by whom, and how many pages it has. The content hash is its identity (the bytes), and the location is a fact
-  that changes when the file is moved. More than one location is allowed (copies).
+  that changes when the file is moved. More than one location is allowed (copies). Where the file was **obtained from** is
+  a separate fact, which does not change: see [Where a file came from](#where-a-file-came-from).
 - **`FilePage`** is one page of one file: its page number, the file it belongs to, its rotation and its display size in points.
   A single-page file, and a raster, has page 1.
 - **`CoordinateFrame`** is a `FilePage` read in one coordinate convention: the named space, the unit and the profile that
@@ -40,6 +41,40 @@ flowchart LR
 File metadata comes from the storage system, so it has no confidence and is not an `InferredEntity`; an extraction records the
 file it read through its provenance. Nothing in the ontology requires a value, and the values (a client's paths, the people who
 saved a file) belong to private data, not to this repository.
+
+## Where a file came from
+
+*(Added with [#229](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/229).)* A file is often copied before it is
+read: a public drawing is downloaded into an organisation's own storage, then processed from there. The copies' addresses are
+`storageLocation` values; the place the file was obtained from is recorded apart from them, so it is not lost among the copies:
+
+| Property | What it records | Changes when copies move |
+|---|---|---|
+| `sourceLocation` | the address the file's bytes were obtained from: a public archive's download address, or an organisation's own storage when that is the only origin known | no |
+| `sourcePage` | the page at the origin that describes the file (a catalogue record, a landing page), often a more lasting address than the file's own | no |
+| `storageLocation` | where a copy is kept; more than one | yes |
+
+A file made from another file (a format conversion, a page split out of a PDF) has other bytes, so it has another content hash
+and is another `DrawingFile`. It points back with `prov:wasDerivedFrom`, and only the original records a `sourceLocation`: the
+origin of any derived file is found by following that link.
+
+```turtle
+:scan  a aprov:DrawingFile ; aprov:mediaType "image/tiff" ;
+    aprov:sourceLocation "https://tile.loc.gov/storage-services/…/0001.tif"^^xsd:anyURI ;
+    aprov:sourcePage     "https://www.loc.gov/item/…/"^^xsd:anyURI ;
+    aprov:storageLocation "https://storage.example.org/drawings/0001.tif"^^xsd:anyURI .
+:image a aprov:DrawingFile ; aprov:mediaType "image/png" ;
+    prov:wasDerivedFrom :scan .
+```
+
+**Whether an address is confidential is a property of the value, not of the term.** An organisation's internal file has its
+internal storage as its `sourceLocation`, and that is right in the organisation's own data. Data that is published names only
+addresses on public hosts: the data checks (`data-validation/release/`, run with an allowlist of public hosts that whoever
+releases the data supplies) report any `sourceLocation`, `sourcePage`, `storageLocation` or `acceptedUnder` on another host. The allowlist names
+the public hosts, so no internal host name has to be written anywhere. In practice a release must drop every `storageLocation`
+before publishing, unless a copy is published on a public host. The check reads the values of these terms only: the IRIs a
+pipeline mints for its individuals are not storage addresses, and the rest of an export is the publication step's to check. A warning (`data-validation/file-source.shacl.ttl`) reports a file with no
+recorded origin, itself or through the files it was derived from.
 
 ## What moves out of `CoordinateFrame`
 
@@ -91,6 +126,8 @@ reasons with ICDD's axioms, so the alignment is an annotation, with local names 
 | media type | `mediaType` | `ct:format` | `dcterms:format` | DCAT: media type |
 | content hash and algorithm | `contentHash`, `hashAlgorithm` | `ct:checksum`, `ct:checksumAlgorithm` | none | |
 | where it is stored | `storageLocation` | `ct:url` | none | DCAT: download URL; IFC: location |
+| where it was obtained from | `sourceLocation` | none | `dcterms:source` | DCAT: download URL |
+| the page describing it at its origin | `sourcePage` | none | none | DCAT: landing page |
 | created, last modified | `fileCreatedAt`, `fileModifiedAt` | `ct:creationDate`, `ct:modificationDate` | `dcterms:created`, `dcterms:modified` | IFC: creation time, last revision time |
 | created by, modified by | `fileCreatedBy`, `fileModifiedBy` (range `Party`) | `ct:createdBy`, `ct:modifiedBy` | `dcterms:creator`, `dcterms:contributor` | IFC: document owner, editors |
 | number of pages | `pageCount` | none | `dcterms:extent` | |

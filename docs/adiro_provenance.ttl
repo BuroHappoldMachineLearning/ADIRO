@@ -70,6 +70,11 @@ prov:used rdf:type owl:ObjectProperty ;
     rdfs:comment "Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range prov:Entity)" ;
     rdfs:isDefinedBy <http://www.w3.org/ns/prov#> .
 
+prov:wasDerivedFrom rdf:type owl:ObjectProperty ;
+    rdfs:label "wasDerivedFrom" ;
+    rdfs:comment "Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Entity, rdfs:range prov:Entity). ADIRO uses it between two DrawingFiles: a file made from another one (a format conversion, a page split out of a PDF) was derived from it, and only the original records a sourceLocation." ;
+    rdfs:isDefinedBy <http://www.w3.org/ns/prov#> .
+
 prov:endedAtTime rdf:type owl:DatatypeProperty ;
     rdfs:label "endedAtTime" ;
     rdfs:comment "Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range xsd:dateTime). ADIRO's own :inferredAt declares rdfs:range xsd:dateTime, so the precision is asserted where it belongs - on the term this suite owns." ;
@@ -257,7 +262,7 @@ ct:Organisation rdf:type owl:Class ;
 
 :DrawingFile rdf:type owl:Class ;
     rdfs:label "Drawing File" ;
-    rdfs:comment "A reference to a document in which drawings are stored: not the bytes, but what identifies and locates them (name, media type, content hash, where it is stored, when and by whom it was made and last changed, how many pages it has). The content hash is its identity; the storage location is a fact that changes when the file is moved, and more than one is allowed (copies). A subclass of the ISO 21597-1 Document, which is likewise a reference." ;
+    rdfs:comment "A reference to a document in which drawings are stored: not the bytes, but what identifies and locates them (name, media type, content hash, where it was obtained from, where it is stored, when and by whom it was made and last changed, how many pages it has). The content hash is its identity; the storage location is a fact that changes when the file is moved, and more than one is allowed (copies), while the source location is where the file came from. A subclass of the ISO 21597-1 Document, which is likewise a reference." ;
     rdfs:subClassOf prov:Entity , ct:Document .
 
 :FilePage rdf:type owl:Class ;
@@ -307,6 +312,20 @@ ct:Organisation rdf:type owl:Class ;
     rdfs:domain :DrawingFile ;
     rdfs:range xsd:anyURI ;
     skos:closeMatch ct:url , dcat:downloadURL .
+
+:sourceLocation rdf:type owl:DatatypeProperty ;
+    rdfs:label "sourceLocation" ;
+    rdfs:comment "Where the file was obtained from: the address its bytes were fetched from, such as a public archive's download address, or the address in an organisation's own storage when that is the only known origin. Unlike storageLocation, it does not change when copies are moved. A file made from another file (converted, split into pages) records its origin through prov:wasDerivedFrom to that file, not a sourceLocation of its own." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:anyURI ;
+    skos:closeMatch dcat:downloadURL , dcterms:source .
+
+:sourcePage rdf:type owl:DatatypeProperty ;
+    rdfs:label "sourcePage" ;
+    rdfs:comment "The page at the file's origin that describes it, such as a catalogue record or a landing page, which is often a more lasting address than the file's own sourceLocation." ;
+    rdfs:domain :DrawingFile ;
+    rdfs:range xsd:anyURI ;
+    skos:closeMatch dcat:landingPage .
 
 :fileCreatedAt rdf:type owl:DatatypeProperty ;
     rdfs:label "fileCreatedAt" ;
