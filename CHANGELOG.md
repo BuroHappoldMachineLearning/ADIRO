@@ -6,7 +6,7 @@ ADIRO's modules are versioned **independently** (per-module SemVer — see
 
 | Module | Version | Changelog |
 |---|---|---|
-| `adiro_provenance` | 2.0.0 | [changelogs/adiro_provenance.md](changelogs/adiro_provenance.md) |
+| `adiro_provenance` | 2.1.0 | [changelogs/adiro_provenance.md](changelogs/adiro_provenance.md) |
 | `adiro_geometry` | 3.0.0 | [changelogs/adiro_geometry.md](changelogs/adiro_geometry.md) |
 | `adiro_drawing_metadata` | 7.0.0 | [changelogs/adiro_drawing_metadata.md](changelogs/adiro_drawing_metadata.md) |
 | `adiro_common_symbols` | 5.0.0 | [changelogs/adiro_common_symbols.md](changelogs/adiro_common_symbols.md) |
