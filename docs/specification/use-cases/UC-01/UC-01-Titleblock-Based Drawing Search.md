@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.15 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.16 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -50,7 +50,7 @@ Things that exist independently and will become OWL Classes.
 
 > **Design note — curated values vs extracted assertions:** UC-01 attaches title-block information as datatype properties **directly on `DrawingSheet`** (`drawingIdentifier`, `drawingTitle`, …). That remains correct for a *validated* value. A second, parallel path exists for values that have been **machine-extracted and not yet validated**: an `aprov:FieldAssertion` reifies the claim - what was read, from which region (`assertedBy`), by what (`hasInferenceMeta`), with what confidence, and with the caption exactly as printed (`capturedCaption`) - bound to a field kind in the `TitleblockFieldScheme`. `aprov:mapsToFieldProperty` names the UC-01 property a validated assertion is promoted to. The two coexist: UC-01's properties are the query surface, the assertion layer is the extraction and provenance record. A value moves from the assertion to the direct property when its assertion is **accepted** (`aprov:hasAcceptance` `Accepted`), by a pipeline rule (a confidence threshold, named by `aprov:acceptedUnder`) or by a person, and the acceptance records who and when (`acceptedBy`, `acceptedAt`). The assertions are never deleted, and the direct properties stay as the permanent query surface of accepted values ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)). When a search finds no value, the assertion carries an outcome instead (`aprov:hasOutcome`: `Empty`, `Illegible`, `NotPrinted`, `NotFound`), and is never promoted. *(Added in [v0.4](#9-version-history); amended in [v0.10](#9-version-history).)*
 
-The promotion is a query that tooling runs on accepted assertions, not an inference. Each accepted assertion that has a value, and that no later assertion supersedes, gives one direct statement on its subject, with the property its field kind maps to (`aprov:mapsToFieldProperty`):
+The promotion is a query that tooling runs on accepted assertions, not an inference. Each accepted assertion that has a value, and that no accepted assertion supersedes, directly or through a chain of corrections, gives one direct statement on its subject, with the property its field kind maps to (`aprov:mapsToFieldProperty`). *(Amended in [v0.16](#9-version-history).)*
 
 ```sparql
 PREFIX aprov: <https://w3id.org/adiro/adiro_provenance#>
@@ -64,11 +64,23 @@ WHERE {
              aprov:hasAcceptance   aprov:Accepted .
   ?kind aprov:mapsToFieldProperty ?property .
   { ?assertion aprov:hasLiteralValue ?value } UNION { ?assertion aprov:hasValueEntity ?value }
-  FILTER NOT EXISTS { ?newer aprov:supersedes ?assertion }
+  FILTER NOT EXISTS { ?newer aprov:supersedes+ ?assertion ; aprov:hasAcceptance aprov:Accepted }
 }
 ```
 
-An assertion that is pending, rejected, outcome-only (`NotPrinted`, `Empty`, `Illegible`, `NotFound`) or superseded gives nothing. This holds for data that passes [`assertions.shacl.ttl`](https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/data-validation/assertions.shacl.ttl), which allows an assertion one acceptance status and at most one outcome: the query itself promotes an assertion that carries `Accepted` among several statuses. The query reads the field-kind concepts too, so it runs over the data together with the ontology. *(Added in [v0.11](#9-version-history), amended in [v0.14](#9-version-history).)*
+An assertion that is pending, rejected, outcome-only (`NotPrinted`, `Empty`, `Illegible`, `NotFound`) or superseded by an accepted assertion gives nothing. This holds for data that passes [`assertions.shacl.ttl`](https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/data-validation/assertions.shacl.ttl), which allows an assertion one acceptance status and at most one outcome: the query itself promotes an assertion that carries `Accepted` among several statuses. The query reads the field-kind concepts too, so it runs over the data together with the ontology. *(Added in [v0.11](#9-version-history), amended in [v0.14](#9-version-history).)*
+
+**Supersession takes effect when the superseding assertion is accepted.** An assertion that `supersedes` another proposes to replace it; until it is accepted, the earlier one stays in force, so an unreviewed re-extraction does not remove a reviewed value. A person's correction is an assertion that person accepts, so it takes effect at once. A value known to be wrong is withdrawn by rejecting its own assertion, whether or not a replacement is ready. An accepted assertion withdraws every assertion it supersedes, directly or through a chain, even when an assertion in between was never accepted, so a chain gives at most one value. Every assertion stays as a record, and no timestamp decides. *(Added in [v0.16](#9-version-history).)*
+
+| A, the earlier assertion | B, which supersedes A | Promoted |
+|---|---|---|
+| Accepted, with a value | Pending | A's value |
+| Accepted, with a value | Rejected | A's value |
+| Accepted, with a value | Accepted, with a value | B's value |
+| Accepted, with a value | Accepted, outcome-only (such as `NotPrinted`) | nothing |
+| Rejected | Pending | nothing |
+
+The query gives the whole current set of direct statements. A store that keeps them replaces the statements it derived before with this set: adding the new set to the old one would leave a withdrawn value in place.
 
 > **Design note — Person vs Role:** `Person` models what an individual *is*, not the role they play. Roles (Author, Checker, Approver) are expressed as distinct Object Properties, not as subclasses of `Person`. Each applies to a `DrawingSheet` (the person the drawing names, for example the title block's "drawn by") and to a `DrawingRevision` (the person who made, checked or approved that revision, who can differ from the one named for the drawing). This keeps `Person` reusable across roles. A drawing that records no author of its own is read as authored by the authors of its revisions (the path `metadata:isAuthoredBy|metadata:hasRevision/metadata:isAuthoredBy`); a drawing that records its own author keeps just that author, so this is a reading convention and not an OWL entailment. It applies to the author only. *(Amended in [v0.8](#9-version-history).)*
 
@@ -333,7 +345,7 @@ SELECT ?drawing ?subject ?assertion ?value ?outcome ?acceptance ?reason WHERE {
   OPTIONAL {
     ?drawing (metadata:hasRevision)? ?subject .
     ?assertion aprov:assertedAbout ?subject ; aprov:assertsFieldKind metadata:DrawnByField .
-    FILTER NOT EXISTS { ?newer aprov:supersedes ?assertion }
+    FILTER NOT EXISTS { ?newer aprov:supersedes+ ?assertion ; aprov:hasAcceptance aprov:Accepted }
     OPTIONAL { ?assertion aprov:hasLiteralValue|aprov:hasValueEntity ?value }
     OPTIONAL { ?assertion aprov:hasOutcome ?o }
     OPTIONAL { ?assertion aprov:hasAcceptance ?s }
@@ -348,7 +360,7 @@ SELECT ?drawing ?subject ?assertion ?value ?outcome ?acceptance ?reason WHERE {
 }
 ```
 
-The query reads the assertions about the drawing and about each of its revisions, following the reading convention of CQ 4.4, and gives one row per assertion, with its subject, so the causes of several revisions stay apart. An assertion has one value or one outcome, and one acceptance; one that records two (malformed data) gives a row for each, so the disagreement is visible. A superseded assertion is not read. The acceptance and the outcome are separate columns; an assertion with no acceptance recorded is `Pending`. The reason:
+The query reads the assertions about the drawing and about each of its revisions, following the reading convention of CQ 4.4, and gives one row per assertion, with its subject, so the causes of several revisions stay apart. An assertion has one value or one outcome, and one acceptance; one that records two (malformed data) gives a row for each, so the disagreement is visible. An assertion superseded by an accepted one is not read, as in the promotion; one superseded only by a pending or rejected assertion is still in force and has its row. The acceptance and the outcome are separate columns; an assertion with no acceptance recorded is `Pending`. The reason:
 
 - `NotPrinted` is a defect of the drawing; `NotFound` is retried; `Empty` and `Illegible` are reviewed. The acceptance column says whether that finding was accepted or still awaits review.
 - `Pending` is a value found and awaiting acceptance.
@@ -357,7 +369,7 @@ The query reads the assertions about the drawing and about each of its revisions
 - `NoValue` is an assertion with neither a value nor an outcome (malformed data): nothing can be promoted from it, so it is corrected, not awaited.
 - `NotProcessed` means no assertion about the author of the drawing or its revisions exists, so the field was not looked at.
 
-*(Amended in [v0.13](#9-version-history).)*
+*(Amended in [v0.13](#9-version-history) and [v0.16](#9-version-history).)*
 
 ### CQ Group 5 — Discipline (validates FR 5)
 
@@ -700,13 +712,21 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.15 (current — draft)
+### v0.16 (current — draft)
+
+Change from v0.15, made when the meaning of supersession was decided ([#221](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/221)). MINOR: the rule of a recorded query, no entity, attribute, relation or competency question changes; the number stays in the 0.x series because the document is still a draft:
+
+- **Supersession takes effect on acceptance.** The promotion query withdrew any assertion that another one supersedes, whatever that one's acceptance, so a pending re-extraction that superseded an accepted title left the drawing with no title until it was reviewed, and a rejected one left it with none for good. Only an accepted assertion now withdraws the ones it supersedes. A correction by a person, who accepts it, still takes effect at once, and a value known to be wrong is withdrawn by rejecting it. The section after the promotion query states the rule and its cases.
+- **Through a chain.** The withdrawal follows `supersedes` transitively (`aprov:supersedes+`), so an accepted correction of a correction withdraws the original even when the one in between was never accepted, and a chain gives at most one value. A cycle of `supersedes` is a validation error.
+- **CQ 4.6 reads the same rule.** It no longer hides an assertion superseded only by a pending or rejected one, so a drawing with two unreviewed attempts shows both.
+- **Keeping the derived statements.** A store that keeps the promoted statements replaces the earlier set; it does not add to it.
+
+### v0.15 (draft)
 
 Changes from v0.14, made when the place a file was obtained from was modelled ([#229](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/229)). MAJOR in substance (attributes, a relation and a competency question added); the number stays in the 0.x series because the document is still a draft:
 
 - **FR 9 says where a file was obtained from** (§3). Before, it asked to identify and locate a file, and `storageLocation` recorded only where copies are kept, so a public drawing copied into internal storage before processing kept only internal addresses. `sourceLocation` (the address the bytes were obtained from) and `sourcePage` (the page describing the file at its origin) are new (§3, §6). A file made from another file points back to it with `prov:wasDerivedFrom`, and only the original records a source.
 - **CQ 9.5 added** (§4), with its query: where the file of a drawing was obtained from, following the files it was made from. A data check warns about a file with no recorded origin, and, for a public release, reports an address that is not on a public host ([the file a drawing is stored in](../../design-decisions/file-and-page-metadata.md#where-a-file-came-from)).
-
 ### v0.14 (draft)
 
 Change from v0.13, made when the data checks of an assertion's status and outcome were added ([#220](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/220)). MINOR: a clarification, no entity, attribute, relation or competency question changes; the number stays in the 0.x series because the document is still a draft:

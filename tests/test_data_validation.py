@@ -213,6 +213,19 @@ def test_a_superseding_assertion_is_about_the_same_subject_and_kind():
     assert len(check_assertions(other_subject)) == 1
 
 
+def test_an_assertion_does_not_supersede_itself_through_a_chain():
+    chain = """:a a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind :k .
+:b a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind :k ; aprov:supersedes :a .
+:c a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind :k ; aprov:supersedes :b .
+"""
+    assert check_assertions(chain) == []
+    cycle = chain + ":a aprov:supersedes :c .\n"
+    message = "An assertion does not supersede itself, directly or through other assertions."
+    assert sorted((r["focus"].rsplit("#", 1)[-1], r["message"]) for r in check_assertions(cycle)) == [
+        ("a", message), ("b", message), ("c", message)]
+    assert [r["message"] for r in check_assertions(chain + ":a aprov:supersedes :a .\n")] == [message]
+
+
 # --- one acceptance status and at most one outcome, each from its published list (#220) ------------------------------
 STATUS = "An acceptance status is Pending, Accepted or Rejected."
 OUTCOME = "An outcome is Empty, Illegible, NotPrinted or NotFound."
