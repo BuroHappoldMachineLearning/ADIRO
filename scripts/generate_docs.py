@@ -27,6 +27,7 @@ if _TTL2MD_SRC.exists() and str(_TTL2MD_SRC) not in sys.path:
 import ttl2md
 import module_renames
 import pylode_metadata
+from ontocanvas import ONTOCANVAS_URL, ONTOCANVAS_ICON_URL
 from release_badges import write_release_badges
 from example_images import stage as stage_example_images
 from ontology_versions import (
@@ -414,11 +415,8 @@ SITE_BASE_URL = "https://burohappoldmachinelearning.github.io/ADIRO"
 # Prefer this over SITE_BASE_URL for the published TTL / HTML / OntoCanvas links.
 W3ID_BASE_URL = "https://w3id.org/adiro"
 
-# The organisation's OntoCanvas deployment, which every OntoCanvas link and embed opens.
-ONTOCANVAS_URL = "https://burohappoldmachinelearning.github.io/OntoCanvas/"
-
-# OntoCanvas branding icon, served by that deployment.
-ONTOCANVAS_ICON_URL = f"{ONTOCANVAS_URL}OntoCanvas.png"
+# The OntoCanvas deployment every OntoCanvas link and embed opens, and its icon: ONTOCANVAS_URL and
+# ONTOCANVAS_ICON_URL, from scripts/ontocanvas.py, which pr_guidance.py reads too.
 
 # Brand palette, derived from the favicon (docs/img/favicon.png):
 #   navy   BRAND_NAVY   border / I-beam
