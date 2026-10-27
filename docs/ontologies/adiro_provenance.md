@@ -2,9 +2,10 @@
 
 <div class="adiro-actions" markdown="span">
 <details class="adiro-version">
-<summary class="md-button">Version 2.0.0 (latest)</summary>
+<summary class="md-button">Version 2.1.0 (latest)</summary>
 <ul>
-<li><a href="./" class="adiro-version-current" aria-current="page">2.0.0 (latest)</a></li>
+<li><a href="./" class="adiro-version-current" aria-current="page">2.1.0 (latest)</a></li>
+<li><a href="2.0.0/">2.0.0</a></li>
 <li><a href="../aec_provenance/">aec_provenance 1.1.0</a></li>
 <li><a href="../aec_provenance/1.0.1/">aec_provenance 1.0.1</a></li>
 <li><a href="../aec_provenance/1.0.0/">aec_provenance 1.0.0</a></li>
@@ -18,7 +19,7 @@
 Foundational, domain-neutral module for provenance. It lets any value inferred from a drawing be recorded as an assertion that carries its own source, confidence, and how it was produced, aligned to W3C PROV-O. The drawing modules import it.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance`
-- **Versioned IRI:** `https://w3id.org/adiro/adiro_provenance/2.0.0`
+- **Versioned IRI:** `https://w3id.org/adiro/adiro_provenance/2.1.0`
 
 ## Interactive view
 
