@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.15 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.16 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -50,7 +50,7 @@ Things that exist independently and will become OWL Classes.
 
 > **Design note — curated values vs extracted assertions:** UC-01 attaches title-block information as datatype properties **directly on `DrawingSheet`** (`drawingIdentifier`, `drawingTitle`, …). That remains correct for a *validated* value. A second, parallel path exists for values that have been **machine-extracted and not yet validated**: an `aprov:FieldAssertion` reifies the claim - what was read, from which region (`assertedBy`), by what (`hasInferenceMeta`), with what confidence, and with the caption exactly as printed (`capturedCaption`) - bound to a field kind in the `TitleblockFieldScheme`. `aprov:mapsToFieldProperty` names the UC-01 property a validated assertion is promoted to. The two coexist: UC-01's properties are the query surface, the assertion layer is the extraction and provenance record. A value moves from the assertion to the direct property when its assertion is **accepted** (`aprov:hasAcceptance` `Accepted`), by a pipeline rule (a confidence threshold, named by `aprov:acceptedUnder`) or by a person, and the acceptance records who and when (`acceptedBy`, `acceptedAt`). The assertions are never deleted, and the direct properties stay as the permanent query surface of accepted values ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)). When a search finds no value, the assertion carries an outcome instead (`aprov:hasOutcome`: `Empty`, `Illegible`, `NotPrinted`, `NotFound`), and is never promoted. *(Added in [v0.4](#9-version-history); amended in [v0.10](#9-version-history).)*
 
-The promotion is a query that tooling runs on accepted assertions, not an inference. Each accepted assertion that has a value, and that no accepted assertion supersedes, directly or through a chain of corrections, gives one direct statement on its subject, with the property its field kind maps to (`aprov:mapsToFieldProperty`). *(Amended in [v0.15](#9-version-history).)*
+The promotion is a query that tooling runs on accepted assertions, not an inference. Each accepted assertion that has a value, and that no accepted assertion supersedes, directly or through a chain of corrections, gives one direct statement on its subject, with the property its field kind maps to (`aprov:mapsToFieldProperty`). *(Amended in [v0.16](#9-version-history).)*
 
 ```sparql
 PREFIX aprov: <https://w3id.org/adiro/adiro_provenance#>
@@ -70,7 +70,7 @@ WHERE {
 
 An assertion that is pending, rejected, outcome-only (`NotPrinted`, `Empty`, `Illegible`, `NotFound`) or superseded by an accepted assertion gives nothing. This holds for data that passes [`assertions.shacl.ttl`](https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/data-validation/assertions.shacl.ttl), which allows an assertion one acceptance status and at most one outcome: the query itself promotes an assertion that carries `Accepted` among several statuses. The query reads the field-kind concepts too, so it runs over the data together with the ontology. *(Added in [v0.11](#9-version-history), amended in [v0.14](#9-version-history).)*
 
-**Supersession takes effect when the superseding assertion is accepted.** An assertion that `supersedes` another proposes to replace it; until it is accepted, the earlier one stays in force, so an unreviewed re-extraction does not remove a reviewed value. A person's correction is an assertion that person accepts, so it takes effect at once. A value known to be wrong is withdrawn by rejecting its own assertion, whether or not a replacement is ready. An accepted assertion withdraws every assertion it supersedes, directly or through a chain, even when an assertion in between was never accepted, so a chain gives at most one value. Every assertion stays as a record, and no timestamp decides. *(Added in [v0.15](#9-version-history).)*
+**Supersession takes effect when the superseding assertion is accepted.** An assertion that `supersedes` another proposes to replace it; until it is accepted, the earlier one stays in force, so an unreviewed re-extraction does not remove a reviewed value. A person's correction is an assertion that person accepts, so it takes effect at once. A value known to be wrong is withdrawn by rejecting its own assertion, whether or not a replacement is ready. An accepted assertion withdraws every assertion it supersedes, directly or through a chain, even when an assertion in between was never accepted, so a chain gives at most one value. Every assertion stays as a record, and no timestamp decides. *(Added in [v0.16](#9-version-history).)*
 
 | A, the earlier assertion | B, which supersedes A | Promoted |
 |---|---|---|
@@ -241,10 +241,10 @@ Each FR describes one representational capability the ontology must have, in imp
 
 **FR 9 — Source File and Page**
 
-> The ontology MUST say in which file, and on which page of it, a drawing is stored, and identify and locate that file, such that a drawing can be traced to its source, the drawings of a file can be listed, and a file can be found again.
+> The ontology MUST say in which file, and on which page of it, a drawing is stored, identify and locate that file, and say where the file was obtained from, such that a drawing can be traced to its source, the drawings of a file can be listed, and a file can be found again. *(Amended in [v0.15](#9-version-history).)*
 
 - Source: UC-01 (and every use case that must return to the source of an extraction)
-- Derived terms: `aprov:DrawingFile` (NEW), `aprov:FilePage` (NEW), `metadata:isOnPage` (NEW), `aprov:belongsToFile` (NEW), `aprov:pageNumber` (NEW, from 1); the description of a file: `aprov:fileName`, `aprov:storageLocation`, `aprov:contentHash` and `aprov:hashAlgorithm`, `aprov:mediaType`, `aprov:fileCreatedAt`, `aprov:fileModifiedAt`, `aprov:fileCreatedBy`, `aprov:fileModifiedBy`, `aprov:pageCount`, `aprov:fileSize` (all NEW); and of a page: `aprov:displayWidthPt`, `aprov:displayHeightPt`, `aprov:pdfRotationDeg` (moved from the coordinate frame)
+- Derived terms: `aprov:DrawingFile` (NEW), `aprov:FilePage` (NEW), `metadata:isOnPage` (NEW), `aprov:belongsToFile` (NEW), `aprov:pageNumber` (NEW, from 1); the description of a file: `aprov:fileName`, `aprov:storageLocation`, `aprov:contentHash` and `aprov:hashAlgorithm`, `aprov:mediaType`, `aprov:fileCreatedAt`, `aprov:fileModifiedAt`, `aprov:fileCreatedBy`, `aprov:fileModifiedBy`, `aprov:pageCount`, `aprov:fileSize` (all NEW); where it was obtained from: `aprov:sourceLocation`, `aprov:sourcePage` (NEW in [v0.15](#9-version-history)), with `prov:wasDerivedFrom` from a file made from another; and of a page: `aprov:displayWidthPt`, `aprov:displayHeightPt`, `aprov:pdfRotationDeg` (moved from the coordinate frame)
 
 > **Design note — drawing, file, page.** A PDF holds many drawings and one drawing can exist in several files, so a drawing is linked to the *page* it is on (`isOnPage`), and the page to its file (`belongsToFile`). The coordinate frame of `adiro_geometry` reads a page in one convention (`describesPage`). The measured size of a page is not `sheetSize`, which is the paper format the drawing is meant for. See [the file a drawing is stored in](../../design-decisions/file-and-page-metadata.md). *(Added in [v0.9](#9-version-history).)*
 ---
@@ -369,7 +369,7 @@ The query reads the assertions about the drawing and about each of its revisions
 - `NoValue` is an assertion with neither a value nor an outcome (malformed data): nothing can be promoted from it, so it is corrected, not awaited.
 - `NotProcessed` means no assertion about the author of the drawing or its revisions exists, so the field was not looked at.
 
-*(Amended in [v0.13](#9-version-history) and [v0.15](#9-version-history).)*
+*(Amended in [v0.13](#9-version-history) and [v0.16](#9-version-history).)*
 
 ### CQ Group 5 — Discipline (validates FR 5)
 
@@ -424,8 +424,9 @@ SELECT ?drawing ?named ?filed WHERE {
 | CQ 9.2 | Which drawings are in file "A101-ground-floor.pdf"? *(Added in [v0.9](#9-version-history).)* |
 | CQ 9.3 | Which files hold more than one drawing? *(Added in [v0.9](#9-version-history).)* |
 | CQ 9.4 | Which drawings are in files last modified after 1 January 2026? *(Added in [v0.9](#9-version-history).)* |
+| CQ 9.5 | Where was the file that drawing "ST-101" is stored in obtained from, including when that file was made from another file? *(Added in [v0.15](#9-version-history).)* |
 
-CQ 9.1 and CQ 9.3 as queries:
+CQ 9.1, CQ 9.3 and CQ 9.5 as queries:
 
 ```sparql
 PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
@@ -451,6 +452,22 @@ SELECT ?file (COUNT(DISTINCT ?drawing) AS ?drawings) WHERE {
   ?page aprov:belongsToFile ?file .
 }
 GROUP BY ?file HAVING (COUNT(DISTINCT ?drawing) > 1)
+```
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+
+# CQ 9.5: where the file of a drawing was obtained from, following the files it was made from
+SELECT ?file ?origin ?sourceLocation ?sourcePage WHERE {
+  ?drawing metadata:drawingIdentifier "ST-101" ;
+           metadata:isOnPage          ?page .
+  ?page aprov:belongsToFile ?file .
+  ?file prov:wasDerivedFrom* ?origin .
+  ?origin aprov:sourceLocation ?sourceLocation .
+  OPTIONAL { ?origin aprov:sourcePage ?sourcePage }
+}
 ```
 
 ### CQ Group I — Integration / Multi-field Queries
@@ -609,6 +626,7 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `aprov:fileName`, `aprov:pageNumber` | `adiro_provenance` | NEW    | CQ 9.1, CQ 9.2                                 | FR 9                               |
 | `aprov:fileModifiedAt`         | `adiro_provenance`       | NEW    | CQ 9.4                                         | FR 9                               |
 | `aprov:storageLocation`, `aprov:contentHash`, `aprov:hashAlgorithm`, `aprov:mediaType`, `aprov:fileCreatedAt`, `aprov:fileCreatedBy`, `aprov:fileModifiedBy`, `aprov:pageCount`, `aprov:fileSize` | `adiro_provenance` | NEW | none yet: they identify, locate and describe the file (the first set of the file brainstorm) | FR 9 |
+| `aprov:sourceLocation`, `aprov:sourcePage`, `prov:wasDerivedFrom` (a typing stub) | `adiro_provenance` | NEW | CQ 9.5 | FR 9 |
 | `metadata:assertsPackage`      | `adiro_drawing_metadata` | NEW    | CQ 8.3, CQ 8.4                                 | FR 8                               |
 | `metadata:drawingIdentifier`       | `adiro_drawing_metadata` | NEW    | CQ 1.1, CQ 1.2                                 | FR 1                               |
 | `metadata:drawingTitle`        | `adiro_drawing_metadata` | NEW    | CQ 1.2                                         | FR 1                               |
@@ -694,15 +712,21 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.15 (current — draft)
+### v0.16 (current — draft)
 
-Change from v0.14, made when the meaning of supersession was decided ([#221](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/221)). MINOR: the rule of a recorded query, no entity, attribute, relation or competency question changes; the number stays in the 0.x series because the document is still a draft:
+Change from v0.15, made when the meaning of supersession was decided ([#221](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/221)). MINOR: the rule of a recorded query, no entity, attribute, relation or competency question changes; the number stays in the 0.x series because the document is still a draft:
 
 - **Supersession takes effect on acceptance.** The promotion query withdrew any assertion that another one supersedes, whatever that one's acceptance, so a pending re-extraction that superseded an accepted title left the drawing with no title until it was reviewed, and a rejected one left it with none for good. Only an accepted assertion now withdraws the ones it supersedes. A correction by a person, who accepts it, still takes effect at once, and a value known to be wrong is withdrawn by rejecting it. The section after the promotion query states the rule and its cases.
 - **Through a chain.** The withdrawal follows `supersedes` transitively (`aprov:supersedes+`), so an accepted correction of a correction withdraws the original even when the one in between was never accepted, and a chain gives at most one value. A cycle of `supersedes` is a validation error.
 - **CQ 4.6 reads the same rule.** It no longer hides an assertion superseded only by a pending or rejected one, so a drawing with two unreviewed attempts shows both.
 - **Keeping the derived statements.** A store that keeps the promoted statements replaces the earlier set; it does not add to it.
 
+### v0.15 (draft)
+
+Changes from v0.14, made when the place a file was obtained from was modelled ([#229](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/229)). MAJOR in substance (attributes, a relation and a competency question added); the number stays in the 0.x series because the document is still a draft:
+
+- **FR 9 says where a file was obtained from** (§3). Before, it asked to identify and locate a file, and `storageLocation` recorded only where copies are kept, so a public drawing copied into internal storage before processing kept only internal addresses. `sourceLocation` (the address the bytes were obtained from) and `sourcePage` (the page describing the file at its origin) are new (§3, §6). A file made from another file points back to it with `prov:wasDerivedFrom`, and only the original records a source.
+- **CQ 9.5 added** (§4), with its query: where the file of a drawing was obtained from, following the files it was made from. A data check warns about a file with no recorded origin, and, for a public release, reports an address that is not on a public host ([the file a drawing is stored in](../../design-decisions/file-and-page-metadata.md#where-a-file-came-from)).
 ### v0.14 (draft)
 
 Change from v0.13, made when the data checks of an assertion's status and outcome were added ([#220](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/220)). MINOR: a clarification, no entity, attribute, relation or competency question changes; the number stays in the 0.x series because the document is still a draft:

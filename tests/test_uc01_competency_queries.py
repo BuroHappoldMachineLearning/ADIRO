@@ -118,6 +118,25 @@ def test_cq_9_3_lists_the_files_that_hold_more_than_one_drawing():
     assert {(str(r[0]).rsplit("#", 1)[-1], int(r[1])) for r in graph.query(query)} == {("many", 2)}
 
 
+def test_cq_9_5_finds_where_a_file_was_obtained_from_through_the_files_it_was_made_from():
+    query = recorded_query("# CQ 9.5")
+    data = """@prefix prov: <http://www.w3.org/ns/prov#> .
+:d a metadata:DrawingSheet ; metadata:drawingIdentifier "ST-101" ; metadata:isOnPage :p .
+:p a aprov:FilePage ; aprov:belongsToFile :png .
+:png a aprov:DrawingFile ; prov:wasDerivedFrom :tif ;
+    aprov:storageLocation "https://storage.example.org/0001.png" .
+:tif a aprov:DrawingFile ; aprov:sourceLocation "https://tile.loc.gov/0001.tif" ;
+    aprov:sourcePage "https://www.loc.gov/item/x/" .
+"""
+    graph = Graph().parse(data=PREFIXES + data, format="turtle")
+    rows = {(str(r[1]).rsplit("#", 1)[-1], str(r[2]), str(r[3])) for r in graph.query(query)}
+    assert rows == {("tif", "https://tile.loc.gov/0001.tif", "https://www.loc.gov/item/x/")}
+    # a file with its own origin is found with no derivation at all
+    direct = data.replace(":png a aprov:DrawingFile ; prov:wasDerivedFrom :tif ;", ":png a aprov:DrawingFile ; aprov:sourceLocation \"https://example.org/set.pdf\" ;")
+    graph = Graph().parse(data=PREFIXES + direct, format="turtle")
+    assert {str(r[1]).rsplit("#", 1)[-1] for r in graph.query(query)} == {"png"}
+
+
 def test_cq_4_6_says_why_a_drawing_has_no_author():
     data = """:printed a metadata:DrawingSheet .
 :a1 a aprov:FieldAssertion ; aprov:assertedAbout :printed ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:NotPrinted .

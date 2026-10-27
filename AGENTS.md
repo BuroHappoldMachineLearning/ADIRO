@@ -182,7 +182,9 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   (`<topic>.shacl.ttl`) that check **data** (the individuals a pipeline extracts) against closed-world rules the ontology cannot state
   under the open-world assumption, for example the UC-03 composition rules. They are not ontology modules: no version, no release,
   and nothing in `src/`. `uv run --with pyshacl python scripts/validate_data.py DATA.ttl` runs them; `tests/test_data_validation.py`
-  proves each rule accepts a conforming graph and rejects a violating one. Full guide: `docs/contribute/data-validation.md`.
+  proves each rule accepts a conforming graph and rejects a violating one. The shapes in `data-validation/release/` run only for a
+  public release (`--public-hosts FILE`, an allowlist of public hosts the releaser supplies and the repository never holds): every
+  address an ADIRO term records (a file's source, page and storage, an assertion's policy) must be on one of them ([#229](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/229)). Full guide: `docs/contribute/data-validation.md`.
 
 **After any `.ttl` edit, validate immediately:**
 `uv run python scripts/validate_ontology.py src/<file>.ttl` (or with no arg to validate all of `src/`).
@@ -505,6 +507,15 @@ already reached:
 
 Tell the person you work with what you found, as a short list of `#N` and one line each. Claude Code: the
 `check-existing-work` skill (`.claude/skills/check-existing-work/`) holds the search commands.
+
+### Brainstorm in a Discussion, decide in an issue
+
+An open question with several possible answers (what to model, where it belongs, which option to take) starts as a
+**GitHub Discussion** in the **Ideas** category, titled `Brainstorm: …`: the motivation, what already exists (with links),
+the questions, and what is out of scope. It is not a proposal to add terms. When the Discussion reaches a decision, open a
+**GitHub issue** that states the decision and links the Discussion; the pull request then closes that issue. Do not open a
+`Brainstorm:` issue: an issue is for work that has been decided (earlier brainstorms such as
+[#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192) were issues, before this rule).
 
 ### A warning is a question
 
