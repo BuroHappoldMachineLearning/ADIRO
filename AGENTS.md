@@ -506,6 +506,15 @@ already reached:
 Tell the person you work with what you found, as a short list of `#N` and one line each. Claude Code: the
 `check-existing-work` skill (`.claude/skills/check-existing-work/`) holds the search commands.
 
+### Brainstorm in a Discussion, decide in an issue
+
+An open question with several possible answers (what to model, where it belongs, which option to take) starts as a
+**GitHub Discussion** in the **Ideas** category, titled `Brainstorm: …`: the motivation, what already exists (with links),
+the questions, and what is out of scope. It is not a proposal to add terms. When the Discussion reaches a decision, open a
+**GitHub issue** that states the decision and links the Discussion; the pull request then closes that issue. Do not open a
+`Brainstorm:` issue: an issue is for work that has been decided (earlier brainstorms such as
+[#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192) were issues, before this rule).
+
 ### A warning is a question
 
 A validator warning, a ROBOT finding or a bot's advice reports what it can see, and it cannot see intent. Before you delete or change

@@ -74,3 +74,8 @@ with the search terms. A search that was run but not reported cannot be checked.
   internal tracker IDs, no client or project names (`AGENTS.md`, "Keep YouTrack out of every public place").
 - **A new issue still follows the issue rules.** Once the search shows the topic is new, open it on GitHub, with the
   related issues linked.
+- **A brainstorm is a Discussion, not an issue.** An open question with several possible answers goes in a Discussion
+  (category **Ideas**, title `Brainstorm: …`); the issue comes after the decision and links the Discussion
+  (`AGENTS.md`, "Brainstorm in a Discussion, decide in an issue"). Create a Discussion with
+  `gh api graphql` and the `createDiscussion` mutation (repository and category ids from
+  `repository{id discussionCategories(first:20){nodes{id name}}}`).
