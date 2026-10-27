@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.14 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.15 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -229,10 +229,10 @@ Each FR describes one representational capability the ontology must have, in imp
 
 **FR 9 — Source File and Page**
 
-> The ontology MUST say in which file, and on which page of it, a drawing is stored, and identify and locate that file, such that a drawing can be traced to its source, the drawings of a file can be listed, and a file can be found again.
+> The ontology MUST say in which file, and on which page of it, a drawing is stored, identify and locate that file, and say where the file was obtained from, such that a drawing can be traced to its source, the drawings of a file can be listed, and a file can be found again. *(Amended in [v0.15](#9-version-history).)*
 
 - Source: UC-01 (and every use case that must return to the source of an extraction)
-- Derived terms: `aprov:DrawingFile` (NEW), `aprov:FilePage` (NEW), `metadata:isOnPage` (NEW), `aprov:belongsToFile` (NEW), `aprov:pageNumber` (NEW, from 1); the description of a file: `aprov:fileName`, `aprov:storageLocation`, `aprov:contentHash` and `aprov:hashAlgorithm`, `aprov:mediaType`, `aprov:fileCreatedAt`, `aprov:fileModifiedAt`, `aprov:fileCreatedBy`, `aprov:fileModifiedBy`, `aprov:pageCount`, `aprov:fileSize` (all NEW); and of a page: `aprov:displayWidthPt`, `aprov:displayHeightPt`, `aprov:pdfRotationDeg` (moved from the coordinate frame)
+- Derived terms: `aprov:DrawingFile` (NEW), `aprov:FilePage` (NEW), `metadata:isOnPage` (NEW), `aprov:belongsToFile` (NEW), `aprov:pageNumber` (NEW, from 1); the description of a file: `aprov:fileName`, `aprov:storageLocation`, `aprov:contentHash` and `aprov:hashAlgorithm`, `aprov:mediaType`, `aprov:fileCreatedAt`, `aprov:fileModifiedAt`, `aprov:fileCreatedBy`, `aprov:fileModifiedBy`, `aprov:pageCount`, `aprov:fileSize` (all NEW); where it was obtained from: `aprov:sourceLocation`, `aprov:sourcePage` (NEW in [v0.15](#9-version-history)), with `prov:wasDerivedFrom` from a file made from another; and of a page: `aprov:displayWidthPt`, `aprov:displayHeightPt`, `aprov:pdfRotationDeg` (moved from the coordinate frame)
 
 > **Design note — drawing, file, page.** A PDF holds many drawings and one drawing can exist in several files, so a drawing is linked to the *page* it is on (`isOnPage`), and the page to its file (`belongsToFile`). The coordinate frame of `adiro_geometry` reads a page in one convention (`describesPage`). The measured size of a page is not `sheetSize`, which is the paper format the drawing is meant for. See [the file a drawing is stored in](../../design-decisions/file-and-page-metadata.md). *(Added in [v0.9](#9-version-history).)*
 ---
@@ -412,8 +412,9 @@ SELECT ?drawing ?named ?filed WHERE {
 | CQ 9.2 | Which drawings are in file "A101-ground-floor.pdf"? *(Added in [v0.9](#9-version-history).)* |
 | CQ 9.3 | Which files hold more than one drawing? *(Added in [v0.9](#9-version-history).)* |
 | CQ 9.4 | Which drawings are in files last modified after 1 January 2026? *(Added in [v0.9](#9-version-history).)* |
+| CQ 9.5 | Where was the file that drawing "ST-101" is stored in obtained from, including when that file was made from another file? *(Added in [v0.15](#9-version-history).)* |
 
-CQ 9.1 and CQ 9.3 as queries:
+CQ 9.1, CQ 9.3 and CQ 9.5 as queries:
 
 ```sparql
 PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
@@ -439,6 +440,22 @@ SELECT ?file (COUNT(DISTINCT ?drawing) AS ?drawings) WHERE {
   ?page aprov:belongsToFile ?file .
 }
 GROUP BY ?file HAVING (COUNT(DISTINCT ?drawing) > 1)
+```
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+
+# CQ 9.5: where the file of a drawing was obtained from, following the files it was made from
+SELECT ?file ?origin ?sourceLocation ?sourcePage WHERE {
+  ?drawing metadata:drawingIdentifier "ST-101" ;
+           metadata:isOnPage          ?page .
+  ?page aprov:belongsToFile ?file .
+  ?file prov:wasDerivedFrom* ?origin .
+  ?origin aprov:sourceLocation ?sourceLocation .
+  OPTIONAL { ?origin aprov:sourcePage ?sourcePage }
+}
 ```
 
 ### CQ Group I — Integration / Multi-field Queries
@@ -597,6 +614,7 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `aprov:fileName`, `aprov:pageNumber` | `adiro_provenance` | NEW    | CQ 9.1, CQ 9.2                                 | FR 9                               |
 | `aprov:fileModifiedAt`         | `adiro_provenance`       | NEW    | CQ 9.4                                         | FR 9                               |
 | `aprov:storageLocation`, `aprov:contentHash`, `aprov:hashAlgorithm`, `aprov:mediaType`, `aprov:fileCreatedAt`, `aprov:fileCreatedBy`, `aprov:fileModifiedBy`, `aprov:pageCount`, `aprov:fileSize` | `adiro_provenance` | NEW | none yet: they identify, locate and describe the file (the first set of the file brainstorm) | FR 9 |
+| `aprov:sourceLocation`, `aprov:sourcePage`, `prov:wasDerivedFrom` (a typing stub) | `adiro_provenance` | NEW | CQ 9.5 | FR 9 |
 | `metadata:assertsPackage`      | `adiro_drawing_metadata` | NEW    | CQ 8.3, CQ 8.4                                 | FR 8                               |
 | `metadata:drawingIdentifier`       | `adiro_drawing_metadata` | NEW    | CQ 1.1, CQ 1.2                                 | FR 1                               |
 | `metadata:drawingTitle`        | `adiro_drawing_metadata` | NEW    | CQ 1.2                                         | FR 1                               |
@@ -682,7 +700,14 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.14 (current — draft)
+### v0.15 (current — draft)
+
+Changes from v0.14, made when the place a file was obtained from was modelled ([#229](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/229)). MAJOR in substance (attributes, a relation and a competency question added); the number stays in the 0.x series because the document is still a draft:
+
+- **FR 9 says where a file was obtained from** (§3). Before, it asked to identify and locate a file, and `storageLocation` recorded only where copies are kept, so a public drawing copied into internal storage before processing kept only internal addresses. `sourceLocation` (the address the bytes were obtained from) and `sourcePage` (the page describing the file at its origin) are new (§3, §6). A file made from another file points back to it with `prov:wasDerivedFrom`, and only the original records a source.
+- **CQ 9.5 added** (§4), with its query: where the file of a drawing was obtained from, following the files it was made from. A data check warns about a file with no recorded origin, and, for a public release, reports an address that is not on a public host ([the file a drawing is stored in](../../design-decisions/file-and-page-metadata.md#where-a-file-came-from)).
+
+### v0.14 (draft)
 
 Change from v0.13, made when the data checks of an assertion's status and outcome were added ([#220](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/220)). MINOR: a clarification, no entity, attribute, relation or competency question changes; the number stays in the 0.x series because the document is still a draft:
 

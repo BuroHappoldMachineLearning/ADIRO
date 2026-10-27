@@ -107,10 +107,12 @@ def test_the_command_line_exits_one_on_a_violation_and_zero_otherwise(tmp_path):
 
 # --- the shape files themselves --------------------------------------------------------------------------------------
 def test_every_shape_has_a_message_and_a_severity():
-    shapes = vd.load_shapes(ROOT)
+    shapes = vd.load_shapes(ROOT, release=True)
     SH = vd.SH
     for shape in shapes.subjects(RDF.type, SH.NodeShape):
         assert shapes.value(shape, SH.severity) is not None, f"{shape} has no sh:severity"
+        for constraint in shapes.objects(shape, SH.sparql):
+            assert shapes.value(constraint, SH.message) is not None, f"a SPARQL constraint of {shape} has no sh:message"
         for prop in shapes.objects(shape, SH.property):
             assert shapes.value(prop, SH.message) is not None, f"a property shape of {shape} has no sh:message"
             # SHACL does not pass a node shape's severity down to its property shapes: without its own, the default
@@ -122,11 +124,12 @@ def test_every_adiro_term_a_shape_names_exists_in_the_ontology():
     # A shape that names a term the ontology no longer has would silently match nothing.
     ontology = vd.load_ontology(ROOT)
     declared = set(ontology.subjects())
+    shapes = vd.load_shapes(ROOT, release=True)
     named = {
-        o for s, p, o in vd.load_shapes(ROOT)
+        o for s, p, o in shapes
         if isinstance(o, URIRef) and str(o).startswith("https://w3id.org/adiro/adiro_")
     }
-    named |= {p for _, p, _ in vd.load_shapes(ROOT) if str(p).startswith("https://w3id.org/adiro/adiro_")}
+    named |= {p for _, p, _ in shapes if str(p).startswith("https://w3id.org/adiro/adiro_")}
     assert named, "the shapes name no ADIRO term"
     assert named - declared == set(), f"terms the ontology does not declare: {sorted(named - declared)}"
 
@@ -135,8 +138,11 @@ def test_the_shape_files_follow_the_naming_convention():
     files = vd.shape_files(ROOT)
     assert files, "no shape files"
     assert all(p.name.endswith(".shacl.ttl") for p in files)
-    stray = [p.name for p in (ROOT / vd.SHAPES_DIR).iterdir() if p.suffix == ".ttl" and not p.name.endswith(".shacl.ttl")]
-    assert stray == [], f"a .ttl in {vd.SHAPES_DIR}/ that is not *.shacl.ttl is never run: {stray}"
+    for folder in (vd.SHAPES_DIR, vd.RELEASE_DIR):
+        stray = [p.name for p in (ROOT / folder).iterdir() if p.suffix == ".ttl" and not p.name.endswith(".shacl.ttl")]
+        assert stray == [], f"a .ttl in {folder}/ that is not *.shacl.ttl is never run: {stray}"
+    release = vd.shape_files(ROOT, release=True)
+    assert set(files) < set(release), "the release adds its own shapes to the others"
 
 
 # --- UC-01: a drawing has an author (#179) -----------------------------------------------------------------------------
@@ -271,3 +277,111 @@ def test_the_cli_reports_the_cases_of_the_issue(tmp_path, capsys):
 
 def messages_of(body):
     return [r["message"] for r in check_assertions(body)]
+
+
+# --- a file records where it came from, itself or through the file it was derived from (#229) ---------------------------
+PROV = "@prefix prov: <http://www.w3.org/ns/prov#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n"
+NO_SOURCE = "A file records where it was obtained from (sourceLocation), or was derived from a file that does."
+
+
+def check_files(body, public_hosts=None):
+    return vd.validate(Graph().parse(data=PREFIXES + APROV + PROV + body, format="turtle"), ROOT, public_hosts)
+
+
+def test_a_file_with_a_source_conforms():
+    assert check_files(':f a aprov:DrawingFile ; aprov:sourceLocation "https://tile.loc.gov/a.tif"^^xsd:anyURI .\n') == []
+
+
+def test_a_file_with_no_source_is_a_warning():
+    results = check_files(":f a aprov:DrawingFile .\n")
+    assert [(r["severity"], r["message"]) for r in results] == [("Warning", NO_SOURCE)]
+
+
+def test_a_derived_file_finds_its_source_through_the_files_it_was_made_from():
+    chain = """:png a aprov:DrawingFile ; prov:wasDerivedFrom :pdf .
+:pdf a aprov:DrawingFile ; prov:wasDerivedFrom :original .
+:original a aprov:DrawingFile ; aprov:sourceLocation "https://example.org/set.pdf"^^xsd:anyURI .
+"""
+    assert check_files(chain) == []
+    no_origin = chain.replace(' ; aprov:sourceLocation "https://example.org/set.pdf"^^xsd:anyURI', "")
+    assert sorted(r["focus"].rsplit("#", 1)[-1] for r in check_files(no_origin)) == ["original", "pdf", "png"]
+
+
+# --- a public release names only addresses on a public host (#229) -------------------------------------------------------
+NOT_PUBLIC = "is not on the allowlist."
+HOSTS = ["loc.gov", "nomic-public-data.com"]
+
+
+def released(body):
+    return [r for r in check_files(body, HOSTS) if r["severity"] == "Violation"]
+
+
+def test_addresses_on_a_public_host_or_its_subdomains_conform_in_a_release():
+    public = """:f a aprov:DrawingFile ; aprov:sourceLocation "https://tile.loc.gov/storage-services/a.tif"^^xsd:anyURI ;
+    aprov:sourcePage "https://www.loc.gov/item/x/"^^xsd:anyURI ;
+    aprov:storageLocation "https://NOMIC-PUBLIC-DATA.com/set.pdf"^^xsd:anyURI .
+"""
+    assert released(public) == []
+
+
+def test_an_address_off_the_allowlist_is_a_violation_in_a_release():
+    internal = """:f a aprov:DrawingFile ; aprov:sourceLocation "https://tile.loc.gov/a.tif"^^xsd:anyURI ;
+    aprov:storageLocation "https://intranet.example.com/sites/data/a.tif"^^xsd:anyURI .
+"""
+    results = released(internal)
+    assert [(r["path"].rsplit("#", 1)[-1], r["message"].endswith(NOT_PUBLIC)) for r in results] == [("storageLocation", True)]
+
+
+def test_a_look_alike_host_a_user_part_or_a_file_path_is_not_public():
+    for address in ("https://evil-loc.gov/a.tif", "https://loc.gov.example.com/a.tif", "https://loc.gov@intranet.example.com/a.tif",
+                    "file:///C:/data/a.tif", "C:/data/a.tif", "/mnt/share/loc.gov"):
+        body = f':f a aprov:DrawingFile ; aprov:sourceLocation "{address}"^^xsd:anyURI .\n'
+        assert len(released(body)) == 1, address
+
+
+def test_a_backslash_a_space_or_a_line_break_never_passes_as_a_public_host():
+    # A URL parser reads a backslash as a slash, so the real host of the first two is intranet.example.com
+    for address in (r"https://intranet.example.com\\.loc.gov/a.tif", r"https://intranet\\@loc.gov/a.tif",
+                    r"https://intranet.example.com/a\n.loc.gov", "https://intranet.example.com .loc.gov/a.tif",
+                    r"https://loc.gov/a.tif\n"):
+        body = f':f a aprov:DrawingFile ; aprov:sourceLocation "{address}"^^xsd:anyURI .\n'
+        assert len(released(body)) == 1, address
+    ok = ':f a aprov:DrawingFile ; aprov:sourceLocation "https://user@tile.loc.gov:443/a%20b.tif?x=1#p"^^xsd:anyURI .\n'
+    assert released(ok) == []
+
+
+def test_the_data_cannot_extend_the_allowlist():
+    smuggled = """@prefix dvr: <https://w3id.org/adiro/data-validation/release#> .
+[] a dvr:PublicHost ; dvr:host "example.com" .
+:f a aprov:DrawingFile ; aprov:sourceLocation "https://intranet.example.com/a.tif"^^xsd:anyURI .
+"""
+    assert len(released(smuggled)) == 1
+
+
+def test_an_acceptance_policy_off_the_allowlist_is_a_violation_in_a_release():
+    policy = ':a a aprov:FieldAssertion ; aprov:acceptedUnder "https://intranet.example.com/policies/v3"^^xsd:anyURI .\n'
+    results = released(policy)
+    assert [(r["focus"].rsplit("#", 1)[-1], r["path"].rsplit("#", 1)[-1]) for r in results] == [("a", "acceptedUnder")]
+    assert released(policy.replace("intranet.example.com", "tile.loc.gov")) == []
+
+
+def test_the_release_rule_runs_only_for_a_release():
+    internal = ':f a aprov:DrawingFile ; aprov:sourceLocation "https://intranet.example.com/a.tif"^^xsd:anyURI .\n'
+    assert check_files(internal) == []  # the organisation's own data may name its own storage
+    assert len(released(internal)) == 1
+
+
+def test_the_cli_reads_the_allowlist_file(tmp_path, capsys):
+    hosts = tmp_path / "hosts.txt"
+    hosts.write_text("# public hosts\nloc.gov  # the Library of Congress\n\n", encoding="utf-8")
+    assert vd.read_public_hosts(hosts) == ["loc.gov"]
+    data = tmp_path / "files.ttl"
+    data.write_text(PREFIXES + APROV + PROV + """:ok a aprov:DrawingFile ; aprov:sourceLocation "https://tile.loc.gov/a.tif"^^xsd:anyURI .
+:leak a aprov:DrawingFile ; aprov:sourceLocation "https://intranet.example.com/a.tif"^^xsd:anyURI .
+""", encoding="utf-8")
+    assert vd.main([str(data)]) == 0
+    assert vd.main(["--public-hosts", str(hosts), str(data)]) == 1
+    out = capsys.readouterr().out
+    assert "[Violation] https://ex.org/d#leak:" in out and "d#ok:" not in out
+    assert "1 result(s), 1 violation(s)" in out
+    assert vd.main(["--public-hosts"]) == 2

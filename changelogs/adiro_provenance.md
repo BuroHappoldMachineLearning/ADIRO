@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+- **Where a file was obtained from** ([#229](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/229)). `sourceLocation` records the address a `DrawingFile`'s bytes were obtained from, such as a public archive's download address or, when it is the only origin known, an address in an organisation's own storage. `storageLocation` still records where copies are kept. The origin no longer gets lost when a public file is copied into internal storage before processing. `sourcePage` records the catalogue or landing page that describes the file at its origin, which is often a more lasting address. Both take an `xsd:anyURI` and are related to DCAT and Dublin Core terms by `skos:closeMatch` (`dcat:downloadURL` and `dcterms:source`; `dcat:landingPage`).
+- **A file made from another file points back to it**: the PROV-O typing stub `prov:wasDerivedFrom` is declared, and is used between two `DrawingFile`s (a format conversion, a page split out of a PDF). Only the original records a `sourceLocation`.
+- Data checks in `data-validation/`: a warning for a file with no recorded origin, itself or through the files it was derived from; and, for a public release only (`validate_data.py --public-hosts FILE`), a violation for any `sourceLocation`, `sourcePage`, `storageLocation` or `acceptedUnder` that is not on the release's allowlist of public hosts (the release must drop it before publishing).
+
 ## [2.0.0] — 2026-10-21
 
 ### Changed
