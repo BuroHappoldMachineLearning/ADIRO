@@ -10,6 +10,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 - **A file made from another file points back to it**: the PROV-O typing stub `prov:wasDerivedFrom` is declared, and is used between two `DrawingFile`s (a format conversion, a page split out of a PDF). Only the original records a `sourceLocation`.
 - Data checks in `data-validation/`: a warning for a file with no recorded origin, itself or through the files it was derived from; and, for a public release only (`validate_data.py --public-hosts FILE`), a violation for any `sourceLocation`, `sourcePage`, `storageLocation` or `acceptedUnder` that is not on the release's allowlist of public hosts (the release must drop it before publishing).
 
+### Changed
+- **`supersedes` takes effect when the superseding assertion is accepted** ([#221](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/221)). Its definition now says so: until then the earlier assertion stays in force, and an accepted assertion replaces every assertion it supersedes, directly or through others. A pending or rejected re-extraction no longer withdraws an accepted value. No term, domain or range changes; tooling that reads `supersedes` as an immediate withdrawal should follow the new rule.
+
 ## [2.0.0] — 2026-10-21
 
 ### Changed
