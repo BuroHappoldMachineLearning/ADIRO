@@ -1,0 +1,47 @@
+# A public release names only public addresses (#229).
+#
+# Whether an address is confidential is a property of the value, not of the term: an organisation's internal file has its
+# internal storage as its sourceLocation, and a public file copied into that storage has the internal address as a
+# storageLocation. Both are right in the organisation's own data, and neither belongs in data it publishes. So every
+# address a file records (sourceLocation, sourcePage, storageLocation) must be on a host of an ALLOWLIST of public hosts
+# before the data is released. An allowlist, not a denylist, so that no internal host name has to be written anywhere.
+#
+# The allowlist is not in this repository: whoever runs the release supplies it, and scripts/validate_data.py adds it to
+# the data graph as dvr:PublicHost nodes with a dvr:host string, which the query below reads. A host allows its subdomains
+# ("loc.gov" allows "tile.loc.gov"). An address that is not a URL with a host (a file path) is never public.
+#
+# This file is in data-validation/release/, so it runs only for a release (validate_data.py --public-hosts FILE); the
+# organisation's own data is checked without it.
+#
+# Severity: sh:Violation. A non-public address in released data is a leak, not an incompleteness: the export drops it.
+
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .
+@prefix dvr: <https://w3id.org/adiro/data-validation/release#> .
+
+dvr: sh:declare
+    [ sh:prefix "aprov" ; sh:namespace "https://w3id.org/adiro/adiro_provenance#"^^xsd:anyURI ] ,
+    [ sh:prefix "dvr" ; sh:namespace "https://w3id.org/adiro/data-validation/release#"^^xsd:anyURI ] .
+
+dvr:PublicLocations a sh:NodeShape ;
+    sh:targetSubjectsOf aprov:sourceLocation , aprov:sourcePage , aprov:storageLocation ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "A released file names only addresses on a public host: {?value} is not on the allowlist." ;
+        sh:prefixes dvr: ;
+        sh:select """
+            SELECT $this ?path ?value WHERE {
+                $this ?path ?value .
+                FILTER (?path IN (aprov:sourceLocation, aprov:sourcePage, aprov:storageLocation))
+                # the host of a URL, lower-cased; "" for anything else (a file path), which no allowed host matches
+                BIND ("^[A-Za-z][A-Za-z0-9+.-]*://([^/?#@]*@)?([^/?#:]+)" AS ?url)
+                BIND (IF(REGEX(STR(?value), ?url), LCASE(REPLACE(STR(?value), CONCAT(?url, ".*$"), "$2")), "") AS ?host)
+                FILTER NOT EXISTS {
+                    ?allowed a dvr:PublicHost ; dvr:host ?h .
+                    FILTER (?host = LCASE(STR(?h)) || STRENDS(?host, CONCAT(".", LCASE(STR(?h)))))
+                }
+            }
+        """ ;
+    ] .

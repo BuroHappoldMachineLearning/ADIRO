@@ -20,6 +20,7 @@ The ontology is validated by `scripts/validate_ontology.py` and the reasoner. Da
 |---|---|
 | `uc01-authorship.shacl.ttl` | A drawing has at least one recorded author (a warning); a drawing that records none is read as authored by its revisions' authors, so an author on a revision counts. Only the author is required: the checker and the approver are optional, and no rule reports their absence. It answers competency question CQ 4.4 of the UC-01 ORSD. |
 | `assertions.shacl.ttl` | The rules for a field assertion ([#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187), [#220](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/220)): it has at most one acceptance status (`Pending`, `Accepted` or `Rejected`) and at most one outcome (`Empty`, `Illegible`, `NotPrinted` or `NotFound`), so an assertion both accepted and rejected is reported before it is promoted, and a different result is recorded as a different assertion; it has a value or an outcome, never both; an accepted assertion has an `acceptedBy`; an assertion that supersedes another is about the same subject and the same field kind. |
+| `file-source.shacl.ttl` | A file records where it was obtained from (`sourceLocation`), itself or through the files it was derived from (`prov:wasDerivedFrom`), as a warning ([#229](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/229)). It answers competency question CQ 9.5 of the UC-01 ORSD. |
 | `uc03-composition.shacl.ttl` | The composition rules of the UC-03 reference expressions: an inline layout and sheet reference contains exactly one drawing identifier mention and at least one layout identifier mention; a reference symbol contains at most one drawing identifier mention; a drawing identifier mention has at most one accepted `denotesDrawingSheet` target. |
 
 A file holds the rules of one use case or one topic, and is named `<topic>.shacl.ttl`. The suffix names the technology;
@@ -41,6 +42,22 @@ uv run --with pyshacl python scripts/validate_data.py path/to/data.ttl
 
 The script reads the ontology modules as background, so a subclass counts as its superclass (a standalone sheet reference is
 a drawing identifier mention). It exits with 1 when a result is a violation, and with 0 otherwise.
+
+## Check data before a public release
+
+Data kept inside an organisation may name its own storage: an internal file's origin is its internal address, and a public
+file copied there has that copy as a `storageLocation`. Data that is published names only public addresses. The shapes in
+`data-validation/release/` check that, and run only when an allowlist of public hosts is given:
+
+```bash
+uv run --with pyshacl python scripts/validate_data.py --public-hosts public-hosts.txt path/to/data.ttl
+```
+
+`public-hosts.txt` lists one host per line (`#` starts a comment); a host also allows its subdomains, so `loc.gov` allows
+`tile.loc.gov`. Every `sourceLocation`, `sourcePage` and `storageLocation` on another host, or that is not a URL with a host (a
+file path), is a violation ([#229](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/229)). The list is supplied by
+whoever releases the data and is not kept in this repository: it names public hosts only, so no internal host name has to be
+written down anywhere.
 
 ## Add a rule
 
