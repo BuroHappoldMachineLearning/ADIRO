@@ -10,7 +10,7 @@
     <td><img src="docs/img/adiro_banner.png" alt="ADIRO" width="320"></td>
     <td align="left" valign="middle">
       <b>Latest releases</b><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_provenance-v2.0.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_provenance.json" alt="adiro_provenance"></a><br>
+      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_provenance-v2.1.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_provenance.json" alt="adiro_provenance"></a><br>
       <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_geometry-v3.0.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_geometry.json" alt="adiro_geometry"></a><br>
       <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_drawing_metadata-v7.0.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_drawing_metadata.json" alt="adiro_drawing_metadata"></a><br>
       <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_common_symbols-v5.0.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_common_symbols.json" alt="adiro_common_symbols"></a><br>
