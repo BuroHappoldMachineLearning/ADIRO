@@ -36,7 +36,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Source: [`adiro_provenance.ttl`](adiro_provenance.ttl)
 
-    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_provenance.html){ .md-button target=_blank }
+    [![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_provenance.html){ .md-button target=_blank }
 
 -   ### [Adiro Geometry](adiro_geometry.html)
 
@@ -46,7 +46,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Source: [`adiro_geometry.ttl`](adiro_geometry.ttl)
 
-    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_geometry.html){ .md-button target=_blank }
+    [![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_geometry.html){ .md-button target=_blank }
 
 -   ### [Adiro Drawing Metadata](adiro_drawing_metadata.html)
 
@@ -56,7 +56,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Source: [`adiro_drawing_metadata.ttl`](adiro_drawing_metadata.ttl)
 
-    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_drawing_metadata.html){ .md-button target=_blank }
+    [![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_drawing_metadata.html){ .md-button target=_blank }
 
 -   ### [Adiro Common Symbols](adiro_common_symbols.html)
 
@@ -66,7 +66,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Source: [`adiro_common_symbols.ttl`](adiro_common_symbols.ttl)
 
-    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_common_symbols.html){ .md-button target=_blank }
+    [![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_common_symbols.html){ .md-button target=_blank }
 
 -   ### [Adiro Domain Common](adiro_domain_common.html)
 
@@ -76,7 +76,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Source: [`adiro_domain_common.ttl`](adiro_domain_common.ttl)
 
-    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_domain_common.html){ .md-button target=_blank }
+    [![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_domain_common.html){ .md-button target=_blank }
 
 -   ### [Adiro Facade Domain](adiro_facade_domain.html)
 
@@ -86,6 +86,6 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Source: [`adiro_facade_domain.ttl`](adiro_facade_domain.ttl)
 
-    [![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_facade_domain.html){ .md-button target=_blank }
+    [![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_facade_domain.html){ .md-button target=_blank }
 
 </div>

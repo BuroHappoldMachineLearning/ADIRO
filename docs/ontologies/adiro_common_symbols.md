@@ -13,7 +13,7 @@
 <li><a href="../aec_common_symbols/1.0.0/">aec_common_symbols 1.0.0</a></li>
 </ul>
 </details>
-[![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_common_symbols.html){ .md-button target=_blank }
+[![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_common_symbols.html){ .md-button target=_blank }
 [:material-file-document-outline: TTL source](https://w3id.org/adiro/adiro_common_symbols.ttl){ .md-button }
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/adiro_common_symbols.html){ .md-button }
 </div>
@@ -26,7 +26,7 @@ Reusable symbols that appear across disciplines, such as dimensions, grids, leve
 
 ## Interactive view
 
-<iframe src="https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_common_symbols.html" title="Adiro Common Symbols in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
+<iframe src="https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_common_symbols.html" title="Adiro Common Symbols in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
 
 ## Dependencies
 

@@ -27,6 +27,7 @@ if _TTL2MD_SRC.exists() and str(_TTL2MD_SRC) not in sys.path:
 import ttl2md
 import module_renames
 import pylode_metadata
+from ontocanvas import ONTOCANVAS_URL, ONTOCANVAS_ICON_URL
 from release_badges import write_release_badges
 from example_images import stage as stage_example_images
 from ontology_versions import (
@@ -414,8 +415,8 @@ SITE_BASE_URL = "https://burohappoldmachinelearning.github.io/ADIRO"
 # Prefer this over SITE_BASE_URL for the published TTL / HTML / OntoCanvas links.
 W3ID_BASE_URL = "https://w3id.org/adiro"
 
-# OntoCanvas branding icon, reused from the previous HTML landing page.
-ONTOCANVAS_ICON_URL = "https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png"
+# The OntoCanvas deployment every OntoCanvas link and embed opens, and its icon: ONTOCANVAS_URL and
+# ONTOCANVAS_ICON_URL, from scripts/ontocanvas.py, which pr_guidance.py reads too.
 
 # Brand palette, derived from the favicon (docs/img/favicon.png):
 #   navy   BRAND_NAVY   border / I-beam
@@ -518,7 +519,7 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
         title = ttl_file.stem.replace("_", " ").title()
         comment = extract_ontology_comment(ttl_file)
         dependencies = extract_adiro_dependencies(ttl_file)
-        ontocanvas_url = f"https://alelom.github.io/OntoCanvas/?onto={W3ID_BASE_URL}/{html_filename}"
+        ontocanvas_url = f"{ONTOCANVAS_URL}?onto={W3ID_BASE_URL}/{html_filename}"
 
         lines.append(f"-   ### [{title}]({html_filename})")
         lines.append("")
@@ -660,7 +661,7 @@ def _ontology_page(ttl_file: Path, ttl_files: list[Path], title: str, selected: 
         html_url = f"{W3ID_BASE_URL}/{stem}.html"
         ttl_url, ontocanvas_target = f"{W3ID_BASE_URL}/{ttl_file.name}", html_url
         page_title = title
-    ontocanvas_url = f"https://alelom.github.io/OntoCanvas/?onto={ontocanvas_target}"
+    ontocanvas_url = f"{ONTOCANVAS_URL}?onto={ontocanvas_target}"
 
     # Pages live below docs/ontologies/, so relative image references (if any) resolve via the depth prefix;
     # absolute image URLs (the ADIRO case, resolved against @base) are left untouched by ttl2md.

@@ -38,6 +38,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import example_images  # noqa: E402
 import module_renames  # noqa: E402
 from ontology_versions import archived_versions, version_key  # noqa: E402
+from ontocanvas import ONTOCANVAS_URL  # noqa: E402
 from validate_ontology import (  # noqa: E402
     ADIRO_NS, DESCRIPTION_PROPS, TERM_TYPES, find_unused_imports, find_unused_prefixes, missing_changelog_modules)
 
@@ -122,7 +123,7 @@ def unregistered_closing(body, registered):
 
 def preview_url(repo, head_ref, module):
     raw = f"https://raw.githubusercontent.com/{repo}/{head_ref}/docs/{module}.ttl"
-    return "https://alelom.github.io/OntoCanvas/?onto=" + urllib.parse.quote(raw, safe="")
+    return f"{ONTOCANVAS_URL}?onto=" + urllib.parse.quote(raw, safe="")
 
 
 # One entry per issue type. A finding is a (kind, item) pair; render() says the advice once per kind and lists the items,

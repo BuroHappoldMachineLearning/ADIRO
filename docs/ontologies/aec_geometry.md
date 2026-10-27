@@ -15,7 +15,7 @@ search:
 <li><a href="1.0.0/">1.0.0</a></li>
 </ul>
 </details>
-[![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_geometry.html){ .md-button target=_blank }
+[![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_geometry.html){ .md-button target=_blank }
 [:material-file-document-outline: TTL source](https://w3id.org/adiro/aec_geometry.ttl){ .md-button }
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/aec_geometry.html){ .md-button }
 </div>
@@ -32,7 +32,7 @@ Foundational, domain-neutral module for geometry. It records where something sit
 
 ## Interactive view
 
-<iframe src="https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_geometry.html" title="Aec Geometry in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
+<iframe src="https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/aec_geometry.html" title="Aec Geometry in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
 
 ## Dependencies
 

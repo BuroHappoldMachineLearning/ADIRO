@@ -13,7 +13,7 @@
 <li><a href="../aec_facade_domain/1.0.0/">aec_facade_domain 1.0.0</a></li>
 </ul>
 </details>
-[![OntoCanvas](https://raw.githubusercontent.com/alelom/OntoCanvas/main/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_facade_domain.html){ .md-button target=_blank }
+[![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_facade_domain.html){ .md-button target=_blank }
 [:material-file-document-outline: TTL source](https://w3id.org/adiro/adiro_facade_domain.ttl){ .md-button }
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/adiro_facade_domain.html){ .md-button }
 </div>
@@ -26,7 +26,7 @@ Facade-engineering concepts and symbols, such as curtain-wall systems and glazin
 
 ## Interactive view
 
-<iframe src="https://alelom.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_facade_domain.html" title="Adiro Facade Domain in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
+<iframe src="https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_facade_domain.html" title="Adiro Facade Domain in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
 
 ## Dependencies
 
