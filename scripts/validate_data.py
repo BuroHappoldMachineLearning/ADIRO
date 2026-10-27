@@ -57,10 +57,13 @@ def read_public_hosts(path):
 
 
 def with_public_hosts(data, hosts):
-    """A copy of the data graph with the allowlist added as data, which the release shapes query."""
+    """A copy of the data graph with the allowlist added as data, which the release shapes query.
+
+    Any triple of the data that uses a term of the release namespace is left out, so the data cannot extend the allowlist."""
     graph = Graph()
     for triple in data:
-        graph.add(triple)
+        if not any(str(term).startswith(str(RELEASE)) for term in triple):
+            graph.add(triple)
     for host in hosts:
         node = BNode()
         graph.add((node, RDF.type, RELEASE.PublicHost))

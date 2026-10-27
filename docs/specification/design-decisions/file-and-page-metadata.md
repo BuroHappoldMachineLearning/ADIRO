@@ -70,9 +70,10 @@ origin of any derived file is found by following that link.
 **Whether an address is confidential is a property of the value, not of the term.** An organisation's internal file has its
 internal storage as its `sourceLocation`, and that is right in the organisation's own data. Data that is published names only
 addresses on public hosts: the data checks (`data-validation/release/`, run with an allowlist of public hosts that whoever
-releases the data supplies) report any `sourceLocation`, `sourcePage` or `storageLocation` on another host. The allowlist names
-the public hosts, so no internal host name has to be written anywhere. In practice a release drops every `storageLocation`,
-unless a copy is published on a public host. A warning (`data-validation/file-source.shacl.ttl`) reports a file with no
+releases the data supplies) report any `sourceLocation`, `sourcePage`, `storageLocation` or `acceptedUnder` on another host. The allowlist names
+the public hosts, so no internal host name has to be written anywhere. In practice a release must drop every `storageLocation`
+before publishing, unless a copy is published on a public host. The check reads the values of these terms only: the IRIs a
+pipeline mints for its individuals are not storage addresses, and the rest of an export is the publication step's to check. A warning (`data-validation/file-source.shacl.ttl`) reports a file with no
 recorded origin, itself or through the files it was derived from.
 
 ## What moves out of `CoordinateFrame`

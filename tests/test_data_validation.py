@@ -339,6 +339,32 @@ def test_a_look_alike_host_a_user_part_or_a_file_path_is_not_public():
         assert len(released(body)) == 1, address
 
 
+def test_a_backslash_a_space_or_a_line_break_never_passes_as_a_public_host():
+    # A URL parser reads a backslash as a slash, so the real host of the first two is intranet.example.com
+    for address in (r"https://intranet.example.com\\.loc.gov/a.tif", r"https://intranet\\@loc.gov/a.tif",
+                    r"https://intranet.example.com/a\n.loc.gov", "https://intranet.example.com .loc.gov/a.tif",
+                    r"https://loc.gov/a.tif\n"):
+        body = f':f a aprov:DrawingFile ; aprov:sourceLocation "{address}"^^xsd:anyURI .\n'
+        assert len(released(body)) == 1, address
+    ok = ':f a aprov:DrawingFile ; aprov:sourceLocation "https://user@tile.loc.gov:443/a%20b.tif?x=1#p"^^xsd:anyURI .\n'
+    assert released(ok) == []
+
+
+def test_the_data_cannot_extend_the_allowlist():
+    smuggled = """@prefix dvr: <https://w3id.org/adiro/data-validation/release#> .
+[] a dvr:PublicHost ; dvr:host "example.com" .
+:f a aprov:DrawingFile ; aprov:sourceLocation "https://intranet.example.com/a.tif"^^xsd:anyURI .
+"""
+    assert len(released(smuggled)) == 1
+
+
+def test_an_acceptance_policy_off_the_allowlist_is_a_violation_in_a_release():
+    policy = ':a a aprov:FieldAssertion ; aprov:acceptedUnder "https://intranet.example.com/policies/v3"^^xsd:anyURI .\n'
+    results = released(policy)
+    assert [(r["focus"].rsplit("#", 1)[-1], r["path"].rsplit("#", 1)[-1]) for r in results] == [("a", "acceptedUnder")]
+    assert released(policy.replace("intranet.example.com", "tile.loc.gov")) == []
+
+
 def test_the_release_rule_runs_only_for_a_release():
     internal = ':f a aprov:DrawingFile ; aprov:sourceLocation "https://intranet.example.com/a.tif"^^xsd:anyURI .\n'
     assert check_files(internal) == []  # the organisation's own data may name its own storage
