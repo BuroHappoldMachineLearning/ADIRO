@@ -32,7 +32,7 @@ This pipeline enforces **forward traceability** (every OWL term traces back to a
 | **Actor**       | Engineer                                                                                                  |
 | **Goal**        | Search drawings based on titleblock information                                                          |
 | **Description** | As an engineer, I want to search easily a number of drawings based on the information in the titleblock. |
-| **ORSD Status** | ✅ [Completed (v0.16)](<UC-01/UC-01-Titleblock-Based Drawing Search.md>) |
+| **ORSD Status** | ✅ [Completed (v0.17)](<UC-01/UC-01-Titleblock-Based Drawing Search.md>) |
 
 ### UC-02: Facade Performance Lines
 
@@ -124,7 +124,7 @@ Following the LOT pipeline (`Use Case → Information Needs → Functional Requi
 
 | Milestone | UC-01 | UC-03 |
 |---|:---:|:---:|
-| ORSD (Use Case → CQs) | ✅ v0.16 | ✅ v0.8 |
+| ORSD (Use Case → CQs) | ✅ v0.17 | ✅ v0.8 |
 | OWL Terms Specification | ✅ | ✅ |
 | ORSD Review & Alignment | ✅ | ✅ (3 open issues) |
 | T-Box Implementation (.owl/.ttl) | ✅ | ✅ |

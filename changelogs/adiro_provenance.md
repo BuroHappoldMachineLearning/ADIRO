@@ -5,6 +5,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+- **The runs of an extraction and their configuration** ([#237](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/237)). An extraction run is a `prov:Activity`; each of its steps (detecting a region, reading text, extracting fields) is an `InferenceMeta` with the model it used, and is part of the run through `dcterms:isPartOf`. New class `Configuration` (a `prov:Entity`) with `configurationContent`: the settings a step used (a prompt, rendering settings, size limits), kept as text whose format ADIRO does not model, recorded with `prov:used`. The typing stubs `dcterms:isPartOf` and `prov:startedAtTime` are declared, with no axioms. `InferenceMeta`'s definition describes steps and runs.
+
 ## [2.1.0] — 2026-10-27
 
 ### Added

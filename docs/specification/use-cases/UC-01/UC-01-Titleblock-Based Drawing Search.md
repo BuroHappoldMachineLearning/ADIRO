@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.16 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.17 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -34,6 +34,7 @@ Things that exist independently and will become OWL Classes.
 | `Person`            | `adiro_provenance`                    | NEW    | Authors, checkers, and approvers appear in the titleblock. *(Moved from `adiro_drawing_metadata` in [v0.9](#9-version-history).)* |
 | `DrawingFile`       | `adiro_provenance`                    | NEW    | The file a drawing is stored in: a reference to a document, identified by its content hash. *(Added in [v0.9](#9-version-history).)* |
 | `FilePage`          | `adiro_provenance`                    | NEW    | One page of a file, counted from 1; the drawing is on a page, not on a file. *(Added in [v0.9](#9-version-history).)* |
+| `Configuration`     | `adiro_provenance`                    | NEW    | The settings a step of an extraction used (a prompt, rendering settings), kept as text. *(Added in [v0.17](#9-version-history).)* |
 | `Discipline`        | `adiro_domain_common`                 | REUSE  | Existing class hierarchy (`Structural`, `MEP`, `Architectural`, …).                      |
 | `StatusCode`        | `adiro_drawing_metadata`              | NEW    | Approval state (IFC, IFR, AFC…) expressed as a controlled vocabulary.                    |
 | `DrawingPackage`    | `adiro_drawing_metadata`              | NEW    | Drawings are grouped into volumes or packages within a project.                          |
@@ -137,6 +138,7 @@ Links between two entities. New properties are wired into the existing generic t
 | `assertsRevision`      | `RevisionTable`   | `DrawingRevision`   | `adiro_drawing_metadata` | NEW    | (top-level)             |
 | `isOnPage`            | `DrawingSheet`    | `FilePage`          | `adiro_drawing_metadata` | NEW    | (top-level)             |
 | `belongsToFile`       | `FilePage`        | `DrawingFile`       | `adiro_provenance`       | NEW    | (top-level)             |
+| `dcterms:isPartOf`    | `InferenceMeta` (a step) | `prov:Activity` (a run) | `adiro_provenance` (typing stub) | NEW | (external) *(Added in [v0.17](#9-version-history).)* |
 | `hasStatusCode`       | `DrawingRevision` | `StatusCode`        | `adiro_drawing_metadata` | NEW    | `metadata:hasProperty`  |
 
 ¹ ⚠️ **Open issue (G5):** `dcommon:hasDiscipline` currently has `rdfs:domain metadata:LayoutContentType`. v0.3 proposes moving the domain to `metadata:Layout` (along with the `min 1` cardinality restriction). Discipline characterises the layout itself, not its content type — and the two are orthogonal axes (see design note below). Pending @alelom / @m-asakihattori sign-off.
@@ -247,6 +249,18 @@ Each FR describes one representational capability the ontology must have, in imp
 - Derived terms: `aprov:DrawingFile` (NEW), `aprov:FilePage` (NEW), `metadata:isOnPage` (NEW), `aprov:belongsToFile` (NEW), `aprov:pageNumber` (NEW, from 1); the description of a file: `aprov:fileName`, `aprov:storageLocation`, `aprov:contentHash` and `aprov:hashAlgorithm`, `aprov:mediaType`, `aprov:fileCreatedAt`, `aprov:fileModifiedAt`, `aprov:fileCreatedBy`, `aprov:fileModifiedBy`, `aprov:pageCount`, `aprov:fileSize` (all NEW); where it was obtained from: `aprov:sourceLocation`, `aprov:sourcePage` (NEW in [v0.15](#9-version-history)), with `prov:wasDerivedFrom` from a file made from another; and of a page: `aprov:displayWidthPt`, `aprov:displayHeightPt`, `aprov:pdfRotationDeg` (moved from the coordinate frame)
 
 > **Design note — drawing, file, page.** A PDF holds many drawings and one drawing can exist in several files, so a drawing is linked to the *page* it is on (`isOnPage`), and the page to its file (`belongsToFile`). The coordinate frame of `adiro_geometry` reads a page in one convention (`describesPage`). The measured size of a page is not `sheetSize`, which is the paper format the drawing is meant for. See [the file a drawing is stored in](../../design-decisions/file-and-page-metadata.md). *(Added in [v0.9](#9-version-history).)*
+
+---
+
+**FR 10 — How a Value Was Produced** *(Added in [v0.17](#9-version-history).)*
+
+> The ontology MUST say which run of an extraction produced a recorded value, which step of that run and which model, with which configuration, and which versions of the ontology the run used, such that a value can be traced to the process that produced it and two runs can be compared.
+
+- Source: UC-01 (every value read from a title block is produced by an extraction, and a reviewer must be able to see how)
+- Derived terms: `aprov:InferenceMeta` (REUSE: a step), `aprov:inferredWith` (REUSE: the model of a step), `aprov:Configuration` and `aprov:configurationContent` (NEW), with the typing stubs `dcterms:isPartOf` (a step is part of its run), `prov:used` (the configuration a step used, and the ontology versions a run used) and `prov:startedAtTime` (when a run started)
+
+> **Design note — runs and steps.** An extraction run is a `prov:Activity`. Each of its steps (detecting the title block, reading its text, extracting the fields) is an `InferenceMeta` with the model it used (`inferredWith`), and is part of the run (`dcterms:isPartOf`). A value's assertion points to the step that produced it (`hasInferenceMeta`). What the step used besides its model is a `Configuration` (`prov:used`): a prompt, rendering settings, size limits, kept as text whose format ADIRO does not model. Its IRI is minted from a hash of its content, so a configuration used on every page of a run is one individual; where it varies from page to page, the `InferenceMeta` of that page records it. The run records the ontology versions it used as `prov:used` their version IRIs (for example `<https://w3id.org/adiro/adiro_provenance/2.1.0>`). UC-03's provenance profile ([#96](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/96)) uses the same pattern. *(Added in [v0.17](#9-version-history).)*
+
 ---
 
 ## 4. Competency Questions
@@ -470,6 +484,33 @@ SELECT ?file ?origin ?sourceLocation ?sourcePage WHERE {
 }
 ```
 
+### CQ Group 10 — How a Value Was Produced (validates FR 10)
+
+| ID      | Competency Question |
+| ------- | ------------------- |
+| CQ 10.1 | For the title of drawing "ST-101": which run produced each value recorded for it, when the run started, which step and which model, and with which configuration? *(Added in [v0.17](#9-version-history).)* |
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+
+# CQ 10.1: the run, the step, the model and the configuration behind each value of a field of a drawing
+SELECT ?assertion ?value ?run ?started ?step ?model ?configuration WHERE {
+  ?drawing metadata:drawingIdentifier "ST-101" .
+  ?assertion aprov:assertedAbout    ?drawing ;
+             aprov:assertsFieldKind metadata:DrawingTitleField ;
+             aprov:hasInferenceMeta ?step .
+  OPTIONAL { ?assertion aprov:hasLiteralValue|aprov:hasValueEntity ?value }
+  OPTIONAL { ?step aprov:inferredWith ?model }
+  OPTIONAL { ?step dcterms:isPartOf ?run . OPTIONAL { ?run prov:startedAtTime ?started } }
+  OPTIONAL { ?step prov:used ?configuration . ?configuration a aprov:Configuration }
+}
+```
+
+The query reads the data as written, with no inference: the configuration is recognised by its type, and the model by `inferredWith`. A value read by hand has a step with no model and no run, and is listed with those left empty.
+
 ### CQ Group I — Integration / Multi-field Queries
 
 | ID     | Competency Question                                                                                  | FRs exercised               |
@@ -627,6 +668,9 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `aprov:fileModifiedAt`         | `adiro_provenance`       | NEW    | CQ 9.4                                         | FR 9                               |
 | `aprov:storageLocation`, `aprov:contentHash`, `aprov:hashAlgorithm`, `aprov:mediaType`, `aprov:fileCreatedAt`, `aprov:fileCreatedBy`, `aprov:fileModifiedBy`, `aprov:pageCount`, `aprov:fileSize` | `adiro_provenance` | NEW | none yet: they identify, locate and describe the file (the first set of the file brainstorm) | FR 9 |
 | `aprov:sourceLocation`, `aprov:sourcePage`, `prov:wasDerivedFrom` (a typing stub) | `adiro_provenance` | NEW | CQ 9.5 | FR 9 |
+| `aprov:InferenceMeta`, `aprov:inferredWith` | `adiro_provenance` | REUSE | CQ 10.1 | FR 10 |
+| `aprov:Configuration`, `aprov:configurationContent` | `adiro_provenance` | NEW | CQ 10.1 | FR 10 |
+| `dcterms:isPartOf`, `prov:used`, `prov:startedAtTime` (typing stubs) | `adiro_provenance` | NEW | CQ 10.1 | FR 10 |
 | `metadata:assertsPackage`      | `adiro_drawing_metadata` | NEW    | CQ 8.3, CQ 8.4                                 | FR 8                               |
 | `metadata:drawingIdentifier`       | `adiro_drawing_metadata` | NEW    | CQ 1.1, CQ 1.2                                 | FR 1                               |
 | `metadata:drawingTitle`        | `adiro_drawing_metadata` | NEW    | CQ 1.2                                         | FR 1                               |
@@ -674,7 +718,7 @@ adiro_provenance                      (NEW - foundational, domain-neutral)
 | Module                 | UC-01 contribution                                                                                                                                                          |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `adiro_drawing_metadata` | **New classes:** `DrawingRevision`, `Project`, `StatusCode`, `DrawingPackage`. **New properties:** all UC-01 datatype properties; `hasRevision` (⊂ `contains`), `hasStatusCode` (⊂ `hasProperty`), `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `isOnPage`. |
-| `adiro_provenance`       | **New classes:** `DrawingFile`, `FilePage`, and the agents `Party`, `Person` and `Organisation` (moved here from `adiro_drawing_metadata`), with the file and page properties of FR 9. **Reused (new module):** `FieldAssertion`, `InferenceMeta`, `hasConfidence`, `capturedCaption`, `assertedBy`, `inferredBy`/`inferredWith`/`inferredFrom`/`inferredAt`, and the `TitleblockFieldScheme` binding via `assertsFieldKind`. Carries **extracted** title-block values before validation - see the design note in §2.1. |
+| `adiro_provenance`       | **New classes:** `Configuration` (FR 10, with `configurationContent`), `DrawingFile`, `FilePage`, and the agents `Party`, `Person` and `Organisation` (moved here from `adiro_drawing_metadata`), with the file and page properties of FR 9. **Reused (new module):** `FieldAssertion`, `InferenceMeta`, `hasConfidence`, `capturedCaption`, `assertedBy`, `inferredBy`/`inferredWith`/`inferredFrom`/`inferredAt`, and the `TitleblockFieldScheme` binding via `assertsFieldKind`. Carries **extracted** title-block values before validation - see the design note in §2.1. |
 | `adiro_geometry`         | **Reused (new module):** the `Titleblock` region may carry a `BoundingBox` (via `hasBoundingBox`) interpreted by a `CoordinateFrame` (which reads the page the drawing is on, via `describesPage`) — i.e. *where the title block sits on the page*. The extracted field values are read from within that one region and are **not** individually localised. *(Added in [v0.5](#9-version-history).)* |
 | `adiro_common_symbols`   | No UC-01 contribution.                                                                                                                                                      |
 | `adiro_domain_common`    | **Reused:** `Discipline` and its subclasses; `hasDiscipline` (with proposed domain change from `LayoutContentType` to `Layout` — see G5).                                   |
@@ -712,7 +756,14 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.16 (current — draft)
+### v0.17 (current — draft)
+
+Changes from v0.16, made when runs were modelled for UC-01 ([#237](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/237), decided on [Discussion #235](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/235)). MAJOR in substance (a functional requirement, a class, an attribute and a competency question added); the number stays in the 0.x series because the document is still a draft:
+
+- **FR 10 and CQ Group 10 added** (§3, §4): which run, step and model produced a value, with which configuration, and which ontology versions the run used. CQ 10.1 is recorded as a query, run without inference.
+- **`Configuration` and `configurationContent` added** (§2.1, §6), with the typing stubs `dcterms:isPartOf` (a step is part of its run, §2.3) and `prov:startedAtTime`. The design note under FR 10 states the pattern: a run is a `prov:Activity`, its steps are `InferenceMeta`, as UC-03's provenance profile ([#96](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/96)) does.
+
+### v0.16 (draft)
 
 Change from v0.15, made when the meaning of supersession was decided ([#221](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/221)). MINOR: the rule of a recorded query, no entity, attribute, relation or competency question changes; the number stays in the 0.x series because the document is still a draft:
 
