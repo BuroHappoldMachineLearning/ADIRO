@@ -70,7 +70,7 @@ A rectangular region on a drawing page that locates something there, whether a m
 
 ### Coordinate Frame {#CoordinateFrame}
 
-A page of a file read in one coordinate convention: the named coordinate space, the unit and the profile that defines it (the datatype properties below), for the page it describes (describesPage). A page can have more than one frame (the primary page_display_pt in points, and px for raster evidence), and each states only its convention: what is true of the page itself (its number, file, rotation and size) is on the adiro_provenance:FilePage. Not an InferredEntity: a declared coordinate context, not a detection with its own confidence.
+A page of a file read in one coordinate convention: the named coordinate space, the unit and the profile that defines it (the datatype properties below), for the page it describes (describesPage). A page can have more than one frame (the primary page_display_pt in points, and px for raster evidence), and each states only its convention: what is true of the page itself (its number, file, rotation and size) is on the adiro_provenance:FilePage. Every image of the page that an extraction feeds to a model is a pixel frame of its own, with the resolution it was rendered or scaled to (resolutionDpi), and a crop is a frame limited to a region of the page (coversRegion), so a step that records the frame it used (prov:used) says what its model saw without the image being kept. Not an InferredEntity: a declared coordinate context, not a detection with its own confidence.
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#CoordinateFrame`
 
@@ -81,6 +81,14 @@ Local typing stub for GeoSPARQL's Geometry class (authoritative definition at th
 - **IRI:** `http://www.opengis.net/ont/geosparql#Geometry`
 
 ## Object Properties
+
+### coversRegion {#coversRegion}
+
+The region of the page that this frame shows, when it shows only part of it (a crop): the BoundingBox, in another frame of the same page (usually page_display_pt), whose rectangle the frame's image holds. The frame's own coordinates start at the region's top-left corner. A frame that shows the whole page has no coversRegion. Between the region and the frame there is only a uniform scale, given by the frame's resolutionDpi, so a box found in the crop is placed on the page without a transform term.
+
+- **IRI:** `https://w3id.org/adiro/adiro_geometry#coversRegion`
+- **Domain:** [Coordinate Frame](#CoordinateFrame)
+- **Range:** [Bounding Box](#BoundingBox)
 
 ### describesPage {#describesPage}
 
@@ -96,6 +104,14 @@ The bounding box that locates a region on a drawing page. In UC-01 this is the t
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#hasBoundingBox`
 - **Range:** [Bounding Box](#BoundingBox)
+
+### imageOf {#imageOf}
+
+The coordinate frame that a kept image file shows: the rendering of a page, or a crop of it, as it was fed to a model, kept so a viewer can show it. The image is an aprov:DrawingFile with its contentHash and mediaType, and its pixels are the frame's coordinates. Only an image that is kept has a file: a frame a model saw is recorded whether or not its image is kept.
+
+- **IRI:** `https://w3id.org/adiro/adiro_geometry#imageOf`
+- **Domain:** `aprov:DrawingFile`
+- **Range:** [Coordinate Frame](#CoordinateFrame)
 
 ### inCoordinateFrame {#inCoordinateFrame}
 
@@ -130,6 +146,14 @@ Reference to the versioned coordinate profile that defines the named coordinateS
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#profileRef`
 - **Domain:** [Coordinate Frame](#CoordinateFrame)
 - **Range:** `xsd:string`
+
+### resolutionDpi {#resolutionDpi}
+
+The resolution of a pixel frame, in pixels per inch of the page: a page_display_pt coordinate times resolutionDpi / 72 gives the pixel. For a page rendered at 300 dpi it is 300; for that image scaled down so that its shorter side is 1200 pixels, it is the resolution the scaling gives (a decimal, such as 42.35). A frame in points has none.
+
+- **IRI:** `https://w3id.org/adiro/adiro_geometry#resolutionDpi`
+- **Domain:** [Coordinate Frame](#CoordinateFrame)
+- **Range:** `xsd:decimal`
 
 ### unit {#unit}
 

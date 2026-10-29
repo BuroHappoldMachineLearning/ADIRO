@@ -445,3 +445,44 @@ def test_a_reading_with_a_text_or_an_outcome_conforms(body):
 ])
 def test_a_malformed_reading_is_reported(body, message):
     assert [r["message"] for r in check_assertions(body)] == [message]
+
+
+# --- the frames a model saw: one resolution, one region, one frame per kept image (#239) ----------------------------------
+GEOM = "@prefix geom: <https://w3id.org/adiro/adiro_geometry#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n"
+
+
+def check_frames(body):
+    graph = Graph().parse(data=PREFIXES + APROV + PROV + GEOM + body, format="turtle")
+    return sorted({r["message"] for r in vd.validate(graph, ROOT)})  # a value can break two rules of one message
+
+
+def test_a_pixel_frame_with_its_resolution_and_a_crop_of_one_region_conform():
+    body = """:f300 a geom:CoordinateFrame ; geom:unit "px" ; geom:resolutionDpi 300.0 .
+:crop a geom:CoordinateFrame ; geom:unit "px" ; geom:resolutionDpi 300.0 ; geom:coversRegion :box .
+:box a geom:BoundingBox .
+:image a aprov:DrawingFile ; geom:imageOf :crop ; prov:wasDerivedFrom :pdf .
+:pdf a aprov:DrawingFile ; aprov:sourceLocation "https://tile.loc.gov/a.pdf"^^xsd:anyURI .
+:pt a geom:CoordinateFrame ; geom:unit "pt" .
+"""
+    assert check_frames(body) == []
+
+
+@pytest.mark.parametrize("body, message", [
+    (':f a geom:CoordinateFrame ; geom:unit "px" .\n', "A pixel frame (unit px) has a resolutionDpi."),
+    (':f a geom:CoordinateFrame ; geom:resolutionDpi 300.0 , 150.0 .\n', "A frame has at most one resolutionDpi, a positive decimal."),
+    (':f a geom:CoordinateFrame ; geom:resolutionDpi 0.0 .\n', "A frame has at most one resolutionDpi, a positive decimal."),
+    (':f a geom:CoordinateFrame ; geom:resolutionDpi "300" .\n', "A frame has at most one resolutionDpi, a positive decimal."),
+    (":f a geom:CoordinateFrame ; geom:coversRegion :a , :b .\n:a a geom:BoundingBox . :b a geom:BoundingBox .\n",
+     "A frame covers at most one region, a BoundingBox."),
+    (':i a aprov:DrawingFile ; geom:imageOf :f , :g ; aprov:sourceLocation "https://tile.loc.gov/a.png"^^xsd:anyURI .\n:f a geom:CoordinateFrame . :g a geom:CoordinateFrame .\n',
+     "A kept image is an image of exactly one frame."),
+])
+def test_a_malformed_frame_or_kept_image_is_reported(body, message):
+    assert check_frames(body) == [message]
+
+
+def test_a_relative_storage_location_conforms_but_is_never_released():
+    body = (':image a aprov:DrawingFile ; aprov:sourceLocation "https://tile.loc.gov/a.tif"^^xsd:anyURI ;'
+            ' aprov:storageLocation "crops/page-1-titleblock.png"^^xsd:anyURI .\n')
+    assert check_files(body) == []
+    assert [r["path"].rsplit("#", 1)[-1] for r in released(body)] == ["storageLocation"]

@@ -4,7 +4,9 @@
     Released ([#192](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/192)) in `adiro_provenance` 2.0.0, `adiro_geometry` 3.0.0
     and `adiro_drawing_metadata` 7.0.0, with the module rename of [#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171).
     [Where a file came from](#where-a-file-came-from) ([#229](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/229)) is in `src/`
-    as an unreleased change, published with the next release of `adiro_provenance`. The names below are those in `src/`.
+    as an unreleased change, published with the next release of `adiro_provenance`, and so is
+    [What a model saw](#what-a-model-saw) ([#239](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/239)), with the next
+    release of `adiro_geometry`. The names below are those in `src/`.
 
 A drawing lives in a file, and a PDF holds many drawings, one per page. ADIRO therefore keeps three things apart: the drawing,
 the file it is stored in, and the page of that file it is on.
@@ -75,6 +77,36 @@ the public hosts, so no internal host name has to be written anywhere. In practi
 before publishing, unless a copy is published on a public host. The check reads the values of these terms only: the IRIs a
 pipeline mints for its individuals are not storage addresses, and the rest of an export is the publication step's to check. A warning (`data-validation/file-source.shacl.ttl`) reports a file with no
 recorded origin, itself or through the files it was derived from.
+
+## What a model saw
+
+*(Added with [#239](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/239), decided on
+[Discussion #235](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/235).)* An extraction feeds images of a page to its
+models: the page rendered at some resolution, the same rendering scaled down for a detector, a crop of the title block for a reader.
+Each is the page, or a region of it, at a resolution, and between any two of them there is only a uniform scale. So each is a
+**pixel `CoordinateFrame`** of the page:
+
+```mermaid
+flowchart LR
+    S[step: InferenceMeta] -- prov:used --> C[CoordinateFrame, px]
+    C -- describesPage --> P[FilePage]
+    C -- coversRegion --> B[BoundingBox]
+    B -- inCoordinateFrame --> PT[CoordinateFrame, pt]
+    I[DrawingFile: kept image] -- imageOf --> C
+```
+
+- **`resolutionDpi`** (a decimal) is the frame's resolution: a `page_display_pt` coordinate times `resolutionDpi / 72` is its pixel.
+  A page rendered at 300 dpi has 300; the same image scaled so its shorter side is 1200 pixels has the resolution that scale gives.
+- **`coversRegion`** limits a frame to a region of the page, a `BoundingBox` in another frame (usually `page_display_pt`): the frame
+  is a crop, and its coordinates start at the region's top-left corner. There is no crop class.
+- **The step records the frame it fed to its model** (`prov:used`), so the data says what each model saw, whether or not the image
+  is kept.
+- **No transform term.** The scale is in the resolution, and a box a model finds is stored in the frame of the page. A general
+  coordinate transform stays with [#93](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/93).
+- **A kept image** (for a viewer) is a `DrawingFile` with its `contentHash` and `mediaType`, linked to the frame it shows by
+  **`imageOf`**. Its `storageLocation` may be a relative reference, resolved against the root of the dataset it belongs to, which
+  the data does not record, so the dataset can be moved. The public-release check accepts only absolute addresses on its allowed
+  hosts, so a relative location is resolved before a release.
 
 ## What moves out of `CoordinateFrame`
 
