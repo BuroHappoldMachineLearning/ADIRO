@@ -74,8 +74,8 @@ jobs:
           # The checks (data-validation shapes and UC-01 queries, #240) are not a module: the tag version must be a
           # released section of changelogs/checks.md at the tag.
           if [ "$MODULE" = "checks" ]; then
-            if ! git show "refs/tags/${TAG}:changelogs/checks.md" | grep -q "^## \[${VERSION}\]"; then
-              echo "::error::changelogs/checks.md at tag ${TAG} has no section [${VERSION}] — date the release before tagging."
+            if ! git show "refs/tags/${TAG}:changelogs/checks.md" | grep -Eq "^## \[${VERSION}\] — [0-9]{4}-[0-9]{2}-[0-9]{2}"; then
+              echo "::error::changelogs/checks.md at tag ${TAG} has no dated section '## [${VERSION}] — YYYY-MM-DD' — date the release before tagging."
               exit 1
             fi
             exit 0
@@ -97,9 +97,18 @@ jobs:
           VERSION="${{ steps.parse.outputs.version }}"
           DEST="versions/${MODULE}/${VERSION}"
           if [ "$MODULE" = "checks" ]; then
-            # The checks as they are at the tag: the tag's tree is exported by this branch's script (standard library only).
+            # A published release of the checks is pinned by consumers and never rebuilt: a re-run for its tag (the repair
+            # path) keeps the snapshot and only redeploys and resets the notes.
+            if [ -f "$DEST/manifest.json" ]; then
+              echo "versions/checks/${VERSION}/ already exists: kept as published."
+              exit 0
+            fi
+            # The checks as they are at the tag, exported by the tag's own script (standard library only), or by this
+            # branch's when the tag predates it.
             git worktree add --detach "$RUNNER_TEMP/tagged" "refs/tags/${TAG}"
-            python3 scripts/export_checks.py "$DEST" --root "$RUNNER_TEMP/tagged" --version "$VERSION"
+            EXPORT="$RUNNER_TEMP/tagged/scripts/export_checks.py"
+            [ -f "$EXPORT" ] || EXPORT="scripts/export_checks.py"
+            python3 "$EXPORT" "$DEST" --root "$RUNNER_TEMP/tagged" --version "$VERSION"
             git worktree remove --force "$RUNNER_TEMP/tagged"
             ls -laR "$DEST"
             exit 0

@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.19 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.20 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -759,7 +759,7 @@ Every filter condition maps to a defined property:
 - `metadata:Layout`, `dcommon:hasDiscipline`, `dcommon:MEP` — reused; note the `rdf:type` check against the class hierarchy automatically matches `Mechanical`, `Electrical`, `Plumbing`, `Lighting` via `rdfs:subClassOf` reasoning.
 - `metadata:isApprovedBy`, `metadata:issueDate`, `metadata:personName` — new in `adiro_drawing_metadata`.
 
-The query is fully expressible, confirming that CQ-I 1 is covered by the current term inventory. The previous v0.2 placeholder prefix (`https://example.org/aec-ontology#`) is retired in favour of the real module namespaces.
+The query is fully expressible, confirming that CQ-I 1 is covered by the current term inventory. It reads the discipline through the class hierarchy, so it needs subclass reasoning: it illustrates the term inventory and is not one of the recorded queries, which run without inference (see above). For a store without a reasoner, the discipline pattern is `?disc a/rdfs:subClassOf* dcommon:MEP`, with the ontology loaded as data. *(Amended in [v0.20](#9-version-history).)* The previous v0.2 placeholder prefix (`https://example.org/aec-ontology#`) is retired in favour of the real module namespaces.
 
 ### Scale competency questions
 
@@ -770,6 +770,7 @@ CQ 1.3 and the scale questions CQ 1.4–1.7 are expressible without a reasoner. 
 ```sparql
 PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
+# CQ 1.3: the drawings drawn at scale 1:50
 SELECT ?sheet WHERE {
   ?sheet  a                                         metadata:DrawingSheet ;
           (metadata:drawingScale|metadata:hasScale) "1:50" .
@@ -781,6 +782,7 @@ SELECT ?sheet WHERE {
 ```sparql
 PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
+# CQ 1.4: the scale of each layout, its own or otherwise its drawing's
 SELECT ?layout ?scale ?basis WHERE {
   ?sheet  a metadata:DrawingSheet ;
           metadata:contains ?layout .
@@ -798,6 +800,7 @@ SELECT ?layout ?scale ?basis WHERE {
 ```sparql
 PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
+# CQ 1.5: the drawings that state no scale
 SELECT ?sheet WHERE {
   ?sheet a metadata:DrawingSheet .
   FILTER NOT EXISTS { ?sheet (metadata:drawingScale|metadata:hasScale) ?scale }
@@ -809,6 +812,7 @@ SELECT ?sheet WHERE {
 ```sparql
 PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
+# CQ 1.6: the layouts whose scale cannot be determined
 SELECT ?layout WHERE {
   ?sheet  a metadata:DrawingSheet ;
           metadata:contains ?layout .
@@ -823,6 +827,7 @@ SELECT ?layout WHERE {
 ```sparql
 PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
+# CQ 1.7: the layouts drawn at another scale than their drawing
 SELECT ?layout ?own ?nominal WHERE {
   ?sheet  a metadata:DrawingSheet ;
           (metadata:drawingScale|metadata:hasScale) ?nominal ;
@@ -966,7 +971,14 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.19 (current — draft)
+### v0.20 (current — draft)
+
+Changes from v0.19, made when the recorded queries were released as a pinnable artefact ([#240](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/240)). MINOR: no entity, attribute, relation or competency question changes:
+
+- **The scale queries are recorded** (§5): the queries of CQ 1.3 to CQ 1.7 now open with the comment line that names a recorded query (`# CQ 1.3: …`), so they are tested and released with the others.
+- **CQ-I 1 is an illustration** (§5): it reads the discipline through the class hierarchy, which needs a reasoner, so it is not a recorded query; the text gives the pattern for a store without one.
+
+### v0.19 (draft)
 
 Changes from v0.18, made when the images a model sees were modelled for UC-01 ([#239](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/239), decided on [Discussion #235](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/235)). MAJOR in substance (a requirement amended, attributes, relations and a competency question added); the number stays in the 0.x series because the document is still a draft:
 

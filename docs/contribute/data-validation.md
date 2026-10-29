@@ -103,8 +103,8 @@ the checks pins one version of them, so a later change to a shape or a query nev
 
 Point at a file, such as `https://w3id.org/adiro/checks/1.0.0/manifest.json`, never at the bare version address. The queries are
 written once, in the ORSD: the tests read them there, and `scripts/export_checks.py` copies each block whose first comment line
-names it (`# CQ 10.1: …`, `# Promotion: …`) into its own file. A SPARQL block with no such line is an illustration and is not
-released.
+names it (`# CQ 10.1: …`, `# Promotion: …`) into its own file, and a test runs each of them. A SPARQL block with no such line is
+an illustration and is not released: in the UC-01 ORSD, only CQ-I 1, which needs a reasoner.
 
 **What a version number means.** The checks follow SemVer, read from the point of view of the data being checked:
 

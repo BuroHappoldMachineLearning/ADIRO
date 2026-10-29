@@ -128,11 +128,12 @@ A release is made by hand:
    `## [<version>] — <date>`, choosing the version by the rules above, and merge it.
 2. **Publish a GitHub Release** with the tag `checks-v<version>` on that merge commit
    (`gh release create checks-v1.0.0 --target main --title "checks 1.0.0" --notes "See changelogs/checks.md"`).
-3. **The rest is automatic.** `backup-version.yml` checks that `changelogs/checks.md` at the tag has the section, exports the
-   checks as they are at the tag into `versions/checks/<version>/` with `scripts/export_checks.py`, commits the snapshot, starts
+3. **The rest is automatic.** `backup-version.yml` checks that `changelogs/checks.md` at the tag has the dated section, exports
+   the checks as they are at the tag into `versions/checks/<version>/` with the tag's own `scripts/export_checks.py`, commits the snapshot, starts
    the docs deploy, which serves everything under `versions/checks/` at `https://w3id.org/adiro/checks/<version>/`, and sets the
    Release notes from the changelog section. A failed run is reported by the release-snapshot alert like a module's, and
-   `gh workflow run backup-version.yml -f tag=checks-v<version>` repairs it.
+   `gh workflow run backup-version.yml -f tag=checks-v<version>` repairs it. A snapshot that exists is never rebuilt: a repair
+   only redeploys it and resets the notes, so a pinned release does not change.
 
 The snapshot never holds a file named `checks.ttl`: the scripts that scan `versions/` read `versions/<name>/<version>/<name>.ttl` as a
 module release.

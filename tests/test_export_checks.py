@@ -79,6 +79,9 @@ def test_a_checks_tag_is_snapshotted_from_the_tag_and_published_whole():
     backup = (ROOT / ".github" / "workflows" / "backup-version.yml").read_text(encoding="utf-8")
     assert 'if [ "$MODULE" = "checks" ]' in backup
     assert "scripts/export_checks.py" in backup and "--root" in backup and "--notes" in backup
+    # a published release is never rebuilt, the tag's own script exports it, and the release must be dated
+    assert '[ -f "$DEST/manifest.json" ]' in backup and '$RUNNER_TEMP/tagged/scripts/export_checks.py' in backup
+    assert "[0-9]{4}-[0-9]{2}-[0-9]{2}" in backup
     deploy = (ROOT / ".github" / "workflows" / "generate-deploy-docs.yml").read_text(encoding="utf-8")
     assert "-path 'versions/checks/*'" in deploy  # the queries and the manifest, not only the .ttl files
 
