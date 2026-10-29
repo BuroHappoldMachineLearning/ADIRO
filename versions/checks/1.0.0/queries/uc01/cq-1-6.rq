@@ -1,0 +1,10 @@
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+
+# CQ 1.6: the layouts whose scale cannot be determined
+SELECT ?layout WHERE {
+  ?sheet  a metadata:DrawingSheet ;
+          metadata:contains ?layout .
+  ?layout a metadata:Layout .
+  FILTER NOT EXISTS { ?layout (metadata:layoutScale|metadata:hasScale)  ?own }
+  FILTER NOT EXISTS { ?sheet  (metadata:drawingScale|metadata:hasScale) ?nominal }
+}

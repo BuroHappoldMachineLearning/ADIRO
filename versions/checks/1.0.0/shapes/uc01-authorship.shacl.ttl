@@ -1,0 +1,30 @@
+# UC-01 authorship rule (#179).
+#
+# A drawing must have an author. The ontology cannot say so: under the open-world assumption a minimum cardinality
+# on isAuthoredBy would infer an author nobody extracted instead of reporting that none was recorded (#84). So the rule
+# is a closed-world check on DATA, and it is the answer to competency question CQ 4.4 of the UC-01 ORSD ("which drawings
+# have no recorded author?"). What is read here is documented in docs/contribute/data-validation.md.
+#
+# A drawing that records no author of its own is read as authored by the authors of its revisions, so an author on any
+# revision satisfies the rule (the path below). A drawing's own author is not replaced by a revision's: this is a reading
+# convention, not an entailment.
+#
+# Only the author is required. A drawing may or may not have been checked or approved, so a checker and an approver are
+# optional and no rule reports their absence.
+#
+# Severity: sh:Warning. A drawing with no recorded author is incomplete, not malformed, and the report cannot say why
+# (the extraction missed it, or the drawing names none): telling those apart is the vocabulary of #187.
+
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix metadata: <https://w3id.org/adiro/adiro_drawing_metadata#> .
+@prefix dv: <https://w3id.org/adiro/data-validation/uc01-authorship#> .
+
+dv:DrawingAuthor a sh:NodeShape ;
+    sh:targetClass metadata:DrawingSheet ;
+    sh:severity sh:Warning ;
+    sh:property [
+        sh:path [ sh:alternativePath ( metadata:isAuthoredBy ( metadata:hasRevision metadata:isAuthoredBy ) ) ] ;
+        sh:severity sh:Warning ;  # a property shape does not inherit the severity of its node shape
+        sh:minCount 1 ;
+        sh:message "A drawing has at least one recorded author."
+    ] .

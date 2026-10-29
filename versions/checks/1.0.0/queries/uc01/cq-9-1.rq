@@ -1,0 +1,11 @@
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+
+# CQ 9.1: the file and the page of a drawing
+SELECT ?fileName ?pageNumber WHERE {
+  ?drawing metadata:drawingIdentifier "ST-101" ;
+           metadata:isOnPage          ?page .
+  ?page aprov:pageNumber ?pageNumber ;
+        aprov:belongsToFile ?file .
+  ?file aprov:fileName ?fileName .
+}

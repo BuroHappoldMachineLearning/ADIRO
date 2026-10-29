@@ -1,0 +1,13 @@
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+
+# CQ 9.5: where the file of a drawing was obtained from, following the files it was made from
+SELECT ?file ?origin ?sourceLocation ?sourcePage WHERE {
+  ?drawing metadata:drawingIdentifier "ST-101" ;
+           metadata:isOnPage          ?page .
+  ?page aprov:belongsToFile ?file .
+  ?file prov:wasDerivedFrom* ?origin .
+  ?origin aprov:sourceLocation ?sourceLocation .
+  OPTIONAL { ?origin aprov:sourcePage ?sourcePage }
+}

@@ -1,0 +1,12 @@
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+
+# CQ 10.2: the ADIRO versions each extraction run used
+SELECT DISTINCT ?run ?started ?version WHERE {
+  ?step a aprov:InferenceMeta ;
+        dcterms:isPartOf ?run .
+  ?run prov:used ?version .
+  FILTER(REGEX(STR(?version), "^https://w3id[.]org/adiro/[a-z_]+/[0-9]+[.][0-9]+[.][0-9]+$"))
+  OPTIONAL { ?run prov:startedAtTime ?started }
+}

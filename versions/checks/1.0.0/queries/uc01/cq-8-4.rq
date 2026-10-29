@@ -1,0 +1,10 @@
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+
+# CQ 8.4: the drawings filed in another package than their title block names
+SELECT ?drawing ?named ?filed WHERE {
+  ?titleblock a metadata:Titleblock ;
+              metadata:assertsMetadataFor ?drawing ;
+              metadata:assertsPackage     ?named .
+  ?drawing metadata:belongsToPackage ?filed .
+  FILTER (?named != ?filed)
+}

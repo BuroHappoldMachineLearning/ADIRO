@@ -1,0 +1,56 @@
+# In a public release, the addresses ADIRO's terms record are on public hosts (#229).
+#
+# Whether an address is confidential is a property of the value, not of the term: an organisation's internal file has its
+# internal storage as its sourceLocation, and a public file copied into that storage has the internal address as a
+# storageLocation. Both are right in the organisation's own data, and neither belongs in data it publishes. So every
+# address recorded by an ADIRO term (sourceLocation, sourcePage, storageLocation, and acceptedUnder, which names a policy
+# or a protocol version) must be on a host of an ALLOWLIST of public hosts before the data is released. An allowlist, not
+# a denylist, so that no internal host name has to be written anywhere.
+#
+# The allowlist is not in this repository: whoever runs the release supplies it, and scripts/validate_data.py adds it to
+# the data graph as dvr:PublicHost nodes with a dvr:host string, which the query below reads (any dvr: triple already in
+# the data is dropped first, so the data cannot extend its own allowlist). A host allows its subdomains ("loc.gov" allows
+# "tile.loc.gov"). An address that is not a URL whose host is plainly written (a file path, a backslash, a space or a line
+# break in it) is never public.
+#
+# Scope: only the values of these ADIRO terms. The IRIs a pipeline mints for its individuals, and any other literal in its
+# export, are the publication step's to check; it mints IRIs that are not storage addresses (docs/contribute/data-validation.md).
+#
+# This file is in data-validation/release/, so it runs only for a release (validate_data.py --public-hosts FILE); the
+# organisation's own data is checked without it.
+#
+# Severity: sh:Violation. A non-public address in released data is a leak, not an incompleteness: the release must drop
+# it before publishing.
+
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .
+@prefix dvr: <https://w3id.org/adiro/data-validation/release#> .
+
+dvr: sh:declare
+    [ sh:prefix "aprov" ; sh:namespace "https://w3id.org/adiro/adiro_provenance#"^^xsd:anyURI ] ,
+    [ sh:prefix "dvr" ; sh:namespace "https://w3id.org/adiro/data-validation/release#"^^xsd:anyURI ] .
+
+dvr:PublicLocations a sh:NodeShape ;
+    sh:targetSubjectsOf aprov:sourceLocation , aprov:sourcePage , aprov:storageLocation , aprov:acceptedUnder ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Released data names only addresses on a public host: {?value} is not on the allowlist." ;
+        sh:prefixes dvr: ;
+        sh:select """
+            SELECT $this ?path ?value WHERE {
+                $this ?path ?value .
+                FILTER (?path IN (aprov:sourceLocation, aprov:sourcePage, aprov:storageLocation, aprov:acceptedUnder))
+                # The whole value must be scheme://[user@]host[tail]; the host is group 2, lower-cased. Only the characters
+                # a URL may contain are allowed, so a backslash, a space or a line break gives no match and the host "",
+                # which no allowed host matches (fail closed).
+                BIND ("^[A-Za-z][A-Za-z0-9+.-]*://([A-Za-z0-9._~!$&'()*+,;=%:-]*@)?([A-Za-z0-9.-]+)([:/?#][]A-Za-z0-9._~:/?#[@!$&'()*+,;=%-]*)?$" AS ?url)
+                BIND (IF(REGEX(STR(?value), ?url), LCASE(REPLACE(STR(?value), ?url, "$2")), "") AS ?host)
+                FILTER NOT EXISTS {
+                    ?allowed a dvr:PublicHost ; dvr:host ?h .
+                    FILTER (?host = LCASE(STR(?h)) || STRENDS(?host, CONCAT(".", LCASE(STR(?h)))))
+                }
+            }
+        """ ;
+    ] .

@@ -1,0 +1,7 @@
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+
+# CQ 1.5: the drawings that state no scale
+SELECT ?sheet WHERE {
+  ?sheet a metadata:DrawingSheet .
+  FILTER NOT EXISTS { ?sheet (metadata:drawingScale|metadata:hasScale) ?scale }
+}

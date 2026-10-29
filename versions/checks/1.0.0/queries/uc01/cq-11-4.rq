@@ -1,0 +1,18 @@
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+
+# CQ 11.4: the pages a region detection searched, on which no title block was detected
+SELECT DISTINCT ?file ?number WHERE {
+  ?step aprov:hasStepKind aprov:RegionDetection ;
+        prov:used|aprov:inferredFrom ?page .
+  FILTER NOT EXISTS { ?step aprov:errorMessage ?error }
+  ?page aprov:belongsToFile ?file ;
+        aprov:pageNumber    ?number .
+  FILTER NOT EXISTS {
+    ?drawing metadata:isOnPage ?page ;
+             metadata:contains ?titleblock .
+    ?titleblock a metadata:Titleblock .
+  }
+}

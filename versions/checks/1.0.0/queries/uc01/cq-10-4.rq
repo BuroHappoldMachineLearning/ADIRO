@@ -1,0 +1,20 @@
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX geom:     <https://w3id.org/adiro/adiro_geometry#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+
+# CQ 10.4: the image of the page that the step behind each value of a field saw
+SELECT ?assertion ?value ?step ?frame ?dpi ?region ?box ?image ?location WHERE {
+  ?drawing metadata:drawingIdentifier "ST-101" .
+  ?assertion aprov:assertedAbout    ?drawing ;
+             aprov:assertsFieldKind metadata:DrawingTitleField ;
+             aprov:hasInferenceMeta ?step .
+  OPTIONAL { ?assertion aprov:hasLiteralValue|aprov:hasValueEntity ?value }
+  OPTIONAL {
+    ?step prov:used|aprov:inferredFrom ?frame .
+    ?frame a geom:CoordinateFrame .
+    OPTIONAL { ?frame geom:resolutionDpi ?dpi }
+    OPTIONAL { ?frame geom:coversRegion ?region . OPTIONAL { ?region geom:bboxXYXY ?box } }
+    OPTIONAL { ?image geom:imageOf ?frame . OPTIONAL { ?image aprov:storageLocation ?location } }
+  }
+}

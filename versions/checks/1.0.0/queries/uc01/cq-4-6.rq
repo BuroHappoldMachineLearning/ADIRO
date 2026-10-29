@@ -1,0 +1,23 @@
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+
+# CQ 4.6: why a drawing has no recorded author, one row per assertion about it or one of its revisions
+SELECT ?drawing ?subject ?assertion ?value ?outcome ?acceptance ?reason WHERE {
+  ?drawing a metadata:DrawingSheet .
+  FILTER NOT EXISTS { ?drawing metadata:isAuthoredBy|(metadata:hasRevision/metadata:isAuthoredBy) ?person }
+  OPTIONAL {
+    ?drawing (metadata:hasRevision)? ?subject .
+    ?assertion aprov:assertedAbout ?subject ; aprov:assertsFieldKind metadata:DrawnByField .
+    FILTER NOT EXISTS { ?newer aprov:supersedes+ ?assertion ; aprov:hasAcceptance aprov:Accepted }
+    OPTIONAL { ?assertion aprov:hasLiteralValue|aprov:hasValueEntity ?value }
+    OPTIONAL { ?assertion aprov:hasOutcome ?o }
+    OPTIONAL { ?assertion aprov:hasAcceptance ?s }
+    BIND (STRAFTER(STR(?o), "#") AS ?outcome)
+    BIND (STRAFTER(STR(COALESCE(?s, aprov:Pending)), "#") AS ?acceptance)
+  }
+  BIND (IF(!BOUND(?assertion), "NotProcessed",
+        IF(?acceptance = "Rejected", "Rejected",
+        IF(BOUND(?outcome), ?outcome,
+        IF(!BOUND(?value), "NoValue",
+        IF(?acceptance = "Accepted", "AcceptedNotPromoted", "Pending"))))) AS ?reason)
+}

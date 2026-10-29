@@ -1,0 +1,27 @@
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+
+# CQ 11.3: each page of a file, the runs that processed it, and the outcome of its reading
+SELECT DISTINCT ?number ?run ?status WHERE {
+  ?file aprov:fileName "A101-ground-floor.pdf" .
+  ?page aprov:belongsToFile ?file ;
+        aprov:pageNumber    ?number .
+  OPTIONAL {
+    ?step a aprov:InferenceMeta ;
+          prov:used|aprov:inferredFrom ?page ;
+          dcterms:isPartOf ?run .
+    OPTIONAL { ?step aprov:errorMessage ?stepError }
+  }
+  OPTIONAL {
+    ?reading aprov:isReadingOf ?page ;
+             aprov:hasInferenceMeta/dcterms:isPartOf ?run .
+    OPTIONAL { ?reading aprov:readText ?text }
+    OPTIONAL { ?reading aprov:hasReadingOutcome ?o }
+  }
+  BIND (IF(!BOUND(?run), "NotProcessed",
+        IF(BOUND(?o), STRAFTER(STR(?o), "#"),
+        IF(BOUND(?stepError), "Failed",
+        IF(BOUND(?text), "Read", "Processed")))) AS ?status)
+}
+ORDER BY ?number ?run

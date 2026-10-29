@@ -1,0 +1,47 @@
+# Rules for a text reading (#238): what a step read from a region or a page.
+#
+# A reading reads one thing, and holds its text or, when it read none, one outcome (Empty, Illegible or Failed), never
+# both and never neither: a reading with neither says nothing, and one with both cannot be read unambiguously. The
+# ontology cannot say so under the open-world assumption. What is read here is documented in
+# docs/contribute/data-validation.md and the vocabulary is that of adiro_provenance.
+#
+# Severity: sh:Violation. Each condition is structural.
+
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .
+@prefix dv: <https://w3id.org/adiro/data-validation/readings#> .
+
+dv:Reading a sh:NodeShape ;
+    sh:targetClass aprov:TextReading ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path aprov:isReadingOf ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A reading reads exactly one region or page." ;
+        sh:severity sh:Violation ;
+    ] , [
+        sh:path aprov:readText ;
+        sh:maxCount 1 ;
+        sh:or ( [ sh:datatype xsd:string ] [ sh:datatype rdf:langString ] ) ;
+        sh:message "A reading has at most one text, a string with or without a language tag." ;
+        sh:severity sh:Violation ;
+    ] , [
+        sh:path aprov:hasReadingOutcome ;
+        sh:maxCount 1 ;
+        sh:in ( aprov:Empty aprov:Illegible aprov:Failed ) ;
+        sh:message "A reading has at most one outcome: Empty, Illegible or Failed." ;
+        sh:severity sh:Violation ;
+    ] .
+
+# A reading has its text or an outcome: exactly one of the two.
+dv:TextOrOutcome a sh:NodeShape ;
+    sh:targetClass aprov:TextReading ;
+    sh:severity sh:Violation ;
+    sh:message "A reading has a text or an outcome, never both and never neither." ;
+    sh:xone (
+        [ sh:property [ sh:path aprov:readText ; sh:minCount 1 ] ]
+        [ sh:property [ sh:path aprov:hasReadingOutcome ; sh:minCount 1 ] ]
+    ) .

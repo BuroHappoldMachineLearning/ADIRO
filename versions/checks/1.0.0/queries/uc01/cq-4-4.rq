@@ -1,0 +1,7 @@
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+
+# CQ 4.4: the drawings with no recorded author (a revision's author counts when the drawing records none)
+SELECT ?drawing WHERE {
+  ?drawing a metadata:DrawingSheet .
+  FILTER NOT EXISTS { ?drawing metadata:isAuthoredBy|(metadata:hasRevision/metadata:isAuthoredBy) ?person }
+}
