@@ -138,7 +138,7 @@ One page of one DrawingFile, counted from 1; a single-page or raster file has pa
 
 ### Inference Meta {#InferenceMeta}
 
-Provenance metadata for an inferred or extracted assertion: what produced it (inferredBy / inferredWith), the source it was derived from (inferredFrom), and when (inferredAt). Modelled as a separate object so several assertions can share one inference record and so provenance can be added without touching the value. Analogous to DANO's DrawingElementMeta, but aligned to PROV-O: this is the prov:Activity that produced the assertion, NOT a prov:Entity. PROV-O declares those two owl:disjointWith, so the distinction is load-bearing rather than stylistic. In an extraction run, each step (detecting a region, reading text, extracting fields) is an InferenceMeta with the model that step used, and is part of the run (dcterms:isPartOf), itself a prov:Activity; the Configuration a step used (a prompt, rendering settings) is recorded with prov:used.
+Provenance metadata for an inferred or extracted assertion: what produced it (inferredBy / inferredWith), the source it was derived from (inferredFrom), and when (inferredAt). Modelled as a separate object so several assertions can share one inference record and so provenance can be added without touching the value. Analogous to DANO's DrawingElementMeta, but aligned to PROV-O: this is the prov:Activity that produced the assertion, NOT a prov:Entity. PROV-O declares those two owl:disjointWith, so the distinction is load-bearing rather than stylistic. In an extraction run, each step (detecting a region, reading text, extracting fields) is an InferenceMeta with the model that step used, and is part of the run (dcterms:isPartOf), itself a prov:Activity; the Configuration a step used (a prompt, rendering settings) is recorded with prov:used. A step may record when it started (prov:startedAtTime) as well as when it ended (inferredAt), so its processing time is known; a run records prov:endedAtTime only when it completed its work, and a run that continues an interrupted one is prov:wasInformedBy it.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#InferenceMeta`
 - **Sub class of:** [Activity](#Activity)
@@ -386,6 +386,12 @@ Typing stub for the PROV-O term of the same name, declared locally so this modul
 
 - **IRI:** `http://www.w3.org/ns/prov#wasGeneratedBy`
 
+### wasInformedBy {#wasInformedBy}
+
+Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range prov:Activity). ADIRO uses it between two extraction runs: a run that continues an interrupted one was informed by it, because it used what the earlier run recorded to decide what to skip. It links two runs, each a whole; a step is part of its run (dcterms:isPartOf), not informed by it.
+
+- **IRI:** `http://www.w3.org/ns/prov#wasInformedBy`
+
 ## Datatype Properties
 
 ### acceptedAt {#acceptedAt}
@@ -581,7 +587,7 @@ The page at the file's origin that describes it, such as a catalogue record or a
 
 ### startedAtTime {#startedAtTime}
 
-Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range xsd:dateTime). ADIRO uses it for when an extraction run started; its steps record when each ended with inferredAt.
+Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range xsd:dateTime). ADIRO uses it for when an extraction run started, and for when a step of a run started: a step records when it ended with inferredAt, so a step that records both has a processing time, the difference.
 
 - **IRI:** `http://www.w3.org/ns/prov#startedAtTime`
 

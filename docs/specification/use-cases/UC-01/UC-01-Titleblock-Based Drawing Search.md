@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.20 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.21 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -259,12 +259,14 @@ Each FR describes one representational capability the ontology must have, in imp
 
 **FR 10 — How a Value Was Produced** *(Added in [v0.17](#9-version-history).)*
 
-> The ontology MUST say which run of an extraction produced a recorded value, which step of that run and which model, with which configuration, what image of the page it saw (its resolution, and the region when it saw only part of the page), and which versions of the ontology the run used, such that a value can be traced to the process that produced it and two runs can be compared. *(Amended in [v0.19](#9-version-history).)*
+> The ontology MUST say which run of an extraction produced a recorded value, which step of that run and which model, with which configuration, what image of the page it saw (its resolution, and the region when it saw only part of the page), and which versions of the ontology the run used; and whether each run completed its work or was interrupted, which earlier run it continues, and when each run and each step started and ended; such that a value can be traced to the process that produced it, two runs can be compared, and the time an extraction took can be measured. *(Amended in [v0.19](#9-version-history) and [v0.21](#9-version-history).)*
 
 - Source: UC-01 (every value read from a title block is produced by an extraction, and a reviewer must be able to see how)
-- Derived terms: `aprov:InferenceMeta` (REUSE: a step), `aprov:inferredWith` (REUSE: the model of a step), `aprov:Configuration` and `aprov:configurationContent` (NEW), with the typing stubs `dcterms:isPartOf` (NEW: a step is part of its run), `prov:startedAtTime` (NEW: when a run started) and `prov:used` (REUSE: the configuration and the frame a step used, and the ontology versions a run used); `geom:CoordinateFrame` (REUSE: the image a step saw), `geom:resolutionDpi`, `geom:coversRegion` and `geom:imageOf` (NEW)
+- Derived terms: `aprov:InferenceMeta` (REUSE: a step), `aprov:inferredWith` (REUSE: the model of a step), `aprov:Configuration` and `aprov:configurationContent` (NEW), with the typing stubs `dcterms:isPartOf` (NEW: a step is part of its run), `prov:startedAtTime` (NEW: when a run started) and `prov:used` (REUSE: the configuration and the frame a step used, and the ontology versions a run used); `geom:CoordinateFrame` (REUSE: the image a step saw), `geom:resolutionDpi`, `geom:coversRegion` and `geom:imageOf` (NEW); `prov:wasInformedBy` (NEW typing stub: a run that continues an interrupted one), `prov:endedAtTime` (REUSE: when a run completed) and `aprov:inferredAt` (REUSE: when a step ended)
 
 > **Design note — runs and steps.** An extraction run is a `prov:Activity`. Each of its steps (detecting the title block, reading its text, extracting the fields) is an `InferenceMeta` with the model it used (`inferredWith`), and is part of the run (`dcterms:isPartOf`). A value's assertion points to the step that produced it (`hasInferenceMeta`). What the step used besides its model is a `Configuration` (`prov:used`): a prompt, rendering settings, size limits, kept as text whose format ADIRO does not model, with no credentials in it. A configuration is identified by its content, so one used on every page of a run is one individual. The recommended IRI is built from a hash of the content: the SHA-256 of the UTF-8 bytes of `configurationContent` exactly as recorded, with no normalisation, in lowercase hexadecimal, appended to the producer's own namespace (for example `<producer namespace>/configuration/sha256-9f2c…`). So that the same configuration gives the same text, and the same IRI, whichever producer writes it, the producer writes the text with `\n` line endings and no trailing newline, and writes settings as JSON with sorted keys and no insignificant whitespace. The hash is not recorded: the content is, and anyone can compute it again. Where a configuration varies from page to page, the `InferenceMeta` of that page records it, so one step of a run can be several `InferenceMeta` with the same model; two runs are compared by run and model, not by the IRI of a step. The run records the ADIRO versions it used as `prov:used` their version IRIs (for example `<https://w3id.org/adiro/adiro_provenance/2.1.0>`), written in that form, which is how a query tells them from anything else the run used. The resolution a page was rendered at is not a configuration: coordinates depend on it, so it is recorded on the coordinate frame it gives. Every image a step feeds to its model is a pixel `CoordinateFrame` of the page with its resolution (`resolutionDpi`), and a crop is a frame limited to a region (`coversRegion`, a `BoundingBox` in another frame of the page); the step records the frame it used (`prov:used`), so the data says what each model saw without the image being kept. Between a frame and the page there is only a uniform scale, so no transform is recorded ([#93](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/93) holds the general case). An image that is kept, for a viewer, is a `DrawingFile` that is an image of its frame (`imageOf`), with its `contentHash`, `mediaType` and a `storageLocation` that may be relative to the root of the dataset. *(Amended in [v0.19](#9-version-history).)* UC-03's provenance profile ([#96](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/96)) uses the same pattern. *(Added in [v0.17](#9-version-history).)*
+
+> **Design note — interrupted runs and extraction jobs.** A long extraction can be interrupted by a cause outside it (a machine stops, a connection is lost) and is then restarted as a new run, which skips the pages the interrupted run had already recorded. The new run records that it continues the earlier one with `prov:wasInformedBy`: it used what that run recorded to decide what to skip. That links two runs, each a whole; a step stays part of its run (`dcterms:isPartOf`). A run records `prov:startedAtTime`, and `prov:endedAtTime` **only when it completed its work**, so a run with no end was interrupted or is still running, and the time of its last recorded work is the latest `inferredAt` of its steps. This reads the data as written, as the other UC-01 queries read an absence. An **extraction job** is a first run, which continues no other run, with every run that continues it, directly or through others. A step records when it ended (`inferredAt`) and may record when it started (`prov:startedAtTime`); the difference is its processing time. A job's elapsed time is the sum of its runs' durations (an interrupted run measured to its last recorded step), which leaves out the gaps between runs, and its processing time is the sum of the durations of the steps that record both times, which also leaves out the time a run spent between steps. A shape checks that a run or a step has at most one start, not after its end (`data-validation/runs.shacl.ttl`). *(Added in [v0.21](#9-version-history).)*
 
 ---
 
@@ -508,6 +510,9 @@ SELECT ?file ?origin ?sourceLocation ?sourcePage WHERE {
 | CQ 10.2 | Which versions of the ADIRO ontologies did each extraction run use, and when did it start? *(Added in [v0.17](#9-version-history).)* |
 | CQ 10.3 | For the title of drawing "ST-101": which assertions were made, by which model or person, when, and how was each reviewed (pending, accepted, rejected, superseded by a correction)? *(Added in [v0.18](#9-version-history).)* |
 | CQ 10.4 | For the title of drawing "ST-101": what image did the step that read each value see: at which resolution, which region of the page, and where is the image kept, if it is? *(Added in [v0.19](#9-version-history).)* |
+| CQ 10.5 | Which runs were interrupted or are still running (no end recorded), when was their last recorded work, and which run continued them? *(Added in [v0.21](#9-version-history).)* |
+| CQ 10.6 | Which runs make up each extraction job (a first run and the runs that continue it), with each run's start, its end or last recorded work, and whether it completed? *(Added in [v0.21](#9-version-history).)* |
+| CQ 10.7 | For each extraction job: how many runs, its elapsed time (the sum of its runs' durations) and its processing time (the sum of its steps' durations), in seconds? *(Added in [v0.21](#9-version-history).)* |
 
 ```sparql
 PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
@@ -599,6 +604,143 @@ SELECT ?assertion ?value ?step ?frame ?dpi ?region ?box ?image ?location WHERE {
 ```
 
 A frame is recognised by its type, so the page, the configuration and the model, which the step also used, are not taken for one. A frame with no region shows the whole page; `?box` is the region in the coordinates of its own frame (usually `page_display_pt`). A frame whose image was not kept has no `?image`: what the model saw is recorded either way. A value whose step recorded no frame (typed by a person, or read by a step that does not record one) is listed with the frame columns empty, as CQ 10.1 lists a value with no run.
+
+```sparql
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+
+# CQ 10.5: the runs with no end recorded, their last recorded work, and the run that continued each
+SELECT DISTINCT ?run ?started ?lastWork ?continuedBy WHERE {
+  ?step a aprov:InferenceMeta ;
+        dcterms:isPartOf ?run .
+  FILTER NOT EXISTS { ?run prov:endedAtTime ?ended }
+  OPTIONAL { ?run prov:startedAtTime ?started }
+  OPTIONAL {
+    SELECT ?run (MAX(?at) AS ?lastWork) WHERE {
+      ?s a aprov:InferenceMeta ;
+         dcterms:isPartOf ?run ;
+         aprov:inferredAt ?at .
+    }
+    GROUP BY ?run
+  }
+  OPTIONAL { ?continuedBy prov:wasInformedBy ?run }
+}
+```
+
+```sparql
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+
+# CQ 10.6: the runs of each extraction job, each with its start, its end or last recorded work, and whether it completed
+SELECT DISTINCT ?job ?run ?started ?end ?completed WHERE {
+  # a job: a first run, which continues no other run, and every run that continues it, directly or through others
+  {
+    SELECT DISTINCT ?job ?run WHERE {
+      ?step a aprov:InferenceMeta ;
+            dcterms:isPartOf ?run .
+      ?run prov:wasInformedBy* ?job .
+      ?jobStep a aprov:InferenceMeta ;
+               dcterms:isPartOf ?job .
+      FILTER NOT EXISTS {
+        ?job prov:wasInformedBy ?earlier .
+        ?earlierStep a aprov:InferenceMeta ;
+                     dcterms:isPartOf ?earlier .
+      }
+    }
+  }
+  OPTIONAL { ?run prov:startedAtTime ?started }
+  OPTIONAL { ?run prov:endedAtTime ?ended }
+  OPTIONAL {
+    SELECT ?run (MAX(?at) AS ?last) WHERE {
+      ?s a aprov:InferenceMeta ;
+         dcterms:isPartOf ?run ;
+         aprov:inferredAt ?at .
+    }
+    GROUP BY ?run
+  }
+  BIND (COALESCE(?ended, ?last) AS ?end)
+  BIND (BOUND(?ended) AS ?completed)
+}
+ORDER BY ?job ?started
+```
+
+```sparql
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+# CQ 10.7: the runs, the elapsed time and the processing time of each extraction job, in seconds
+SELECT ?job (COUNT(DISTINCT ?run) AS ?runs)
+       (SUM(IF(?role = "runEnd", ?seconds, IF(?role = "runStart", -?seconds, 0))) AS ?elapsedSeconds)
+       (SUM(IF(?role = "stepEnd", ?seconds, IF(?role = "stepStart", -?seconds, 0))) AS ?processingSeconds)
+WHERE {
+  {
+    SELECT DISTINCT ?job ?run WHERE {
+      ?step a aprov:InferenceMeta ;
+            dcterms:isPartOf ?run .
+      ?run prov:wasInformedBy* ?job .
+      ?jobStep a aprov:InferenceMeta ;
+               dcterms:isPartOf ?job .
+      FILTER NOT EXISTS {
+        ?job prov:wasInformedBy ?earlier .
+        ?earlierStep a aprov:InferenceMeta ;
+                     dcterms:isPartOf ?earlier .
+      }
+    }
+  }
+  # one row per time that counts, signed by its role: a run's start and its end (its last recorded step when it has
+  # no end), for a run that records both; and a step's start and end, for a step that records both
+  {
+    ?run prov:startedAtTime ?t .
+    FILTER (EXISTS { ?run prov:endedAtTime ?e } || EXISTS { ?x dcterms:isPartOf ?run ; aprov:inferredAt ?a })
+    BIND ("runStart" AS ?role)
+  } UNION {
+    ?run prov:startedAtTime ?runStart .
+    OPTIONAL { ?run prov:endedAtTime ?ended }
+    OPTIONAL {
+    SELECT ?run (MAX(?at) AS ?last) WHERE {
+      ?s a aprov:InferenceMeta ;
+         dcterms:isPartOf ?run ;
+         aprov:inferredAt ?at .
+    }
+    GROUP BY ?run
+  }
+    BIND (COALESCE(?ended, ?last) AS ?t)
+    FILTER (BOUND(?t))
+    BIND ("runEnd" AS ?role)
+  } UNION {
+    ?s a aprov:InferenceMeta ;
+       dcterms:isPartOf ?run ;
+       prov:startedAtTime ?t ;
+       aprov:inferredAt ?stepEnd .
+    BIND ("stepStart" AS ?role)
+  } UNION {
+    ?s a aprov:InferenceMeta ;
+       dcterms:isPartOf ?run ;
+       prov:startedAtTime ?stepStart ;
+       aprov:inferredAt ?t .
+    BIND ("stepEnd" AS ?role)
+  }
+  # the time in seconds from a fixed origin, in UTC: days from the date (a Julian day number), then the time of day,
+  # less the time zone offset; a time with no zone is read as UTC
+  BIND (IF(MONTH(?t) <= 2, 1, 0) AS ?shift)
+  BIND (YEAR(?t) + 4800 - ?shift AS ?y)
+  BIND (MONTH(?t) + 12 * ?shift - 3 AS ?m)
+  BIND (TZ(?t) AS ?zone)
+  BIND ((DAY(?t) + FLOOR((153 * ?m + 2) / 5) + 365 * ?y + FLOOR(?y / 4) - FLOOR(?y / 100) + FLOOR(?y / 400)) * 86400
+        + HOURS(?t) * 3600 + MINUTES(?t) * 60 + SECONDS(?t)
+        - IF(?zone = "Z" || ?zone = "", 0,
+             IF(STRSTARTS(?zone, "-"), -1, 1)
+               * (xsd:integer(SUBSTR(?zone, 2, 2)) * 3600 + xsd:integer(SUBSTR(?zone, 5, 2)) * 60))
+        AS ?seconds)
+}
+GROUP BY ?job
+```
+
+The queries read the data as written, with no inference. A run is recognised by its steps, as in CQ 10.2, so a step, which also records `prov:startedAtTime`, is never taken for a run, and the first run of a job is one that continues no other run. CQ 10.7 subtracts times with standard functions only, because SPARQL 1.1 defines no subtraction of two `xsd:dateTime` values: each time becomes a number of seconds in UTC, and each duration is an end less a start. A run that records no start, and a step that records only its end, count in neither sum.
 
 ### CQ Group 11 — Text Read from a Drawing (validates FR 11)
 
@@ -879,6 +1021,8 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `aprov:inferredAt`, `aprov:hasAcceptance`, `aprov:supersedes` | `adiro_provenance` | REUSE | CQ 10.3 | FR 10 |
 | `geom:CoordinateFrame`, `geom:bboxXYXY`, `aprov:storageLocation` | `adiro_geometry`, `adiro_provenance` | REUSE | CQ 10.4 | FR 10 |
 | `geom:resolutionDpi`, `geom:coversRegion`, `geom:imageOf` | `adiro_geometry` | NEW | CQ 10.4 | FR 10 |
+| `prov:wasInformedBy` (typing stub) | `adiro_provenance` | NEW | CQ 10.5, CQ 10.6, CQ 10.7 | FR 10 |
+| `prov:endedAtTime` (typing stub), `prov:startedAtTime` on a step, `aprov:inferredAt` | `adiro_provenance` | REUSE | CQ 10.5, CQ 10.6, CQ 10.7 | FR 10 |
 | `aprov:TextReading`, `aprov:isReadingOf`, `aprov:readText`, `aprov:hasReadingOutcome`, `aprov:errorMessage` | `adiro_provenance` | NEW | CQ 11.1, CQ 11.2, CQ 11.3 | FR 11 |
 | `aprov:StepKind` (`RegionDetection`, `TextRecognition`, `FieldExtraction`), `aprov:hasStepKind` | `adiro_provenance` | NEW | CQ 11.4 | FR 11 |
 | `aprov:Configuration`, `aprov:configurationContent` | `adiro_provenance` | NEW | CQ 10.1 | FR 10 |
@@ -971,7 +1115,15 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.20 (current — draft)
+### v0.21 (current — draft)
+
+Changes from v0.20, made when interrupted runs and their continuation were modelled for UC-01 ([#249](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/249)). MAJOR in substance (a requirement amended and competency questions added); the number stays in the 0.x series because the document is still a draft:
+
+- **FR 10 amended** (§3): whether a run completed or was interrupted, which run it continues, and when runs and steps started and ended. A design note under FR 10 states the reading: a run records `prov:endedAtTime` only when it completed, a run that continues an interrupted one is `prov:wasInformedBy` it, a job is a first run and the runs that continue it, and a step may record its start.
+- **CQ 10.5 to CQ 10.7 added** (§4), with their queries: interrupted runs and their last recorded work, the runs of each job, and each job's elapsed and processing time.
+- **`prov:wasInformedBy` added** as a typing stub (§6); a shape checks the start and the end of runs and steps (`data-validation/runs.shacl.ttl`).
+
+### v0.20 (draft)
 
 Changes from v0.19, made when the recorded queries were released as a pinnable artefact ([#240](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/240)). MINOR: no entity, attribute, relation or competency question changes:
 
