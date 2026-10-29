@@ -87,6 +87,9 @@ The same rectangle looks different in other spaces, which is exactly why the fra
 
 Notes:
 
+- **A rendering is a frame of its own.** The raster above is a pixel `CoordinateFrame` with `resolutionDpi 150`, and a crop of
+  it is a frame that covers a region (`coversRegion`); see
+  [What a model saw](file-and-page-metadata.md#what-a-model-saw) ([#239](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/239)).
 - **We store `page_display_pt`** as the single primary representation (it matches the extraction pipeline's page
   geometry). Native-PDF and pixel values are *derived* views; record them as evidence if a downstream writer
   needs them, but do not silently interchange the coordinate-space names.

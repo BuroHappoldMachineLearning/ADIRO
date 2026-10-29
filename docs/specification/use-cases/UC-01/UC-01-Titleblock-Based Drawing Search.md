@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.18 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.19 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -142,6 +142,8 @@ Links between two entities. New properties are wired into the existing generic t
 | `belongsToFile`       | `FilePage`        | `DrawingFile`       | `adiro_provenance`       | NEW    | (top-level)             |
 | `dcterms:isPartOf`    | `InferenceMeta` (a step) | `prov:Activity` (a run) | `adiro_provenance` (typing stub) | NEW | (external) *(Added in [v0.17](#9-version-history).)* |
 | `isReadingOf`         | `TextReading`     | `Titleblock` or `FilePage` | `adiro_provenance` | NEW | (top-level) *(Added in [v0.18](#9-version-history).)* |
+| `coversRegion`        | `CoordinateFrame` (a crop) | `BoundingBox` | `adiro_geometry` | NEW | (top-level) *(Added in [v0.19](#9-version-history).)* |
+| `imageOf`             | `DrawingFile` (a kept image) | `CoordinateFrame` | `adiro_geometry` | NEW | (top-level) *(Added in [v0.19](#9-version-history).)* |
 | `hasStatusCode`       | `DrawingRevision` | `StatusCode`        | `adiro_drawing_metadata` | NEW    | `metadata:hasProperty`  |
 
 ¹ ⚠️ **Open issue (G5):** `dcommon:hasDiscipline` currently has `rdfs:domain metadata:LayoutContentType`. v0.3 proposes moving the domain to `metadata:Layout` (along with the `min 1` cardinality restriction). Discipline characterises the layout itself, not its content type — and the two are orthogonal axes (see design note below). Pending @alelom / @m-asakihattori sign-off.
@@ -257,12 +259,12 @@ Each FR describes one representational capability the ontology must have, in imp
 
 **FR 10 — How a Value Was Produced** *(Added in [v0.17](#9-version-history).)*
 
-> The ontology MUST say which run of an extraction produced a recorded value, which step of that run and which model, with which configuration, and which versions of the ontology the run used, such that a value can be traced to the process that produced it and two runs can be compared.
+> The ontology MUST say which run of an extraction produced a recorded value, which step of that run and which model, with which configuration, what image of the page it saw (its resolution, and the region when it saw only part of the page), and which versions of the ontology the run used, such that a value can be traced to the process that produced it and two runs can be compared. *(Amended in [v0.19](#9-version-history).)*
 
 - Source: UC-01 (every value read from a title block is produced by an extraction, and a reviewer must be able to see how)
-- Derived terms: `aprov:InferenceMeta` (REUSE: a step), `aprov:inferredWith` (REUSE: the model of a step), `aprov:Configuration` and `aprov:configurationContent` (NEW), with the typing stubs `dcterms:isPartOf` (NEW: a step is part of its run), `prov:startedAtTime` (NEW: when a run started) and `prov:used` (REUSE: the configuration a step used, and the ontology versions a run used)
+- Derived terms: `aprov:InferenceMeta` (REUSE: a step), `aprov:inferredWith` (REUSE: the model of a step), `aprov:Configuration` and `aprov:configurationContent` (NEW), with the typing stubs `dcterms:isPartOf` (NEW: a step is part of its run), `prov:startedAtTime` (NEW: when a run started) and `prov:used` (REUSE: the configuration and the frame a step used, and the ontology versions a run used); `geom:CoordinateFrame` (REUSE: the image a step saw), `geom:resolutionDpi`, `geom:coversRegion` and `geom:imageOf` (NEW)
 
-> **Design note — runs and steps.** An extraction run is a `prov:Activity`. Each of its steps (detecting the title block, reading its text, extracting the fields) is an `InferenceMeta` with the model it used (`inferredWith`), and is part of the run (`dcterms:isPartOf`). A value's assertion points to the step that produced it (`hasInferenceMeta`). What the step used besides its model is a `Configuration` (`prov:used`): a prompt, rendering settings, size limits, kept as text whose format ADIRO does not model, with no credentials in it. A configuration is identified by its content, so one used on every page of a run is one individual. The recommended IRI is built from a hash of the content: the SHA-256 of the UTF-8 bytes of `configurationContent` exactly as recorded, with no normalisation, in lowercase hexadecimal, appended to the producer's own namespace (for example `<producer namespace>/configuration/sha256-9f2c…`). So that the same configuration gives the same text, and the same IRI, whichever producer writes it, the producer writes the text with `\n` line endings and no trailing newline, and writes settings as JSON with sorted keys and no insignificant whitespace. The hash is not recorded: the content is, and anyone can compute it again. Where a configuration varies from page to page, the `InferenceMeta` of that page records it, so one step of a run can be several `InferenceMeta` with the same model; two runs are compared by run and model, not by the IRI of a step. The run records the ADIRO versions it used as `prov:used` their version IRIs (for example `<https://w3id.org/adiro/adiro_provenance/2.1.0>`), written in that form, which is how a query tells them from anything else the run used. The resolution a page was rendered at is not a configuration: coordinates depend on it, so it belongs with the coordinate frame ([#239](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/239)). UC-03's provenance profile ([#96](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/96)) uses the same pattern. *(Added in [v0.17](#9-version-history).)*
+> **Design note — runs and steps.** An extraction run is a `prov:Activity`. Each of its steps (detecting the title block, reading its text, extracting the fields) is an `InferenceMeta` with the model it used (`inferredWith`), and is part of the run (`dcterms:isPartOf`). A value's assertion points to the step that produced it (`hasInferenceMeta`). What the step used besides its model is a `Configuration` (`prov:used`): a prompt, rendering settings, size limits, kept as text whose format ADIRO does not model, with no credentials in it. A configuration is identified by its content, so one used on every page of a run is one individual. The recommended IRI is built from a hash of the content: the SHA-256 of the UTF-8 bytes of `configurationContent` exactly as recorded, with no normalisation, in lowercase hexadecimal, appended to the producer's own namespace (for example `<producer namespace>/configuration/sha256-9f2c…`). So that the same configuration gives the same text, and the same IRI, whichever producer writes it, the producer writes the text with `\n` line endings and no trailing newline, and writes settings as JSON with sorted keys and no insignificant whitespace. The hash is not recorded: the content is, and anyone can compute it again. Where a configuration varies from page to page, the `InferenceMeta` of that page records it, so one step of a run can be several `InferenceMeta` with the same model; two runs are compared by run and model, not by the IRI of a step. The run records the ADIRO versions it used as `prov:used` their version IRIs (for example `<https://w3id.org/adiro/adiro_provenance/2.1.0>`), written in that form, which is how a query tells them from anything else the run used. The resolution a page was rendered at is not a configuration: coordinates depend on it, so it is recorded on the coordinate frame it gives. Every image a step feeds to its model is a pixel `CoordinateFrame` of the page with its resolution (`resolutionDpi`), and a crop is a frame limited to a region (`coversRegion`, a `BoundingBox` in another frame of the page); the step records the frame it used (`prov:used`), so the data says what each model saw without the image being kept. Between a frame and the page there is only a uniform scale, so no transform is recorded ([#93](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/93) holds the general case). An image that is kept, for a viewer, is a `DrawingFile` that is an image of its frame (`imageOf`), with its `contentHash`, `mediaType` and a `storageLocation` that may be relative to the root of the dataset. *(Amended in [v0.19](#9-version-history).)* UC-03's provenance profile ([#96](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/96)) uses the same pattern. *(Added in [v0.17](#9-version-history).)*
 
 ---
 
@@ -505,6 +507,7 @@ SELECT ?file ?origin ?sourceLocation ?sourcePage WHERE {
 | CQ 10.1 | For the title of drawing "ST-101": which run produced each value recorded for it, when the run started, which step, which model or person, and with which configuration? *(Added in [v0.17](#9-version-history).)* |
 | CQ 10.2 | Which versions of the ADIRO ontologies did each extraction run use, and when did it start? *(Added in [v0.17](#9-version-history).)* |
 | CQ 10.3 | For the title of drawing "ST-101": which assertions were made, by which model or person, when, and how was each reviewed (pending, accepted, rejected, superseded by a correction)? *(Added in [v0.18](#9-version-history).)* |
+| CQ 10.4 | For the title of drawing "ST-101": what image did the step that read each value see: at which resolution, which region of the page, and where is the image kept, if it is? *(Added in [v0.19](#9-version-history).)* |
 
 ```sparql
 PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
@@ -571,6 +574,31 @@ ORDER BY ?at ?assertion
 ```
 
 Every assertion is listed, the superseded ones included, oldest first: a model's value and a person's correction that supersedes it appear one after the other, with who accepted each. An assertion with no acceptance recorded is `Pending`, as in CQ 4.6. It uses only terms that CQ 4.6 and CQ 10.1 already use.
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX geom:     <https://w3id.org/adiro/adiro_geometry#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+
+# CQ 10.4: the image of the page that the step behind each value of a field saw
+SELECT ?assertion ?value ?step ?frame ?dpi ?region ?box ?image ?location WHERE {
+  ?drawing metadata:drawingIdentifier "ST-101" .
+  ?assertion aprov:assertedAbout    ?drawing ;
+             aprov:assertsFieldKind metadata:DrawingTitleField ;
+             aprov:hasInferenceMeta ?step .
+  OPTIONAL { ?assertion aprov:hasLiteralValue|aprov:hasValueEntity ?value }
+  OPTIONAL {
+    ?step prov:used|aprov:inferredFrom ?frame .
+    ?frame a geom:CoordinateFrame .
+    OPTIONAL { ?frame geom:resolutionDpi ?dpi }
+    OPTIONAL { ?frame geom:coversRegion ?region . OPTIONAL { ?region geom:bboxXYXY ?box } }
+    OPTIONAL { ?image geom:imageOf ?frame . OPTIONAL { ?image aprov:storageLocation ?location } }
+  }
+}
+```
+
+A frame is recognised by its type, so the page, the configuration and the model, which the step also used, are not taken for one. A frame with no region shows the whole page; `?box` is the region in the coordinates of its own frame (usually `page_display_pt`). A frame whose image was not kept has no `?image`: what the model saw is recorded either way. A value whose step recorded no frame (typed by a person, or read by a step that does not record one) is listed with the frame columns empty, as CQ 10.1 lists a value with no run.
 
 ### CQ Group 11 — Text Read from a Drawing (validates FR 11)
 
@@ -844,6 +872,8 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `aprov:sourceLocation`, `aprov:sourcePage`, `prov:wasDerivedFrom` (a typing stub) | `adiro_provenance` | NEW | CQ 9.5 | FR 9 |
 | `aprov:InferenceMeta`, `aprov:inferredWith`, `aprov:inferredBy` | `adiro_provenance` | REUSE | CQ 10.1, CQ 10.2, CQ 10.3 | FR 10 |
 | `aprov:inferredAt`, `aprov:hasAcceptance`, `aprov:supersedes` | `adiro_provenance` | REUSE | CQ 10.3 | FR 10 |
+| `geom:CoordinateFrame`, `geom:bboxXYXY`, `aprov:storageLocation` | `adiro_geometry`, `adiro_provenance` | REUSE | CQ 10.4 | FR 10 |
+| `geom:resolutionDpi`, `geom:coversRegion`, `geom:imageOf` | `adiro_geometry` | NEW | CQ 10.4 | FR 10 |
 | `aprov:TextReading`, `aprov:isReadingOf`, `aprov:readText`, `aprov:hasReadingOutcome`, `aprov:errorMessage` | `adiro_provenance` | NEW | CQ 11.1, CQ 11.2, CQ 11.3 | FR 11 |
 | `aprov:StepKind` (`RegionDetection`, `TextRecognition`, `FieldExtraction`), `aprov:hasStepKind` | `adiro_provenance` | NEW | CQ 11.4 | FR 11 |
 | `aprov:Configuration`, `aprov:configurationContent` | `adiro_provenance` | NEW | CQ 10.1 | FR 10 |
@@ -898,7 +928,7 @@ adiro_provenance                      (NEW - foundational, domain-neutral)
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `adiro_drawing_metadata` | **New classes:** `DrawingRevision`, `Project`, `StatusCode`, `DrawingPackage`. **New properties:** all UC-01 datatype properties; `hasRevision` (⊂ `contains`), `hasStatusCode` (⊂ `hasProperty`), `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `isOnPage`. |
 | `adiro_provenance`       | **New classes:** `Configuration` (FR 10, with `configurationContent`), `TextReading` and `StepKind` (FR 11, with the outcome value `Failed`), `DrawingFile`, `FilePage`, and the agents `Party`, `Person` and `Organisation` (moved here from `adiro_drawing_metadata`), with the file and page properties of FR 9. **Reused (new module):** `FieldAssertion`, `InferenceMeta`, `hasConfidence`, `capturedCaption`, `assertedBy`, `inferredBy`/`inferredWith`/`inferredFrom`/`inferredAt`, and the `TitleblockFieldScheme` binding via `assertsFieldKind`. Carries **extracted** title-block values before validation - see the design note in §2.1. |
-| `adiro_geometry`         | **Reused (new module):** the `Titleblock` region may carry a `BoundingBox` (via `hasBoundingBox`) interpreted by a `CoordinateFrame` (which reads the page the drawing is on, via `describesPage`) — i.e. *where the title block sits on the page*. The extracted field values are read from within that one region and are **not** individually localised. *(Added in [v0.5](#9-version-history).)* |
+| `adiro_geometry`         | **Reused (new module):** the `Titleblock` region may carry a `BoundingBox` (via `hasBoundingBox`) interpreted by a `CoordinateFrame` (which reads the page the drawing is on, via `describesPage`) — i.e. *where the title block sits on the page*. The extracted field values are read from within that one region and are **not** individually localised. **New:** `resolutionDpi`, `coversRegion` and `imageOf` (FR 10): the image of the page, or of a region of it, that a step saw, at its resolution, and the kept image file. *(Added in [v0.5](#9-version-history); amended in [v0.19](#9-version-history).)* |
 | `adiro_common_symbols`   | No UC-01 contribution.                                                                                                                                                      |
 | `adiro_domain_common`    | **Reused:** `Discipline` and its subclasses; `hasDiscipline` (with proposed domain change from `LayoutContentType` to `Layout` — see G5).                                   |
 | `adiro_facade_domain`    | No UC-01 contribution.                                                                                                                                                      |
@@ -936,7 +966,15 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.18 (current — draft)
+### v0.19 (current — draft)
+
+Changes from v0.18, made when the images a model sees were modelled for UC-01 ([#239](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/239), decided on [Discussion #235](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/235)). MAJOR in substance (a requirement amended, attributes, relations and a competency question added); the number stays in the 0.x series because the document is still a draft:
+
+- **FR 10 amended** (§3): a value is traced to the image of the page its step saw, at its resolution and, for a crop, the region. The design note under FR 10 states the pattern: every image fed to a model is a pixel `CoordinateFrame` with `resolutionDpi`, a crop covers a region (`coversRegion`), the step uses the frame (`prov:used`), and a kept image is a `DrawingFile` that is an image of its frame (`imageOf`), stored at a location that may be relative to the root of the dataset. No transform is recorded.
+- **CQ 10.4 added** (§4), with its query.
+- **`resolutionDpi`, `coversRegion` and `imageOf` added** (§2.3, §6, §7) in `adiro_geometry`; a shape checks frames and kept images (`data-validation/frames.shacl.ttl`).
+
+### v0.18 (draft)
 
 Changes from v0.17, made when text readings were modelled for UC-01 ([#238](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/238), decided on [Discussion #235](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/235)) the history of a value was asked for ([#236](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/236)), and the queries were checked over named graphs ([#241](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/241)). MAJOR in substance (a functional requirement, classes, attributes and competency questions added); the number stays in the 0.x series because the document is still a draft:
 

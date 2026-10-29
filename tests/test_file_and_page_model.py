@@ -63,7 +63,8 @@ def test_what_is_true_of_a_page_is_on_the_page_and_the_frame_keeps_only_its_conv
     for moved in ("displayWidthPt", "displayHeightPt", "pdfRotationDeg"):
         assert PROVENANCE.value(APROV[moved], RDFS.domain) == APROV.FilePage
     frame_properties = {str(p).rsplit("#", 1)[-1] for p in GEOMETRY.subjects(RDFS.domain, GEOM.CoordinateFrame)}
-    assert frame_properties == {"describesPage", "coordinateSpace", "unit", "profileRef"}
+    # the resolution and the region are of the rendering the frame is, not of the page (#239)
+    assert frame_properties == {"describesPage", "coordinateSpace", "unit", "profileRef", "resolutionDpi", "coversRegion"}
     assert GEOMETRY.value(GEOM.describesPage, RDFS.range) == APROV.FilePage
     for gone in ("pageIndex", "frameArtifactRef"):
         assert (GEOM[gone], None, None) not in GEOMETRY
