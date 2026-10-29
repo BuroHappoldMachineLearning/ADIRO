@@ -83,7 +83,7 @@ Typing stub for the PROV-O term of the same name, declared locally so this modul
 
 ### Assertion Outcome {#AssertionOutcome}
 
-What a search for a field found, when it found no value: Empty, Illegible, NotPrinted or NotFound. An assertion that has a value needs no outcome (the value is its outcome), and an assertion has a value or an outcome, never both.
+What a search for a field found, when it found no value: Empty, Illegible, NotPrinted, NotFound or Failed. An assertion that has a value needs no outcome (the value is its outcome), and an assertion has a value or an outcome, never both. A TextReading that read no text has an outcome from the same list (hasReadingOutcome).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#AssertionOutcome`
 - **One of:**
@@ -91,6 +91,7 @@ What a search for a field found, when it found no value: Empty, Illegible, NotPr
     - [Illegible](#Illegible)
     - [Not printed](#NotPrinted)
     - [Not found](#NotFound)
+    - [Failed](#Failed)
 
 ### Configuration {#Configuration}
 
@@ -193,6 +194,23 @@ Typing stub for the ISO 21597-1 (ICDD) term Person, edition 1. A stub is a name,
 
 - **IRI:** `https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Person`
 
+### Step Kind {#StepKind}
+
+What a step of an extraction did: RegionDetection, TextRecognition or FieldExtraction. A closed list, so a new kind of step is a new value and not a new class. It tells steps apart when they use the same model, and it tells what a step looked for when it found nothing: a page that a region detection used, with no region found on it, was searched and has none, unless the step failed (an errorMessage on the step).
+
+- **IRI:** `https://w3id.org/adiro/adiro_provenance#StepKind`
+- **One of:**
+    - [Region detection](#RegionDetection)
+    - [Text recognition](#TextRecognition)
+    - [Field extraction](#FieldExtraction)
+
+### Text Reading {#TextReading}
+
+The text a step read from one region, such as a title block, or from a whole page (isReadingOf), as it is printed and whether or not any of it was read as a field, so a drawing can be found by any word on it. The text is readText, with the language as the literal's language tag when it is known. A reading that read nothing has an outcome instead (hasReadingOutcome): the region holds no text (Empty), it cannot be read (Illegible), or the step failed (Failed, with its errorMessage). A kind of InferredEntity: each reading has the step that produced it (hasInferenceMeta), so two runs that read the same region keep two readings.
+
+- **IRI:** `https://w3id.org/adiro/adiro_provenance#TextReading`
+- **Sub class of:** [Inferred Entity](#InferredEntity)
+
 ## Object Properties
 
 ### acceptedBy {#acceptedBy}
@@ -274,6 +292,22 @@ What the search for this field found, when it found no value (an AssertionOutcom
 - **Domain:** [Field Assertion](#FieldAssertion)
 - **Range:** [Assertion Outcome](#AssertionOutcome)
 
+### hasReadingOutcome {#hasReadingOutcome}
+
+Why a TextReading holds no text (an AssertionOutcome): the region holds none (Empty), it cannot be read (Illegible), or the step failed (Failed). A reading with readText has no outcome. A property of its own rather than hasOutcome, whose domain is FieldAssertion: a reading is not a claim about a field.
+
+- **IRI:** `https://w3id.org/adiro/adiro_provenance#hasReadingOutcome`
+- **Domain:** [Text Reading](#TextReading)
+- **Range:** [Assertion Outcome](#AssertionOutcome)
+
+### hasStepKind {#hasStepKind}
+
+What kind of step of an extraction this InferenceMeta is (a StepKind): a region detection, a text recognition or a field extraction.
+
+- **IRI:** `https://w3id.org/adiro/adiro_provenance#hasStepKind`
+- **Domain:** [Inference Meta](#InferenceMeta)
+- **Range:** [Step Kind](#StepKind)
+
 ### hasValueEntity {#hasValueEntity}
 
 For object-valued field kinds, the entity that is the asserted value - e.g. a Person or Organisation. Used instead of hasLiteralValue when the field references a thing rather than states a string, which is what makes cross-sheet questions ('everything checked by X') answerable.
@@ -311,6 +345,13 @@ The algorithm or model (ideally with version) used to produce this inference. Di
 Typing stub for the DCMI Metadata Terms property of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative definition lives at the source that rdfs:isDefinedBy points at. ADIRO uses it between the steps of an extraction run and the run: each step (an InferenceMeta, such as detecting the title block or reading its text) is part of the run (a prov:Activity) it was performed in.
 
 - **IRI:** `http://purl.org/dc/terms/isPartOf`
+
+### isReadingOf {#isReadingOf}
+
+What a TextReading read: a region, such as a title block (metadata:Titleblock), or a whole page (a FilePage). No range is declared, because the regions are defined by the modules that use this one.
+
+- **IRI:** `https://w3id.org/adiro/adiro_provenance#isReadingOf`
+- **Domain:** [Text Reading](#TextReading)
 
 ### supersedes {#supersedes}
 
@@ -407,6 +448,14 @@ The effective width of the page in points after the recorded page mapping (rotat
 Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range xsd:dateTime). ADIRO's own :inferredAt declares rdfs:range xsd:dateTime, so the precision is asserted where it belongs - on the term this suite owns.
 
 - **IRI:** `http://www.w3.org/ns/prov#endedAtTime`
+
+### errorMessage {#errorMessage}
+
+The error that stopped a step, as the step reported it. On an inferred entity whose outcome is Failed (a reading, a field assertion), it is the error that stopped the step producing it. On a step (an InferenceMeta), it says that the step itself failed before it produced anything, so a page it used was not searched: a region detection that timed out is a failure, not a page with no region on it. It is published with the data, so credentials, keys and private addresses are removed before it is recorded.
+
+- **IRI:** `https://w3id.org/adiro/adiro_provenance#errorMessage`
+- **Domain:** ([Inferred Entity](#InferredEntity) or [Inference Meta](#InferenceMeta))
+- **Range:** `xsd:string`
 
 ### fileCreatedAt {#fileCreatedAt}
 
@@ -505,6 +554,14 @@ The rotation recorded for the page, in degrees. The page_display_pt coordinates 
 - **Domain:** [File Page](#FilePage)
 - **Range:** `xsd:integer`
 
+### readText {#readText}
+
+The text a TextReading read, as printed, in reading order. The language, when known, is the literal's language tag ("Erdgeschoss"@de); text whose language is not known is a plain string.
+
+- **IRI:** `https://w3id.org/adiro/adiro_provenance#readText`
+- **Domain:** [Text Reading](#TextReading)
+- **Range:** `rdfs:Literal`
+
 ### sourceLocation {#sourceLocation}
 
 Where the file was obtained from: the address its bytes were fetched from, such as a public archive's download address, or the address in an organisation's own storage when that is the only known origin. Unlike storageLocation, it does not change when copies are moved. A file made from another file (converted, split into pages) records its origin through prov:wasDerivedFrom to that file, not a sourceLocation of its own.
@@ -565,6 +622,20 @@ The field is printed on the drawing but holds no value (a blank cell). The groun
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#Empty`
 - **Type:** [Assertion Outcome](#AssertionOutcome)
 
+### Failed {#Failed}
+
+The step did not complete: an error, a timeout or an unreadable input stopped it, so it searched nothing and says nothing about the drawing. It is retried. The error is recorded with errorMessage. Not a ground-truth observation status: it is the extraction's own.
+
+- **IRI:** `https://w3id.org/adiro/adiro_provenance#Failed`
+- **Type:** [Assertion Outcome](#AssertionOutcome)
+
+### Field extraction {#FieldExtraction}
+
+A step that turns text or an image into the values of fields (the title, the author, the drawing number), each recorded as a FieldAssertion.
+
+- **IRI:** `https://w3id.org/adiro/adiro_provenance#FieldExtraction`
+- **Type:** [Step Kind](#StepKind)
+
 ### Illegible {#Illegible}
 
 The field is printed on the drawing but cannot be read. The ground-truth observation status 'illegible'.
@@ -593,9 +664,23 @@ Not yet accepted or rejected: the assertion is the extraction's record and its v
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#Pending`
 - **Type:** [Acceptance Status](#AcceptanceStatus)
 
+### Region detection {#RegionDetection}
+
+A step that finds regions on a page, such as the title block, and gives each its bounding box.
+
+- **IRI:** `https://w3id.org/adiro/adiro_provenance#RegionDetection`
+- **Type:** [Step Kind](#StepKind)
+
 ### Rejected {#Rejected}
 
 Decided against: the assertion stays as a record but is not promoted.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#Rejected`
 - **Type:** [Acceptance Status](#AcceptanceStatus)
+
+### Text recognition {#TextRecognition}
+
+A step that reads the text of a region or of a whole page, as it is printed, into a TextReading.
+
+- **IRI:** `https://w3id.org/adiro/adiro_provenance#TextRecognition`
+- **Type:** [Step Kind](#StepKind)

@@ -1,4 +1,4 @@
-# Rules for field assertions: one allowed acceptance status and outcome (#220), a value or an outcome, an accepted assertion
+# Rules for field assertions: one allowed acceptance status and outcome (#220, Failed added by #238), a value or an outcome, an accepted assertion
 # has an agent, a superseding assertion is about the same thing (#187), no assertion supersedes itself through a chain (#221).
 #
 # They check DATA (what an extraction pipeline or a ground-truth import produces), not the ontology: OWL cannot say "never both"
@@ -52,8 +52,8 @@ dv:OneAllowedStatusAndOutcome a sh:NodeShape ;
         sh:severity sh:Violation ;
     ] , [
         sh:path aprov:hasOutcome ;
-        sh:in ( aprov:Empty aprov:Illegible aprov:NotPrinted aprov:NotFound ) ;
-        sh:message "An outcome is Empty, Illegible, NotPrinted or NotFound." ;
+        sh:in ( aprov:Empty aprov:Illegible aprov:NotPrinted aprov:NotFound aprov:Failed ) ;
+        sh:message "An outcome is Empty, Illegible, NotPrinted, NotFound or Failed." ;
         sh:severity sh:Violation ;
     ] .
 

@@ -432,6 +432,37 @@ ct:Organisation rdf:type owl:Class ;
     rdfs:range xsd:integer .
 
 #################################################################
+#    Classes - the kind of a step, and the text read
+#
+#    A step of an extraction run (an InferenceMeta) says what kind of step it
+#    is, so a step that produced nothing is still known for what it looked
+#    for. A TextReading holds the text a step read from a region or a page,
+#    whether or not it was read as a field.
+#################################################################
+
+:StepKind rdf:type owl:Class ;
+    rdfs:label "Step Kind" ;
+    rdfs:comment "What a step of an extraction did: RegionDetection, TextRecognition or FieldExtraction. A closed list, so a new kind of step is a new value and not a new class. It tells steps apart when they use the same model, and it tells what a step looked for when it found nothing: a page that a region detection used, with no region found on it, was searched and has none, unless the step failed (an errorMessage on the step)." ;
+    owl:oneOf ( :RegionDetection :TextRecognition :FieldExtraction ) .
+
+:RegionDetection rdf:type owl:NamedIndividual , :StepKind ;
+    rdfs:label "Region detection" ;
+    rdfs:comment "A step that finds regions on a page, such as the title block, and gives each its bounding box." .
+
+:TextRecognition rdf:type owl:NamedIndividual , :StepKind ;
+    rdfs:label "Text recognition" ;
+    rdfs:comment "A step that reads the text of a region or of a whole page, as it is printed, into a TextReading." .
+
+:FieldExtraction rdf:type owl:NamedIndividual , :StepKind ;
+    rdfs:label "Field extraction" ;
+    rdfs:comment "A step that turns text or an image into the values of fields (the title, the author, the drawing number), each recorded as a FieldAssertion." .
+
+:TextReading rdf:type owl:Class ;
+    rdfs:label "Text Reading" ;
+    rdfs:comment "The text a step read from one region, such as a title block, or from a whole page (isReadingOf), as it is printed and whether or not any of it was read as a field, so a drawing can be found by any word on it. The text is readText, with the language as the literal's language tag when it is known. A reading that read nothing has an outcome instead (hasReadingOutcome): the region holds no text (Empty), it cannot be read (Illegible), or the step failed (Failed, with its errorMessage). A kind of InferredEntity: each reading has the step that produced it (hasInferenceMeta), so two runs that read the same region keep two readings." ;
+    rdfs:subClassOf :InferredEntity .
+
+#################################################################
 #    Classes - the outcome and the acceptance of an assertion
 #
 #    Two independent axes. The OUTCOME says what a search for a field found
@@ -444,8 +475,8 @@ ct:Organisation rdf:type owl:Class ;
 
 :AssertionOutcome rdf:type owl:Class ;
     rdfs:label "Assertion Outcome" ;
-    rdfs:comment "What a search for a field found, when it found no value: Empty, Illegible, NotPrinted or NotFound. An assertion that has a value needs no outcome (the value is its outcome), and an assertion has a value or an outcome, never both." ;
-    owl:oneOf ( :Empty :Illegible :NotPrinted :NotFound ) .
+    rdfs:comment "What a search for a field found, when it found no value: Empty, Illegible, NotPrinted, NotFound or Failed. An assertion that has a value needs no outcome (the value is its outcome), and an assertion has a value or an outcome, never both. A TextReading that read no text has an outcome from the same list (hasReadingOutcome)." ;
+    owl:oneOf ( :Empty :Illegible :NotPrinted :NotFound :Failed ) .
 
 :Empty rdf:type owl:NamedIndividual , :AssertionOutcome ;
     rdfs:label "Empty" ;
@@ -462,6 +493,10 @@ ct:Organisation rdf:type owl:Class ;
 :NotFound rdf:type owl:NamedIndividual , :AssertionOutcome ;
     rdfs:label "Not found" ;
     rdfs:comment "A model searched where the field is expected and matched nothing. Not confirmed: the field may be missing from the drawing or merely missed, so it is retried or reviewed; it says nothing yet about the drawing." .
+
+:Failed rdf:type owl:NamedIndividual , :AssertionOutcome ;
+    rdfs:label "Failed" ;
+    rdfs:comment "The step did not complete: an error, a timeout or an unreadable input stopped it, so it searched nothing and says nothing about the drawing. It is retried. The error is recorded with errorMessage. Not a ground-truth observation status: it is the extraction's own." .
 
 :AcceptanceStatus rdf:type owl:Class ;
     rdfs:label "Acceptance Status" ;
@@ -489,6 +524,35 @@ ct:Organisation rdf:type owl:Class ;
     rdfs:comment "What the search for this field found, when it found no value (an AssertionOutcome). An assertion with a hasLiteralValue or a hasValueEntity has no outcome." ;
     rdfs:domain :FieldAssertion ;
     rdfs:range :AssertionOutcome .
+
+:hasReadingOutcome rdf:type owl:ObjectProperty ;
+    rdfs:label "hasReadingOutcome" ;
+    rdfs:comment "Why a TextReading holds no text (an AssertionOutcome): the region holds none (Empty), it cannot be read (Illegible), or the step failed (Failed). A reading with readText has no outcome. A property of its own rather than hasOutcome, whose domain is FieldAssertion: a reading is not a claim about a field." ;
+    rdfs:domain :TextReading ;
+    rdfs:range :AssertionOutcome .
+
+:errorMessage rdf:type owl:DatatypeProperty ;
+    rdfs:label "errorMessage" ;
+    rdfs:comment "The error that stopped a step, as the step reported it. On an inferred entity whose outcome is Failed (a reading, a field assertion), it is the error that stopped the step producing it. On a step (an InferenceMeta), it says that the step itself failed before it produced anything, so a page it used was not searched: a region detection that timed out is a failure, not a page with no region on it. It is published with the data, so credentials, keys and private addresses are removed before it is recorded." ;
+    rdfs:domain [ rdf:type owl:Class ; owl:unionOf ( :InferredEntity :InferenceMeta ) ] ;
+    rdfs:range xsd:string .
+
+:hasStepKind rdf:type owl:ObjectProperty ;
+    rdfs:label "hasStepKind" ;
+    rdfs:comment "What kind of step of an extraction this InferenceMeta is (a StepKind): a region detection, a text recognition or a field extraction." ;
+    rdfs:domain :InferenceMeta ;
+    rdfs:range :StepKind .
+
+:isReadingOf rdf:type owl:ObjectProperty ;
+    rdfs:label "isReadingOf" ;
+    rdfs:comment "What a TextReading read: a region, such as a title block (metadata:Titleblock), or a whole page (a FilePage). No range is declared, because the regions are defined by the modules that use this one." ;
+    rdfs:domain :TextReading .
+
+:readText rdf:type owl:DatatypeProperty ;
+    rdfs:label "readText" ;
+    rdfs:comment "The text a TextReading read, as printed, in reading order. The language, when known, is the literal's language tag (\"Erdgeschoss\"@de); text whose language is not known is a plain string." ;
+    rdfs:domain :TextReading ;
+    rdfs:range rdfs:Literal .
 
 :hasAcceptance rdf:type owl:ObjectProperty ;
     rdfs:label "hasAcceptance" ;
