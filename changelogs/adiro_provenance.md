@@ -5,6 +5,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [2.2.0] — 2026-10-29
+
 ### Changed
 - **`storageLocation` may be relative** ([#239](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/239)): a relative reference is resolved against the root of the dataset the data belongs to, which the data does not record, and is resolved before a public release, whose check accepts only absolute addresses on its allowed hosts. `Configuration`'s definition says again that a resolution is recorded on the coordinate frame it gives (`resolutionDpi`, in `adiro_geometry`).
 

@@ -5,6 +5,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [3.1.0] — 2026-10-29
+
 ### Added
 - **What a model saw** ([#239](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/239)). Every image of a page an extraction feeds to a model is a pixel `CoordinateFrame` with its resolution, the new **`resolutionDpi`** (a decimal); a crop is a frame limited to a region, the new **`coversRegion`** (frame → `BoundingBox`); a step records the frame it used with `prov:used`. An image that is kept is an `aprov:DrawingFile` linked to its frame by the new **`imageOf`**. No crop class and no transform term: between frames there is only a uniform scale. `CoordinateFrame`'s definition says so.
 
