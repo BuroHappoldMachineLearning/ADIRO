@@ -41,7 +41,7 @@ SEEN = """@prefix prov: <http://www.w3.org/ns/prov#> .
 :d a metadata:DrawingSheet ; metadata:drawingIdentifier "ST-101" ; metadata:isOnPage :p1 ; metadata:contains :tb .
 :p1 a aprov:FilePage ; aprov:pageNumber 1 .
 :pt a geom:CoordinateFrame ; geom:describesPage :p1 ; geom:coordinateSpace "page_display_pt" ; geom:unit "pt" .
-:full a geom:CoordinateFrame ; geom:describesPage :p1 ; geom:unit "px" ; geom:resolutionDpi 300.0 .
+:full a geom:CoordinateFrame ; geom:describesPage :p1 ; geom:unit "px" ; geom:resolutionDpi 300 .
 :small a geom:CoordinateFrame ; geom:describesPage :p1 ; geom:unit "px" ; geom:resolutionDpi 51.31 .
 :tbBox a geom:BoundingBox ; geom:bboxXYXY "[1900, 1400, 2360, 1660]" ; geom:inCoordinateFrame :pt ; aprov:hasInferenceMeta :detect .
 :tb a metadata:Titleblock ; geom:hasBoundingBox :tbBox .
@@ -69,11 +69,13 @@ def cq_10_4(data):
 
 def test_cq_10_4_gives_the_crop_the_reader_saw_with_its_resolution_region_and_kept_image():
     assert cq_10_4(SEEN) == {
+        # the page, the prompt and the model the step also used are not frames
         ("a1", "crop", 300.0, "tbBox", "[1900, 1400, 2360, 1660]", "cropImage", "crops/ST-101-titleblock.png"),
-        # the page, the prompt and the model the step also used are not frames; a hand-typed value saw no image
+        # a hand-typed value saw no image, and is listed with the frame columns empty
+        ("a2", None, None, None, None, None, None),
     }
 
 
 def test_cq_10_4_records_what_was_seen_when_the_image_was_not_kept_and_the_whole_page_was_seen():
     whole_page = SEEN.replace("prov:used :crop , :p1 , :prompt", "prov:used :small , :p1 , :prompt")
-    assert cq_10_4(whole_page) == {("a1", "small", 51.31, None, None, None, None)}
+    assert ("a1", "small", 51.31, None, None, None, None) in cq_10_4(whole_page)

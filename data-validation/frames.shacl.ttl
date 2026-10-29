@@ -20,9 +20,11 @@ dv:Frame a sh:NodeShape ;
     sh:property [
         sh:path geom:resolutionDpi ;
         sh:maxCount 1 ;
-        sh:datatype xsd:decimal ;
+        # 300 is an xsd:integer in Turtle, which the range xsd:decimal admits (integer is derived from decimal), but
+        # sh:datatype matches one datatype exactly: both are accepted
+        sh:or ( [ sh:datatype xsd:decimal ] [ sh:datatype xsd:integer ] ) ;
         sh:minExclusive 0 ;
-        sh:message "A frame has at most one resolutionDpi, a positive decimal." ;
+        sh:message "A frame has at most one resolutionDpi, a positive number (300 or 42.35)." ;
         sh:severity sh:Violation ;
     ] , [
         sh:path geom:coversRegion ;

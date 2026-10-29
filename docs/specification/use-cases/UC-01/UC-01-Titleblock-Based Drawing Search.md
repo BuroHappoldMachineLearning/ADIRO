@@ -588,15 +588,17 @@ SELECT ?assertion ?value ?step ?frame ?dpi ?region ?box ?image ?location WHERE {
              aprov:assertsFieldKind metadata:DrawingTitleField ;
              aprov:hasInferenceMeta ?step .
   OPTIONAL { ?assertion aprov:hasLiteralValue|aprov:hasValueEntity ?value }
-  ?step prov:used|aprov:inferredFrom ?frame .
-  ?frame a geom:CoordinateFrame .
-  OPTIONAL { ?frame geom:resolutionDpi ?dpi }
-  OPTIONAL { ?frame geom:coversRegion ?region . OPTIONAL { ?region geom:bboxXYXY ?box } }
-  OPTIONAL { ?image geom:imageOf ?frame . OPTIONAL { ?image aprov:storageLocation ?location } }
+  OPTIONAL {
+    ?step prov:used|aprov:inferredFrom ?frame .
+    ?frame a geom:CoordinateFrame .
+    OPTIONAL { ?frame geom:resolutionDpi ?dpi }
+    OPTIONAL { ?frame geom:coversRegion ?region . OPTIONAL { ?region geom:bboxXYXY ?box } }
+    OPTIONAL { ?image geom:imageOf ?frame . OPTIONAL { ?image aprov:storageLocation ?location } }
+  }
 }
 ```
 
-A frame is recognised by its type, so the page, the configuration and the model, which the step also used, are not taken for one. A frame with no region shows the whole page; `?box` is the region in the coordinates of its own frame (usually `page_display_pt`). A frame whose image was not kept has no `?image`: what the model saw is recorded either way.
+A frame is recognised by its type, so the page, the configuration and the model, which the step also used, are not taken for one. A frame with no region shows the whole page; `?box` is the region in the coordinates of its own frame (usually `page_display_pt`). A frame whose image was not kept has no `?image`: what the model saw is recorded either way. A value whose step recorded no frame (typed by a person, or read by a step that does not record one) is listed with the frame columns empty, as CQ 10.1 lists a value with no run.
 
 ### CQ Group 11 — Text Read from a Drawing (validates FR 11)
 

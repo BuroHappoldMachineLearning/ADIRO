@@ -95,7 +95,9 @@ flowchart LR
     I[DrawingFile: kept image] -- imageOf --> C
 ```
 
-- **`resolutionDpi`** (a decimal) is the frame's resolution: a `page_display_pt` coordinate times `resolutionDpi / 72` is its pixel.
+- **`resolutionDpi`** (a number, `300` or `42.35`) is the frame's resolution. For a frame that shows the whole page, a
+  `page_display_pt` coordinate times `resolutionDpi / 72` is its pixel; for a crop, the coordinate is first taken from the
+  corner of its region: `(coordinate − corner) × resolutionDpi / 72`.
   A page rendered at 300 dpi has 300; the same image scaled so its shorter side is 1200 pixels has the resolution that scale gives.
 - **`coversRegion`** limits a frame to a region of the page, a `BoundingBox` in another frame (usually `page_display_pt`): the frame
   is a crop, and its coordinates start at the region's top-left corner. There is no crop class.

@@ -457,7 +457,8 @@ def check_frames(body):
 
 
 def test_a_pixel_frame_with_its_resolution_and_a_crop_of_one_region_conform():
-    body = """:f300 a geom:CoordinateFrame ; geom:unit "px" ; geom:resolutionDpi 300.0 .
+    body = """:f300 a geom:CoordinateFrame ; geom:unit "px" ; geom:resolutionDpi 300 .
+:small a geom:CoordinateFrame ; geom:unit "px" ; geom:resolutionDpi 42.35 .
 :crop a geom:CoordinateFrame ; geom:unit "px" ; geom:resolutionDpi 300.0 ; geom:coversRegion :box .
 :box a geom:BoundingBox .
 :image a aprov:DrawingFile ; geom:imageOf :crop ; prov:wasDerivedFrom :pdf .
@@ -469,9 +470,9 @@ def test_a_pixel_frame_with_its_resolution_and_a_crop_of_one_region_conform():
 
 @pytest.mark.parametrize("body, message", [
     (':f a geom:CoordinateFrame ; geom:unit "px" .\n', "A pixel frame (unit px) has a resolutionDpi."),
-    (':f a geom:CoordinateFrame ; geom:resolutionDpi 300.0 , 150.0 .\n', "A frame has at most one resolutionDpi, a positive decimal."),
-    (':f a geom:CoordinateFrame ; geom:resolutionDpi 0.0 .\n', "A frame has at most one resolutionDpi, a positive decimal."),
-    (':f a geom:CoordinateFrame ; geom:resolutionDpi "300" .\n', "A frame has at most one resolutionDpi, a positive decimal."),
+    (':f a geom:CoordinateFrame ; geom:resolutionDpi 300.0 , 150.0 .\n', "A frame has at most one resolutionDpi, a positive number (300 or 42.35)."),
+    (':f a geom:CoordinateFrame ; geom:resolutionDpi 0.0 .\n', "A frame has at most one resolutionDpi, a positive number (300 or 42.35)."),
+    (':f a geom:CoordinateFrame ; geom:resolutionDpi "300" .\n', "A frame has at most one resolutionDpi, a positive number (300 or 42.35)."),
     (":f a geom:CoordinateFrame ; geom:coversRegion :a , :b .\n:a a geom:BoundingBox . :b a geom:BoundingBox .\n",
      "A frame covers at most one region, a BoundingBox."),
     (':i a aprov:DrawingFile ; geom:imageOf :f , :g ; aprov:sourceLocation "https://tile.loc.gov/a.png"^^xsd:anyURI .\n:f a geom:CoordinateFrame . :g a geom:CoordinateFrame .\n',

@@ -149,7 +149,7 @@ Reference to the versioned coordinate profile that defines the named coordinateS
 
 ### resolutionDpi {#resolutionDpi}
 
-The resolution of a pixel frame, in pixels per inch of the page: a page_display_pt coordinate times resolutionDpi / 72 gives the pixel. For a page rendered at 300 dpi it is 300; for that image scaled down so that its shorter side is 1200 pixels, it is the resolution the scaling gives (a decimal, such as 42.35). A frame in points has none.
+The resolution of a pixel frame, in pixels per inch of the page. For a frame that shows the whole page, a page_display_pt coordinate times resolutionDpi / 72 gives the pixel; for a crop (coversRegion), the coordinate is first taken from the region's top-left corner: (coordinate - corner) times resolutionDpi / 72. For a page rendered at 300 dpi it is 300; for that image scaled down so that its shorter side is 1200 pixels, it is the resolution the scaling gives (a decimal, such as 42.35). A frame in points has none.
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#resolutionDpi`
 - **Domain:** [Coordinate Frame](#CoordinateFrame)
