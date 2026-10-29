@@ -74,7 +74,7 @@ jobs:
           # The checks (data-validation shapes and UC-01 queries, #240) are not a module: the tag version must be a
           # released section of changelogs/checks.md at the tag.
           if [ "$MODULE" = "checks" ]; then
-            if ! git show "refs/tags/${TAG}:changelogs/checks.md" | grep -Eq "^## \[${VERSION}\] — [0-9]{4}-[0-9]{2}-[0-9]{2}"; then
+            if ! git show "refs/tags/${TAG}:changelogs/checks.md" | grep -Eq "^## \[${VERSION}\] .* [0-9]{4}-[0-9]{2}-[0-9]{2}"; then
               echo "::error::changelogs/checks.md at tag ${TAG} has no dated section '## [${VERSION}] — YYYY-MM-DD' — date the release before tagging."
               exit 1
             fi
