@@ -117,6 +117,26 @@ An override is **not** the tool for:
 
 If the Release PR workflow fails with a message naming `config/release_overrides.json`, the file holds an unknown module name or a value other than `patch`, `minor`, `major` or `hold`.
 
+## Releasing the checks
+
+The data-validation shapes and the UC-01 competency queries are released as **the checks**, with their own version
+([#240](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/240)); what a version number means for them is in
+[Data validation](../data-validation.md#versioning-and-publication). They are not a module, so the Release PR does not cut them.
+A release is made by hand:
+
+1. **Date the release.** In a pull request, move the `[Unreleased]` entries of `changelogs/checks.md` under a new heading
+   `## [<version>] — <date>`, choosing the version by the rules above, and merge it.
+2. **Publish a GitHub Release** with the tag `checks-v<version>` on that merge commit
+   (`gh release create checks-v1.0.0 --target main --title "checks 1.0.0" --notes "See changelogs/checks.md"`).
+3. **The rest is automatic.** `backup-version.yml` checks that `changelogs/checks.md` at the tag has the section, exports the
+   checks as they are at the tag into `versions/checks/<version>/` with `scripts/export_checks.py`, commits the snapshot, starts
+   the docs deploy, which serves everything under `versions/checks/` at `https://w3id.org/adiro/checks/<version>/`, and sets the
+   Release notes from the changelog section. A failed run is reported by the release-snapshot alert like a module's, and
+   `gh workflow run backup-version.yml -f tag=checks-v<version>` repairs it.
+
+The snapshot never holds a file named `checks.ttl`: the scripts that scan `versions/` read `versions/<name>/<version>/<name>.ttl` as a
+module release.
+
 ## Design decisions
 
 - **The workflow acts as the ADIRO Bot GitHub App, not as `GITHUB_TOKEN`.** Events created with `GITHUB_TOKEN` start no other workflows, so a bot PR would get no PR checks and a published Release would not start `backup-version.yml`; both needed workarounds. An app installation token has neither limit, and the bot gets its own name and logo. The app is registered at organisation level and installed on this repository; its credentials are the repository secrets `ADIRO_BOT_APP_ID` and `ADIRO_BOT_PRIVATE_KEY`, and the workflow requests a short-lived token from them on each run. The same identity is meant for other bot features ([#106](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/106)).

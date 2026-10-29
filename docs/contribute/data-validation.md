@@ -86,6 +86,32 @@ that silently matches nothing.
 
 ## Versioning and publication
 
-The files are not ontology modules: they have no version of their own and do not go through the release process. A shape follows
-the module it checks, and a change that makes a previously valid dataset invalid is recorded in that module's changelog. The
-folder is not part of the published site; it is in the repository.
+The shapes and the UC-01 competency queries are released together as **the checks**, an artefact with its own version
+([#240](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/240)). They are not an ontology module: a shape checks data
+against several modules at once, so it cannot follow one module's version. A system that writes ADIRO data and tests it against
+the checks pins one version of them, so a later change to a shape or a query never silently changes what its tests accept.
+
+**What a release holds.** Each release is served under `https://w3id.org/adiro/checks/<version>/`:
+
+| Path | What |
+|---|---|
+| `manifest.json` | The version, every file below, and the version of each module in `src/` when the checks were released (the versions they were tested with). |
+| `shapes/<topic>.shacl.ttl` | Every shape file of `data-validation/`, as in the repository. |
+| `shapes/release/<topic>.shacl.ttl` | The shapes that run only for a public release. |
+| `queries/uc01/<name>.rq` | Each competency query recorded in the UC-01 ORSD (`cq-10-1.rq`, `promotion.rq`, …), as written there. |
+
+Point at a file, such as `https://w3id.org/adiro/checks/1.0.0/manifest.json`, never at the bare version address. The queries are
+written once, in the ORSD: the tests read them there, and `scripts/export_checks.py` copies each block whose first comment line
+names it (`# CQ 10.1: …`, `# Promotion: …`) into its own file. A SPARQL block with no such line is an illustration and is not
+released.
+
+**What a version number means.** The checks follow SemVer, read from the point of view of the data being checked:
+
+- **MAJOR**: a dataset that passed may now fail, or a query may answer differently: a rule tightened or added at `sh:Violation`, a
+  query changed or removed, a file renamed or removed.
+- **MINOR**: nothing that passed fails: a rule loosened, a new query, a new rule at `sh:Warning`, a new public-release rule.
+- **PATCH**: a message, a comment or the wording of a file, with the same results.
+
+Record each change under `[Unreleased]` in `changelogs/checks.md`, in the pull request that makes it. Releasing is a separate step,
+described in [Releasing the checks](versioning/release-process.md#releasing-the-checks). Between releases the files in the repository
+are the current state, and a pinned release does not change.
