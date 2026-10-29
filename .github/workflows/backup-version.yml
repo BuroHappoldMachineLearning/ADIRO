@@ -71,6 +71,15 @@ jobs:
           TAG="${{ steps.parse.outputs.tag }}"
           MODULE="${{ steps.parse.outputs.module }}"
           VERSION="${{ steps.parse.outputs.version }}"
+          # The checks (data-validation shapes and UC-01 queries, #240) are not a module: the tag version must be a
+          # released section of changelogs/checks.md at the tag.
+          if [ "$MODULE" = "checks" ]; then
+            if ! git show "refs/tags/${TAG}:changelogs/checks.md" | grep -q "^## \[${VERSION}\]"; then
+              echo "::error::changelogs/checks.md at tag ${TAG} has no section [${VERSION}] — date the release before tagging."
+              exit 1
+            fi
+            exit 0
+          fi
           if ! git cat-file -e "refs/tags/${TAG}:src/${MODULE}.ttl" 2>/dev/null; then
             echo "::error::src/${MODULE}.ttl does not exist at tag ${TAG}."
             exit 1
@@ -87,6 +96,14 @@ jobs:
           MODULE="${{ steps.parse.outputs.module }}"
           VERSION="${{ steps.parse.outputs.version }}"
           DEST="versions/${MODULE}/${VERSION}"
+          if [ "$MODULE" = "checks" ]; then
+            # The checks as they are at the tag: the tag's tree is exported by this branch's script (standard library only).
+            git worktree add --detach "$RUNNER_TEMP/tagged" "refs/tags/${TAG}"
+            python3 scripts/export_checks.py "$DEST" --root "$RUNNER_TEMP/tagged" --version "$VERSION"
+            git worktree remove --force "$RUNNER_TEMP/tagged"
+            ls -laR "$DEST"
+            exit 0
+          fi
           mkdir -p "$DEST"
           git show "refs/tags/${TAG}:src/${MODULE}.ttl" > "$DEST/${MODULE}.ttl"
           echo "Snapshotted src/${MODULE}.ttl @ ${TAG} -> $DEST/${MODULE}.ttl"
@@ -145,7 +162,11 @@ jobs:
           VERSION="${{ steps.parse.outputs.version }}"
           # Summary (SemVer bump, docs link, compare link), changelog section, the PRs that changed
           # the module since the previous release, and the canonical URLs: see scripts/release_notes.py.
-          python3 scripts/release_notes.py "$MODULE" "$VERSION" --repo "${{ github.repository }}" > release-notes.md
+          if [ "$MODULE" = "checks" ]; then
+            python3 scripts/export_checks.py --notes "$VERSION" > release-notes.md
+          else
+            python3 scripts/release_notes.py "$MODULE" "$VERSION" --repo "${{ github.repository }}" > release-notes.md
+          fi
           echo "----- release notes -----"; cat release-notes.md
           gh release edit "$TAG" --repo "${{ github.repository }}" --notes-file release-notes.md
 
