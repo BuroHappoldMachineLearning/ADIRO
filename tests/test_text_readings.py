@@ -6,6 +6,7 @@ import pytest
 
 pytest.importorskip("rdflib")
 from rdflib import Graph, Namespace  # noqa: E402
+from rdflib.collection import Collection  # noqa: E402
 from rdflib.namespace import OWL, RDF, RDFS  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -81,6 +82,21 @@ def test_cq_11_2_gives_the_latest_reading_of_the_page_and_of_its_title_block_wit
         failed_only, "# CQ 11.2", "target", "text", "language", "outcome", "error", "run")
 
 
+def test_cq_11_2_reads_a_run_with_no_start_as_the_oldest():
+    no_start = RUNS.replace(':run1 a prov:Activity ; prov:startedAtTime "2026-10-01T09:00:00Z"^^xsd:dateTime .', ":run1 a prov:Activity .")
+    result = rows(no_start, "# CQ 11.2", "target", "text", "language", "outcome", "error", "run")
+    assert ("tb1", "GROUND FLOOR PLAN  ST-101", "en", None, None, "run1") in result  # its only reading is kept
+    assert ("p1", "Erdgeschoss Grundriss", "de", None, None, "run2") in result      # and a run with a start is later
+    assert not any(r[0] == "p1" and r[5] == "run1" for r in result)
+
+
+def test_cq_11_2_gives_a_later_failed_reading_over_an_earlier_text():
+    later_failure = RUNS.replace(':r4 a aprov:TextReading ; aprov:isReadingOf :p1 ; aprov:readText "Erdgeschoss Grundriss"@de ;',
+                                 ':r4 a aprov:TextReading ; aprov:isReadingOf :p1 ; aprov:hasReadingOutcome aprov:Failed ; aprov:errorMessage "timeout" ;')
+    assert ("p1", None, None, "Failed", "timeout", "run2") in rows(
+        later_failure, "# CQ 11.2", "target", "text", "language", "outcome", "error", "run")
+
+
 def test_cq_11_3_lists_each_page_with_the_runs_that_processed_it():
     assert rows(RUNS, "# CQ 11.3", "number", "run", "status") == {
         ("1", "run1", "Failed"), ("1", "run2", "Read"),
@@ -89,11 +105,26 @@ def test_cq_11_3_lists_each_page_with_the_runs_that_processed_it():
     }
 
 
+def test_cq_11_3_reports_a_page_whose_step_failed_as_failed():
+    failed = RUNS + ':detect2 a aprov:InferenceMeta ; aprov:hasStepKind aprov:RegionDetection ; dcterms:isPartOf :run2 ; prov:used :p3 ; aprov:errorMessage "timeout" .\n'
+    assert ("3", "run2", "Failed") in rows(failed, "# CQ 11.3", "number", "run", "status")
+
+
 def test_cq_11_4_lists_the_pages_searched_for_a_title_block_with_none_detected():
     # page 2 was searched and holds no drawing; page 1 has its title block; page 3 was never searched
-    assert rows(RUNS, "# CQ 11.4", "file", "number", "run") == {("file", "2", "run1")}
+    assert rows(RUNS, "# CQ 11.4", "file", "number") == {("file", "2")}
     # a text recognition that used a page is not a search for a title block
-    assert rows(RUNS.replace("prov:used :p1 , :p2 .", "prov:used :p1 ."), "# CQ 11.4", "file", "number", "run") == set()
+    assert rows(RUNS.replace("prov:used :p1 , :p2 .", "prov:used :p1 ."), "# CQ 11.4", "file", "number") == set()
+
+
+def test_cq_11_4_leaves_out_a_detection_that_failed():
+    failed = RUNS.replace("prov:used :p1 , :p2 .", 'prov:used :p1 , :p2 ; aprov:errorMessage "timeout after 60 s" .')
+    assert rows(failed, "# CQ 11.4", "file", "number") == set()
+
+
+def test_a_step_can_record_that_it_failed():
+    domain = PROVENANCE.value(APROV.errorMessage, RDFS.domain)
+    assert set(Collection(PROVENANCE, PROVENANCE.value(domain, OWL.unionOf))) == {APROV.InferredEntity, APROV.InferenceMeta}
 
 
 HISTORY = """@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .

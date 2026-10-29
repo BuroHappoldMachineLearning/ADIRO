@@ -442,7 +442,7 @@ ct:Organisation rdf:type owl:Class ;
 
 :StepKind rdf:type owl:Class ;
     rdfs:label "Step Kind" ;
-    rdfs:comment "What a step of an extraction did: RegionDetection, TextRecognition or FieldExtraction. A closed list, so a new kind of step is a new value and not a new class. It tells steps apart when they use the same model, and it tells what a step looked for when it found nothing: a page that a region detection used, with no region found on it, was searched and has none." ;
+    rdfs:comment "What a step of an extraction did: RegionDetection, TextRecognition or FieldExtraction. A closed list, so a new kind of step is a new value and not a new class. It tells steps apart when they use the same model, and it tells what a step looked for when it found nothing: a page that a region detection used, with no region found on it, was searched and has none, unless the step failed (an errorMessage on the step)." ;
     owl:oneOf ( :RegionDetection :TextRecognition :FieldExtraction ) .
 
 :RegionDetection rdf:type owl:NamedIndividual , :StepKind ;
@@ -533,8 +533,8 @@ ct:Organisation rdf:type owl:Class ;
 
 :errorMessage rdf:type owl:DatatypeProperty ;
     rdfs:label "errorMessage" ;
-    rdfs:comment "The error that stopped the step producing this entity, as the step reported it, when its outcome is Failed. It is published with the data, so credentials, keys and private addresses are removed before it is recorded." ;
-    rdfs:domain :InferredEntity ;
+    rdfs:comment "The error that stopped a step, as the step reported it. On an inferred entity whose outcome is Failed (a reading, a field assertion), it is the error that stopped the step producing it. On a step (an InferenceMeta), it says that the step itself failed before it produced anything, so a page it used was not searched: a region detection that timed out is a failure, not a page with no region on it. It is published with the data, so credentials, keys and private addresses are removed before it is recorded." ;
+    rdfs:domain [ rdf:type owl:Class ; owl:unionOf ( :InferredEntity :InferenceMeta ) ] ;
     rdfs:range xsd:string .
 
 :hasStepKind rdf:type owl:ObjectProperty ;

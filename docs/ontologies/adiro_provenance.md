@@ -196,7 +196,7 @@ Typing stub for the ISO 21597-1 (ICDD) term Person, edition 1. A stub is a name,
 
 ### Step Kind {#StepKind}
 
-What a step of an extraction did: RegionDetection, TextRecognition or FieldExtraction. A closed list, so a new kind of step is a new value and not a new class. It tells steps apart when they use the same model, and it tells what a step looked for when it found nothing: a page that a region detection used, with no region found on it, was searched and has none.
+What a step of an extraction did: RegionDetection, TextRecognition or FieldExtraction. A closed list, so a new kind of step is a new value and not a new class. It tells steps apart when they use the same model, and it tells what a step looked for when it found nothing: a page that a region detection used, with no region found on it, was searched and has none, unless the step failed (an errorMessage on the step).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#StepKind`
 - **One of:**
@@ -451,10 +451,10 @@ Typing stub for the PROV-O term of the same name, declared locally so this modul
 
 ### errorMessage {#errorMessage}
 
-The error that stopped the step producing this entity, as the step reported it, when its outcome is Failed. It is published with the data, so credentials, keys and private addresses are removed before it is recorded.
+The error that stopped a step, as the step reported it. On an inferred entity whose outcome is Failed (a reading, a field assertion), it is the error that stopped the step producing it. On a step (an InferenceMeta), it says that the step itself failed before it produced anything, so a page it used was not searched: a region detection that timed out is a failure, not a page with no region on it. It is published with the data, so credentials, keys and private addresses are removed before it is recorded.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#errorMessage`
-- **Domain:** [Inferred Entity](#InferredEntity)
+- **Domain:** ([Inferred Entity](#InferredEntity) or [Inference Meta](#InferenceMeta))
 - **Range:** `xsd:string`
 
 ### fileCreatedAt {#fileCreatedAt}

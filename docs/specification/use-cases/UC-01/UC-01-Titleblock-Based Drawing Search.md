@@ -273,7 +273,7 @@ Each FR describes one representational capability the ontology must have, in imp
 - Source: UC-01 (a drawing is searched for by any word of its title block, not only by the fields read from it; a reviewer checks what a run covered)
 - Derived terms: `aprov:TextReading`, `aprov:isReadingOf`, `aprov:readText`, `aprov:hasReadingOutcome`, `aprov:errorMessage`, `aprov:StepKind` (`RegionDetection`, `TextRecognition`, `FieldExtraction`) with `aprov:hasStepKind`, and the outcome value `aprov:Failed` (all NEW)
 
-> **Design note — readings and coverage.** A `TextReading` is an `InferredEntity`, so each has the step that produced it, and two runs that read the same title block keep two readings; the latest is the one whose run started last. It reads one thing (`isReadingOf`): a `Titleblock`, or a whole `FilePage`. Its text is `readText`, with the language as the literal's language tag (`"Erdgeschoss"@de`) when it is known. A reading that read nothing has one outcome instead: `Empty`, `Illegible`, or `Failed` with its `errorMessage`; `Failed` is also an outcome of a field assertion. The outcome of a reading is a property of its own (`hasReadingOutcome`), not `hasOutcome`, whose domain is `FieldAssertion`: widening that domain would change what an existing property implies, and a reading is not a claim about a field. Every step says what kind of step it is (`hasStepKind`), so a step that found nothing is still known for what it looked for: "no title block detected" needs no term of its own, it is a page that a region detection used with no title block on it; "not processed" is a page no step used. *(Added in [v0.18](#9-version-history).)*
+> **Design note — readings and coverage.** A `TextReading` is an `InferredEntity`, so each has the step that produced it, and two runs that read the same title block keep two readings; the latest is the one whose run started last. It reads one thing (`isReadingOf`): a `Titleblock`, or a whole `FilePage`. Its text is `readText`, with the language as the literal's language tag (`"Erdgeschoss"@de`) when it is known. A reading that read nothing has one outcome instead: `Empty`, `Illegible`, or `Failed` with its `errorMessage`; `Failed` is also an outcome of a field assertion. A step that failed before producing anything records its `errorMessage` on itself, so a detection that timed out is not read as a page with no title block. The latest reading of a target is the latest, whatever its outcome: a later failed reading hides an earlier text in CQ 11.2, which answers what the latest run read, while CQ 11.1 still finds the earlier text. A run with no recorded start counts as the oldest. The outcome of a reading is a property of its own (`hasReadingOutcome`), not `hasOutcome`, whose domain is `FieldAssertion`: widening that domain would change what an existing property implies, and a reading is not a claim about a field. Every step says what kind of step it is (`hasStepKind`), so a step that found nothing is still known for what it looked for: "no title block detected" needs no term of its own, it is a page that a region detection that did not fail used, with no title block on it; "not processed" is a page no step used. *(Added in [v0.18](#9-version-history).)*
 
 ---
 
@@ -579,7 +579,7 @@ Every assertion is listed, the superseded ones included, oldest first: a model's
 | CQ 11.1 | Which drawings mention "ground floor" anywhere in their title block, whether or not it was read as a field? *(Added in [v0.18](#9-version-history).)* |
 | CQ 11.2 | For page 1 of file "A101-ground-floor.pdf": what text did the latest run read from its title block and from the whole page, in which language, and if it read none, why (empty, illegible, failed, with the error)? *(Added in [v0.18](#9-version-history).)* |
 | CQ 11.3 | Which pages of file "A101-ground-floor.pdf" did each run process, and with what outcome? *(Added in [v0.18](#9-version-history).)* |
-| CQ 11.4 | Which pages were searched for a title block, and none was detected? *(Added in [v0.18](#9-version-history).)* |
+| CQ 11.4 | Which pages were searched for a title block by a detection that did not fail, and the store holds no title block on them? *(Added in [v0.18](#9-version-history).)* |
 
 ```sparql
 PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
@@ -612,11 +612,11 @@ SELECT ?target ?text ?language ?outcome ?error ?run WHERE {
   FILTER (?target = ?page || EXISTS { ?target a metadata:Titleblock })
   ?reading aprov:isReadingOf ?target ;
            aprov:hasInferenceMeta/dcterms:isPartOf ?run .
-  ?run prov:startedAtTime ?started .
+  OPTIONAL { ?run prov:startedAtTime ?started }
   FILTER NOT EXISTS {
     ?later aprov:isReadingOf ?target ;
            aprov:hasInferenceMeta/dcterms:isPartOf/prov:startedAtTime ?laterStart .
-    FILTER (?laterStart > ?started)
+    FILTER (!BOUND(?started) || ?laterStart > ?started)
   }
   OPTIONAL { ?reading aprov:readText ?text }
   OPTIONAL { ?reading aprov:hasReadingOutcome ?outcome }
@@ -639,6 +639,7 @@ SELECT DISTINCT ?number ?run ?status WHERE {
     ?step a aprov:InferenceMeta ;
           prov:used|aprov:inferredFrom ?page ;
           dcterms:isPartOf ?run .
+    OPTIONAL { ?step aprov:errorMessage ?stepError }
   }
   OPTIONAL {
     ?reading aprov:isReadingOf ?page ;
@@ -648,7 +649,8 @@ SELECT DISTINCT ?number ?run ?status WHERE {
   }
   BIND (IF(!BOUND(?run), "NotProcessed",
         IF(BOUND(?o), STRAFTER(STR(?o), "#"),
-        IF(BOUND(?text), "Read", "Processed"))) AS ?status)
+        IF(BOUND(?stepError), "Failed",
+        IF(BOUND(?text), "Read", "Processed")))) AS ?status)
 }
 ORDER BY ?number ?run
 ```
@@ -660,10 +662,10 @@ PREFIX prov:     <http://www.w3.org/ns/prov#>
 PREFIX dcterms:  <http://purl.org/dc/terms/>
 
 # CQ 11.4: the pages a region detection searched, on which no title block was detected
-SELECT DISTINCT ?file ?number ?run WHERE {
+SELECT DISTINCT ?file ?number WHERE {
   ?step aprov:hasStepKind aprov:RegionDetection ;
         prov:used|aprov:inferredFrom ?page .
-  OPTIONAL { ?step dcterms:isPartOf ?run }
+  FILTER NOT EXISTS { ?step aprov:errorMessage ?error }
   ?page aprov:belongsToFile ?file ;
         aprov:pageNumber    ?number .
   FILTER NOT EXISTS {
@@ -674,7 +676,7 @@ SELECT DISTINCT ?file ?number ?run WHERE {
 }
 ```
 
-The queries read the data as written, with no inference. A step records a page it used with `prov:used`, or with `inferredFrom`, its sub-property, so both are read. In CQ 11.3 a page is `NotProcessed` when no step of any run used it and nothing read it; `Processed` when a run used it without reading its text; `Read` when it has text; otherwise its reading's outcome. CQ 11.4 reads every page a region detection used as searched for a title block (open point [G13](#8-open-issues--pending-team-discussion)).
+The queries read the data as written, with no inference. A step records a page it used with `prov:used`, or with `inferredFrom`, its sub-property, so both are read. In CQ 11.3 a page is `NotProcessed` when no step of any run used it and nothing read it; its reading's outcome when a reading of it has one; `Failed` when a step of the run that used it failed; `Read` when it has text; otherwise `Processed` (used without its text being read). CQ 11.4 leaves out a detection that failed, and reads every other page a region detection used as searched for a title block (open point [G13](#8-open-issues--pending-team-discussion)). It answers for the pages as the store now holds them, not per run: a title block is not tied to the run that detected it, so a later run that misses a title block an earlier run found does not list the page.
 
 ### CQ Group I — Integration / Multi-field Queries
 
@@ -922,7 +924,7 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 | ID  | Issue                                                                                                                                                              |
 | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | G5  | Should `hasDiscipline` domain move from `LayoutContentType` to `Layout`? v0.3 proposes yes — discipline characterises the layout, not its content type.            |
-| G13 | **What a region detection looked for.** CQ 11.4 reads every page that a region detection used as searched for a title block, which holds while UC-01's extraction detects only title blocks. A run that detects several kinds of region (a title block, a legend) in separate steps would need each step to say what it looked for, which ADIRO does not record yet. *(Added in [v0.18](#9-version-history).)* |
+| G13 | **What a region detection looked for.** CQ 11.4 reads every page that a region detection used as searched for a title block, which holds while UC-01's extraction detects only title blocks. A run that detects several kinds of region (a title block, a legend) in separate steps would need each step to say what it looked for, which ADIRO does not record yet. Nor is a region tied to the run that detected it, so CQ 11.4 cannot say which run missed a title block another run found. *(Added in [v0.18](#9-version-history).)* |
 | G5b | Should `DrawingSheet` itself carry a `hasDiscipline` (a "primary discipline" for the whole sheet) in addition to Layout-level discipline?                          |
 | G11 | ~~**Direct properties vs `FieldAssertion`.**~~ **Resolved** ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85), [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)): a value is promoted when its assertion is accepted, by a pipeline rule or a person, with the acceptance recorded on the assertion; both layers are kept, and the direct properties are permanent. See the design note in §2.1. |
 | G12 | ~~**A missing person is two different facts.**~~ "The extraction did not find the author" and "the drawing names none" must be told apart (the first is retried or reviewed, the second is a defect of the drawing). Decided: record absence as a value-less `FieldAssertion` with an outcome. **Resolved**: the vocabulary is in `adiro_provenance` (`hasOutcome`, `hasAcceptance`, [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)), and CQ 4.6 reports a drawing by cause. |
