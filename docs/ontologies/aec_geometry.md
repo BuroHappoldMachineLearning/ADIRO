@@ -7,9 +7,10 @@ search:
 
 <div class="adiro-actions" markdown="span">
 <details class="adiro-version">
-<summary class="md-button">Version 2.0.0 (adiro_geometry 3.0.0 available)</summary>
+<summary class="md-button">Version 2.0.0 (adiro_geometry 3.1.0 available)</summary>
 <ul>
-<li><a href="../adiro_geometry/">adiro_geometry 3.0.0 (latest)</a></li>
+<li><a href="../adiro_geometry/">adiro_geometry 3.1.0 (latest)</a></li>
+<li><a href="../adiro_geometry/3.0.0/">adiro_geometry 3.0.0</a></li>
 <li><a href="./" class="adiro-version-current" aria-current="page">2.0.0 (final)</a></li>
 <li><a href="1.0.1/">1.0.1</a></li>
 <li><a href="1.0.0/">1.0.0</a></li>
