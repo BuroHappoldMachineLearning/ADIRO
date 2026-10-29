@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+- **A run that continues an interrupted one** ([#249](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/249)). The PROV-O property `prov:wasInformedBy` is declared as a typing stub, with no axioms: a run restarted after an interruption is `prov:wasInformedBy` the earlier run, whose recorded work it used to decide what to skip. It links two runs; a step stays part of its run (`dcterms:isPartOf`).
+
+### Changed
+- **When runs and steps start and end** ([#249](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/249)). The `prov:startedAtTime` stub's comment says a step may record it as well as a run, so a step that also records `inferredAt` has a processing time; `InferenceMeta`'s definition says so, and that a run records `prov:endedAtTime` only when it completed its work.
+
 ## [2.2.0] — 2026-10-29
 
 ### Changed

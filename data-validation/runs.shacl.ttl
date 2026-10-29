@@ -1,0 +1,41 @@
+# Rules for the times of extraction runs and their steps (#249).
+#
+# A run records when it started (prov:startedAtTime) and, only when it completed its work, when it ended
+# (prov:endedAtTime); a step records when it ended (aprov:inferredAt) and may record when it started. A start and an end
+# make a duration, so each has at most one start and the start is not after the end. The ontology cannot say so under the
+# open-world assumption. What is read here is documented in docs/contribute/data-validation.md and the vocabulary is that
+# of adiro_provenance and PROV-O.
+#
+# Severity: sh:Violation. A run or a step with two starts, or one that ends before it starts, gives no usable duration.
+
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .
+@prefix dv: <https://w3id.org/adiro/data-validation/runs#> .
+
+# Anything that records a start: a run, or a step.
+dv:Start a sh:NodeShape ;
+    sh:targetSubjectsOf prov:startedAtTime ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path prov:startedAtTime ;
+        sh:maxCount 1 ;
+        sh:message "A run or a step has at most one prov:startedAtTime." ;
+        sh:severity sh:Violation ;
+    ] , [
+        sh:path prov:startedAtTime ;
+        sh:lessThanOrEquals prov:endedAtTime ;
+        sh:message "A run does not end (prov:endedAtTime) before it starts (prov:startedAtTime)." ;
+        sh:severity sh:Violation ;
+    ] .
+
+# A step ends with inferredAt.
+dv:StepTimes a sh:NodeShape ;
+    sh:targetClass aprov:InferenceMeta ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path prov:startedAtTime ;
+        sh:lessThanOrEquals aprov:inferredAt ;
+        sh:message "A step does not end (aprov:inferredAt) before it starts (prov:startedAtTime)." ;
+        sh:severity sh:Violation ;
+    ] .

@@ -487,3 +487,33 @@ def test_a_relative_storage_location_conforms_but_is_never_released():
             ' aprov:storageLocation "crops/page-1-titleblock.png"^^xsd:anyURI .\n')
     assert check_files(body) == []
     assert [r["path"].rsplit("#", 1)[-1] for r in released(body)] == ["storageLocation"]
+
+
+# --- the times of runs and steps: one start, not after the end (#249) -----------------------------------------------------
+TIMES = "@prefix prov: <http://www.w3.org/ns/prov#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n"
+
+
+def check_times(body):
+    graph = Graph().parse(data=PREFIXES + APROV + TIMES + body, format="turtle")
+    return sorted({r["message"] for r in vd.validate(graph, ROOT)})
+
+
+def test_a_run_and_a_step_with_ordered_times_conform():
+    body = """:run a prov:Activity ; prov:startedAtTime "2026-10-28T22:00:00+01:00"^^xsd:dateTime ; prov:endedAtTime "2026-10-28T21:30:00Z"^^xsd:dateTime .
+:interrupted a prov:Activity ; prov:startedAtTime "2026-10-28T09:00:00Z"^^xsd:dateTime .
+:step a aprov:InferenceMeta ; prov:startedAtTime "2026-10-28T21:00:00Z"^^xsd:dateTime ; aprov:inferredAt "2026-10-28T21:00:00Z"^^xsd:dateTime .
+:endOnly a aprov:InferenceMeta ; aprov:inferredAt "2026-10-28T21:05:00Z"^^xsd:dateTime .
+"""
+    assert check_times(body) == []
+
+
+@pytest.mark.parametrize("body, message", [
+    (':r a prov:Activity ; prov:startedAtTime "2026-10-28T09:00:00Z"^^xsd:dateTime , "2026-10-28T10:00:00Z"^^xsd:dateTime .\n',
+     "A run or a step has at most one prov:startedAtTime."),
+    (':r a prov:Activity ; prov:startedAtTime "2026-10-28T09:00:00Z"^^xsd:dateTime ; prov:endedAtTime "2026-10-28T08:59:59Z"^^xsd:dateTime .\n',
+     "A run does not end (prov:endedAtTime) before it starts (prov:startedAtTime)."),
+    (':s a aprov:InferenceMeta ; prov:startedAtTime "2026-10-28T22:10:00+01:00"^^xsd:dateTime ; aprov:inferredAt "2026-10-28T21:05:00Z"^^xsd:dateTime .\n',
+     "A step does not end (aprov:inferredAt) before it starts (prov:startedAtTime)."),
+])
+def test_a_run_or_step_with_two_starts_or_ending_before_it_starts_is_reported(body, message):
+    assert check_times(body) == [message]
