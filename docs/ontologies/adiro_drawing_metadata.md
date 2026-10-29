@@ -748,14 +748,14 @@ Free-text guidance for an information-extraction model on where and how a field 
 
 ### isComputerVisionLabel {#isComputerVisionLabel}
 
-When true, this class or datatype property can be used as a label by annotators in computer-vision annotation tooling; when false, it cannot. A class label is a shape drawn around what the class depicts (solid contour in the diagram when true, dashed when false). A datatype-property label is a box drawn around the printed text of that field, such as a layout's title; the box belongs to the class that names the property in an owl:onProperty restriction, which is also how the property is reached from that class. Says nothing about other applications. Carries no reasoning weight.
+When true, this class or datatype property can be used as a label by annotators in computer-vision annotation tooling; when false, it cannot. A class label is a shape drawn around what the class depicts (solid contour in the diagram when true, dashed when false). A datatype-property label is a box drawn around the printed text of that field, such as a layout's title; the box belongs to the class that names the property in an owl:onProperty restriction, which is also how the property is reached from that class. Says nothing about other applications: it is named for the application it serves, and another application gets its own pair of annotations. Carries no reasoning weight.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#isComputerVisionLabel`
 - **Range:** `xsd:boolean`
 
 ### isComputerVisionOptionalLabel {#isComputerVisionOptionalLabel}
 
-Presentation hint for computer-vision annotation tooling: when true, the class is presented apart from the required labels (on the trailing side of the label panel rather than the default leading side) and may be left out by annotators, for example a discipline picked as an attribute of a drawing rather than drawn as a shape. Independent of isComputerVisionLabel. Carries no reasoning weight.
+Presentation hint for computer-vision annotation tooling: when true, the class is presented apart from the required labels (on the trailing side of the label panel rather than the default leading side) and may be left out by annotators, for example a discipline picked as an attribute of a drawing rather than drawn as a shape. Independent of isComputerVisionLabel. Named for the application it serves, like isComputerVisionLabel: another application gets its own pair of annotations. Carries no reasoning weight.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#isComputerVisionOptionalLabel`
 - **Range:** `xsd:boolean`

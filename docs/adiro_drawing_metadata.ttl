@@ -52,20 +52,14 @@ foaf:depiction rdf:type owl:AnnotationProperty ;
     rdfs:range xsd:anyURI ;
     rdfs:comment "Links a class or relationship to an image that shows it. The value is the absolute https IRI of an image file in the module's exampleImage folder (https://w3id.org/adiro/<module>/exampleImage/<LocalName>_NN.<ext>, NN being the two-digit order starting at 01). Carries no reasoning weight, but can be used by downstream consumers like machine-learning workflows or annotation tools. How to add an image: see https://w3id.org/adiro/contribute/example-images/"@en .
 
-# --- Labelling annotations --------------------------------------------------------------------------------------
-# isComputerVisionLabel and isComputerVisionOptionalLabel replace labellableRoot and the older tool-named property (#89, #141).
-# They are named for the application they serve (computer-vision annotation); another application gets its own pair.
-# isComputerVisionLabel marks classes, and also the datatype properties whose printed value an annotator boxes as a text
-# field (#162); each such property is named by an owl:onProperty restriction on the class that owns it.
-
 :isComputerVisionLabel rdf:type owl:AnnotationProperty ;
     rdfs:label "isComputerVisionLabel" ;
-    rdfs:comment "When true, this class or datatype property can be used as a label by annotators in computer-vision annotation tooling; when false, it cannot. A class label is a shape drawn around what the class depicts (solid contour in the diagram when true, dashed when false). A datatype-property label is a box drawn around the printed text of that field, such as a layout's title; the box belongs to the class that names the property in an owl:onProperty restriction, which is also how the property is reached from that class. Says nothing about other applications. Carries no reasoning weight." ;
+    rdfs:comment "When true, this class or datatype property can be used as a label by annotators in computer-vision annotation tooling; when false, it cannot. A class label is a shape drawn around what the class depicts (solid contour in the diagram when true, dashed when false). A datatype-property label is a box drawn around the printed text of that field, such as a layout's title; the box belongs to the class that names the property in an owl:onProperty restriction, which is also how the property is reached from that class. Says nothing about other applications: it is named for the application it serves, and another application gets its own pair of annotations. Carries no reasoning weight." ;
     rdfs:range xsd:boolean .
 
 :isComputerVisionOptionalLabel rdf:type owl:AnnotationProperty ;
     rdfs:label "isComputerVisionOptionalLabel" ;
-    rdfs:comment "Presentation hint for computer-vision annotation tooling: when true, the class is presented apart from the required labels (on the trailing side of the label panel rather than the default leading side) and may be left out by annotators, for example a discipline picked as an attribute of a drawing rather than drawn as a shape. Independent of isComputerVisionLabel. Carries no reasoning weight." ;
+    rdfs:comment "Presentation hint for computer-vision annotation tooling: when true, the class is presented apart from the required labels (on the trailing side of the label panel rather than the default leading side) and may be left out by annotators, for example a discipline picked as an attribute of a drawing rather than drawn as a shape. Independent of isComputerVisionLabel. Named for the application it serves, like isComputerVisionLabel: another application gets its own pair of annotations. Carries no reasoning weight." ;
     rdfs:range xsd:boolean .
 
 :extractionHint rdf:type owl:AnnotationProperty ;

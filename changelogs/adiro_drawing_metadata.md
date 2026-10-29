@@ -5,6 +5,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+- **The labelling annotations' definitions say they are named for their application** ([#216](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/216)): `isComputerVisionLabel` and `isComputerVisionOptionalLabel` serve computer-vision annotation, and another application gets its own pair. The Turtle comment block above them, which said so along with the history of their names (recorded under [#141](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/141) in the `aec_drawing_metadata` changelog), is removed: a `#` comment is not part of the graph any tool reads. Downstream consumers need no change.
+
 ## [7.0.0] — 2026-10-21
 
 ### Changed
