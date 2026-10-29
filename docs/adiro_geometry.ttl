@@ -58,7 +58,7 @@ geo:Geometry rdf:type owl:Class ;
 
 :CoordinateFrame rdf:type owl:Class ;
     rdfs:label "Coordinate Frame" ;
-    rdfs:comment "A page of a file read in one coordinate convention: the named coordinate space, the unit and the profile that defines it (the datatype properties below), for the page it describes (describesPage). A page can have more than one frame (the primary page_display_pt in points, and px for raster evidence), and each states only its convention: what is true of the page itself (its number, file, rotation and size) is on the adiro_provenance:FilePage. Not an InferredEntity: a declared coordinate context, not a detection with its own confidence." .
+    rdfs:comment "A page of a file read in one coordinate convention: the named coordinate space, the unit and the profile that defines it (the datatype properties below), for the page it describes (describesPage). A page can have more than one frame (the primary page_display_pt in points, and px for raster evidence), and each states only its convention: what is true of the page itself (its number, file, rotation and size) is on the adiro_provenance:FilePage. Every image of the page that an extraction feeds to a model is a pixel frame of its own, with the resolution it was rendered or scaled to (resolutionDpi), and a crop is a frame limited to a region of the page (coversRegion), so a step that records the frame it used (prov:used) says what its model saw without the image being kept. Not an InferredEntity: a declared coordinate context, not a detection with its own confidence." .
 
 #################################################################
 #    Object Properties
@@ -80,6 +80,18 @@ geo:Geometry rdf:type owl:Class ;
     rdfs:label "hasBoundingBox" ;
     rdfs:comment "The bounding box that locates a region on a drawing page. In UC-01 this is the title block's own region (a adiro_drawing_metadata:Titleblock, like every MetadataContainer, may have a hasBoundingBox): the field values are read from within that single region and are not themselves individually localised. No rdfs:domain is asserted, so the same property serves any locatable region or element - e.g. UC-03 reference symbols, when that work extends this module." ;
     rdfs:range :BoundingBox .
+
+:coversRegion rdf:type owl:ObjectProperty ;
+    rdfs:label "coversRegion" ;
+    rdfs:comment "The region of the page that this frame shows, when it shows only part of it (a crop): the BoundingBox, in another frame of the same page (usually page_display_pt), whose rectangle the frame's image holds. The frame's own coordinates start at the region's top-left corner. A frame that shows the whole page has no coversRegion. Between the region and the frame there is only a uniform scale, given by the frame's resolutionDpi, so a box found in the crop is placed on the page without a transform term." ;
+    rdfs:domain :CoordinateFrame ;
+    rdfs:range :BoundingBox .
+
+:imageOf rdf:type owl:ObjectProperty ;
+    rdfs:label "imageOf" ;
+    rdfs:comment "The coordinate frame that a kept image file shows: the rendering of a page, or a crop of it, as it was fed to a model, kept so a viewer can show it. The image is an aprov:DrawingFile with its contentHash and mediaType, and its pixels are the frame's coordinates. Only an image that is kept has a file: a frame a model saw is recorded whether or not its image is kept." ;
+    rdfs:domain aprov:DrawingFile ;
+    rdfs:range :CoordinateFrame .
 
 #################################################################
 #    Datatype Properties - the shape
@@ -112,3 +124,9 @@ geo:Geometry rdf:type owl:Class ;
     rdfs:comment "Reference to the versioned coordinate profile that defines the named coordinateSpace in full (origin, axes and unit), so the convention is pinned rather than only implied by the space's name." ;
     rdfs:domain :CoordinateFrame ;
     rdfs:range xsd:string .
+
+:resolutionDpi rdf:type owl:DatatypeProperty ;
+    rdfs:label "resolutionDpi" ;
+    rdfs:comment "The resolution of a pixel frame, in pixels per inch of the page. For a frame that shows the whole page, a page_display_pt coordinate times resolutionDpi / 72 gives the pixel; for a crop (coversRegion), the coordinate is first taken from the region's top-left corner: (coordinate - corner) times resolutionDpi / 72. For a page rendered at 300 dpi it is 300; for that image scaled down so that its shorter side is 1200 pixels, it is the resolution the scaling gives (a decimal, such as 42.35). A frame in points has none." ;
+    rdfs:domain :CoordinateFrame ;
+    rdfs:range xsd:decimal .

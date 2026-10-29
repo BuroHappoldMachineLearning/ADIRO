@@ -1,0 +1,57 @@
+# Rules for the frames a model saw (#239): the image of a page, or of a region of it, at a resolution.
+#
+# A frame has at most one resolution, a positive number, and covers at most one region; a pixel frame says its resolution,
+# or its pixels cannot be placed on the page; a kept image is an image of one frame. The ontology cannot say so under the
+# open-world assumption. What is read here is documented in docs/contribute/data-validation.md and the vocabulary is that
+# of adiro_geometry.
+#
+# Severity: sh:Violation for the structural rules; sh:Warning for a pixel frame with no resolution, which is incomplete
+# rather than malformed (a frame recorded before resolutions were).
+
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .
+@prefix geom: <https://w3id.org/adiro/adiro_geometry#> .
+@prefix dv: <https://w3id.org/adiro/data-validation/frames#> .
+
+dv:Frame a sh:NodeShape ;
+    sh:targetClass geom:CoordinateFrame ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path geom:resolutionDpi ;
+        sh:maxCount 1 ;
+        # 300 is an xsd:integer in Turtle, which the range xsd:decimal admits (integer is derived from decimal), but
+        # sh:datatype matches one datatype exactly: both are accepted
+        sh:or ( [ sh:datatype xsd:decimal ] [ sh:datatype xsd:integer ] ) ;
+        sh:minExclusive 0 ;
+        sh:message "A frame has at most one resolutionDpi, a positive number (300 or 42.35)." ;
+        sh:severity sh:Violation ;
+    ] , [
+        sh:path geom:coversRegion ;
+        sh:maxCount 1 ;
+        sh:class geom:BoundingBox ;
+        sh:message "A frame covers at most one region, a BoundingBox." ;
+        sh:severity sh:Violation ;
+    ] .
+
+# A pixel frame says its resolution.
+dv:PixelFrameResolution a sh:NodeShape ;
+    sh:targetClass geom:CoordinateFrame ;
+    sh:severity sh:Warning ;
+    sh:message "A pixel frame (unit px) has a resolutionDpi." ;
+    sh:or (
+        [ sh:not [ sh:property [ sh:path geom:unit ; sh:hasValue "px" ] ] ]
+        [ sh:property [ sh:path geom:resolutionDpi ; sh:minCount 1 ] ]
+    ) .
+
+# A kept image is an image of one frame.
+dv:KeptImage a sh:NodeShape ;
+    sh:targetSubjectsOf geom:imageOf ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path geom:imageOf ;
+        sh:maxCount 1 ;
+        sh:class geom:CoordinateFrame ;
+        sh:message "A kept image is an image of exactly one frame." ;
+        sh:severity sh:Violation ;
+    ] .

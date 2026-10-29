@@ -522,10 +522,20 @@ td {
                 <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
               </th>
               <td>
-                <span>
-                  <a href="#hasBoundingBox">hasBoundingBox</a>
-                  <sup class="sup-op" title="OWL Object Property">op</sup>
-                </span>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#hasBoundingBox">hasBoundingBox</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#coversRegion">coversRegion</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                </ul>
               </td>
             </tr>
           </table>
@@ -545,7 +555,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A page of a file read in one coordinate convention: the named coordinate space, the unit and the profile that defines it (the datatype properties below), for the page it describes (describesPage). A page can have more than one frame (the primary page_display_pt in points, and px for raster evidence), and each states only its convention: what is true of the page itself (its number, file, rotation and size) is on the adiro_provenance:FilePage. Not an InferredEntity: a declared coordinate context, not a detection with its own confidence.</p></td>
+              <td><p>A page of a file read in one coordinate convention: the named coordinate space, the unit and the profile that defines it (the datatype properties below), for the page it describes (describesPage). A page can have more than one frame (the primary page_display_pt in points, and px for raster evidence), and each states only its convention: what is true of the page itself (its number, file, rotation and size) is on the adiro_provenance:FilePage. Every image of the page that an extraction feeds to a model is a pixel frame of its own, with the resolution it was rendered or scaled to (resolutionDpi), and a crop is a frame limited to a region of the page (coversRegion), so a step that records the frame it used (prov:used) says what its model saw without the image being kept. Not an InferredEntity: a declared coordinate context, not a detection with its own confidence.</p></td>
             </tr>
             <tr>
               <th>
@@ -556,6 +566,12 @@ td {
                   <li>
                     <span>
                       <a href="#describesPage">describesPage</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#coversRegion">coversRegion</a>
                       <sup class="sup-op" title="OWL Object Property">op</sup>
                     </span>
                   </li>
@@ -577,6 +593,12 @@ td {
                       <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
                     </span>
                   </li>
+                  <li>
+                    <span>
+                      <a href="#resolutionDpi">resolutionDpi</a>
+                      <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+                    </span>
+                  </li>
                 </ul>
               </td>
             </tr>
@@ -585,10 +607,20 @@ td {
                 <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
               </th>
               <td>
-                <span>
-                  <a href="#inCoordinateFrame">inCoordinateFrame</a>
-                  <sup class="sup-op" title="OWL Object Property">op</sup>
-                </span>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#inCoordinateFrame">inCoordinateFrame</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#imageOf">imageOf</a>
+                      <sup class="sup-op" title="OWL Object Property">op</sup>
+                    </span>
+                  </li>
+                </ul>
               </td>
             </tr>
           </table>
@@ -699,6 +731,85 @@ td {
               <td>
                 <span>
                   <a href="#BoundingBox">Bounding Box</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="coversRegion">
+          <h3>coversRegion
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/adiro_geometry#coversRegion</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>The region of the page that this frame shows, when it shows only part of it (a crop): the BoundingBox, in another frame of the same page (usually page_display_pt), whose rectangle the frame's image holds. The frame's own coordinates start at the region's top-left corner. A frame that shows the whole page has no coversRegion. Between the region and the frame there is only a uniform scale, given by the frame's resolutionDpi, so a box found in the crop is placed on the page without a transform term.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#CoordinateFrame">Coordinate Frame</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#BoundingBox">Bounding Box</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="imageOf">
+          <h3>imageOf
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/adiro_geometry#imageOf</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>The coordinate frame that a kept image file shows: the rendering of a page, or a crop of it, as it was fed to a model, kept so a viewer can show it. The image is an aprov:DrawingFile with its contentHash and mediaType, and its pixels are the frame's coordinates. Only an image that is kept has a file: a frame a model saw is recorded whether or not its image is kept.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <a href="https://w3id.org/adiro/adiro_provenance#DrawingFile">aprov:DrawingFile</a>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#CoordinateFrame">Coordinate Frame</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -860,6 +971,44 @@ td {
             </tr>
           </table>
         </div>
+        <div class="property entity" id="resolutionDpi">
+          <h3>resolutionDpi
+            <sup class="sup-dp" title="OWL Datatype Property">dp</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/adiro_geometry#resolutionDpi</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>The resolution of a pixel frame, in pixels per inch of the page. For a frame that shows the whole page, a page_display_pt coordinate times resolutionDpi / 72 gives the pixel; for a crop (coversRegion), the coordinate is first taken from the region's top-left corner: (coordinate - corner) times resolutionDpi / 72. For a page rendered at 300 dpi it is 300; for that image scaled down so that its shorter side is 1200 pixels, it is the resolution the scaling gives (a decimal, such as 42.35). A frame in points has none.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#CoordinateFrame">Coordinate Frame</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2001/XMLSchema#decimal">xsd:decimal</a>
+              </td>
+            </tr>
+          </table>
+        </div>
       </div>
       <div id="namespaces">
         <h2>Namespaces</h2>
@@ -981,6 +1130,12 @@ td {
             <li>
               <a href="#hasBoundingBox">hasBoundingBox</a>
             </li>
+            <li>
+              <a href="#coversRegion">coversRegion</a>
+            </li>
+            <li>
+              <a href="#imageOf">imageOf</a>
+            </li>
           </ul>
         </li>
         <li>
@@ -999,6 +1154,9 @@ td {
             </li>
             <li>
               <a href="#profileRef">profileRef</a>
+            </li>
+            <li>
+              <a href="#resolutionDpi">resolutionDpi</a>
             </li>
           </ul>
         </li>

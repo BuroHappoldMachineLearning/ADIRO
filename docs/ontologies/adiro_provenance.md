@@ -95,7 +95,7 @@ What a search for a field found, when it found no value: Empty, Illegible, NotPr
 
 ### Configuration {#Configuration}
 
-The settings a step of an extraction used, kept as text (configurationContent): a prompt, rendering settings, size limits, model parameters. ADIRO does not model what is inside, so any setting can be recorded without a new term. A configuration is identified by its content: the same content used on thousands of pages should be one individual. A step records that it used a configuration with prov:used; where the configuration varies from page to page, as a prompt can, the InferenceMeta of that page records it.
+The settings a step of an extraction used, kept as text (configurationContent): a prompt, rendering settings, size limits, model parameters. ADIRO does not model what is inside, so any setting can be recorded without a new term. A configuration is identified by its content: the same content used on thousands of pages should be one individual. A step records that it used a configuration with prov:used; where the configuration varies from page to page, as a prompt can, the InferenceMeta of that page records it. A resolution is not a configuration: coordinates depend on it, so it is recorded on the coordinate frame it gives (resolutionDpi, in adiro_geometry).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#Configuration`
 - **Sub class of:** [Entity](#Entity)
@@ -586,7 +586,7 @@ Typing stub for the PROV-O term of the same name, declared locally so this modul
 
 ### storageLocation {#storageLocation}
 
-Where a copy of the file is stored: an address in a document-management or cloud storage system, or a path as a file address. More than one is allowed, and a location changes when the file is moved; the contentHash is what stays the same.
+Where a copy of the file is stored: an address in a document-management or cloud storage system, or a path as a file address. More than one is allowed, and a location changes when the file is moved; the contentHash is what stays the same. It may be a relative reference (RFC 3986, such as crops/page-1-titleblock.png), resolved against the root of the dataset the data belongs to, which the data does not record: a dataset that is moved keeps its relative locations. A public release accepts only absolute addresses on its allowed hosts, so a relative location is resolved before release.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#storageLocation`
 - **Domain:** [Drawing File](#DrawingFile)
