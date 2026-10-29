@@ -92,6 +92,13 @@ What a search for a field found, when it found no value: Empty, Illegible, NotPr
     - [Not printed](#NotPrinted)
     - [Not found](#NotFound)
 
+### Configuration {#Configuration}
+
+The settings a step of an extraction used, kept as text (configurationContent): a prompt, rendering settings, size limits, model parameters. ADIRO does not model what is inside, so any setting can be recorded without a new term. A configuration is identified by its content: the same content used on thousands of pages should be one individual. A step records that it used a configuration with prov:used; where the configuration varies from page to page, as a prompt can, the InferenceMeta of that page records it.
+
+- **IRI:** `https://w3id.org/adiro/adiro_provenance#Configuration`
+- **Sub class of:** [Entity](#Entity)
+
 ### Document (ISO 21597-1) {#Document}
 
 Typing stub for the ISO 21597-1 (ICDD) term Document, edition 1: an abstract reference to a document inside or outside a container. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at.
@@ -129,7 +136,7 @@ One page of one DrawingFile, counted from 1; a single-page or raster file has pa
 
 ### Inference Meta {#InferenceMeta}
 
-Provenance metadata for an inferred or extracted assertion: what produced it (inferredBy / inferredWith), the source it was derived from (inferredFrom), and when (inferredAt). Modelled as a separate object so several assertions can share one inference record and so provenance can be added without touching the value. Analogous to DANO's DrawingElementMeta, but aligned to PROV-O: this is the prov:Activity that produced the assertion, NOT a prov:Entity. PROV-O declares those two owl:disjointWith, so the distinction is load-bearing rather than stylistic.
+Provenance metadata for an inferred or extracted assertion: what produced it (inferredBy / inferredWith), the source it was derived from (inferredFrom), and when (inferredAt). Modelled as a separate object so several assertions can share one inference record and so provenance can be added without touching the value. Analogous to DANO's DrawingElementMeta, but aligned to PROV-O: this is the prov:Activity that produced the assertion, NOT a prov:Entity. PROV-O declares those two owl:disjointWith, so the distinction is load-bearing rather than stylistic. In an extraction run, each step (detecting a region, reading text, extracting fields) is an InferenceMeta with the model that step used, and is part of the run (dcterms:isPartOf), itself a prov:Activity; the Configuration a step used (a prompt, rendering settings) is recorded with prov:used.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#InferenceMeta`
 - **Sub class of:** [Activity](#Activity)
@@ -299,6 +306,12 @@ The algorithm or model (ideally with version) used to produce this inference. Di
 - **Sub property of:** [used](#used)
 - **Domain:** [Inference Meta](#InferenceMeta)
 
+### isPartOf {#isPartOf}
+
+Typing stub for the DCMI Metadata Terms property of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative definition lives at the source that rdfs:isDefinedBy points at. ADIRO uses it between the steps of an extraction run and the run: each step (an InferenceMeta, such as detecting the title block or reading its text) is part of the run (a prov:Activity) it was performed in.
+
+- **IRI:** `http://purl.org/dc/terms/isPartOf`
+
 ### supersedes {#supersedes}
 
 The earlier assertion that this one replaces about the same field of the same subject: a person's correction of a model's value, or a later value after a not-found. It takes effect when this assertion is accepted: until then the earlier one stays in force, and an accepted assertion replaces every one it supersedes, directly or through others. The earlier one stays as a record. Explicit, so a query does not depend on timestamps.
@@ -355,6 +368,14 @@ The caption/label text exactly as printed on the drawing for this assertion (e.g
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#capturedCaption`
 - **Domain:** [Field Assertion](#FieldAssertion)
+- **Range:** `xsd:string`
+
+### configurationContent {#configurationContent}
+
+The content of a Configuration, as text: the prompt as sent, or the settings serialised in the format the step reads them in, kept verbatim so a step can be repeated with exactly the same settings. It is published with the data, so it carries no credentials: keys, tokens and private endpoints are removed before it is recorded.
+
+- **IRI:** `https://w3id.org/adiro/adiro_provenance#configurationContent`
+- **Domain:** [Configuration](#Configuration)
 - **Range:** `xsd:string`
 
 ### contentHash {#contentHash}
@@ -499,6 +520,12 @@ The page at the file's origin that describes it, such as a catalogue record or a
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#sourcePage`
 - **Domain:** [Drawing File](#DrawingFile)
 - **Range:** `xsd:anyURI`
+
+### startedAtTime {#startedAtTime}
+
+Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range xsd:dateTime). ADIRO uses it for when an extraction run started; its steps record when each ended with inferredAt.
+
+- **IRI:** `http://www.w3.org/ns/prov#startedAtTime`
 
 ### storageLocation {#storageLocation}
 

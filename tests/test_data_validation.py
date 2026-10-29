@@ -398,3 +398,18 @@ def test_the_cli_reads_the_allowlist_file(tmp_path, capsys):
     assert "[Violation] https://ex.org/d#leak:" in out and "d#ok:" not in out
     assert "1 result(s), 1 violation(s)" in out
     assert vd.main(["--public-hosts"]) == 2
+
+
+# --- a configuration of a step: exactly one content, as a string (#237) ---------------------------------------------------
+def test_a_configuration_with_one_content_conforms():
+    assert check_assertions(':c a aprov:Configuration ; aprov:configurationContent "Read the title block." .\n') == []
+
+
+@pytest.mark.parametrize("body", [
+    ":c a aprov:Configuration .\n",
+    ':c a aprov:Configuration ; aprov:configurationContent "Read the title block." , "Read every field." .\n',
+    ":c a aprov:Configuration ; aprov:configurationContent 300 .\n",
+])
+def test_a_configuration_with_no_content_two_contents_or_a_number_is_reported(body):
+    assert [r["message"] for r in check_assertions(body)] == [
+        "A configuration has exactly one configurationContent, as a string."]
