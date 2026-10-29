@@ -184,7 +184,11 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   and nothing in `src/`. `uv run --with pyshacl python scripts/validate_data.py DATA.ttl` runs them; `tests/test_data_validation.py`
   proves each rule accepts a conforming graph and rejects a violating one. The shapes in `data-validation/release/` run only for a
   public release (`--public-hosts FILE`, an allowlist of public hosts the releaser supplies and the repository never holds): every
-  address an ADIRO term records (a file's source, page and storage, an assertion's policy) must be on one of them ([#229](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/229)). Full guide: `docs/contribute/data-validation.md`.
+  address an ADIRO term records (a file's source, page and storage, an assertion's policy) must be on one of them ([#229](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/229)). The shapes and the
+  UC-01 competency queries are released together as **the checks**, with their own SemVer, changelog (`changelogs/checks.md`) and tag
+  (`checks-v<semver>`), so a consumer can pin them ([#240](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/240)): a release is
+  cut by hand (date the changelog, publish the Release), `backup-version.yml` exports it with `scripts/export_checks.py` into
+  `versions/checks/<semver>/`, and the deploy serves it at `w3id.org/adiro/checks/<semver>/`. Full guide: `docs/contribute/data-validation.md`.
 
 **After any `.ttl` edit, validate immediately:**
 `uv run python scripts/validate_ontology.py src/<file>.ttl` (or with no arg to validate all of `src/`).
