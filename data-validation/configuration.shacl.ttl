@@ -1,0 +1,27 @@
+# The configuration of a step of an extraction run (#237).
+#
+# A Configuration is identified by its content: the IRI recommended in the UC-01 ORSD (FR 10) is built from a hash of
+# configurationContent, and the content is what lets a step be repeated with the same settings. So a configuration has
+# exactly one content, as a string. The ontology cannot say so under the open-world assumption: a missing content would
+# be unknown, not absent, and two would not contradict each other. What is read here is documented in
+# docs/contribute/data-validation.md and the vocabulary is that of adiro_provenance.
+#
+# Severity: sh:Violation. A configuration with no content cannot be repeated or named from its content, and one with two
+# is ambiguous.
+
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .
+@prefix dv: <https://w3id.org/adiro/data-validation/configuration#> .
+
+dv:ConfigurationContent a sh:NodeShape ;
+    sh:targetClass aprov:Configuration ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path aprov:configurationContent ;
+        sh:severity sh:Violation ;  # a property shape does not inherit the severity of its node shape
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "A configuration has exactly one configurationContent, as a string."
+    ] .

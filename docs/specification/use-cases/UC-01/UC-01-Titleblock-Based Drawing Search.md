@@ -259,7 +259,7 @@ Each FR describes one representational capability the ontology must have, in imp
 - Source: UC-01 (every value read from a title block is produced by an extraction, and a reviewer must be able to see how)
 - Derived terms: `aprov:InferenceMeta` (REUSE: a step), `aprov:inferredWith` (REUSE: the model of a step), `aprov:Configuration` and `aprov:configurationContent` (NEW), with the typing stubs `dcterms:isPartOf` (a step is part of its run), `prov:used` (the configuration a step used, and the ontology versions a run used) and `prov:startedAtTime` (when a run started)
 
-> **Design note — runs and steps.** An extraction run is a `prov:Activity`. Each of its steps (detecting the title block, reading its text, extracting the fields) is an `InferenceMeta` with the model it used (`inferredWith`), and is part of the run (`dcterms:isPartOf`). A value's assertion points to the step that produced it (`hasInferenceMeta`). What the step used besides its model is a `Configuration` (`prov:used`): a prompt, rendering settings, size limits, kept as text whose format ADIRO does not model. Its IRI is minted from a hash of its content, so a configuration used on every page of a run is one individual; where it varies from page to page, the `InferenceMeta` of that page records it. The run records the ontology versions it used as `prov:used` their version IRIs (for example `<https://w3id.org/adiro/adiro_provenance/2.1.0>`). UC-03's provenance profile ([#96](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/96)) uses the same pattern. *(Added in [v0.17](#9-version-history).)*
+> **Design note — runs and steps.** An extraction run is a `prov:Activity`. Each of its steps (detecting the title block, reading its text, extracting the fields) is an `InferenceMeta` with the model it used (`inferredWith`), and is part of the run (`dcterms:isPartOf`). A value's assertion points to the step that produced it (`hasInferenceMeta`). What the step used besides its model is a `Configuration` (`prov:used`): a prompt, rendering settings, size limits, kept as text whose format ADIRO does not model, with no credentials in it. A configuration is identified by its content, so one used on every page of a run is one individual. The recommended IRI is built from a hash of the content: the SHA-256 of the UTF-8 bytes of `configurationContent`, in lowercase hexadecimal (for example `…/configuration/sha256-9f2c…`), with settings written as JSON with sorted keys and no insignificant whitespace, so that the same settings give the same text and the same IRI, whichever producer writes them. The hash is not recorded: the content is, and anyone can compute it again. Where a configuration varies from page to page, the `InferenceMeta` of that page records it, so one step of a run can be several `InferenceMeta` with the same model; two runs are compared by run and model, not by the IRI of a step. The run records the ADIRO versions it used as `prov:used` their version IRIs (for example `<https://w3id.org/adiro/adiro_provenance/2.1.0>`), written in that form, which is how a query tells them from anything else the run used. The resolution a page was rendered at is not a configuration: coordinates depend on it, so it belongs with the coordinate frame ([#239](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/239)). UC-03's provenance profile ([#96](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/96)) uses the same pattern. *(Added in [v0.17](#9-version-history).)*
 
 ---
 
@@ -488,7 +488,8 @@ SELECT ?file ?origin ?sourceLocation ?sourcePage WHERE {
 
 | ID      | Competency Question |
 | ------- | ------------------- |
-| CQ 10.1 | For the title of drawing "ST-101": which run produced each value recorded for it, when the run started, which step and which model, and with which configuration? *(Added in [v0.17](#9-version-history).)* |
+| CQ 10.1 | For the title of drawing "ST-101": which run produced each value recorded for it, when the run started, which step, which model or person, and with which configuration? *(Added in [v0.17](#9-version-history).)* |
+| CQ 10.2 | Which versions of the ADIRO ontologies did each extraction run use, and when did it start? *(Added in [v0.17](#9-version-history).)* |
 
 ```sparql
 PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
@@ -497,19 +498,37 @@ PREFIX prov:     <http://www.w3.org/ns/prov#>
 PREFIX dcterms:  <http://purl.org/dc/terms/>
 
 # CQ 10.1: the run, the step, the model and the configuration behind each value of a field of a drawing
-SELECT ?assertion ?value ?run ?started ?step ?model ?configuration WHERE {
+SELECT ?assertion ?value ?run ?started ?step ?model ?agent ?configuration WHERE {
   ?drawing metadata:drawingIdentifier "ST-101" .
   ?assertion aprov:assertedAbout    ?drawing ;
              aprov:assertsFieldKind metadata:DrawingTitleField ;
              aprov:hasInferenceMeta ?step .
   OPTIONAL { ?assertion aprov:hasLiteralValue|aprov:hasValueEntity ?value }
   OPTIONAL { ?step aprov:inferredWith ?model }
+  OPTIONAL { ?step aprov:inferredBy ?agent }
   OPTIONAL { ?step dcterms:isPartOf ?run . OPTIONAL { ?run prov:startedAtTime ?started } }
   OPTIONAL { ?step prov:used ?configuration . ?configuration a aprov:Configuration }
 }
 ```
 
-The query reads the data as written, with no inference: the configuration is recognised by its type, and the model by `inferredWith`. A value read by hand has a step with no model and no run, and is listed with those left empty.
+The query reads the data as written, with no inference: the configuration is recognised by its type, and the model by `inferredWith`. A value typed by a person has a step with no model and no run, and is listed with the person (`inferredBy`) and those left empty.
+
+```sparql
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+
+# CQ 10.2: the ADIRO versions each extraction run used
+SELECT DISTINCT ?run ?started ?version WHERE {
+  ?step a aprov:InferenceMeta ;
+        dcterms:isPartOf ?run .
+  ?run prov:used ?version .
+  FILTER(REGEX(STR(?version), "^https://w3id[.]org/adiro/[a-z_]+/[0-9]+[.][0-9]+[.][0-9]+$"))
+  OPTIONAL { ?run prov:startedAtTime ?started }
+}
+```
+
+A version is recognised by the form of its IRI, `https://w3id.org/adiro/<module>/<major>.<minor>.<patch>`, which is the `owl:versionIRI` of every ADIRO release, so a run's data answers the question without the ontology loaded beside it. The run is found through its steps, because `dcterms:isPartOf` has no domain and is used for other things too.
 
 ### CQ Group I — Integration / Multi-field Queries
 
@@ -668,9 +687,9 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `aprov:fileModifiedAt`         | `adiro_provenance`       | NEW    | CQ 9.4                                         | FR 9                               |
 | `aprov:storageLocation`, `aprov:contentHash`, `aprov:hashAlgorithm`, `aprov:mediaType`, `aprov:fileCreatedAt`, `aprov:fileCreatedBy`, `aprov:fileModifiedBy`, `aprov:pageCount`, `aprov:fileSize` | `adiro_provenance` | NEW | none yet: they identify, locate and describe the file (the first set of the file brainstorm) | FR 9 |
 | `aprov:sourceLocation`, `aprov:sourcePage`, `prov:wasDerivedFrom` (a typing stub) | `adiro_provenance` | NEW | CQ 9.5 | FR 9 |
-| `aprov:InferenceMeta`, `aprov:inferredWith` | `adiro_provenance` | REUSE | CQ 10.1 | FR 10 |
+| `aprov:InferenceMeta`, `aprov:inferredWith`, `aprov:inferredBy` | `adiro_provenance` | REUSE | CQ 10.1, CQ 10.2 | FR 10 |
 | `aprov:Configuration`, `aprov:configurationContent` | `adiro_provenance` | NEW | CQ 10.1 | FR 10 |
-| `dcterms:isPartOf`, `prov:used`, `prov:startedAtTime` (typing stubs) | `adiro_provenance` | NEW | CQ 10.1 | FR 10 |
+| `dcterms:isPartOf`, `prov:used`, `prov:startedAtTime` (typing stubs) | `adiro_provenance` | NEW | CQ 10.1, CQ 10.2 | FR 10 |
 | `metadata:assertsPackage`      | `adiro_drawing_metadata` | NEW    | CQ 8.3, CQ 8.4                                 | FR 8                               |
 | `metadata:drawingIdentifier`       | `adiro_drawing_metadata` | NEW    | CQ 1.1, CQ 1.2                                 | FR 1                               |
 | `metadata:drawingTitle`        | `adiro_drawing_metadata` | NEW    | CQ 1.2                                         | FR 1                               |
@@ -760,8 +779,8 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 Changes from v0.16, made when runs were modelled for UC-01 ([#237](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/237), decided on [Discussion #235](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/235)). MAJOR in substance (a functional requirement, a class, an attribute and a competency question added); the number stays in the 0.x series because the document is still a draft:
 
-- **FR 10 and CQ Group 10 added** (§3, §4): which run, step and model produced a value, with which configuration, and which ontology versions the run used. CQ 10.1 is recorded as a query, run without inference.
-- **`Configuration` and `configurationContent` added** (§2.1, §6), with the typing stubs `dcterms:isPartOf` (a step is part of its run, §2.3) and `prov:startedAtTime`. The design note under FR 10 states the pattern: a run is a `prov:Activity`, its steps are `InferenceMeta`, as UC-03's provenance profile ([#96](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/96)) does.
+- **FR 10 and CQ Group 10 added** (§3, §4): which run, step and model produced a value, with which configuration, and which ontology versions the run used. CQ 10.1 and CQ 10.2 are recorded as queries, run without inference; CQ 10.2 recognises a version by the form of its IRI. The design note recommends how a configuration's IRI is built from its content.
+- **`Configuration` and `configurationContent` added** (§2.1, §6), with the typing stubs `dcterms:isPartOf` (a step is part of its run, §2.3) and `prov:startedAtTime`; a shape checks that a configuration has exactly one content (`data-validation/configuration.shacl.ttl`). The design note under FR 10 states the pattern: a run is a `prov:Activity`, its steps are `InferenceMeta`, as UC-03's provenance profile ([#96](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/96)) does.
 
 ### v0.16 (draft)
 

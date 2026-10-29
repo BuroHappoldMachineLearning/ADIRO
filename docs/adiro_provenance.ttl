@@ -134,7 +134,7 @@ dcterms:isPartOf rdf:type owl:ObjectProperty ;
 
 :Configuration rdf:type owl:Class ;
     rdfs:label "Configuration" ;
-    rdfs:comment "The settings a step of an extraction used, kept as text (configurationContent): a prompt, rendering settings, size limits, model parameters. ADIRO does not model what is inside, so any setting can be recorded without a new term; dcterms:conformsTo may name the format the text follows. Its IRI is minted from a hash of its content, so the same configuration used on thousands of pages is one individual. A step records that it used a configuration with prov:used; where the configuration varies from page to page, as a prompt can, the InferenceMeta of that page records it. A resolution is not a configuration: coordinates depend on it, so it is recorded on the coordinate frame it gives." ;
+    rdfs:comment "The settings a step of an extraction used, kept as text (configurationContent): a prompt, rendering settings, size limits, model parameters. ADIRO does not model what is inside, so any setting can be recorded without a new term. A configuration is identified by its content: the same content used on thousands of pages should be one individual. A step records that it used a configuration with prov:used; where the configuration varies from page to page, as a prompt can, the InferenceMeta of that page records it." ;
     rdfs:subClassOf prov:Entity .
 
 #################################################################
@@ -194,7 +194,7 @@ dcterms:isPartOf rdf:type owl:ObjectProperty ;
 
 :configurationContent rdf:type owl:DatatypeProperty ;
     rdfs:label "configurationContent" ;
-    rdfs:comment "The content of a Configuration, as text: the prompt as sent, or the settings serialised in the format the step reads them in, kept verbatim so a step can be repeated with exactly the same settings." ;
+    rdfs:comment "The content of a Configuration, as text: the prompt as sent, or the settings serialised in the format the step reads them in, kept verbatim so a step can be repeated with exactly the same settings. It is published with the data, so it carries no credentials: keys, tokens and private endpoints are removed before it is recorded." ;
     rdfs:domain :Configuration ;
     rdfs:range xsd:string .
 
