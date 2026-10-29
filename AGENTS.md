@@ -241,7 +241,7 @@ commands directly, but Git Bash is simpler.
 
 ## Versioning
 **Per-module SemVer** — each `src/*.ttl` is versioned independently via its own `owl:versionIRI` +
-`owl:versionInfo` (currently `adiro_provenance` 2.1.0; `adiro_geometry` 3.0.0; `adiro_drawing_metadata` 7.0.0; `adiro_common_symbols` 5.0.0; `adiro_domain_common` 4.0.0; `adiro_facade_domain` 4.0.0). The full scheme — IRI
+`owl:versionInfo` (currently `adiro_provenance` 2.2.0; `adiro_geometry` 3.1.0; `adiro_drawing_metadata` 7.0.1; `adiro_common_symbols` 5.0.0; `adiro_domain_common` 4.0.0; `adiro_facade_domain` 4.0.0). The full scheme — IRI
 strategy, bump rules (compatibility-diff spec), imports policy, deprecation, the tag-driven release flow, and
 changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
 [DATA-A-10](https://bhmlrnd.youtrack.cloud/articles/DATA-A-10); plan/decisions in
