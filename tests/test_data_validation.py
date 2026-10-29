@@ -228,7 +228,7 @@ def test_an_assertion_does_not_supersede_itself_through_a_chain():
 
 # --- one acceptance status and at most one outcome, each from its published list (#220) ------------------------------
 STATUS = "An acceptance status is Pending, Accepted or Rejected."
-OUTCOME = "An outcome is Empty, Illegible, NotPrinted or NotFound."
+OUTCOME = "An outcome is Empty, Illegible, NotPrinted, NotFound or Failed."
 
 
 def test_an_assertion_accepted_and_rejected_is_reported_even_with_an_agent():
@@ -257,7 +257,7 @@ def test_each_allowed_status_and_outcome_conforms():
     accepted = ':a a aprov:FieldAssertion ; aprov:hasLiteralValue "X" ; aprov:hasAcceptance aprov:Accepted'
     assert check_assertions(accepted + " ; aprov:acceptedBy :reviewer .\n") == []
     assert messages_of(accepted + " .\n") == ["An accepted assertion has an acceptedBy."]
-    for outcome in ("Empty", "Illegible", "NotPrinted", "NotFound"):
+    for outcome in ("Empty", "Illegible", "NotPrinted", "NotFound", "Failed"):
         assert check_assertions(f":a a aprov:FieldAssertion ; aprov:hasOutcome aprov:{outcome} ; aprov:hasAcceptance aprov:Pending .\n") == []
 
 
@@ -413,3 +413,35 @@ def test_a_configuration_with_one_content_conforms():
 def test_a_configuration_with_no_content_two_contents_or_a_number_is_reported(body):
     assert [r["message"] for r in check_assertions(body)] == [
         "A configuration has exactly one configurationContent, as a string."]
+
+
+# --- a text reading: one thing read, its text or one outcome (#238) -----------------------------------------------------
+TEXT_OR_OUTCOME = "A reading has a text or an outcome, never both and never neither."
+
+
+@pytest.mark.parametrize("body", [
+    ':r a aprov:TextReading ; aprov:isReadingOf :titleblock ; aprov:readText "GROUND FLOOR PLAN" .\n',
+    ':r a aprov:TextReading ; aprov:isReadingOf :page ; aprov:readText "Erdgeschoss"@de .\n',
+    ":r a aprov:TextReading ; aprov:isReadingOf :titleblock ; aprov:hasReadingOutcome aprov:Empty .\n",
+    ':r a aprov:TextReading ; aprov:isReadingOf :page ; aprov:hasReadingOutcome aprov:Failed ; aprov:errorMessage "timeout" .\n',
+])
+def test_a_reading_with_a_text_or_an_outcome_conforms(body):
+    assert check_assertions(body) == []
+
+
+@pytest.mark.parametrize("body, message", [
+    (":r a aprov:TextReading ; aprov:isReadingOf :page .\n", TEXT_OR_OUTCOME),
+    (':r a aprov:TextReading ; aprov:isReadingOf :page ; aprov:readText "A" ; aprov:hasReadingOutcome aprov:Empty .\n',
+     TEXT_OR_OUTCOME),
+    (':r a aprov:TextReading ; aprov:readText "A" .\n', "A reading reads exactly one region or page."),
+    (':r a aprov:TextReading ; aprov:isReadingOf :page , :titleblock ; aprov:readText "A" .\n',
+     "A reading reads exactly one region or page."),
+    (':r a aprov:TextReading ; aprov:isReadingOf :page ; aprov:readText "A" , "B" .\n',
+     "A reading has at most one text, a string with or without a language tag."),
+    (":r a aprov:TextReading ; aprov:isReadingOf :page ; aprov:readText 42 .\n",
+     "A reading has at most one text, a string with or without a language tag."),
+    (":r a aprov:TextReading ; aprov:isReadingOf :page ; aprov:hasReadingOutcome aprov:NotPrinted .\n",
+     "A reading has at most one outcome: Empty, Illegible or Failed."),
+])
+def test_a_malformed_reading_is_reported(body, message):
+    assert [r["message"] for r in check_assertions(body)] == [message]

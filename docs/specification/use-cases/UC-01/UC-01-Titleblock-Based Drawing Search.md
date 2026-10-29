@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.17 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.18 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -35,6 +35,8 @@ Things that exist independently and will become OWL Classes.
 | `DrawingFile`       | `adiro_provenance`                    | NEW    | The file a drawing is stored in: a reference to a document, identified by its content hash. *(Added in [v0.9](#9-version-history).)* |
 | `FilePage`          | `adiro_provenance`                    | NEW    | One page of a file, counted from 1; the drawing is on a page, not on a file. *(Added in [v0.9](#9-version-history).)* |
 | `Configuration`     | `adiro_provenance`                    | NEW    | The settings a step of an extraction used (a prompt, rendering settings), kept as text. *(Added in [v0.17](#9-version-history).)* |
+| `TextReading`       | `adiro_provenance`                    | NEW    | The text a step read from a title block or a whole page, or why it read none. *(Added in [v0.18](#9-version-history).)* |
+| `StepKind`          | `adiro_provenance`                    | NEW    | What a step of an extraction did: region detection, text recognition or field extraction. *(Added in [v0.18](#9-version-history).)* |
 | `Discipline`        | `adiro_domain_common`                 | REUSE  | Existing class hierarchy (`Structural`, `MEP`, `Architectural`, …).                      |
 | `StatusCode`        | `adiro_drawing_metadata`              | NEW    | Approval state (IFC, IFR, AFC…) expressed as a controlled vocabulary.                    |
 | `DrawingPackage`    | `adiro_drawing_metadata`              | NEW    | Drawings are grouped into volumes or packages within a project.                          |
@@ -49,7 +51,7 @@ Things that exist independently and will become OWL Classes.
 
 > **Design note — Discipline reuse:** UC-01 v0.2 introduced `:Discipline` plus a `:disciplineCode` string property. The existing `dcommon:Discipline` is already a full class hierarchy (`Structural`, `MEP > Mechanical / Electrical > Lighting / Plumbing`, `Architectural > Facade / FireLifeSafety`, `Masterplan`). v0.3 reuses it and drops `:disciplineCode` — discipline filtering uses `rdf:type` checks against the class hierarchy (e.g. `?disc a dcommon:MEP`), which automatically rolls up sub-disciplines via `rdfs:subClassOf` reasoning.
 
-> **Design note — curated values vs extracted assertions:** UC-01 attaches title-block information as datatype properties **directly on `DrawingSheet`** (`drawingIdentifier`, `drawingTitle`, …). That remains correct for a *validated* value. A second, parallel path exists for values that have been **machine-extracted and not yet validated**: an `aprov:FieldAssertion` reifies the claim - what was read, from which region (`assertedBy`), by what (`hasInferenceMeta`), with what confidence, and with the caption exactly as printed (`capturedCaption`) - bound to a field kind in the `TitleblockFieldScheme`. `aprov:mapsToFieldProperty` names the UC-01 property a validated assertion is promoted to. The two coexist: UC-01's properties are the query surface, the assertion layer is the extraction and provenance record. A value moves from the assertion to the direct property when its assertion is **accepted** (`aprov:hasAcceptance` `Accepted`), by a pipeline rule (a confidence threshold, named by `aprov:acceptedUnder`) or by a person, and the acceptance records who and when (`acceptedBy`, `acceptedAt`). The assertions are never deleted, and the direct properties stay as the permanent query surface of accepted values ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)). When a search finds no value, the assertion carries an outcome instead (`aprov:hasOutcome`: `Empty`, `Illegible`, `NotPrinted`, `NotFound`), and is never promoted. *(Added in [v0.4](#9-version-history); amended in [v0.10](#9-version-history).)*
+> **Design note — curated values vs extracted assertions:** UC-01 attaches title-block information as datatype properties **directly on `DrawingSheet`** (`drawingIdentifier`, `drawingTitle`, …). That remains correct for a *validated* value. A second, parallel path exists for values that have been **machine-extracted and not yet validated**: an `aprov:FieldAssertion` reifies the claim - what was read, from which region (`assertedBy`), by what (`hasInferenceMeta`), with what confidence, and with the caption exactly as printed (`capturedCaption`) - bound to a field kind in the `TitleblockFieldScheme`. `aprov:mapsToFieldProperty` names the UC-01 property a validated assertion is promoted to. The two coexist: UC-01's properties are the query surface, the assertion layer is the extraction and provenance record. A value moves from the assertion to the direct property when its assertion is **accepted** (`aprov:hasAcceptance` `Accepted`), by a pipeline rule (a confidence threshold, named by `aprov:acceptedUnder`) or by a person, and the acceptance records who and when (`acceptedBy`, `acceptedAt`). The assertions are never deleted, and the direct properties stay as the permanent query surface of accepted values ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)). When a search finds no value, the assertion carries an outcome instead (`aprov:hasOutcome`: `Empty`, `Illegible`, `NotPrinted`, `NotFound`, `Failed`), and is never promoted. *(Added in [v0.4](#9-version-history); amended in [v0.10](#9-version-history) and [v0.18](#9-version-history).)*
 
 The promotion is a query that tooling runs on accepted assertions, not an inference. Each accepted assertion that has a value, and that no accepted assertion supersedes, directly or through a chain of corrections, gives one direct statement on its subject, with the property its field kind maps to (`aprov:mapsToFieldProperty`). *(Amended in [v0.16](#9-version-history).)*
 
@@ -139,6 +141,7 @@ Links between two entities. New properties are wired into the existing generic t
 | `isOnPage`            | `DrawingSheet`    | `FilePage`          | `adiro_drawing_metadata` | NEW    | (top-level)             |
 | `belongsToFile`       | `FilePage`        | `DrawingFile`       | `adiro_provenance`       | NEW    | (top-level)             |
 | `dcterms:isPartOf`    | `InferenceMeta` (a step) | `prov:Activity` (a run) | `adiro_provenance` (typing stub) | NEW | (external) *(Added in [v0.17](#9-version-history).)* |
+| `isReadingOf`         | `TextReading`     | `Titleblock` or `FilePage` | `adiro_provenance` | NEW | (top-level) *(Added in [v0.18](#9-version-history).)* |
 | `hasStatusCode`       | `DrawingRevision` | `StatusCode`        | `adiro_drawing_metadata` | NEW    | `metadata:hasProperty`  |
 
 ¹ ⚠️ **Open issue (G5):** `dcommon:hasDiscipline` currently has `rdfs:domain metadata:LayoutContentType`. v0.3 proposes moving the domain to `metadata:Layout` (along with the `min 1` cardinality restriction). Discipline characterises the layout itself, not its content type — and the two are orthogonal axes (see design note below). Pending @alelom / @m-asakihattori sign-off.
@@ -263,6 +266,17 @@ Each FR describes one representational capability the ontology must have, in imp
 
 ---
 
+**FR 11 — Text Read from a Drawing** *(Added in [v0.18](#9-version-history))*
+
+> The ontology MUST hold the text an extraction read from a title block and from a whole page, with its language when it is known and whether or not any of it was read as a field, and why none was read (empty, illegible, or a step that failed, with its error); and it MUST say what kind of step each step of a run was, such that a drawing can be found by any text of its title block, and the pages a run processed, and those on which it detected no title block, can be listed.
+
+- Source: UC-01 (a drawing is searched for by any word of its title block, not only by the fields read from it; a reviewer checks what a run covered)
+- Derived terms: `aprov:TextReading`, `aprov:isReadingOf`, `aprov:readText`, `aprov:hasReadingOutcome`, `aprov:errorMessage`, `aprov:StepKind` (`RegionDetection`, `TextRecognition`, `FieldExtraction`) with `aprov:hasStepKind`, and the outcome value `aprov:Failed` (all NEW)
+
+> **Design note — readings and coverage.** A `TextReading` is an `InferredEntity`, so each has the step that produced it, and two runs that read the same title block keep two readings; the latest is the one whose run started last. It reads one thing (`isReadingOf`): a `Titleblock`, or a whole `FilePage`. Its text is `readText`, with the language as the literal's language tag (`"Erdgeschoss"@de`) when it is known. A reading that read nothing has one outcome instead: `Empty`, `Illegible`, or `Failed` with its `errorMessage`; `Failed` is also an outcome of a field assertion. The outcome of a reading is a property of its own (`hasReadingOutcome`), not `hasOutcome`, whose domain is `FieldAssertion`: widening that domain would change what an existing property implies, and a reading is not a claim about a field. Every step says what kind of step it is (`hasStepKind`), so a step that found nothing is still known for what it looked for: "no title block detected" needs no term of its own, it is a page that a region detection used with no title block on it; "not processed" is a page no step used. *(Added in [v0.18](#9-version-history).)*
+
+---
+
 ## 4. Competency Questions
 
 CQs are grouped by the FR they validate. Each must be translatable directly into a SPARQL query against the term inventory above.
@@ -321,7 +335,7 @@ SELECT ?drawing ?named ?filed WHERE {
 | CQ 4.3 | For sheet "ST-101 Rev C", who was the approving authority?   |
 | CQ 4.4 | Which drawings have no recorded author, neither their own nor a revision's? *(Added in [v0.8](#9-version-history).)* |
 | CQ 4.5 | Which drawings have no recorded checker, or no recorded approver? *(Added in [v0.8](#9-version-history).)* |
-| CQ 4.6 | For each drawing with no recorded author, why: not printed, empty, illegible, not found, awaiting acceptance, rejected, accepted and not yet promoted, or recorded with no value? *(Added in [v0.10](#9-version-history), amended in [v0.13](#9-version-history).)* |
+| CQ 4.6 | For each drawing with no recorded author, why: not printed, empty, illegible, not found, failed, awaiting acceptance, rejected, accepted and not yet promoted, or recorded with no value? *(Added in [v0.10](#9-version-history), amended in [v0.13](#9-version-history) and [v0.18](#9-version-history).)* |
 
 CQ 3.4 and CQ 4.4 as queries (CQ 4.5 is the same pattern with `isCheckedBy` or `isApprovedBy` alone, without the path through the revisions, which is for the author only):
 
@@ -376,14 +390,14 @@ SELECT ?drawing ?subject ?assertion ?value ?outcome ?acceptance ?reason WHERE {
 
 The query reads the assertions about the drawing and about each of its revisions, following the reading convention of CQ 4.4, and gives one row per assertion, with its subject, so the causes of several revisions stay apart. An assertion has one value or one outcome, and one acceptance; one that records two (malformed data) gives a row for each, so the disagreement is visible. An assertion superseded by an accepted one is not read, as in the promotion; one superseded only by a pending or rejected assertion is still in force and has its row. The acceptance and the outcome are separate columns; an assertion with no acceptance recorded is `Pending`. The reason:
 
-- `NotPrinted` is a defect of the drawing; `NotFound` is retried; `Empty` and `Illegible` are reviewed. The acceptance column says whether that finding was accepted or still awaits review.
+- `NotPrinted` is a defect of the drawing; `NotFound` and `Failed` (a step that did not complete) are retried; `Empty` and `Illegible` are reviewed. The acceptance column says whether that finding was accepted or still awaits review.
 - `Pending` is a value found and awaiting acceptance.
 - `Rejected` is an assertion a person or a rule rejected; its value or outcome is in its columns for inspection, and it is neither a finding nor awaiting review.
 - `AcceptedNotPromoted` is an accepted value that the [promotion](#21-entities) has not yet turned into `isAuthoredBy`.
 - `NoValue` is an assertion with neither a value nor an outcome (malformed data): nothing can be promoted from it, so it is corrected, not awaited.
 - `NotProcessed` means no assertion about the author of the drawing or its revisions exists, so the field was not looked at.
 
-*(Amended in [v0.13](#9-version-history) and [v0.16](#9-version-history).)*
+*(Amended in [v0.13](#9-version-history), [v0.16](#9-version-history) and [v0.18](#9-version-history).)*
 
 ### CQ Group 5 — Discipline (validates FR 5)
 
@@ -490,6 +504,7 @@ SELECT ?file ?origin ?sourceLocation ?sourcePage WHERE {
 | ------- | ------------------- |
 | CQ 10.1 | For the title of drawing "ST-101": which run produced each value recorded for it, when the run started, which step, which model or person, and with which configuration? *(Added in [v0.17](#9-version-history).)* |
 | CQ 10.2 | Which versions of the ADIRO ontologies did each extraction run use, and when did it start? *(Added in [v0.17](#9-version-history).)* |
+| CQ 10.3 | For the title of drawing "ST-101": which assertions were made, by which model or person, when, and how was each reviewed (pending, accepted, rejected, superseded by a correction)? *(Added in [v0.18](#9-version-history).)* |
 
 ```sparql
 PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
@@ -530,6 +545,137 @@ SELECT DISTINCT ?run ?started ?version WHERE {
 
 A version is recognised by the form of its IRI, `https://w3id.org/adiro/<module>/<major>.<minor>.<patch>`, which is the `owl:versionIRI` of every ADIRO release, so a run's data answers the question without the ontology loaded beside it. The run is found through its steps, because `dcterms:isPartOf` has no domain and is used for other things too.
 
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+
+# CQ 10.3: the history of the values of a field of a drawing, oldest first
+SELECT ?assertion ?value ?outcome ?model ?agent ?at ?acceptance ?acceptedBy ?supersededBy WHERE {
+  ?drawing metadata:drawingIdentifier "ST-101" .
+  ?assertion aprov:assertedAbout    ?drawing ;
+             aprov:assertsFieldKind metadata:DrawingTitleField .
+  OPTIONAL { ?assertion aprov:hasLiteralValue|aprov:hasValueEntity ?value }
+  OPTIONAL { ?assertion aprov:hasOutcome ?outcome }
+  OPTIONAL {
+    ?assertion aprov:hasInferenceMeta ?step .
+    OPTIONAL { ?step aprov:inferredWith ?model }
+    OPTIONAL { ?step aprov:inferredBy ?agent }
+    OPTIONAL { ?step aprov:inferredAt ?at }
+  }
+  OPTIONAL { ?assertion aprov:hasAcceptance ?status }
+  BIND (COALESCE(?status, aprov:Pending) AS ?acceptance)
+  OPTIONAL { ?assertion aprov:acceptedBy ?acceptedBy }
+  OPTIONAL { ?supersededBy aprov:supersedes ?assertion }
+}
+ORDER BY ?at ?assertion
+```
+
+Every assertion is listed, the superseded ones included, oldest first: a model's value and a person's correction that supersedes it appear one after the other, with who accepted each. An assertion with no acceptance recorded is `Pending`, as in CQ 4.6. It uses only terms that CQ 4.6 and CQ 10.1 already use.
+
+### CQ Group 11 — Text Read from a Drawing (validates FR 11)
+
+| ID      | Competency Question |
+| ------- | ------------------- |
+| CQ 11.1 | Which drawings mention "ground floor" anywhere in their title block, whether or not it was read as a field? *(Added in [v0.18](#9-version-history).)* |
+| CQ 11.2 | For page 1 of file "A101-ground-floor.pdf": what text did the latest run read from its title block and from the whole page, in which language, and if it read none, why (empty, illegible, failed, with the error)? *(Added in [v0.18](#9-version-history).)* |
+| CQ 11.3 | Which pages of file "A101-ground-floor.pdf" did each run process, and with what outcome? *(Added in [v0.18](#9-version-history).)* |
+| CQ 11.4 | Which pages were searched for a title block, and none was detected? *(Added in [v0.18](#9-version-history).)* |
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+
+# CQ 11.1: the drawings whose title block mentions a text, in any reading of it
+SELECT DISTINCT ?drawing ?identifier WHERE {
+  ?drawing metadata:contains ?titleblock .
+  ?titleblock a metadata:Titleblock .
+  ?reading aprov:isReadingOf ?titleblock ;
+           aprov:readText    ?text .
+  FILTER (CONTAINS(LCASE(STR(?text)), "ground floor"))
+  OPTIONAL { ?drawing metadata:drawingIdentifier ?identifier }
+}
+```
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+
+# CQ 11.2: what the latest run read from the title block and from the whole of a page, or why it read nothing
+SELECT ?target ?text ?language ?outcome ?error ?run WHERE {
+  ?file aprov:fileName "A101-ground-floor.pdf" .
+  ?page aprov:belongsToFile ?file ;
+        aprov:pageNumber    ?number .
+  FILTER (?number = 1)
+  ?page (^metadata:isOnPage/metadata:contains)? ?target .
+  FILTER (?target = ?page || EXISTS { ?target a metadata:Titleblock })
+  ?reading aprov:isReadingOf ?target ;
+           aprov:hasInferenceMeta/dcterms:isPartOf ?run .
+  ?run prov:startedAtTime ?started .
+  FILTER NOT EXISTS {
+    ?later aprov:isReadingOf ?target ;
+           aprov:hasInferenceMeta/dcterms:isPartOf/prov:startedAtTime ?laterStart .
+    FILTER (?laterStart > ?started)
+  }
+  OPTIONAL { ?reading aprov:readText ?text }
+  OPTIONAL { ?reading aprov:hasReadingOutcome ?outcome }
+  OPTIONAL { ?reading aprov:errorMessage ?error }
+  BIND (LANG(?text) AS ?language)
+}
+```
+
+```sparql
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+
+# CQ 11.3: each page of a file, the runs that processed it, and the outcome of its reading
+SELECT DISTINCT ?number ?run ?status WHERE {
+  ?file aprov:fileName "A101-ground-floor.pdf" .
+  ?page aprov:belongsToFile ?file ;
+        aprov:pageNumber    ?number .
+  OPTIONAL {
+    ?step a aprov:InferenceMeta ;
+          prov:used|aprov:inferredFrom ?page ;
+          dcterms:isPartOf ?run .
+  }
+  OPTIONAL {
+    ?reading aprov:isReadingOf ?page ;
+             aprov:hasInferenceMeta/dcterms:isPartOf ?run .
+    OPTIONAL { ?reading aprov:readText ?text }
+    OPTIONAL { ?reading aprov:hasReadingOutcome ?o }
+  }
+  BIND (IF(!BOUND(?run), "NotProcessed",
+        IF(BOUND(?o), STRAFTER(STR(?o), "#"),
+        IF(BOUND(?text), "Read", "Processed"))) AS ?status)
+}
+ORDER BY ?number ?run
+```
+
+```sparql
+PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+
+# CQ 11.4: the pages a region detection searched, on which no title block was detected
+SELECT DISTINCT ?file ?number ?run WHERE {
+  ?step aprov:hasStepKind aprov:RegionDetection ;
+        prov:used|aprov:inferredFrom ?page .
+  OPTIONAL { ?step dcterms:isPartOf ?run }
+  ?page aprov:belongsToFile ?file ;
+        aprov:pageNumber    ?number .
+  FILTER NOT EXISTS {
+    ?drawing metadata:isOnPage ?page ;
+             metadata:contains ?titleblock .
+    ?titleblock a metadata:Titleblock .
+  }
+}
+```
+
+The queries read the data as written, with no inference. A step records a page it used with `prov:used`, or with `inferredFrom`, its sub-property, so both are read. In CQ 11.3 a page is `NotProcessed` when no step of any run used it and nothing read it; `Processed` when a run used it without reading its text; `Read` when it has text; otherwise its reading's outcome. CQ 11.4 reads every page a region detection used as searched for a title block (open point [G13](#8-open-issues--pending-team-discussion)).
+
 ### CQ Group I — Integration / Multi-field Queries
 
 | ID     | Competency Question                                                                                  | FRs exercised               |
@@ -541,6 +687,13 @@ A version is recognised by the form of its IRI, `https://w3id.org/adiro/<module>
 ---
 
 ## 5. SPARQL Validation
+
+**How the recorded queries are run.** *(Added in [v0.18](#9-version-history).)* Every query recorded in this document is written for a store in which each run's data is a named graph of its own, corrections are in another, and nothing is inferred:
+
+- **Union default graph.** The queries name no graph: they read the union of the named graphs, so a value, the step that produced it and the run it is part of are found together wherever each was written, and a correction in its own graph supersedes an assertion of a run. A store whose default graph is not the union of its named graphs is configured so, or each query is given its graphs with `FROM`. A question about one run selects it by its IRI (CQ 10.2, CQ 11.3), not by its graph.
+- **No inference.** The queries read the data as written: a class or a property is matched as stated, never through `rdfs:subClassOf` or `rdfs:subPropertyOf`, and where a sub-property can carry the same fact both are named (`prov:used|aprov:inferredFrom` in CQ 11.3 and CQ 11.4). The one fact the queries take from the ontology, the property a field kind is promoted to (`aprov:mapsToFieldProperty`, read by the promotion), is read from the ontology modules loaded into the store as data, in a graph of their own.
+
+The tests run every recorded query twice: on the case's data as one graph, and on the same triples spread over several named graphs through the union default graph, and the answers must be the same ([#241](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/241); `tests/conftest.py`). No test loads a reasoner.
 
 The following example demonstrates that the term inventory is sufficient to answer integration query CQ-I 1.
 
@@ -687,7 +840,10 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `aprov:fileModifiedAt`         | `adiro_provenance`       | NEW    | CQ 9.4                                         | FR 9                               |
 | `aprov:storageLocation`, `aprov:contentHash`, `aprov:hashAlgorithm`, `aprov:mediaType`, `aprov:fileCreatedAt`, `aprov:fileCreatedBy`, `aprov:fileModifiedBy`, `aprov:pageCount`, `aprov:fileSize` | `adiro_provenance` | NEW | none yet: they identify, locate and describe the file (the first set of the file brainstorm) | FR 9 |
 | `aprov:sourceLocation`, `aprov:sourcePage`, `prov:wasDerivedFrom` (a typing stub) | `adiro_provenance` | NEW | CQ 9.5 | FR 9 |
-| `aprov:InferenceMeta`, `aprov:inferredWith`, `aprov:inferredBy` | `adiro_provenance` | REUSE | CQ 10.1, CQ 10.2 | FR 10 |
+| `aprov:InferenceMeta`, `aprov:inferredWith`, `aprov:inferredBy` | `adiro_provenance` | REUSE | CQ 10.1, CQ 10.2, CQ 10.3 | FR 10 |
+| `aprov:inferredAt`, `aprov:hasAcceptance`, `aprov:supersedes` | `adiro_provenance` | REUSE | CQ 10.3 | FR 10 |
+| `aprov:TextReading`, `aprov:isReadingOf`, `aprov:readText`, `aprov:hasReadingOutcome`, `aprov:errorMessage` | `adiro_provenance` | NEW | CQ 11.1, CQ 11.2, CQ 11.3 | FR 11 |
+| `aprov:StepKind` (`RegionDetection`, `TextRecognition`, `FieldExtraction`), `aprov:hasStepKind` | `adiro_provenance` | NEW | CQ 11.4 | FR 11 |
 | `aprov:Configuration`, `aprov:configurationContent` | `adiro_provenance` | NEW | CQ 10.1 | FR 10 |
 | `dcterms:isPartOf`, `prov:startedAtTime` (typing stubs) | `adiro_provenance` | NEW | CQ 10.1, CQ 10.2 | FR 10 |
 | `prov:used` (typing stub) | `adiro_provenance` | REUSE | CQ 10.1, CQ 10.2 | FR 10 |
@@ -701,10 +857,11 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `metadata:revisionCode`        | `adiro_drawing_metadata` | NEW    | CQ 3.1, CQ 3.3                                 | FR 3                               |
 | `metadata:issueDate`           | `adiro_drawing_metadata` | NEW    | CQ 3.2, CQ 3.3, CQ-I 1                         | FR 3                               |
 | `aprov:Person`                 | `adiro_provenance`       | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
-| `aprov:AssertionOutcome` (`Empty`, `Illegible`, `NotPrinted`, `NotFound`), `aprov:hasOutcome` | `adiro_provenance` | NEW | CQ 4.6 | FR 4 |
+| `aprov:AssertionOutcome` (`Empty`, `Illegible`, `NotPrinted`, `NotFound`, `Failed`), `aprov:hasOutcome` | `adiro_provenance` | NEW | CQ 4.6, CQ 10.3, CQ 11.2, CQ 11.3 | FR 4, FR 11 |
 | `aprov:AcceptanceStatus` (`Pending`, `Accepted`, `Rejected`), `aprov:hasAcceptance` | `adiro_provenance` | NEW | CQ 4.6 | FR 4 |
 | `aprov:supersedes`             | `adiro_provenance`       | NEW    | CQ 4.6                                         | FR 4                               |
-| `aprov:acceptedBy`, `aprov:acceptedAt`, `aprov:acceptedUnder` | `adiro_provenance` | NEW | none yet: the record of an acceptance (the decision of #85), not asked by a question | FR 4 |
+| `aprov:acceptedBy` | `adiro_provenance` | NEW | CQ 10.3 | FR 4 |
+| `aprov:acceptedAt`, `aprov:acceptedUnder` | `adiro_provenance` | NEW | none yet: the record of an acceptance (the decision of #85), not asked by a question | FR 4 |
 | `metadata:personName`          | `adiro_drawing_metadata` | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
 | `metadata:statusLabel`         | `adiro_drawing_metadata` | NEW    | CQ 7.x                                         | FR 7                               |
 | `metadata:projectName`         | `adiro_drawing_metadata` | NEW    | CQ 2.x                                         | FR 2                               |
@@ -738,7 +895,7 @@ adiro_provenance                      (NEW - foundational, domain-neutral)
 | Module                 | UC-01 contribution                                                                                                                                                          |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `adiro_drawing_metadata` | **New classes:** `DrawingRevision`, `Project`, `StatusCode`, `DrawingPackage`. **New properties:** all UC-01 datatype properties; `hasRevision` (⊂ `contains`), `hasStatusCode` (⊂ `hasProperty`), `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `isOnPage`. |
-| `adiro_provenance`       | **New classes:** `Configuration` (FR 10, with `configurationContent`), `DrawingFile`, `FilePage`, and the agents `Party`, `Person` and `Organisation` (moved here from `adiro_drawing_metadata`), with the file and page properties of FR 9. **Reused (new module):** `FieldAssertion`, `InferenceMeta`, `hasConfidence`, `capturedCaption`, `assertedBy`, `inferredBy`/`inferredWith`/`inferredFrom`/`inferredAt`, and the `TitleblockFieldScheme` binding via `assertsFieldKind`. Carries **extracted** title-block values before validation - see the design note in §2.1. |
+| `adiro_provenance`       | **New classes:** `Configuration` (FR 10, with `configurationContent`), `TextReading` and `StepKind` (FR 11, with the outcome value `Failed`), `DrawingFile`, `FilePage`, and the agents `Party`, `Person` and `Organisation` (moved here from `adiro_drawing_metadata`), with the file and page properties of FR 9. **Reused (new module):** `FieldAssertion`, `InferenceMeta`, `hasConfidence`, `capturedCaption`, `assertedBy`, `inferredBy`/`inferredWith`/`inferredFrom`/`inferredAt`, and the `TitleblockFieldScheme` binding via `assertsFieldKind`. Carries **extracted** title-block values before validation - see the design note in §2.1. |
 | `adiro_geometry`         | **Reused (new module):** the `Titleblock` region may carry a `BoundingBox` (via `hasBoundingBox`) interpreted by a `CoordinateFrame` (which reads the page the drawing is on, via `describesPage`) — i.e. *where the title block sits on the page*. The extracted field values are read from within that one region and are **not** individually localised. *(Added in [v0.5](#9-version-history).)* |
 | `adiro_common_symbols`   | No UC-01 contribution.                                                                                                                                                      |
 | `adiro_domain_common`    | **Reused:** `Discipline` and its subclasses; `hasDiscipline` (with proposed domain change from `LayoutContentType` to `Layout` — see G5).                                   |
@@ -765,6 +922,7 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 | ID  | Issue                                                                                                                                                              |
 | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | G5  | Should `hasDiscipline` domain move from `LayoutContentType` to `Layout`? v0.3 proposes yes — discipline characterises the layout, not its content type.            |
+| G13 | **What a region detection looked for.** CQ 11.4 reads every page that a region detection used as searched for a title block, which holds while UC-01's extraction detects only title blocks. A run that detects several kinds of region (a title block, a legend) in separate steps would need each step to say what it looked for, which ADIRO does not record yet. *(Added in [v0.18](#9-version-history).)* |
 | G5b | Should `DrawingSheet` itself carry a `hasDiscipline` (a "primary discipline" for the whole sheet) in addition to Layout-level discipline?                          |
 | G11 | ~~**Direct properties vs `FieldAssertion`.**~~ **Resolved** ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85), [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)): a value is promoted when its assertion is accepted, by a pipeline rule or a person, with the acceptance recorded on the assertion; both layers are kept, and the direct properties are permanent. See the design note in §2.1. |
 | G12 | ~~**A missing person is two different facts.**~~ "The extraction did not find the author" and "the drawing names none" must be told apart (the first is retried or reviewed, the second is a defect of the drawing). Decided: record absence as a value-less `FieldAssertion` with an outcome. **Resolved**: the vocabulary is in `adiro_provenance` (`hasOutcome`, `hasAcceptance`, [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)), and CQ 4.6 reports a drawing by cause. |
@@ -776,7 +934,18 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 ## 9. Version History
 
-### v0.17 (current — draft)
+### v0.18 (current — draft)
+
+Changes from v0.17, made when text readings were modelled for UC-01 ([#238](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/238), decided on [Discussion #235](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/235)) the history of a value was asked for ([#236](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/236)), and the queries were checked over named graphs ([#241](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/241)). MAJOR in substance (a functional requirement, classes, attributes and competency questions added); the number stays in the 0.x series because the document is still a draft:
+
+- **FR 11 and CQ Group 11 added** (§3, §4): the text read from a title block or a page, its language and why none was read (CQ 11.1, CQ 11.2), which pages a run processed (CQ 11.3) and on which it detected no title block (CQ 11.4). The coverage questions that #236 would have recorded as pending in §8 are answered here instead.
+- **CQ 10.3 added** (§4): the history of the values of a field, by model or person, with how each was reviewed, from existing terms only. `acceptedBy` is now asked by a question (§6).
+- **`TextReading`, `StepKind` and the outcome `Failed` added** (§2.1, §2.3, §6, §7), with `isReadingOf`, `readText`, `hasReadingOutcome`, `errorMessage` and `hasStepKind`; a shape checks that a reading has a text or an outcome (`data-validation/readings.shacl.ttl`). The design note under FR 11 says why a reading has its own outcome property.
+- **CQ 4.6 gains the reason `Failed`**, retried like `NotFound`.
+- **G13 added** (§8): what a region detection looked for, when a run detects several kinds of region.
+- **How the recorded queries are run** (§5, [#241](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/241)): over named graphs, one per run and one for corrections, through the union default graph, with no inference; the ontology is loaded as data where the promotion needs it. Every recorded query is tested both ways, and none needed a change.
+
+### v0.17 (draft)
 
 Changes from v0.16, made when runs were modelled for UC-01 ([#237](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/237), decided on [Discussion #235](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/235)). MAJOR in substance (a functional requirement, a class, an attribute and a competency question added); the number stays in the 0.x series because the document is still a draft:
 

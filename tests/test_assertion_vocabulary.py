@@ -19,8 +19,9 @@ def members(cls):
 
 
 def test_the_outcome_is_a_closed_list_that_follows_the_ground_truth_statuses():
-    # present is a value; empty, illegible and absent are the ground-truth observation statuses; not found is a model's
-    assert members(APROV.AssertionOutcome) == {APROV.Empty, APROV.Illegible, APROV.NotPrinted, APROV.NotFound}
+    # present is a value; empty, illegible and absent are the ground-truth observation statuses; not found is a model's;
+    # failed is a step that did not complete (#238)
+    assert members(APROV.AssertionOutcome) == {APROV.Empty, APROV.Illegible, APROV.NotPrinted, APROV.NotFound, APROV.Failed}
     assert (APROV.Present, None, None) not in G, "a value is its own outcome: there is no 'present' individual"
 
 
@@ -29,7 +30,7 @@ def test_the_acceptance_is_a_closed_list_of_three():
 
 
 def test_every_individual_is_typed_labelled_and_described():
-    for cls in (APROV.AssertionOutcome, APROV.AcceptanceStatus):
+    for cls in (APROV.AssertionOutcome, APROV.AcceptanceStatus, APROV.StepKind):
         for individual in members(cls):
             assert (individual, RDF.type, OWL.NamedIndividual) in G and (individual, RDF.type, cls) in G
             assert G.value(individual, RDFS.label) and G.value(individual, RDFS.comment), individual
