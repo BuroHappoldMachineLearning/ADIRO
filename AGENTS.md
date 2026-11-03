@@ -97,8 +97,9 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
   **The names of terms in a definition are links** ([#252](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/252)): a name written in an `rdfs:comment` (its local name, or a
   prefixed name) links to the term's entry on the page, or to the latest page of the module that defines it, on the Markdown
   page and on the pyLODE page alike. One implementation, `ttl2md/src/ttl2md/crosslinks.py`, holds the rules (which words are
-  not linked, so an ordinary word is not); `generate_docs.py` applies it to the pyLODE HTML (`link_html_definitions`), including
-  the kept pages of earlier releases. The Turtle stays plain text: write a term's name exactly as its IRI's local name and it is linked. The
+  not linked, so an ordinary word is not); `generate_docs.py` applies it to the pyLODE HTML (`link_pylode_pages`, once every page exists,
+  with the ids pyLODE gave the entries: it makes them from labels, so they are read from the pages, never computed), including
+  the kept pages of earlier releases. `tests/test_definition_links.py` checks that every such link in `docs/` reaches an entry. The Turtle stays plain text: write a term's name exactly as its IRI's local name and it is linked. The
   external resource links (TTL source, pyLODE HTML, OntoCanvas) point at the permanent **`w3id.org/adiro`** front
   door — which 302-redirects to the Pages host with permissive CORS — not the `github.io` host directly. Do the same when you reference an ontology IRI, a versioned IRI (`…/adiro/<module>/<semver>`)
 or the docs in an issue, PR, changelog, release note or message: use `w3id.org/adiro`; the `github.io` host is only the
