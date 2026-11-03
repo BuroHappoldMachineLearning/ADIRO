@@ -62,7 +62,7 @@ graph BT
 
 ### Acceptance Status {#AcceptanceStatus}
 
-Whether an assertion was taken into the direct properties of its subject: Pending (not yet decided), Accepted or Rejected. Only an Accepted assertion that has a value is promoted by mapsToFieldProperty.
+Whether an assertion was taken into the direct properties of its subject: [Pending](#Pending) (not yet decided), [Accepted](#Accepted) or [Rejected](#Rejected). Only an Accepted assertion that has a value is promoted by [mapsToFieldProperty](#mapsToFieldProperty).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#AcceptanceStatus`
 - **One of:**
@@ -72,7 +72,7 @@ Whether an assertion was taken into the direct properties of its subject: Pendin
 
 ### Activity {#Activity}
 
-Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. Disjoint with prov:Entity in PROV-O - see prov:Entity above.
+Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. Disjoint with [prov:Entity](#Entity) in PROV-O - see prov:Entity above.
 
 - **IRI:** `http://www.w3.org/ns/prov#Activity`
 
@@ -84,7 +84,7 @@ Typing stub for the PROV-O term of the same name, declared locally so this modul
 
 ### Assertion Outcome {#AssertionOutcome}
 
-What a search for a field found, when it found no value: Empty, Illegible, NotPrinted, NotFound or Failed. An assertion that has a value needs no outcome (the value is its outcome), and an assertion has a value or an outcome, never both. A TextReading that read no text has an outcome from the same list (hasReadingOutcome).
+What a search for a field found, when it found no value: [Empty](#Empty), [Illegible](#Illegible), [NotPrinted](#NotPrinted), [NotFound](#NotFound) or [Failed](#Failed). An assertion that has a value needs no outcome (the value is its outcome), and an assertion has a value or an outcome, never both. A [TextReading](#TextReading) that read no text has an outcome from the same list ([hasReadingOutcome](#hasReadingOutcome)).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#AssertionOutcome`
 - **One of:**
@@ -96,7 +96,7 @@ What a search for a field found, when it found no value: Empty, Illegible, NotPr
 
 ### Configuration {#Configuration}
 
-The settings a step of an extraction used, kept as text (configurationContent): a prompt, rendering settings, size limits, model parameters. ADIRO does not model what is inside, so any setting can be recorded without a new term. A configuration is identified by its content: the same content used on thousands of pages should be one individual. A step records that it used a configuration with prov:used; where the configuration varies from page to page, as a prompt can, the InferenceMeta of that page records it. A resolution is not a configuration: coordinates depend on it, so it is recorded on the coordinate frame it gives (resolutionDpi, in adiro_geometry).
+The settings a step of an extraction used, kept as text ([configurationContent](#configurationContent)): a prompt, rendering settings, size limits, model parameters. ADIRO does not model what is inside, so any setting can be recorded without a new term. A configuration is identified by its content: the same content used on thousands of pages should be one individual. A step records that it used a configuration with [prov:used](#used); where the configuration varies from page to page, as a prompt can, the [InferenceMeta](#InferenceMeta) of that page records it. A resolution is not a configuration: coordinates depend on it, so it is recorded on the coordinate frame it gives ([resolutionDpi](adiro_geometry.md#resolutionDpi), in adiro_geometry).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#Configuration`
 - **Sub class of:** [Entity](#Entity)
@@ -118,34 +118,34 @@ A reference to a document in which drawings are stored: not the bytes, but what 
 
 ### Entity {#Entity}
 
-Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. PROV-O declares prov:Entity owl:disjointWith prov:Activity, which is why the alignment below is seated carefully: a FieldAssertion is the Entity produced, an InferenceMeta is the Activity that produced it, and nothing may be both.
+Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. PROV-O declares prov:Entity owl:disjointWith [prov:Activity](#Activity), which is why the alignment below is seated carefully: a [FieldAssertion](#FieldAssertion) is the Entity produced, an [InferenceMeta](#InferenceMeta) is the Activity that produced it, and nothing may be both.
 
 - **IRI:** `http://www.w3.org/ns/prov#Entity`
 
 ### Field Assertion {#FieldAssertion}
 
-A single reified assertion that some source makes a value-claim about a field kind. Reifying the claim (rather than attaching the value straight to a subject) lets each printed occurrence carry its own provenance - which region asserted it (assertedBy), what produced it (hasInferenceMeta), and with what confidence (hasConfidence) - independently of the value it states. The value is a literal (hasLiteralValue) for datatype-valued fields or an entity (hasValueEntity) for object-valued fields. An assertion has a value or, when none was found, an outcome (hasOutcome); it is promoted to a direct statement on its subject only once it is Accepted (hasAcceptance), by tooling and never by reasoning. Conflicting assertions across sources are surfaced, not silently merged, and a later one that replaces an earlier says so with supersedes. A kind of InferredEntity, so it carries the shared provenance/confidence; in PROV-O terms the prov:Entity an extraction produced, which is why the PROV alignment is seated across two classes rather than all on one.
+A single reified assertion that some source makes a value-claim about a field kind. Reifying the claim (rather than attaching the value straight to a subject) lets each printed occurrence carry its own provenance - which region asserted it ([assertedBy](#assertedBy)), what produced it ([hasInferenceMeta](#hasInferenceMeta)), and with what confidence ([hasConfidence](#hasConfidence)) - independently of the value it states. The value is a literal ([hasLiteralValue](#hasLiteralValue)) for datatype-valued fields or an entity ([hasValueEntity](#hasValueEntity)) for object-valued fields. An assertion has a value or, when none was found, an outcome ([hasOutcome](#hasOutcome)); it is promoted to a direct statement on its subject only once it is [Accepted](#Accepted) ([hasAcceptance](#hasAcceptance)), by tooling and never by reasoning. Conflicting assertions across sources are surfaced, not silently merged, and a later one that replaces an earlier says so with supersedes. A kind of [InferredEntity](#InferredEntity), so it carries the shared provenance/confidence; in PROV-O terms the [prov:Entity](#Entity) an extraction produced, which is why the PROV alignment is seated across two classes rather than all on one.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#FieldAssertion`
 - **Sub class of:** [Inferred Entity](#InferredEntity)
 
 ### File Page {#FilePage}
 
-One page of one DrawingFile, counted from 1; a single-page or raster file has page 1. It holds what is true of the page itself: its number, the file it belongs to, its rotation and its display size in points. A drawing is linked to the page it is on, and a coordinate frame reads the page in one coordinate convention.
+One page of one [DrawingFile](#DrawingFile), counted from 1; a single-page or raster file has page 1. It holds what is true of the page itself: its number, the file it belongs to, its rotation and its display size in points. A drawing is linked to the page it is on, and a coordinate frame reads the page in one coordinate convention.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#FilePage`
 - **Sub class of:** [Entity](#Entity)
 
 ### Inference Meta {#InferenceMeta}
 
-Provenance metadata for an inferred or extracted assertion: what produced it (inferredBy / inferredWith), the source it was derived from (inferredFrom), and when (inferredAt). Modelled as a separate object so several assertions can share one inference record and so provenance can be added without touching the value. Analogous to DANO's DrawingElementMeta, but aligned to PROV-O: this is the prov:Activity that produced the assertion, NOT a prov:Entity. PROV-O declares those two owl:disjointWith, so the distinction is load-bearing rather than stylistic. In an extraction run, each step (detecting a region, reading text, extracting fields) is an InferenceMeta with the model that step used, and is part of the run (dcterms:isPartOf), itself a prov:Activity; the Configuration a step used (a prompt, rendering settings) is recorded with prov:used.
+Provenance metadata for an inferred or extracted assertion: what produced it ([inferredBy](#inferredBy) / [inferredWith](#inferredWith)), the source it was derived from ([inferredFrom](#inferredFrom)), and when ([inferredAt](#inferredAt)). Modelled as a separate object so several assertions can share one inference record and so provenance can be added without touching the value. Analogous to DANO's DrawingElementMeta, but aligned to PROV-O: this is the [prov:Activity](#Activity) that produced the assertion, NOT a [prov:Entity](#Entity). PROV-O declares those two owl:disjointWith, so the distinction is load-bearing rather than stylistic. In an extraction run, each step (detecting a region, reading text, extracting fields) is an InferenceMeta with the model that step used, and is part of the run ([dcterms:isPartOf](#isPartOf)), itself a prov:Activity; the [Configuration](#Configuration) a step used (a prompt, rendering settings) is recorded with [prov:used](#used).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#InferenceMeta`
 - **Sub class of:** [Activity](#Activity)
 
 ### Inferred Entity {#InferredEntity}
 
-Anything ADIRO infers or extracts that carries its own provenance and confidence - the shared superclass of everything an inference/extraction step produces as a first-class, provenance-bearing individual. A field-value claim (FieldAssertion, here) is one; a spatial localisation (a BoundingBox, in adiro_geometry) is another. It exists so that hasInferenceMeta and hasConfidence apply uniformly to any such product, not only to a field-value claim: a detected box is an inferred entity with its own producer and score, distinct from the confidence in the value read at that box. In PROV-O terms this is the prov:Entity an inference activity generated. The producing step can be a model or a person: a human annotation (a box drawn by hand, a field typed in) is an inference step performed by a person, recorded with inferredBy that person (an aprov:Person) and no inferredWith, and it carries a confidence only if one is given. A model's output and a person's label are told apart by who inferredBy is.
+Anything ADIRO infers or extracts that carries its own provenance and confidence - the shared superclass of everything an inference/extraction step produces as a first-class, provenance-bearing individual. A field-value claim ([FieldAssertion](#FieldAssertion), here) is one; a spatial localisation (a [BoundingBox](adiro_geometry.md#BoundingBox), in adiro_geometry) is another. It exists so that [hasInferenceMeta](#hasInferenceMeta) and [hasConfidence](#hasConfidence) apply uniformly to any such product, not only to a field-value claim: a detected box is an inferred entity with its own producer and score, distinct from the confidence in the value read at that box. In PROV-O terms this is the [prov:Entity](#Entity) an inference activity generated. The producing step can be a model or a person: a human annotation (a box drawn by hand, a field typed in) is an inference step performed by a person, recorded with [inferredBy](#inferredBy) that person (an aprov:Person) and no [inferredWith](#inferredWith), and it carries a confidence only if one is given. A model's output and a person's label are told apart by who inferredBy is.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#InferredEntity`
 - **Sub class of:** [Entity](#Entity)
@@ -167,7 +167,7 @@ Typing stub for the ISO 21597-1 (ICDD) term Organisation, edition 1. A stub is a
 
 ### Party {#Party}
 
-A person or an organisation: whoever made, saved or is named on something. Abstract: every party is exactly a Person or an Organisation, never both and never neither (their disjoint union), as in ISO 21597-1. Software that produced a file is not a party; a PROV activity records it.
+A person or an organisation: whoever made, saved or is named on something. Abstract: every party is exactly a [Person](#Person) or an [Organisation](#Organisation), never both and never neither (their disjoint union), as in ISO 21597-1. Software that produced a file is not a party; a PROV activity records it.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#Party`
 - **Sub class of:**
@@ -197,7 +197,7 @@ Typing stub for the ISO 21597-1 (ICDD) term Person, edition 1. A stub is a name,
 
 ### Step Kind {#StepKind}
 
-What a step of an extraction did: RegionDetection, TextRecognition or FieldExtraction. A closed list, so a new kind of step is a new value and not a new class. It tells steps apart when they use the same model, and it tells what a step looked for when it found nothing: a page that a region detection used, with no region found on it, was searched and has none, unless the step failed (an errorMessage on the step).
+What a step of an extraction did: [RegionDetection](#RegionDetection), [TextRecognition](#TextRecognition) or [FieldExtraction](#FieldExtraction). A closed list, so a new kind of step is a new value and not a new class. It tells steps apart when they use the same model, and it tells what a step looked for when it found nothing: a page that a region detection used, with no region found on it, was searched and has none, unless the step failed (an [errorMessage](#errorMessage) on the step).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#StepKind`
 - **One of:**
@@ -207,7 +207,7 @@ What a step of an extraction did: RegionDetection, TextRecognition or FieldExtra
 
 ### Text Reading {#TextReading}
 
-The text a step read from one region, such as a title block, or from a whole page (isReadingOf), as it is printed and whether or not any of it was read as a field, so a drawing can be found by any word on it. The text is readText, with the language as the literal's language tag when it is known. A reading that read nothing has an outcome instead (hasReadingOutcome): the region holds no text (Empty), it cannot be read (Illegible), or the step failed (Failed, with its errorMessage). A kind of InferredEntity: each reading has the step that produced it (hasInferenceMeta), so two runs that read the same region keep two readings.
+The text a step read from one region, such as a title block, or from a whole page ([isReadingOf](#isReadingOf)), as it is printed and whether or not any of it was read as a field, so a drawing can be found by any word on it. The text is [readText](#readText), with the language as the literal's language tag when it is known. A reading that read nothing has an outcome instead ([hasReadingOutcome](#hasReadingOutcome)): the region holds no text ([Empty](#Empty)), it cannot be read ([Illegible](#Illegible)), or the step failed ([Failed](#Failed), with its [errorMessage](#errorMessage)). A kind of [InferredEntity](#InferredEntity): each reading has the step that produced it ([hasInferenceMeta](#hasInferenceMeta)), so two runs that read the same region keep two readings.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#TextReading`
 - **Sub class of:** [Inferred Entity](#InferredEntity)
@@ -224,14 +224,14 @@ The agent that accepted or rejected this assertion: a person for a review, or a 
 
 ### assertedAbout {#assertedAbout}
 
-The subject the claim is ABOUT - the thing a validated assertion is promoted onto. Distinct from assertedBy, which records where the claim was read FROM: a drawn-by name is read from a title-block region (assertedBy) but is a claim about a particular DrawingRevision (assertedAbout), and a sheet has many revisions, so the subject cannot be recovered from the region alone. Without it, mapsToFieldProperty names a property but nothing names the individual to hang it on, and promotion is not expressible. No rdfs:range is asserted: the subjects differ per field kind - Titleblock, DrawingSheet, DrawingRevision, DrawingPackage, Project - and a narrower range would entail those subjects are of a type they are not.
+The subject the claim is ABOUT - the thing a validated assertion is promoted onto. Distinct from [assertedBy](#assertedBy), which records where the claim was read FROM: a drawn-by name is read from a title-block region (assertedBy) but is a claim about a particular [DrawingRevision](adiro_drawing_metadata.md#DrawingRevision) (assertedAbout), and a sheet has many revisions, so the subject cannot be recovered from the region alone. Without it, [mapsToFieldProperty](#mapsToFieldProperty) names a property but nothing names the individual to hang it on, and promotion is not expressible. No rdfs:range is asserted: the subjects differ per field kind - [Titleblock](adiro_drawing_metadata.md#Titleblock), [DrawingSheet](adiro_drawing_metadata.md#DrawingSheet), DrawingRevision, [DrawingPackage](adiro_drawing_metadata.md#DrawingPackage), [Project](adiro_drawing_metadata.md#Project) - and a narrower range would entail those subjects are of a type they are not.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#assertedAbout`
 - **Domain:** [Field Assertion](#FieldAssertion)
 
 ### assertedBy {#assertedBy}
 
-The source that makes this assertion - typically the drawing region it was read from (e.g. a Titleblock or a Layout). This is the provenance that lets the same field kind asserted by different regions be distinguished (e.g. a sheet's scale read from the title block versus the same sheet's scale read from a general note), which a fixed domain on a per-field property cannot express.
+The source that makes this assertion - typically the drawing region it was read from (e.g. a [Titleblock](adiro_drawing_metadata.md#Titleblock) or a [Layout](adiro_drawing_metadata.md#Layout)). This is the provenance that lets the same field kind asserted by different regions be distinguished (e.g. a sheet's scale read from the title block versus the same sheet's scale read from a general note), which a fixed domain on a per-field property cannot express.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#assertedBy`
 - **Domain:** [Field Assertion](#FieldAssertion)
@@ -246,7 +246,7 @@ The field kind (a SKOS concept in a field-kind scheme, e.g. a title-block field 
 
 ### belongsToFile {#belongsToFile}
 
-The DrawingFile that a FilePage is a page of. To go from a file to its pages, use the inverse path ^aprov:belongsToFile (ADIRO declares no named inverse properties).
+The [DrawingFile](#DrawingFile) that a [FilePage](#FilePage) is a page of. To go from a file to its pages, use the inverse path ^aprov:belongsToFile (ADIRO declares no named inverse properties).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#belongsToFile`
 - **Domain:** [File Page](#FilePage)
@@ -254,7 +254,7 @@ The DrawingFile that a FilePage is a page of. To go from a file to its pages, us
 
 ### fileCreatedBy {#fileCreatedBy}
 
-The party that made the file in the storage system, usually whoever saved it. Not the drawing's author, which is isAuthoredBy in adiro_drawing_metadata; a close match to, not the same as, Dublin Core creator and ICDD createdBy.
+The party that made the file in the storage system, usually whoever saved it. Not the drawing's author, which is [isAuthoredBy](adiro_drawing_metadata.md#isAuthoredBy) in adiro_drawing_metadata; a close match to, not the same as, Dublin Core creator and ICDD createdBy.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#fileCreatedBy`
 - **Domain:** [Drawing File](#DrawingFile)
@@ -270,7 +270,7 @@ A party that modified the file in the storage system. More than one is allowed.
 
 ### hasAcceptance {#hasAcceptance}
 
-Whether this assertion was taken into the direct properties of its subject (an AcceptanceStatus). An assertion with no acceptance recorded is as good as Pending.
+Whether this assertion was taken into the direct properties of its subject (an [AcceptanceStatus](#AcceptanceStatus)). An assertion with no acceptance recorded is as good as [Pending](#Pending).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#hasAcceptance`
 - **Domain:** [Field Assertion](#FieldAssertion)
@@ -278,7 +278,7 @@ Whether this assertion was taken into the direct properties of its subject (an A
 
 ### hasInferenceMeta {#hasInferenceMeta}
 
-Links an inferred entity (a FieldAssertion, a BoundingBox, ...) to the InferenceMeta describing what produced it, from where, and when. Aligned to prov:wasGeneratedBy: the entity (a prov:Entity) was generated by the inference (a prov:Activity).
+Links an inferred entity (a [FieldAssertion](#FieldAssertion), a [BoundingBox](adiro_geometry.md#BoundingBox), ...) to the [InferenceMeta](#InferenceMeta) describing what produced it, from where, and when. Aligned to [prov:wasGeneratedBy](#wasGeneratedBy): the entity (a [prov:Entity](#Entity)) was generated by the inference (a [prov:Activity](#Activity)).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#hasInferenceMeta`
 - **Sub property of:** [wasGeneratedBy](#wasGeneratedBy)
@@ -287,7 +287,7 @@ Links an inferred entity (a FieldAssertion, a BoundingBox, ...) to the Inference
 
 ### hasOutcome {#hasOutcome}
 
-What the search for this field found, when it found no value (an AssertionOutcome). An assertion with a hasLiteralValue or a hasValueEntity has no outcome.
+What the search for this field found, when it found no value (an [AssertionOutcome](#AssertionOutcome)). An assertion with a [hasLiteralValue](#hasLiteralValue) or a [hasValueEntity](#hasValueEntity) has no outcome.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#hasOutcome`
 - **Domain:** [Field Assertion](#FieldAssertion)
@@ -295,7 +295,7 @@ What the search for this field found, when it found no value (an AssertionOutcom
 
 ### hasReadingOutcome {#hasReadingOutcome}
 
-Why a TextReading holds no text (an AssertionOutcome): the region holds none (Empty), it cannot be read (Illegible), or the step failed (Failed). A reading with readText has no outcome. A property of its own rather than hasOutcome, whose domain is FieldAssertion: a reading is not a claim about a field.
+Why a [TextReading](#TextReading) holds no text (an [AssertionOutcome](#AssertionOutcome)): the region holds none ([Empty](#Empty)), it cannot be read ([Illegible](#Illegible)), or the step failed ([Failed](#Failed)). A reading with [readText](#readText) has no outcome. A property of its own rather than [hasOutcome](#hasOutcome), whose domain is [FieldAssertion](#FieldAssertion): a reading is not a claim about a field.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#hasReadingOutcome`
 - **Domain:** [Text Reading](#TextReading)
@@ -303,7 +303,7 @@ Why a TextReading holds no text (an AssertionOutcome): the region holds none (Em
 
 ### hasStepKind {#hasStepKind}
 
-What kind of step of an extraction this InferenceMeta is (a StepKind): a region detection, a text recognition or a field extraction.
+What kind of step of an extraction this [InferenceMeta](#InferenceMeta) is (a [StepKind](#StepKind)): a region detection, a text recognition or a field extraction.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#hasStepKind`
 - **Domain:** [Inference Meta](#InferenceMeta)
@@ -311,14 +311,14 @@ What kind of step of an extraction this InferenceMeta is (a StepKind): a region 
 
 ### hasValueEntity {#hasValueEntity}
 
-For object-valued field kinds, the entity that is the asserted value - e.g. a Person or Organisation. Used instead of hasLiteralValue when the field references a thing rather than states a string, which is what makes cross-sheet questions ('everything checked by X') answerable.
+For object-valued field kinds, the entity that is the asserted value - e.g. a [Person](#Person) or [Organisation](#Organisation). Used instead of [hasLiteralValue](#hasLiteralValue) when the field references a thing rather than states a string, which is what makes cross-sheet questions ('everything checked by X') answerable.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#hasValueEntity`
 - **Domain:** [Field Assertion](#FieldAssertion)
 
 ### inferredBy {#inferredBy}
 
-The actor, organisation or software that produced this inference: a person (an aprov:Person) when a human annotated, a software agent when a model predicted. Aligned to prov:wasAssociatedWith - the agent the inference activity was associated with.
+The actor, organisation or software that produced this inference: a person (an aprov:Person) when a human annotated, a software agent when a model predicted. Aligned to [prov:wasAssociatedWith](#wasAssociatedWith) - the agent the inference activity was associated with.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#inferredBy`
 - **Sub property of:** [wasAssociatedWith](#wasAssociatedWith)
@@ -327,7 +327,7 @@ The actor, organisation or software that produced this inference: a person (an a
 
 ### inferredFrom {#inferredFrom}
 
-The source the value was derived from - e.g. the origin file, page or region. Aligned to prov:used - the activity used this source.
+The source the value was derived from - e.g. the origin file, page or region. Aligned to [prov:used](#used) - the activity used this source.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#inferredFrom`
 - **Sub property of:** [used](#used)
@@ -335,7 +335,7 @@ The source the value was derived from - e.g. the origin file, page or region. Al
 
 ### inferredWith {#inferredWith}
 
-The algorithm or model (ideally with version) used to produce this inference. Distinct from inferredBy, which names the responsible actor; inferredWith names the tool. Aligned to prov:used - the activity used this model.
+The algorithm or model (ideally with version) used to produce this inference. Distinct from [inferredBy](#inferredBy), which names the responsible actor; inferredWith names the tool. Aligned to [prov:used](#used) - the activity used this model.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#inferredWith`
 - **Sub property of:** [used](#used)
@@ -343,13 +343,13 @@ The algorithm or model (ideally with version) used to produce this inference. Di
 
 ### isPartOf {#isPartOf}
 
-Typing stub for the DCMI Metadata Terms property of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative definition lives at the source that rdfs:isDefinedBy points at. ADIRO uses it between the steps of an extraction run and the run: each step (an InferenceMeta, such as detecting the title block or reading its text) is part of the run (a prov:Activity) it was performed in.
+Typing stub for the DCMI Metadata Terms property of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative definition lives at the source that rdfs:isDefinedBy points at. ADIRO uses it between the steps of an extraction run and the run: each step (an [InferenceMeta](#InferenceMeta), such as detecting the title block or reading its text) is part of the run (a [prov:Activity](#Activity)) it was performed in.
 
 - **IRI:** `http://purl.org/dc/terms/isPartOf`
 
 ### isReadingOf {#isReadingOf}
 
-What a TextReading read: a region, such as a title block (metadata:Titleblock), or a whole page (a FilePage). No range is declared, because the regions are defined by the modules that use this one.
+What a [TextReading](#TextReading) read: a region, such as a title block (metadata:Titleblock), or a whole page (a [FilePage](#FilePage)). No range is declared, because the regions are defined by the modules that use this one.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#isReadingOf`
 - **Domain:** [Text Reading](#TextReading)
@@ -364,25 +364,25 @@ The earlier assertion that this one replaces about the same field of the same su
 
 ### used {#used}
 
-Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range prov:Entity)
+Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain [prov:Activity](#Activity), rdfs:range [prov:Entity](#Entity))
 
 - **IRI:** `http://www.w3.org/ns/prov#used`
 
 ### wasAssociatedWith {#wasAssociatedWith}
 
-Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range prov:Agent)
+Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain [prov:Activity](#Activity), rdfs:range [prov:Agent](#Agent))
 
 - **IRI:** `http://www.w3.org/ns/prov#wasAssociatedWith`
 
 ### wasDerivedFrom {#wasDerivedFrom}
 
-Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Entity, rdfs:range prov:Entity). ADIRO uses it between two DrawingFiles: a file made from another one (a format conversion, a page split out of a PDF) was derived from it, and only the original records a sourceLocation.
+Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain [prov:Entity](#Entity), rdfs:range prov:Entity). ADIRO uses it between two [DrawingFile](#DrawingFile)s: a file made from another one (a format conversion, a page split out of a PDF) was derived from it, and only the original records a [sourceLocation](#sourceLocation).
 
 - **IRI:** `http://www.w3.org/ns/prov#wasDerivedFrom`
 
 ### wasGeneratedBy {#wasGeneratedBy}
 
-Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Entity, rdfs:range prov:Activity)
+Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain [prov:Entity](#Entity), rdfs:range [prov:Activity](#Activity))
 
 - **IRI:** `http://www.w3.org/ns/prov#wasGeneratedBy`
 
@@ -414,7 +414,7 @@ The caption/label text exactly as printed on the drawing for this assertion (e.g
 
 ### configurationContent {#configurationContent}
 
-The content of a Configuration, as text: the prompt as sent, or the settings serialised in the format the step reads them in, kept verbatim so a step can be repeated with exactly the same settings. It is published with the data, so it carries no credentials: keys, tokens and private endpoints are removed before it is recorded.
+The content of a [Configuration](#Configuration), as text: the prompt as sent, or the settings serialised in the format the step reads them in, kept verbatim so a step can be repeated with exactly the same settings. It is published with the data, so it carries no credentials: keys, tokens and private endpoints are removed before it is recorded.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#configurationContent`
 - **Domain:** [Configuration](#Configuration)
@@ -430,7 +430,7 @@ The hash of the bytes of the file, as a hexadecimal string. It identifies the co
 
 ### displayHeightPt {#displayHeightPt}
 
-The effective height of the page in points after the recorded page mapping (rotation and cropping); supports bounds checks on coordinates. The measured size of this page of this file, not the paper format the drawing is meant for (sheetSize).
+The effective height of the page in points after the recorded page mapping (rotation and cropping); supports bounds checks on coordinates. The measured size of this page of this file, not the paper format the drawing is meant for ([sheetSize](adiro_drawing_metadata.md#sheetSize)).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#displayHeightPt`
 - **Domain:** [File Page](#FilePage)
@@ -438,7 +438,7 @@ The effective height of the page in points after the recorded page mapping (rota
 
 ### displayWidthPt {#displayWidthPt}
 
-The effective width of the page in points after the recorded page mapping (rotation and cropping); supports bounds checks on coordinates. The measured size of this page of this file, not the paper format the drawing is meant for (sheetSize).
+The effective width of the page in points after the recorded page mapping (rotation and cropping); supports bounds checks on coordinates. The measured size of this page of this file, not the paper format the drawing is meant for ([sheetSize](adiro_drawing_metadata.md#sheetSize)).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#displayWidthPt`
 - **Domain:** [File Page](#FilePage)
@@ -446,13 +446,13 @@ The effective width of the page in points after the recorded page mapping (rotat
 
 ### endedAtTime {#endedAtTime}
 
-Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range xsd:dateTime). ADIRO's own :inferredAt declares rdfs:range xsd:dateTime, so the precision is asserted where it belongs - on the term this suite owns.
+Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain [prov:Activity](#Activity), rdfs:range xsd:dateTime). ADIRO's own :inferredAt declares rdfs:range xsd:dateTime, so the precision is asserted where it belongs - on the term this suite owns.
 
 - **IRI:** `http://www.w3.org/ns/prov#endedAtTime`
 
 ### errorMessage {#errorMessage}
 
-The error that stopped a step, as the step reported it. On an inferred entity whose outcome is Failed (a reading, a field assertion), it is the error that stopped the step producing it. On a step (an InferenceMeta), it says that the step itself failed before it produced anything, so a page it used was not searched: a region detection that timed out is a failure, not a page with no region on it. It is published with the data, so credentials, keys and private addresses are removed before it is recorded.
+The error that stopped a step, as the step reported it. On an inferred entity whose outcome is [Failed](#Failed) (a reading, a field assertion), it is the error that stopped the step producing it. On a step (an [InferenceMeta](#InferenceMeta)), it says that the step itself failed before it produced anything, so a page it used was not searched: a region detection that timed out is a failure, not a page with no region on it. It is published with the data, so credentials, keys and private addresses are removed before it is recorded.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#errorMessage`
 - **Domain:** ([Inferred Entity](#InferredEntity) or [Inference Meta](#InferenceMeta))
@@ -460,7 +460,7 @@ The error that stopped a step, as the step reported it. On an inferred entity wh
 
 ### fileCreatedAt {#fileCreatedAt}
 
-When the file was created, as the storage system records it. Not the drawing's issue date (issueDate).
+When the file was created, as the storage system records it. Not the drawing's issue date ([issueDate](adiro_drawing_metadata.md#issueDate)).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#fileCreatedAt`
 - **Domain:** [Drawing File](#DrawingFile)
@@ -492,7 +492,7 @@ The size of the file in bytes.
 
 ### hasConfidence {#hasConfidence}
 
-Confidence of the inference behind an inferred entity, as a decimal in [0,1]: the score a model gives, or, for a human annotation, absent (or 1 when the annotator is taken as certain). Applies to any InferredEntity - the confidence in a field-value claim (FieldAssertion) and the confidence in a detected localisation (a BoundingBox in adiro_geometry) are separate values, each carried on the individual it belongs to. Carried on the individual rather than on a triple, which keeps confidence in the graph without requiring RDF-star or statement reification. The range is an OWL 2 datatype restriction on xsd:decimal with minInclusive 0 and maxInclusive 1, so the [0,1] bound is asserted rather than only described in prose. Note this cannot fire in CI today: the reasoning gate runs over the T-Box in src/ and the repository holds no instance data, so the bound becomes enforceable when an A-Box exists (GitHub issue #22).
+Confidence of the inference behind an inferred entity, as a decimal in [0,1]: the score a model gives, or, for a human annotation, absent (or 1 when the annotator is taken as certain). Applies to any [InferredEntity](#InferredEntity) - the confidence in a field-value claim ([FieldAssertion](#FieldAssertion)) and the confidence in a detected localisation (a [BoundingBox](adiro_geometry.md#BoundingBox) in adiro_geometry) are separate values, each carried on the individual it belongs to. Carried on the individual rather than on a triple, which keeps confidence in the graph without requiring RDF-star or statement reification. The range is an OWL 2 datatype restriction on xsd:decimal with minInclusive 0 and maxInclusive 1, so the [0,1] bound is asserted rather than only described in prose. Note this cannot fire in CI today: the reasoning gate runs over the T-Box in src/ and the repository holds no instance data, so the bound becomes enforceable when an A-Box exists (GitHub issue #22).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#hasConfidence`
 - **Domain:** [Inferred Entity](#InferredEntity)
@@ -500,7 +500,7 @@ Confidence of the inference behind an inferred entity, as a decimal in [0,1]: th
 
 ### hashAlgorithm {#hashAlgorithm}
 
-The algorithm that produced the contentHash, for example sha256.
+The algorithm that produced the [contentHash](#contentHash), for example sha256.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#hashAlgorithm`
 - **Domain:** [Drawing File](#DrawingFile)
@@ -516,7 +516,7 @@ For datatype-valued field kinds, the literal value asserted, kept verbatim (not 
 
 ### inferredAt {#inferredAt}
 
-The time the inference was produced. Aligned to prov:endedAtTime - when the inference activity ended.
+The time the inference was produced. Aligned to [prov:endedAtTime](#endedAtTime) - when the inference activity ended.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#inferredAt`
 - **Sub property of:** [endedAtTime](#endedAtTime)
@@ -557,7 +557,7 @@ The rotation recorded for the page, in degrees. The page_display_pt coordinates 
 
 ### readText {#readText}
 
-The text a TextReading read, as printed, in reading order. The language, when known, is the literal's language tag ("Erdgeschoss"@de); text whose language is not known is a plain string.
+The text a [TextReading](#TextReading) read, as printed, in reading order. The language, when known, is the literal's language tag ("Erdgeschoss"@de); text whose language is not known is a plain string.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#readText`
 - **Domain:** [Text Reading](#TextReading)
@@ -565,7 +565,7 @@ The text a TextReading read, as printed, in reading order. The language, when kn
 
 ### sourceLocation {#sourceLocation}
 
-Where the file was obtained from: the address its bytes were fetched from, such as a public archive's download address, or the address in an organisation's own storage when that is the only known origin. Unlike storageLocation, it does not change when copies are moved. A file made from another file (converted, split into pages) records its origin through prov:wasDerivedFrom to that file, not a sourceLocation of its own.
+Where the file was obtained from: the address its bytes were fetched from, such as a public archive's download address, or the address in an organisation's own storage when that is the only known origin. Unlike [storageLocation](#storageLocation), it does not change when copies are moved. A file made from another file (converted, split into pages) records its origin through [prov:wasDerivedFrom](#wasDerivedFrom) to that file, not a sourceLocation of its own.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#sourceLocation`
 - **Domain:** [Drawing File](#DrawingFile)
@@ -573,7 +573,7 @@ Where the file was obtained from: the address its bytes were fetched from, such 
 
 ### sourcePage {#sourcePage}
 
-The page at the file's origin that describes it, such as a catalogue record or a landing page, which is often a more lasting address than the file's own sourceLocation.
+The page at the file's origin that describes it, such as a catalogue record or a landing page, which is often a more lasting address than the file's own [sourceLocation](#sourceLocation).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#sourcePage`
 - **Domain:** [Drawing File](#DrawingFile)
@@ -581,13 +581,13 @@ The page at the file's origin that describes it, such as a catalogue record or a
 
 ### startedAtTime {#startedAtTime}
 
-Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range xsd:dateTime). ADIRO uses it for when an extraction run started; its steps record when each ended with inferredAt.
+Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain [prov:Activity](#Activity), rdfs:range xsd:dateTime). ADIRO uses it for when an extraction run started; its steps record when each ended with [inferredAt](#inferredAt).
 
 - **IRI:** `http://www.w3.org/ns/prov#startedAtTime`
 
 ### storageLocation {#storageLocation}
 
-Where a copy of the file is stored: an address in a document-management or cloud storage system, or a path as a file address. More than one is allowed, and a location changes when the file is moved; the contentHash is what stays the same. It may be a relative reference (RFC 3986, such as crops/page-1-titleblock.png), resolved against the root of the dataset the data belongs to, which the data does not record: a dataset that is moved keeps its relative locations. A public release accepts only absolute addresses on its allowed hosts, so a relative location is resolved before release.
+Where a copy of the file is stored: an address in a document-management or cloud storage system, or a path as a file address. More than one is allowed, and a location changes when the file is moved; the [contentHash](#contentHash) is what stays the same. It may be a relative reference (RFC 3986, such as crops/page-1-titleblock.png), resolved against the root of the dataset the data belongs to, which the data does not record: a dataset that is moved keeps its relative locations. A public release accepts only absolute addresses on its allowed hosts, so a relative location is resolved before release.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#storageLocation`
 - **Domain:** [Drawing File](#DrawingFile)
@@ -597,13 +597,13 @@ Where a copy of the file is stored: an address in a document-management or cloud
 
 ### expectedRange {#expectedRange}
 
-On a field-kind concept: the expected type of its asserted value - a datatype (e.g. xsd:string, xsd:date) for literal-valued fields, or a class (e.g. Person, Organisation) for object-valued fields. Signals whether an assertion of this kind uses hasLiteralValue or hasValueEntity.
+On a field-kind concept: the expected type of its asserted value - a datatype (e.g. xsd:string, xsd:date) for literal-valued fields, or a class (e.g. Person, [Organisation](#Organisation)) for object-valued fields. Signals whether an assertion of this kind uses [hasLiteralValue](#hasLiteralValue) or [hasValueEntity](#hasValueEntity).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#expectedRange`
 
 ### mapsToFieldProperty {#mapsToFieldProperty}
 
-On a field-kind concept: the canonical ADIRO property that an accepted assertion (hasAcceptance Accepted) of this field kind, one that has a value, is promoted to (the bridge from the reified assertion to a direct statement on the subject). The subject is the assertion's assertedAbout, so a promotion is: ?a assertedAbout ?subject ; assertsFieldKind ?k . ?k mapsToFieldProperty ?p  =>  ?subject ?p <value>. Annotation only - the promotion is performed by tooling on acceptance, not by reasoning.
+On a field-kind concept: the canonical ADIRO property that an accepted assertion ([hasAcceptance](#hasAcceptance) Accepted) of this field kind, one that has a value, is promoted to (the bridge from the reified assertion to a direct statement on the subject). The subject is the assertion's [assertedAbout](#assertedAbout), so a promotion is: ?a assertedAbout ?subject ; [assertsFieldKind](#assertsFieldKind) ?k . ?k mapsToFieldProperty ?p  =>  ?subject ?p <value>. Annotation only - the promotion is performed by tooling on acceptance, not by reasoning.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#mapsToFieldProperty`
 
@@ -611,7 +611,7 @@ On a field-kind concept: the canonical ADIRO property that an accepted assertion
 
 ### Accepted {#Accepted}
 
-Taken in, by a pipeline rule (a confidence threshold, named by acceptedUnder) or by a person. An accepted assertion that has a value is promoted to a direct property.
+Taken in, by a pipeline rule (a confidence threshold, named by [acceptedUnder](#acceptedUnder)) or by a person. An accepted assertion that has a value is promoted to a direct property.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#Accepted`
 - **Type:** [Acceptance Status](#AcceptanceStatus)
@@ -625,14 +625,14 @@ The field is printed on the drawing but holds no value (a blank cell). The groun
 
 ### Failed {#Failed}
 
-The step did not complete: an error, a timeout or an unreadable input stopped it, so it searched nothing and says nothing about the drawing. It is retried. The error is recorded with errorMessage. Not a ground-truth observation status: it is the extraction's own.
+The step did not complete: an error, a timeout or an unreadable input stopped it, so it searched nothing and says nothing about the drawing. It is retried. The error is recorded with [errorMessage](#errorMessage). Not a ground-truth observation status: it is the extraction's own.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#Failed`
 - **Type:** [Assertion Outcome](#AssertionOutcome)
 
 ### Field extraction {#FieldExtraction}
 
-A step that turns text or an image into the values of fields (the title, the author, the drawing number), each recorded as a FieldAssertion.
+A step that turns text or an image into the values of fields (the title, the author, the drawing number), each recorded as a [FieldAssertion](#FieldAssertion).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#FieldExtraction`
 - **Type:** [Step Kind](#StepKind)
@@ -681,7 +681,7 @@ Decided against: the assertion stays as a record but is not promoted.
 
 ### Text recognition {#TextRecognition}
 
-A step that reads the text of a region or of a whole page, as it is printed, into a TextReading.
+A step that reads the text of a region or of a whole page, as it is printed, into a [TextReading](#TextReading).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#TextRecognition`
 - **Type:** [Step Kind](#StepKind)

@@ -192,7 +192,7 @@ The engineering or architectural discipline associated with a Layout.
 
 ### Electrical {#Electrical}
 
-The electrical-engineering discipline, part of MEP.
+The electrical-engineering discipline, part of [MEP](#MEP).
 
 - **IRI:** `https://w3id.org/adiro/aec_domain_common#Electrical`
 - **Sub class of:** [MEP](#MEP)
@@ -297,14 +297,14 @@ General property category
 
 ### Mechanical {#Mechanical}
 
-The mechanical-engineering discipline, part of MEP.
+The mechanical-engineering discipline, part of [MEP](#MEP).
 
 - **IRI:** `https://w3id.org/adiro/aec_domain_common#Mechanical`
 - **Sub class of:** [MEP](#MEP)
 
 ### MEP {#MEP}
 
-Mechanical, Electrical, and Plumbing.
+Mechanical, [Electrical](#Electrical), and [Plumbing](#Plumbing).
 
 - **IRI:** `https://w3id.org/adiro/aec_domain_common#MEP`
 - **Sub class of:** [Discipline](#Discipline)
@@ -325,7 +325,7 @@ A structural component that is essentially a panel or plate, such as a slab or w
 
 ### Plumbing {#Plumbing}
 
-The plumbing discipline, part of MEP.
+The plumbing discipline, part of [MEP](#MEP).
 
 - **IRI:** `https://w3id.org/adiro/aec_domain_common#Plumbing`
 - **Sub class of:** [MEP](#MEP)
@@ -377,7 +377,7 @@ General property category
 
 ### Section shape {#SectionShape}
 
-The cross-sectional profile of a structural section, such as an I-section, CHS or RHS.
+The cross-sectional profile of a structural section, such as an I-section, [CHS](#CHS) or [RHS](#RHS).
 
 - **IRI:** `https://w3id.org/adiro/aec_domain_common#SectionShape`
 - **Sub class of:** [Section properties](#SectionProperties)

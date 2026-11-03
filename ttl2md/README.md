@@ -69,6 +69,14 @@ markdown = conv.render(doc)
   `exampleImage` (case-insensitive) is rendered as an inline image preview,
   reproducing the HTML post-processing previously applied to pyLODE output.
   Configurable via `example_image_predicates`.
+- **Links in definitions** — the name of a term written in a definition
+  (`FieldAssertion`, or a prefixed name such as `prov:Activity`) links to the
+  term's entry on the page, or to another page given in `external_links`
+  (IRI -> URL). A single capitalised word is linked only mid-sentence and not
+  inside a capitalised phrase, a single lowercase word never, and each term once
+  per definition; URLs, code spans and existing links are left alone. The rules
+  are in `ttl2md.crosslinks` (`link_names`, `targets_for`), which takes any link
+  syntax, so an HTML page can link the same names (`html_link`).
 
 Headings carry explicit `{#localName}` anchors (via the `attr_list` Markdown
 extension) so intra-ontology references resolve regardless of heading
