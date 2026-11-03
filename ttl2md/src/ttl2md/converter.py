@@ -316,19 +316,28 @@ class MarkdownConverter:
     )
 
     def _concept_groups(self, schemes: list[URIRef], concepts: list[URIRef]) -> list[tuple[Term | None, list[Term]]]:
-        """Each scheme with its concepts, then the concepts in no scheme of this document, sorted by label."""
+        """Each scheme with its concepts, then the concepts in no scheme of this document, sorted by label.
+
+        A concept has one entry: under the first of its schemes in this document (by IRI). Every other scheme of the
+        document that it is in lists it under "Also includes", so no scheme looks emptier than it is.
+        """
         def by_label(t: Term):
             return (t.label.lower(), t.local)
 
         members: dict[str, list[Term]] = {str(s): [] for s in schemes}
+        also: dict[str, list[str]] = {str(s): [] for s in schemes}
         loose: list[Term] = []
         for subj in concepts:
             term = self._concept_term(subj)
             in_schemes = sorted(str(s) for s in self._graph.objects(subj, SKOS.inScheme) if str(s) in members)
-            (members[in_schemes[0]] if in_schemes else loose).append(term)  # under its first scheme only
-        groups: list[tuple[Term | None, list[Term]]] = [
-            (term, sorted(members[term.iri], key=by_label)) for term in sorted(map(self._scheme_term, schemes), key=by_label)
-        ]
+            (members[in_schemes[0]] if in_schemes else loose).append(term)
+            for other in in_schemes[1:]:
+                also[other].append(self._ref(subj))
+        scheme_terms = sorted(map(self._scheme_term, schemes), key=by_label)
+        for term in scheme_terms:
+            if also[term.iri]:
+                term.metadata.append(("Also includes", sorted(also[term.iri])))
+        groups: list[tuple[Term | None, list[Term]]] = [(term, sorted(members[term.iri], key=by_label)) for term in scheme_terms]
         if loose:
             groups.append((None, sorted(loose, key=by_label)))
         return groups
@@ -599,7 +608,7 @@ class MarkdownConverter:
         out += ["## Concepts", ""]
         for scheme, concepts in groups:
             if scheme is None:
-                out += ["### Concepts in no scheme", ""]
+                out += ["### Other concepts", "", "Concepts in no scheme of this ontology.", ""]
             else:
                 self._render_term(out, scheme)
             for concept in concepts:

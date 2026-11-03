@@ -38,13 +38,13 @@ def md(**kwargs) -> str:
 def test_each_scheme_is_followed_by_its_concepts_sorted_by_label_then_the_concepts_in_no_scheme():
     page = md()
     order = [page.index(s) for s in ("## Concepts", "### Field Scheme {#Fields}", "#### Alpha Field {#Alpha}",
-                                     "#### Scale Field {#ScaleField}", "### Concepts in no scheme", "#### Other {#Other}")]
+                                     "#### Scale Field {#ScaleField}", "### Other concepts", "#### Other {#Other}")]
     assert order == sorted(order)
 
 
 def test_a_concept_shows_its_definition_names_examples_scheme_and_other_statements():
     page = md(external_links={"https://example.org/ext#FieldKind": "ext.md#FieldKind"})
-    entry = page[page.index("#### Scale Field"):page.index("### Concepts in no scheme")]
+    entry = page[page.index("#### Scale Field"):page.index("### Other concepts")]
     assert "The scale of the drawing, read into [hasScale](#hasScale)." in entry
     assert "- **Comment:** A note on the scale." in entry
     assert "- **Type:** [`ext:FieldKind`](ext.md#FieldKind)" in entry  # a class on another page is linked
@@ -71,3 +71,21 @@ def test_a_concept_declared_a_named_individual_is_listed_once_among_the_concepts
 def test_no_concepts_no_section():
     graph = Graph().parse(data="@prefix owl: <http://www.w3.org/2002/07/owl#> .\n<https://e.org/o> a owl:Ontology .", format="turtle")
     assert "## Concepts" not in convert_graph(graph)
+
+
+def test_a_concept_in_two_schemes_is_entered_once_and_listed_by_the_other_and_a_scheme_elsewhere_is_other():
+    turtle = """
+    @prefix : <https://example.org/onto#> .
+    @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+    @prefix owl: <http://www.w3.org/2002/07/owl#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    <https://example.org/onto> a owl:Ontology .
+    :S1 a skos:ConceptScheme ; rdfs:label "S1" .
+    :S2 a skos:ConceptScheme ; rdfs:label "S2" .
+    :b a skos:Concept ; rdfs:label "B" ; skos:inScheme :S1 , :S2 .
+    :a a skos:Concept ; rdfs:label "A" ; skos:inScheme <https://example.org/far#Far> .
+    """
+    page = convert_graph(Graph().parse(data=textwrap.dedent(turtle), format="turtle"))
+    assert page.count("{#b}") == 1 and page.index("{#b}") < page.index("### S2 {#S2}")
+    assert "- **Also includes:** [B](#b)" in page[page.index("### S2 {#S2}"):]
+    assert page.index("### Other concepts") < page.index("#### A {#a}")

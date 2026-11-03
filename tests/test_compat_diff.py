@@ -344,6 +344,30 @@ def test_a_class_added_to_an_individual_is_minor_and_a_class_removed_is_major():
     assert _deltas(SKOS_BASE, named) == []  # owl:NamedIndividual is a declaration, not a class of the individual
 
 
+CONTRACT = SKOS_BASE.replace(
+    ":k a skos:Concept ; skos:inScheme :S ;",
+    ':k a skos:Concept ; skos:inScheme :S ; skos:prefLabel "Scale"@en , "Massstab"@de ; skos:altLabel "Sc."@en ;\n'
+    "    <https://ex.org/p#mapsTo> :p ; <https://ex.org/p#expected> :A ;")
+
+
+@pytest.mark.parametrize("change,old,new,expected,bump", [
+    ("taken out of its scheme", " skos:inScheme :S ;", "", "SCHEME_MEMBERSHIP_REMOVED", cd.BUMP_MAJOR),
+    ("put in a second scheme", " skos:inScheme :S ;", " skos:inScheme :S , :T ;", "SCHEME_MEMBERSHIP_ADDED", cd.BUMP_MINOR),
+    ("a name removed", ' , "Massstab"@de', "", "NAME_REMOVED", cd.BUMP_MAJOR),
+    ("a name added", '"Sc."@en', '"Sc."@en , "NTS"@en', "NAME_ADDED", cd.BUMP_MINOR),
+    ("a name moved to another language", '"Massstab"@de', '"Massstab"@en', "NAME_REMOVED", cd.BUMP_MAJOR),
+    ("a name losing its language", '"Sc."@en', '"Sc."', "NAME_REMOVED", cd.BUMP_MAJOR),
+    ("the mapped property changed", "#mapsTo> :p", "#mapsTo> :q", "LINK_CHANGED", cd.BUMP_MAJOR),
+    ("the expected range changed", "#expected> :A", "#expected> :B", "LINK_CHANGED", cd.BUMP_MAJOR),
+    ("a link added", "#expected> :A ;", "#expected> :A ; skos:broader :k0 ;", "LINK_ADDED", cd.BUMP_MINOR),
+])
+def test_what_a_consumer_of_a_concept_acts_on_has_its_own_delta(change, old, new, expected, bump):
+    assert CONTRACT.count(old) == 1, change
+    deltas = _deltas(CONTRACT, CONTRACT.replace(old, new))
+    assert expected in [d for d, _ in deltas], (change, deltas)
+    assert cd.required_bump(deltas) == bump, change
+
+
 def test_a_changed_skos_definition_or_note_is_an_annotation_change_and_is_named():
     reworded = SKOS_BASE.replace('"A kind."@en', '"A kind of field."@en')
     assert _deltas(SKOS_BASE, reworded) == [("ANNOTATION_CHANGED", "https://ex.org/m#k")]
@@ -351,5 +375,7 @@ def test_a_changed_skos_definition_or_note_is_an_annotation_change_and_is_named(
     assert cd.annotation_details(_syms(SKOS_BASE), _syms(reworded)) == {"https://ex.org/m#k": ["skos:definition"]}
     noted = SKOS_BASE.replace(":S a skos:ConceptScheme .", ':S a skos:ConceptScheme ; skos:note "A note." .')
     assert _deltas(SKOS_BASE, noted) == [("ANNOTATION_CHANGED", "https://ex.org/m#S")]
+    retagged = SKOS_BASE.replace('"A kind."@en', '"A kind."@de')  # the language of a literal is compared
+    assert _deltas(SKOS_BASE, retagged) == [("ANNOTATION_CHANGED", "https://ex.org/m#k")]
     line, found = cd.locate_lines(reworded, "https://ex.org/m#k", ["skos:definition"])
     assert found == {"skos:definition": line}

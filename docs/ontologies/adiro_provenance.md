@@ -137,7 +137,7 @@ A single reified assertion that some source makes a value-claim about a field ki
 
 ### Field Kind {#FieldKind}
 
-A kind of field printed on a drawing, such as the scale, the client or who drew it, kept as data: each kind is an individual of this class in a field-kind scheme (the [TitleblockFieldScheme](adiro_drawing_metadata.md#TitleblockFieldScheme), in adiro_drawing_metadata), so a new kind is a new individual and not a new class or property. A [FieldAssertion](#FieldAssertion) names its kind with [assertsFieldKind](#assertsFieldKind). A field kind carries the names it is printed under (skos:prefLabel and skos:altLabel, in each language), examples of values (skos:example), the type of its value ([expectedRange](#expectedRange)) and the property an accepted value is promoted to ([mapsToFieldProperty](#mapsToFieldProperty)), whose domain is the class the value belongs to.
+A kind of field printed on a drawing, such as the scale, the client or who drew it, kept as data: each kind is an individual of this class in a field-kind scheme (the [TitleblockFieldScheme](adiro_drawing_metadata.md#TitleblockFieldScheme), in adiro_drawing_metadata), so a new kind is a new individual and not a new class or property. A [FieldAssertion](#FieldAssertion) names its kind with [assertsFieldKind](#assertsFieldKind). A field kind carries the names it is printed under (skos:prefLabel and skos:altLabel, in each language), examples of values (skos:example), the type of its value ([expectedRange](#expectedRange)) and the property an accepted value is promoted to ([mapsToFieldProperty](#mapsToFieldProperty)), whose domain is the class of the subject the value is about.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#FieldKind`
 - **Sub class of:** [Concept](#Concept)
@@ -616,7 +616,7 @@ On a [FieldKind](#FieldKind): the type of its value, a datatype (such as xsd:str
 
 ### mapsToFieldProperty {#mapsToFieldProperty}
 
-On a [FieldKind](#FieldKind): the ADIRO property that an accepted assertion of this kind ([hasAcceptance](#hasAcceptance) Accepted) that has a value is promoted to, on the subject of the assertion ([assertedAbout](#assertedAbout)): ?a assertedAbout ?s ; [assertsFieldKind](#assertsFieldKind) ?k . ?k mapsToFieldProperty ?p gives ?s ?p with the value. The domain of that property is the class the value belongs to, such as [Titleblock](adiro_drawing_metadata.md#Titleblock) for [assertsClient](adiro_drawing_metadata.md#assertsClient) or [Project](adiro_drawing_metadata.md#Project) for [projectNumber](adiro_drawing_metadata.md#projectNumber). Annotation only: the promotion is a query that tooling runs on acceptance, not reasoning.
+On a [FieldKind](#FieldKind): the ADIRO property that an accepted assertion of this kind ([hasAcceptance](#hasAcceptance) Accepted) that has a value is promoted to, on the subject of the assertion ([assertedAbout](#assertedAbout)): ?a assertedAbout ?s ; [assertsFieldKind](#assertsFieldKind) ?k . ?k mapsToFieldProperty ?p gives ?s ?p with the value. The domain of that property is the class of the subject, such as [Titleblock](adiro_drawing_metadata.md#Titleblock) for [assertsClient](adiro_drawing_metadata.md#assertsClient) or [Project](adiro_drawing_metadata.md#Project) for [projectNumber](adiro_drawing_metadata.md#projectNumber). Annotation only: the promotion is a query that tooling runs on acceptance, not reasoning.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#mapsToFieldProperty`
 

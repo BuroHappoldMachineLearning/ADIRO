@@ -56,6 +56,16 @@ DELTA_SEVERITY = {
     # removes what a consumer could select it by.
     "MEMBERSHIP_ADDED": NON_BREAKING,
     "MEMBERSHIP_REMOVED": BREAKING,
+    # What a consumer of a controlled vocabulary acts on (#254). Its scheme: a concept taken out of a scheme is no longer
+    # looked for. Its names (skos:prefLabel, altLabel, hiddenLabel, compared with their language): a removed name stops
+    # matching. Its links to other terms (aprov:mapsToFieldProperty, aprov:expectedRange, skos:broader, ...): a changed
+    # one changes what an assertion of it means; a new one only adds.
+    "SCHEME_MEMBERSHIP_ADDED": NON_BREAKING,
+    "SCHEME_MEMBERSHIP_REMOVED": BREAKING,
+    "NAME_ADDED": NON_BREAKING,
+    "NAME_REMOVED": POTENTIALLY,
+    "LINK_ADDED": NON_BREAKING,
+    "LINK_CHANGED": POTENTIALLY,
     "SUPERPROPERTY_CHANGED": BREAKING,
     # A rename (config/module_renames.json, #171) changes every term IRI of the module: one MAJOR change. The terms
     # are compared with the old IRIs mapped to the new ones, so only what changed besides the name is listed with it.
@@ -69,7 +79,9 @@ BUMP_NONE, BUMP_PATCH, BUMP_MINOR, BUMP_MAJOR = "none", "patch", "minor", "major
 BUMP_RANK = {BUMP_NONE: 0, BUMP_PATCH: 1, BUMP_MINOR: 2, BUMP_MAJOR: 3}
 
 # Deltas that are a semantic (non-annotation) change and so warrant at least MINOR.
-_MINOR_DELTAS = {"TERM_ADDED", "RESTRICTION_LOOSENED", "RESTRICTION_REMOVED", "MEMBERSHIP_ADDED"}
+_MINOR_DELTAS = {"TERM_ADDED", "RESTRICTION_LOOSENED", "RESTRICTION_REMOVED", "MEMBERSHIP_ADDED", "SCHEME_MEMBERSHIP_ADDED",
+                 "NAME_ADDED", "LINK_ADDED"}
+_NAME_PREDICATES = (SKOS.prefLabel, SKOS.altLabel, SKOS.hiddenLabel)
 
 # Boolean flags that the metadata module defines (isComputerVisionLabel, isComputerVisionOptionalLabel, ...) are read by the downstream annotation
 # tooling to build its label set, so changing one on an existing term can break a consumer although no axiom changed.
@@ -103,6 +115,29 @@ def kind_of(graph, term):
     if OWL.NamedIndividual in types or types & {SKOS.Concept, SKOS.ConceptScheme}:
         return "individual"  # a SKOS concept or scheme is a term of the module too (#254), typed owl:NamedIndividual or not
     return None
+
+
+def _individual_statements(graph, term):
+    """What is said of an individual besides its classes, label and comment, split by what a change to it means (#254).
+
+    ``schemes`` (skos:inScheme), ``names`` (skos:prefLabel / altLabel / hiddenLabel), ``links`` (any other statement whose
+    value is a term) and ``notes`` (any other literal: a definition, an example, a note). A literal is compared with its
+    language and datatype, since a name is matched under its language.
+    """
+    out = {"schemes": set(), "names": set(), "links": set(), "notes": set()}
+    for p, o in graph.predicate_objects(term):
+        if (p in (RDF.type, RDFS.label, RDFS.comment) or isinstance(o, BNode) or str(p).startswith(_FLAG_NS)
+                or str(p).rsplit("#", 1)[-1] == "exampleImage"):
+            continue
+        if p == SKOS.inScheme:
+            out["schemes"].add(str(o))
+        elif p in _NAME_PREDICATES:
+            out["names"].add((str(p), o.n3()))
+        elif isinstance(o, URIRef):
+            out["links"].add((str(p), str(o)))
+        else:
+            out["notes"].add((str(p), o.n3()))
+    return {key: frozenset(values) for key, values in out.items()}
 
 
 def _note_name(pred):
@@ -164,12 +199,8 @@ def build_symbols(graph):
             "types": frozenset(
                 str(o) for o in graph.objects(term, RDF.type) if isinstance(o, URIRef) and o != OWL.NamedIndividual
             ) if kind == "individual" else frozenset(),
-            "notes": frozenset(
-                (str(p), str(o))
-                for p, o in graph.predicate_objects(term)
-                if p not in (RDF.type, RDFS.label, RDFS.comment) and str(p).rsplit("#", 1)[-1] != "exampleImage"
-                and not str(p).startswith(_FLAG_NS) and not isinstance(o, BNode)
-            ) if kind == "individual" else frozenset(),
+            **(_individual_statements(graph, term) if kind == "individual" else
+               {"schemes": frozenset(), "names": frozenset(), "links": frozenset(), "notes": frozenset()}),
         }
         symbols[str(term)] = desc
     # The owl:Ontology header: annotations on it (a reworded description, owl:priorVersion, ...) are invisible to the
@@ -265,10 +296,17 @@ def compute_deltas(old_syms, new_syms):
             for dt in _diff_restrictions(o["restrictions"], n["restrictions"]):
                 deltas.append((dt, iri))
         elif o["kind"] == "individual":
-            if n["types"] - o["types"]:
-                deltas.append(("MEMBERSHIP_ADDED", iri))
-            if o["types"] - n["types"]:
-                deltas.append(("MEMBERSHIP_REMOVED", iri))
+            for key, added, removed in (("types", "MEMBERSHIP_ADDED", "MEMBERSHIP_REMOVED"),
+                                        ("schemes", "SCHEME_MEMBERSHIP_ADDED", "SCHEME_MEMBERSHIP_REMOVED"),
+                                        ("names", "NAME_ADDED", "NAME_REMOVED")):
+                if n[key] - o[key]:
+                    deltas.append((added, iri))
+                if o[key] - n[key]:
+                    deltas.append((removed, iri))
+            if o["links"] - n["links"]:  # a link removed or given another value
+                deltas.append(("LINK_CHANGED", iri))
+            elif n["links"] - o["links"]:
+                deltas.append(("LINK_ADDED", iri))
         if o["flags"] != n["flags"]:
             deltas.append(("LABELLING_CHANGED", iri))
         if ((o["labels"], o["comments"], o["images"], o["notes"]) != (n["labels"], n["comments"], n["images"], n["notes"])

@@ -63,7 +63,10 @@ markdown = conv.render(doc)
   sub-property-of, inverse-of, and property characteristics (functional,
   transitive, symmetric, …).
 - **Named individuals** — with their class memberships.
-- **Concepts** — SKOS concept schemes, each followed by its concepts: the
+- **Concepts** — SKOS concept schemes, each followed by its concepts (a
+  concept in several schemes is entered under the first, and listed by the
+  others under "Also includes"; one in no scheme of the ontology is under
+  "Other concepts"): the
   definition (`skos:definition`, else `rdfs:comment`), the classes besides
   `skos:Concept`, the scheme, the preferred and alternative labels with their
   language, examples, scope notes and notes, and any other statement about the

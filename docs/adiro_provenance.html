@@ -923,7 +923,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A kind of field printed on a drawing, such as the scale, the client or who drew it, kept as data: each kind is an individual of this class in a field-kind scheme (the <a href="ontologies/adiro_drawing_metadata/#TitleblockFieldScheme">TitleblockFieldScheme</a>, in adiro_drawing_metadata), so a new kind is a new individual and not a new class or property. A <a href="#FieldAssertion">FieldAssertion</a> names its kind with <a href="#assertsFieldKind">assertsFieldKind</a>. A field kind carries the names it is printed under (skos:prefLabel and skos:altLabel, in each language), examples of values (skos:example), the type of its value (<a href="#expectedRange">expectedRange</a>) and the property an accepted value is promoted to (<a href="#mapsToFieldProperty">mapsToFieldProperty</a>), whose domain is the class the value belongs to.</p></td>
+              <td><p>A kind of field printed on a drawing, such as the scale, the client or who drew it, kept as data: each kind is an individual of this class in a field-kind scheme (the <a href="ontologies/adiro_drawing_metadata/#TitleblockFieldScheme">TitleblockFieldScheme</a>, in adiro_drawing_metadata), so a new kind is a new individual and not a new class or property. A <a href="#FieldAssertion">FieldAssertion</a> names its kind with <a href="#assertsFieldKind">assertsFieldKind</a>. A field kind carries the names it is printed under (skos:prefLabel and skos:altLabel, in each language), examples of values (skos:example), the type of its value (<a href="#expectedRange">expectedRange</a>) and the property an accepted value is promoted to (<a href="#mapsToFieldProperty">mapsToFieldProperty</a>), whose domain is the class of the subject the value is about.</p></td>
             </tr>
             <tr>
               <th>
@@ -3414,12 +3414,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#InferenceMeta">Inference Meta</a>
+                  <a href="#InferredEntity">Inferred Entity</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#InferredEntity">Inferred Entity</a>
+                  <a href="#InferenceMeta">Inference Meta</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -3586,7 +3586,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>On a <a href="#FieldKind">FieldKind</a>: the ADIRO property that an accepted assertion of this kind (<a href="#hasAcceptance">hasAcceptance</a> Accepted) that has a value is promoted to, on the subject of the assertion (<a href="#assertedAbout">assertedAbout</a>): ?a assertedAbout ?s ; <a href="#assertsFieldKind">assertsFieldKind</a> ?k . ?k mapsToFieldProperty ?p gives ?s ?p with the value. The domain of that property is the class the value belongs to, such as <a href="adiro_drawing_metadata.html#Titleblock">Titleblock</a> for <a href="adiro_drawing_metadata.html#assertsClient">assertsClient</a> or <a href="adiro_drawing_metadata.html#Project">Project</a> for <a href="adiro_drawing_metadata.html#projectNumber">projectNumber</a>. Annotation only: the promotion is a query that tooling runs on acceptance, not reasoning.</p></td>
+              <td><p>On a <a href="#FieldKind">FieldKind</a>: the ADIRO property that an accepted assertion of this kind (<a href="#hasAcceptance">hasAcceptance</a> Accepted) that has a value is promoted to, on the subject of the assertion (<a href="#assertedAbout">assertedAbout</a>): ?a assertedAbout ?s ; <a href="#assertsFieldKind">assertsFieldKind</a> ?k . ?k mapsToFieldProperty ?p gives ?s ?p with the value. The domain of that property is the class of the subject, such as <a href="adiro_drawing_metadata.html#Titleblock">Titleblock</a> for <a href="adiro_drawing_metadata.html#assertsClient">assertsClient</a> or <a href="adiro_drawing_metadata.html#Project">Project</a> for <a href="adiro_drawing_metadata.html#projectNumber">projectNumber</a>. Annotation only: the promotion is a query that tooling runs on acceptance, not reasoning.</p></td>
             </tr>
           </table>
         </div>

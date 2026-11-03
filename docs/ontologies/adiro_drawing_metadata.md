@@ -791,7 +791,7 @@ Vertical orientation.
 
 ### Titleblock Field Scheme {#TitleblockFieldScheme}
 
-The kinds of field an extraction looks for in a title block, such as the scale, the client or who drew the drawing; each member is an [aprov:FieldKind](adiro_provenance.md#FieldKind). An extracted value is a [FieldAssertion](adiro_provenance.md#FieldAssertion) that names its kind ([aprov:assertsFieldKind](adiro_provenance.md#assertsFieldKind)) and the region it was read from ([aprov:assertedBy](adiro_provenance.md#assertedBy), usually a [Titleblock](#Titleblock)). Once accepted, the value is promoted to the property its kind maps to ([aprov:mapsToFieldProperty](adiro_provenance.md#mapsToFieldProperty)), whose domain is the class the value belongs to, such as Titleblock for [assertsClient](#assertsClient) or [Project](#Project) for [projectNumber](#projectNumber). The scheme names no class itself: a region and a field kind meet only through assertions.
+The kinds of field an extraction looks for in a title block, such as the scale, the client or who drew the drawing; each member is an [aprov:FieldKind](adiro_provenance.md#FieldKind). An extracted value is a [FieldAssertion](adiro_provenance.md#FieldAssertion) that names its kind ([aprov:assertsFieldKind](adiro_provenance.md#assertsFieldKind)) and the region it was read from ([aprov:assertedBy](adiro_provenance.md#assertedBy), usually a [Titleblock](#Titleblock)). Once accepted, the value is promoted to the property its kind maps to ([aprov:mapsToFieldProperty](adiro_provenance.md#mapsToFieldProperty)), whose domain is the class of the subject the value is about, such as Titleblock for [assertsClient](#assertsClient) or [Project](#Project) for [projectNumber](#projectNumber). The scheme names no class itself: a region and a field kind meet only through assertions.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#TitleblockFieldScheme`
 - **Scope note:** Public content. Every name, synonym and example in this scheme is generic: standard AEC field names, their common German equivalents, and example values that identify nothing (scales, status, revision and discipline codes). A name that only one project uses stays outside ADIRO and refers to a field kind by its IRI.
@@ -1007,7 +1007,9 @@ The issue status / suitability of the drawing, e.g. IFC (Issued for Construction
 - **expectedRange:** `xsd:string`
 - **mapsToFieldProperty:** [statusLabel](#statusLabel)
 
-### Concepts in no scheme
+### Other concepts
+
+Concepts in no scheme of this ontology.
 
 #### Unidentified Field {#UnidentifiedField}
 
