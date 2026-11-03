@@ -99,7 +99,9 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
   page and on the pyLODE page alike. One implementation, `ttl2md/src/ttl2md/crosslinks.py`, holds the rules (which words are
   not linked, so an ordinary word is not); `generate_docs.py` applies it to the pyLODE HTML (`link_pylode_pages`, once every page exists,
   with the ids pyLODE gave the entries: it makes them from labels, so they are read from the pages, never computed), including
-  the kept pages of earlier releases. `tests/test_definition_links.py` checks that every such link in `docs/` reaches an entry. The Turtle stays plain text: write a term's name exactly as its IRI's local name and it is linked. The
+  the kept pages of earlier releases. `tests/test_definition_links.py` checks that every such link in `docs/` reaches an entry. The Turtle stays plain text: write a term's name exactly as its IRI's local name and it is linked. pyLODE shows no entry for a named
+  individual or a SKOS concept, so a pyLODE page links those to their entry on the Markdown page, where `ttl2md` documents SKOS
+  concepts in a **Concepts** section, each scheme followed by its concepts ([#255](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/255)). The
   external resource links (TTL source, pyLODE HTML, OntoCanvas) point at the permanent **`w3id.org/adiro`** front
   door — which 302-redirects to the Pages host with permissive CORS — not the `github.io` host directly. Do the same when you reference an ontology IRI, a versioned IRI (`…/adiro/<module>/<semver>`)
 or the docs in an issue, PR, changelog, release note or message: use `w3id.org/adiro`; the `github.io` host is only the
@@ -131,7 +133,8 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   over `src/*.ttl` (parse check, circular-subclass detection, ensures an `owl:Ontology` declaration, and
   per-module version consistency — `owl:versionInfo` == `owl:versionIRI` tail == ontology IRI + version), plus
   `scripts/compat_diff.py` (RES-67, *warn* mode) which flags when a module's declared SemVer bump is smaller
-  than its change requires. The same validate step gates the deploy workflow. The workflow also runs the repository's
+  than its change requires. It compares SKOS concepts and schemes too, as individuals: their classes and everything said of
+  them, so a change to a field kind is released ([#254](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/254)). The same validate step gates the deploy workflow. The workflow also runs the repository's
   `tests/` (`pytest`) on the PR; they used to run only on a push to `main`, after a failing test could already have merged. On a PR (`BASE_REF` set) it also
   warns when `src/<module>.ttl` changed but `changelogs/<module>.md` did not
   ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)); advisory, and `ENFORCE_CHANGELOG=1`

@@ -77,6 +77,10 @@ Detect the following delta records:
 - `TERM_RENAMED`
 - `NAMESPACE_MOVED`
 - `TYPE_CHANGED` (e.g., datatype property -> object property)
+- `MEMBERSHIP_ADDED` / `MEMBERSHIP_REMOVED` (an individual, including a SKOS concept or concept scheme, gained or lost a class: a field kind typed `aprov:FieldKind` as well as `skos:Concept`)
+- `SCHEME_MEMBERSHIP_ADDED` / `SCHEME_MEMBERSHIP_REMOVED` (a concept was put in, or taken out of, a scheme (`skos:inScheme`): taken out, it is no longer looked for)
+- `NAME_ADDED` / `NAME_REMOVED` (a `skos:prefLabel`, `skos:altLabel` or `skos:hiddenLabel` of an individual was added or removed, compared with its language: a name that changes language is removed and added)
+- `LINK_ADDED` / `LINK_CHANGED` (a statement of an individual whose value is a term, such as `aprov:mapsToFieldProperty`, `aprov:expectedRange` or `skos:broader`, was added, or removed or given another value)
 - `DOMAIN_CHANGED`
 - `RANGE_CHANGED`
 - `SUPERCLASS_CHANGED`
@@ -85,7 +89,7 @@ Detect the following delta records:
 - `RESTRICTION_REMOVED`
 - `RESTRICTION_TIGHTENED`
 - `RESTRICTION_LOOSENED`
-- `ANNOTATION_CHANGED` (a label, a comment, the `exampleImage` values of a term, or the domain, range or super-property of an annotation property, which carry no logical meaning)
+- `ANNOTATION_CHANGED` (a label, a comment, the `exampleImage` values of a term, the domain, range or super-property of an annotation property, which carry no logical meaning, or any other literal said of an individual, such as a SKOS concept's definition, examples or notes, compared with its language and datatype)
 - `ONTOLOGY_HEADER_CHANGED` (an annotation on the `owl:Ontology` header changed: its label, description, `owl:priorVersion`, ...; `owl:versionIRI`, `owl:versionInfo` and `owl:imports` are not compared here)
 - `IMPORTS_CHANGED` (an `owl:imports` was added or removed on the `owl:Ontology` header)
 - `LABELLING_CHANGED` (a boolean flag in the `adiro_drawing_metadata` namespace, such as `isComputerVisionLabel` or `isComputerVisionOptionalLabel`, was added, removed or changed on an existing term)
@@ -95,11 +99,11 @@ Detect the following delta records:
 ## Step 5 — Severity Classification
 Default mapping:
 - Non-breaking:
-  - `TERM_ADDED`, `ANNOTATION_CHANGED`, `ONTOLOGY_HEADER_CHANGED`, `IMPORTS_CHANGED`, `RESTRICTION_LOOSENED`, `MODULE_RETIRED` (needs no release)
+  - `TERM_ADDED`, `MEMBERSHIP_ADDED`, `SCHEME_MEMBERSHIP_ADDED`, `NAME_ADDED`, `LINK_ADDED`, `ANNOTATION_CHANGED`, `ONTOLOGY_HEADER_CHANGED`, `IMPORTS_CHANGED`, `RESTRICTION_LOOSENED`, `MODULE_RETIRED` (needs no release)
 - Potentially-breaking:
-  - `DOMAIN_CHANGED`, `RANGE_CHANGED`, `SUPERCLASS_CHANGED`, `LABELLING_CHANGED`, `RESTRICTION_ADDED`, `RESTRICTION_TIGHTENED`
+  - `DOMAIN_CHANGED`, `RANGE_CHANGED`, `SUPERCLASS_CHANGED`, `NAME_REMOVED`, `LINK_CHANGED`, `LABELLING_CHANGED`, `RESTRICTION_ADDED`, `RESTRICTION_TIGHTENED`
 - Breaking:
-  - `TERM_REMOVED`, `TERM_RENAMED`, `NAMESPACE_MOVED`, `MODULE_RENAMED`, `TYPE_CHANGED`, `SUPERPROPERTY_CHANGED` (if constraints imply old assertions become invalid)
+  - `TERM_REMOVED`, `TERM_RENAMED`, `NAMESPACE_MOVED`, `MODULE_RENAMED`, `TYPE_CHANGED`, `MEMBERSHIP_REMOVED`, `SCHEME_MEMBERSHIP_REMOVED`, `SUPERPROPERTY_CHANGED` (if constraints imply old assertions become invalid)
 
 Note: implementers may override with policy rules file.
 

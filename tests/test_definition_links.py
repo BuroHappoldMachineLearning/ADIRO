@@ -77,7 +77,7 @@ def test_definitions_link_to_the_ids_pylode_gave_on_this_page_and_on_another_mod
     page = (docs / "adiro_x.html").read_text(encoding="utf-8")
     assert ('<td><p>A Box, an <a href="adiro_provenance.html#Inferredentity">InferredEntity</a> in a '
             '<a href="#Layoutcontenttype">LayoutContentType</a>, made by a <a href="#Activity">prov:Activity</a>, '
-            'never Failed.</p></td>') in page  # Failed is an individual: the pyLODE page has no entry for it
+            'never <a href="ontologies/adiro_provenance/#Failed">Failed</a>.</p></td>') in page  # an individual: its Markdown entry
     assert '<td><p>Where a <a href="#Box">Box</a> is.</p></td>' in page
     assert gd.link_pylode_pages(files, tmp_path, docs) == 0  # running it again changes nothing
 
@@ -116,8 +116,13 @@ def test_every_link_in_a_pylode_definition_reaches_an_entry():
     for page in pages:
         for cell in gd._DESCRIPTION_CELL.finditer(page.read_text(encoding="utf-8")):
             for target, fid in _ANCHOR.findall(cell.group(2)):
-                target_page = (page.parent / target).resolve() if target else page
-                if not target_page.is_file() or fid not in html_ids(target_page):
+                if target.endswith("/"):  # an entry on a Markdown page (#255), served at ontologies/<module>/[<version>/]
+                    markdown = Path(str((page.parent / target).resolve()) + ".md")
+                    ok = markdown.is_file() and f"{{#{fid}}}" in markdown.read_text(encoding="utf-8")
+                else:
+                    target_page = (page.parent / target).resolve() if target else page
+                    ok = target_page.is_file() and fid in html_ids(target_page)
+                if not ok:
                     broken.append(f"{page.relative_to(DOCS)} -> {target}#{fid}")
     assert not broken, broken[:20]
 
@@ -138,3 +143,27 @@ def test_the_published_pages_link_the_example_of_the_issue():
     assert "each recorded as a [FieldAssertion](#FieldAssertion)." in md
     html = (DOCS / "adiro_provenance.html").read_text(encoding="utf-8")
     assert '<a href="#errorMessage">errorMessage</a>' in html
+
+
+def test_an_individual_or_a_concept_links_to_its_markdown_entry(tmp_path):
+    files, docs = site(tmp_path)
+    files[0].write_text(MODULE.replace("never Failed.", "never Failed, in a Kind.")
+                        + ':Kind a <http://www.w3.org/2004/02/skos/core#Concept> .\n', encoding="utf-8")
+    (docs / "adiro_x.html").write_text(X_PAGE.replace("never Failed.", "never Failed, in a Kind."), encoding="utf-8")
+    gd.link_pylode_pages(files, tmp_path, docs)
+    linked = (docs / "adiro_x.html").read_text(encoding="utf-8")
+    assert 'never <a href="ontologies/adiro_provenance/#Failed">Failed</a>' in linked  # another module's latest page
+    assert 'in a <a href="ontologies/adiro_x/#Kind">Kind</a>' in linked  # this module's own page
+    assert gd.suite_terms(files)[X + "Kind"] == ("adiro_x", "Kind", True)
+
+
+def test_an_earlier_releases_page_links_its_own_individuals_on_its_own_versions_markdown_page(tmp_path):
+    files, docs = site(tmp_path)
+    module = MODULE.replace("never Failed.", "in a Kind.") + ':Kind a <http://www.w3.org/2004/02/skos/core#Concept> .\n'
+    (tmp_path / "versions" / "adiro_x" / "1.0.0").mkdir(parents=True)
+    (tmp_path / "versions" / "adiro_x" / "1.0.0" / "adiro_x.ttl").write_text(module, encoding="utf-8")
+    (docs / "adiro_x" / "1.0.0").mkdir(parents=True)
+    (docs / "adiro_x" / "1.0.0" / "adiro_x.html").write_text(X_PAGE.replace("never Failed.", "in a Kind."), encoding="utf-8")
+    gd.link_pylode_pages(files, tmp_path, docs)
+    page = (docs / "adiro_x" / "1.0.0" / "adiro_x.html").read_text(encoding="utf-8")
+    assert '<a href="../../ontologies/adiro_x/1.0.0/#Kind">Kind</a>' in page

@@ -214,7 +214,7 @@ Double glazing unit: two panes of glass held apart by a spacer around a sealed g
 Component of a facade system; a type of drawing element
 
 - **IRI:** `https://w3id.org/adiro/adiro_facade_domain#FacadeComponent`
-- **Sub class of:** `metadata:DrawingElement`
+- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
 
 ### Facade secondary structure {#FacadeSecondaryStructure}
 
@@ -224,15 +224,15 @@ Component of a facade system; a type of drawing element
 ### Facade shape {#FacadeShape}
 
 - **IRI:** `https://w3id.org/adiro/adiro_facade_domain#FacadeShape`
-- **Sub class of:** `dcommon:GeometricProperties`
+- **Sub class of:** [`dcommon:GeometricProperties`](adiro_domain_common.md#GeometricProperties)
 
 ### Facade system {#FacadeSystem}
 
 Facade system - part of support type; a type of drawing element
 
 - **IRI:** `https://w3id.org/adiro/adiro_facade_domain#FacadeSystem`
-- **Sub class of:** `metadata:DrawingElement`
-- **Restrictions:** `metadata:contains` some [Facade component](#FacadeComponent)
+- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
+- **Restrictions:** [`metadata:contains`](adiro_drawing_metadata.md#contains) some [Facade component](#FacadeComponent)
 
 ### Faceted {#Faceted}
 

@@ -585,6 +585,55 @@ td {
             </tr>
           </table>
         </div>
+        <div class="property entity" id="Concept">
+          <h3>Concept
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>http://www.w3.org/2004/02/skos/core#Concept</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#isDefinedBy" title="The definition of the subject resource. Defined in The RDF Schema vocabulary (RDFS)">Is Defined By</a>
+              </th>
+              <td>
+                <a href="http://www.w3.org/2004/02/skos/core#">skos:</a>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>Typing stub for the SKOS class of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative definition lives at the source that rdfs:isDefinedBy points at. ADIRO uses it as the superclass of <a href="#FieldKind">FieldKind</a> and as the range of <a href="#assertsFieldKind">assertsFieldKind</a>.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inRangeOf" title="Inverse of rdfs:range. Defined in Ontology Documentation Profile">In Range Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#assertsFieldKind">assertsFieldKind</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/superClassOf" title="Inverse of RDFS' subClassOf. Defined in Ontology Documentation Profile">Super Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#FieldKind">Field Kind</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
         <div class="property entity" id="InferredEntity">
           <h3>Inferred Entity
             <sup class="sup-c" title="OWL/RDFS Class">c</sup>
@@ -672,7 +721,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A single reified assertion that some source makes a value-claim about a field kind. Reifying the claim (rather than attaching the value straight to a subject) lets each printed occurrence carry its own provenance - which region asserted it (<a href="#assertedBy">assertedBy</a>), what produced it (<a href="#hasInferenceMeta">hasInferenceMeta</a>), and with what confidence (<a href="#hasConfidence">hasConfidence</a>) - independently of the value it states. The value is a literal (<a href="#hasLiteralValue">hasLiteralValue</a>) for datatype-valued fields or an entity (<a href="#hasValueEntity">hasValueEntity</a>) for object-valued fields. An assertion has a value or, when none was found, an outcome (<a href="#hasOutcome">hasOutcome</a>); it is promoted to a direct statement on its subject only once it is Accepted (<a href="#hasAcceptance">hasAcceptance</a>), by tooling and never by reasoning. Conflicting assertions across sources are surfaced, not silently merged, and a later one that replaces an earlier says so with supersedes. A kind of <a href="#InferredEntity">InferredEntity</a>, so it carries the shared provenance/confidence; in PROV-O terms the <a href="#Entity">prov:Entity</a> an extraction produced, which is why the PROV alignment is seated across two classes rather than all on one.</p></td>
+              <td><p>A single reified assertion that some source makes a value-claim about a field kind. Reifying the claim (rather than attaching the value straight to a subject) lets each printed occurrence carry its own provenance - which region asserted it (<a href="#assertedBy">assertedBy</a>), what produced it (<a href="#hasInferenceMeta">hasInferenceMeta</a>), and with what confidence (<a href="#hasConfidence">hasConfidence</a>) - independently of the value it states. The value is a literal (<a href="#hasLiteralValue">hasLiteralValue</a>) for datatype-valued fields or an entity (<a href="#hasValueEntity">hasValueEntity</a>) for object-valued fields. An assertion has a value or, when none was found, an outcome (<a href="#hasOutcome">hasOutcome</a>); it is promoted to a direct statement on its subject only once it is <a href="ontologies/adiro_provenance/#Accepted">Accepted</a> (<a href="#hasAcceptance">hasAcceptance</a>), by tooling and never by reasoning. Conflicting assertions across sources are surfaced, not silently merged, and a later one that replaces an earlier says so with supersedes. A kind of <a href="#InferredEntity">InferredEntity</a>, so it carries the shared provenance/confidence; in PROV-O terms the <a href="#Entity">prov:Entity</a> an extraction produced, which is why the PROV alignment is seated across two classes rather than all on one.</p></td>
             </tr>
             <tr>
               <th>
@@ -854,6 +903,36 @@ td {
                 <span>
                   <a href="#hasInferenceMeta">hasInferenceMeta</a>
                   <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="FieldKind">
+          <h3>Field Kind
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/adiro_provenance#FieldKind</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A kind of field printed on a drawing, such as the scale, the client or who drew it, kept as data: each kind is an individual of this class in a field-kind scheme (the <a href="ontologies/adiro_drawing_metadata/#TitleblockFieldScheme">TitleblockFieldScheme</a>, in adiro_drawing_metadata), so a new kind is a new individual and not a new class or property. A <a href="#FieldAssertion">FieldAssertion</a> names its kind with <a href="#assertsFieldKind">assertsFieldKind</a>. A field kind carries the names it is printed under (skos:prefLabel and skos:altLabel, in each language), examples of values (skos:example), the type of its value (<a href="#expectedRange">expectedRange</a>) and the property an accepted value is promoted to (<a href="#mapsToFieldProperty">mapsToFieldProperty</a>), whose domain is the class of the subject the value is about.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="http://www.w3.org/2004/02/skos/core#Concept">Concept</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
             </tr>
@@ -1436,7 +1515,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>What a step of an extraction did: RegionDetection, TextRecognition or FieldExtraction. A closed list, so a new kind of step is a new value and not a new class. It tells steps apart when they use the same model, and it tells what a step looked for when it found nothing: a page that a region detection used, with no region found on it, was searched and has none, unless the step failed (an <a href="#errorMessage">errorMessage</a> on the step).</p></td>
+              <td><p>What a step of an extraction did: <a href="ontologies/adiro_provenance/#RegionDetection">RegionDetection</a>, <a href="ontologies/adiro_provenance/#TextRecognition">TextRecognition</a> or <a href="ontologies/adiro_provenance/#FieldExtraction">FieldExtraction</a>. A closed list, so a new kind of step is a new value and not a new class. It tells steps apart when they use the same model, and it tells what a step looked for when it found nothing: a page that a region detection used, with no region found on it, was searched and has none, unless the step failed (an <a href="#errorMessage">errorMessage</a> on the step).</p></td>
             </tr>
             <tr>
               <th>
@@ -1466,7 +1545,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The text a step read from one region, such as a title block, or from a whole page (<a href="#isReadingOf">isReadingOf</a>), as it is printed and whether or not any of it was read as a field, so a drawing can be found by any word on it. The text is <a href="#readText">readText</a>, with the language as the literal's language tag when it is known. A reading that read nothing has an outcome instead (<a href="#hasReadingOutcome">hasReadingOutcome</a>): the region holds no text (Empty), it cannot be read (Illegible), or the step failed (Failed, with its <a href="#errorMessage">errorMessage</a>). A kind of <a href="#InferredEntity">InferredEntity</a>: each reading has the step that produced it (<a href="#hasInferenceMeta">hasInferenceMeta</a>), so two runs that read the same region keep two readings.</p></td>
+              <td><p>The text a step read from one region, such as a title block, or from a whole page (<a href="#isReadingOf">isReadingOf</a>), as it is printed and whether or not any of it was read as a field, so a drawing can be found by any word on it. The text is <a href="#readText">readText</a>, with the language as the literal's language tag when it is known. A reading that read nothing has an outcome instead (<a href="#hasReadingOutcome">hasReadingOutcome</a>): the region holds no text (<a href="ontologies/adiro_provenance/#Empty">Empty</a>), it cannot be read (<a href="ontologies/adiro_provenance/#Illegible">Illegible</a>), or the step failed (<a href="ontologies/adiro_provenance/#Failed">Failed</a>, with its <a href="#errorMessage">errorMessage</a>). A kind of <a href="#InferredEntity">InferredEntity</a>: each reading has the step that produced it (<a href="#hasInferenceMeta">hasInferenceMeta</a>), so two runs that read the same region keep two readings.</p></td>
             </tr>
             <tr>
               <th>
@@ -1523,7 +1602,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>What a search for a field found, when it found no value: Empty, Illegible, NotPrinted, NotFound or Failed. An assertion that has a value needs no outcome (the value is its outcome), and an assertion has a value or an outcome, never both. A <a href="#TextReading">TextReading</a> that read no text has an outcome from the same list (<a href="#hasReadingOutcome">hasReadingOutcome</a>).</p></td>
+              <td><p>What a search for a field found, when it found no value: <a href="ontologies/adiro_provenance/#Empty">Empty</a>, <a href="ontologies/adiro_provenance/#Illegible">Illegible</a>, <a href="ontologies/adiro_provenance/#NotPrinted">NotPrinted</a>, <a href="ontologies/adiro_provenance/#NotFound">NotFound</a> or <a href="ontologies/adiro_provenance/#Failed">Failed</a>. An assertion that has a value needs no outcome (the value is its outcome), and an assertion has a value or an outcome, never both. A <a href="#TextReading">TextReading</a> that read no text has an outcome from the same list (<a href="#hasReadingOutcome">hasReadingOutcome</a>).</p></td>
             </tr>
             <tr>
               <th>
@@ -1563,7 +1642,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Whether an assertion was taken into the direct properties of its subject: Pending (not yet decided), Accepted or Rejected. Only an Accepted assertion that has a value is promoted by <a href="#mapsToFieldProperty">mapsToFieldProperty</a>.</p></td>
+              <td><p>Whether an assertion was taken into the direct properties of its subject: <a href="ontologies/adiro_provenance/#Pending">Pending</a> (not yet decided), <a href="ontologies/adiro_provenance/#Accepted">Accepted</a> or <a href="ontologies/adiro_provenance/#Rejected">Rejected</a>. Only an Accepted assertion that has a value is promoted by <a href="#mapsToFieldProperty">mapsToFieldProperty</a>.</p></td>
             </tr>
             <tr>
               <th>
@@ -1774,7 +1853,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The field kind (a SKOS concept in a field-kind scheme, e.g. a title-block field such as Scale or Client) that this assertion is about. Keeping the kind as a referenced concept - rather than a bespoke property per field - is what lets names/synonyms live on the concept and keeps the number of relationships small.</p></td>
+              <td><p>The field kind this assertion is about: a <a href="#FieldKind">FieldKind</a> in a field-kind scheme, such as the title-block field for the scale or for the client. Keeping the kind as data, rather than a property per field, lets the names and synonyms of a field live on its kind and keeps the number of properties small. The range is <a href="#Concept">skos:Concept</a>, the superclass of FieldKind.</p></td>
             </tr>
             <tr>
               <th>
@@ -2255,7 +2334,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Why a <a href="#TextReading">TextReading</a> holds no text (an <a href="#AssertionOutcome">AssertionOutcome</a>): the region holds none (Empty), it cannot be read (Illegible), or the step failed (Failed). A reading with <a href="#readText">readText</a> has no outcome. A property of its own rather than <a href="#hasOutcome">hasOutcome</a>, whose domain is <a href="#FieldAssertion">FieldAssertion</a>: a reading is not a claim about a field.</p></td>
+              <td><p>Why a <a href="#TextReading">TextReading</a> holds no text (an <a href="#AssertionOutcome">AssertionOutcome</a>): the region holds none (<a href="ontologies/adiro_provenance/#Empty">Empty</a>), it cannot be read (<a href="ontologies/adiro_provenance/#Illegible">Illegible</a>), or the step failed (<a href="ontologies/adiro_provenance/#Failed">Failed</a>). A reading with <a href="#readText">readText</a> has no outcome. A property of its own rather than <a href="#hasOutcome">hasOutcome</a>, whose domain is <a href="#FieldAssertion">FieldAssertion</a>: a reading is not a claim about a field.</p></td>
             </tr>
             <tr>
               <th>
@@ -2367,7 +2446,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Whether this assertion was taken into the direct properties of its subject (an <a href="#AcceptanceStatus">AcceptanceStatus</a>). An assertion with no acceptance recorded is as good as Pending.</p></td>
+              <td><p>Whether this assertion was taken into the direct properties of its subject (an <a href="#AcceptanceStatus">AcceptanceStatus</a>). An assertion with no acceptance recorded is as good as <a href="ontologies/adiro_provenance/#Pending">Pending</a>.</p></td>
             </tr>
             <tr>
               <th>
@@ -3327,7 +3406,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The error that stopped a step, as the step reported it. On an inferred entity whose outcome is Failed (a reading, a field assertion), it is the error that stopped the step producing it. On a step (an <a href="#InferenceMeta">InferenceMeta</a>), it says that the step itself failed before it produced anything, so a page it used was not searched: a region detection that timed out is a failure, not a page with no region on it. It is published with the data, so credentials, keys and private addresses are removed before it is recorded.</p></td>
+              <td><p>The error that stopped a step, as the step reported it. On an inferred entity whose outcome is <a href="ontologies/adiro_provenance/#Failed">Failed</a> (a reading, a field assertion), it is the error that stopped the step producing it. On a step (an <a href="#InferenceMeta">InferenceMeta</a>), it says that the step itself failed before it produced anything, so a page it used was not searched: a region detection that timed out is a failure, not a page with no region on it. It is published with the data, so credentials, keys and private addresses are removed before it is recorded.</p></td>
             </tr>
             <tr>
               <th>
@@ -3335,12 +3414,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#InferenceMeta">Inference Meta</a>
+                  <a href="#InferredEntity">Inferred Entity</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#InferredEntity">Inferred Entity</a>
+                  <a href="#InferenceMeta">Inference Meta</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -3488,7 +3567,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>On a field-kind concept: the expected type of its asserted value - a datatype (e.g. xsd:string, xsd:date) for literal-valued fields, or a class (e.g. <a href="#Person">Person</a>, <a href="#Organisation">Organisation</a>) for object-valued fields. Signals whether an assertion of this kind uses <a href="#hasLiteralValue">hasLiteralValue</a> or <a href="#hasValueEntity">hasValueEntity</a>.</p></td>
+              <td><p>On a <a href="#FieldKind">FieldKind</a>: the type of its value, a datatype (such as xsd:string or xsd:date) or a class (such as <a href="#Person">Person</a> or <a href="#Organisation">Organisation</a>). It says whether an assertion of this kind records its value with <a href="#hasLiteralValue">hasLiteralValue</a> or with <a href="#hasValueEntity">hasValueEntity</a>.</p></td>
             </tr>
           </table>
         </div>
@@ -3507,7 +3586,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>On a field-kind concept: the canonical ADIRO property that an accepted assertion (<a href="#hasAcceptance">hasAcceptance</a> Accepted) of this field kind, one that has a value, is promoted to (the bridge from the reified assertion to a direct statement on the subject). The subject is the assertion's <a href="#assertedAbout">assertedAbout</a>, so a promotion is: ?a assertedAbout ?subject ; <a href="#assertsFieldKind">assertsFieldKind</a> ?k . ?k mapsToFieldProperty ?p  =&gt;  ?subject ?p <value>. Annotation only - the promotion is performed by tooling on acceptance, not by reasoning.</p></td>
+              <td><p>On a <a href="#FieldKind">FieldKind</a>: the ADIRO property that an accepted assertion of this kind (<a href="#hasAcceptance">hasAcceptance</a> Accepted) that has a value is promoted to, on the subject of the assertion (<a href="#assertedAbout">assertedAbout</a>): ?a assertedAbout ?s ; <a href="#assertsFieldKind">assertsFieldKind</a> ?k . ?k mapsToFieldProperty ?p gives ?s ?p with the value. The domain of that property is the class of the subject, such as <a href="adiro_drawing_metadata.html#Titleblock">Titleblock</a> for <a href="adiro_drawing_metadata.html#assertsClient">assertsClient</a> or <a href="adiro_drawing_metadata.html#Project">Project</a> for <a href="adiro_drawing_metadata.html#projectNumber">projectNumber</a>. Annotation only: the promotion is a query that tooling runs on acceptance, not reasoning.</p></td>
             </tr>
           </table>
         </div>
@@ -3627,6 +3706,9 @@ td {
               <a href="#Agent">Agent</a>
             </li>
             <li>
+              <a href="#Concept">Concept</a>
+            </li>
+            <li>
               <a href="#InferredEntity">Inferred Entity</a>
             </li>
             <li>
@@ -3634,6 +3716,9 @@ td {
             </li>
             <li>
               <a href="#InferenceMeta">Inference Meta</a>
+            </li>
+            <li>
+              <a href="#FieldKind">Field Kind</a>
             </li>
             <li>
               <a href="#Configuration">Configuration</a>

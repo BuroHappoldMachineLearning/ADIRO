@@ -24,7 +24,7 @@ import sys
 from pathlib import Path
 
 from rdflib import BNode, Graph, Literal, URIRef
-from rdflib.namespace import OWL, RDF, RDFS, XSD
+from rdflib.namespace import OWL, RDF, RDFS, SKOS, XSD
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import module_renames as mr  # noqa: E402
@@ -52,6 +52,20 @@ DELTA_SEVERITY = {
     "RESTRICTION_TIGHTENED": POTENTIALLY,
     "TERM_REMOVED": BREAKING,
     "TYPE_CHANGED": BREAKING,
+    # An individual's classes (#254): one more class is an addition (a field kind typed aprov:FieldKind as well), one less
+    # removes what a consumer could select it by.
+    "MEMBERSHIP_ADDED": NON_BREAKING,
+    "MEMBERSHIP_REMOVED": BREAKING,
+    # What a consumer of a controlled vocabulary acts on (#254). Its scheme: a concept taken out of a scheme is no longer
+    # looked for. Its names (skos:prefLabel, altLabel, hiddenLabel, compared with their language): a removed name stops
+    # matching. Its links to other terms (aprov:mapsToFieldProperty, aprov:expectedRange, skos:broader, ...): a changed
+    # one changes what an assertion of it means; a new one only adds.
+    "SCHEME_MEMBERSHIP_ADDED": NON_BREAKING,
+    "SCHEME_MEMBERSHIP_REMOVED": BREAKING,
+    "NAME_ADDED": NON_BREAKING,
+    "NAME_REMOVED": POTENTIALLY,
+    "LINK_ADDED": NON_BREAKING,
+    "LINK_CHANGED": POTENTIALLY,
     "SUPERPROPERTY_CHANGED": BREAKING,
     # A rename (config/module_renames.json, #171) changes every term IRI of the module: one MAJOR change. The terms
     # are compared with the old IRIs mapped to the new ones, so only what changed besides the name is listed with it.
@@ -65,7 +79,9 @@ BUMP_NONE, BUMP_PATCH, BUMP_MINOR, BUMP_MAJOR = "none", "patch", "minor", "major
 BUMP_RANK = {BUMP_NONE: 0, BUMP_PATCH: 1, BUMP_MINOR: 2, BUMP_MAJOR: 3}
 
 # Deltas that are a semantic (non-annotation) change and so warrant at least MINOR.
-_MINOR_DELTAS = {"TERM_ADDED", "RESTRICTION_LOOSENED", "RESTRICTION_REMOVED"}
+_MINOR_DELTAS = {"TERM_ADDED", "RESTRICTION_LOOSENED", "RESTRICTION_REMOVED", "MEMBERSHIP_ADDED", "SCHEME_MEMBERSHIP_ADDED",
+                 "NAME_ADDED", "LINK_ADDED"}
+_NAME_PREDICATES = (SKOS.prefLabel, SKOS.altLabel, SKOS.hiddenLabel)
 
 # Boolean flags that the metadata module defines (isComputerVisionLabel, isComputerVisionOptionalLabel, ...) are read by the downstream annotation
 # tooling to build its label set, so changing one on an existing term can break a consumer although no axiom changed.
@@ -96,9 +112,40 @@ def kind_of(graph, term):
         return "datatype-property"
     if OWL.AnnotationProperty in types:
         return "annotation-property"
-    if OWL.NamedIndividual in types:
-        return "individual"
+    if OWL.NamedIndividual in types or types & {SKOS.Concept, SKOS.ConceptScheme}:
+        return "individual"  # a SKOS concept or scheme is a term of the module too (#254), typed owl:NamedIndividual or not
     return None
+
+
+def _individual_statements(graph, term):
+    """What is said of an individual besides its classes, label and comment, split by what a change to it means (#254).
+
+    ``schemes`` (skos:inScheme), ``names`` (skos:prefLabel / altLabel / hiddenLabel), ``links`` (any other statement whose
+    value is a term) and ``notes`` (any other literal: a definition, an example, a note). A literal is compared with its
+    language and datatype, since a name is matched under its language.
+    """
+    out = {"schemes": set(), "names": set(), "links": set(), "notes": set()}
+    for p, o in graph.predicate_objects(term):
+        if (p in (RDF.type, RDFS.label, RDFS.comment) or isinstance(o, BNode) or str(p).startswith(_FLAG_NS)
+                or str(p).rsplit("#", 1)[-1] == "exampleImage"):
+            continue
+        if p == SKOS.inScheme:
+            out["schemes"].add(str(o))
+        elif p in _NAME_PREDICATES:
+            out["names"].add((str(p), o.n3()))
+        elif isinstance(o, URIRef):
+            out["links"].add((str(p), str(o)))
+        else:
+            out["notes"].add((str(p), o.n3()))
+    return {key: frozenset(values) for key, values in out.items()}
+
+
+def _note_name(pred):
+    """How a documentation predicate of an individual is named in a report: ``skos:definition``, or its local name."""
+    text = str(pred)
+    if text.startswith(str(SKOS)):
+        return "skos:" + text[len(str(SKOS)):]
+    return re.split(r"[#/]", text)[-1]
 
 
 def _restrictions(graph, cls):
@@ -147,6 +194,13 @@ def build_symbols(graph):
                 for p, o in graph.predicate_objects(term)
                 if str(p).startswith(_FLAG_NS) and isinstance(o, Literal) and o.datatype == XSD.boolean
             ),
+            # an individual's classes, and everything else said of it (a SKOS definition, names, examples, scheme, the
+            # field-kind annotations): what a consumer of a controlled vocabulary reads (#254)
+            "types": frozenset(
+                str(o) for o in graph.objects(term, RDF.type) if isinstance(o, URIRef) and o != OWL.NamedIndividual
+            ) if kind == "individual" else frozenset(),
+            **(_individual_statements(graph, term) if kind == "individual" else
+               {"schemes": frozenset(), "names": frozenset(), "links": frozenset(), "notes": frozenset()}),
         }
         symbols[str(term)] = desc
     # The owl:Ontology header: annotations on it (a reworded description, owl:priorVersion, ...) are invisible to the
@@ -241,9 +295,21 @@ def compute_deltas(old_syms, new_syms):
                 deltas.append(("SUPERCLASS_CHANGED", iri))
             for dt in _diff_restrictions(o["restrictions"], n["restrictions"]):
                 deltas.append((dt, iri))
+        elif o["kind"] == "individual":
+            for key, added, removed in (("types", "MEMBERSHIP_ADDED", "MEMBERSHIP_REMOVED"),
+                                        ("schemes", "SCHEME_MEMBERSHIP_ADDED", "SCHEME_MEMBERSHIP_REMOVED"),
+                                        ("names", "NAME_ADDED", "NAME_REMOVED")):
+                if n[key] - o[key]:
+                    deltas.append((added, iri))
+                if o[key] - n[key]:
+                    deltas.append((removed, iri))
+            if o["links"] - n["links"]:  # a link removed or given another value
+                deltas.append(("LINK_CHANGED", iri))
+            elif n["links"] - o["links"]:
+                deltas.append(("LINK_ADDED", iri))
         if o["flags"] != n["flags"]:
             deltas.append(("LABELLING_CHANGED", iri))
-        if ((o["labels"], o["comments"], o["images"]) != (n["labels"], n["comments"], n["images"])
+        if ((o["labels"], o["comments"], o["images"], o["notes"]) != (n["labels"], n["comments"], n["images"], n["notes"])
                 and ("ANNOTATION_CHANGED", iri) not in deltas):  # one delta per term, whatever annotation changed
             deltas.append(("ANNOTATION_CHANGED", iri))
     return deltas
@@ -274,6 +340,8 @@ def annotation_details(old_syms, new_syms):
         if o["kind"] == "annotation-property":
             pairs += [("domain", "rdfs:domain"), ("range", "rdfs:range"), ("supers", "rdfs:subPropertyOf")]
         names = [name for key, name in pairs if o[key] != n[key]]
+        changed = {p for p, _ in o["notes"] ^ n["notes"]}  # an individual's other annotations, by predicate
+        names += sorted({_note_name(p) for p in changed})
         if names:
             out[iri] = names
     return out
@@ -299,7 +367,7 @@ def locate_lines(text, iri, names=()):
         end += 1
     found = {}
     for name in names:
-        rx = re.compile(_ANNOTATION_PREDICATE[name])
+        rx = re.compile(_ANNOTATION_PREDICATE.get(name) or r"(?:[\w-]*:|<[^>]*[#/])%s\b" % re.escape(name.split(":")[-1]))
         for i in range(start, end):
             if rx.search(lines[i]):
                 found[name] = i + 1

@@ -103,6 +103,8 @@ class OntologyDoc:
     datatype_properties: list[Term] = field(default_factory=list)
     annotation_properties: list[Term] = field(default_factory=list)
     individuals: list[Term] = field(default_factory=list)
+    # SKOS concepts, grouped by the scheme they are in: (scheme, its concepts), and (None, the concepts in no scheme).
+    concept_groups: list[tuple[Term | None, list[Term]]] = field(default_factory=list)
 
 
 class MarkdownConverter:
@@ -168,10 +170,14 @@ class MarkdownConverter:
         object_props = self._collect(graph, (OWL.ObjectProperty,))
         datatype_props = self._collect(graph, (OWL.DatatypeProperty,))
         annotation_props = self._collect(graph, (OWL.AnnotationProperty,))
-        individuals = self._collect(graph, (OWL.NamedIndividual,))
+        # A SKOS concept or concept scheme is documented in the Concepts section, with its names, definition and
+        # scheme, whether or not it is also declared an owl:NamedIndividual.
+        concepts = self._collect(graph, (SKOS.Concept,))
+        schemes = [s for s in self._collect(graph, (SKOS.ConceptScheme,)) if s not in concepts]
+        individuals = [s for s in self._collect(graph, (OWL.NamedIndividual,)) if s not in concepts and s not in schemes]
 
         # Register every named term first so cross-references resolve.
-        for subj in (*classes, *object_props, *datatype_props, *annotation_props, *individuals):
+        for subj in (*classes, *object_props, *datatype_props, *annotation_props, *individuals, *concepts, *schemes):
             iri = str(subj)
             self._local_iris.add(iri)
             self._labels[iri] = self._label_of(subj)
@@ -200,6 +206,7 @@ class MarkdownConverter:
         doc.datatype_properties = [self._property_term(s) for s in datatype_props]
         doc.annotation_properties = [self._property_term(s) for s in annotation_props]
         doc.individuals = [self._individual_term(s) for s in individuals]
+        doc.concept_groups = self._concept_groups(schemes, concepts)
 
         for bucket in (
             doc.classes,
@@ -301,6 +308,90 @@ class MarkdownConverter:
         if types:
             term.metadata.append(("Type", sorted(types)))
         return term
+
+    # What a concept's entry shows in its own fields; any other statement about it is listed by its predicate.
+    _CONCEPT_FIELDS = (
+        RDF.type, RDFS.label, RDFS.comment, RDFS.isDefinedBy, SKOS.definition, SKOS.prefLabel, SKOS.altLabel,
+        SKOS.example, SKOS.inScheme, SKOS.scopeNote, SKOS.note,
+    )
+
+    def _concept_groups(self, schemes: list[URIRef], concepts: list[URIRef]) -> list[tuple[Term | None, list[Term]]]:
+        """Each scheme with its concepts, then the concepts in no scheme of this document, sorted by label.
+
+        A concept has one entry: under the first of its schemes in this document (by IRI). Every other scheme of the
+        document that it is in lists it under "Also includes", so no scheme looks emptier than it is.
+        """
+        def by_label(t: Term):
+            return (t.label.lower(), t.local)
+
+        members: dict[str, list[Term]] = {str(s): [] for s in schemes}
+        also: dict[str, list[str]] = {str(s): [] for s in schemes}
+        loose: list[Term] = []
+        for subj in concepts:
+            term = self._concept_term(subj)
+            in_schemes = sorted(str(s) for s in self._graph.objects(subj, SKOS.inScheme) if str(s) in members)
+            (members[in_schemes[0]] if in_schemes else loose).append(term)
+            for other in in_schemes[1:]:
+                also[other].append(self._ref(subj))
+        scheme_terms = sorted(map(self._scheme_term, schemes), key=by_label)
+        for term in scheme_terms:
+            if also[term.iri]:
+                term.metadata.append(("Also includes", sorted(also[term.iri])))
+        groups: list[tuple[Term | None, list[Term]]] = [(term, sorted(members[term.iri], key=by_label)) for term in scheme_terms]
+        if loose:
+            groups.append((None, sorted(loose, key=by_label)))
+        return groups
+
+    def _scheme_term(self, subj: URIRef) -> Term:
+        term = self._base_term(subj)
+        self._add_notes(subj, term)
+        return term
+
+    def _concept_term(self, subj: URIRef) -> Term:
+        """A concept's entry: its definition (skos:definition, else rdfs:comment), names, examples and scheme."""
+        term = self._base_term(subj)
+        definition = self._first_text(subj, (SKOS.definition,))
+        if definition:
+            comment = self._first_text(subj, (RDFS.comment,))
+            term.comment = self._linked(subj, definition)
+            if comment:
+                term.metadata.append(("Comment", [self._linked(subj, comment)]))
+        types = [self._ref(t) for t in self._graph.objects(subj, RDF.type)
+                 if isinstance(t, URIRef) and t not in (SKOS.Concept, OWL.NamedIndividual)]
+        if types:
+            term.metadata.append(("Type", sorted(types)))
+        schemes = [self._ref(s) for s in self._graph.objects(subj, SKOS.inScheme) if isinstance(s, URIRef)]
+        if schemes:
+            term.metadata.append(("In scheme", sorted(schemes)))
+        for pred, label in ((SKOS.prefLabel, "Preferred labels"), (SKOS.altLabel, "Alternative labels"), (SKOS.example, "Examples")):
+            values = self._literals(subj, pred)
+            if values:
+                term.metadata.append((label, [", ".join(values)]))
+        self._add_notes(subj, term)
+        for pred in sorted({p for p in self._graph.predicates(subj, None)}, key=str):
+            if pred in self._CONCEPT_FIELDS or str(pred) in self._example_predicates:
+                continue
+            values = [self._ref(o) if isinstance(o, URIRef) else self._literal(o)
+                      for o in self._graph.objects(subj, pred) if not isinstance(o, BNode)]
+            if values:
+                term.metadata.append((self._labels.get(str(pred)) or local_name(str(pred)), sorted(values)))
+        term.annotations = []  # already listed above
+        return term
+
+    def _add_notes(self, subj: URIRef, term: Term) -> None:
+        for pred, label in ((SKOS.scopeNote, "Scope note"), (SKOS.note, "Note")):
+            for value in sorted(str(o) for o in self._graph.objects(subj, pred) if isinstance(o, Literal)):
+                term.metadata.append((label, [self._linked(subj, value)]))
+
+    def _literals(self, subj: URIRef, pred: URIRef) -> list[str]:
+        """Each literal value, quoted, with its language: "Client" (en). English first, then by language and text."""
+        values = [o for o in self._graph.objects(subj, pred) if isinstance(o, Literal)]
+        values.sort(key=lambda o: (o.language not in (None, "en"), o.language or "", str(o)))
+        return [self._literal(o) for o in values]
+
+    @staticmethod
+    def _literal(value: Literal) -> str:
+        return f'"{value}"' + (f" ({value.language})" if value.language else "")
 
     def _property_characteristics(self, subj: URIRef) -> list[str]:
         mapping = {
@@ -452,6 +543,8 @@ class MarkdownConverter:
         iri = str(node)
         if iri in self._local_iris:
             return f"[{self._labels.get(iri, local_name(iri))}](#{local_name(iri)})"
+        if iri in self.external_links:  # documented on another page
+            return f"[`{self._curie(node)}`]({self.external_links[iri]})"
         return f"`{self._curie(node)}`"
 
     def _curie(self, node: URIRef) -> str:
@@ -497,6 +590,7 @@ class MarkdownConverter:
         self._render_section(out, "Datatype Properties", doc.datatype_properties)
         self._render_section(out, "Annotation Properties", doc.annotation_properties)
         self._render_section(out, "Named Individuals", doc.individuals)
+        self._render_concepts(out, doc.concept_groups)
 
         return "\n".join(out).rstrip() + "\n"
 
@@ -507,8 +601,21 @@ class MarkdownConverter:
         for term in terms:
             self._render_term(out, term)
 
-    def _render_term(self, out: list[str], term: Term) -> None:
-        out += [f"### {term.label} {{#{term.local}}}", ""]
+    def _render_concepts(self, out: list[str], groups: list[tuple[Term | None, list[Term]]]) -> None:
+        """The Concepts section: each scheme with its concepts below it, then the concepts in no scheme."""
+        if not groups:
+            return
+        out += ["## Concepts", ""]
+        for scheme, concepts in groups:
+            if scheme is None:
+                out += ["### Other concepts", "", "Concepts in no scheme of this ontology.", ""]
+            else:
+                self._render_term(out, scheme)
+            for concept in concepts:
+                self._render_term(out, concept, level=4)
+
+    def _render_term(self, out: list[str], term: Term, level: int = 3) -> None:
+        out += [f"{'#' * level} {term.label} {{#{term.local}}}", ""]
         if term.comment:
             out += [term.comment.strip(), ""]
         out.append(f"- **IRI:** `{term.iri}`")

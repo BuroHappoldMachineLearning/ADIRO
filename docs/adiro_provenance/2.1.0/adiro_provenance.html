@@ -653,7 +653,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A single reified assertion that some source makes a value-claim about a field kind. Reifying the claim (rather than attaching the value straight to a subject) lets each printed occurrence carry its own provenance - which region asserted it (<a href="#assertedBy">assertedBy</a>), what produced it (<a href="#hasInferenceMeta">hasInferenceMeta</a>), and with what confidence (<a href="#hasConfidence">hasConfidence</a>) - independently of the value it states. The value is a literal (<a href="#hasLiteralValue">hasLiteralValue</a>) for datatype-valued fields or an entity (<a href="#hasValueEntity">hasValueEntity</a>) for object-valued fields. An assertion has a value or, when none was found, an outcome (<a href="#hasOutcome">hasOutcome</a>); it is promoted to a direct statement on its subject only once it is Accepted (<a href="#hasAcceptance">hasAcceptance</a>), by tooling and never by reasoning. Conflicting assertions across sources are surfaced, not silently merged, and a later one that replaces an earlier says so with supersedes. A kind of <a href="#InferredEntity">InferredEntity</a>, so it carries the shared provenance/confidence; in PROV-O terms the <a href="#Entity">prov:Entity</a> an extraction produced, which is why the PROV alignment is seated across two classes rather than all on one.</p></td>
+              <td><p>A single reified assertion that some source makes a value-claim about a field kind. Reifying the claim (rather than attaching the value straight to a subject) lets each printed occurrence carry its own provenance - which region asserted it (<a href="#assertedBy">assertedBy</a>), what produced it (<a href="#hasInferenceMeta">hasInferenceMeta</a>), and with what confidence (<a href="#hasConfidence">hasConfidence</a>) - independently of the value it states. The value is a literal (<a href="#hasLiteralValue">hasLiteralValue</a>) for datatype-valued fields or an entity (<a href="#hasValueEntity">hasValueEntity</a>) for object-valued fields. An assertion has a value or, when none was found, an outcome (<a href="#hasOutcome">hasOutcome</a>); it is promoted to a direct statement on its subject only once it is <a href="../../ontologies/adiro_provenance/2.1.0/#Accepted">Accepted</a> (<a href="#hasAcceptance">hasAcceptance</a>), by tooling and never by reasoning. Conflicting assertions across sources are surfaced, not silently merged, and a later one that replaces an earlier says so with supersedes. A kind of <a href="#InferredEntity">InferredEntity</a>, so it carries the shared provenance/confidence; in PROV-O terms the <a href="#Entity">prov:Entity</a> an extraction produced, which is why the PROV alignment is seated across two classes rather than all on one.</p></td>
             </tr>
             <tr>
               <th>
@@ -1370,7 +1370,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>What a search for a field found, when it found no value: Empty, Illegible, NotPrinted or NotFound. An assertion that has a value needs no outcome (the value is its outcome), and an assertion has a value or an outcome, never both.</p></td>
+              <td><p>What a search for a field found, when it found no value: <a href="../../ontologies/adiro_provenance/2.1.0/#Empty">Empty</a>, <a href="../../ontologies/adiro_provenance/2.1.0/#Illegible">Illegible</a>, <a href="../../ontologies/adiro_provenance/2.1.0/#NotPrinted">NotPrinted</a> or <a href="../../ontologies/adiro_provenance/2.1.0/#NotFound">NotFound</a>. An assertion that has a value needs no outcome (the value is its outcome), and an assertion has a value or an outcome, never both.</p></td>
             </tr>
             <tr>
               <th>
@@ -1400,7 +1400,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Whether an assertion was taken into the direct properties of its subject: Pending (not yet decided), Accepted or Rejected. Only an Accepted assertion that has a value is promoted by <a href="#mapsToFieldProperty">mapsToFieldProperty</a>.</p></td>
+              <td><p>Whether an assertion was taken into the direct properties of its subject: <a href="../../ontologies/adiro_provenance/2.1.0/#Pending">Pending</a> (not yet decided), <a href="../../ontologies/adiro_provenance/2.1.0/#Accepted">Accepted</a> or <a href="../../ontologies/adiro_provenance/2.1.0/#Rejected">Rejected</a>. Only an <a href="../../ontologies/adiro_provenance/2.1.0/#Accepted">Accepted</a> assertion that has a value is promoted by <a href="#mapsToFieldProperty">mapsToFieldProperty</a>.</p></td>
             </tr>
             <tr>
               <th>
@@ -2065,7 +2065,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Whether this assertion was taken into the direct properties of its subject (an <a href="#AcceptanceStatus">AcceptanceStatus</a>). An assertion with no acceptance recorded is as good as Pending.</p></td>
+              <td><p>Whether this assertion was taken into the direct properties of its subject (an <a href="#AcceptanceStatus">AcceptanceStatus</a>). An assertion with no acceptance recorded is as good as <a href="../../ontologies/adiro_provenance/2.1.0/#Pending">Pending</a>.</p></td>
             </tr>
             <tr>
               <th>
@@ -3059,7 +3059,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>On a field-kind concept: the canonical ADIRO property that an accepted assertion (<a href="#hasAcceptance">hasAcceptance</a> Accepted) of this field kind, one that has a value, is promoted to (the bridge from the reified assertion to a direct statement on the subject). The subject is the assertion's <a href="#assertedAbout">assertedAbout</a>, so a promotion is: ?a <a href="#assertedAbout">assertedAbout</a> ?subject ; <a href="#assertsFieldKind">assertsFieldKind</a> ?k . ?k mapsToFieldProperty ?p  =&gt;  ?subject ?p <value>. Annotation only - the promotion is performed by tooling on acceptance, not by reasoning.</p></td>
+              <td><p>On a field-kind concept: the canonical ADIRO property that an accepted assertion (<a href="#hasAcceptance">hasAcceptance</a> <a href="../../ontologies/adiro_provenance/2.1.0/#Accepted">Accepted</a>) of this field kind, one that has a value, is promoted to (the bridge from the reified assertion to a direct statement on the subject). The subject is the assertion's <a href="#assertedAbout">assertedAbout</a>, so a promotion is: ?a <a href="#assertedAbout">assertedAbout</a> ?subject ; <a href="#assertsFieldKind">assertsFieldKind</a> ?k . ?k mapsToFieldProperty ?p  =&gt;  ?subject ?p <value>. Annotation only - the promotion is performed by tooling on acceptance, not by reasoning.</p></td>
             </tr>
           </table>
         </div>
