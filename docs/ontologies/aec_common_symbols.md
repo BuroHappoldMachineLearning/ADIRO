@@ -108,7 +108,7 @@ A symbol drawn on a Layout that references another Layout (on the same or a diff
 
 ### hasReferenceSymbol {#hasReferenceSymbol}
 
-A Layout contains one or more ReferenceSymbols. To navigate from a symbol back to the Layout it is drawn on, use the SPARQL inverse path ^csymbol:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
+A Layout contains one or more [ReferenceSymbol](#ReferenceSymbol)s. To navigate from a symbol back to the Layout it is drawn on, use the SPARQL inverse path ^csymbol:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
 
 - **IRI:** `https://w3id.org/adiro/aec_common_symbols#hasReferenceSymbol`
 - **Sub property of:** `metadata:contains`
@@ -117,7 +117,7 @@ A Layout contains one or more ReferenceSymbols. To navigate from a symbol back t
 
 ### referencesLayout {#referencesLayout}
 
-Target Layout — the Layout this ReferenceSymbol points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^csymbol:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
+Target Layout — the Layout this [ReferenceSymbol](#ReferenceSymbol) points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^csymbol:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
 
 - **IRI:** `https://w3id.org/adiro/aec_common_symbols#referencesLayout`
 - **Domain:** [ReferenceSymbol](#ReferenceSymbol)

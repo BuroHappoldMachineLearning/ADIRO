@@ -79,7 +79,7 @@ A large-scale zoomed-in drawing of a specific construction assembly or connectio
 
 ### Drawing element {#DrawingElement}
 
-Element depicted on a drawing. Contained by Layout. Can be a Facade system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc. It may carry a BoundingBox, its region on the page (geom:hasBoundingBox).
+Element depicted on a drawing. Contained by [Layout](#Layout). Can be a [Facade](adiro_domain_common.md#Facade) system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc. It may carry a [BoundingBox](adiro_geometry.md#BoundingBox), its region on the page ([geom:hasBoundingBox](adiro_geometry.md#hasBoundingBox)).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#DrawingElement`
 - **Restrictions:** `geom:hasBoundingBox` min 0 `geom:BoundingBox`
@@ -87,7 +87,7 @@ Element depicted on a drawing. Contained by Layout. Can be a Facade system or Fa
 
 ### Drawing identifier mention {#DrawingIdentifierMention}
 
-One evidenced occurrence of drawing-identifier (sheet-identifier) text on a source drawing, distinct from the DrawingSheet that the text may denote. Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted sheet resolution: an unlocalisable text block may retain its accepted denotesDrawingSheet edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed.
+One evidenced occurrence of drawing-identifier (sheet-identifier) text on a source drawing, distinct from the [DrawingSheet](#DrawingSheet) that the text may denote. Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted sheet resolution: an unlocalisable text block may retain its accepted [denotesDrawingSheet](#denotesDrawingSheet) edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#DrawingIdentifierMention`
 - **Sub class of:** [Drawing element](#DrawingElement)
@@ -124,14 +124,14 @@ Top-level container for a drawing. Contains Layout(s).
 
 ### DrawingPackage {#DrawingPackage}
 
-A grouping of DrawingSheets within a Project, e.g. a volume or submission package.
+A grouping of [DrawingSheet](#DrawingSheet)s within a [Project](#Project), e.g. a volume or submission package.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#DrawingPackage`
 - **isComputerVisionLabel:** false
 
 ### DrawingRevision {#DrawingRevision}
 
-A specific revision of a DrawingSheet. Carries revision-specific metadata: code, issue date, status, and role-differentiated person attribution.
+A specific revision of a [DrawingSheet](#DrawingSheet). Carries revision-specific metadata: code, issue date, status, and role-differentiated person attribution.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#DrawingRevision`
 - **isComputerVisionLabel:** false
@@ -158,7 +158,7 @@ An image embedded within a note region on a drawing sheet.
 
 ### Inline layout and sheet reference {#InlineLayoutSheetReference}
 
-A complete inline textual expression relating layout number(s) to a sheet number, such as '1, 3, 5 & 7/S601'. The component mentions retain their own identities; accepted Layout targets are connected separately by inlineReferencesLayout. Expected composition: one sheet-identifier mention and at least one layout-identifier mention, attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction.
+A complete inline textual expression relating layout number(s) to a sheet number, such as '1, 3, 5 & 7/S601'. The component mentions retain their own identities; accepted [Layout](#Layout) targets are connected separately by [inlineReferencesLayout](#inlineReferencesLayout). Expected composition: one sheet-identifier mention and at least one layout-identifier mention, attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#InlineLayoutSheetReference`
 - **Sub class of:** [Reference expression](#ReferenceExpression)
@@ -170,7 +170,7 @@ A complete inline textual expression relating layout number(s) to a sheet number
 
 ### Key Plan {#KeyPlan}
 
-A small locator diagram on a drawing sheet showing where the sheet's subject sits within the wider building or site, typically with the relevant area hatched or outlined. A graphical region rather than a text field: its value is the diagram, so it is modelled here as a detectable region alongside Legend and RevisionTable, not as an asserted title-block property. Contained either by a Titleblock, where it is printed inside the title-block strip, or directly by a DrawingSheet where it stands alone on the page; both placements occur and both are optional.
+A small locator diagram on a drawing sheet showing where the sheet's subject sits within the wider building or site, typically with the relevant area hatched or outlined. A graphical region rather than a text field: its value is the diagram, so it is modelled here as a detectable region alongside [Legend](#Legend) and [RevisionTable](#RevisionTable), not as an asserted title-block property. Contained either by a [Titleblock](#Titleblock), where it is printed inside the title-block strip, or directly by a [DrawingSheet](#DrawingSheet) where it stands alone on the page; both placements occur and both are optional.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#KeyPlan`
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
@@ -182,7 +182,7 @@ A small locator diagram on a drawing sheet showing where the sheet's subject sit
 
 ### Layout {#Layout}
 
-Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content. It may carry a BoundingBox, its region on the page (geom:hasBoundingBox).
+Drawing layout - contained by [DrawingSheet](#DrawingSheet). Contains [DrawingElement](#DrawingElement)(s), annotations, drawing type, and content. It may carry a [BoundingBox](adiro_geometry.md#BoundingBox), its region on the page ([geom:hasBoundingBox](adiro_geometry.md#hasBoundingBox)).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#Layout`
 - **Restrictions:**
@@ -211,7 +211,7 @@ Type of content included in a layout.
 
 ### Layout identifier mention {#LayoutIdentifierMention}
 
-One evidenced occurrence of layout-identifier text (a small integer or letter), distinct from a target Layout. A complete inline reference may contain several such occurrences, attached with contains; no target is inferred from matching text alone.
+One evidenced occurrence of layout-identifier text (a small integer or letter), distinct from a target [Layout](#Layout). A complete inline reference may contain several such occurrences, attached with contains; no target is inferred from matching text alone.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#LayoutIdentifierMention`
 - **Sub class of:** [Drawing element](#DrawingElement)
@@ -235,7 +235,7 @@ A legend containing mapping information between symbols and a text signifier.
 
 ### MetadataContainer {#MetadataContainer}
 
-Supporting visual region on a drawing sheet (titleblock, legend, etc.). Renamed from :Metadata to avoid confusion with semantic metadata properties on DrawingSheet. Every container (the title block, a revision table, a legend, a key plan, a note) may carry a BoundingBox, its region on the page, which what is read from it is located by (geom:hasBoundingBox); each subclass inherits this.
+Supporting visual region on a drawing sheet (titleblock, legend, etc.). Renamed from :Metadata to avoid confusion with semantic metadata properties on [DrawingSheet](#DrawingSheet). Every container (the title block, a revision table, a legend, a key plan, a note) may carry a [BoundingBox](adiro_geometry.md#BoundingBox), its region on the page, which what is read from it is located by ([geom:hasBoundingBox](adiro_geometry.md#hasBoundingBox)); each subclass inherits this.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#MetadataContainer`
 - **Restrictions:** `geom:hasBoundingBox` min 0 `geom:BoundingBox`
@@ -251,7 +251,7 @@ Superclass for annotations on a drawing sheet that are not part of the drawing g
 
 ### Orientation {#OrientationValue}
 
-Enumerated orientation values used with hasOrientation.
+Enumerated orientation values used with [hasOrientation](#hasOrientation).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#OrientationValue`
 - **One of:**
@@ -286,7 +286,7 @@ A horizontal cut through a building viewed from above, showing the arrangement o
 
 ### Project {#Project}
 
-A project under which DrawingSheets are grouped.
+A project under which [DrawingSheet](#DrawingSheet)s are grouped.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#Project`
 - **isComputerVisionLabel:** false
@@ -326,7 +326,7 @@ Section drawing. Has a required property of orientation, which can be vertical o
 
 ### Standalone sheet reference {#StandaloneSheetReference}
 
-A drawing-identifier occurrence that itself constitutes a complete reference. One individual is both the DrawingIdentifierMention and the ReferenceExpression: no duplicate wrapper, self-directed hasDrawingIdentifierMention edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified.
+A drawing-identifier occurrence that itself constitutes a complete reference. One individual is both the [DrawingIdentifierMention](#DrawingIdentifierMention) and the [ReferenceExpression](#ReferenceExpression): no duplicate wrapper, self-directed hasDrawingIdentifierMention edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#StandaloneSheetReference`
 - **Sub class of:**
@@ -340,7 +340,7 @@ A drawing-identifier occurrence that itself constitutes a complete reference. On
 
 ### StatusCode {#StatusCode}
 
-Controlled-vocabulary status assigned to a DrawingRevision, e.g. IFC (Issued for Construction), IFR (Issued for Review), AFC (Approved for Construction).
+Controlled-vocabulary status assigned to a [DrawingRevision](#DrawingRevision), e.g. IFC (Issued for Construction), IFR (Issued for Review), AFC (Approved for Construction).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#StatusCode`
 - **isComputerVisionLabel:** false
@@ -371,7 +371,7 @@ A free-form block of text, such as numbered lists or paragraphs, containing gene
 
 ### Titleblock {#Titleblock}
 
-Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc. May itself contain a KeyPlan, Legend or RevisionTable, which are commonly printed inside the title-block strip rather than standing alone on the page; all three are optional, and each may alternatively be contained directly by the DrawingSheet.
+Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc. May itself contain a [KeyPlan](#KeyPlan), [Legend](#Legend) or [RevisionTable](#RevisionTable), which are commonly printed inside the title-block strip rather than standing alone on the page; all three are optional, and each may alternatively be contained directly by the [DrawingSheet](#DrawingSheet).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#Titleblock`
 - **Sub class of:** [MetadataContainer](#MetadataContainer)
@@ -391,7 +391,7 @@ Titleblock containing information about the drawing, for example project name, d
 
 ### asserts client {#assertsClient}
 
-The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from assertsOriginator, which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value.
+The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from [assertsOriginator](#assertsOriginator), which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#assertsClient`
 - **Domain:** [Titleblock](#Titleblock)
@@ -400,7 +400,7 @@ The organisation commissioning the work — the client or employer — as named 
 
 ### asserts metadata for {#assertsMetadataFor}
 
-Links a titleblock region to the drawing sheet whose metadata it asserts. Range is DrawingSheet rather than a separate Document class: the sheet is the unit UC-01 established as searchable, and introducing a competing Document class would deepen an unresolved placement question rather than settle it.
+Links a titleblock region to the drawing sheet whose metadata it asserts. Range is [DrawingSheet](#DrawingSheet) rather than a separate Document class: the sheet is the unit UC-01 established as searchable, and introducing a competing Document class would deepen an unresolved placement question rather than settle it.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#assertsMetadataFor`
 - **Domain:** [Titleblock](#Titleblock)
@@ -409,7 +409,7 @@ Links a titleblock region to the drawing sheet whose metadata it asserts. Range 
 
 ### asserts originator {#assertsOriginator}
 
-The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. This is the practice or consultancy whose name and logo appear as author of the sheet. Distinct from assertsClient, which names who commissioned the work.
+The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. This is the practice or consultancy whose name and logo appear as author of the sheet. Distinct from [assertsClient](#assertsClient), which names who commissioned the work.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#assertsOriginator`
 - **Domain:** [Titleblock](#Titleblock)
@@ -418,7 +418,7 @@ The organisation that produced the drawing — the originator in ISO 19650-2 ter
 
 ### assertsPackage {#assertsPackage}
 
-The drawing package this title block names, when it names one: a claim read off the printed region, like assertsProject. Optional: a title block may or may not name a package, so there is no cardinality. The fact that a drawing is filed in a package is belongsToPackage; the two can differ, and the difference is what a query can report.
+The drawing package this title block names, when it names one: a claim read off the printed region, like [assertsProject](#assertsProject). Optional: a title block may or may not name a package, so there is no cardinality. The fact that a drawing is filed in a package is [belongsToPackage](#belongsToPackage); the two can differ, and the difference is what a query can report.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#assertsPackage`
 - **Domain:** [Titleblock](#Titleblock)
@@ -427,7 +427,7 @@ The drawing package this title block names, when it names one: a claim read off 
 
 ### assertsProject {#assertsProject}
 
-The project this title block names: a claim read off the printed region, like assertsClient. The fact that a drawing is filed under a project is belongsToProject; the two can differ (a drawing filed under another project than its title block names), and the difference is what a query can report.
+The project this title block names: a claim read off the printed region, like [assertsClient](#assertsClient). The fact that a drawing is filed under a project is [belongsToProject](#belongsToProject); the two can differ (a drawing filed under another project than its title block names), and the difference is what a query can report.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#assertsProject`
 - **Domain:** [Titleblock](#Titleblock)
@@ -436,7 +436,7 @@ The project this title block names: a claim read off the printed region, like as
 
 ### assertsRevision {#assertsRevision}
 
-A revision that this revision table lists: a claim read off the printed table, one link per row, so a table listing revisions A, B and C asserts three. It does not say which revision is the latest, and it does not replace hasRevision, which states that a drawing has the revision; assertsRevision records which printed table a revision was read from. Reach the table from a revision with the inverse path ^assertsRevision.
+A revision that this revision table lists: a claim read off the printed table, one link per row, so a table listing revisions A, B and C asserts three. It does not say which revision is the latest, and it does not replace [hasRevision](#hasRevision), which states that a drawing has the revision; assertsRevision records which printed table a revision was read from. Reach the table from a revision with the inverse path ^assertsRevision.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#assertsRevision`
 - **Domain:** [Revision table](#RevisionTable)
@@ -445,7 +445,7 @@ A revision that this revision table lists: a claim read off the printed table, o
 
 ### belongsToPackage {#belongsToPackage}
 
-Associates a DrawingSheet with the DrawingPackage it belongs to.
+Associates a [DrawingSheet](#DrawingSheet) with the [DrawingPackage](#DrawingPackage) it belongs to.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#belongsToPackage`
 - **Domain:** [Drawing Sheet](#DrawingSheet)
@@ -453,7 +453,7 @@ Associates a DrawingSheet with the DrawingPackage it belongs to.
 
 ### belongsToProject {#belongsToProject}
 
-Associates a DrawingSheet with the Project it belongs to.
+Associates a [DrawingSheet](#DrawingSheet) with the [Project](#Project) it belongs to.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#belongsToProject`
 - **Domain:** [Drawing Sheet](#DrawingSheet)
@@ -469,7 +469,7 @@ Direct containment: indicates physical containment of something within a parent 
 
 ### denotesDrawingSheet {#denotesDrawingSheet}
 
-The accepted DrawingSheet identity denoted by one sheet-number occurrence. It does not assert that a Layout target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict.
+The accepted [DrawingSheet](#DrawingSheet) identity denoted by one sheet-number occurrence. It does not assert that a [Layout](#Layout) target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#denotesDrawingSheet`
 - **Domain:** [Drawing identifier mention](#DrawingIdentifierMention)
@@ -477,7 +477,7 @@ The accepted DrawingSheet identity denoted by one sheet-number occurrence. It do
 
 ### hasLayout {#hasLayout}
 
-Named containment: a DrawingSheet contains one or more Layouts.
+Named containment: a [DrawingSheet](#DrawingSheet) contains one or more [Layout](#Layout)s.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#hasLayout`
 - **Sub property of:** [contains](#contains)
@@ -486,7 +486,7 @@ Named containment: a DrawingSheet contains one or more Layouts.
 
 ### hasLayoutContentType {#hasLayoutContentType}
 
-Named characterisation: a Layout has exactly one LayoutContentType.
+Named characterisation: a [Layout](#Layout) has exactly one [LayoutContentType](#LayoutContentType).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#hasLayoutContentType`
 - **Sub property of:** [hasProperty](#hasProperty)
@@ -511,7 +511,7 @@ Subject is characterised by a property, or quality. Used for example to indicate
 
 ### hasRevision {#hasRevision}
 
-A DrawingSheet compositionally contains its DrawingRevisions. To navigate from a revision back to its sheet, use the SPARQL inverse path ^metadata:hasRevision - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
+A [DrawingSheet](#DrawingSheet) compositionally contains its [DrawingRevision](#DrawingRevision)s. To navigate from a revision back to its sheet, use the SPARQL inverse path ^metadata:hasRevision - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#hasRevision`
 - **Sub property of:** [contains](#contains)
@@ -520,7 +520,7 @@ A DrawingSheet compositionally contains its DrawingRevisions. To navigate from a
 
 ### hasStatusCode {#hasStatusCode}
 
-The controlled-vocabulary StatusCode assigned to a DrawingRevision.
+The controlled-vocabulary [StatusCode](#StatusCode) assigned to a [DrawingRevision](#DrawingRevision).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#hasStatusCode`
 - **Sub property of:** [hasProperty](#hasProperty)
@@ -529,7 +529,7 @@ The controlled-vocabulary StatusCode assigned to a DrawingRevision.
 
 ### inlineReferencesLayout {#inlineReferencesLayout}
 
-An accepted target Layout of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges.
+An accepted target [Layout](#Layout) of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#inlineReferencesLayout`
 - **Domain:** [Inline layout and sheet reference](#InlineLayoutSheetReference)
@@ -537,7 +537,7 @@ An accepted target Layout of an inline layout/sheet reference. Multiple supporte
 
 ### isApprovedBy {#isApprovedBy}
 
-The Person who approved a drawing or a revision of it. On a DrawingSheet it is the person the drawing names as having approved it; on a DrawingRevision it is the person who approved that revision, who can differ from the one named for the drawing. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179).
+The Person who approved a drawing or a revision of it. On a [DrawingSheet](#DrawingSheet) it is the person the drawing names as having approved it; on a [DrawingRevision](#DrawingRevision) it is the person who approved that revision, who can differ from the one named for the drawing. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#isApprovedBy`
 - **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))
@@ -545,7 +545,7 @@ The Person who approved a drawing or a revision of it. On a DrawingSheet it is t
 
 ### isAuthoredBy {#isAuthoredBy}
 
-The Person who authored a drawing or a revision of it. On a DrawingSheet it is the person the drawing names as having drawn it; on a DrawingRevision it is the person who authored that revision, who can differ from the one named for the drawing. A drawing that records no author of its own is read as authored by the authors of its revisions (the property path isAuthoredBy | hasRevision/isAuthoredBy); this is a reading convention, not an entailment, so a drawing that records its own author keeps just that author. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179).
+The Person who authored a drawing or a revision of it. On a [DrawingSheet](#DrawingSheet) it is the person the drawing names as having drawn it; on a [DrawingRevision](#DrawingRevision) it is the person who authored that revision, who can differ from the one named for the drawing. A drawing that records no author of its own is read as authored by the authors of its revisions (the property path isAuthoredBy | [hasRevision](#hasRevision)/isAuthoredBy); this is a reading convention, not an entailment, so a drawing that records its own author keeps just that author. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#isAuthoredBy`
 - **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))
@@ -553,7 +553,7 @@ The Person who authored a drawing or a revision of it. On a DrawingSheet it is t
 
 ### isCheckedBy {#isCheckedBy}
 
-The Person who checked a drawing or a revision of it. On a DrawingSheet it is the person the drawing names as having checked it; on a DrawingRevision it is the person who checked that revision, who can differ from the one named for the drawing. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179).
+The Person who checked a drawing or a revision of it. On a [DrawingSheet](#DrawingSheet) it is the person the drawing names as having checked it; on a [DrawingRevision](#DrawingRevision) it is the person who checked that revision, who can differ from the one named for the drawing. No cardinality: a drawing may name several people and an extraction may find none, so a drawing with no recorded person is reported by a data-validation check, not by an OWL axiom (see GitHub issue #179).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#isCheckedBy`
 - **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))
@@ -561,7 +561,7 @@ The Person who checked a drawing or a revision of it. On a DrawingSheet it is th
 
 ### isOnPage {#isOnPage}
 
-The page of a file that a drawing is on (an aprov:FilePage). One drawing can be on a page of several files (the PDF export, a scan, an earlier version) and one file holds many drawings, so the page belongs to this link, not to the drawing and not to the file. The coordinate frames that read the page are reached with the inverse path ^describesPage of adiro_geometry (ADIRO declares no named inverse properties).
+The page of a file that a drawing is on (an [aprov:FilePage](adiro_provenance.md#FilePage)). One drawing can be on a page of several files (the PDF export, a scan, an earlier version) and one file holds many drawings, so the page belongs to this link, not to the drawing and not to the file. The coordinate frames that read the page are reached with the inverse path ^[describesPage](adiro_geometry.md#describesPage) of adiro_geometry (ADIRO declares no named inverse properties).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#isOnPage`
 - **Domain:** [Drawing Sheet](#DrawingSheet)
@@ -571,7 +571,7 @@ The page of a file that a drawing is on (an aprov:FilePage). One drawing can be 
 
 ### assertsCrossReferenceNumber {#assertsCrossReferenceNumber}
 
-A second (or third) identifier the title block prints for the same sheet, issued by a system other than the one drawingIdentifier is read from — a design-team-internal number, a client/EDMS document number, or a sketch/site-advice reference. Stored whole and verbatim, not parsed into segments; which system issued it is not modelled as a controlled vocabulary here, so that distinction is carried by extractionHint only.
+A second (or third) identifier the title block prints for the same sheet, issued by a system other than the one [drawingIdentifier](#drawingIdentifier) is read from — a design-team-internal number, a client/EDMS document number, or a sketch/site-advice reference. Stored whole and verbatim, not parsed into segments; which system issued it is not modelled as a controlled vocabulary here, so that distinction is carried by [extractionHint](#extractionHint) only.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#assertsCrossReferenceNumber`
 - **Domain:** [Titleblock](#Titleblock)
@@ -589,7 +589,7 @@ Sheet-level identifier, e.g. 'ST-201'. Also known as 'drawing number'.
 
 ### drawingScale {#drawingScale}
 
-The scale of a DrawingSheet as a whole, e.g. '1:50', or a note such as 'NTS' or 'As shown'. It is most often printed in the title block, and can also appear in a general note or another area outside any layout. It is the sheet's nominal or predominant scale, not a claim about every layout on it: where a Layout prints its own scale, that layoutScale is the more specific value for that drawing. A layout's scale is not copied into drawingScale, because a sheet can gain layouts and the scale of one of them would then no longer describe the sheet. A sub-property of hasScale, so every drawingScale value is also a hasScale value of the sheet.
+The scale of a [DrawingSheet](#DrawingSheet) as a whole, e.g. '1:50', or a note such as 'NTS' or 'As shown'. It is most often printed in the title block, and can also appear in a general note or another area outside any layout. It is the sheet's nominal or predominant scale, not a claim about every layout on it: where a [Layout](#Layout) prints its own scale, that [layoutScale](#layoutScale) is the more specific value for that drawing. A layout's scale is not copied into drawingScale, because a sheet can gain layouts and the scale of one of them would then no longer describe the sheet. A sub-property of [hasScale](#hasScale), so every drawingScale value is also a hasScale value of the sheet.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#drawingScale`
 - **Sub property of:** [hasScale](#hasScale)
@@ -609,7 +609,7 @@ Title of the drawing sheet.
 
 ### hasScale {#hasScale}
 
-Scale notation, e.g. '1:50'. Applies to a DrawingSheet where one scale governs the whole sheet, and to a Layout where the sheet carries several drawings at different scales — a detail at 1:5 beside a plan at 1:100 is ordinary. Where a Layout carries its own value it is the more specific one and describes that drawing; the sheet-level value, where both are present, is the sheet's nominal or predominant scale rather than a claim about every layout on it.
+Scale notation, e.g. '1:50'. Applies to a [DrawingSheet](#DrawingSheet) where one scale governs the whole sheet, and to a [Layout](#Layout) where the sheet carries several drawings at different scales — a detail at 1:5 beside a plan at 1:100 is ordinary. Where a Layout carries its own value it is the more specific one and describes that drawing; the sheet-level value, where both are present, is the sheet's nominal or predominant scale rather than a claim about every layout on it.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#hasScale`
 - **Domain:** ([Drawing Sheet](#DrawingSheet) or [Layout](#Layout))
@@ -617,7 +617,7 @@ Scale notation, e.g. '1:50'. Applies to a DrawingSheet where one scale governs t
 
 ### issueDate {#issueDate}
 
-The date a drawing or a revision of it was issued. On a DrawingSheet it is the date the title block prints for the drawing (the date of its current issue); on a DrawingRevision it is the date that revision was issued. It is also the date authored: ADIRO has no separate authoring-date property.
+The date a drawing or a revision of it was issued. On a [DrawingSheet](#DrawingSheet) it is the date the title block prints for the drawing (the date of its current issue); on a [DrawingRevision](#DrawingRevision) it is the date that revision was issued. It is also the date authored: ADIRO has no separate authoring-date property.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#issueDate`
 - **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))
@@ -625,7 +625,7 @@ The date a drawing or a revision of it was issued. On a DrawingSheet it is the d
 
 ### layoutIdentifier {#layoutIdentifier}
 
-Identifier for a Layout within its parent DrawingSheet. Also known as 'layout number'. Typically a small integer or letter ('1', '2', 'A').
+Identifier for a [Layout](#Layout) within its parent [DrawingSheet](#DrawingSheet). Also known as 'layout number'. Typically a small integer or letter ('1', '2', 'A').
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#layoutIdentifier`
 - **Domain:** [Layout](#Layout)
@@ -634,7 +634,7 @@ Identifier for a Layout within its parent DrawingSheet. Also known as 'layout nu
 
 ### layoutScale {#layoutScale}
 
-The scale printed in an individual Layout's own caption, e.g. '1:5' for a detail on a sheet whose plan is drawn at 1:100, or a note such as 'NTS' or 'As shown'. Where a Layout carries one, it is the more specific value and describes that drawing; the sheet-level drawingScale is only the sheet's nominal scale. Where a Layout prints no scale, no layoutScale is recorded: it is left empty, not filled from the sheet. A sub-property of hasScale, so every layoutScale value is also a hasScale value of the layout.
+The scale printed in an individual [Layout](#Layout)'s own caption, e.g. '1:5' for a detail on a sheet whose plan is drawn at 1:100, or a note such as 'NTS' or 'As shown'. Where a Layout carries one, it is the more specific value and describes that drawing; the sheet-level [drawingScale](#drawingScale) is only the sheet's nominal scale. Where a Layout prints no scale, no layoutScale is recorded: it is left empty, not filled from the sheet. A sub-property of [hasScale](#hasScale), so every layoutScale value is also a hasScale value of the layout.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#layoutScale`
 - **Sub property of:** [hasScale](#hasScale)
@@ -645,7 +645,7 @@ The scale printed in an individual Layout's own caption, e.g. '1:5' for a detail
 
 ### layoutTitle {#layoutTitle}
 
-The caption naming an individual Layout, distinct from the sheet-level drawingTitle. A sheet routinely carries several drawings — details, sections, plans at different scales — each with its own printed title such as 'Mullion Head Detail' or 'Ground Floor Plan'. Pairs with layoutIdentifier as title-to-number: the identifier says which layout, this says what it depicts.
+The caption naming an individual [Layout](#Layout), distinct from the sheet-level [drawingTitle](#drawingTitle). A sheet routinely carries several drawings — details, sections, plans at different scales — each with its own printed title such as 'Mullion Head Detail' or 'Ground Floor Plan'. Pairs with [layoutIdentifier](#layoutIdentifier) as title-to-number: the identifier says which layout, this says what it depicts.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#layoutTitle`
 - **Domain:** [Layout](#Layout)
@@ -655,7 +655,7 @@ The caption naming an individual Layout, distinct from the sheet-level drawingTi
 
 ### organisationName {#organisationName}
 
-The name of an organisation as printed. Parallels personName. Verbatim: not normalised, expanded or translated at extraction time.
+The name of an organisation as printed. Parallels [personName](#personName). Verbatim: not normalised, expanded or translated at extraction time.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#organisationName`
 - **Domain:** `aprov:Organisation`
@@ -712,7 +712,7 @@ The code identifying a specific revision, e.g. 'A', 'B', 'P01'.
 
 ### sheetSize {#sheetSize}
 
-Sheet size designation, e.g. 'A1', 'A0'. Named for the sheet of paper, which has a size; the printed fields of the drawing itself say 'drawing' (drawingIdentifier, drawingTitle, drawingScale). 'Drawing size' is a synonym of this term, not a second term.
+Sheet size designation, e.g. 'A1', 'A0'. Named for the sheet of paper, which has a size; the printed fields of the drawing itself say 'drawing' ([drawingIdentifier](#drawingIdentifier), [drawingTitle](#drawingTitle), [drawingScale](#drawingScale)). 'Drawing size' is a synonym of this term, not a second term.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#sheetSize`
 - **Domain:** [Drawing Sheet](#DrawingSheet)
@@ -756,7 +756,7 @@ When true, this class or datatype property can be used as a label by annotators 
 
 ### isComputerVisionOptionalLabel {#isComputerVisionOptionalLabel}
 
-Presentation hint for computer-vision annotation tooling: when true, the class is presented apart from the required labels (on the trailing side of the label panel rather than the default leading side) and may be left out by annotators, for example a discipline picked as an attribute of a drawing rather than drawn as a shape. Independent of isComputerVisionLabel. Named for the application it serves, like isComputerVisionLabel: another application gets its own pair of annotations. Carries no reasoning weight.
+Presentation hint for computer-vision annotation tooling: when true, the class is presented apart from the required labels (on the trailing side of the label panel rather than the default leading side) and may be left out by annotators, for example a discipline picked as an attribute of a drawing rather than drawn as a shape. Independent of [isComputerVisionLabel](#isComputerVisionLabel). Named for the application it serves, like isComputerVisionLabel: another application gets its own pair of annotations. Carries no reasoning weight.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#isComputerVisionOptionalLabel`
 - **Range:** `xsd:boolean`

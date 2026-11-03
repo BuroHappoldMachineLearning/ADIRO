@@ -451,7 +451,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. PROV-O declares prov:Entity owl:disjointWith prov:Activity, which is why the alignment below is seated carefully: a FieldAssertion is the Entity produced, an InferenceMeta is the Activity that produced it, and nothing may be both.</p></td>
+              <td><p>Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. PROV-O declares prov:Entity owl:disjointWith <a href="#Activity">prov:Activity</a>, which is why the alignment below is seated carefully: a <a href="#FieldAssertion">FieldAssertion</a> is the Entity produced, an <a href="#InferenceMeta">InferenceMeta</a> is the Activity that produced it, and nothing may be both.</p></td>
             </tr>
             <tr>
               <th>
@@ -511,7 +511,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. Disjoint with prov:Entity in PROV-O - see prov:Entity above.</p></td>
+              <td><p>Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. Disjoint with <a href="#Entity">prov:Entity</a> in PROV-O - see prov:Entity above.</p></td>
             </tr>
             <tr>
               <th>
@@ -600,7 +600,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Anything ADIRO infers or extracts that carries its own provenance and confidence - the shared superclass of everything an inference/extraction step produces as a first-class, provenance-bearing individual. A field-value claim (FieldAssertion, here) is one; a spatial localisation (a BoundingBox, in adiro_geometry) is another. It exists so that hasInferenceMeta and hasConfidence apply uniformly to any such product, not only to a field-value claim: a detected box is an inferred entity with its own producer and score, distinct from the confidence in the value read at that box. In PROV-O terms this is the prov:Entity an inference activity generated. The producing step can be a model or a person: a human annotation (a box drawn by hand, a field typed in) is an inference step performed by a person, recorded with inferredBy that person (an aprov:Person) and no inferredWith, and it carries a confidence only if one is given. A model's output and a person's label are told apart by who inferredBy is.</p></td>
+              <td><p>Anything ADIRO infers or extracts that carries its own provenance and confidence - the shared superclass of everything an inference/extraction step produces as a first-class, provenance-bearing individual. A field-value claim (<a href="#FieldAssertion">FieldAssertion</a>, here) is one; a spatial localisation (a <a href="adiro_geometry.html#BoundingBox">BoundingBox</a>, in adiro_geometry) is another. It exists so that <a href="#hasInferenceMeta">hasInferenceMeta</a> and <a href="#hasConfidence">hasConfidence</a> apply uniformly to any such product, not only to a field-value claim: a detected box is an inferred entity with its own producer and score, distinct from the confidence in the value read at that box. In PROV-O terms this is the <a href="#Entity">prov:Entity</a> an inference activity generated. The producing step can be a model or a person: a human annotation (a box drawn by hand, a field typed in) is an inference step performed by a person, recorded with <a href="#inferredBy">inferredBy</a> that person (an aprov:Person) and no <a href="#inferredWith">inferredWith</a>, and it carries a confidence only if one is given. A model's output and a person's label are told apart by who inferredBy is.</p></td>
             </tr>
             <tr>
               <th>
@@ -672,7 +672,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A single reified assertion that some source makes a value-claim about a field kind. Reifying the claim (rather than attaching the value straight to a subject) lets each printed occurrence carry its own provenance - which region asserted it (assertedBy), what produced it (hasInferenceMeta), and with what confidence (hasConfidence) - independently of the value it states. The value is a literal (hasLiteralValue) for datatype-valued fields or an entity (hasValueEntity) for object-valued fields. An assertion has a value or, when none was found, an outcome (hasOutcome); it is promoted to a direct statement on its subject only once it is Accepted (hasAcceptance), by tooling and never by reasoning. Conflicting assertions across sources are surfaced, not silently merged, and a later one that replaces an earlier says so with supersedes. A kind of InferredEntity, so it carries the shared provenance/confidence; in PROV-O terms the prov:Entity an extraction produced, which is why the PROV alignment is seated across two classes rather than all on one.</p></td>
+              <td><p>A single reified assertion that some source makes a value-claim about a field kind. Reifying the claim (rather than attaching the value straight to a subject) lets each printed occurrence carry its own provenance - which region asserted it (<a href="#assertedBy">assertedBy</a>), what produced it (<a href="#hasInferenceMeta">hasInferenceMeta</a>), and with what confidence (<a href="#hasConfidence">hasConfidence</a>) - independently of the value it states. The value is a literal (<a href="#hasLiteralValue">hasLiteralValue</a>) for datatype-valued fields or an entity (<a href="#hasValueEntity">hasValueEntity</a>) for object-valued fields. An assertion has a value or, when none was found, an outcome (<a href="#hasOutcome">hasOutcome</a>); it is promoted to a direct statement on its subject only once it is Accepted (<a href="#hasAcceptance">hasAcceptance</a>), by tooling and never by reasoning. Conflicting assertions across sources are surfaced, not silently merged, and a later one that replaces an earlier says so with supersedes. A kind of <a href="#InferredEntity">InferredEntity</a>, so it carries the shared provenance/confidence; in PROV-O terms the <a href="#Entity">prov:Entity</a> an extraction produced, which is why the PROV alignment is seated across two classes rather than all on one.</p></td>
             </tr>
             <tr>
               <th>
@@ -794,7 +794,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Provenance metadata for an inferred or extracted assertion: what produced it (inferredBy / inferredWith), the source it was derived from (inferredFrom), and when (inferredAt). Modelled as a separate object so several assertions can share one inference record and so provenance can be added without touching the value. Analogous to DANO's DrawingElementMeta, but aligned to PROV-O: this is the prov:Activity that produced the assertion, NOT a prov:Entity. PROV-O declares those two owl:disjointWith, so the distinction is load-bearing rather than stylistic. In an extraction run, each step (detecting a region, reading text, extracting fields) is an InferenceMeta with the model that step used, and is part of the run (dcterms:isPartOf), itself a prov:Activity; the Configuration a step used (a prompt, rendering settings) is recorded with prov:used.</p></td>
+              <td><p>Provenance metadata for an inferred or extracted assertion: what produced it (<a href="#inferredBy">inferredBy</a> / <a href="#inferredWith">inferredWith</a>), the source it was derived from (<a href="#inferredFrom">inferredFrom</a>), and when (<a href="#inferredAt">inferredAt</a>). Modelled as a separate object so several assertions can share one inference record and so provenance can be added without touching the value. Analogous to DANO's DrawingElementMeta, but aligned to PROV-O: this is the <a href="#Activity">prov:Activity</a> that produced the assertion, NOT a <a href="#Entity">prov:Entity</a>. PROV-O declares those two owl:disjointWith, so the distinction is load-bearing rather than stylistic. In an extraction run, each step (detecting a region, reading text, extracting fields) is an InferenceMeta with the model that step used, and is part of the run (<a href="#isPartOf">dcterms:isPartOf</a>), itself a prov:Activity; the <a href="#Configuration">Configuration</a> a step used (a prompt, rendering settings) is recorded with <a href="#used">prov:used</a>.</p></td>
             </tr>
             <tr>
               <th>
@@ -874,7 +874,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The settings a step of an extraction used, kept as text (configurationContent): a prompt, rendering settings, size limits, model parameters. ADIRO does not model what is inside, so any setting can be recorded without a new term. A configuration is identified by its content: the same content used on thousands of pages should be one individual. A step records that it used a configuration with prov:used; where the configuration varies from page to page, as a prompt can, the InferenceMeta of that page records it. A resolution is not a configuration: coordinates depend on it, so it is recorded on the coordinate frame it gives (resolutionDpi, in adiro_geometry).</p></td>
+              <td><p>The settings a step of an extraction used, kept as text (<a href="#configurationContent">configurationContent</a>): a prompt, rendering settings, size limits, model parameters. ADIRO does not model what is inside, so any setting can be recorded without a new term. A configuration is identified by its content: the same content used on thousands of pages should be one individual. A step records that it used a configuration with <a href="#used">prov:used</a>; where the configuration varies from page to page, as a prompt can, the <a href="#InferenceMeta">InferenceMeta</a> of that page records it. A resolution is not a configuration: coordinates depend on it, so it is recorded on the coordinate frame it gives (<a href="adiro_geometry.html#resolutionDpi">resolutionDpi</a>, in adiro_geometry).</p></td>
             </tr>
             <tr>
               <th>
@@ -1067,7 +1067,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A person or an organisation: whoever made, saved or is named on something. Abstract: every party is exactly a Person or an Organisation, never both and never neither (their disjoint union), as in ISO 21597-1. Software that produced a file is not a party; a PROV activity records it.</p></td>
+              <td><p>A person or an organisation: whoever made, saved or is named on something. Abstract: every party is exactly a <a href="#Person">Person</a> or an <a href="#Organisation">Organisation</a>, never both and never neither (their disjoint union), as in ISO 21597-1. Software that produced a file is not a party; a PROV activity records it.</p></td>
             </tr>
             <tr>
               <th>
@@ -1367,7 +1367,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>One page of one DrawingFile, counted from 1; a single-page or raster file has page 1. It holds what is true of the page itself: its number, the file it belongs to, its rotation and its display size in points. A drawing is linked to the page it is on, and a coordinate frame reads the page in one coordinate convention.</p></td>
+              <td><p>One page of one <a href="#DrawingFile">DrawingFile</a>, counted from 1; a single-page or raster file has page 1. It holds what is true of the page itself: its number, the file it belongs to, its rotation and its display size in points. A drawing is linked to the page it is on, and a coordinate frame reads the page in one coordinate convention.</p></td>
             </tr>
             <tr>
               <th>
@@ -1436,7 +1436,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>What a step of an extraction did: RegionDetection, TextRecognition or FieldExtraction. A closed list, so a new kind of step is a new value and not a new class. It tells steps apart when they use the same model, and it tells what a step looked for when it found nothing: a page that a region detection used, with no region found on it, was searched and has none, unless the step failed (an errorMessage on the step).</p></td>
+              <td><p>What a step of an extraction did: RegionDetection, TextRecognition or FieldExtraction. A closed list, so a new kind of step is a new value and not a new class. It tells steps apart when they use the same model, and it tells what a step looked for when it found nothing: a page that a region detection used, with no region found on it, was searched and has none, unless the step failed (an <a href="#errorMessage">errorMessage</a> on the step).</p></td>
             </tr>
             <tr>
               <th>
@@ -1466,7 +1466,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The text a step read from one region, such as a title block, or from a whole page (isReadingOf), as it is printed and whether or not any of it was read as a field, so a drawing can be found by any word on it. The text is readText, with the language as the literal's language tag when it is known. A reading that read nothing has an outcome instead (hasReadingOutcome): the region holds no text (Empty), it cannot be read (Illegible), or the step failed (Failed, with its errorMessage). A kind of InferredEntity: each reading has the step that produced it (hasInferenceMeta), so two runs that read the same region keep two readings.</p></td>
+              <td><p>The text a step read from one region, such as a title block, or from a whole page (<a href="#isReadingOf">isReadingOf</a>), as it is printed and whether or not any of it was read as a field, so a drawing can be found by any word on it. The text is <a href="#readText">readText</a>, with the language as the literal's language tag when it is known. A reading that read nothing has an outcome instead (<a href="#hasReadingOutcome">hasReadingOutcome</a>): the region holds no text (Empty), it cannot be read (Illegible), or the step failed (Failed, with its <a href="#errorMessage">errorMessage</a>). A kind of <a href="#InferredEntity">InferredEntity</a>: each reading has the step that produced it (<a href="#hasInferenceMeta">hasInferenceMeta</a>), so two runs that read the same region keep two readings.</p></td>
             </tr>
             <tr>
               <th>
@@ -1523,7 +1523,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>What a search for a field found, when it found no value: Empty, Illegible, NotPrinted, NotFound or Failed. An assertion that has a value needs no outcome (the value is its outcome), and an assertion has a value or an outcome, never both. A TextReading that read no text has an outcome from the same list (hasReadingOutcome).</p></td>
+              <td><p>What a search for a field found, when it found no value: Empty, Illegible, NotPrinted, NotFound or Failed. An assertion that has a value needs no outcome (the value is its outcome), and an assertion has a value or an outcome, never both. A <a href="#TextReading">TextReading</a> that read no text has an outcome from the same list (<a href="#hasReadingOutcome">hasReadingOutcome</a>).</p></td>
             </tr>
             <tr>
               <th>
@@ -1563,7 +1563,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Whether an assertion was taken into the direct properties of its subject: Pending (not yet decided), Accepted or Rejected. Only an Accepted assertion that has a value is promoted by mapsToFieldProperty.</p></td>
+              <td><p>Whether an assertion was taken into the direct properties of its subject: Pending (not yet decided), Accepted or Rejected. Only an Accepted assertion that has a value is promoted by <a href="#mapsToFieldProperty">mapsToFieldProperty</a>.</p></td>
             </tr>
             <tr>
               <th>
@@ -1604,7 +1604,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Entity, rdfs:range prov:Activity)</p></td>
+              <td><p>Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain <a href="#Entity">prov:Entity</a>, rdfs:range <a href="#Activity">prov:Activity</a>)</p></td>
             </tr>
             <tr>
               <th>
@@ -1642,7 +1642,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range prov:Agent)</p></td>
+              <td><p>Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain <a href="#Activity">prov:Activity</a>, rdfs:range <a href="#Agent">prov:Agent</a>)</p></td>
             </tr>
             <tr>
               <th>
@@ -1680,7 +1680,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range prov:Entity)</p></td>
+              <td><p>Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain <a href="#Activity">prov:Activity</a>, rdfs:range <a href="#Entity">prov:Entity</a>)</p></td>
             </tr>
             <tr>
               <th>
@@ -1728,7 +1728,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Entity, rdfs:range prov:Entity). ADIRO uses it between two DrawingFiles: a file made from another one (a format conversion, a page split out of a PDF) was derived from it, and only the original records a sourceLocation.</p></td>
+              <td><p>Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain <a href="#Entity">prov:Entity</a>, rdfs:range prov:Entity). ADIRO uses it between two <a href="#DrawingFile">DrawingFile</a>s: a file made from another one (a format conversion, a page split out of a PDF) was derived from it, and only the original records a <a href="#sourceLocation">sourceLocation</a>.</p></td>
             </tr>
           </table>
         </div>
@@ -1755,7 +1755,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Typing stub for the DCMI Metadata Terms property of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative definition lives at the source that rdfs:isDefinedBy points at. ADIRO uses it between the steps of an extraction run and the run: each step (an InferenceMeta, such as detecting the title block or reading its text) is part of the run (a prov:Activity) it was performed in.</p></td>
+              <td><p>Typing stub for the DCMI Metadata Terms property of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative definition lives at the source that rdfs:isDefinedBy points at. ADIRO uses it between the steps of an extraction run and the run: each step (an <a href="#InferenceMeta">InferenceMeta</a>, such as detecting the title block or reading its text) is part of the run (a <a href="#Activity">prov:Activity</a>) it was performed in.</p></td>
             </tr>
           </table>
         </div>
@@ -1815,7 +1815,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The source that makes this assertion - typically the drawing region it was read from (e.g. a Titleblock or a Layout). This is the provenance that lets the same field kind asserted by different regions be distinguished (e.g. a sheet's scale read from the title block versus the same sheet's scale read from a general note), which a fixed domain on a per-field property cannot express.</p></td>
+              <td><p>The source that makes this assertion - typically the drawing region it was read from (e.g. a <a href="adiro_drawing_metadata.html#Titleblock">Titleblock</a> or a <a href="adiro_drawing_metadata.html#Layout">Layout</a>). This is the provenance that lets the same field kind asserted by different regions be distinguished (e.g. a sheet's scale read from the title block versus the same sheet's scale read from a general note), which a fixed domain on a per-field property cannot express.</p></td>
             </tr>
             <tr>
               <th>
@@ -1845,7 +1845,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The subject the claim is ABOUT - the thing a validated assertion is promoted onto. Distinct from assertedBy, which records where the claim was read FROM: a drawn-by name is read from a title-block region (assertedBy) but is a claim about a particular DrawingRevision (assertedAbout), and a sheet has many revisions, so the subject cannot be recovered from the region alone. Without it, mapsToFieldProperty names a property but nothing names the individual to hang it on, and promotion is not expressible. No rdfs:range is asserted: the subjects differ per field kind - Titleblock, DrawingSheet, DrawingRevision, DrawingPackage, Project - and a narrower range would entail those subjects are of a type they are not.</p></td>
+              <td><p>The subject the claim is ABOUT - the thing a validated assertion is promoted onto. Distinct from <a href="#assertedBy">assertedBy</a>, which records where the claim was read FROM: a drawn-by name is read from a title-block region (assertedBy) but is a claim about a particular <a href="adiro_drawing_metadata.html#DrawingRevision">DrawingRevision</a> (assertedAbout), and a sheet has many revisions, so the subject cannot be recovered from the region alone. Without it, <a href="#mapsToFieldProperty">mapsToFieldProperty</a> names a property but nothing names the individual to hang it on, and promotion is not expressible. No rdfs:range is asserted: the subjects differ per field kind - <a href="adiro_drawing_metadata.html#Titleblock">Titleblock</a>, <a href="adiro_drawing_metadata.html#DrawingSheet">DrawingSheet</a>, DrawingRevision, <a href="adiro_drawing_metadata.html#DrawingPackage">DrawingPackage</a>, <a href="adiro_drawing_metadata.html#Project">Project</a> - and a narrower range would entail those subjects are of a type they are not.</p></td>
             </tr>
             <tr>
               <th>
@@ -1875,7 +1875,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>For object-valued field kinds, the entity that is the asserted value - e.g. a Person or Organisation. Used instead of hasLiteralValue when the field references a thing rather than states a string, which is what makes cross-sheet questions ('everything checked by X') answerable.</p></td>
+              <td><p>For object-valued field kinds, the entity that is the asserted value - e.g. a <a href="#Person">Person</a> or <a href="#Organisation">Organisation</a>. Used instead of <a href="#hasLiteralValue">hasLiteralValue</a> when the field references a thing rather than states a string, which is what makes cross-sheet questions ('everything checked by X') answerable.</p></td>
             </tr>
             <tr>
               <th>
@@ -1905,7 +1905,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Links an inferred entity (a FieldAssertion, a BoundingBox, ...) to the InferenceMeta describing what produced it, from where, and when. Aligned to prov:wasGeneratedBy: the entity (a prov:Entity) was generated by the inference (a prov:Activity).</p></td>
+              <td><p>Links an inferred entity (a <a href="#FieldAssertion">FieldAssertion</a>, a <a href="adiro_geometry.html#BoundingBox">BoundingBox</a>, ...) to the <a href="#InferenceMeta">InferenceMeta</a> describing what produced it, from where, and when. Aligned to <a href="#wasGeneratedBy">prov:wasGeneratedBy</a>: the entity (a <a href="#Entity">prov:Entity</a>) was generated by the inference (a <a href="#Activity">prov:Activity</a>).</p></td>
             </tr>
             <tr>
               <th>
@@ -1957,7 +1957,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The actor, organisation or software that produced this inference: a person (an aprov:Person) when a human annotated, a software agent when a model predicted. Aligned to prov:wasAssociatedWith - the agent the inference activity was associated with.</p></td>
+              <td><p>The actor, organisation or software that produced this inference: a person (an aprov:Person) when a human annotated, a software agent when a model predicted. Aligned to <a href="#wasAssociatedWith">prov:wasAssociatedWith</a> - the agent the inference activity was associated with.</p></td>
             </tr>
             <tr>
               <th>
@@ -2009,7 +2009,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The algorithm or model (ideally with version) used to produce this inference. Distinct from inferredBy, which names the responsible actor; inferredWith names the tool. Aligned to prov:used - the activity used this model.</p></td>
+              <td><p>The algorithm or model (ideally with version) used to produce this inference. Distinct from <a href="#inferredBy">inferredBy</a>, which names the responsible actor; inferredWith names the tool. Aligned to <a href="#used">prov:used</a> - the activity used this model.</p></td>
             </tr>
             <tr>
               <th>
@@ -2050,7 +2050,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The source the value was derived from - e.g. the origin file, page or region. Aligned to prov:used - the activity used this source.</p></td>
+              <td><p>The source the value was derived from - e.g. the origin file, page or region. Aligned to <a href="#used">prov:used</a> - the activity used this source.</p></td>
             </tr>
             <tr>
               <th>
@@ -2091,7 +2091,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The party that made the file in the storage system, usually whoever saved it. Not the drawing's author, which is isAuthoredBy in adiro_drawing_metadata; a close match to, not the same as, Dublin Core creator and ICDD createdBy.</p></td>
+              <td><p>The party that made the file in the storage system, usually whoever saved it. Not the drawing's author, which is <a href="adiro_drawing_metadata.html#isAuthoredBy">isAuthoredBy</a> in adiro_drawing_metadata; a close match to, not the same as, Dublin Core creator and ICDD createdBy.</p></td>
             </tr>
             <tr>
               <th>
@@ -2173,7 +2173,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The DrawingFile that a FilePage is a page of. To go from a file to its pages, use the inverse path ^aprov:belongsToFile (ADIRO declares no named inverse properties).</p></td>
+              <td><p>The <a href="#DrawingFile">DrawingFile</a> that a <a href="#FilePage">FilePage</a> is a page of. To go from a file to its pages, use the inverse path ^aprov:belongsToFile (ADIRO declares no named inverse properties).</p></td>
             </tr>
             <tr>
               <th>
@@ -2214,7 +2214,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>What the search for this field found, when it found no value (an AssertionOutcome). An assertion with a hasLiteralValue or a hasValueEntity has no outcome.</p></td>
+              <td><p>What the search for this field found, when it found no value (an <a href="#AssertionOutcome">AssertionOutcome</a>). An assertion with a <a href="#hasLiteralValue">hasLiteralValue</a> or a <a href="#hasValueEntity">hasValueEntity</a> has no outcome.</p></td>
             </tr>
             <tr>
               <th>
@@ -2255,7 +2255,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Why a TextReading holds no text (an AssertionOutcome): the region holds none (Empty), it cannot be read (Illegible), or the step failed (Failed). A reading with readText has no outcome. A property of its own rather than hasOutcome, whose domain is FieldAssertion: a reading is not a claim about a field.</p></td>
+              <td><p>Why a <a href="#TextReading">TextReading</a> holds no text (an <a href="#AssertionOutcome">AssertionOutcome</a>): the region holds none (Empty), it cannot be read (Illegible), or the step failed (Failed). A reading with <a href="#readText">readText</a> has no outcome. A property of its own rather than <a href="#hasOutcome">hasOutcome</a>, whose domain is <a href="#FieldAssertion">FieldAssertion</a>: a reading is not a claim about a field.</p></td>
             </tr>
             <tr>
               <th>
@@ -2296,7 +2296,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>What kind of step of an extraction this InferenceMeta is (a StepKind): a region detection, a text recognition or a field extraction.</p></td>
+              <td><p>What kind of step of an extraction this <a href="#InferenceMeta">InferenceMeta</a> is (a <a href="#StepKind">StepKind</a>): a region detection, a text recognition or a field extraction.</p></td>
             </tr>
             <tr>
               <th>
@@ -2337,7 +2337,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>What a TextReading read: a region, such as a title block (metadata:Titleblock), or a whole page (a FilePage). No range is declared, because the regions are defined by the modules that use this one.</p></td>
+              <td><p>What a <a href="#TextReading">TextReading</a> read: a region, such as a title block (metadata:Titleblock), or a whole page (a <a href="#FilePage">FilePage</a>). No range is declared, because the regions are defined by the modules that use this one.</p></td>
             </tr>
             <tr>
               <th>
@@ -2367,7 +2367,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Whether this assertion was taken into the direct properties of its subject (an AcceptanceStatus). An assertion with no acceptance recorded is as good as Pending.</p></td>
+              <td><p>Whether this assertion was taken into the direct properties of its subject (an <a href="#AcceptanceStatus">AcceptanceStatus</a>). An assertion with no acceptance recorded is as good as Pending.</p></td>
             </tr>
             <tr>
               <th>
@@ -2501,7 +2501,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range xsd:dateTime). ADIRO uses it for when an extraction run started; its steps record when each ended with inferredAt.</p></td>
+              <td><p>Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain <a href="#Activity">prov:Activity</a>, rdfs:range xsd:dateTime). ADIRO uses it for when an extraction run started; its steps record when each ended with <a href="#inferredAt">inferredAt</a>.</p></td>
             </tr>
           </table>
         </div>
@@ -2528,7 +2528,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain prov:Activity, rdfs:range xsd:dateTime). ADIRO's own :inferredAt declares rdfs:range xsd:dateTime, so the precision is asserted where it belongs - on the term this suite owns.</p></td>
+              <td><p>Typing stub for the PROV-O term of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative axioms live at the source that rdfs:isDefinedBy points at. (rdfs:domain <a href="#Activity">prov:Activity</a>, rdfs:range xsd:dateTime). ADIRO's own :inferredAt declares rdfs:range xsd:dateTime, so the precision is asserted where it belongs - on the term this suite owns.</p></td>
             </tr>
             <tr>
               <th>
@@ -2558,7 +2558,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The content of a Configuration, as text: the prompt as sent, or the settings serialised in the format the step reads them in, kept verbatim so a step can be repeated with exactly the same settings. It is published with the data, so it carries no credentials: keys, tokens and private endpoints are removed before it is recorded.</p></td>
+              <td><p>The content of a <a href="#Configuration">Configuration</a>, as text: the prompt as sent, or the settings serialised in the format the step reads them in, kept verbatim so a step can be repeated with exactly the same settings. It is published with the data, so it carries no credentials: keys, tokens and private endpoints are removed before it is recorded.</p></td>
             </tr>
             <tr>
               <th>
@@ -2672,7 +2672,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Confidence of the inference behind an inferred entity, as a decimal in [0,1]: the score a model gives, or, for a human annotation, absent (or 1 when the annotator is taken as certain). Applies to any InferredEntity - the confidence in a field-value claim (FieldAssertion) and the confidence in a detected localisation (a BoundingBox in adiro_geometry) are separate values, each carried on the individual it belongs to. Carried on the individual rather than on a triple, which keeps confidence in the graph without requiring RDF-star or statement reification. The range is an OWL 2 datatype restriction on xsd:decimal with minInclusive 0 and maxInclusive 1, so the [0,1] bound is asserted rather than only described in prose. Note this cannot fire in CI today: the reasoning gate runs over the T-Box in src/ and the repository holds no instance data, so the bound becomes enforceable when an A-Box exists (GitHub issue #22).</p></td>
+              <td><p>Confidence of the inference behind an inferred entity, as a decimal in [0,1]: the score a model gives, or, for a human annotation, absent (or 1 when the annotator is taken as certain). Applies to any <a href="#InferredEntity">InferredEntity</a> - the confidence in a field-value claim (<a href="#FieldAssertion">FieldAssertion</a>) and the confidence in a detected localisation (a <a href="adiro_geometry.html#BoundingBox">BoundingBox</a> in adiro_geometry) are separate values, each carried on the individual it belongs to. Carried on the individual rather than on a triple, which keeps confidence in the graph without requiring RDF-star or statement reification. The range is an OWL 2 datatype restriction on xsd:decimal with minInclusive 0 and maxInclusive 1, so the [0,1] bound is asserted rather than only described in prose. Note this cannot fire in CI today: the reasoning gate runs over the T-Box in src/ and the repository holds no instance data, so the bound becomes enforceable when an A-Box exists (GitHub issue #22).</p></td>
             </tr>
             <tr>
               <th>
@@ -2708,7 +2708,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The time the inference was produced. Aligned to prov:endedAtTime - when the inference activity ended.</p></td>
+              <td><p>The time the inference was produced. Aligned to <a href="#endedAtTime">prov:endedAtTime</a> - when the inference activity ended.</p></td>
             </tr>
             <tr>
               <th>
@@ -2871,7 +2871,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The algorithm that produced the contentHash, for example sha256.</p></td>
+              <td><p>The algorithm that produced the <a href="#contentHash">contentHash</a>, for example sha256.</p></td>
             </tr>
             <tr>
               <th>
@@ -2909,7 +2909,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Where a copy of the file is stored: an address in a document-management or cloud storage system, or a path as a file address. More than one is allowed, and a location changes when the file is moved; the contentHash is what stays the same. It may be a relative reference (RFC 3986, such as crops/page-1-titleblock.png), resolved against the root of the dataset the data belongs to, which the data does not record: a dataset that is moved keeps its relative locations. A public release accepts only absolute addresses on its allowed hosts, so a relative location is resolved before release.</p></td>
+              <td><p>Where a copy of the file is stored: an address in a document-management or cloud storage system, or a path as a file address. More than one is allowed, and a location changes when the file is moved; the <a href="#contentHash">contentHash</a> is what stays the same. It may be a relative reference (RFC 3986, such as crops/page-1-titleblock.png), resolved against the root of the dataset the data belongs to, which the data does not record: a dataset that is moved keeps its relative locations. A public release accepts only absolute addresses on its allowed hosts, so a relative location is resolved before release.</p></td>
             </tr>
             <tr>
               <th>
@@ -2947,7 +2947,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Where the file was obtained from: the address its bytes were fetched from, such as a public archive's download address, or the address in an organisation's own storage when that is the only known origin. Unlike storageLocation, it does not change when copies are moved. A file made from another file (converted, split into pages) records its origin through prov:wasDerivedFrom to that file, not a sourceLocation of its own.</p></td>
+              <td><p>Where the file was obtained from: the address its bytes were fetched from, such as a public archive's download address, or the address in an organisation's own storage when that is the only known origin. Unlike <a href="#storageLocation">storageLocation</a>, it does not change when copies are moved. A file made from another file (converted, split into pages) records its origin through <a href="#wasDerivedFrom">prov:wasDerivedFrom</a> to that file, not a sourceLocation of its own.</p></td>
             </tr>
             <tr>
               <th>
@@ -2985,7 +2985,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The page at the file's origin that describes it, such as a catalogue record or a landing page, which is often a more lasting address than the file's own sourceLocation.</p></td>
+              <td><p>The page at the file's origin that describes it, such as a catalogue record or a landing page, which is often a more lasting address than the file's own <a href="#sourceLocation">sourceLocation</a>.</p></td>
             </tr>
             <tr>
               <th>
@@ -3023,7 +3023,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>When the file was created, as the storage system records it. Not the drawing's issue date (issueDate).</p></td>
+              <td><p>When the file was created, as the storage system records it. Not the drawing's issue date (<a href="adiro_drawing_metadata.html#issueDate">issueDate</a>).</p></td>
             </tr>
             <tr>
               <th>
@@ -3213,7 +3213,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The effective width of the page in points after the recorded page mapping (rotation and cropping); supports bounds checks on coordinates. The measured size of this page of this file, not the paper format the drawing is meant for (sheetSize).</p></td>
+              <td><p>The effective width of the page in points after the recorded page mapping (rotation and cropping); supports bounds checks on coordinates. The measured size of this page of this file, not the paper format the drawing is meant for (<a href="adiro_drawing_metadata.html#sheetSize">sheetSize</a>).</p></td>
             </tr>
             <tr>
               <th>
@@ -3251,7 +3251,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The effective height of the page in points after the recorded page mapping (rotation and cropping); supports bounds checks on coordinates. The measured size of this page of this file, not the paper format the drawing is meant for (sheetSize).</p></td>
+              <td><p>The effective height of the page in points after the recorded page mapping (rotation and cropping); supports bounds checks on coordinates. The measured size of this page of this file, not the paper format the drawing is meant for (<a href="adiro_drawing_metadata.html#sheetSize">sheetSize</a>).</p></td>
             </tr>
             <tr>
               <th>
@@ -3327,7 +3327,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The error that stopped a step, as the step reported it. On an inferred entity whose outcome is Failed (a reading, a field assertion), it is the error that stopped the step producing it. On a step (an InferenceMeta), it says that the step itself failed before it produced anything, so a page it used was not searched: a region detection that timed out is a failure, not a page with no region on it. It is published with the data, so credentials, keys and private addresses are removed before it is recorded.</p></td>
+              <td><p>The error that stopped a step, as the step reported it. On an inferred entity whose outcome is Failed (a reading, a field assertion), it is the error that stopped the step producing it. On a step (an <a href="#InferenceMeta">InferenceMeta</a>), it says that the step itself failed before it produced anything, so a page it used was not searched: a region detection that timed out is a failure, not a page with no region on it. It is published with the data, so credentials, keys and private addresses are removed before it is recorded.</p></td>
             </tr>
             <tr>
               <th>
@@ -3370,7 +3370,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The text a TextReading read, as printed, in reading order. The language, when known, is the literal's language tag ("Erdgeschoss"@de); text whose language is not known is a plain string.</p></td>
+              <td><p>The text a <a href="#TextReading">TextReading</a> read, as printed, in reading order. The language, when known, is the literal's language tag ("Erdgeschoss"@de); text whose language is not known is a plain string.</p></td>
             </tr>
             <tr>
               <th>
@@ -3488,7 +3488,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>On a field-kind concept: the expected type of its asserted value - a datatype (e.g. xsd:string, xsd:date) for literal-valued fields, or a class (e.g. Person, Organisation) for object-valued fields. Signals whether an assertion of this kind uses hasLiteralValue or hasValueEntity.</p></td>
+              <td><p>On a field-kind concept: the expected type of its asserted value - a datatype (e.g. xsd:string, xsd:date) for literal-valued fields, or a class (e.g. <a href="#Person">Person</a>, <a href="#Organisation">Organisation</a>) for object-valued fields. Signals whether an assertion of this kind uses <a href="#hasLiteralValue">hasLiteralValue</a> or <a href="#hasValueEntity">hasValueEntity</a>.</p></td>
             </tr>
           </table>
         </div>
@@ -3507,7 +3507,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>On a field-kind concept: the canonical ADIRO property that an accepted assertion (hasAcceptance Accepted) of this field kind, one that has a value, is promoted to (the bridge from the reified assertion to a direct statement on the subject). The subject is the assertion's assertedAbout, so a promotion is: ?a assertedAbout ?subject ; assertsFieldKind ?k . ?k mapsToFieldProperty ?p  =&gt;  ?subject ?p <value>. Annotation only - the promotion is performed by tooling on acceptance, not by reasoning.</p></td>
+              <td><p>On a field-kind concept: the canonical ADIRO property that an accepted assertion (<a href="#hasAcceptance">hasAcceptance</a> Accepted) of this field kind, one that has a value, is promoted to (the bridge from the reified assertion to a direct statement on the subject). The subject is the assertion's <a href="#assertedAbout">assertedAbout</a>, so a promotion is: ?a assertedAbout ?subject ; <a href="#assertsFieldKind">assertsFieldKind</a> ?k . ?k mapsToFieldProperty ?p  =&gt;  ?subject ?p <value>. Annotation only - the promotion is performed by tooling on acceptance, not by reasoning.</p></td>
             </tr>
           </table>
         </div>

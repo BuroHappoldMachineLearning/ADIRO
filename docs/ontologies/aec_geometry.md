@@ -71,7 +71,7 @@ graph BT
 
 ### Bounding Box {#BoundingBox}
 
-A rectangular region on a drawing page that locates something there, whether a model detected it or a person marked it - e.g. a title-block field's caption or value. Its coordinates are held as an xyxy string (bboxXYXY) and are meaningless without the CoordinateFrame it points at (inCoordinateFrame), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an InferredEntity: it carries its own provenance (aprov:hasInferenceMeta - a detector, or a human annotator, told apart by aprov:inferredBy) and its own confidence (aprov:hasConfidence, the detector's score, absent for a hand-drawn box), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL geo:Geometry so it is recognised as a spatial shape.
+A rectangular region on a drawing page that locates something there, whether a model detected it or a person marked it - e.g. a title-block field's caption or value. Its coordinates are held as an xyxy string ([bboxXYXY](#bboxXYXY)) and are meaningless without the [CoordinateFrame](#CoordinateFrame) it points at ([inCoordinateFrame](#inCoordinateFrame)), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an InferredEntity: it carries its own provenance (aprov:hasInferenceMeta - a detector, or a human annotator, told apart by aprov:inferredBy) and its own confidence (aprov:hasConfidence, the detector's score, absent for a hand-drawn box), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL [geo:Geometry](#Geometry) so it is recognised as a spatial shape.
 
 - **IRI:** `https://w3id.org/adiro/aec_geometry#BoundingBox`
 - **Sub class of:**
@@ -80,13 +80,13 @@ A rectangular region on a drawing page that locates something there, whether a m
 
 ### Coordinate Frame {#CoordinateFrame}
 
-A page of a file read in one coordinate convention: the named coordinate space, the unit and the profile that defines it (the datatype properties below), for the page it describes (describesPage). A page can have more than one frame (the primary page_display_pt in points, and px for raster evidence), and each states only its convention: what is true of the page itself (its number, file, rotation and size) is on the aec_provenance:FilePage. Not an InferredEntity: a declared coordinate context, not a detection with its own confidence.
+A page of a file read in one coordinate convention: the named coordinate space, the unit and the profile that defines it (the datatype properties below), for the page it describes ([describesPage](#describesPage)). A page can have more than one frame (the primary page_display_pt in points, and px for raster evidence), and each states only its convention: what is true of the page itself (its number, file, rotation and size) is on the aec_provenance:FilePage. Not an InferredEntity: a declared coordinate context, not a detection with its own confidence.
 
 - **IRI:** `https://w3id.org/adiro/aec_geometry#CoordinateFrame`
 
 ### Geometry {#Geometry}
 
-Local typing stub for GeoSPARQL's Geometry class (authoritative definition at the rdfs:isDefinedBy IRI), declared here so reasoning stays offline. Used as the supertype of BoundingBox so an ADIRO box is recognised as a spatial shape; ADIRO adopts no GeoSPARQL CRS or spatial-query profile (deferred, GitHub issue #36).
+Local typing stub for GeoSPARQL's Geometry class (authoritative definition at the rdfs:isDefinedBy IRI), declared here so reasoning stays offline. Used as the supertype of [BoundingBox](#BoundingBox) so an ADIRO box is recognised as a spatial shape; ADIRO adopts no GeoSPARQL CRS or spatial-query profile (deferred, GitHub issue #36).
 
 - **IRI:** `http://www.opengis.net/ont/geosparql#Geometry`
 
@@ -109,7 +109,7 @@ The bounding box that locates a region on a drawing page. In UC-01 this is the t
 
 ### inCoordinateFrame {#inCoordinateFrame}
 
-The CoordinateFrame that interprets this geometry's coordinates. Required for a geometry to mean anything: the same xyxy numbers denote different regions in different frames, so equal coordinates alone never establish that two geometries are the same region.
+The [CoordinateFrame](#CoordinateFrame) that interprets this geometry's coordinates. Required for a geometry to mean anything: the same xyxy numbers denote different regions in different frames, so equal coordinates alone never establish that two geometries are the same region.
 
 - **IRI:** `https://w3id.org/adiro/aec_geometry#inCoordinateFrame`
 - **Domain:** [Geometry](#Geometry)
@@ -119,7 +119,7 @@ The CoordinateFrame that interprets this geometry's coordinates. Required for a 
 
 ### bboxXYXY {#bboxXYXY}
 
-The rectangle as a string "[xmin, ymin, xmax, ymax]" in the coordinate frame's convention (xmin/ymin the top-left corner, xmax/ymax the bottom-right, under page_display_pt). The xyxy ordering is aligned to the Croissant cr:BoundingBox 'XYXY' format token, so an ADIRO box can be mapped to Croissant/CV formats by an exporter - ADIRO stores a page-point xyxy string, whereas Croissant expects a four-number array with a format declaration (background: GitHub issue #91). Interpret only together with inCoordinateFrame.
+The rectangle as a string "[xmin, ymin, xmax, ymax]" in the coordinate frame's convention (xmin/ymin the top-left corner, xmax/ymax the bottom-right, under page_display_pt). The xyxy ordering is aligned to the Croissant cr:BoundingBox 'XYXY' format token, so an ADIRO box can be mapped to Croissant/CV formats by an exporter - ADIRO stores a page-point xyxy string, whereas Croissant expects a four-number array with a format declaration (background: GitHub issue #91). Interpret only together with [inCoordinateFrame](#inCoordinateFrame).
 
 - **IRI:** `https://w3id.org/adiro/aec_geometry#bboxXYXY`
 - **Domain:** [Bounding Box](#BoundingBox)
@@ -135,7 +135,7 @@ The named coordinate convention that fixes the origin and axes. Primary: 'page_d
 
 ### profileRef {#profileRef}
 
-Reference to the versioned coordinate profile that defines the named coordinateSpace in full (origin, axes and unit), so the convention is pinned rather than only implied by the space's name.
+Reference to the versioned coordinate profile that defines the named [coordinateSpace](#coordinateSpace) in full (origin, axes and unit), so the convention is pinned rather than only implied by the space's name.
 
 - **IRI:** `https://w3id.org/adiro/aec_geometry#profileRef`
 - **Domain:** [Coordinate Frame](#CoordinateFrame)

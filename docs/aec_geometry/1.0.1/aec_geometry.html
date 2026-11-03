@@ -476,7 +476,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A rectangular region on a drawing page that locates something detected there - e.g. a title-block field's caption or value. Its coordinates are held as an xyxy string (bboxXYXY) and are meaningless without the CoordinateFrame it points at (inCoordinateFrame), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an InferredEntity: it carries its own provenance (aprov:hasInferenceMeta - a detector, or a human annotator) and its own confidence (aprov:hasConfidence, the detector score), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL geo:Geometry so it is recognised as a spatial shape.</p></td>
+              <td><p>A rectangular region on a drawing page that locates something detected there - e.g. a title-block field's caption or value. Its coordinates are held as an xyxy string (bboxXYXY) and are meaningless without the CoordinateFrame it points at (inCoordinateFrame), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an <a href="../../adiro_provenance.html#InferredEntity">InferredEntity</a>: it carries its own provenance (aprov:hasInferenceMeta - a detector, or a human annotator) and its own confidence (aprov:hasConfidence, the detector score), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL <a href="#Geometry">geo:Geometry</a> so it is recognised as a spatial shape.</p></td>
             </tr>
             <tr>
               <th>
@@ -535,7 +535,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The coordinate context that makes a geometry's numbers interpretable - the exact PDF/page, unit and named coordinate space its coordinates are relative to (detailed by the datatype properties below). Normally owned by a DrawingSheet (aec_drawing_metadata:hasCoordinateFrame) and shared by the geometries on that page; a sheet may have different frames for different file versions. Not an InferredEntity: a declared coordinate context, not a detection with its own confidence.</p></td>
+              <td><p>The coordinate context that makes a geometry's numbers interpretable - the exact PDF/page, unit and named coordinate space its coordinates are relative to (detailed by the datatype properties below). Normally owned by a <a href="../../adiro_drawing_metadata.html#DrawingSheet">DrawingSheet</a> (aec_drawing_metadata:hasCoordinateFrame) and shared by the geometries on that page; a sheet may have different frames for different file versions. Not an <a href="../../adiro_provenance.html#InferredEntity">InferredEntity</a>: a declared coordinate context, not a detection with its own confidence.</p></td>
             </tr>
             <tr>
               <th>

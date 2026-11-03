@@ -177,13 +177,13 @@ Dead load - the permanent, static load of a structure's own weight and fixed com
 
 ### Discipline {#Discipline}
 
-The engineering or architectural discipline associated with a Layout.
+The engineering or architectural discipline associated with a [Layout](adiro_drawing_metadata.md#Layout).
 
 - **IRI:** `https://w3id.org/adiro/adiro_domain_common#Discipline`
 
 ### Electrical {#Electrical}
 
-The electrical-engineering discipline, part of MEP.
+The electrical-engineering discipline, part of [MEP](#MEP).
 
 - **IRI:** `https://w3id.org/adiro/adiro_domain_common#Electrical`
 - **Sub class of:** [MEP](#MEP)
@@ -288,14 +288,14 @@ General property category
 
 ### Mechanical {#Mechanical}
 
-The mechanical-engineering discipline, part of MEP.
+The mechanical-engineering discipline, part of [MEP](#MEP).
 
 - **IRI:** `https://w3id.org/adiro/adiro_domain_common#Mechanical`
 - **Sub class of:** [MEP](#MEP)
 
 ### MEP {#MEP}
 
-Mechanical, Electrical, and Plumbing.
+Mechanical, [Electrical](#Electrical), and [Plumbing](#Plumbing).
 
 - **IRI:** `https://w3id.org/adiro/adiro_domain_common#MEP`
 - **Sub class of:** [Discipline](#Discipline)
@@ -316,7 +316,7 @@ A structural component that is essentially a panel or plate, such as a slab or w
 
 ### Plumbing {#Plumbing}
 
-The plumbing discipline, part of MEP.
+The plumbing discipline, part of [MEP](#MEP).
 
 - **IRI:** `https://w3id.org/adiro/adiro_domain_common#Plumbing`
 - **Sub class of:** [MEP](#MEP)
@@ -368,7 +368,7 @@ General property category
 
 ### Section shape {#SectionShape}
 
-The cross-sectional profile of a structural section, such as an I-section, CHS or RHS.
+The cross-sectional profile of a structural section, such as an I-section, [CHS](#CHS) or [RHS](#RHS).
 
 - **IRI:** `https://w3id.org/adiro/adiro_domain_common#SectionShape`
 - **Sub class of:** [Section properties](#SectionProperties)
@@ -477,7 +477,7 @@ A wall - a vertical structural panel.
 
 ### hasDiscipline {#hasDiscipline}
 
-Links a Layout to an AEC discipline. Discipline characterises the Layout itself, not its content type — the two are orthogonal axes.
+Links a [Layout](adiro_drawing_metadata.md#Layout) to an AEC discipline. Discipline characterises the Layout itself, not its content type — the two are orthogonal axes.
 
 - **IRI:** `https://w3id.org/adiro/adiro_domain_common#hasDiscipline`
 - **Domain:** `metadata:Layout`

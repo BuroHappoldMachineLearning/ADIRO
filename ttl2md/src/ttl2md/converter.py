@@ -36,6 +36,8 @@ from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.namespace import OWL, RDF, RDFS, SKOS, XSD
 from rdflib.namespace import split_uri
 
+from .crosslinks import link_names, prefixed_name, targets_for
+
 __all__ = [
     "MarkdownConverter",
     "convert_graph",
@@ -117,6 +119,10 @@ class MarkdownConverter:
         ``None`` (default), any predicate whose local name equals
         ``exampleImage`` (case-insensitive) is used, matching the historical
         pyLODE post-processing.
+    external_links:
+        IRI -> URL of terms documented on other pages. The names of terms written
+        in a definition link to the term's entry on this page, or to its page in
+        this mapping (see :mod:`ttl2md.crosslinks` for the rules).
     """
 
     # Cardinality predicates grouped by the phrasing they map to.
@@ -129,8 +135,10 @@ class MarkdownConverter:
         *,
         asset_prefix: str = "",
         example_image_predicates: set[str] | None = None,
+        external_links: dict[str, str] | None = None,
     ) -> None:
         self.asset_prefix = asset_prefix
+        self.external_links = dict(external_links or {})
         self._explicit_example_predicates = (
             {str(p) for p in example_image_predicates}
             if example_image_predicates is not None
@@ -167,6 +175,14 @@ class MarkdownConverter:
             iri = str(subj)
             self._local_iris.add(iri)
             self._labels[iri] = self._label_of(subj)
+
+        # The names of terms written in a definition become links (ttl2md.crosslinks).
+        self._link_targets = targets_for(
+            graph,
+            str(ontology) if ontology is not None else None,
+            {iri: f"#{local_name(iri)}" for iri in self._local_iris},
+            self.external_links,
+        )
 
         doc = OntologyDoc(
             title=title or (self._label_of(ontology) if ontology else "Ontology"),
@@ -305,10 +321,17 @@ class MarkdownConverter:
             iri=iri,
             local=local_name(iri),
             label=self._labels.get(iri, self._label_of(subj)),
-            comment=self._first_text(subj, (RDFS.comment, SKOS.definition, RDFS.isDefinedBy)),
+            comment=self._linked(subj, self._first_text(subj, (RDFS.comment, SKOS.definition, RDFS.isDefinedBy))),
         )
         self._collect_annotations(subj, term)
         return term
+
+    def _linked(self, subj: URIRef, text: str | None) -> str | None:
+        """A definition with the names of other terms linked to their documentation."""
+        if not text:
+            return text
+        own = {local_name(str(subj)), prefixed_name(self._graph, str(subj))}
+        return link_names(text, self._link_targets, skip=own)
 
     def _collect_annotations(self, subj: URIRef, term: Term) -> None:
         images: list[str] = []
