@@ -67,7 +67,7 @@ graph BT
 A dimension line or dimension annotation on a drawing, indicating measurements or distances.
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#Dimension`
-- **Sub class of:** `metadata:DrawingElement`
+- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
 
 *Example images:*
 
@@ -78,7 +78,7 @@ A dimension line or dimension annotation on a drawing, indicating measurements o
 A grid line or grid system used for alignment and reference in architectural drawings.
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#Grid`
-- **Sub class of:** `metadata:DrawingElement`
+- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
 
 *Example images:*
 
@@ -89,7 +89,7 @@ A grid line or grid system used for alignment and reference in architectural dra
 A symbol drawn on a [Layout](adiro_drawing_metadata.md#Layout) that references another Layout (on the same or a different [DrawingSheet](adiro_drawing_metadata.md#DrawingSheet)). Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target Layout's [LayoutContentType](adiro_drawing_metadata.md#LayoutContentType).
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#ReferenceSymbol`
-- **Sub class of:** `metadata:ReferenceExpression`
+- **Sub class of:** [`metadata:ReferenceExpression`](adiro_drawing_metadata.md#ReferenceExpression)
 
 *Example images:*
 
@@ -102,8 +102,8 @@ A symbol drawn on a [Layout](adiro_drawing_metadata.md#Layout) that references a
 A Layout contains one or more [ReferenceSymbol](#ReferenceSymbol)s. To navigate from a symbol back to the [Layout](adiro_drawing_metadata.md#Layout) it is drawn on, use the SPARQL inverse path ^csymbol:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#hasReferenceSymbol`
-- **Sub property of:** `metadata:contains`
-- **Domain:** `metadata:Layout`
+- **Sub property of:** [`metadata:contains`](adiro_drawing_metadata.md#contains)
+- **Domain:** [`metadata:Layout`](adiro_drawing_metadata.md#Layout)
 - **Range:** [ReferenceSymbol](#ReferenceSymbol)
 
 ### referencesLayout {#referencesLayout}
@@ -112,4 +112,4 @@ Target Layout — the [Layout](adiro_drawing_metadata.md#Layout) this [Reference
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#referencesLayout`
 - **Domain:** [ReferenceSymbol](#ReferenceSymbol)
-- **Range:** `metadata:Layout`
+- **Range:** [`metadata:Layout`](adiro_drawing_metadata.md#Layout)

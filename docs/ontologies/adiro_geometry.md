@@ -67,7 +67,7 @@ A rectangular region on a drawing page that locates something there, whether a m
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#BoundingBox`
 - **Sub class of:**
     - [Geometry](#Geometry)
-    - `aprov:InferredEntity`
+    - [`aprov:InferredEntity`](adiro_provenance.md#InferredEntity)
 
 ### Coordinate Frame {#CoordinateFrame}
 
@@ -97,7 +97,7 @@ The page (an [aprov:FilePage](adiro_provenance.md#FilePage)) that this coordinat
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#describesPage`
 - **Domain:** [Coordinate Frame](#CoordinateFrame)
-- **Range:** `aprov:FilePage`
+- **Range:** [`aprov:FilePage`](adiro_provenance.md#FilePage)
 
 ### hasBoundingBox {#hasBoundingBox}
 
@@ -111,7 +111,7 @@ The bounding box that locates a region on a drawing page. In UC-01 this is the t
 The coordinate frame that a kept image file shows: the rendering of a page, or a crop of it, as it was fed to a model, kept so a viewer can show it. The image is an [aprov:DrawingFile](adiro_provenance.md#DrawingFile) with its [contentHash](adiro_provenance.md#contentHash) and [mediaType](adiro_provenance.md#mediaType), and its pixels are the frame's coordinates. Only an image that is kept has a file: a frame a model saw is recorded whether or not its image is kept.
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#imageOf`
-- **Domain:** `aprov:DrawingFile`
+- **Domain:** [`aprov:DrawingFile`](adiro_provenance.md#DrawingFile)
 - **Range:** [Coordinate Frame](#CoordinateFrame)
 
 ### inCoordinateFrame {#inCoordinateFrame}

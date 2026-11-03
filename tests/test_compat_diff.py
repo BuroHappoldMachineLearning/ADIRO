@@ -321,3 +321,35 @@ def test_the_pull_request_number_and_base_repository_are_taken_only_when_valid(m
     (tmp_path / "m.ttl").write_text("x", encoding="utf-8")
     monkeypatch.setenv("COMPAT_LINK_BASE_REPO", "o/r")
     assert cd.links_from_env(tmp_path, tmp_path)["read_base"]("m") == "x"
+
+
+# --- SKOS concepts are terms (#254) ---------------------------------------------
+SKOS_BASE = BASE.replace("@prefix xsd:", "@prefix skos: <http://www.w3.org/2004/02/skos/core#> .\n@prefix xsd:") + (
+    ':S a skos:ConceptScheme .\n:k a skos:Concept ; skos:inScheme :S ; skos:definition "A kind."@en .\n')
+
+
+def test_a_skos_concept_is_a_term_so_adding_or_removing_one_is_seen():
+    added = _deltas(SKOS_BASE, SKOS_BASE + ":k2 a skos:Concept ; skos:inScheme :S .\n")
+    assert added == [("TERM_ADDED", "https://ex.org/m#k2")] and cd.required_bump(added) == cd.BUMP_MINOR
+    assert _deltas(SKOS_BASE + ":k2 a skos:Concept .\n", SKOS_BASE) == [("TERM_REMOVED", "https://ex.org/m#k2")]
+
+
+def test_a_class_added_to_an_individual_is_minor_and_a_class_removed_is_major():
+    typed = SKOS_BASE.replace(":k a skos:Concept ;", ":k a skos:Concept , :A ;")
+    assert _deltas(SKOS_BASE, typed) == [("MEMBERSHIP_ADDED", "https://ex.org/m#k")]
+    assert cd.required_bump(_deltas(SKOS_BASE, typed)) == cd.BUMP_MINOR
+    assert _deltas(typed, SKOS_BASE) == [("MEMBERSHIP_REMOVED", "https://ex.org/m#k")]
+    assert cd.required_bump(_deltas(typed, SKOS_BASE)) == cd.BUMP_MAJOR
+    named = SKOS_BASE.replace(":k a skos:Concept ;", ":k a skos:Concept , owl:NamedIndividual ;")
+    assert _deltas(SKOS_BASE, named) == []  # owl:NamedIndividual is a declaration, not a class of the individual
+
+
+def test_a_changed_skos_definition_or_note_is_an_annotation_change_and_is_named():
+    reworded = SKOS_BASE.replace('"A kind."@en', '"A kind of field."@en')
+    assert _deltas(SKOS_BASE, reworded) == [("ANNOTATION_CHANGED", "https://ex.org/m#k")]
+    assert cd.required_bump(_deltas(SKOS_BASE, reworded)) == cd.BUMP_PATCH
+    assert cd.annotation_details(_syms(SKOS_BASE), _syms(reworded)) == {"https://ex.org/m#k": ["skos:definition"]}
+    noted = SKOS_BASE.replace(":S a skos:ConceptScheme .", ':S a skos:ConceptScheme ; skos:note "A note." .')
+    assert _deltas(SKOS_BASE, noted) == [("ANNOTATION_CHANGED", "https://ex.org/m#S")]
+    line, found = cd.locate_lines(reworded, "https://ex.org/m#k", ["skos:definition"])
+    assert found == {"skos:definition": line}

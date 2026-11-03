@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+- **Every field kind is an `aprov:FieldKind`** ([#254](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/254)): the 17 concepts of the `TitleblockFieldScheme` and the sentinel `UnidentifiedField` are typed `aprov:FieldKind` as well as `skos:Concept`, which stays written on each, so a query that selects field kinds by either type, or by `skos:inScheme`, finds them.
+- **The scheme's definitions are shorter and say how a field kind relates to the rest** ([#254](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/254)): an assertion names its kind and the region it was read from, and an accepted value is promoted to the property its kind maps to, whose domain is the class the value belongs to (such as `Titleblock`); the scheme itself names no class. The public-content note and the unique-synonym rule are kept, in fewer words, and the sentinel's definition is shorter.
+- **The field kinds are on the module's documentation page** ([#255](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/255)), in a Concepts section with their names in each language, examples, value type and mapped property.
+
 ## [7.0.1] — 2026-10-29
 
 ### Changed

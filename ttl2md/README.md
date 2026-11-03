@@ -63,6 +63,12 @@ markdown = conv.render(doc)
   sub-property-of, inverse-of, and property characteristics (functional,
   transitive, symmetric, …).
 - **Named individuals** — with their class memberships.
+- **Concepts** — SKOS concept schemes, each followed by its concepts: the
+  definition (`skos:definition`, else `rdfs:comment`), the classes besides
+  `skos:Concept`, the scheme, the preferred and alternative labels with their
+  language, examples, scope notes and notes, and any other statement about the
+  concept (an annotation pointing at a property is linked to it). A concept is
+  listed here even when it is also an `owl:NamedIndividual`.
 - **Class expressions** — unions (`A or B`), intersections (`A and B`),
   enumerations (`{a, b}`) and complements (`not A`), rendered recursively.
 - **Example images** — any annotation property whose local name is

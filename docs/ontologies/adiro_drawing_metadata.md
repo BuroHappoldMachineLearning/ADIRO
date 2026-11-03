@@ -82,7 +82,7 @@ A large-scale zoomed-in drawing of a specific construction assembly or connectio
 Element depicted on a drawing. Contained by [Layout](#Layout). Can be a [Facade](adiro_domain_common.md#Facade) system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc. It may carry a [BoundingBox](adiro_geometry.md#BoundingBox), its region on the page ([geom:hasBoundingBox](adiro_geometry.md#hasBoundingBox)).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#DrawingElement`
-- **Restrictions:** `geom:hasBoundingBox` min 0 `geom:BoundingBox`
+- **Restrictions:** [`geom:hasBoundingBox`](adiro_geometry.md#hasBoundingBox) min 0 [`geom:BoundingBox`](adiro_geometry.md#BoundingBox)
 - **isComputerVisionLabel:** false
 
 ### Drawing identifier mention {#DrawingIdentifierMention}
@@ -186,12 +186,12 @@ Drawing layout - contained by [DrawingSheet](#DrawingSheet). Contains [DrawingEl
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#Layout`
 - **Restrictions:**
+    - [`geom:hasBoundingBox`](adiro_geometry.md#hasBoundingBox) min 0 [`geom:BoundingBox`](adiro_geometry.md#BoundingBox)
     - [contains](#contains) min 0 [Drawing element](#DrawingElement)
     - [hasProperty](#hasProperty) exactly 1 [Layout content type](#LayoutContentType)
     - [layoutIdentifier](#layoutIdentifier) min 0 `xsd:string`
     - [layoutScale](#layoutScale) min 0 `xsd:string`
     - [layoutTitle](#layoutTitle) min 0 `xsd:string`
-    - `geom:hasBoundingBox` min 0 `geom:BoundingBox`
 - **isComputerVisionLabel:** true
 
 *Example images:*
@@ -238,7 +238,7 @@ A legend containing mapping information between symbols and a text signifier.
 Supporting visual region on a drawing sheet (titleblock, legend, etc.). Renamed from :Metadata to avoid confusion with semantic metadata properties on [DrawingSheet](#DrawingSheet). Every container (the title block, a revision table, a legend, a key plan, a note) may carry a [BoundingBox](adiro_geometry.md#BoundingBox), its region on the page, which what is read from it is located by ([geom:hasBoundingBox](adiro_geometry.md#hasBoundingBox)); each subclass inherits this.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#MetadataContainer`
-- **Restrictions:** `geom:hasBoundingBox` min 0 `geom:BoundingBox`
+- **Restrictions:** [`geom:hasBoundingBox`](adiro_geometry.md#hasBoundingBox) min 0 [`geom:BoundingBox`](adiro_geometry.md#BoundingBox)
 - **isComputerVisionLabel:** false
 
 ### Note {#Note}
@@ -395,7 +395,7 @@ The organisation commissioning the work — the client or employer — as named 
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#assertsClient`
 - **Domain:** [Titleblock](#Titleblock)
-- **Range:** `aprov:Organisation`
+- **Range:** [`aprov:Organisation`](adiro_provenance.md#Organisation)
 - **extraction hint:** Often the most prominent organisation name on the sheet, sometimes a logo rather than text. Frequently in its own cell above or beside the originator's block.
 
 ### asserts metadata for {#assertsMetadataFor}
@@ -413,7 +413,7 @@ The organisation that produced the drawing — the originator in ISO 19650-2 ter
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#assertsOriginator`
 - **Domain:** [Titleblock](#Titleblock)
-- **Range:** `aprov:Organisation`
+- **Range:** [`aprov:Organisation`](adiro_provenance.md#Organisation)
 - **extraction hint:** Usually the organisation whose logo sits in or beside the title block, and whose code appears in the drawing-number originator segment.
 
 ### assertsPackage {#assertsPackage}
@@ -541,7 +541,7 @@ The Person who approved a drawing or a revision of it. On a [DrawingSheet](#Draw
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#isApprovedBy`
 - **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))
-- **Range:** `aprov:Person`
+- **Range:** [`aprov:Person`](adiro_provenance.md#Person)
 
 ### isAuthoredBy {#isAuthoredBy}
 
@@ -549,7 +549,7 @@ The Person who authored a drawing or a revision of it. On a [DrawingSheet](#Draw
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#isAuthoredBy`
 - **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))
-- **Range:** `aprov:Person`
+- **Range:** [`aprov:Person`](adiro_provenance.md#Person)
 
 ### isCheckedBy {#isCheckedBy}
 
@@ -557,7 +557,7 @@ The Person who checked a drawing or a revision of it. On a [DrawingSheet](#Drawi
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#isCheckedBy`
 - **Domain:** ([Drawing Sheet](#DrawingSheet) or [DrawingRevision](#DrawingRevision))
-- **Range:** `aprov:Person`
+- **Range:** [`aprov:Person`](adiro_provenance.md#Person)
 
 ### isOnPage {#isOnPage}
 
@@ -565,7 +565,7 @@ The page of a file that a drawing is on (an [aprov:FilePage](adiro_provenance.md
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#isOnPage`
 - **Domain:** [Drawing Sheet](#DrawingSheet)
-- **Range:** `aprov:FilePage`
+- **Range:** [`aprov:FilePage`](adiro_provenance.md#FilePage)
 
 ## Datatype Properties
 
@@ -658,7 +658,7 @@ The caption naming an individual [Layout](#Layout), distinct from the sheet-leve
 The name of an organisation as printed. Parallels [personName](#personName). Verbatim: not normalised, expanded or translated at extraction time.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#organisationName`
-- **Domain:** `aprov:Organisation`
+- **Domain:** [`aprov:Organisation`](adiro_provenance.md#Organisation)
 - **Range:** `xsd:string`
 - **extraction hint:** Transcribe exactly as printed, including any legal suffix.
 
@@ -675,7 +675,7 @@ Name of the drawing package.
 Name of the person.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#personName`
-- **Domain:** `aprov:Person`
+- **Domain:** [`aprov:Person`](adiro_provenance.md#Person)
 - **Range:** `xsd:string`
 
 ### projectName {#projectName}
@@ -786,3 +786,232 @@ Vertical orientation.
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#Vertical`
 - **Type:** [Orientation](#OrientationValue)
 - **isComputerVisionLabel:** true
+
+## Concepts
+
+### Titleblock Field Scheme {#TitleblockFieldScheme}
+
+The kinds of field an extraction looks for in a title block, such as the scale, the client or who drew the drawing; each member is an [aprov:FieldKind](adiro_provenance.md#FieldKind). An extracted value is a [FieldAssertion](adiro_provenance.md#FieldAssertion) that names its kind ([aprov:assertsFieldKind](adiro_provenance.md#assertsFieldKind)) and the region it was read from ([aprov:assertedBy](adiro_provenance.md#assertedBy), usually a [Titleblock](#Titleblock)). Once accepted, the value is promoted to the property its kind maps to ([aprov:mapsToFieldProperty](adiro_provenance.md#mapsToFieldProperty)), whose domain is the class the value belongs to, such as Titleblock for [assertsClient](#assertsClient) or [Project](#Project) for [projectNumber](#projectNumber). The scheme names no class itself: a region and a field kind meet only through assertions.
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#TitleblockFieldScheme`
+- **Scope note:** Public content. Every name, synonym and example in this scheme is generic: standard AEC field names, their common German equivalents, and example values that identify nothing (scales, status, revision and discipline codes). A name that only one project uses stays outside ADIRO and refers to a field kind by its IRI.
+- **Note:** Unique synonyms. Within this scheme, an alternative name (skos:altLabel) in a given language names at most one field kind, so a project's synonym that matches a name of another kind is a real conflict, not an ambiguity in ADIRO. The sentinel [UnidentifiedField](#UnidentifiedField) is not a member, so it is never looked for.
+
+#### Approved By Field {#ApprovedByField}
+
+The individual who approved/authorised the drawing for issue.
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#ApprovedByField`
+- **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)
+- **In scheme:** [Titleblock Field Scheme](#TitleblockFieldScheme)
+- **Preferred labels:** "Approved By" (en), "Genehmigt" (de)
+- **Alternative labels:** "approved" (en), "authorised" (en)
+- **expectedRange:** [`aprov:Person`](adiro_provenance.md#Person)
+- **mapsToFieldProperty:** [isApprovedBy](#isApprovedBy)
+
+#### Checked By Field {#CheckedByField}
+
+The individual who checked the drawing.
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#CheckedByField`
+- **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)
+- **In scheme:** [Titleblock Field Scheme](#TitleblockFieldScheme)
+- **Preferred labels:** "Checked By" (en), "Geprüft" (de)
+- **Alternative labels:** "checked" (en), "Gepr." (de)
+- **expectedRange:** [`aprov:Person`](adiro_provenance.md#Person)
+- **mapsToFieldProperty:** [isCheckedBy](#isCheckedBy)
+
+#### Client Field {#ClientField}
+
+The party commissioning the works - the organisation the drawing is produced for.
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#ClientField`
+- **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)
+- **In scheme:** [Titleblock Field Scheme](#TitleblockFieldScheme)
+- **Preferred labels:** "Client" (en), "Auftraggeber" (de)
+- **Alternative labels:** "client" (en), "employer" (en), "for" (en), "Bauherr" (de)
+- **expectedRange:** [`aprov:Organisation`](adiro_provenance.md#Organisation)
+- **mapsToFieldProperty:** [asserts client](#assertsClient)
+
+#### Cross Reference Number Field {#CrossReferenceNumberField}
+
+An alternative or external identifier for the drawing - e.g. a client, design-team or document-management-system (EDMS) reference number, distinct from the drawing's own number.
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#CrossReferenceNumberField`
+- **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)
+- **In scheme:** [Titleblock Field Scheme](#TitleblockFieldScheme)
+- **Preferred labels:** "Cross-Reference Number" (en)
+- **Alternative labels:** "Alternative Ref. No." (en), "Design Team Drawing Number" (en), "EDMS document number" (en), "SA/SK No." (en), "client reference number" (en)
+- **expectedRange:** `xsd:string`
+- **mapsToFieldProperty:** [assertsCrossReferenceNumber](#assertsCrossReferenceNumber)
+
+#### Discipline Field {#DisciplineField}
+
+The engineering/design discipline the drawing belongs to, e.g. Architecture, Structures, [Mechanical](adiro_domain_common.md#Mechanical).
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#DisciplineField`
+- **Comment:** No dedicated ADIRO property yet (no [mapsToFieldProperty](adiro_provenance.md#mapsToFieldProperty)); a candidate to model - possibly reusing adiro_domain_common:Discipline - tracked with the wider title-block relationship work (GitHub issue #69).
+- **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)
+- **In scheme:** [Titleblock Field Scheme](#TitleblockFieldScheme)
+- **Preferred labels:** "Discipline" (en), "Fachbereich" (de)
+- **Alternative labels:** "discipline" (en), "Gewerk" (de)
+- **Examples:** "A", "M", "S"
+- **expectedRange:** `xsd:string`
+
+#### Drawing Number Field {#DrawingNumberField}
+
+The identifier assigned to the drawing sheet within its numbering system.
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#DrawingNumberField`
+- **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)
+- **In scheme:** [Titleblock Field Scheme](#TitleblockFieldScheme)
+- **Preferred labels:** "Drawing Number" (en), "Zeichnungsnummer" (de)
+- **Alternative labels:** "Drawing No." (en), "Dwg No." (en), "drawing number" (en)
+- **Examples:** "ST-201"
+- **expectedRange:** `xsd:string`
+- **mapsToFieldProperty:** [drawingIdentifier](#drawingIdentifier)
+
+#### Drawing Package Field {#DrawingPackageField}
+
+The package, volume or submission grouping the drawing belongs to.
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#DrawingPackageField`
+- **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)
+- **In scheme:** [Titleblock Field Scheme](#TitleblockFieldScheme)
+- **Preferred labels:** "Drawing Package" (en)
+- **Alternative labels:** "Component / Package" (en), "Package" (en), "volume" (en)
+- **expectedRange:** `xsd:string`
+- **mapsToFieldProperty:** [packageName](#packageName)
+
+#### Drawing Title Field {#DrawingTitleField}
+
+The descriptive title of the individual drawing or sheet.
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#DrawingTitleField`
+- **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)
+- **In scheme:** [Titleblock Field Scheme](#TitleblockFieldScheme)
+- **Preferred labels:** "Drawing Title" (en), "Zeichnungstitel" (de)
+- **Alternative labels:** "Sheet Title" (en), "drawing title" (en), "title" (en), "view title" (en)
+- **expectedRange:** `xsd:string`
+- **mapsToFieldProperty:** [drawingTitle](#drawingTitle)
+
+#### Drawn By Field {#DrawnByField}
+
+The individual who drew/authored the drawing, as distinct from the originating organisation (see Originator Field).
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#DrawnByField`
+- **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)
+- **In scheme:** [Titleblock Field Scheme](#TitleblockFieldScheme)
+- **Preferred labels:** "Drawn By" (en), "Gezeichnet" (de)
+- **Alternative labels:** "Author" (en), "drawn" (en), "Bearb." (de), "Verfasser" (de)
+- **expectedRange:** [`aprov:Person`](adiro_provenance.md#Person)
+- **mapsToFieldProperty:** [isAuthoredBy](#isAuthoredBy)
+
+#### Issue Date Field {#IssueDateField}
+
+The date the drawing (or its current revision) was issued.
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#IssueDateField`
+- **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)
+- **In scheme:** [Titleblock Field Scheme](#TitleblockFieldScheme)
+- **Preferred labels:** "Issue Date" (en), "Datum" (de)
+- **Alternative labels:** "Date" (en), "date" (en), "issued" (en)
+- **expectedRange:** `xsd:date`
+- **mapsToFieldProperty:** [issueDate](#issueDate)
+
+#### Originator Field {#OriginatorField}
+
+The organisation that authored/produced the drawing (the consultant or design practice), as distinct from the individual who drew it (see Drawn By Field).
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#OriginatorField`
+- **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)
+- **In scheme:** [Titleblock Field Scheme](#TitleblockFieldScheme)
+- **Preferred labels:** "Originator" (en), "Planverfasser" (de)
+- **Alternative labels:** "consultant" (en), "drawn by (company)" (en), "originator" (en)
+- **expectedRange:** [`aprov:Organisation`](adiro_provenance.md#Organisation)
+- **mapsToFieldProperty:** [asserts originator](#assertsOriginator)
+
+#### Project Number Field {#ProjectNumberField}
+
+The number assigned to the project the drawing belongs to.
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#ProjectNumberField`
+- **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)
+- **In scheme:** [Titleblock Field Scheme](#TitleblockFieldScheme)
+- **Preferred labels:** "Project Number" (en), "Projektnummer" (de)
+- **Alternative labels:** "Proj. No." (en), "Project No." (en)
+- **expectedRange:** `xsd:string`
+- **mapsToFieldProperty:** [projectNumber](#projectNumber)
+
+#### Project Title Field {#ProjectTitleField}
+
+The name of the project the drawing belongs to.
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#ProjectTitleField`
+- **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)
+- **In scheme:** [Titleblock Field Scheme](#TitleblockFieldScheme)
+- **Preferred labels:** "Project Title" (en), "Bauvorhaben" (de)
+- **Alternative labels:** "Project" (en), "Projekt" (de)
+- **expectedRange:** `xsd:string`
+- **mapsToFieldProperty:** [projectName](#projectName)
+
+#### Revision Code Field {#RevisionCodeField}
+
+The revision identifier of the drawing (or its current revision), e.g. 'A', 'P01', '00'.
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#RevisionCodeField`
+- **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)
+- **In scheme:** [Titleblock Field Scheme](#TitleblockFieldScheme)
+- **Preferred labels:** "Revision Code" (en), "Revisionsstand" (de)
+- **Alternative labels:** "Rev" (en), "Rev." (en), "Revision" (en), "Index" (de)
+- **Examples:** "00", "A", "P01"
+- **expectedRange:** `xsd:string`
+- **mapsToFieldProperty:** [revisionCode](#revisionCode)
+
+#### Scale Field {#ScaleField}
+
+The drawing scale - a ratio such as 1:50, or a note such as NTS ('not to scale') or 'as shown'.
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#ScaleField`
+- **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)
+- **In scheme:** [Titleblock Field Scheme](#TitleblockFieldScheme)
+- **Preferred labels:** "Scale" (en), "Maßstab" (de)
+- **Alternative labels:** "NTS" (en), "as shown" (en), "scale" (en)
+- **Examples:** "1:100", "1:50", "NTS"
+- **expectedRange:** `xsd:string`
+- **mapsToFieldProperty:** [drawingScale](#drawingScale)
+
+#### Sheet Size Field {#SheetSizeField}
+
+The paper/sheet size designation of the drawing.
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#SheetSizeField`
+- **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)
+- **In scheme:** [Titleblock Field Scheme](#TitleblockFieldScheme)
+- **Preferred labels:** "Sheet Size" (en), "Blattgröße" (de)
+- **Alternative labels:** "Format" (en), "Size" (en)
+- **Examples:** "A0", "A1"
+- **expectedRange:** `xsd:string`
+- **mapsToFieldProperty:** [sheetSize](#sheetSize)
+
+#### Status Field {#StatusField}
+
+The issue status / suitability of the drawing, e.g. IFC (Issued for Construction), IFR (Issued for Review), AFC (Approved for Construction).
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#StatusField`
+- **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)
+- **In scheme:** [Titleblock Field Scheme](#TitleblockFieldScheme)
+- **Preferred labels:** "Status" (en)
+- **Alternative labels:** "Issue" (en), "Suitability" (en), "status code" (en), "Status" (de)
+- **Examples:** "AFC", "IFC", "IFR"
+- **expectedRange:** `xsd:string`
+- **mapsToFieldProperty:** [statusLabel](#statusLabel)
+
+### Concepts in no scheme
+
+#### Unidentified Field {#UnidentifiedField}
+
+The field kind of an extracted title-block field whose kind matched no member of the [TitleblockFieldScheme](#TitleblockFieldScheme). Its assertion keeps the caption as printed ([aprov:capturedCaption](adiro_provenance.md#capturedCaption)) and the value, so nothing is lost, and is never promoted (this kind has no [aprov:mapsToFieldProperty](adiro_provenance.md#mapsToFieldProperty)). It is not a member of the scheme, so it is never looked for. A high share of assertions bound to it points to a field ADIRO does not cover yet, or to a failure in extraction.
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#UnidentifiedField`
+- **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)

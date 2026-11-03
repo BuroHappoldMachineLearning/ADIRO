@@ -13,7 +13,7 @@ import re
 from pathlib import Path
 from pylode.profiles.ontpub import OntPub
 from rdflib import Graph, URIRef
-from rdflib.namespace import RDF, RDFS, OWL
+from rdflib.namespace import RDF, RDFS, OWL, SKOS
 from rdflib.namespace import split_uri
 
 # ttl2md is a self-contained package that lives in this repository (see the
@@ -194,7 +194,7 @@ def suite_terms(ttl_files: list[Path]) -> dict[str, tuple[str, str, bool]]:
         if ontology is None:
             continue
         documented = (OWL.Class, RDFS.Class, OWL.ObjectProperty, OWL.DatatypeProperty, OWL.AnnotationProperty)
-        for kind in (*documented, OWL.NamedIndividual):
+        for kind in (*documented, OWL.NamedIndividual, SKOS.Concept, SKOS.ConceptScheme):  # concepts too (#255)
             for subject in graph.subjects(RDF.type, kind):
                 iri = str(subject)
                 if iri in terms or not (iri.startswith(ontology) and iri[len(ontology):][:1] in ("#", "/")):
@@ -236,17 +236,25 @@ def pylode_ids(page: str) -> dict[str, str]:
     return ids
 
 
-def link_html_definitions(page: str, ttl_file: Path, elsewhere: dict[str, str]) -> str:
+def link_html_definitions(page: str, ttl_file: Path, elsewhere: dict[str, str], markdown_page: str | None = None) -> str:
     """The pyLODE page with the names of terms in each definition linked to their documentation (#252).
 
     The same rules as the Markdown pages (``ttl2md.crosslinks``): a term with an entry on this page links to it, a term
-    in ``elsewhere`` (IRI -> URL) to that URL. Running it again changes nothing, because a name inside a link is never
-    linked.
+    in ``elsewhere`` (IRI -> URL) to that URL. A term of this module that pyLODE shows no entry for (a named individual,
+    a SKOS concept) links to its entry on the module's Markdown page, ``markdown_page`` (#255). Running it again changes
+    nothing, because a name inside a link is never linked.
     """
     graph = Graph().parse(str(ttl_file), format="turtle")
     ids = pylode_ids(page)
     iri_of = {fid: iri for iri, fid in ids.items()}
     ontology = next((str(o) for o in graph.subjects(RDF.type, OWL.Ontology)), None)
+    elsewhere = dict(elsewhere)
+    if markdown_page and ontology:
+        for kind in (OWL.NamedIndividual, SKOS.Concept, SKOS.ConceptScheme):
+            for subject in graph.subjects(RDF.type, kind):
+                iri = str(subject)
+                if iri not in ids and iri.startswith(ontology) and iri[len(ontology):][:1] in ("#", "/"):
+                    elsewhere[iri] = f"{markdown_page}#{ttl2md.local_name(iri)}"
     targets = ttl2md.targets_for(graph, ontology, {iri: f"#{fid}" for iri, fid in ids.items()}, elsewhere)
     if not targets:
         return page
@@ -266,32 +274,38 @@ def link_pylode_pages(ttl_files: list[Path], repo_root: Path, output_dir: Path) 
     """Link the names of terms in the definitions of every pyLODE page, the latest and the earlier releases' (#252).
 
     Run once every page is generated, because a link to another module's latest page takes its id from that page
-    (``pylode_ids``). A kept page of an earlier release gets the links without pyLODE being run again; its links to other
-    modules go to their latest pages, like its dependency diagram. Returns the number of pages changed.
+    (``pylode_ids``). A term that pyLODE shows no entry for (a named individual, a SKOS concept) links to its entry on
+    the Markdown page instead (#255): the module's own page of the same version, or another module's latest page. A kept
+    page of an earlier release gets the links without pyLODE being run again; its links to other modules go to their
+    latest pages, like its dependency diagram. Returns the number of pages changed.
     """
     suite = suite_terms(ttl_files)
     latest = {f.stem: output_dir / f"{f.stem}.html" for f in ttl_files}
     ids = {module: pylode_ids(page.read_text(encoding="utf-8")) for module, page in latest.items() if page.is_file()}
 
-    pages: list[tuple[Path, Path, str]] = [(f, latest[f.stem], "") for f in ttl_files]
+    # (the Turtle of the page, the page, the way up to docs/, the version of an earlier release's page)
+    pages: list[tuple[Path, Path, str, str | None]] = [(f, latest[f.stem], "", None) for f in ttl_files]
     for ttl_file in ttl_files:
         module_dir = output_dir / ttl_file.stem
         for page in sorted(module_dir.glob(f"*/{ttl_file.stem}.html")) if module_dir.is_dir() else []:
             snapshot = repo_root / "versions" / ttl_file.stem / page.parent.name / f"{ttl_file.stem}.ttl"
             if SEMVER_RE.match(page.parent.name) and snapshot.is_file():
-                pages.append((snapshot, page, "../../"))
+                pages.append((snapshot, page, "../../", page.parent.name))
 
     changed = 0
-    for ttl_file, page_file, prefix in pages:
+    for ttl_file, page_file, prefix, version in pages:
         if not page_file.is_file():
             continue
         module = page_file.stem
+        # the site serves docs/ontologies/<module>.md at ontologies/<module>/ (and <module>/<version>.md one level down)
         elsewhere = {} if pylode_metadata.replacements(ttl_file) is not None else {
-            iri: f"{prefix}{other}.html#{ids[other][iri]}"
-            for iri, (other, _, _) in suite.items() if other != module and iri in ids.get(other, {})
+            iri: f"{prefix}{other}.html#{ids[other][iri]}" if iri in ids.get(other, {})
+            else f"{prefix}ontologies/{other}/#{name}"
+            for iri, (other, name, _) in suite.items() if other != module
         }
+        markdown_page = f"{prefix}ontologies/{module}/" + (f"{version}/" if version else "")
         page = page_file.read_text(encoding="utf-8")
-        linked = link_html_definitions(page, ttl_file, elsewhere)
+        linked = link_html_definitions(page, ttl_file, elsewhere, markdown_page)
         if linked != page:
             page_file.write_text(linked, encoding="utf-8")
             changed += 1

@@ -480,5 +480,5 @@ A wall - a vertical structural panel.
 Links a [Layout](adiro_drawing_metadata.md#Layout) to an AEC discipline. Discipline characterises the Layout itself, not its content type — the two are orthogonal axes.
 
 - **IRI:** `https://w3id.org/adiro/adiro_domain_common#hasDiscipline`
-- **Domain:** `metadata:Layout`
+- **Domain:** [`metadata:Layout`](adiro_drawing_metadata.md#Layout)
 - **Range:** [Discipline](#Discipline)

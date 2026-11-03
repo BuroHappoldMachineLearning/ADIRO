@@ -94,6 +94,12 @@ What a search for a field found, when it found no value: [Empty](#Empty), [Illeg
     - [Not found](#NotFound)
     - [Failed](#Failed)
 
+### Concept {#Concept}
+
+Typing stub for the SKOS class of the same name, declared locally so this module stays self-contained and the reasoning CI resolves offline. A stub is a name, not a definition: the authoritative definition lives at the source that rdfs:isDefinedBy points at. ADIRO uses it as the superclass of [FieldKind](#FieldKind) and as the range of [assertsFieldKind](#assertsFieldKind).
+
+- **IRI:** `http://www.w3.org/2004/02/skos/core#Concept`
+
 ### Configuration {#Configuration}
 
 The settings a step of an extraction used, kept as text ([configurationContent](#configurationContent)): a prompt, rendering settings, size limits, model parameters. ADIRO does not model what is inside, so any setting can be recorded without a new term. A configuration is identified by its content: the same content used on thousands of pages should be one individual. A step records that it used a configuration with [prov:used](#used); where the configuration varies from page to page, as a prompt can, the [InferenceMeta](#InferenceMeta) of that page records it. A resolution is not a configuration: coordinates depend on it, so it is recorded on the coordinate frame it gives ([resolutionDpi](adiro_geometry.md#resolutionDpi), in adiro_geometry).
@@ -128,6 +134,13 @@ A single reified assertion that some source makes a value-claim about a field ki
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#FieldAssertion`
 - **Sub class of:** [Inferred Entity](#InferredEntity)
+
+### Field Kind {#FieldKind}
+
+A kind of field printed on a drawing, such as the scale, the client or who drew it, kept as data: each kind is an individual of this class in a field-kind scheme (the [TitleblockFieldScheme](adiro_drawing_metadata.md#TitleblockFieldScheme), in adiro_drawing_metadata), so a new kind is a new individual and not a new class or property. A [FieldAssertion](#FieldAssertion) names its kind with [assertsFieldKind](#assertsFieldKind). A field kind carries the names it is printed under (skos:prefLabel and skos:altLabel, in each language), examples of values (skos:example), the type of its value ([expectedRange](#expectedRange)) and the property an accepted value is promoted to ([mapsToFieldProperty](#mapsToFieldProperty)), whose domain is the class the value belongs to.
+
+- **IRI:** `https://w3id.org/adiro/adiro_provenance#FieldKind`
+- **Sub class of:** [Concept](#Concept)
 
 ### File Page {#FilePage}
 
@@ -238,11 +251,11 @@ The source that makes this assertion - typically the drawing region it was read 
 
 ### assertsFieldKind {#assertsFieldKind}
 
-The field kind (a SKOS concept in a field-kind scheme, e.g. a title-block field such as Scale or Client) that this assertion is about. Keeping the kind as a referenced concept - rather than a bespoke property per field - is what lets names/synonyms live on the concept and keeps the number of relationships small.
+The field kind this assertion is about: a [FieldKind](#FieldKind) in a field-kind scheme, such as the title-block field for the scale or for the client. Keeping the kind as data, rather than a property per field, lets the names and synonyms of a field live on its kind and keeps the number of properties small. The range is [skos:Concept](#Concept), the superclass of FieldKind.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#assertsFieldKind`
 - **Domain:** [Field Assertion](#FieldAssertion)
-- **Range:** `skos:Concept`
+- **Range:** [Concept](#Concept)
 
 ### belongsToFile {#belongsToFile}
 
@@ -597,13 +610,13 @@ Where a copy of the file is stored: an address in a document-management or cloud
 
 ### expectedRange {#expectedRange}
 
-On a field-kind concept: the expected type of its asserted value - a datatype (e.g. xsd:string, xsd:date) for literal-valued fields, or a class (e.g. [Person](#Person), [Organisation](#Organisation)) for object-valued fields. Signals whether an assertion of this kind uses [hasLiteralValue](#hasLiteralValue) or [hasValueEntity](#hasValueEntity).
+On a [FieldKind](#FieldKind): the type of its value, a datatype (such as xsd:string or xsd:date) or a class (such as [Person](#Person) or [Organisation](#Organisation)). It says whether an assertion of this kind records its value with [hasLiteralValue](#hasLiteralValue) or with [hasValueEntity](#hasValueEntity).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#expectedRange`
 
 ### mapsToFieldProperty {#mapsToFieldProperty}
 
-On a field-kind concept: the canonical ADIRO property that an accepted assertion ([hasAcceptance](#hasAcceptance) Accepted) of this field kind, one that has a value, is promoted to (the bridge from the reified assertion to a direct statement on the subject). The subject is the assertion's [assertedAbout](#assertedAbout), so a promotion is: ?a assertedAbout ?subject ; [assertsFieldKind](#assertsFieldKind) ?k . ?k mapsToFieldProperty ?p  =>  ?subject ?p <value>. Annotation only - the promotion is performed by tooling on acceptance, not by reasoning.
+On a [FieldKind](#FieldKind): the ADIRO property that an accepted assertion of this kind ([hasAcceptance](#hasAcceptance) Accepted) that has a value is promoted to, on the subject of the assertion ([assertedAbout](#assertedAbout)): ?a assertedAbout ?s ; [assertsFieldKind](#assertsFieldKind) ?k . ?k mapsToFieldProperty ?p gives ?s ?p with the value. The domain of that property is the class the value belongs to, such as [Titleblock](adiro_drawing_metadata.md#Titleblock) for [assertsClient](adiro_drawing_metadata.md#assertsClient) or [Project](adiro_drawing_metadata.md#Project) for [projectNumber](adiro_drawing_metadata.md#projectNumber). Annotation only: the promotion is a query that tooling runs on acceptance, not reasoning.
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#mapsToFieldProperty`
 

@@ -491,7 +491,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A symbol drawn on a <a href="../../adiro_drawing_metadata.html#Layout">Layout</a> that references another Layout (on the same or a different <a href="../../adiro_drawing_metadata.html#DrawingSheet">DrawingSheet</a>). Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target Layout's <a href="../../adiro_drawing_metadata.html#Layoutcontenttype">LayoutContentType</a>.</p></td>
+              <td><p>A symbol drawn on a <a href="../../adiro_drawing_metadata.html#Layout">Layout</a> that references another <a href="../../adiro_drawing_metadata.html#Layout">Layout</a> (on the same or a different <a href="../../adiro_drawing_metadata.html#DrawingSheet">DrawingSheet</a>). Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target <a href="../../adiro_drawing_metadata.html#Layout">Layout</a>'s <a href="../../adiro_drawing_metadata.html#Layoutcontenttype">LayoutContentType</a>.</p></td>
             </tr>
             <tr>
               <th>
@@ -589,7 +589,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Target Layout — the <a href="../../adiro_drawing_metadata.html#Layout">Layout</a> this ReferenceSymbol points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^csymbol:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).</p></td>
+              <td><p>Target Layout — the <a href="../../adiro_drawing_metadata.html#Layout">Layout</a> this ReferenceSymbol points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a <a href="../../adiro_drawing_metadata.html#Layout">Layout</a>, use the SPARQL inverse path ^csymbol:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).</p></td>
             </tr>
             <tr>
               <th>
