@@ -6,6 +6,7 @@ This script discovers all .ttl files in the root directory and uses pyLODE
 to generate HTML documentation for each one.
 """
 
+import html as htmllib
 import sys
 import shutil
 import re
@@ -110,14 +111,13 @@ def find_display_json_files(root_dir: Path) -> list[Path]:
     return sorted(display_json_files)
 
 
-def generate_documentation(ttl_file: Path, output_dir: Path, copy_ttl: bool = True, suite: dict | None = None) -> bool:
+def generate_documentation(ttl_file: Path, output_dir: Path, copy_ttl: bool = True) -> bool:
     """
     Generate HTML documentation for a TTL file using pyLODE.
     
     Args:
         ttl_file: Path to the input TTL file
         output_dir: Directory where HTML output should be saved
-        suite: the suite's terms (``suite_terms``), for the links from a definition to another module's page
         
     Returns:
         True if successful, False otherwise
@@ -143,7 +143,7 @@ def generate_documentation(ttl_file: Path, output_dir: Path, copy_ttl: bool = Tr
         # The TTL source and documentation rows of the Metadata block, and the check that the page shows the module's own
         # IRI and title (a wrong page fails the build)
         module, version = pylode_metadata.module_and_version(ttl_file, output_dir)
-        if not maintain_page(ttl_file, output_file, module, version, suite):
+        if not maintain_page(ttl_file, output_file, module, version):
             return False
         
         print(f"  [OK] Generated: {output_file}")
@@ -161,16 +161,15 @@ def generate_documentation(ttl_file: Path, output_dir: Path, copy_ttl: bool = Tr
         return False
 
 
-def maintain_page(ttl_file: Path, html_file: Path, module: str, version: str | None, suite: dict | None = None) -> bool:
+def maintain_page(ttl_file: Path, html_file: Path, module: str, version: str | None) -> bool:
     """Add the two links to a pyLODE page (if they are not there) and check its Metadata block against the Turtle (#146).
 
     Used for a page just generated and for an earlier release's page that is kept: the links are added to it without
-    regenerating pyLODE's output, and so are the links from the names of terms in its definitions (#252). Returns False,
-    after saying why, when the page shows the wrong IRI or heading.
+    regenerating pyLODE's output. Returns False, after saying why, when the page shows the wrong IRI or heading.
+    The links from the names of terms in its definitions are added later, by ``link_pylode_pages`` (#252).
     """
     page = html_file.read_text(encoding="utf-8")
     with_links = pylode_metadata.add_deprecation(pylode_metadata.add_links(page, module, version), ttl_file)
-    with_links = link_html_definitions(with_links, ttl_file, module, "../../" if version else "", suite)
     if with_links != page:
         html_file.write_text(with_links, encoding="utf-8")
     problems = pylode_metadata.check(with_links, ttl_file)
@@ -206,50 +205,97 @@ def suite_terms(ttl_files: list[Path]) -> dict[str, tuple[str, str, bool]]:
     return terms
 
 
-def elsewhere_links(suite: dict | None, ttl_file: Path, module: str, prefix: str, suffix: str,
-                    individuals: bool) -> dict[str, str]:
-    """IRI -> URL of the terms of the other modules, from a page ``prefix`` away from the latest pages (#252).
+def elsewhere_links(suite: dict | None, ttl_file: Path, module: str, prefix: str) -> dict[str, str]:
+    """IRI -> URL of the terms of the other modules on their latest Markdown page, from a page ``prefix`` away (#252).
 
-    ``suffix`` is the file of a module's page (``.md``, ``.html``); ``individuals`` is False for the pyLODE pages, which
-    document no named individuals. The page of a deprecated module links only within itself.
+    ttl2md gives every entry its local name as its anchor. The page of a deprecated module links only within itself.
     """
     if not suite or pylode_metadata.replacements(ttl_file) is not None:
         return {}
-    return {iri: f"{prefix}{other}{suffix}#{name}" for iri, (other, name, individual) in suite.items()
-            if other != module and (individuals or not individual)}
+    return {iri: f"{prefix}{other}.md#{name}" for iri, (other, name, _) in suite.items() if other != module}
 
 
 _ENTITY_DIV = re.compile(r'<div class="property entity" id="([^"]+)">')
+_ENTITY_IRI = re.compile(r"<th>IRI</th>\s*<td>\s*<code>([^<]+)</code>")
 _DESCRIPTION_CELL = re.compile(r'(>Description</a>\s*</th>\s*<td>)(.*?)(</td>)', re.DOTALL)
 
 
-def link_html_definitions(page: str, ttl_file: Path, module: str, prefix: str, suite: dict | None) -> str:
+def pylode_ids(page: str) -> dict[str, str]:
+    """IRI -> the ``id`` of its entry on a pyLODE page.
+
+    pyLODE makes the id from the label when it can (the class ``LayoutContentType``, labelled "Layout content type", is
+    ``#Layoutcontenttype``) and from the IRI when that id is taken, so it is read from the page, never computed. A term
+    with no entry (pyLODE documents no named individuals) is not in the result.
+    """
+    parts = _ENTITY_DIV.split(page)  # [before, id, chunk, id, chunk, ...]
+    ids: dict[str, str] = {}
+    for i in range(1, len(parts), 2):
+        match = _ENTITY_IRI.search(parts[i + 1])
+        if match:
+            ids.setdefault(htmllib.unescape(match.group(1)).strip(), parts[i])
+    return ids
+
+
+def link_html_definitions(page: str, ttl_file: Path, elsewhere: dict[str, str]) -> str:
     """The pyLODE page with the names of terms in each definition linked to their documentation (#252).
 
-    The same rules as the Markdown pages (``ttl2md.crosslinks``): a term on this page links to its entry (pyLODE gives
-    each class and property an ``id``, its local name), a term of another module to that module's latest page. Running
-    it again changes nothing, because a name inside a link is never linked.
+    The same rules as the Markdown pages (``ttl2md.crosslinks``): a term with an entry on this page links to it, a term
+    in ``elsewhere`` (IRI -> URL) to that URL. Running it again changes nothing, because a name inside a link is never
+    linked.
     """
     graph = Graph().parse(str(ttl_file), format="turtle")
-    ids = set(_ENTITY_DIV.findall(page))
+    ids = pylode_ids(page)
+    iri_of = {fid: iri for iri, fid in ids.items()}
     ontology = next((str(o) for o in graph.subjects(RDF.type, OWL.Ontology)), None)
-    on_page = {str(s): f"#{ttl2md.local_name(str(s))}" for s in set(graph.subjects())
-               if isinstance(s, URIRef) and ttl2md.local_name(str(s)) in ids}
-    targets = ttl2md.targets_for(graph, ontology, on_page,
-                                 elsewhere_links(suite, ttl_file, module, prefix, ".html", individuals=False))
+    targets = ttl2md.targets_for(graph, ontology, {iri: f"#{fid}" for iri, fid in ids.items()}, elsewhere)
     if not targets:
         return page
-    iri_of = {ttl2md.local_name(iri): iri for iri in on_page}
 
-    parts = _ENTITY_DIV.split(page)  # [before, id, chunk, id, chunk, ...]
+    parts = _ENTITY_DIV.split(page)
     for i in range(1, len(parts), 2):
-        entity = parts[i]
-        own = {entity, ttl2md.prefixed_name(graph, iri_of[entity]) if entity in iri_of else None}
+        iri = iri_of.get(parts[i])
+        own = {ttl2md.local_name(iri), ttl2md.prefixed_name(graph, iri)} if iri else set()
         parts[i + 1] = _DESCRIPTION_CELL.sub(
             lambda m: m.group(1) + ttl2md.link_names(m.group(2), targets, ttl2md.html_link, skip=own) + m.group(3),
             parts[i + 1], count=1)
-        parts[i] = f'<div class="property entity" id="{entity}">'
+        parts[i] = f'<div class="property entity" id="{parts[i]}">'
     return "".join(parts)
+
+
+def link_pylode_pages(ttl_files: list[Path], repo_root: Path, output_dir: Path) -> int:
+    """Link the names of terms in the definitions of every pyLODE page, the latest and the earlier releases' (#252).
+
+    Run once every page is generated, because a link to another module's latest page takes its id from that page
+    (``pylode_ids``). A kept page of an earlier release gets the links without pyLODE being run again; its links to other
+    modules go to their latest pages, like its dependency diagram. Returns the number of pages changed.
+    """
+    suite = suite_terms(ttl_files)
+    latest = {f.stem: output_dir / f"{f.stem}.html" for f in ttl_files}
+    ids = {module: pylode_ids(page.read_text(encoding="utf-8")) for module, page in latest.items() if page.is_file()}
+
+    pages: list[tuple[Path, Path, str]] = [(f, latest[f.stem], "") for f in ttl_files]
+    for ttl_file in ttl_files:
+        module_dir = output_dir / ttl_file.stem
+        for page in sorted(module_dir.glob(f"*/{ttl_file.stem}.html")) if module_dir.is_dir() else []:
+            snapshot = repo_root / "versions" / ttl_file.stem / page.parent.name / f"{ttl_file.stem}.ttl"
+            if SEMVER_RE.match(page.parent.name) and snapshot.is_file():
+                pages.append((snapshot, page, "../../"))
+
+    changed = 0
+    for ttl_file, page_file, prefix in pages:
+        if not page_file.is_file():
+            continue
+        module = page_file.stem
+        elsewhere = {} if pylode_metadata.replacements(ttl_file) is not None else {
+            iri: f"{prefix}{other}.html#{ids[other][iri]}"
+            for iri, (other, _, _) in suite.items() if other != module and iri in ids.get(other, {})
+        }
+        page = page_file.read_text(encoding="utf-8")
+        linked = link_html_definitions(page, ttl_file, elsewhere)
+        if linked != page:
+            page_file.write_text(linked, encoding="utf-8")
+            changed += 1
+    return changed
 
 
 def _local_name(term_iri: str) -> str | None:
@@ -366,8 +412,7 @@ def inject_example_images(ttl_file: Path, html_file: Path) -> None:
     html_file.write_text(html, encoding="utf-8")
 
 
-def generate_version_documentation(ttl_files: list[Path], repo_root: Path, output_dir: Path, refresh: bool | set = False,
-                                   suite: dict | None = None) -> int:
+def generate_version_documentation(ttl_files: list[Path], repo_root: Path, output_dir: Path, refresh: bool | set = False) -> int:
     """pyLODE HTML for every earlier release of each module (#124), at ``<module>/<version>/<module>.html``.
 
     That is next to the archived Turtle the deploy publishes at the same path, so a version's page can link to
@@ -397,10 +442,10 @@ def generate_version_documentation(ttl_files: list[Path], repo_root: Path, outpu
             snapshot = repo_root / "versions" / stem / version / f"{stem}.ttl"
             page = module_dir / version / f"{stem}.html"
             if page.is_file() and not (refresh is True or (refresh and stem in refresh)):
-                if not maintain_page(snapshot, page, stem, version, suite):
+                if not maintain_page(snapshot, page, stem, version):
                     failures += 1
                 continue
-            if not generate_documentation(snapshot, module_dir / version, copy_ttl=False, suite=suite):
+            if not generate_documentation(snapshot, module_dir / version, copy_ttl=False):
                 failures += 1
     return failures
 
@@ -743,7 +788,7 @@ def _ontology_page(ttl_file: Path, ttl_files: list[Path], title: str, selected: 
     # Pages live below docs/ontologies/, so relative image references (if any) resolve via the depth prefix;
     # absolute image URLs (the ADIRO case, resolved against @base) are left untouched by ttl2md.
     # The names of terms in a definition link to their entries, on this page or another module's latest page (#252).
-    elsewhere = elsewhere_links(suite, ttl_file, stem, "../" if earlier else "", ".md", individuals=True)
+    elsewhere = elsewhere_links(suite, ttl_file, stem, "../" if earlier else "")
     body = ttl2md.convert_file(ttl_file, title=page_title, asset_prefix=depth, external_links=elsewhere)
 
     links_block = (
@@ -936,17 +981,18 @@ def main():
     
     # Generate documentation for each file
     success_count = 0
-    suite = suite_terms(ttl_files)  # the links from a definition to another module's page (#252)
     for ttl_file in ttl_files:
-        if generate_documentation(ttl_file, output_dir, suite=suite):
+        if generate_documentation(ttl_file, output_dir):
             success_count += 1
 
     # pyLODE HTML for each earlier release, next to its archived Turtle (#124)
     args = sys.argv[1:]
     refresh_modules = {args[i + 1] for i, a in enumerate(args[:-1]) if a == "--refresh-module"}
     version_failures = generate_version_documentation(ttl_files, repo_root, output_dir,
-                                                      refresh=True if "--refresh-versions" in args else refresh_modules,
-                                                      suite=suite)
+                                                      refresh=True if "--refresh-versions" in args else refresh_modules)
+
+    # The names of terms in the definitions of every pyLODE page, once all of them exist (#252)
+    print(f"  [OK] Linked the definitions of {link_pylode_pages(ttl_files, repo_root, output_dir)} pyLODE page(s)")
     
     # Generate index.html
     print("-" * 60)

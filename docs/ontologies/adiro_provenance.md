@@ -597,7 +597,7 @@ Where a copy of the file is stored: an address in a document-management or cloud
 
 ### expectedRange {#expectedRange}
 
-On a field-kind concept: the expected type of its asserted value - a datatype (e.g. xsd:string, xsd:date) for literal-valued fields, or a class (e.g. Person, [Organisation](#Organisation)) for object-valued fields. Signals whether an assertion of this kind uses [hasLiteralValue](#hasLiteralValue) or [hasValueEntity](#hasValueEntity).
+On a field-kind concept: the expected type of its asserted value - a datatype (e.g. xsd:string, xsd:date) for literal-valued fields, or a class (e.g. [Person](#Person), [Organisation](#Organisation)) for object-valued fields. Signals whether an assertion of this kind uses [hasLiteralValue](#hasLiteralValue) or [hasValueEntity](#hasValueEntity).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#expectedRange`
 

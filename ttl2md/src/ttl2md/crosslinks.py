@@ -11,8 +11,9 @@ rewrites a text. The rules, chosen so that ordinary words are not linked by mist
 * A name is matched as a whole word, case-sensitively, optionally followed by a plural ``s``.
 * A name with a capital letter inside it (``FieldAssertion``, ``hasStepKind``) or a prefix (``prov:Activity``) is
   always linked.
-* A name that is a single capitalised word (``Layout``, ``Failed``) is linked unless it starts a sentence or stands
-  next to another capitalised word (part of a phrase such as "Ground Floor Plan").
+* A name that is a single capitalised word (``Layout``, ``Failed``) is linked unless it starts a sentence (the full
+  stop of "e.g.", "i.e.", "etc.", "cf." or "vs." does not end one) or stands next to another capitalised word (part
+  of a phrase such as "Ground Floor Plan").
 * A name that is a single all-lowercase word (``unit``, ``contains``) is never linked.
 * Each target is linked once per text, at its first linkable mention, and the names in ``skip`` (the term being
   defined) are never linked.
@@ -34,7 +35,8 @@ _PROTECTED = re.compile(
     re.IGNORECASE | re.DOTALL,
 )
 _SINGLE_WORD = re.compile(r"[A-Za-z][a-z0-9]*")
-_SENTENCE_START = re.compile(r"(?:^|[.!?])\s*$")  # the text before a match ends a sentence (or is empty)
+# The text before a match ends a sentence (or is empty); the full stop of an abbreviation ("e.g. Person") does not.
+_SENTENCE_START = re.compile(r"(?:^|(?<!\be\.g)(?<!\bi\.e)(?<!\betc)(?<!\bcf)(?<!\bvs)[.!?])\s*$")
 _CAPITALISED_BEFORE = re.compile(r"[A-Z][\w\-]*\s$")  # "Ground Floor| Plan"
 _CAPITALISED_AFTER = re.compile(r"s?\s[A-Z]")  # "Detail| Markers"
 

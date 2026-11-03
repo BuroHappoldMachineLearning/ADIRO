@@ -45,6 +45,10 @@ def test_a_single_capitalised_word_is_not_linked_at_the_start_of_a_sentence():
     assert link_names("Layout of the page. Plan it.", TARGETS) == "Layout of the page. Plan it."
 
 
+def test_the_full_stop_of_an_abbreviation_does_not_start_a_sentence():
+    assert link_names("A class (e.g. Layout, i.e. Plan).", TARGETS) == "A class (e.g. [Layout](#Layout), i.e. [Plan](#Plan))."
+
+
 def test_a_single_capitalised_word_is_not_linked_inside_a_capitalised_phrase():
     text = "A title such as 'Ground Floor Plan' or Plan Markers, on a Layout."
     assert link_names(text, TARGETS) == "A title such as 'Ground Floor Plan' or Plan Markers, on a [Layout](#Layout)."
