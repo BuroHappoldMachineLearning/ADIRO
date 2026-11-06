@@ -5,6 +5,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [2.3.0] — 2026-11-06
+
 ### Added
 - **`FieldKind`, the class of a field kind** ([#254](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/254)). A field kind (the scale, the client, who drew the drawing) is kept as data: an individual in a field-kind scheme, which an assertion names with `assertsFieldKind`. `FieldKind` is a subclass of `skos:Concept` whose definition explains the pattern: the names a field is printed under, the type of its value (`expectedRange`) and the property an accepted value is promoted to (`mapsToFieldProperty`), whose domain is the class of the subject the value is about. The range of `assertsFieldKind` stays `skos:Concept`. `skos:Concept` is declared as a typing stub, like the PROV-O terms.
 
