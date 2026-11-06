@@ -13,6 +13,14 @@
       "x": -593,
       "y": 425
     },
+    "FieldKind": {
+      "x": 851,
+      "y": 1408
+    },
+    "Configuration": {
+      "x": 1227,
+      "y": 300
+    },
     "Party": {
       "x": -97,
       "y": 1369
@@ -32,6 +40,14 @@
     "FilePage": {
       "x": 441,
       "y": 563
+    },
+    "StepKind": {
+      "x": -992,
+      "y": 546
+    },
+    "TextReading": {
+      "x": 1231,
+      "y": 497
     },
     "AssertionOutcome": {
       "x": 1336,
@@ -53,13 +69,13 @@
       "x": -592,
       "y": 820
     },
+    "Concept": {
+      "x": 851,
+      "y": 1130
+    },
     "Document": {
       "x": -9,
       "y": 192
-    },
-    "http://www.w3.org/2004/02/skos/core#Concept": {
-      "x": 1326,
-      "y": 901
     },
     "https://standards.iso.org/iso/21597/-1/ed-1/en/Container#Party": {
       "x": -100,
@@ -74,84 +90,112 @@
       "y": 1168
     },
     "__dataprop__FieldAssertion__acceptedAt": {
-      "x": 766,
+      "x": 770,
       "y": 911
     },
     "__dataprop__FieldAssertion__acceptedUnder": {
-      "x": 904,
+      "x": 908,
       "y": 911
     },
     "__dataprop__FieldAssertion__capturedCaption": {
-      "x": 789,
-      "y": 975
+      "x": 845,
+      "y": 986
     },
     "__dataprop__FieldAssertion__hasLiteralValue": {
-      "x": 907,
-      "y": 976
+      "x": 845,
+      "y": 1011
+    },
+    "__dataprop__Configuration__configurationContent": {
+      "x": 1230,
+      "y": 394
     },
     "__dataprop__DrawingFile__contentHash": {
-      "x": -126,
-      "y": 646
+      "x": -162,
+      "y": 651
     },
     "__dataprop__DrawingFile__fileCreatedAt": {
-      "x": 21,
-      "y": 656
+      "x": -20,
+      "y": 651
     },
     "__dataprop__DrawingFile__fileModifiedAt": {
-      "x": 131,
-      "y": 651
+      "x": 151,
+      "y": 634
     },
     "__dataprop__DrawingFile__fileName": {
-      "x": -224,
-      "y": 646
+      "x": -235,
+      "y": 702
     },
     "__dataprop__DrawingFile__fileSize": {
-      "x": -88,
-      "y": 694
+      "x": -81,
+      "y": 693
     },
     "__dataprop__DrawingFile__hashAlgorithm": {
-      "x": 64,
-      "y": 708
+      "x": 51,
+      "y": 700
     },
     "__dataprop__DrawingFile__mediaType": {
-      "x": 170,
-      "y": 699
+      "x": 159,
+      "y": 691
     },
     "__dataprop__DrawingFile__pageCount": {
-      "x": -79,
-      "y": 746
-    },
-    "__dataprop__DrawingFile__storageLocation": {
-      "x": 49,
+      "x": -151,
       "y": 751
     },
+    "__dataprop__DrawingFile__sourceLocation": {
+      "x": -12,
+      "y": 751
+    },
+    "__dataprop__DrawingFile__sourcePage": {
+      "x": 129,
+      "y": 751
+    },
+    "__dataprop__DrawingFile__storageLocation": {
+      "x": -216,
+      "y": 602
+    },
     "__dataprop__FilePage__displayHeightPt": {
-      "x": 300,
-      "y": 655
+      "x": 340,
+      "y": 653
     },
     "__dataprop__FilePage__displayWidthPt": {
-      "x": 509,
-      "y": 654
+      "x": 459,
+      "y": 655
     },
     "__dataprop__FilePage__pageNumber": {
-      "x": 641,
-      "y": 651
+      "x": 601,
+      "y": 655
     },
     "__dataprop__FilePage__pdfRotationDeg": {
-      "x": 407,
-      "y": 654
+      "x": 441,
+      "y": 730
+    },
+    "__dataprop__InferredEntity__errorMessage": {
+      "x": 774,
+      "y": 542
     },
     "__dataprop__InferredEntity__hasConfidence": {
-      "x": 844,
-      "y": 543
+      "x": 920,
+      "y": 542
+    },
+    "__dataprop__InferenceMeta__errorMessage": {
+      "x": -656,
+      "y": 524
     },
     "__dataprop__InferenceMeta__inferredAt": {
-      "x": -502,
-      "y": 547
+      "x": -522,
+      "y": 525
+    },
+    "__dataprop__TextReading__readText": {
+      "x": 1231,
+      "y": 564
     },
     "__dataprop__unattached__endedAtTime": {
-      "x": 419,
-      "y": 940
+      "x": 305,
+      "y": 1528
+    },
+    "__dataprop__unattached__startedAtTime": {
+      "x": 429,
+      "y": 1528
     }
   },
   "edgeStyleConfig": {
@@ -215,10 +259,28 @@
       "color": "#46d926",
       "lineType": "solid"
     },
+    "hasReadingOutcome": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26d957",
+      "lineType": "solid"
+    },
+    "hasStepKind": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26d926",
+      "lineType": "solid"
+    },
     "hasValueEntity": {
       "show": true,
       "showLabel": true,
       "color": "#26b5d9",
+      "lineType": "solid"
+    },
+    "http://purl.org/dc/terms/isPartOf": {
+      "show": true,
+      "showLabel": true,
+      "color": "#88d926",
       "lineType": "solid"
     },
     "http://www.w3.org/ns/prov#used": {
@@ -231,6 +293,12 @@
       "show": true,
       "showLabel": true,
       "color": "#d95c26",
+      "lineType": "solid"
+    },
+    "http://www.w3.org/ns/prov#wasDerivedFrom": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d9b826",
       "lineType": "solid"
     },
     "http://www.w3.org/ns/prov#wasGeneratedBy": {
@@ -255,6 +323,12 @@
       "show": true,
       "showLabel": true,
       "color": "#d9c726",
+      "lineType": "solid"
+    },
+    "isReadingOf": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d93f26",
       "lineType": "solid"
     },
     "subClassOf": {
@@ -329,6 +403,18 @@
       "color": "#46d926",
       "lineType": "solid"
     },
+    "https://w3id.org/adiro/adiro_provenance#hasReadingOutcome": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26d957",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/adiro_provenance#hasStepKind": {
+      "show": true,
+      "showLabel": true,
+      "color": "#26d926",
+      "lineType": "solid"
+    },
     "https://w3id.org/adiro/adiro_provenance#hasValueEntity": {
       "show": true,
       "showLabel": true,
@@ -351,6 +437,12 @@
       "show": true,
       "showLabel": true,
       "color": "#d9c726",
+      "lineType": "solid"
+    },
+    "https://w3id.org/adiro/adiro_provenance#isReadingOf": {
+      "show": true,
+      "showLabel": true,
+      "color": "#d93f26",
       "lineType": "solid"
     },
     "https://w3id.org/adiro/adiro_provenance#supersedes": {
@@ -427,15 +519,16 @@
     "mapsToFieldProperty"
   ],
   "viewState": {
-    "scale": 0.7575155775845527,
+    "scale": 0.40493554099343254,
     "position": {
-      "x": 346.45565250512607,
-      "y": 1011.9144275744636
+      "x": 443.79770107142826,
+      "y": 720.3484804547566
     }
   },
   "displayExternalReferences": true,
   "clusterThingDataProperties": true,
   "stackLeaves": true,
+  "relaxIndividuals": true,
   "externalNodeLayout": "auto",
   "hierarchyRelationships": [
     "subClassOf"
