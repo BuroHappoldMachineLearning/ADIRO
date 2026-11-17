@@ -227,7 +227,8 @@ commands directly, but Git Bash is simpler.
 - **`.github/workflows/pr-guidance.yml`** — on every same-repo PR (opened/edited/pushed), the **ADIRO Bot** posts a
   separate, human-readable sticky comment ([#106](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/106)),
   built by `scripts/pr_guidance.py`: a to-do list for **this PR's own changes**, grouped by issue type ([#144](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/144): each type's advice is said once, and more than 5 items are collapsed; a new check adds one `Kind` in the script) (a touched term with no
-  `skos:definition`, a label shared with another term, a `.ttl` change with no changelog change (the
+  description (a `skos:definition`, or an `rdfs:comment` until its module is split), a new term that defines itself in
+  `rdfs:comment`, a label shared with another term, a `.ttl` change with no changelog change (the
   `validate_ontology.py` check below, rendered in plain language), an unused `@prefix`/`owl:imports` the PR
   introduced, a `Closes #N` GitHub did not register), titled "Required improvements", with an OntoCanvas preview link
   per touched module that declares classes listed beneath it. **The comment exists only while something needs fixing**
