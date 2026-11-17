@@ -1,7 +1,7 @@
 cff-version: 1.2.0
-message: "If you use ADIRO, please cite it as below."
+message: "Cite the ADIRO suite of ontologies as follows."
 title: "ADIRO: AEC Drawing Information Representation Ontologies"
-type: dataset
+type: software
 abstract: >-
   ADIRO (AEC Drawing Information Representation Ontologies) is a suite of OWL/TTL ontologies for representing
   drawings of the architecture, engineering and construction (AEC) domain: drawing metadata, common symbols,

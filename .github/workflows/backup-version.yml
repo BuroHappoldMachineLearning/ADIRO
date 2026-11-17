@@ -25,6 +25,9 @@ concurrency:
 
 jobs:
   backup-version:
+    # A suite-level release (tag `suite-<date>`, published to archive the repository on Zenodo, #275) is not a module
+    # release: there is no module to snapshot, so the job is skipped rather than failing and raising an alert.
+    if: ${{ github.event_name != 'release' || !startsWith(github.event.release.tag_name, 'suite-') }}
     runs-on: ubuntu-latest
 
     steps:
