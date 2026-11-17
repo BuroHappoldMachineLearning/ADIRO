@@ -282,6 +282,11 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   The dispatch is **unconditional** — it also runs when the snapshot already exists, so re-running the job for a
   tag (`gh workflow run backup-version.yml -f tag=<module>-v<semver>`) repairs a release whose deploy was missed;
   the cost is one extra docs build, and the deploy publishes `main`, not the tagged commit.
+- **A suite release archives the repository on Zenodo** ([#275](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/275)).
+  Zenodo's GitHub integration archives the whole repository at each published GitHub Release, under one concept DOI for the
+  repository (`CITATION.cff` holds its metadata and names no module or version, so renames and releases leave it correct).
+  A release that exists only to archive the repository is tagged `suite-<date>` (not `<module>-v<semver>`) and is skipped by
+  `backup-version.yml`, which snapshots modules; a module release is archived by the same integration as a version of the same DOI.
 - **Changelogs:** per-module `changelogs/<module>.md` (source of truth, `[Unreleased]` section) + a top-level
   `CHANGELOG.md` rollup. Bump `owl:versionInfo` / `owl:versionIRI` **only at a release cut**, not per edit.
 - **CI enforces per-module version consistency** (`scripts/validate_ontology.py`, [RES-66](https://bhmlrnd.youtrack.cloud/issue/RES-66)).
