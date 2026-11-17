@@ -350,12 +350,6 @@ class MarkdownConverter:
     def _concept_term(self, subj: URIRef) -> Term:
         """A concept's entry: its definition (skos:definition, else rdfs:comment), names, examples and scheme."""
         term = self._base_term(subj)
-        definition = self._first_text(subj, (SKOS.definition,))
-        if definition:
-            comment = self._first_text(subj, (RDFS.comment,))
-            term.comment = self._linked(subj, definition)
-            if comment:
-                term.metadata.append(("Comment", [self._linked(subj, comment)]))
         types = [self._ref(t) for t in self._graph.objects(subj, RDF.type)
                  if isinstance(t, URIRef) and t not in (SKOS.Concept, OWL.NamedIndividual)]
         if types:
@@ -408,12 +402,18 @@ class MarkdownConverter:
 
     def _base_term(self, subj: URIRef) -> Term:
         iri = str(subj)
+        # The definition is skos:definition and the commentary is rdfs:comment (#273); a term not yet split carries its
+        # definition in rdfs:comment, so that is what is shown when there is no skos:definition.
+        definition = self._first_text(subj, (SKOS.definition,))
+        commentary = self._first_text(subj, (RDFS.comment,))
         term = Term(
             iri=iri,
             local=local_name(iri),
             label=self._labels.get(iri, self._label_of(subj)),
-            comment=self._linked(subj, self._first_text(subj, (RDFS.comment, SKOS.definition, RDFS.isDefinedBy))),
+            comment=self._linked(subj, definition or commentary or self._first_text(subj, (RDFS.isDefinedBy,))),
         )
+        if definition and commentary:
+            term.metadata.append(("Comment", [self._linked(subj, commentary)]))
         self._collect_annotations(subj, term)
         return term
 

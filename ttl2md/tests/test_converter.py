@@ -410,3 +410,33 @@ def test_convert_file_round_trip(tmp_path):
 )
 def test_local_name_helper(iri, expected):
     assert local_name(iri) == expected
+
+
+# --------------------------------------------------------------------------
+# Definition (skos:definition) and commentary (rdfs:comment), #273
+# --------------------------------------------------------------------------
+
+
+def test_a_class_shows_its_definition_first_and_its_commentary_as_a_comment_row():
+    md = to_md(
+        """
+        @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+        :Other a owl:Class ; rdfs:label "Other" .
+        :Thing a owl:Class ; rdfs:label "Thing" ;
+            skos:definition "What a Thing is, once drawn." ;
+            rdfs:comment "Why it exists." .
+        """
+    )
+    entry = md[md.index("### Thing"):]
+    assert entry.index("What a Thing is, once drawn.") < entry.index("- **IRI:**") < entry.index("- **Comment:** Why it exists.")
+
+
+def test_a_term_not_yet_split_shows_its_rdfs_comment_as_the_definition_with_no_comment_row():
+    md = to_md(
+        """
+        :Thing a owl:Class ; rdfs:label "Thing" ; rdfs:comment "Old style definition." .
+        """
+    )
+    entry = md[md.index("### Thing"):]
+    assert "Old style definition." in entry
+    assert "**Comment:**" not in entry

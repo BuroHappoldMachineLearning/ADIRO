@@ -379,3 +379,25 @@ def test_a_changed_skos_definition_or_note_is_an_annotation_change_and_is_named(
     assert _deltas(SKOS_BASE, retagged) == [("ANNOTATION_CHANGED", "https://ex.org/m#k")]
     line, found = cd.locate_lines(reworded, "https://ex.org/m#k", ["skos:definition"])
     assert found == {"skos:definition": line}
+
+
+def _skos(ttl):
+    return ttl.replace("@prefix xsd:", "@prefix skos: <http://www.w3.org/2004/02/skos/core#> .\n@prefix xsd:")
+
+
+def test_moving_a_definition_from_rdfs_comment_to_skos_definition_is_one_annotation_change_naming_both(tmp_path):
+    """#273: the split of a comment is an annotation change (PATCH) that names the two properties."""
+    before = _described("What A is.")
+    after = _skos(BASE).replace(
+        ":A a owl:Class .\n",
+        ':A a owl:Class ;\n    rdfs:label "A" ;\n    skos:definition "What A is." .\n')
+    details = cd.annotation_details(_syms(before), _syms(after))
+    assert details == {"https://ex.org/m#A": ["skos:definition", "rdfs:comment"]}
+    deltas = cd.compute_deltas(_syms(before), _syms(after))
+    assert deltas == [("ANNOTATION_CHANGED", "https://ex.org/m#A")]
+
+
+def test_a_changed_skos_definition_of_a_class_is_an_annotation_change():
+    one = _skos(BASE).replace(":A a owl:Class .\n", ':A a owl:Class ; skos:definition "one" .\n')
+    two = one.replace('"one"', '"two"')
+    assert cd.annotation_details(_syms(one), _syms(two)) == {"https://ex.org/m#A": ["skos:definition"]}
