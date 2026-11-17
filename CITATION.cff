@@ -1,0 +1,48 @@
+cff-version: 1.2.0
+message: "If you use ADIRO, please cite it as below."
+title: "ADIRO: AEC Drawing Information Representation Ontologies"
+type: dataset
+abstract: >-
+  ADIRO (AEC Drawing Information Representation Ontologies) is a suite of OWL/TTL ontologies for representing
+  drawings of the architecture, engineering and construction (AEC) domain: drawing metadata, common symbols,
+  domain-common and domain-specific symbols, the geometry of what is found on a drawing, and the provenance and
+  confidence of what is extracted from it. It supports machine-learning tasks, in particular information
+  extraction, and lets drawings drive graph databases and knowledge graphs. Each module of the suite has its own
+  IRI, version and documentation page.
+authors:
+  - family-names: Lombardi
+    given-names: Alessio
+    orcid: "https://orcid.org/0009-0002-3338-7806"
+    affiliation: "Buro Happold Ltd., London, United Kingdom"
+  - family-names: Elnagar
+    given-names: Ahmed
+    orcid: "https://orcid.org/0009-0003-0140-332X"
+    affiliation: "Buro Happold Ltd., London, United Kingdom"
+  - family-names: Huang
+    given-names: Tianyang
+    orcid: "https://orcid.org/0009-0008-3649-7115"
+    affiliation: "Buro Happold Ltd., London, United Kingdom; Birmingham City University, Birmingham, United Kingdom"
+  - family-names: Zalouk
+    given-names: Ahmed
+    orcid: "https://orcid.org/0000-0001-9997-2560"
+    affiliation: "Buro Happold Ltd., London, United Kingdom; Birmingham City University, Birmingham, United Kingdom"
+  - family-names: Vakaj
+    given-names: Edlira
+    orcid: "https://orcid.org/0000-0002-0712-0959"
+    affiliation: "Birmingham City University, Birmingham, United Kingdom"
+  - family-names: Ragab
+    given-names: Mohamed
+    orcid: "https://orcid.org/0000-0002-9048-7873"
+    affiliation: "Birmingham City University, Birmingham, United Kingdom"
+license: GPL-3.0-only
+repository-code: "https://github.com/BuroHappoldMachineLearning/ADIRO"
+url: "https://w3id.org/adiro/"
+keywords:
+  - ontology
+  - OWL
+  - AEC
+  - architecture engineering construction
+  - engineering drawings
+  - information extraction
+  - knowledge graph
+  - provenance
