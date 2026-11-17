@@ -9,7 +9,7 @@
     "adiro_geometry": "A region of the drawing (a title block, a revision table, a legend, a key plan, a note, a layout, a symbol) is located with a BoundingBox (geom:hasBoundingBox, which has no domain on purpose), stated as a min 0 restriction on MetadataContainer, on Layout and on DrawingElement; the box is read in a CoordinateFrame of the page."
   },
   "adiro_common_symbols": {
-    "adiro_drawing_metadata": "Symbols are DrawingElements that a Layout contains; they use isComputerVisionLabel and exampleImage, and the reference symbols specialise ReferenceExpression."
+    "adiro_drawing_metadata": "Symbols and reference expressions are DrawingElements that a Layout contains (a reference also points at a Layout or a DrawingSheet); they use isComputerVisionLabel and exampleImage."
   },
   "adiro_domain_common": {
     "adiro_drawing_metadata": "Disciplines and sections classify a Layout; they use isComputerVisionLabel, isComputerVisionOptionalLabel and exampleImage."

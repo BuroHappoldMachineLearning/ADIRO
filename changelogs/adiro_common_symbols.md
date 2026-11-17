@@ -5,6 +5,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+- **The UC-03 reference terms are defined here** ([#277](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/277), with [#271](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/271)): `ReferenceExpression` (the superclass of a complete reference, graphical, inline or standalone), `DrawingIdentifierMention`, `LayoutIdentifierMention`, `InlineLayoutDrawingReference` ("Inline Layout and Drawing Reference"), `StandaloneDrawingReference` ("Standalone Drawing Reference"), and the properties `denotesDrawingSheet` and `inlineReferencesLayout`. They were released in `adiro_drawing_metadata` as `ReferenceExpression`, `DrawingIdentifierMention`, `LayoutIdentifierMention`, `InlineLayoutSheetReference`, `StandaloneSheetReference`, `denotesDrawingSheet` and `inlineReferencesLayout`; those IRIs stay there, deprecated and equivalent to the new terms. The definitions, superclasses, example images (also served from this module's folder) and `isComputerVisionLabel` markers are the ones they had. `ReferenceSymbol` is now a subclass of this module's own `ReferenceExpression`. The module's introduction is widened to say it holds the reference terms.
+  Downstream consumers may need adjustments: the annotation tooling takes these labels from the class IRIs, so each label is offered from this module, under the new names for the two reference classes.
+
+### Changed
+- **`ReferenceSymbol` specialises this module's `ReferenceExpression`** ([#277](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/277)), not the `ReferenceExpression` of `adiro_drawing_metadata`, which is equivalent to it. The meaning is unchanged, but the compatibility diff reads a new superclass IRI as a superclass change, so this module's next release is a MAJOR one.
+
 ## [5.0.0] — 2026-10-21
 
 ### Changed

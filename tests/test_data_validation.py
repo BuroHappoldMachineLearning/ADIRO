@@ -29,9 +29,9 @@ def messages(body):
 
 
 # --- the inline reference: one drawing identifier, at least one layout identifier -----------------------------------
-INLINE_OK = """:ref a metadata:InlineLayoutDrawingReference ; metadata:contains :sheet , :l1 , :l3 .
-:sheet a metadata:DrawingIdentifierMention .
-:l1 a metadata:LayoutIdentifierMention . :l3 a metadata:LayoutIdentifierMention .
+INLINE_OK = """:ref a csymbol:InlineLayoutDrawingReference ; metadata:contains :sheet , :l1 , :l3 .
+:sheet a csymbol:DrawingIdentifierMention .
+:l1 a csymbol:LayoutIdentifierMention . :l3 a csymbol:LayoutIdentifierMention .
 """
 
 
@@ -40,20 +40,20 @@ def test_a_complete_inline_reference_conforms():
 
 
 def test_an_inline_reference_with_two_drawing_identifiers_is_reported():
-    two = INLINE_OK + ":other a metadata:DrawingIdentifierMention . :ref metadata:contains :other .\n"
+    two = INLINE_OK + ":other a csymbol:DrawingIdentifierMention . :ref metadata:contains :other .\n"
     assert messages(two) == ["An inline layout and drawing reference contains exactly one drawing identifier mention."]
 
 
 def test_an_inline_reference_with_no_drawing_identifier_is_reported():
-    none = """:ref a metadata:InlineLayoutDrawingReference ; metadata:contains :l1 .
-:l1 a metadata:LayoutIdentifierMention .
+    none = """:ref a csymbol:InlineLayoutDrawingReference ; metadata:contains :l1 .
+:l1 a csymbol:LayoutIdentifierMention .
 """
     assert messages(none) == ["An inline layout and drawing reference contains exactly one drawing identifier mention."]
 
 
 def test_an_inline_reference_with_no_layout_identifier_is_reported():
-    none = """:ref a metadata:InlineLayoutDrawingReference ; metadata:contains :sheet .
-:sheet a metadata:DrawingIdentifierMention .
+    none = """:ref a csymbol:InlineLayoutDrawingReference ; metadata:contains :sheet .
+:sheet a csymbol:DrawingIdentifierMention .
 """
     assert messages(none) == ["An inline layout and drawing reference contains at least one layout identifier mention."]
 
@@ -63,10 +63,17 @@ def test_an_inline_reference_typed_with_the_deprecated_class_is_still_checked():
     assert messages(old) == ["An inline layout and drawing reference contains exactly one drawing identifier mention."]
 
 
+def test_a_mention_typed_with_the_iris_it_had_in_drawing_metadata_is_still_checked():
+    two = ":m a metadata:DrawingIdentifierMention ; metadata:denotesDrawingSheet :s1 , :s2 .\n"
+    assert messages(two) == ["A drawing identifier mention has at most one accepted denotesDrawingSheet target."]
+    inline = ":ref a csymbol:InlineLayoutDrawingReference ; metadata:contains :sheet , :l1 .\n:sheet a metadata:DrawingIdentifierMention . :l1 a metadata:LayoutIdentifierMention .\n"
+    assert messages(inline) == []
+
+
 def test_a_standalone_reference_counts_as_a_drawing_identifier_mention():
     # StandaloneDrawingReference is a subclass of DrawingIdentifierMention: the ontology is read as background.
-    nested = """:ref a metadata:InlineLayoutDrawingReference ; metadata:contains :sheet , :l1 .
-:sheet a metadata:StandaloneDrawingReference . :l1 a metadata:LayoutIdentifierMention .
+    nested = """:ref a csymbol:InlineLayoutDrawingReference ; metadata:contains :sheet , :l1 .
+:sheet a csymbol:StandaloneDrawingReference . :l1 a csymbol:LayoutIdentifierMention .
 """
     assert check(nested) == []
 
@@ -74,36 +81,36 @@ def test_a_standalone_reference_counts_as_a_drawing_identifier_mention():
 # --- the reference symbol: at most one drawing identifier ------------------------------------------------------------
 def test_a_reference_symbol_with_at_most_one_drawing_identifier_conforms():
     assert check(":s a csymbol:ReferenceSymbol .\n") == []
-    assert check(":s a csymbol:ReferenceSymbol ; metadata:contains :m . :m a metadata:DrawingIdentifierMention .\n") == []
+    assert check(":s a csymbol:ReferenceSymbol ; metadata:contains :m . :m a csymbol:DrawingIdentifierMention .\n") == []
 
 
 def test_a_reference_symbol_with_two_drawing_identifiers_is_reported():
-    two = ":s a csymbol:ReferenceSymbol ; metadata:contains :a , :b . :a a metadata:DrawingIdentifierMention . :b a metadata:DrawingIdentifierMention .\n"
+    two = ":s a csymbol:ReferenceSymbol ; metadata:contains :a , :b . :a a csymbol:DrawingIdentifierMention . :b a csymbol:DrawingIdentifierMention .\n"
     assert messages(two) == ["A reference symbol contains at most one drawing identifier mention."]
 
 
 # --- a mention has at most one accepted target -----------------------------------------------------------------------
 def test_a_mention_with_one_target_conforms_and_with_two_is_reported():
-    one = ":m a metadata:DrawingIdentifierMention ; metadata:denotesDrawingSheet :s1 .\n"
-    two = one + ":m metadata:denotesDrawingSheet :s2 .\n"
+    one = ":m a csymbol:DrawingIdentifierMention ; csymbol:denotesDrawingSheet :s1 .\n"
+    two = one + ":m csymbol:denotesDrawingSheet :s2 .\n"
     assert check(one) == []
     assert messages(two) == ["A drawing identifier mention has at most one accepted denotesDrawingSheet target."]
 
 
 def test_the_rule_reaches_a_standalone_reference_through_its_superclass():
-    two = ":m a metadata:StandaloneDrawingReference ; metadata:denotesDrawingSheet :s1 , :s2 .\n"
+    two = ":m a csymbol:StandaloneDrawingReference ; csymbol:denotesDrawingSheet :s1 , :s2 .\n"
     assert messages(two) == ["A drawing identifier mention has at most one accepted denotesDrawingSheet target."]
 
 
 def test_a_violation_is_reported_with_its_severity_and_focus():
-    result = check(":m a metadata:DrawingIdentifierMention ; metadata:denotesDrawingSheet :s1 , :s2 .\n")[0]
+    result = check(":m a csymbol:DrawingIdentifierMention ; csymbol:denotesDrawingSheet :s1 , :s2 .\n")[0]
     assert result["severity"] == "Violation" and result["focus"] == "https://ex.org/d#m"
     assert result["path"].endswith("denotesDrawingSheet")
 
 
 def test_the_command_line_exits_one_on_a_violation_and_zero_otherwise(tmp_path):
     bad, good = tmp_path / "bad.ttl", tmp_path / "good.ttl"
-    bad.write_text(PREFIXES + ":m a metadata:DrawingIdentifierMention ; metadata:denotesDrawingSheet :s1 , :s2 .\n", encoding="utf-8")
+    bad.write_text(PREFIXES + ":m a csymbol:DrawingIdentifierMention ; csymbol:denotesDrawingSheet :s1 , :s2 .\n", encoding="utf-8")
     good.write_text(PREFIXES + INLINE_OK, encoding="utf-8")
     assert vd.main([str(bad)]) == 1
     assert vd.main([str(good)]) == 0

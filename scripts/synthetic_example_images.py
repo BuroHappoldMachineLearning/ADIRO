@@ -780,6 +780,14 @@ def standalone_drawing_reference():
     return _expression("SEE S601 FOR TYPICAL DETAIL", [(4, len("S601"))], "Standalone Drawing Reference")
 
 
+def inline_layout_sheet_reference():  # the released picture of the old IRI, which an archived release still names
+    return _expression(NOTE, [(EXPRESSION, len("1, 3, 5 & 7/S601"))], "Inline layout and sheet reference")
+
+
+def standalone_sheet_reference():  # the released picture of the old IRI, which an archived release still names
+    return _expression("SEE S601 FOR TYPICAL DETAIL", [(4, len("S601"))], "Standalone sheet reference")
+
+
 def drawing_identifier_mention():
     return _expression(NOTE, [(NOTE.index("S601"), len("S601"))], "Drawing identifier mention")
 
@@ -807,10 +815,6 @@ METADATA = {
     "DrawingSheet_01.png": sheet_one_layout,
     "DrawingSheet_02.png": layout,  # the sheet with three layouts, which Layout_01.png has always shown
     "DrawingSheet_03.png": sheet_six_layouts,
-    "InlineLayoutDrawingReference_01.png": inline_layout_drawing_reference,
-    "StandaloneDrawingReference_01.png": standalone_drawing_reference,
-    "DrawingIdentifierMention_01.png": drawing_identifier_mention,
-    "LayoutIdentifierMention_01.png": layout_identifier_mention,
 }
 
 # Images that no current term links but that an earlier release names, so their address must keep answering with
@@ -818,12 +822,23 @@ METADATA = {
 # regeneration reproduces them.
 ARCHIVED = {  # module -> {file name -> function returning the PNG bytes}; the aec_* folders keep what their releases named (#171)
     "aec_drawing_metadata": {"Layout_01.png": layout},
+    # The reference terms moved to adiro_common_symbols (#277); the files that adiro_drawing_metadata 7.0.x names stay.
+    "adiro_drawing_metadata": {
+        "InlineLayoutSheetReference_01.png": inline_layout_sheet_reference,
+        "StandaloneSheetReference_01.png": standalone_sheet_reference,
+        "DrawingIdentifierMention_01.png": drawing_identifier_mention,
+        "LayoutIdentifierMention_01.png": layout_identifier_mention,
+    },
 }
 
 COMMON_SYMBOLS = {
     "Dimension_01.png": dimension,
     "Grid_01.png": grid,
     "ReferenceSymbol_01.png": reference_symbol,
+    "InlineLayoutDrawingReference_01.png": inline_layout_drawing_reference,
+    "StandaloneDrawingReference_01.png": standalone_drawing_reference,
+    "DrawingIdentifierMention_01.png": drawing_identifier_mention,
+    "LayoutIdentifierMention_01.png": layout_identifier_mention,
 }
 
 DOMAIN_COMMON = {

@@ -18,7 +18,7 @@
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/adiro_common_symbols.html){ .md-button }
 </div>
 
-Reusable symbols that appear across disciplines, such as dimensions, grids, levels, and reference symbols. Every symbol is a kind of drawing element from the drawing-metadata module. The discipline modules build on these shared symbols.
+Reusable symbols and text that appear across disciplines, such as dimensions, grids, levels and references to another layout or drawing: the graphical reference symbol, the inline and standalone reference expressions, and the occurrences of drawing and layout identifiers they are made of. Every one is a kind of drawing element from the drawing-metadata module. The discipline modules build on them.
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols`
 - **Versioned IRI:** `https://w3id.org/adiro/adiro_common_symbols/5.0.0`
@@ -73,6 +73,17 @@ A dimension line or dimension annotation on a drawing, indicating measurements o
 
 ![Dimension — example](https://w3id.org/adiro/adiro_common_symbols/exampleImage/Dimension_01.png)
 
+### Drawing identifier mention {#DrawingIdentifierMention}
+
+One evidenced occurrence of drawing-identifier (sheet-identifier) text on a source drawing, distinct from the [DrawingSheet](adiro_drawing_metadata.md#DrawingSheet) that the text may denote. Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted sheet resolution: an unlocalisable text block may retain its accepted [denotesDrawingSheet](#denotesDrawingSheet) edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed.
+
+- **IRI:** `https://w3id.org/adiro/adiro_common_symbols#DrawingIdentifierMention`
+- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
+
+*Example images:*
+
+![Drawing identifier mention — example](https://w3id.org/adiro/adiro_common_symbols/exampleImage/DrawingIdentifierMention_01.png)
+
 ### Grid {#Grid}
 
 A grid line or grid system used for alignment and reference in architectural drawings.
@@ -84,18 +95,68 @@ A grid line or grid system used for alignment and reference in architectural dra
 
 ![Grid — example](https://w3id.org/adiro/adiro_common_symbols/exampleImage/Grid_01.png)
 
+### Inline Layout and Drawing Reference {#InlineLayoutDrawingReference}
+
+A complete inline textual expression relating layout number(s) to a sheet number, such as '1, 3, 5 & 7/S601'. The component mentions retain their own identities; accepted [Layout](adiro_drawing_metadata.md#Layout) targets are connected separately by [inlineReferencesLayout](#inlineReferencesLayout). Expected composition: one sheet-identifier mention and at least one layout-identifier mention, attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction.
+
+- **IRI:** `https://w3id.org/adiro/adiro_common_symbols#InlineLayoutDrawingReference`
+- **Sub class of:** [Reference expression](#ReferenceExpression)
+
+*Example images:*
+
+![Inline Layout and Drawing Reference — example](https://w3id.org/adiro/adiro_common_symbols/exampleImage/InlineLayoutDrawingReference_01.png)
+
+### Layout identifier mention {#LayoutIdentifierMention}
+
+One evidenced occurrence of layout-identifier text (a small integer or letter), distinct from a target [Layout](adiro_drawing_metadata.md#Layout). A complete inline reference may contain several such occurrences, attached with contains; no target is inferred from matching text alone.
+
+- **IRI:** `https://w3id.org/adiro/adiro_common_symbols#LayoutIdentifierMention`
+- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
+
+*Example images:*
+
+![Layout identifier mention — example](https://w3id.org/adiro/adiro_common_symbols/exampleImage/LayoutIdentifierMention_01.png)
+
+### Reference expression {#ReferenceExpression}
+
+A complete source reference expression, whether graphical, inline or a standalone sheet-number reference. This superclass groups those forms for queries; it does not require a second individual around any of them.
+
+- **IRI:** `https://w3id.org/adiro/adiro_common_symbols#ReferenceExpression`
+- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
+
 ### ReferenceSymbol {#ReferenceSymbol}
 
 A symbol drawn on a [Layout](adiro_drawing_metadata.md#Layout) that references another Layout (on the same or a different [DrawingSheet](adiro_drawing_metadata.md#DrawingSheet)). Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target Layout's [LayoutContentType](adiro_drawing_metadata.md#LayoutContentType).
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#ReferenceSymbol`
-- **Sub class of:** [`metadata:ReferenceExpression`](adiro_drawing_metadata.md#ReferenceExpression)
+- **Sub class of:** [Reference expression](#ReferenceExpression)
 
 *Example images:*
 
 ![ReferenceSymbol — example](https://w3id.org/adiro/adiro_common_symbols/exampleImage/ReferenceSymbol_01.png)
 
+### Standalone Drawing Reference {#StandaloneDrawingReference}
+
+A drawing-identifier occurrence that itself constitutes a complete reference. One individual is both the [DrawingIdentifierMention](#DrawingIdentifierMention) and the [ReferenceExpression](#ReferenceExpression): no duplicate wrapper, self-directed hasDrawingIdentifierMention edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified.
+
+- **IRI:** `https://w3id.org/adiro/adiro_common_symbols#StandaloneDrawingReference`
+- **Sub class of:**
+    - [Drawing identifier mention](#DrawingIdentifierMention)
+    - [Reference expression](#ReferenceExpression)
+
+*Example images:*
+
+![Standalone Drawing Reference — example](https://w3id.org/adiro/adiro_common_symbols/exampleImage/StandaloneDrawingReference_01.png)
+
 ## Object Properties
+
+### denotesDrawingSheet {#denotesDrawingSheet}
+
+The accepted [DrawingSheet](adiro_drawing_metadata.md#DrawingSheet) identity denoted by one sheet-number occurrence. It does not assert that a [Layout](adiro_drawing_metadata.md#Layout) target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict.
+
+- **IRI:** `https://w3id.org/adiro/adiro_common_symbols#denotesDrawingSheet`
+- **Domain:** [Drawing identifier mention](#DrawingIdentifierMention)
+- **Range:** [`metadata:DrawingSheet`](adiro_drawing_metadata.md#DrawingSheet)
 
 ### hasReferenceSymbol {#hasReferenceSymbol}
 
@@ -105,6 +166,14 @@ A Layout contains one or more [ReferenceSymbol](#ReferenceSymbol)s. To navigate 
 - **Sub property of:** [`metadata:contains`](adiro_drawing_metadata.md#contains)
 - **Domain:** [`metadata:Layout`](adiro_drawing_metadata.md#Layout)
 - **Range:** [ReferenceSymbol](#ReferenceSymbol)
+
+### inlineReferencesLayout {#inlineReferencesLayout}
+
+An accepted target [Layout](adiro_drawing_metadata.md#Layout) of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges.
+
+- **IRI:** `https://w3id.org/adiro/adiro_common_symbols#inlineReferencesLayout`
+- **Domain:** [Inline Layout and Drawing Reference](#InlineLayoutDrawingReference)
+- **Range:** [`metadata:Layout`](adiro_drawing_metadata.md#Layout)
 
 ### referencesLayout {#referencesLayout}
 

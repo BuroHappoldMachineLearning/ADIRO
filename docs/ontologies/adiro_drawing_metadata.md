@@ -87,15 +87,11 @@ Element depicted on a drawing. Contained by [Layout](#Layout). Can be a [Facade]
 
 ### Drawing identifier mention {#DrawingIdentifierMention}
 
-One evidenced occurrence of drawing-identifier (sheet-identifier) text on a source drawing, distinct from the [DrawingSheet](#DrawingSheet) that the text may denote. Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted sheet resolution: an unlocalisable text block may retain its accepted [denotesDrawingSheet](#denotesDrawingSheet) edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed.
+Deprecated: use DrawingIdentifierMention of adiro_common_symbols, the same class defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#DrawingIdentifierMention`
 - **Sub class of:** [Drawing element](#DrawingElement)
-- **isComputerVisionLabel:** true
-
-*Example images:*
-
-![Drawing identifier mention — example](https://w3id.org/adiro/adiro_drawing_metadata/exampleImage/DrawingIdentifierMention_01.png)
+- **Equivalent to:** `csymbol:DrawingIdentifierMention`
 
 ### Drawing Sheet {#DrawingSheet}
 
@@ -156,25 +152,13 @@ An image embedded within a note region on a drawing sheet.
 - **Sub class of:** [Note](#Note)
 - **isComputerVisionLabel:** true
 
-### Inline Layout and Drawing Reference {#InlineLayoutDrawingReference}
-
-A complete inline textual expression relating layout number(s) to a sheet number, such as '1, 3, 5 & 7/S601'. The component mentions retain their own identities; accepted [Layout](#Layout) targets are connected separately by [inlineReferencesLayout](#inlineReferencesLayout). Expected composition: one sheet-identifier mention and at least one layout-identifier mention, attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction.
-
-- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#InlineLayoutDrawingReference`
-- **Sub class of:** [Reference expression](#ReferenceExpression)
-- **isComputerVisionLabel:** true
-
-*Example images:*
-
-![Inline Layout and Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_metadata/exampleImage/InlineLayoutDrawingReference_01.png)
-
 ### Inline layout and sheet reference {#InlineLayoutSheetReference}
 
-Deprecated: use [InlineLayoutDrawingReference](#InlineLayoutDrawingReference), the same class under a name that says drawing, not sheet. Everything typed with this class is also typed with InlineLayoutDrawingReference.
+Deprecated: use [InlineLayoutDrawingReference](adiro_common_symbols.md#InlineLayoutDrawingReference) of adiro_common_symbols, the same class under a name that says drawing, not sheet, defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#InlineLayoutSheetReference`
 - **Sub class of:** [Reference expression](#ReferenceExpression)
-- **Equivalent to:** [Inline Layout and Drawing Reference](#InlineLayoutDrawingReference)
+- **Equivalent to:** [`csymbol:InlineLayoutDrawingReference`](adiro_common_symbols.md#InlineLayoutDrawingReference)
 
 ### Key Plan {#KeyPlan}
 
@@ -219,15 +203,11 @@ Type of content included in a layout.
 
 ### Layout identifier mention {#LayoutIdentifierMention}
 
-One evidenced occurrence of layout-identifier text (a small integer or letter), distinct from a target [Layout](#Layout). A complete inline reference may contain several such occurrences, attached with contains; no target is inferred from matching text alone.
+Deprecated: use LayoutIdentifierMention of adiro_common_symbols, the same class defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#LayoutIdentifierMention`
 - **Sub class of:** [Drawing element](#DrawingElement)
-- **isComputerVisionLabel:** true
-
-*Example images:*
-
-![Layout identifier mention — example](https://w3id.org/adiro/adiro_drawing_metadata/exampleImage/LayoutIdentifierMention_01.png)
+- **Equivalent to:** `csymbol:LayoutIdentifierMention`
 
 ### Legend {#Legend}
 
@@ -301,11 +281,11 @@ A project under which [DrawingSheet](#DrawingSheet)s are grouped.
 
 ### Reference expression {#ReferenceExpression}
 
-A complete source reference expression, whether graphical, inline or a standalone sheet-number reference. This superclass groups those forms for queries; it does not require a second individual around any of them.
+Deprecated: use ReferenceExpression of adiro_common_symbols, the same class defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#ReferenceExpression`
 - **Sub class of:** [Drawing element](#DrawingElement)
-- **isComputerVisionLabel:** true
+- **Equivalent to:** `csymbol:ReferenceExpression`
 
 ### Revision table {#RevisionTable}
 
@@ -332,29 +312,15 @@ Section drawing. Has a required property of orientation, which can be vertical o
 
 ![Section — example](https://w3id.org/adiro/adiro_drawing_metadata/exampleImage/Section_01.png)
 
-### Standalone Drawing Reference {#StandaloneDrawingReference}
-
-A drawing-identifier occurrence that itself constitutes a complete reference. One individual is both the [DrawingIdentifierMention](#DrawingIdentifierMention) and the [ReferenceExpression](#ReferenceExpression): no duplicate wrapper, self-directed hasDrawingIdentifierMention edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified.
-
-- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#StandaloneDrawingReference`
-- **Sub class of:**
-    - [Drawing identifier mention](#DrawingIdentifierMention)
-    - [Reference expression](#ReferenceExpression)
-- **isComputerVisionLabel:** true
-
-*Example images:*
-
-![Standalone Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_metadata/exampleImage/StandaloneDrawingReference_01.png)
-
 ### Standalone sheet reference {#StandaloneSheetReference}
 
-Deprecated: use [StandaloneDrawingReference](#StandaloneDrawingReference), the same class under a name that says drawing, not sheet. Everything typed with this class is also typed with StandaloneDrawingReference.
+Deprecated: use [StandaloneDrawingReference](adiro_common_symbols.md#StandaloneDrawingReference) of adiro_common_symbols, the same class under a name that says drawing, not sheet, defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#StandaloneSheetReference`
 - **Sub class of:**
     - [Drawing identifier mention](#DrawingIdentifierMention)
     - [Reference expression](#ReferenceExpression)
-- **Equivalent to:** [Standalone Drawing Reference](#StandaloneDrawingReference)
+- **Equivalent to:** [`csymbol:StandaloneDrawingReference`](adiro_common_symbols.md#StandaloneDrawingReference)
 
 ### StatusCode {#StatusCode}
 
@@ -487,7 +453,7 @@ Direct containment: indicates physical containment of something within a parent 
 
 ### denotesDrawingSheet {#denotesDrawingSheet}
 
-The accepted [DrawingSheet](#DrawingSheet) identity denoted by one sheet-number occurrence. It does not assert that a [Layout](#Layout) target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict.
+Deprecated: use denotesDrawingSheet of adiro_common_symbols, the same property defined in the module that holds the reference symbol.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#denotesDrawingSheet`
 - **Domain:** [Drawing identifier mention](#DrawingIdentifierMention)
@@ -547,10 +513,10 @@ The controlled-vocabulary [StatusCode](#StatusCode) assigned to a [DrawingRevisi
 
 ### inlineReferencesLayout {#inlineReferencesLayout}
 
-An accepted target [Layout](#Layout) of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges.
+Deprecated: use inlineReferencesLayout of adiro_common_symbols, the same property defined in the module that holds the reference symbol.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#inlineReferencesLayout`
-- **Domain:** [Inline Layout and Drawing Reference](#InlineLayoutDrawingReference)
+- **Domain:** [Inline layout and sheet reference](#InlineLayoutSheetReference)
 - **Range:** [Layout](#Layout)
 
 ### isApprovedBy {#isApprovedBy}

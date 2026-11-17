@@ -1,6 +1,53 @@
 {
   "renames": [
-    {"module": "adiro_drawing_metadata", "from": "InlineLayoutSheetReference", "to": "InlineLayoutDrawingReference", "reason": "#271: say drawing, not sheet"},
-    {"module": "adiro_drawing_metadata", "from": "StandaloneSheetReference", "to": "StandaloneDrawingReference", "reason": "#271: say drawing, not sheet"}
+    {
+      "module": "adiro_drawing_metadata",
+      "to_module": "adiro_common_symbols",
+      "from": "ReferenceExpression",
+      "to": "ReferenceExpression",
+      "reason": "#277: moved to adiro_common_symbols"
+    },
+    {
+      "module": "adiro_drawing_metadata",
+      "to_module": "adiro_common_symbols",
+      "from": "DrawingIdentifierMention",
+      "to": "DrawingIdentifierMention",
+      "reason": "#277: moved to adiro_common_symbols"
+    },
+    {
+      "module": "adiro_drawing_metadata",
+      "to_module": "adiro_common_symbols",
+      "from": "LayoutIdentifierMention",
+      "to": "LayoutIdentifierMention",
+      "reason": "#277: moved to adiro_common_symbols"
+    },
+    {
+      "module": "adiro_drawing_metadata",
+      "to_module": "adiro_common_symbols",
+      "from": "InlineLayoutSheetReference",
+      "to": "InlineLayoutDrawingReference",
+      "reason": "#277: moved to adiro_common_symbols; #271: say drawing, not sheet"
+    },
+    {
+      "module": "adiro_drawing_metadata",
+      "to_module": "adiro_common_symbols",
+      "from": "StandaloneSheetReference",
+      "to": "StandaloneDrawingReference",
+      "reason": "#277: moved to adiro_common_symbols; #271: say drawing, not sheet"
+    },
+    {
+      "module": "adiro_drawing_metadata",
+      "to_module": "adiro_common_symbols",
+      "from": "denotesDrawingSheet",
+      "to": "denotesDrawingSheet",
+      "reason": "#277: moved to adiro_common_symbols"
+    },
+    {
+      "module": "adiro_drawing_metadata",
+      "to_module": "adiro_common_symbols",
+      "from": "inlineReferencesLayout",
+      "to": "inlineReferencesLayout",
+      "reason": "#277: moved to adiro_common_symbols"
+    }
   ]
 }

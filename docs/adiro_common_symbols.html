@@ -297,7 +297,7 @@ td {
         "@value": "Cross-discipline layout content. Generic symbol classes like dimensions, reference symbols, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology."
       },
       {
-        "@value": "Reusable symbols that appear across disciplines, such as dimensions, grids, levels, and reference symbols. Every symbol is a kind of drawing element from the drawing-metadata module. The discipline modules build on these shared symbols."
+        "@value": "Reusable symbols and text that appear across disciplines, such as dimensions, grids, levels and references to another layout or drawing: the graphical reference symbol, the inline and standalone reference expressions, and the occurrences of drawing and layout identifiers they are made of. Every one is a kind of drawing element from the drawing-metadata module. The discipline modules build on them."
       }
     ],
     "https://schema.org/license": [
@@ -423,7 +423,7 @@ td {
             <dd>
               <ul>
                 <li><p>Cross-discipline layout content. Generic symbol classes like dimensions, reference symbols, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology.</p></li>
-                <li><p>Reusable symbols that appear across disciplines, such as dimensions, grids, levels, and reference symbols. Every symbol is a kind of drawing element from the drawing-metadata module. The discipline modules build on these shared symbols.</p></li>
+                <li><p>Reusable symbols and text that appear across disciplines, such as dimensions, grids, levels and references to another layout or drawing: the graphical reference symbol, the inline and standalone reference expressions, and the occurrences of drawing and layout identifiers they are made of. Every one is a kind of drawing element from the drawing-metadata module. The discipline modules build on them.</p></li>
               </ul>
             </dd>
           </div>
@@ -505,6 +505,237 @@ td {
             </tr>
 </table>
         </div>
+        <div class="property entity" id="Referenceexpression">
+          <h3>Reference expression
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/adiro_common_symbols#ReferenceExpression</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A complete source reference expression, whether graphical, inline or a standalone sheet-number reference. This superclass groups those forms for queries; it does not require a second individual around any of them.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <a href="https://w3id.org/adiro/adiro_drawing_metadata#DrawingElement">metadata:DrawingElement</a>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/superClassOf" title="Inverse of RDFS' subClassOf. Defined in Ontology Documentation Profile">Super Class Of</a>
+              </th>
+              <td>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#InlineLayoutDrawingReference">Inline Layout and Drawing Reference</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#StandaloneDrawingReference">Standalone Drawing Reference</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#ReferenceSymbol">ReferenceSymbol</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="Drawingidentifiermention">
+          <h3>Drawing identifier mention
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/adiro_common_symbols#DrawingIdentifierMention</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>One evidenced occurrence of drawing-identifier (sheet-identifier) text on a source drawing, distinct from the <a href="adiro_drawing_metadata.html#DrawingSheet">DrawingSheet</a> that the text may denote. Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted sheet resolution: an unlocalisable text block may retain its accepted <a href="#denotesDrawingSheet">denotesDrawingSheet</a> edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <a href="https://w3id.org/adiro/adiro_drawing_metadata#DrawingElement">metadata:DrawingElement</a>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#denotesDrawingSheet">denotesDrawingSheet</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/superClassOf" title="Inverse of RDFS' subClassOf. Defined in Ontology Documentation Profile">Super Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#StandaloneDrawingReference">Standalone Drawing Reference</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="Layoutidentifiermention">
+          <h3>Layout identifier mention
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/adiro_common_symbols#LayoutIdentifierMention</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>One evidenced occurrence of layout-identifier text (a small integer or letter), distinct from a target <a href="adiro_drawing_metadata.html#Layout">Layout</a>. A complete inline reference may contain several such occurrences, attached with contains; no target is inferred from matching text alone.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <a href="https://w3id.org/adiro/adiro_drawing_metadata#DrawingElement">metadata:DrawingElement</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="InlineLayoutDrawingReference">
+          <h3>Inline Layout and Drawing Reference
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/adiro_common_symbols#InlineLayoutDrawingReference</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A complete inline textual expression relating layout number(s) to a sheet number, such as '1, 3, 5 &amp; 7/S601'. The component mentions retain their own identities; accepted <a href="adiro_drawing_metadata.html#Layout">Layout</a> targets are connected separately by <a href="#inlineReferencesLayout">inlineReferencesLayout</a>. Expected composition: one sheet-identifier mention and at least one layout-identifier mention, attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Referenceexpression">Reference expression</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="https://w3id.org/profile/ontdoc/inDomainOf" title="Inverse of rdfs:domain. Defined in Ontology Documentation Profile">In Domain Of</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#inlineReferencesLayout">inlineReferencesLayout</a>
+                  <sup class="sup-op" title="OWL Object Property">op</sup>
+                </span>
+              </td>
+            </tr>
+          
+            <tr>
+              <th>
+                <a class="hover_property" href="#exampleimage" title="Links a class or concept to an example image illustrating it.">Example image</a>
+              </th>
+              <td><div>
+  <a href="https://w3id.org/adiro/adiro_common_symbols/exampleImage/InlineLayoutDrawingReference_01.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/adiro_common_symbols/exampleImage/InlineLayoutDrawingReference_01.png</code></a><br>
+  <img src="https://w3id.org/adiro/adiro_common_symbols/exampleImage/InlineLayoutDrawingReference_01.png" alt="Example image for InlineLayoutDrawingReference" style="max-width: 500px;">
+</div></td>
+            </tr>
+</table>
+        </div>
+        <div class="property entity" id="StandaloneDrawingReference">
+          <h3>Standalone Drawing Reference
+            <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/adiro_common_symbols#StandaloneDrawingReference</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>A drawing-identifier occurrence that itself constitutes a complete reference. One individual is both the <a href="#Drawingidentifiermention">DrawingIdentifierMention</a> and the <a href="#Referenceexpression">ReferenceExpression</a>: no duplicate wrapper, self-directed hasDrawingIdentifierMention edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
+              </th>
+              <td>
+                <ul>
+                  <li>
+                    <span>
+                      <a href="#Drawingidentifiermention">Drawing identifier mention</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                  <li>
+                    <span>
+                      <a href="#Referenceexpression">Reference expression</a>
+                      <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                    </span>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+          
+            <tr>
+              <th>
+                <a class="hover_property" href="#exampleimage" title="Links a class or concept to an example image illustrating it.">Example image</a>
+              </th>
+              <td><div>
+  <a href="https://w3id.org/adiro/adiro_common_symbols/exampleImage/StandaloneDrawingReference_01.png" target="_blank" rel="noopener noreferrer"><code>https://w3id.org/adiro/adiro_common_symbols/exampleImage/StandaloneDrawingReference_01.png</code></a><br>
+  <img src="https://w3id.org/adiro/adiro_common_symbols/exampleImage/StandaloneDrawingReference_01.png" alt="Example image for StandaloneDrawingReference" style="max-width: 500px;">
+</div></td>
+            </tr>
+</table>
+        </div>
         <div class="property entity" id="ReferenceSymbol">
           <h3>ReferenceSymbol
             <sup class="sup-c" title="OWL/RDFS Class">c</sup>
@@ -527,7 +758,10 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#subClassOf" title="The subject is a subclass of a class. Defined in The RDF Schema vocabulary (RDFS)">Sub Class Of</a>
               </th>
               <td>
-                <a href="https://w3id.org/adiro/adiro_drawing_metadata#ReferenceExpression">metadata:ReferenceExpression</a>
+                <span>
+                  <a href="#Referenceexpression">Reference expression</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
               </td>
             </tr>
             <tr>
@@ -567,6 +801,82 @@ td {
       </div>
       <div class="section" id="objectproperties">
         <h2>Object Properties</h2>
+        <div class="property entity" id="denotesDrawingSheet">
+          <h3>denotesDrawingSheet
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/adiro_common_symbols#denotesDrawingSheet</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>The accepted <a href="adiro_drawing_metadata.html#DrawingSheet">DrawingSheet</a> identity denoted by one sheet-number occurrence. It does not assert that a <a href="adiro_drawing_metadata.html#Layout">Layout</a> target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#Drawingidentifiermention">Drawing identifier mention</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="https://w3id.org/adiro/adiro_drawing_metadata#DrawingSheet">metadata:DrawingSheet</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="property entity" id="inlineReferencesLayout">
+          <h3>inlineReferencesLayout
+            <sup class="sup-op" title="OWL Object Property">op</sup>
+          </h3>
+          <table>
+            <tr>
+              <th>IRI</th>
+              <td>
+                <code>https://w3id.org/adiro/adiro_common_symbols#inlineReferencesLayout</code>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              </th>
+              <td><p>An accepted target <a href="adiro_drawing_metadata.html#Layout">Layout</a> of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
+              </th>
+              <td>
+                <span>
+                  <a href="#InlineLayoutDrawingReference">Inline Layout and Drawing Reference</a>
+                  <sup class="sup-c" title="OWL/RDFS Class">c</sup>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
+              </th>
+              <td>
+                <a href="https://w3id.org/adiro/adiro_drawing_metadata#Layout">metadata:Layout</a>
+              </td>
+            </tr>
+          </table>
+        </div>
         <div class="property entity" id="hasReferenceSymbol">
           <h3>hasReferenceSymbol
             <sup class="sup-op" title="OWL Object Property">op</sup>
@@ -744,6 +1054,21 @@ td {
               <a href="#Grid">Grid</a>
             </li>
             <li>
+              <a href="#Referenceexpression">Reference expression</a>
+            </li>
+            <li>
+              <a href="#Drawingidentifiermention">Drawing identifier mention</a>
+            </li>
+            <li>
+              <a href="#Layoutidentifiermention">Layout identifier mention</a>
+            </li>
+            <li>
+              <a href="#InlineLayoutDrawingReference">Inline Layout and Drawing Reference</a>
+            </li>
+            <li>
+              <a href="#StandaloneDrawingReference">Standalone Drawing Reference</a>
+            </li>
+            <li>
               <a href="#ReferenceSymbol">ReferenceSymbol</a>
             </li>
           </ul>
@@ -753,6 +1078,12 @@ td {
             <a href="#objectproperties">Object Properties</a>
           </h4>
           <ul class="second">
+            <li>
+              <a href="#denotesDrawingSheet">denotesDrawingSheet</a>
+            </li>
+            <li>
+              <a href="#inlineReferencesLayout">inlineReferencesLayout</a>
+            </li>
             <li>
               <a href="#hasReferenceSymbol">hasReferenceSymbol</a>
             </li>

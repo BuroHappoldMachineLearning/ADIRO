@@ -198,18 +198,25 @@ def test_trig_rewrites_a_graph_named_by_an_old_iri(tmp_path):
         ("https://example.org/x", RDF_TYPE, W3ID + "adiro_geometry#BoundingBox", "urn:x-rdflib:default")}
 
 
-# --- a class renamed inside a module (#271) ----------------------------------------------------------------------
+# --- a class renamed inside a module (#271) or moved to another (#277) ---------------------------------------------
 DM = W3ID + "adiro_drawing_metadata#"
+CS = W3ID + "adiro_common_symbols#"
 
 
 def test_a_class_renamed_inside_a_module_is_rewritten_from_every_old_iri():
     text = f"<{W3ID}aec_drawing_metadata#InlineLayoutSheetReference> <{DM}StandaloneSheetReference> <{DM}StandaloneSheetReferenceX>"
     assert mig.rewrite_text(text, ROOT).split() == [
-        f"<{DM}InlineLayoutDrawingReference>", f"<{DM}StandaloneDrawingReference>", f"<{DM}StandaloneSheetReferenceX>"]
+        f"<{CS}InlineLayoutDrawingReference>", f"<{CS}StandaloneDrawingReference>", f"<{DM}StandaloneSheetReferenceX>"]
 
 
 def test_a_graph_typed_with_an_old_class_is_rewritten_to_the_new_class(tmp_path):
     source = tmp_path / "data.ttl"
     source.write_text(f"<https://ex.org/a> a <{W3ID}aec_drawing_metadata#StandaloneSheetReference> .\n", encoding="utf-8")
     mig.main(["rewrite", str(source)])
-    assert (URIRef("https://ex.org/a"), RDF.type, URIRef(DM + "StandaloneDrawingReference")) in parse(tmp_path / "data.adiro.ttl")
+    assert (URIRef("https://ex.org/a"), RDF.type, URIRef(CS + "StandaloneDrawingReference")) in parse(tmp_path / "data.adiro.ttl")
+
+
+def test_a_term_moved_to_another_module_keeps_its_name_and_changes_its_namespace():
+    text = f"<{DM}ReferenceExpression> <{DM}denotesDrawingSheet> <{DM}DrawingSheet> <{W3ID}aec_drawing_metadata#LayoutIdentifierMention>"
+    assert mig.rewrite_text(text, ROOT).split() == [
+        f"<{CS}ReferenceExpression>", f"<{CS}denotesDrawingSheet>", f"<{DM}DrawingSheet>", f"<{CS}LayoutIdentifierMention>"]

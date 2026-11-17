@@ -3,7 +3,7 @@
 This page explains the UC-03 semantic extension tracked in
 [#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95). It complements the
 [UC-03 specification](../UC-03-Reference%20Symbol%20Cross-Sheet%20Linking.md).
-The existing `adiro_common_symbols:ReferenceSymbol` and its Layout-to-Layout link remain in place. The new terms
+The existing `adiro_common_symbols:ReferenceSymbol` and its Layout-to-Layout link remain in place, and every reference term is defined in the same module, `adiro_common_symbols` ([#277](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/277)); `DrawingElement`, `Layout` and `DrawingSheet` stay in `adiro_drawing_metadata`. The new terms
 describe source text occurrences and complete inline or standalone references that the original symbol-only
 model could not distinguish.
 
@@ -11,13 +11,13 @@ model could not distinguish.
 
 | Source individual | Meaning | Accepted target edge |
 |---|---|---|
-| `metadata:DrawingIdentifierMention` | One occurrence of sheet-number text | `metadata:denotesDrawingSheet` to a `DrawingSheet`, when resolved |
-| `metadata:LayoutIdentifierMention` | One occurrence of layout-number text | No direct target edge; it is a component of a complete expression |
+| `csymbol:DrawingIdentifierMention` | One occurrence of sheet-number text | `csymbol:denotesDrawingSheet` to a `DrawingSheet`, when resolved |
+| `csymbol:LayoutIdentifierMention` | One occurrence of layout-number text | No direct target edge; it is a component of a complete expression |
 | `csymbol:ReferenceSymbol` | One graphical marker | Existing `csymbol:referencesLayout` to an accepted target `Layout` |
-| `metadata:InlineLayoutDrawingReference` | One complete inline expression | `metadata:inlineReferencesLayout` to each accepted target `Layout` |
-| `metadata:StandaloneDrawingReference` | One sheet-number occurrence that is itself a complete reference | Inherited `metadata:denotesDrawingSheet` |
+| `csymbol:InlineLayoutDrawingReference` | One complete inline expression | `csymbol:inlineReferencesLayout` to each accepted target `Layout` |
+| `csymbol:StandaloneDrawingReference` | One sheet-number occurrence that is itself a complete reference | Inherited `csymbol:denotesDrawingSheet` |
 
-`metadata:ReferenceExpression` groups the three complete forms for queries. A standalone reference has both
+`csymbol:ReferenceExpression` groups the three complete forms for queries. A standalone reference has both
 `DrawingIdentifierMention` and `ReferenceExpression` types through subclassing: **one occurrence, one individual**. It
 does not need an outer wrapper, a self-directed `contains` edge or a duplicate box. An embedded sheet
 number remains a component of its symbol or inline expression; absence of a known parent does not prove that
@@ -31,7 +31,7 @@ resolution. The existing `metadata:hasLayout` states which Layout belongs to a D
 alone is not a globally unique Layout identity. The evidenced source Layout of any reference expression, inline or
 standalone, is stated with `metadata:contains` from that Layout (a graphical marker through `csymbol:hasReferenceSymbol`,
 a sub-property of `contains`), and read from the expression's side with the inverse path `^metadata:contains`, as ADIRO
-declares no named inverse properties ([#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21)). Likewise, `metadata:inlineReferencesLayout` is separate from the existing symbol-only
+declares no named inverse properties ([#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21)). Likewise, `csymbol:inlineReferencesLayout` is separate from the existing symbol-only
 `csymbol:referencesLayout`, so using an inline reference cannot accidentally infer that it is a graphical
 symbol. Source membership is left unset when the evidence supports only a page location. *(Amended in
 [UC-03 v0.7](../UC-03-Reference%20Symbol%20Cross-Sheet%20Linking.md#10-version-history): `appearsOnLayout` was removed.)*
@@ -48,20 +48,21 @@ For example, after one inline member has been accepted:
 
 ```turtle
 @prefix md: <https://w3id.org/adiro/adiro_drawing_metadata#> .
+@prefix cs: <https://w3id.org/adiro/adiro_common_symbols#> .
 @prefix ex: <https://example.org/adiro/demo#> .
 
 ex:sheet-S601 a md:DrawingSheet ;
     md:hasLayout ex:layout-1-S601 .
 
-ex:sheet-text-S601 a md:DrawingIdentifierMention ;
-    md:denotesDrawingSheet ex:sheet-S601 .
+ex:sheet-text-S601 a cs:DrawingIdentifierMention ;
+    cs:denotesDrawingSheet ex:sheet-S601 .
 
-ex:inline-reference-1 a md:InlineLayoutDrawingReference ;
+ex:inline-reference-1 a cs:InlineLayoutDrawingReference ;
     md:contains ex:sheet-text-S601 ;
-    md:inlineReferencesLayout ex:layout-1-S601 .
+    cs:inlineReferencesLayout ex:layout-1-S601 .
 
-ex:standalone-reference-2 a md:StandaloneDrawingReference ;
-    md:denotesDrawingSheet ex:sheet-S601 .
+ex:standalone-reference-2 a cs:StandaloneDrawingReference ;
+    cs:denotesDrawingSheet ex:sheet-S601 .
 ```
 
 No `contains` self-link or extra DrawingIdentifierMention individual is added for the standalone reference.

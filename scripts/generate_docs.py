@@ -12,7 +12,7 @@ import shutil
 import re
 from pathlib import Path
 from pylode.profiles.ontpub import OntPub
-from rdflib import Graph, URIRef
+from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import RDF, RDFS, OWL, SKOS
 from rdflib.namespace import split_uri
 
@@ -183,7 +183,8 @@ def suite_terms(ttl_files: list[Path]) -> dict[str, tuple[str, str, bool]]:
 
     The links from a definition to a term of another module point at the page of that module's latest release. A
     deprecated module (#171) is left out, so its terms, which share their local names with their successors', are never
-    linked from another module.
+    linked from another module; nor is a deprecated term (#277), such as the IRI a term had before it moved to another
+    module, which shares its local name with the term that replaced it.
     """
     terms: dict[str, tuple[str, str, bool]] = {}
     for ttl_file in ttl_files:
@@ -199,20 +200,33 @@ def suite_terms(ttl_files: list[Path]) -> dict[str, tuple[str, str, bool]]:
                 iri = str(subject)
                 if iri in terms or not (iri.startswith(ontology) and iri[len(ontology):][:1] in ("#", "/")):
                     continue
+                if (subject, OWL.deprecated, Literal(True)) in graph:
+                    continue
                 # an individual that is also a class or a property (punning) has an entry on the pyLODE page too
                 individual = not any((subject, RDF.type, k) in graph for k in documented)
                 terms[iri] = (ttl_file.stem, ttl2md.local_name(iri), individual)
     return terms
 
 
+def own_local_names(ttl_file: Path) -> set[str]:
+    """The local names of the terms a module file defines in its own namespace."""
+    graph = Graph().parse(str(ttl_file), format="turtle")
+    ontology = next((str(o) for o in graph.subjects(RDF.type, OWL.Ontology)), None)
+    return {ttl2md.local_name(str(s)) for s in graph.subjects() if ontology and isinstance(s, URIRef)
+            and str(s).startswith(ontology) and str(s)[len(ontology):][:1] in ("#", "/")}
+
+
 def elsewhere_links(suite: dict | None, ttl_file: Path, module: str, prefix: str) -> dict[str, str]:
     """IRI -> URL of the terms of the other modules on their latest Markdown page, from a page ``prefix`` away (#252).
 
-    ttl2md gives every entry its local name as its anchor. The page of a deprecated module links only within itself.
+    ttl2md gives every entry its local name as its anchor. The page of a deprecated module links only within itself. A name
+    that a term of this page's own ontology also has is left out (#277): when a term moves to another module, the page of the
+    release that defined it keeps the old term under the same local name, and a definition on that page names its own term.
     """
     if not suite or pylode_metadata.replacements(ttl_file) is not None:
         return {}
-    return {iri: f"{prefix}{other}.md#{name}" for iri, (other, name, _) in suite.items() if other != module}
+    own = own_local_names(ttl_file)
+    return {iri: f"{prefix}{other}.md#{name}" for iri, (other, name, _) in suite.items() if other != module and name not in own}
 
 
 _ENTITY_DIV = re.compile(r'<div class="property entity" id="([^"]+)">')
@@ -298,10 +312,11 @@ def link_pylode_pages(ttl_files: list[Path], repo_root: Path, output_dir: Path) 
             continue
         module = page_file.stem
         # the site serves docs/ontologies/<module>.md at ontologies/<module>/ (and <module>/<version>.md one level down)
+        own = own_local_names(ttl_file)  # a name this page's own term has wins over a moved term's (#277)
         elsewhere = {} if pylode_metadata.replacements(ttl_file) is not None else {
             iri: f"{prefix}{other}.html#{ids[other][iri]}" if iri in ids.get(other, {})
             else f"{prefix}ontologies/{other}/#{name}"
-            for iri, (other, name, _) in suite.items() if other != module
+            for iri, (other, name, _) in suite.items() if other != module and name not in own
         }
         markdown_page = f"{prefix}ontologies/{module}/" + (f"{version}/" if version else "")
         page = page_file.read_text(encoding="utf-8")

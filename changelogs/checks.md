@@ -9,7 +9,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 ## [Unreleased]
 
 ### Changed
-- **The inline-reference shape also targets `InlineLayoutDrawingReference`** ([#271](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/271)), the new name of `InlineLayoutSheetReference`, which it still targets, so data typed with either is checked. Its two messages say "inline layout and drawing reference" instead of "inline layout and sheet reference".
+- **The UC-03 composition shapes follow the reference terms to `adiro_common_symbols`** ([#277](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/277), with [#271](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/271)): the inline-reference shape targets `InlineLayoutDrawingReference` of `adiro_common_symbols` and, still, the `InlineLayoutSheetReference` of `adiro_drawing_metadata`; the mention counts and the `denotesDrawingSheet` limit read the classes and the property from either module, so data typed with the IRIs the terms had in `adiro_drawing_metadata` is checked as before. Its two messages say "inline layout and drawing reference" instead of "inline layout and sheet reference".
 
 ## [1.0.0] — 2026-10-29
 
