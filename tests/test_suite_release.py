@@ -25,3 +25,16 @@ def test_the_citation_file_names_no_module_and_no_version():
     text = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
     assert re.search(r"(?m)^type: software$", text) and not re.search(r"(?m)^version:", text)
     assert "adiro_" not in text  # a module rename leaves the record correct
+
+
+def test_the_zenodo_doi_is_the_same_in_the_readme_and_the_documentation_index():
+    """#275: the README and the generated index carry the same concept DOI, and the badge is keyed by the repository's ID."""
+    badge = re.compile(r"zenodo\.org/badge/(\d+)\.svg.*?doi\.org/(10\.5281/zenodo\.\d+)", re.S)
+    found = {}
+    for name, text in (("README", (ROOT / "README.md").read_text(encoding="utf-8")),
+                       ("generator", (ROOT / "scripts" / "generate_docs.py").read_text(encoding="utf-8")),
+                       ("index", (ROOT / "docs" / "index.md").read_text(encoding="utf-8"))):
+        m = badge.search(text) or re.search(r"doi\.org/(10\.5281/zenodo\.\d+).*?zenodo\.org/badge/(\d+)\.svg", text, re.S)
+        assert m, f"{name} has a Zenodo DOI badge"
+        found[name] = tuple(sorted(m.groups()))
+    assert len(set(found.values())) == 1, found
