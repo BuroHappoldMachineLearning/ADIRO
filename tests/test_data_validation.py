@@ -29,7 +29,7 @@ def messages(body):
 
 
 # --- the inline reference: one drawing identifier, at least one layout identifier -----------------------------------
-INLINE_OK = """:ref a metadata:InlineLayoutSheetReference ; metadata:contains :sheet , :l1 , :l3 .
+INLINE_OK = """:ref a metadata:InlineLayoutDrawingReference ; metadata:contains :sheet , :l1 , :l3 .
 :sheet a metadata:DrawingIdentifierMention .
 :l1 a metadata:LayoutIdentifierMention . :l3 a metadata:LayoutIdentifierMention .
 """
@@ -41,27 +41,32 @@ def test_a_complete_inline_reference_conforms():
 
 def test_an_inline_reference_with_two_drawing_identifiers_is_reported():
     two = INLINE_OK + ":other a metadata:DrawingIdentifierMention . :ref metadata:contains :other .\n"
-    assert messages(two) == ["An inline layout and sheet reference contains exactly one drawing identifier mention."]
+    assert messages(two) == ["An inline layout and drawing reference contains exactly one drawing identifier mention."]
 
 
 def test_an_inline_reference_with_no_drawing_identifier_is_reported():
-    none = """:ref a metadata:InlineLayoutSheetReference ; metadata:contains :l1 .
+    none = """:ref a metadata:InlineLayoutDrawingReference ; metadata:contains :l1 .
 :l1 a metadata:LayoutIdentifierMention .
 """
-    assert messages(none) == ["An inline layout and sheet reference contains exactly one drawing identifier mention."]
+    assert messages(none) == ["An inline layout and drawing reference contains exactly one drawing identifier mention."]
 
 
 def test_an_inline_reference_with_no_layout_identifier_is_reported():
-    none = """:ref a metadata:InlineLayoutSheetReference ; metadata:contains :sheet .
+    none = """:ref a metadata:InlineLayoutDrawingReference ; metadata:contains :sheet .
 :sheet a metadata:DrawingIdentifierMention .
 """
-    assert messages(none) == ["An inline layout and sheet reference contains at least one layout identifier mention."]
+    assert messages(none) == ["An inline layout and drawing reference contains at least one layout identifier mention."]
+
+
+def test_an_inline_reference_typed_with_the_deprecated_class_is_still_checked():
+    old = ":ref a metadata:InlineLayoutSheetReference ; metadata:contains :l1 .\n:l1 a metadata:LayoutIdentifierMention .\n"
+    assert messages(old) == ["An inline layout and drawing reference contains exactly one drawing identifier mention."]
 
 
 def test_a_standalone_reference_counts_as_a_drawing_identifier_mention():
-    # StandaloneSheetReference is a subclass of DrawingIdentifierMention: the ontology is read as background.
-    nested = """:ref a metadata:InlineLayoutSheetReference ; metadata:contains :sheet , :l1 .
-:sheet a metadata:StandaloneSheetReference . :l1 a metadata:LayoutIdentifierMention .
+    # StandaloneDrawingReference is a subclass of DrawingIdentifierMention: the ontology is read as background.
+    nested = """:ref a metadata:InlineLayoutDrawingReference ; metadata:contains :sheet , :l1 .
+:sheet a metadata:StandaloneDrawingReference . :l1 a metadata:LayoutIdentifierMention .
 """
     assert check(nested) == []
 
@@ -86,7 +91,7 @@ def test_a_mention_with_one_target_conforms_and_with_two_is_reported():
 
 
 def test_the_rule_reaches_a_standalone_reference_through_its_superclass():
-    two = ":m a metadata:StandaloneSheetReference ; metadata:denotesDrawingSheet :s1 , :s2 .\n"
+    two = ":m a metadata:StandaloneDrawingReference ; metadata:denotesDrawingSheet :s1 , :s2 .\n"
     assert messages(two) == ["A drawing identifier mention has at most one accepted denotesDrawingSheet target."]
 
 

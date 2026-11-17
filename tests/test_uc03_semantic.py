@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 
 import pytest
-from rdflib import Graph, Literal, Namespace, RDF, RDFS, OWL
+from rdflib import DCTERMS, Graph, Literal, Namespace, RDF, RDFS, OWL
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -27,16 +27,27 @@ def test_reference_forms_keep_symbol_and_inline_domains_distinct() -> None:
         CS.ReferenceSymbol, RDFS.subClassOf
     )
     assert MD.DrawingIdentifierMention in graph.transitive_objects(
-        MD.StandaloneSheetReference, RDFS.subClassOf
+        MD.StandaloneDrawingReference, RDFS.subClassOf
     )
     assert MD.ReferenceExpression in graph.transitive_objects(
-        MD.StandaloneSheetReference, RDFS.subClassOf
+        MD.StandaloneDrawingReference, RDFS.subClassOf
     )
     assert CS.ReferenceSymbol not in graph.transitive_objects(
-        MD.InlineLayoutSheetReference, RDFS.subClassOf
+        MD.InlineLayoutDrawingReference, RDFS.subClassOf
     )
-    assert (MD.inlineReferencesLayout, RDFS.domain, MD.InlineLayoutSheetReference) in graph
+    assert (MD.inlineReferencesLayout, RDFS.domain, MD.InlineLayoutDrawingReference) in graph
     assert (CS.referencesLayout, RDFS.domain, CS.ReferenceSymbol) in graph
+
+
+def test_the_old_reference_class_names_are_deprecated_and_equivalent_to_the_new_ones() -> None:
+    graph = load_semantic_modules()
+
+    for old, new in ((MD.InlineLayoutSheetReference, MD.InlineLayoutDrawingReference),
+                     (MD.StandaloneSheetReference, MD.StandaloneDrawingReference)):
+        assert (old, OWL.deprecated, Literal(True)) in graph
+        assert (old, OWL.equivalentClass, new) in graph
+        assert (old, DCTERMS.isReplacedBy, new) in graph
+        assert (old, MD.isComputerVisionLabel, None) not in graph
 
 
 def test_published_inline_query_returns_only_accepted_targets() -> None:
@@ -44,7 +55,7 @@ def test_published_inline_query_returns_only_accepted_targets() -> None:
     graph.add((EX.sheet, MD.drawingIdentifier, Literal("S601")))
     graph.add((EX.sheet, MD.hasLayout, EX.layout1))
     graph.add((EX.sheet, MD.hasLayout, EX.layout3))
-    graph.add((EX.inline, RDF.type, MD.InlineLayoutSheetReference))
+    graph.add((EX.inline, RDF.type, MD.InlineLayoutDrawingReference))
     graph.add((EX.inline, MD.contains, EX.sheet_mention))
     graph.add((EX.sheet_mention, RDF.type, MD.DrawingIdentifierMention))
     graph.add((EX.sheet_mention, MD.denotesDrawingSheet, EX.sheet))
@@ -88,10 +99,10 @@ def test_the_source_layout_of_a_reference_expression_is_contains_from_the_layout
     graph = load_semantic_modules()
     assert (MD.appearsOnLayout, RDF.type, OWL.ObjectProperty) not in graph
 
-    # a standalone sheet reference and a graphical marker are both found from their layout with `contains`, and back with ^contains
+    # a standalone drawing reference and a graphical marker are both found from their layout with `contains`, and back with ^contains
     graph.parse(
         data=f"""@prefix md: <{MD}> . @prefix cs: <{CS}> . @prefix ex: <{EX}> .
-ex:layout md:contains ex:standalone , ex:marker . ex:standalone a md:StandaloneSheetReference . ex:marker a cs:ReferenceSymbol .""",
+ex:layout md:contains ex:standalone , ex:marker . ex:standalone a md:StandaloneDrawingReference . ex:marker a cs:ReferenceSymbol .""",
         format="turtle",
     )
     found = {

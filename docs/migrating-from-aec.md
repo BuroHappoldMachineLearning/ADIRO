@@ -42,3 +42,12 @@ module says `dcterms:replaces` the old one and names every old release with `owl
 
 Data written against an `aec_*` release older than the final one may use terms that the final release moved or
 removed; the changelogs of the old modules list those changes, and the rewrite does not cover them.
+
+## Classes renamed since
+
+Two classes of `adiro_drawing_metadata` changed name after the module rename
+([#271](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/271)): `InlineLayoutSheetReference` is now
+`InlineLayoutDrawingReference`, and `StandaloneSheetReference` is now `StandaloneDrawingReference`. The old IRIs stay,
+deprecated and `owl:equivalentClass` to the new ones. The mapping above and the `rewrite` and `links` commands send an old IRI,
+whether `aec_drawing_metadata#…` or `adiro_drawing_metadata#…`, straight to the new class. The renames are listed in
+`config/term_renames.json`.

@@ -772,12 +772,12 @@ NOTE = "SEE 1, 3, 5 & 7/S601 FOR TYPICAL DETAIL"
 EXPRESSION = NOTE.index("1, 3, 5")
 
 
-def inline_layout_sheet_reference():
-    return _expression(NOTE, [(EXPRESSION, len("1, 3, 5 & 7/S601"))], "Inline layout and sheet reference")
+def inline_layout_drawing_reference():
+    return _expression(NOTE, [(EXPRESSION, len("1, 3, 5 & 7/S601"))], "Inline Layout and Drawing Reference")
 
 
-def standalone_sheet_reference():
-    return _expression("SEE S601 FOR TYPICAL DETAIL", [(4, len("S601"))], "Standalone sheet reference")
+def standalone_drawing_reference():
+    return _expression("SEE S601 FOR TYPICAL DETAIL", [(4, len("S601"))], "Standalone Drawing Reference")
 
 
 def drawing_identifier_mention():
@@ -807,8 +807,8 @@ METADATA = {
     "DrawingSheet_01.png": sheet_one_layout,
     "DrawingSheet_02.png": layout,  # the sheet with three layouts, which Layout_01.png has always shown
     "DrawingSheet_03.png": sheet_six_layouts,
-    "InlineLayoutSheetReference_01.png": inline_layout_sheet_reference,
-    "StandaloneSheetReference_01.png": standalone_sheet_reference,
+    "InlineLayoutDrawingReference_01.png": inline_layout_drawing_reference,
+    "StandaloneDrawingReference_01.png": standalone_drawing_reference,
     "DrawingIdentifierMention_01.png": drawing_identifier_mention,
     "LayoutIdentifierMention_01.png": layout_identifier_mention,
 }

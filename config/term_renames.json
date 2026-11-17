@@ -1,0 +1,6 @@
+{
+  "renames": [
+    {"module": "adiro_drawing_metadata", "from": "InlineLayoutSheetReference", "to": "InlineLayoutDrawingReference", "reason": "#271: say drawing, not sheet"},
+    {"module": "adiro_drawing_metadata", "from": "StandaloneSheetReference", "to": "StandaloneDrawingReference", "reason": "#271: say drawing, not sheet"}
+  ]
+}

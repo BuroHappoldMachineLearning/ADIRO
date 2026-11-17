@@ -156,17 +156,25 @@ An image embedded within a note region on a drawing sheet.
 - **Sub class of:** [Note](#Note)
 - **isComputerVisionLabel:** true
 
-### Inline layout and sheet reference {#InlineLayoutSheetReference}
+### Inline Layout and Drawing Reference {#InlineLayoutDrawingReference}
 
 A complete inline textual expression relating layout number(s) to a sheet number, such as '1, 3, 5 & 7/S601'. The component mentions retain their own identities; accepted [Layout](#Layout) targets are connected separately by [inlineReferencesLayout](#inlineReferencesLayout). Expected composition: one sheet-identifier mention and at least one layout-identifier mention, attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction.
 
-- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#InlineLayoutSheetReference`
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#InlineLayoutDrawingReference`
 - **Sub class of:** [Reference expression](#ReferenceExpression)
 - **isComputerVisionLabel:** true
 
 *Example images:*
 
-![Inline layout and sheet reference — example](https://w3id.org/adiro/adiro_drawing_metadata/exampleImage/InlineLayoutSheetReference_01.png)
+![Inline Layout and Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_metadata/exampleImage/InlineLayoutDrawingReference_01.png)
+
+### Inline layout and sheet reference {#InlineLayoutSheetReference}
+
+Deprecated: use [InlineLayoutDrawingReference](#InlineLayoutDrawingReference), the same class under a name that says drawing, not sheet. Everything typed with this class is also typed with InlineLayoutDrawingReference.
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#InlineLayoutSheetReference`
+- **Sub class of:** [Reference expression](#ReferenceExpression)
+- **Equivalent to:** [Inline Layout and Drawing Reference](#InlineLayoutDrawingReference)
 
 ### Key Plan {#KeyPlan}
 
@@ -324,11 +332,11 @@ Section drawing. Has a required property of orientation, which can be vertical o
 
 ![Section — example](https://w3id.org/adiro/adiro_drawing_metadata/exampleImage/Section_01.png)
 
-### Standalone sheet reference {#StandaloneSheetReference}
+### Standalone Drawing Reference {#StandaloneDrawingReference}
 
 A drawing-identifier occurrence that itself constitutes a complete reference. One individual is both the [DrawingIdentifierMention](#DrawingIdentifierMention) and the [ReferenceExpression](#ReferenceExpression): no duplicate wrapper, self-directed hasDrawingIdentifierMention edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified.
 
-- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#StandaloneSheetReference`
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#StandaloneDrawingReference`
 - **Sub class of:**
     - [Drawing identifier mention](#DrawingIdentifierMention)
     - [Reference expression](#ReferenceExpression)
@@ -336,7 +344,17 @@ A drawing-identifier occurrence that itself constitutes a complete reference. On
 
 *Example images:*
 
-![Standalone sheet reference — example](https://w3id.org/adiro/adiro_drawing_metadata/exampleImage/StandaloneSheetReference_01.png)
+![Standalone Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_metadata/exampleImage/StandaloneDrawingReference_01.png)
+
+### Standalone sheet reference {#StandaloneSheetReference}
+
+Deprecated: use [StandaloneDrawingReference](#StandaloneDrawingReference), the same class under a name that says drawing, not sheet. Everything typed with this class is also typed with StandaloneDrawingReference.
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#StandaloneSheetReference`
+- **Sub class of:**
+    - [Drawing identifier mention](#DrawingIdentifierMention)
+    - [Reference expression](#ReferenceExpression)
+- **Equivalent to:** [Standalone Drawing Reference](#StandaloneDrawingReference)
 
 ### StatusCode {#StatusCode}
 
@@ -532,7 +550,7 @@ The controlled-vocabulary [StatusCode](#StatusCode) assigned to a [DrawingRevisi
 An accepted target [Layout](#Layout) of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#inlineReferencesLayout`
-- **Domain:** [Inline layout and sheet reference](#InlineLayoutSheetReference)
+- **Domain:** [Inline Layout and Drawing Reference](#InlineLayoutDrawingReference)
 - **Range:** [Layout](#Layout)
 
 ### isApprovedBy {#isApprovedBy}

@@ -8,6 +8,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+- **The inline-reference shape also targets `InlineLayoutDrawingReference`** ([#271](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/271)), the new name of `InlineLayoutSheetReference`, which it still targets, so data typed with either is checked. Its two messages say "inline layout and drawing reference" instead of "inline layout and sheet reference".
+
 ## [1.0.0] — 2026-10-29
 
 ### Added

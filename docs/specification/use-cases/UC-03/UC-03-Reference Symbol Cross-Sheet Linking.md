@@ -1,6 +1,6 @@
 # UC-03: Reference Symbol Cross-Sheet Linking
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-03 · **Version:** 0.8 (semantic extension implemented on this branch, pending review — see [§8](#8-open-issues-pending-team-discussion) for deferred items, [§10](#10-version-history) for changelog)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-03 · **Version:** 0.9 (semantic extension implemented on this branch, pending review — see [§8](#8-open-issues-pending-team-discussion) for deferred items, [§10](#10-version-history) for changelog)
 
 ---
 
@@ -30,8 +30,8 @@
 | `ReferenceSymbol`        | `adiro_common_symbols`   | REUSE | A graphical linking entity drawn on a source Layout and pointing to an accepted target Layout. |
 | `ReferenceExpression` | `adiro_drawing_metadata` | NEW | Common type for a complete graphical, inline or standalone reference; no extra wrapper individual is required. |
 | `DrawingIdentifierMention` / `LayoutIdentifierMention` | `adiro_drawing_metadata` | NEW | Distinct, evidenced occurrences of source number text, separate from target identities. |
-| `InlineLayoutSheetReference` | `adiro_drawing_metadata` | NEW | One complete inline expression, possibly with several layout-number components and accepted target Layouts. |
-| `StandaloneSheetReference` | `adiro_drawing_metadata` | NEW | One occurrence typed as both `DrawingIdentifierMention` and `ReferenceExpression`. |
+| `InlineLayoutDrawingReference` | `adiro_drawing_metadata` | NEW | One complete inline expression, possibly with several layout-number components and accepted target Layouts. |
+| `StandaloneDrawingReference` | `adiro_drawing_metadata` | NEW | One occurrence typed as both `DrawingIdentifierMention` and `ReferenceExpression`. |
 
 > **Design note — graphical symbols and text.** `csymbol:ReferenceSymbol` is the established class for graphical cross-sheet markers. `metadata:ReferenceExpression` now groups it with inline and standalone textual forms for source-reference queries. A graphical marker is still a `metadata:DrawingElement`; its accepted `csymbol:referencesLayout` target remains Layout-level. *(Amended in [v0.6](#10-version-history).)*
 
@@ -63,7 +63,7 @@ decisions remain in immutable source evidence; an accepted target edge is assert
 | `hasReferenceSymbol`  | `Layout`          | `ReferenceSymbol` | `adiro_common_symbols`   | NEW    | `metadata:contains`     |
 | `referencesLayout`    | `ReferenceSymbol` | `Layout`          | `adiro_common_symbols`   | NEW    | (top-level)             |
 | `denotesDrawingSheet` | `DrawingIdentifierMention` | `DrawingSheet` | `adiro_drawing_metadata` | NEW | (top-level) |
-| `inlineReferencesLayout` | `InlineLayoutSheetReference` | `Layout` | `adiro_drawing_metadata` | NEW | (top-level) |
+| `inlineReferencesLayout` | `InlineLayoutDrawingReference` | `Layout` | `adiro_drawing_metadata` | NEW | (top-level) |
 
 > **Design note — inverse properties.** ADIRO declares **no** named inverse properties and no `owl:inverseOf` axioms. Only the forward direction of each pair is modelled: `hasReferenceSymbol` (Layout → ReferenceSymbol, ⊂ `metadata:contains`) and `referencesLayout` (ReferenceSymbol → Layout). Reverse navigation uses the SPARQL inverse path, e.g. `?sym ^csymbol:hasReferenceSymbol ?layout`, or simply reads the forward triple in the other direction. Decided project-wide in [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21). *(Changed in [v0.3](#10-version-history).)*
 
@@ -145,7 +145,7 @@ See the [semantic design note](design-notes/uc03-semantic-references.md) for the
 
 - Source: UC-03 reference extraction and cross-sheet linking ([#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95))
 - Derived terms: `metadata:ReferenceExpression`, `DrawingIdentifierMention`, `LayoutIdentifierMention`,
-  `InlineLayoutSheetReference`, `StandaloneSheetReference`
+  `InlineLayoutDrawingReference`, `StandaloneDrawingReference`
 - Export condition: a semantic Mention has source-text and immutable PDF/page evidence. An unlocalisable
   reconstructed block may retain an independently accepted Sheet resolution with explicit source status
   and no navigation link. Unresolved target candidates remain in extraction evidence; OWL subclassing
@@ -163,7 +163,7 @@ See the [semantic design note](design-notes/uc03-semantic-references.md) for the
 - Detailed component-to-target pairing stays in structured evidence; the graph contains the supported
   target set. This does not add the graphical whole-sheet relation deferred in
   [#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38) or claim that a PDF hyperlink was emitted.
-- **Deferred: bare layout-identifier reference.** A layout identifier that is a complete reference by itself (for example a same-sheet "see detail 3") is a `LayoutIdentifierMention` but not yet a `ReferenceExpression`, so it has no class. A dedicated reference class for it, the layout counterpart of `StandaloneSheetReference`, is deferred together with [#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38) and [#20](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/20).
+- **Deferred: bare layout-identifier reference.** A layout identifier that is a complete reference by itself (for example a same-sheet "see detail 3") is a `LayoutIdentifierMention` but not yet a `ReferenceExpression`, so it has no class. A dedicated reference class for it, the layout counterpart of `StandaloneDrawingReference`, is deferred together with [#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38) and [#20](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/20).
 
 ---
 
@@ -282,7 +282,7 @@ particular symbol; inspect that symbol's source evidence for a text comparison.
 PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 SELECT DISTINCT ?targetLayout WHERE {
-  ?inline a metadata:InlineLayoutSheetReference ;
+  ?inline a metadata:InlineLayoutDrawingReference ;
           metadata:contains ?sheetMention ;
           metadata:inlineReferencesLayout ?targetLayout .
   ?sheetMention a metadata:DrawingIdentifierMention ;
@@ -312,7 +312,7 @@ string; member-level pairings and unresolved decisions require the indexed evide
 | `metadata:layoutIdentifier`        | `adiro_drawing_metadata` | REUSE | CQ 2.x | FR 5 |
 | `metadata:ReferenceExpression` | `adiro_drawing_metadata` | NEW | CQ 4.1 | FR 7 |
 | `metadata:DrawingIdentifierMention` / `LayoutIdentifierMention` | `adiro_drawing_metadata` | NEW | CQ 4.1–4.3 | FR 7, FR 8 |
-| `metadata:InlineLayoutSheetReference` / `StandaloneSheetReference` | `adiro_drawing_metadata` | NEW | CQ 4.1–4.3 | FR 7 |
+| `metadata:InlineLayoutDrawingReference` / `StandaloneDrawingReference` | `adiro_drawing_metadata` | NEW | CQ 4.1–4.3 | FR 7 |
 | `metadata:denotesDrawingSheet` | `adiro_drawing_metadata` | NEW | CQ 4.2, CQ 4.3 | FR 8 |
 | `metadata:inlineReferencesLayout` | `adiro_drawing_metadata` | NEW | CQ 4.2 | FR 8 |
 
@@ -370,7 +370,7 @@ These items were raised during UC-03 drafting. **UC03-1 and UC03-2 are resolved*
 | UC03-2 | **✅ RESOLVED (implemented).** `metadata:layoutIdentifier` is now declared in `adiro_drawing_metadata` (`src/`). *(Original: UC-03 introduced it provisionally, pending UC-01 formally adopting it as an identity field.)* |
 | UC03-3 | **→ Tracked as [#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36) (deferred).** A GeoSPARQL WKT/CRS profile and source-Layout spatial containment queries remain optional. The shared `BoundingBox` / `CoordinateFrame` already exist in PR #76; UC-03 localisation and navigation geometry are separately tracked in [#93](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/93). A title/number strip is not a full Layout polygon, and spatial overlap alone does not establish accepted source membership. |
 | UC03-4 | **→ Tracked as [#37](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/37) (backlog; out of UC-03 core scope).** Match Lines and other reference symbol types. Industry usage extends beyond Detail/Section/Elevation markers (Match Lines for split-sheet continuation, Schedule references, Key Plan references, etc.). UC-03's current scope covers the three primary types; broader coverage may need additional modelling if a CQ requires it. |
-| UC03-5 | **→ Tracked as [#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38) (backlog).** A graphical marker targeting an entire DrawingSheet remains an open case; the existing `csymbol:referencesLayout` is Layout-level and no general `referencesSheet` property is introduced here. For textual sources, `metadata:TextualNote.refersToDrawingId` remains available for a note's identifier string. The new `StandaloneSheetReference` instead represents one evidenced sheet-number occurrence whose accepted sheet identity may be expressed by `denotesDrawingSheet`; it does not change the graphical-marker question. |
+| UC03-5 | **→ Tracked as [#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38) (backlog).** A graphical marker targeting an entire DrawingSheet remains an open case; the existing `csymbol:referencesLayout` is Layout-level and no general `referencesSheet` property is introduced here. For textual sources, `metadata:TextualNote.refersToDrawingId` remains available for a note's identifier string. The new `StandaloneDrawingReference` instead represents one evidenced sheet-number occurrence whose accepted sheet identity may be expressed by `denotesDrawingSheet`; it does not change the graphical-marker question. |
 | —     | **✅ RESOLVED — [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21).** Inverse-property convention (project-wide, not UC-03-specific). Decided: ADIRO declares **no** named inverse properties and no `owl:inverseOf` axioms; reverse navigation uses SPARQL inverse paths. `appearsOn` and `isReferencedBy` removed from `adiro_common_symbols`; `isRevisionOf` removed from `adiro_drawing_metadata`. *(Applied in [v0.3](#10-version-history).)* |
 
 ---
@@ -391,11 +391,17 @@ For the full design-debate reasoning behind the v0.2 modelling choices, see the 
 
 ## 10. Version History
 
-### v0.8 (current)
+### v0.9 (current)
+
+Change from v0.8, made when the two reference classes lost "sheet" from their names ([#271](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/271)). MAJOR in substance (two terms renamed); the number stays in the 0.x series because the document is still a draft:
+
+- **`InlineLayoutSheetReference` is now `InlineLayoutDrawingReference` and `StandaloneSheetReference` is now `StandaloneDrawingReference`** wherever this document names them (the class tables, FR 7, CQ 4.2 and the traceability table). A thing ADIRO describes is a drawing; "sheet" stays for the paper format and in the name `DrawingSheet`. The old IRIs stay in `adiro_drawing_metadata`, deprecated and equivalent to the new classes, so data typed with them is read as the new classes. Nothing else changes: definitions, superclasses and the properties that use them are the same.
+
+### v0.8 (previous)
 
 Change from v0.7, made when the modules were renamed from `aec_*` to `adiro_*` ([#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171)). MINOR: no entity, attribute, relation or competency question changes, only the module names and the namespaces of the IRIs this document cites (the CQ 4.2 query now uses the `adiro_*` namespaces). The entries below keep the names of their time.
 
-### v0.7 (previous)
+### v0.7
 
 Change from v0.6, made when the duplicate of `contains` was removed ([#170](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/170)). MAJOR in substance (a term removed); the number stays in the 0.x series because the document is still a draft:
 

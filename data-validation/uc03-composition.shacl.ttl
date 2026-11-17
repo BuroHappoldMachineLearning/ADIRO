@@ -15,7 +15,7 @@
 @prefix dv: <https://w3id.org/adiro/data-validation/uc03-composition#> .
 
 dv:InlineReferenceComposition a sh:NodeShape ;
-    sh:targetClass metadata:InlineLayoutSheetReference ;
+    sh:targetClass metadata:InlineLayoutDrawingReference , metadata:InlineLayoutSheetReference ;
     sh:severity sh:Violation ;
     sh:property [
         sh:severity sh:Violation ;
@@ -23,14 +23,14 @@ dv:InlineReferenceComposition a sh:NodeShape ;
         sh:qualifiedValueShape [ sh:class metadata:DrawingIdentifierMention ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
-        sh:message "An inline layout and sheet reference contains exactly one drawing identifier mention."
+        sh:message "An inline layout and drawing reference contains exactly one drawing identifier mention."
     ] ;
     sh:property [
         sh:severity sh:Violation ;
         sh:path metadata:contains ;
         sh:qualifiedValueShape [ sh:class metadata:LayoutIdentifierMention ] ;
         sh:qualifiedMinCount 1 ;
-        sh:message "An inline layout and sheet reference contains at least one layout identifier mention."
+        sh:message "An inline layout and drawing reference contains at least one layout identifier mention."
     ] .
 
 dv:ReferenceSymbolComposition a sh:NodeShape ;
