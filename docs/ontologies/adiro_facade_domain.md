@@ -18,6 +18,10 @@
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/adiro_facade_domain.html){ .md-button }
 </div>
 
+!!! warning "Deprecated"
+
+    This module is deprecated and receives no further changes. It is replaced by `adiro_facade_discipline`, which continues its version numbering. Every release of it stays published at its own IRI.
+
 Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbol, and domain vocabularies.
 
 - **IRI:** `https://w3id.org/adiro/adiro_facade_domain`
@@ -214,7 +218,7 @@ Double glazing unit: two panes of glass held apart by a spacer around a sealed g
 Component of a facade system; a type of drawing element
 
 - **IRI:** `https://w3id.org/adiro/adiro_facade_domain#FacadeComponent`
-- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
+- **Sub class of:** `metadata:DrawingElement`
 
 ### Facade secondary structure {#FacadeSecondaryStructure}
 
@@ -224,15 +228,15 @@ Component of a facade system; a type of drawing element
 ### Facade shape {#FacadeShape}
 
 - **IRI:** `https://w3id.org/adiro/adiro_facade_domain#FacadeShape`
-- **Sub class of:** [`dcommon:GeometricProperties`](adiro_domain_common.md#GeometricProperties)
+- **Sub class of:** `dcommon:GeometricProperties`
 
 ### Facade system {#FacadeSystem}
 
 Facade system - part of support type; a type of drawing element
 
 - **IRI:** `https://w3id.org/adiro/adiro_facade_domain#FacadeSystem`
-- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
-- **Restrictions:** [`metadata:contains`](adiro_drawing_metadata.md#contains) some [Facade component](#FacadeComponent)
+- **Sub class of:** `metadata:DrawingElement`
+- **Restrictions:** `metadata:contains` some [Facade component](#FacadeComponent)
 
 ### Faceted {#Faceted}
 
