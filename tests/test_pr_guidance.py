@@ -241,21 +241,3 @@ def test_removing_or_renaming_the_example_image_property_is_detected():
     assert len(caution.detect([{"module": "aec_drawing_metadata", "base": base, "head": head}], None)) == 1
     assert caution.detect([{"module": "aec_drawing_metadata", "base": base, "head": base}], None) == []
     assert caution.detect([{"module": "aec_x", "base": g(BASE), "head": g(BASE)}], None) == []
-
-
-def test_a_new_term_that_defines_itself_in_rdfs_comment_is_asked_for_a_skos_definition_but_a_touched_one_is_not():
-    """#273: `undescribed` accepts an rdfs:comment while the modules are split, so the new terms are checked on their own."""
-    skos = BASE.replace("@prefix rdfs:", "@prefix skos: <http://www.w3.org/2004/02/skos/core#> .\n@prefix rdfs:")
-    head = g(skos.replace('rdfs:comment "Old."', 'rdfs:comment "Reworded."')  # A: touched, still defined in a comment
-             + ':New a owl:Class ; rdfs:comment "Old style." .\n'
-             + ':Split a owl:Class ; skos:definition "A definition." ; rdfs:comment "Commentary." .\n'
-             + ":Bare a owl:Class .\n")
-    base = g(skos)
-    assert name(pg.new_terms_defined_in_comment(base, head)) == ["New"]  # not A (touched), Split (split) or Bare (undescribed)
-    assert name(pg.undescribed(head, pg.touched_terms(base, head))) == ["Bare"]
-
-
-def test_the_unsplit_finding_is_rendered_with_its_advice():
-    text = pg.render([("unsplit", "`New` (`aec_x`)")], [], "o/r")
-    assert "**1 new term defined in `rdfs:comment` and not in `skos:definition`.**" in text
-    assert "A new term takes a `skos:definition`" in text and "- `New` (`aec_x`)" in text

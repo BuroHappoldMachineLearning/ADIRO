@@ -10,8 +10,8 @@ Findings are grouped by issue type (#144): each type's advice is said once, foll
 behind <details> when there are more than COLLAPSE_OVER. A new check adds one `Kind` to `kinds()`.
 
 Sections (each appears only when it has something to say):
-  - To do: touched terms with no description (skos:definition, or rdfs:comment until a module is split, #273), new terms
-    that define themselves in rdfs:comment, touched terms whose label is shared with another term,
+  - To do: touched terms with no description (skos:definition, or rdfs:comment until a module is split, #273),
+    touched terms whose label is shared with another term,
     a `.ttl` change with no changelog entry (#105), unused @prefix / owl:imports in a touched module,
     and a `Closes #N` in the description that GitHub did not register;
   - Previews: an OntoCanvas link per touched module that declares classes.
@@ -32,7 +32,7 @@ from pathlib import Path
 
 from rdflib import Graph, URIRef
 from rdflib.compare import isomorphic
-from rdflib.namespace import OWL, RDF, RDFS, SKOS
+from rdflib.namespace import OWL, RDF, RDFS
 from rdflib.term import BNode
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -75,17 +75,6 @@ def touched_terms(base, head):
 
 def undescribed(head, terms):
     return [t for t in terms if not any((t, p, None) in head for p in DESCRIPTION_PROPS)]
-
-
-def new_terms_defined_in_comment(base, head):
-    """New ADIRO terms (no triples in the base) with an rdfs:comment and no skos:definition (#273).
-
-    `undescribed` accepts an rdfs:comment while the modules are split one by one, so a new term written the old way would
-    add to the backlog of the split unnoticed; only the terms this PR adds are asked for a definition, not the ones it
-    merely touches.
-    """
-    return [t for t in sorted(adiro_terms(head), key=str)
-            if not _signature(base, t) and (t, RDFS.comment, None) in head and (t, SKOS.definition, None) not in head]
 
 
 def label_clashes(suite, terms):
@@ -158,9 +147,6 @@ def kinds(repo):
         Kind("undescribed", "No `skos:definition` on {n} {things}",
              f"Add a short definition in your own words, as a `skos:definition`; `rdfs:comment` is for commentary "
              f"(convention: [#87]({issue}/87), [#273]({issue}/273)).", ("term", "terms")),
-        Kind("unsplit", "{n} new {things} defined in `rdfs:comment` and not in `skos:definition`",
-             "A new term takes a `skos:definition`, and `rdfs:comment` is kept for commentary; the existing terms are split "
-             f"module by module ([#273]({issue}/273)).", ("term", "terms")),
         Kind("label-clash", "{n} {things} share an `rdfs:label` with another term",
              "Labels are unique across classes so the docs and label search are not ambiguous.", ("term", "terms")),
         Kind("removed", "{n} ontology {things} removed or renamed",
@@ -362,7 +348,6 @@ def main(argv=None):
             ln = definition_line(texts[path], t)
             where = f", [line {ln}](https://github.com/{args.repo}/blob/{args.head_sha}/{path}#L{ln})" if ln else ""
             findings.append(("undescribed", f"`{local_name(t)}` (`{module}`{where})"))
-        findings += [("unsplit", f"`{local_name(t)}` (`{module}`)") for t in new_terms_defined_in_comment(base, head)]
         for t, others in label_clashes(suite, touched).items():
             findings.append(("label-clash", f"`{local_name(t)}` (`{module}`) shares it with "
                                             + ", ".join(f"`{local_name(o)}`" for o in others)))
