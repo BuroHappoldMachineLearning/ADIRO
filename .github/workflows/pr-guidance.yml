@@ -1,7 +1,7 @@
 name: PR guidance
 
 # #106. The ADIRO Bot's human-readable guidance for a PR: what the author should do about THEIR OWN
-# changes (new terms without an rdfs:comment, label clashes, a .ttl change with no changelog entry,
+# changes (terms without a skos:definition or rdfs:comment, label clashes, a .ttl change with no changelog entry,
 # a `Closes #N` that did not register) plus an OntoCanvas preview link per touched module. The machine
 # report stays in the QC comment (ontology-reasoning.yml); this is a separate sticky comment on purpose.
 # All logic is scripts/pr_guidance.py; this file only runs it and posts the result.

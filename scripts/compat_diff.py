@@ -126,7 +126,7 @@ def _individual_statements(graph, term):
     """
     out = {"schemes": set(), "names": set(), "links": set(), "notes": set()}
     for p, o in graph.predicate_objects(term):
-        if (p in (RDF.type, RDFS.label, RDFS.comment) or isinstance(o, BNode) or str(p).startswith(_FLAG_NS)
+        if (p in (RDF.type, RDFS.label, RDFS.comment, SKOS.definition) or isinstance(o, BNode) or str(p).startswith(_FLAG_NS)
                 or str(p).rsplit("#", 1)[-1] == "exampleImage"):
             continue
         if p == SKOS.inScheme:
@@ -178,6 +178,8 @@ def build_symbols(graph):
             "kind": kind,
             "labels": frozenset(str(o) for o in graph.objects(term, RDFS.label)),
             "comments": frozenset(str(o) for o in graph.objects(term, RDFS.comment)),
+            # a term's definition (#273): compared for every kind of term, as its comment is
+            "definitions": frozenset(o.n3() for o in graph.objects(term, SKOS.definition)),  # with its language, as an individual's notes are
             "supers": frozenset(
                 str(o)
                 for pred in (RDFS.subClassOf, RDFS.subPropertyOf)
@@ -309,7 +311,8 @@ def compute_deltas(old_syms, new_syms):
                 deltas.append(("LINK_ADDED", iri))
         if o["flags"] != n["flags"]:
             deltas.append(("LABELLING_CHANGED", iri))
-        if ((o["labels"], o["comments"], o["images"], o["notes"]) != (n["labels"], n["comments"], n["images"], n["notes"])
+        if ((o["labels"], o["definitions"], o["comments"], o["images"], o["notes"])
+                != (n["labels"], n["definitions"], n["comments"], n["images"], n["notes"])
                 and ("ANNOTATION_CHANGED", iri) not in deltas):  # one delta per term, whatever annotation changed
             deltas.append(("ANNOTATION_CHANGED", iri))
     return deltas
@@ -320,6 +323,7 @@ def compute_deltas(old_syms, new_syms):
 _ANNOTATION_PREDICATE = {
     "rdfs:label": r"rdfs:label\b",
     "rdfs:comment": r"rdfs:comment\b",
+    "skos:definition": r"skos:definition\b",
     "exampleImage": r"(?:[\w-]*:|<[^>]*#)exampleImage\b",
     "rdfs:domain": r"rdfs:domain\b",
     "rdfs:range": r"rdfs:range\b",
@@ -336,7 +340,8 @@ def annotation_details(old_syms, new_syms):
         o, n = old_syms[iri], new_syms[iri]
         if o["kind"] != n["kind"] or o["kind"] == "ontology":
             continue
-        pairs = [("labels", "rdfs:label"), ("comments", "rdfs:comment"), ("images", "exampleImage")]
+        pairs = [("labels", "rdfs:label"), ("definitions", "skos:definition"), ("comments", "rdfs:comment"),
+                 ("images", "exampleImage")]
         if o["kind"] == "annotation-property":
             pairs += [("domain", "rdfs:domain"), ("range", "rdfs:range"), ("supers", "rdfs:subPropertyOf")]
         names = [name for key, name in pairs if o[key] != n[key]]

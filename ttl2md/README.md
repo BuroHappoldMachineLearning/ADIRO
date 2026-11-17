@@ -56,6 +56,8 @@ markdown = conv.render(doc)
 ## What it renders
 
 - Ontology metadata: title, IRI, `owl:versionInfo`, `owl:imports`.
+- **A term's description** (a class, a property, an individual or a concept): its definition first (`skos:definition`, or the
+  `rdfs:comment` of a term not yet split), then its commentary (`rdfs:comment`) as a **Comment** row.
 - **Classes** — description, `rdfs:subClassOf` (named super-classes as intra-page
   links), OWL **restrictions** with cardinalities (`min`/`max`/`exactly`,
   qualified and unqualified), `owl:equivalentClass`, `owl:oneOf` enumerations.
@@ -66,8 +68,7 @@ markdown = conv.render(doc)
 - **Concepts** — SKOS concept schemes, each followed by its concepts (a
   concept in several schemes is entered under the first, and listed by the
   others under "Also includes"; one in no scheme of the ontology is under
-  "Other concepts"): the
-  definition (`skos:definition`, else `rdfs:comment`), the classes besides
+  "Other concepts"): the classes besides
   `skos:Concept`, the scheme, the preferred and alternative labels with their
   language, examples, scope notes and notes, and any other statement about the
   concept (an annotation pointing at a property is linked to it). A concept is
