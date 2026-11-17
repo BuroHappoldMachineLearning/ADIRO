@@ -1,3 +1,9 @@
+## 2026-11-17 - Zenodo sandbox test and the first suite release ([#275](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/275))
+
+Tested Zenodo's GitHub integration on the sandbox with the real Zenodo switched off (checked in the repository's webhooks first): a throwaway release `zenodo-test-1` was archived with the right creators, ORCID iDs, licence, description and keywords, as a *Software* record (the integration's type; Zenodo has no ontology type, so Software stays). GitHub sent three release events; Zenodo took the first and answered 409 to two. Release and tag deleted. `backup-version.yml` failed on the tag, as expected, and opened the alert issue [#279](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/279), closed by hand.
+- This change: `CITATION.cff` message reworded (it shows as the record's Notes) and `type: software`; `backup-version.yml` skips a release tagged `suite-*` (a suite release archives the repository and snapshots no module), with `tests/test_suite_release.py`; `AGENTS.md` records the suite-release convention.
+- Next: merge, publish the first suite release `suite-2026-11-17` (real Zenodo is on), confirm the DOI, then add the badge to the README and the documentation index. Whether a release published by the ADIRO Bot is archived is still untested.
+
 ## 2026-11-17 - `CITATION.cff` for the Zenodo DOI ([#275](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/275))
 
 Added `CITATION.cff` at the repository root, the metadata Zenodo's GitHub integration reads (no `.zenodo.json`, so it uses this file). One DOI for the repository, decided in [#275](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/275).
