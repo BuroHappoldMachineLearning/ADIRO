@@ -94,7 +94,7 @@ Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachine
   than alphabetical order. Each ontology page also embeds an **OntoCanvas `<iframe>`** (`## Interactive view`,
   after the intro, before `## Dependencies`); the page's intro is the module's `owl:Ontology` `rdfs:comment`,
   which should be a short, plain-language paragraph about the module's *role* (not a list of its classes).
-  **The names of terms in a definition are links** ([#252](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/252)): a name written in an `rdfs:comment` (its local name, or a
+  **The names of terms in a definition are links** ([#252](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/252)): a name written in a term's `skos:definition` or `rdfs:comment` (its local name, or a
   prefixed name) links to the term's entry on the page, or to the latest page of the module that defines it, on the Markdown
   page and on the pyLODE page alike. One implementation, `ttl2md/src/ttl2md/crosslinks.py`, holds the rules (which words are
   not linked, so an ordinary word is not); `generate_docs.py` applies it to the pyLODE HTML (`link_pylode_pages`, once every page exists,
@@ -227,7 +227,7 @@ commands directly, but Git Bash is simpler.
 - **`.github/workflows/pr-guidance.yml`** — on every same-repo PR (opened/edited/pushed), the **ADIRO Bot** posts a
   separate, human-readable sticky comment ([#106](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/106)),
   built by `scripts/pr_guidance.py`: a to-do list for **this PR's own changes**, grouped by issue type ([#144](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/144): each type's advice is said once, and more than 5 items are collapsed; a new check adds one `Kind` in the script) (a touched term with no
-  `rdfs:comment`, a label shared with another term, a `.ttl` change with no changelog change (the
+  description (a `skos:definition`, or an `rdfs:comment` until its module is split), a label shared with another term, a `.ttl` change with no changelog change (the
   `validate_ontology.py` check below, rendered in plain language), an unused `@prefix`/`owl:imports` the PR
   introduced, a `Closes #N` GitHub did not register), titled "Required improvements", with an OntoCanvas preview link
   per touched module that declares classes listed beneath it. **The comment exists only while something needs fixing**
@@ -344,7 +344,7 @@ For anyone changing an ontology, agent or person. The sections below give the de
 1. **Edit `src/<module>.ttl`** and validate it straight away (`uv run python scripts/validate_ontology.py`).
 2. **Record the change** under `[Unreleased]` in `changelogs/<module>.md`, in the same PR. That entry becomes the
    release notes, so write it for a reader of the release.
-3. **Give every new or edited term an `rdfs:comment`**, in your own words (see "Every ADIRO term needs an `rdfs:comment`").
+3. **Give every new or edited term a `skos:definition`**, in your own words, and keep `rdfs:comment` for commentary (see "Every ADIRO term needs a `skos:definition`").
 4. **Regenerate the docs and bring the hand-written specification into line**, as the "Keep in sync" rules say.
 5. **Open the PR** following "Pull-request description", then **read the ADIRO Bot's comments and act on them**. "Required
    improvements" lists what to fix in this PR's own changes (a missing definition, a missing changelog change, a
@@ -469,12 +469,17 @@ For anyone changing an ontology, agent or person. The sections below give the de
     classes declared as local stubs (PROV, GeoSPARQL) are not ours to classify. It only produced a standing list of root
     classes nobody acts on. **Do not assert `rdfs:subClassOf owl:Thing` to silence it**: `owl:Thing` is implicit for every
     class, and the compatibility diff reads an added superclass as a change (a potentially breaking, MAJOR one).
-- **Every ADIRO term needs an `rdfs:comment`.** That is ADIRO's definition vocabulary — deliberately
+- **Every ADIRO term needs a `skos:definition`.** A term's **definition** (what it is, one to three sentences, in your
+  own words, `@en`) is a `skos:definition`, and **`rdfs:comment` is the commentary**: rationale, examples, the standard a
+  term corresponds to and how it differs, links to issues ([#273](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/273), decided in
+  [Discussion #265](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/265)). The modules are split one at a time:
+  until a module is, a term whose definition is still an `rdfs:comment` counts as described, and the validator lists it
+  as "not yet split" (`ENFORCE_DEFINITIONS=1` makes that blocking). The definition is deliberately
   **not** the OBO `IAO:0000115` that ROBOT's `missing_definition` rule looks for, which is why that rule is
   **absent** from `config/robot_report_profile.txt` (a profile lists the checks that run; omitting one
   disables it, and the file format accepts no comments to say so). Reasons in
   `docs/specification/design-decisions/usage-of-annotation-properties.md`. `scripts/validate_ontology.py` reports
-  ADIRO-namespace terms that lack one (external stubs exempt — their definitions live at the source). It is
+  ADIRO-namespace terms that lack a description (external stubs exempt — their definitions live at the source). It is
   advisory while the backlog in [#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87) is
   cleared; `ENFORCE_DESCRIPTIONS=1` makes it blocking, `LIST_UNDESCRIBED=1` lists every term.
 - **Versioning.** Record any change to a module's semantics under that module's `changelogs/<module>.md`

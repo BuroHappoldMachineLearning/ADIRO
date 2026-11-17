@@ -25,15 +25,16 @@ import module_renames
 
 
 # Every ADIRO term must carry a human-readable description. ADIRO's definition
-# vocabulary is rdfs:comment - NOT the OBO convention IAO:0000115 that ROBOT's
-# built-in `missing_definition` rule looks for. See
-# docs/specification/design-decisions/usage-of-annotation-properties.md for why.
+# vocabulary is skos:definition, with rdfs:comment kept for commentary (#273) - NOT the
+# OBO convention IAO:0000115 that ROBOT's built-in `missing_definition` rule looks for.
+# See docs/specification/design-decisions/usage-of-annotation-properties.md for why.
 #
-# skos:definition and dcterms:description are accepted too: those are the other
-# properties pyLODE normalises into a rendered description, so a term carrying
-# one of them still documents itself on the published site.
+# While the modules are split one by one (#273), a term that still defines itself in
+# rdfs:comment counts as described, as does one with dcterms:description (the other
+# property pyLODE normalises into a rendered description); find_unsplit_terms reports
+# the terms whose definition is not yet a skos:definition.
 ADIRO_NS = "https://w3id.org/adiro/"
-DESCRIPTION_PROPS = (RDFS.comment, SKOS.definition, DCTERMS.description)
+DESCRIPTION_PROPS = (SKOS.definition, RDFS.comment, DCTERMS.description)
 TERM_TYPES = (OWL.Class, OWL.ObjectProperty, OWL.DatatypeProperty,
               OWL.AnnotationProperty, OWL.NamedIndividual,
               # a field-kind vocabulary is SKOS, and its concepts are terms a
@@ -189,6 +190,24 @@ def find_internal_names(repo_root: Path) -> list[str]:
                     findings.append(f"{path.relative_to(repo_root).as_posix()}:{n} names an internal tool; describe the "
                                     "behaviour generically (this repository is public)")
     return findings
+
+
+def find_unsplit_terms(graph) -> list[str]:
+    """
+    ADIRO-namespace terms whose definition is still an rdfs:comment: they have an rdfs:comment and no skos:definition (#273).
+
+    A term with neither is reported by find_undescribed_terms; a term with a skos:definition is split, whatever
+    commentary it also carries.
+    """
+    unsplit = []
+    for term_type in TERM_TYPES:
+        for term in graph.subjects(RDF.type, term_type):
+            if not isinstance(term, URIRef) or not str(term).startswith(ADIRO_NS):
+                continue
+            if (term, SKOS.definition, None) in graph or (term, RDFS.comment, None) not in graph:
+                continue
+            unsplit.append(str(term).split("#")[-1])
+    return sorted(set(unsplit))
 
 
 def find_undescribed_terms(graph) -> list[str]:
@@ -401,8 +420,8 @@ def validate_ontology(ttl_file: Path) -> tuple[bool, list[str], list[str]]:
         if undescribed:
             head = ", ".join(undescribed[:8])
             more = f" ... and {len(undescribed) - 8} more" if len(undescribed) > 8 else ""
-            msg = (f"{len(undescribed)} term(s) have no rdfs:comment "
-                   f"(nor skos:definition / dcterms:description): {head}{more}. "
+            msg = (f"{len(undescribed)} term(s) have no skos:definition "
+                   f"(nor rdfs:comment / dcterms:description): {head}{more}. "
                    "Backlog: [#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87); "
                    "`LIST_UNDESCRIBED=1 uv run python scripts/validate_ontology.py` lists every term.")
             if os.environ.get("ENFORCE_DESCRIPTIONS") == "1":
@@ -411,6 +430,20 @@ def validate_ontology(ttl_file: Path) -> tuple[bool, list[str], list[str]]:
                 warnings.append(msg)
                 if os.environ.get("LIST_UNDESCRIBED") == "1":
                     warnings.extend(f"  undescribed: {t}" for t in undescribed)
+
+        # A definition is a skos:definition and rdfs:comment is commentary (#273). Advisory while the modules are split
+        # one by one; ENFORCE_DEFINITIONS=1 makes it blocking once the last is.
+        unsplit = find_unsplit_terms(graph)
+        if unsplit:
+            head = ", ".join(unsplit[:8])
+            more = f" ... and {len(unsplit) - 8} more" if len(unsplit) > 8 else ""
+            msg = (f"{len(unsplit)} term(s) still carry their definition in rdfs:comment and have no skos:definition: "
+                   f"{head}{more}. Move the definition to skos:definition and keep rdfs:comment for commentary "
+                   "([#273](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/273)).")
+            if os.environ.get("ENFORCE_DEFINITIONS") == "1":
+                errors.append(msg)
+            else:
+                warnings.append(msg)
 
         return len(errors) == 0, errors, warnings
 

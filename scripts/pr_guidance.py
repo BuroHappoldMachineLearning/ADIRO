@@ -10,7 +10,8 @@ Findings are grouped by issue type (#144): each type's advice is said once, foll
 behind <details> when there are more than COLLAPSE_OVER. A new check adds one `Kind` to `kinds()`.
 
 Sections (each appears only when it has something to say):
-  - To do: touched terms with no rdfs:comment, touched terms whose label is shared with another term,
+  - To do: touched terms with no description (skos:definition, or rdfs:comment until a module is split, #273),
+    touched terms whose label is shared with another term,
     a `.ttl` change with no changelog entry (#105), unused @prefix / owl:imports in a touched module,
     and a `Closes #N` in the description that GitHub did not register;
   - Previews: an OntoCanvas link per touched module that declares classes.
@@ -143,8 +144,9 @@ class Kind:
 def kinds(repo):
     issue = f"https://github.com/{repo}/issues"
     return [
-        Kind("undescribed", "No `rdfs:comment` on {n} {things}",
-             f"Add a short definition in your own words (convention: [#87]({issue}/87)).", ("term", "terms")),
+        Kind("undescribed", "No `skos:definition` on {n} {things}",
+             f"Add a short definition in your own words, as a `skos:definition`; `rdfs:comment` is for commentary "
+             f"(convention: [#87]({issue}/87), [#273]({issue}/273)).", ("term", "terms")),
         Kind("label-clash", "{n} {things} share an `rdfs:label` with another term",
              "Labels are unique across classes so the docs and label search are not ambiguous.", ("term", "terms")),
         Kind("removed", "{n} ontology {things} removed or renamed",

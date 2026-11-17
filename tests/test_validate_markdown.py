@@ -62,6 +62,44 @@ def test_the_undescribed_terms_warning_links_the_backlog_and_says_how_to_list_ev
         encoding="utf-8",
     )
     _, errors, warnings = vo.validate_ontology(ttl)
-    (msg,) = [w for w in warnings if "have no rdfs:comment" in w]
+    (msg,) = [w for w in warnings if "have no skos:definition" in w]
     assert "[#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87)" in msg
     assert "`LIST_UNDESCRIBED=1 uv run python scripts/validate_ontology.py` lists every term." in msg
+
+
+MODULE = (
+    "@prefix owl: <http://www.w3.org/2002/07/owl#> .\n"
+    "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n"
+    "@prefix skos: <http://www.w3.org/2004/02/skos/core#> .\n"
+    "<https://w3id.org/adiro/aec_x> a owl:Ontology ;\n"
+    "    owl:versionIRI <https://w3id.org/adiro/aec_x/1.0.0> ;\n"
+    '    owl:versionInfo "1.0.0" .\n'
+)
+
+
+def _module(tmp_path, terms):
+    (tmp_path / "src").mkdir(exist_ok=True)
+    ttl = tmp_path / "src" / "aec_x.ttl"
+    ttl.write_text(MODULE + terms, encoding="utf-8")
+    return ttl
+
+
+def test_a_term_that_defines_itself_in_rdfs_comment_is_reported_as_not_yet_split_and_is_not_undescribed(tmp_path):
+    ttl = _module(tmp_path, '<https://w3id.org/adiro/aec_x#A> a owl:Class ; rdfs:comment "Old style." .\n')
+    _, errors, warnings = vo.validate_ontology(ttl)
+    (msg,) = [w for w in warnings if "no skos:definition: A" in w]
+    assert "[#273](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/273)" in msg
+    assert not any("have no skos:definition (nor" in w for w in warnings) and not errors
+
+
+def test_a_term_with_a_skos_definition_is_split_whatever_commentary_it_also_carries(tmp_path):
+    ttl = _module(tmp_path, '<https://w3id.org/adiro/aec_x#A> a owl:Class ; skos:definition "What A is." ; rdfs:comment "Why." .\n')
+    _, errors, warnings = vo.validate_ontology(ttl)
+    assert not any("still carry their definition" in w or "have no skos:definition" in w for w in warnings) and not errors
+
+
+def test_enforce_definitions_makes_the_unsplit_terms_an_error(tmp_path, monkeypatch):
+    ttl = _module(tmp_path, '<https://w3id.org/adiro/aec_x#A> a owl:Class ; rdfs:comment "Old style." .\n')
+    monkeypatch.setenv("ENFORCE_DEFINITIONS", "1")
+    ok, errors, _ = vo.validate_ontology(ttl)
+    assert not ok and any("still carry their definition in rdfs:comment" in e for e in errors)

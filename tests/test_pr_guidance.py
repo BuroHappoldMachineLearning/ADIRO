@@ -85,7 +85,7 @@ def test_render_lists_findings_and_previews():
     url = pg.preview_url("o/r", "feat/x", "aec_x")
     text = pg.render([("undescribed", "`B` (`aec_x`)"), ("closing", "[#7](https://github.com/o/r/issues/7)")], [("aec_x", url)], "o/r")
     assert text.startswith(pg.MARKER)
-    assert "**No `rdfs:comment` on 1 term.** Add a short definition in your own words" in text
+    assert "**No `skos:definition` on 1 term.** Add a short definition in your own words" in text
     assert "- `B` (`aec_x`)" in text
     assert "[ ]" not in text and "recomputes" not in text
     assert "[#7](https://github.com/o/r/issues/7)" in text and "closing keyword that GitHub did not link" in text
@@ -106,7 +106,7 @@ def test_findings_of_one_type_share_one_heading_and_the_advice_is_said_once():
     items = [f"`T{i}` (`aec_x`)" for i in range(3)]
     text = pg.render([("undescribed", i) for i in items], [], "o/r")
     assert text.count("Add a short definition in your own words") == 1
-    assert "No `rdfs:comment` on 3 terms." in text
+    assert "No `skos:definition` on 3 terms." in text
     assert "<details>" not in text and all(f"- {i}" in text for i in items)  # 5 or fewer stay in the open
 
 
@@ -114,7 +114,7 @@ def test_more_than_five_findings_of_a_type_are_collapsed():
     items = [f"`T{i}` (`aec_x`)" for i in range(6)]
     text = pg.render([("undescribed", i) for i in items], [], "o/r")
     assert text.count("<details>") == 1 and "<summary>Show the 6 terms</summary>" in text
-    assert text.index("No `rdfs:comment` on 6 terms.") < text.index("<details>") < text.index("- `T0`") < text.index("</details>")
+    assert text.index("No `skos:definition` on 6 terms.") < text.index("<details>") < text.index("- `T0`") < text.index("</details>")
     five = pg.render([("undescribed", i) for i in items[:5]], [], "o/r")
     assert "<details>" not in five
 
@@ -122,7 +122,7 @@ def test_more_than_five_findings_of_a_type_are_collapsed():
 def test_each_issue_type_gets_its_own_group_in_a_fixed_order():
     text = pg.render([("changelog", "`changelogs/aec_x.md`"), ("undescribed", "`A` (`aec_x`)"), ("changelog", "`changelogs/aec_y.md`")],
                      [], "o/r")
-    assert text.index("No `rdfs:comment`") < text.index("The ontology changed but 2 changelogs did not")
+    assert text.index("No `skos:definition`") < text.index("The ontology changed but 2 changelogs did not")
 
 
 def test_a_finding_of_an_unregistered_type_is_an_error_not_silently_dropped():

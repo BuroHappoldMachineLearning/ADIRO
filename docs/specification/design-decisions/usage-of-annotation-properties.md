@@ -14,9 +14,23 @@ Some examples:
 
 Other annotation properties (e.g. `rdfs:label`, `rdfs:comment`) follow standard OWL usage.
 
-## `rdfs:comment` is ADIRO's definition vocabulary
+## `skos:definition` is ADIRO's definition vocabulary, `rdfs:comment` its commentary
 
-Every ADIRO term carries its human-readable definition in **`rdfs:comment`**. ADIRO deliberately does **not**
+Every ADIRO term carries its human-readable definition in **`skos:definition`** and any commentary in **`rdfs:comment`**:
+
+| Property | Holds |
+|---|---|
+| `skos:definition` | What the term is, in one to three sentences, in ADIRO's own words, tagged `@en`. One per term. |
+| `rdfs:comment` | Commentary: design rationale, examples, the standard the term corresponds to and how it differs, links to issues and design notes. Optional. |
+
+This separates the definition, which a tool or a reader selects, from the commentary, which a definition-only string cannot
+carry without the two blurring. It was decided in
+[Discussion #265](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/265) and carried out by
+[#273](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/273) one module at a time: a term not yet split carries its
+definition in `rdfs:comment`, and the validator reports it. The `owl:Ontology` header keeps its `rdfs:comment`, which is the
+module's introduction and not a term's definition. *(Amended: the definition was an `rdfs:comment` until [#273](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/273).)*
+
+ADIRO deliberately does **not**
 use `IAO:0000115`, the OBO Foundry definition annotation that ROBOT's `report` command looks for in its
 built-in `missing_definition` rule. That rule is therefore **not listed** in
 [`config/robot_report_profile.txt`](https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/config/robot_report_profile.txt),
@@ -31,24 +45,23 @@ itself.)
 - **The published documentation would lose every description.** pyLODE, which generates the ontology
   reference pages, builds a description by normalising from exactly four properties — `dc:description`,
   `rdfs:comment`, `skos:definition` and `sdo:description`. `IAO:0000115` is not among them and IAO is not
-  referenced anywhere in pyLODE, so moving the text there would blank the descriptions on the site.
+  referenced anywhere in pyLODE, so moving the text there would blank the descriptions on the site. `skos:definition`
+  is among them, and pyLODE lists it and `rdfs:comment` together in one *Description* entry.
 - **The conversion is editorial, not mechanical.** An IAO definition is the definition alone; a good number
   of ADIRO's comments deliberately carry the definition *plus* the design rationale, which would have to be
-  split by hand.
+  split by hand, as the move to `skos:definition` is.
 - **It buys conformance with tooling ADIRO does not use**, at the cost of an external vocabulary in every
   core module — see [External ontology imports](external-ontology-imports.md) for the test a core-module
   reference has to pass.
 
-The peer ontology [DAnO](dano-comparison.md) makes the same choice: `rdfs:label` plus `rdfs:comment` on
-essentially every term, no `IAO:0000115` and no `skos:definition`.
+The peer ontology [DAnO](dano-comparison.md) avoids `IAO:0000115` too: `rdfs:label` plus `rdfs:comment` on
+essentially every term, and no `skos:definition`.
 
 **What replaces the ROBOT rule.** `scripts/validate_ontology.py` checks that every term in an ADIRO namespace
-carries an `rdfs:comment` (`skos:definition` and `dcterms:description` are accepted too, since pyLODE renders
-those as well). Terms from other namespaces are exempt by design: an external term declared as a local stub is
+carries a description: a `skos:definition`, or, until its module is split, an `rdfs:comment` (`dcterms:description`
+is accepted too, since pyLODE renders it as well). A second check lists the terms that have an `rdfs:comment` and no
+`skos:definition`, advisory until the last module is split (`ENFORCE_DEFINITIONS=1` makes it blocking). Terms from other namespaces are exempt by design: an external term declared as a local stub is
 a name, not a definition — the definition lives at the source, which is what its `rdfs:isDefinedBy` points at.
 The check is advisory while the existing backlog is cleared ([#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87)); set `ENFORCE_DESCRIPTIONS=1`
 to promote it to a blocking error, and `LIST_UNDESCRIBED=1` to list every term it finds.
 
-**If the definition/commentary distinction is ever wanted**, the route is `skos:definition` for the definition
-alongside `rdfs:comment` for the note — pyLODE renders it, and ADIRO already uses SKOS throughout, so it adds
-no new dependency.
