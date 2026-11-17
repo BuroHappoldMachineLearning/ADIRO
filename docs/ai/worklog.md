@@ -1,3 +1,9 @@
+## 2026-11-17 - The first suite release and the DOI badge ([#275](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/275))
+
+Published GitHub Release `suite-2026-11-17` (target `main`, real and sandbox Zenodo both on). Zenodo archived it: version DOI `10.5281/zenodo.24319135`, concept DOI `10.5281/zenodo.24319134` (the DOI of the repository, always the latest release), six creators, `gpl-3.0`, the reworded Notes. `backup-version.yml` was skipped by the new guard, so no alert issue. The record is *Software* (the integration's type, kept by decision).
+- The DOI badge, `zenodo.org/badge/1165500639.svg` (keyed by the repository's ID, so it survives renames and releases) linking `doi.org/10.5281/zenodo.24319134`, is in the README (below the badge table) and the docs index (in `generate_docs.py`, mirrored in `docs/index.md` until the deploy regenerates it); `tests/test_suite_release.py` keeps the three in step.
+- Not done: whether a release published by the ADIRO Bot is archived (the first module release after this shows it); the sandbox also holds a copy of this release, harmless; BE-OLS submissions wait for the module renames.
+
 ## 2026-11-17 - Zenodo sandbox test and the first suite release ([#275](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/275))
 
 Tested Zenodo's GitHub integration on the sandbox with the real Zenodo switched off (checked in the repository's webhooks first): a throwaway release `zenodo-test-1` was archived with the right creators, ORCID iDs, licence, description and keywords, as a *Software* record (the integration's type; Zenodo has no ontology type, so Software stays). GitHub sent three release events; Zenodo took the first and answered 409 to two. Release and tag deleted. `backup-version.yml` failed on the tag, as expected, and opened the alert issue [#279](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/279), closed by hand.

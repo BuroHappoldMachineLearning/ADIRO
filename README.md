@@ -30,6 +30,8 @@
   </tr>
 </table>
 
+<p align="center"><a href="https://doi.org/10.5281/zenodo.24319134"><img src="https://zenodo.org/badge/1165500639.svg" alt="DOI"></a></p>
+
 ADIRO (*AEC Drawing Information Representation Ontologies*) is a set of ontologies for AEC (*Architecture, Engineering, and Construction*) drawing representation, designed to support machine learning tasks, in particular information extraction workflows.
 
 The ontologies include concepts for drawing metadata, common symbols, domain-common symbols, and domain-specific symbols.  
