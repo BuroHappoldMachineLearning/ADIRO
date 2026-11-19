@@ -183,3 +183,22 @@ def test_a_deprecated_module_stays_a_link_target_until_its_successor_is_there(tm
     successor.write_text(head + '<https://w3id.org/adiro/adiro_y> a owl:Ontology . <https://w3id.org/adiro/adiro_y#Box> a owl:Class .', encoding="utf-8")
     terms = gd.suite_terms([old, other, successor])
     assert X + "Box" not in terms and terms["https://w3id.org/adiro/adiro_y#Box"][0] == "adiro_y", "with the successor, only its term is a target"
+
+
+def test_the_names_in_a_definition_row_and_in_a_comment_row_are_both_linked(tmp_path):
+    """#273: pyLODE shows a term's definition and its commentary in two rows; the names are linked in each."""
+    (tmp_path / "src").mkdir()
+    module = tmp_path / "src" / "adiro_x.ttl"
+    module.write_text(MODULE.replace(
+        ':Box a owl:Class ; rdfs:comment "A Box, an InferredEntity in a LayoutContentType, made by a prov:Activity, never Failed." .',
+        ':Box a owl:Class ; rdfs:comment "Kept in a LayoutContentType." .'), encoding="utf-8")
+
+    def row(label, text):
+        return (f'<tr><th><a class="hover_property" href="" title="">{label}</a></th>\n<td><p>{text}</p></td></tr>')
+
+    page = ('<html><div class="property entity" id="Box">\n<table><tr><th>IRI</th>\n<td>\n<code>' + X + 'Box</code>\n</td></tr>\n'
+            + row("Definition", "A Box, in a LayoutContentType.") + row("Comment", "Kept in a LayoutContentType.")
+            + '</table>\n</div>\n<div class="property entity" id="Layoutcontenttype">\n<table><tr><th>IRI</th>\n<td>\n<code>'
+            + X + 'LayoutContentType</code>\n</td></tr></table>\n</div></html>')
+    linked = gd.link_html_definitions(page, module, {})
+    assert linked.count('<a href="#Layoutcontenttype">LayoutContentType</a>') == 2  # once in each row
