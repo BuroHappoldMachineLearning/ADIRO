@@ -87,3 +87,58 @@ def test_a_page_that_is_not_a_pylode_page_is_reported(toy):
 def test_module_and_version_are_read_from_the_output_folder(tmp_path):
     assert pm.module_and_version(tmp_path / "src" / "aec_x.ttl", tmp_path / "docs") == ("aec_x", None)
     assert pm.module_and_version(tmp_path / "versions" / "aec_x" / "1.2.3" / "aec_x.ttl", tmp_path / "docs" / "aec_x" / "1.2.3") == ("aec_x", "1.2.3")
+
+
+# --- a term's definition and its commentary, #273 -----------------------------------------------------------------
+
+SPLIT_TTL = TTL.replace(
+    ':Thing a owl:Class ; rdfs:label "Thing" ; rdfs:comment "A thing." .',
+    ':Thing a owl:Class ; rdfs:label "Thing" ; skos:definition "A *thing*, with `code` & more."@en ;\n'
+    '    rdfs:comment "Why a thing exists." , "A second note." .\n'
+    ':Plain a owl:Class ; rdfs:label "Plain" ; rdfs:comment "Defined the old way." .\n'
+    ':Only a owl:Class ; rdfs:label "Only" ; skos:definition "Just a definition." .\n')
+
+
+def split_page(tmp_path):
+    ttl = tmp_path / "aec_toy.ttl"
+    ttl.write_text(SPLIT_TTL, encoding="utf-8")
+    return pm.separate_definitions(page_of(pm.graph_for_pylode(ttl), tmp_path)), ttl
+
+
+def entry(page, label):
+    start = page.index(f"<h3>{label}")
+    return page[start:page.index("</table>", start)]
+
+
+def test_a_term_with_a_definition_shows_it_apart_from_its_comments(tmp_path):
+    page, _ = split_page(tmp_path)
+    thing = entry(page, "Thing")
+    assert thing.index(">Definition</a>") < thing.index(">Comment</a>")
+    definition = thing[thing.index(">Definition</a>"):thing.index(">Comment</a>")]
+    assert "<em>thing</em>" in definition and "<code>code</code>" in definition and "&amp; more" in definition  # pyLODE's own rendering
+    comment = thing[thing.index(">Comment</a>"):]
+    assert "Why a thing exists." in comment and "A second note." in comment and "<ul>" in comment  # several values: a list
+    assert "Description</a>" not in thing and "thing exists" not in definition
+
+
+def test_a_term_with_only_a_definition_has_no_comment_row_and_one_with_only_a_comment_keeps_its_description(tmp_path):
+    page, _ = split_page(tmp_path)
+    only = entry(page, "Only")
+    assert ">Definition</a>" in only and "Just a definition." in only and ">Comment</a>" not in only
+    plain = entry(page, "Plain")
+    assert ">Description</a>" in plain and "Defined the old way." in plain and ">Definition</a>" not in plain
+
+
+def test_the_mark_never_reaches_the_page_and_splitting_twice_changes_nothing(tmp_path):
+    page, _ = split_page(tmp_path)
+    assert pm.MARK not in page
+    assert pm.separate_definitions(page) == page
+
+
+def test_the_graph_pyLODE_reads_carries_the_mark_but_the_turtle_does_not(tmp_path):
+    from rdflib.namespace import SKOS
+
+    _, ttl = split_page(tmp_path)
+    marked = [str(o) for o in pm.graph_for_pylode(ttl).objects(None, SKOS.definition)]
+    assert marked and all(o.startswith(pm.MARK) for o in marked)
+    assert pm.MARK not in ttl.read_text(encoding="utf-8")

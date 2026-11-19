@@ -169,7 +169,8 @@ def maintain_page(ttl_file: Path, html_file: Path, module: str, version: str | N
     The links from the names of terms in its definitions are added later, by ``link_pylode_pages`` (#252).
     """
     page = html_file.read_text(encoding="utf-8")
-    with_links = pylode_metadata.add_deprecation(pylode_metadata.add_links(page, module, version), ttl_file)
+    with_links = pylode_metadata.separate_definitions(
+        pylode_metadata.add_deprecation(pylode_metadata.add_links(page, module, version), ttl_file))
     if with_links != page:
         html_file.write_text(with_links, encoding="utf-8")
     problems = pylode_metadata.check(with_links, ttl_file)
@@ -220,7 +221,7 @@ def elsewhere_links(suite: dict | None, ttl_file: Path, module: str, prefix: str
 
 _ENTITY_DIV = re.compile(r'<div class="property entity" id="([^"]+)">')
 _ENTITY_IRI = re.compile(r"<th>IRI</th>\s*<td>\s*<code>([^<]+)</code>")
-_DESCRIPTION_CELL = re.compile(r'(>Description</a>\s*</th>\s*<td>)(.*?)(</td>)', re.DOTALL)
+_DESCRIPTION_CELL = re.compile(r'(>(?:Description|Definition|Comment)</a>\s*</th>\s*<td>)(.*?)(</td>)', re.DOTALL)
 
 
 def pylode_ids(page: str) -> dict[str, str]:
@@ -268,7 +269,7 @@ def link_html_definitions(page: str, ttl_file: Path, elsewhere: dict[str, str], 
         own = {ttl2md.local_name(iri), ttl2md.prefixed_name(graph, iri)} if iri else set()
         parts[i + 1] = _DESCRIPTION_CELL.sub(
             lambda m: m.group(1) + ttl2md.link_names(m.group(2), targets, ttl2md.html_link, skip=own) + m.group(3),
-            parts[i + 1], count=1)
+            parts[i + 1])
         parts[i] = f'<div class="property entity" id="{parts[i]}">'
     return "".join(parts)
 
