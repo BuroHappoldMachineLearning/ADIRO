@@ -302,6 +302,7 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   release cut performs the bump. *(Supersedes the earlier "hold pending ratification".)*
 
 ## Ontology authoring conventions
+- **A module's prefix is "ad" and its role** ([#281](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/281), [#289](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/289)): `adprov:` (`adiro_provenance`), `adgeom:` (`adiro_geometry`), `admeta:` (`adiro_drawing_metadata`), and `adsym:`, `adcore:` and `adfacade:` for the three modules being renamed. A prefix is only a label, so changing one changes no IRI; "ad" marks a name as ADIRO's in a query that mixes vocabularies, and `dcore:` would read as Dublin Core. A module declares in its Turtle only the prefixes it uses.
 - **Say "drawing", not "sheet".** In prose, in a definition, in a competency question and in a PR or an issue, the thing
   ADIRO describes is a *drawing*. "Sheet" means only the paper format (an A1 sheet, a sheet of paper). The existing class
   `DrawingSheet` and the names built on it (`denotesDrawingSheet`, `assertsMetadataFor` with range `DrawingSheet`) keep their
@@ -453,7 +454,7 @@ For anyone changing an ontology, agent or person. The sections below give the de
     tracked or pending, check the issue before leaving the sentence in place; decisions are often recorded in
     a comment rather than by closing the issue.
   - **Do not add terms no in-scope use case needs.** A public `w3id.org` IRI is hard to withdraw; an issue is
-    cheap. PR #76 minted and then withdrew `metadata:depicts` for exactly this reason.
+    cheap. PR #76 minted and then withdrew `admeta:depicts` for exactly this reason.
 - **Adding a quality check? It must surface in the PR comment.** A check whose output only reaches a CI job
   log is a check nobody reads — we already had 130 undescribed terms sitting invisibly in one while a
   different job's comment showed 23 rows of something else. There is **one** sticky comment for ontology QC,
@@ -552,7 +553,7 @@ the questions, and what is out of scope. It is not a proposal to add terms. When
 A validator warning, a ROBOT finding or a bot's advice reports what it can see, and it cannot see intent. Before you delete or change
 what one flags (an `owl:imports` called "unused", an unused prefix, a term nobody seems to use), find out why it is there: the pin
 `config/module_imports.json` (each module's imports and the reason), `git log -S`, the ORSD and design pages, the changelogs, the tests.
-An import can be a dependency used as a **data pattern** (a property with no domain, such as `geom:hasBoundingBox` on a `Titleblock`):
+An import can be a dependency used as a **data pattern** (a property with no domain, such as `adgeom:hasBoundingBox` on a `Titleblock`):
 then state the use with an axiom and keep it. A removal made only because a check complained is not a reason; a reason is a statement
 that it is not needed, with the evidence. Say in the pull request and the changelog what you removed and why, and update every place
 that names it. Changing an import means editing the pin in the same pull request, with the reason (`tests/test_module_imports.py`

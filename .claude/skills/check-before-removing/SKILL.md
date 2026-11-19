@@ -11,7 +11,7 @@ description: >-
 The rule is in [`AGENTS.md`](../../../AGENTS.md) ("A warning is a question"); this skill is the Claude Code checklist for it. A
 validator, a bot or an advisory check reports what it can see. It cannot see intent, and in an ontology much of the intent lives
 outside the file being checked. The case that made this a rule: an `owl:imports` flagged as "unused" was dropped, but the
-module used it as a **data pattern** (`geom:hasBoundingBox` has no domain on purpose), so no axiom of the module named a term of
+module used it as a **data pattern** (`adgeom:hasBoundingBox` has no domain on purpose), so no axiom of the module named a term of
 the import, and the dependency documented in the ORSD was lost ([#195](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/195)).
 
 ## Before you delete
@@ -26,7 +26,7 @@ the import, and the dependency documented in the ORSD was lost ([#195](https://g
    - Search the issues and Discussions for it.
 3. **Decide with that evidence.**
    - Still needed, but the file does not show it: **state the use** (an axiom such as a `min 0` restriction, as for
-     `Titleblock` and `geom:hasBoundingBox`), keep the thing, and let the warning go away that way.
+     `Titleblock` and `adgeom:hasBoundingBox`), keep the thing, and let the warning go away that way.
    - Not needed: remove it **and** update every place that names it (the pin, the ORSD, the design pages, the changelog, the display
      config, the tests) in the same pull request.
    - Unsure: ask the person who asked for the work; do not guess.

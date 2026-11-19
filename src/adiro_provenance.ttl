@@ -135,7 +135,7 @@ skos:Concept rdf:type owl:Class ;
 :InferredEntity rdf:type owl:Class ;
     rdfs:label "Inferred Entity" ;
     skos:definition "Anything ADIRO infers or extracts that carries its own provenance and confidence - the shared superclass of everything an inference/extraction step produces as a first-class, provenance-bearing individual."@en ;
-    rdfs:comment "A field-value claim (FieldAssertion, here) is one; a spatial localisation (a BoundingBox, in adiro_geometry) is another. It exists so that hasInferenceMeta and hasConfidence apply uniformly to any such product, not only to a field-value claim: a detected box is an inferred entity with its own producer and score, distinct from the confidence in the value read at that box. In PROV-O terms this is the prov:Entity an inference activity generated. The producing step can be a model or a person: a human annotation (a box drawn by hand, a field typed in) is an inference step performed by a person, recorded with inferredBy that person (an aprov:Person) and no inferredWith, and it carries a confidence only if one is given. A model's output and a person's label are told apart by who inferredBy is." ;
+    rdfs:comment "A field-value claim (FieldAssertion, here) is one; a spatial localisation (a BoundingBox, in adiro_geometry) is another. It exists so that hasInferenceMeta and hasConfidence apply uniformly to any such product, not only to a field-value claim: a detected box is an inferred entity with its own producer and score, distinct from the confidence in the value read at that box. In PROV-O terms this is the prov:Entity an inference activity generated. The producing step can be a model or a person: a human annotation (a box drawn by hand, a field typed in) is an inference step performed by a person, recorded with inferredBy that person (an adprov:Person) and no inferredWith, and it carries a confidence only if one is given. A model's output and a person's label are told apart by who inferredBy is." ;
     rdfs:subClassOf prov:Entity .
 
 :FieldAssertion rdf:type owl:Class ;
@@ -200,7 +200,7 @@ skos:Concept rdf:type owl:Class ;
 
 :inferredBy rdf:type owl:ObjectProperty ;
     rdfs:label "inferredBy" ;
-    skos:definition "The actor, organisation or software that produced this inference: a person (an aprov:Person) when a human annotated, a software agent when a model predicted."@en ;
+    skos:definition "The actor, organisation or software that produced this inference: a person (an adprov:Person) when a human annotated, a software agent when a model predicted."@en ;
     rdfs:comment "Aligned to prov:wasAssociatedWith - the agent the inference activity was associated with." ;
     rdfs:subPropertyOf prov:wasAssociatedWith ;
     rdfs:domain :InferenceMeta ;
@@ -448,7 +448,7 @@ ct:Organisation rdf:type owl:Class ;
 :belongsToFile rdf:type owl:ObjectProperty ;
     rdfs:label "belongsToFile" ;
     skos:definition "The DrawingFile that a FilePage is a page of."@en ;
-    rdfs:comment "To go from a file to its pages, use the inverse path ^aprov:belongsToFile (ADIRO declares no named inverse properties)." ;
+    rdfs:comment "To go from a file to its pages, use the inverse path ^adprov:belongsToFile (ADIRO declares no named inverse properties)." ;
     rdfs:domain :FilePage ;
     rdfs:range :DrawingFile .
 
@@ -604,7 +604,7 @@ ct:Organisation rdf:type owl:Class ;
 
 :isReadingOf rdf:type owl:ObjectProperty ;
     rdfs:label "isReadingOf" ;
-    skos:definition "What a TextReading read: a region, such as a title block (metadata:Titleblock), or a whole page (a FilePage)."@en ;
+    skos:definition "What a TextReading read: a region, such as a title block (admeta:Titleblock), or a whole page (a FilePage)."@en ;
     rdfs:comment "No range is declared, because the regions are defined by the modules that use this one." ;
     rdfs:domain :TextReading .
 

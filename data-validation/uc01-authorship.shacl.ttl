@@ -16,14 +16,14 @@
 # (the extraction missed it, or the drawing names none): telling those apart is the vocabulary of #187.
 
 @prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix metadata: <https://w3id.org/adiro/adiro_drawing_metadata#> .
+@prefix admeta: <https://w3id.org/adiro/adiro_drawing_metadata#> .
 @prefix dv: <https://w3id.org/adiro/data-validation/uc01-authorship#> .
 
 dv:DrawingAuthor a sh:NodeShape ;
-    sh:targetClass metadata:DrawingSheet ;
+    sh:targetClass admeta:DrawingSheet ;
     sh:severity sh:Warning ;
     sh:property [
-        sh:path [ sh:alternativePath ( metadata:isAuthoredBy ( metadata:hasRevision metadata:isAuthoredBy ) ) ] ;
+        sh:path [ sh:alternativePath ( admeta:isAuthoredBy ( admeta:hasRevision admeta:isAuthoredBy ) ) ] ;
         sh:severity sh:Warning ;  # a property shape does not inherit the severity of its node shape
         sh:minCount 1 ;
         sh:message "A drawing has at least one recorded author."

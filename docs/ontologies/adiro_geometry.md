@@ -65,10 +65,10 @@ graph BT
 A rectangular region on a drawing page that locates something there, whether a model detected it or a person marked it - e.g. a title-block field's caption or value.
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#BoundingBox`
-- **Comment:** Its coordinates are held as an xyxy string ([bboxXYXY](#bboxXYXY)) and are meaningless without the [CoordinateFrame](#CoordinateFrame) it points at ([inCoordinateFrame](#inCoordinateFrame)), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an [InferredEntity](adiro_provenance.md#InferredEntity): it carries its own provenance ([aprov:hasInferenceMeta](adiro_provenance.md#hasInferenceMeta) - a detector, or a human annotator, told apart by [aprov:inferredBy](adiro_provenance.md#inferredBy)) and its own confidence ([aprov:hasConfidence](adiro_provenance.md#hasConfidence), the detector's score, absent for a hand-drawn box), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL [geo:Geometry](#Geometry) so it is recognised as a spatial shape.
+- **Comment:** Its coordinates are held as an xyxy string ([bboxXYXY](#bboxXYXY)) and are meaningless without the [CoordinateFrame](#CoordinateFrame) it points at ([inCoordinateFrame](#inCoordinateFrame)), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an [InferredEntity](adiro_provenance.md#InferredEntity): it carries its own provenance ([adprov:hasInferenceMeta](adiro_provenance.md#hasInferenceMeta) - a detector, or a human annotator, told apart by [adprov:inferredBy](adiro_provenance.md#inferredBy)) and its own confidence ([adprov:hasConfidence](adiro_provenance.md#hasConfidence), the detector's score, absent for a hand-drawn box), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL [geo:Geometry](#Geometry) so it is recognised as a spatial shape.
 - **Sub class of:**
     - [Geometry](#Geometry)
-    - [`aprov:InferredEntity`](adiro_provenance.md#InferredEntity)
+    - [`adprov:InferredEntity`](adiro_provenance.md#InferredEntity)
 
 ### Coordinate Frame {#CoordinateFrame}
 
@@ -96,12 +96,12 @@ The region of the page that this frame shows, when it shows only part of it (a c
 
 ### describesPage {#describesPage}
 
-The page (an [aprov:FilePage](adiro_provenance.md#FilePage)) that this coordinate frame reads.
+The page (an [adprov:FilePage](adiro_provenance.md#FilePage)) that this coordinate frame reads.
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#describesPage`
 - **Comment:** The frames of a drawing are reached through its page: the path [isOnPage](adiro_drawing_metadata.md#isOnPage) / ^describesPage from the drawing, in adiro_drawing_metadata.
 - **Domain:** [Coordinate Frame](#CoordinateFrame)
-- **Range:** [`aprov:FilePage`](adiro_provenance.md#FilePage)
+- **Range:** [`adprov:FilePage`](adiro_provenance.md#FilePage)
 
 ### hasBoundingBox {#hasBoundingBox}
 
@@ -116,8 +116,8 @@ The bounding box that locates a region on a drawing page.
 The coordinate frame that a kept image file shows: the rendering of a page, or a crop of it, as it was fed to a model, kept so a viewer can show it.
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#imageOf`
-- **Comment:** The image is an [aprov:DrawingFile](adiro_provenance.md#DrawingFile) with its [contentHash](adiro_provenance.md#contentHash) and [mediaType](adiro_provenance.md#mediaType), and its pixels are the frame's coordinates. Only an image that is kept has a file: a frame a model saw is recorded whether or not its image is kept.
-- **Domain:** [`aprov:DrawingFile`](adiro_provenance.md#DrawingFile)
+- **Comment:** The image is an [adprov:DrawingFile](adiro_provenance.md#DrawingFile) with its [contentHash](adiro_provenance.md#contentHash) and [mediaType](adiro_provenance.md#mediaType), and its pixels are the frame's coordinates. Only an image that is kept has a file: a frame a model saw is recorded whether or not its image is kept.
+- **Domain:** [`adprov:DrawingFile`](adiro_provenance.md#DrawingFile)
 - **Range:** [Coordinate Frame](#CoordinateFrame)
 
 ### inCoordinateFrame {#inCoordinateFrame}

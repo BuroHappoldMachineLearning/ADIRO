@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.21 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.22 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -14,7 +14,7 @@
 | **Primary Actor** | Engineer                                                                                                      |
 | **Goal**          | Retrieve a set of drawing sheets matching one or more titleblock metadata criteria, individually or in combination. |
 
-> **Terminology note:** Throughout this ORSD, the user-facing term "drawing" refers to a `metadata:DrawingSheet` — the top-level, titleblock-bearing, searchable unit in the existing ontology. A sheet contains one or more `Layout`s, each of which carries its content type (Plan / Section / Detail / …) and discipline classification.
+> **Terminology note:** Throughout this ORSD, the user-facing term "drawing" refers to a `admeta:DrawingSheet` — the top-level, titleblock-bearing, searchable unit in the existing ontology. A sheet contains one or more `Layout`s, each of which carries its content type (Plan / Section / Detail / …) and discipline classification.
 
 ---
 
@@ -43,31 +43,31 @@ Things that exist independently and will become OWL Classes.
 
 > **Design note — DrawingSheet vs Layout:** A `DrawingSheet` may contain multiple `Layout`s, each with its own `LayoutContentType` and `Discipline`. Queries for "Structural Plan drawings" filter for sheets containing at least one Layout whose content type is `Plan` and whose discipline is (a subclass of) `Structural`.
 
-> **Design note — Titleblock as visual region vs titleblock data:** The existing `metadata:Titleblock` class models the *visual region* on a sheet (for CV annotation). The *information* conventionally found inside it (`drawingIdentifier`, `drawingTitle`, …) is attached as datatype properties directly on `DrawingSheet`. The two layers coexist independently: a sheet has a drawing number whether or not its visual Titleblock region has been bounded in annotation.
+> **Design note — Titleblock as visual region vs titleblock data:** The existing `admeta:Titleblock` class models the *visual region* on a sheet (for CV annotation). The *information* conventionally found inside it (`drawingIdentifier`, `drawingTitle`, …) is attached as datatype properties directly on `DrawingSheet`. The two layers coexist independently: a sheet has a drawing number whether or not its visual Titleblock region has been bounded in annotation.
 
 > **Design note — `:Metadata` → `:MetadataContainer`:** The existing `:Metadata` class has been renamed to `:MetadataContainer` (team decision). It is the parent of `Titleblock`, `RevisionTable`, `Legend`, and `Note` — i.e. it models *visual supporting regions*, not semantic metadata. The rename avoids confusion with UC-01's datatype properties (`drawingIdentifier`, `drawingTitle`, etc.) on `DrawingSheet`.
 
-> **Design note — DrawingType deprecated:** UC-01 v0.2 introduced `:DrawingType` (Plan, Section, Elevation, Detail, Schedule). This is the same axis as `metadata:LayoutContentType` (Plan, Section, Elevation, Detail, Table, Perspective). "Schedule" maps to `Table`. `DrawingType` is removed in v0.3 — `LayoutContentType` is reused.
+> **Design note — DrawingType deprecated:** UC-01 v0.2 introduced `:DrawingType` (Plan, Section, Elevation, Detail, Schedule). This is the same axis as `admeta:LayoutContentType` (Plan, Section, Elevation, Detail, Table, Perspective). "Schedule" maps to `Table`. `DrawingType` is removed in v0.3 — `LayoutContentType` is reused.
 
 > **Design note — Discipline reuse:** UC-01 v0.2 introduced `:Discipline` plus a `:disciplineCode` string property. The existing `dcommon:Discipline` is already a full class hierarchy (`Structural`, `MEP > Mechanical / Electrical > Lighting / Plumbing`, `Architectural > Facade / FireLifeSafety`, `Masterplan`). v0.3 reuses it and drops `:disciplineCode` — discipline filtering uses `rdf:type` checks against the class hierarchy (e.g. `?disc a dcommon:MEP`), which automatically rolls up sub-disciplines via `rdfs:subClassOf` reasoning.
 
-> **Design note — curated values vs extracted assertions:** UC-01 attaches title-block information as datatype properties **directly on `DrawingSheet`** (`drawingIdentifier`, `drawingTitle`, …). That remains correct for a *validated* value. A second, parallel path exists for values that have been **machine-extracted and not yet validated**: an `aprov:FieldAssertion` reifies the claim - what was read, from which region (`assertedBy`), by what (`hasInferenceMeta`), with what confidence, and with the caption exactly as printed (`capturedCaption`) - bound to a field kind (`aprov:FieldKind`) in the `TitleblockFieldScheme`. `aprov:mapsToFieldProperty` names the UC-01 property a validated assertion is promoted to, and that property's domain is the class of the subject the value is about (`DrawingSheet`, `Titleblock`, `Project`, …): a region and a field kind meet only through assertions. The two coexist: UC-01's properties are the query surface, the assertion layer is the extraction and provenance record. A value moves from the assertion to the direct property when its assertion is **accepted** (`aprov:hasAcceptance` `Accepted`), by a pipeline rule (a confidence threshold, named by `aprov:acceptedUnder`) or by a person, and the acceptance records who and when (`acceptedBy`, `acceptedAt`). The assertions are never deleted, and the direct properties stay as the permanent query surface of accepted values ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)). When a search finds no value, the assertion carries an outcome instead (`aprov:hasOutcome`: `Empty`, `Illegible`, `NotPrinted`, `NotFound`, `Failed`), and is never promoted. *(Added in [v0.4](#9-version-history); amended in [v0.10](#9-version-history), [v0.18](#9-version-history) and [v0.21](#9-version-history).)*
+> **Design note — curated values vs extracted assertions:** UC-01 attaches title-block information as datatype properties **directly on `DrawingSheet`** (`drawingIdentifier`, `drawingTitle`, …). That remains correct for a *validated* value. A second, parallel path exists for values that have been **machine-extracted and not yet validated**: an `adprov:FieldAssertion` reifies the claim - what was read, from which region (`assertedBy`), by what (`hasInferenceMeta`), with what confidence, and with the caption exactly as printed (`capturedCaption`) - bound to a field kind (`adprov:FieldKind`) in the `TitleblockFieldScheme`. `adprov:mapsToFieldProperty` names the UC-01 property a validated assertion is promoted to, and that property's domain is the class of the subject the value is about (`DrawingSheet`, `Titleblock`, `Project`, …): a region and a field kind meet only through assertions. The two coexist: UC-01's properties are the query surface, the assertion layer is the extraction and provenance record. A value moves from the assertion to the direct property when its assertion is **accepted** (`adprov:hasAcceptance` `Accepted`), by a pipeline rule (a confidence threshold, named by `adprov:acceptedUnder`) or by a person, and the acceptance records who and when (`acceptedBy`, `acceptedAt`). The assertions are never deleted, and the direct properties stay as the permanent query surface of accepted values ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)). When a search finds no value, the assertion carries an outcome instead (`adprov:hasOutcome`: `Empty`, `Illegible`, `NotPrinted`, `NotFound`, `Failed`), and is never promoted. *(Added in [v0.4](#9-version-history); amended in [v0.10](#9-version-history), [v0.18](#9-version-history) and [v0.21](#9-version-history).)*
 
-The promotion is a query that tooling runs on accepted assertions, not an inference. Each accepted assertion that has a value, and that no accepted assertion supersedes, directly or through a chain of corrections, gives one direct statement on its subject, with the property its field kind maps to (`aprov:mapsToFieldProperty`). *(Amended in [v0.16](#9-version-history).)*
+The promotion is a query that tooling runs on accepted assertions, not an inference. Each accepted assertion that has a value, and that no accepted assertion supersedes, directly or through a chain of corrections, gives one direct statement on its subject, with the property its field kind maps to (`adprov:mapsToFieldProperty`). *(Amended in [v0.16](#9-version-history).)*
 
 ```sparql
-PREFIX aprov: <https://w3id.org/adiro/adiro_provenance#>
+PREFIX adprov: <https://w3id.org/adiro/adiro_provenance#>
 
 # Promotion: the direct statements that accepted assertions give
 CONSTRUCT { ?subject ?property ?value }
 WHERE {
-  ?assertion a aprov:FieldAssertion ;
-             aprov:assertedAbout   ?subject ;
-             aprov:assertsFieldKind ?kind ;
-             aprov:hasAcceptance   aprov:Accepted .
-  ?kind aprov:mapsToFieldProperty ?property .
-  { ?assertion aprov:hasLiteralValue ?value } UNION { ?assertion aprov:hasValueEntity ?value }
-  FILTER NOT EXISTS { ?newer aprov:supersedes+ ?assertion ; aprov:hasAcceptance aprov:Accepted }
+  ?assertion a adprov:FieldAssertion ;
+             adprov:assertedAbout   ?subject ;
+             adprov:assertsFieldKind ?kind ;
+             adprov:hasAcceptance   adprov:Accepted .
+  ?kind adprov:mapsToFieldProperty ?property .
+  { ?assertion adprov:hasLiteralValue ?value } UNION { ?assertion adprov:hasValueEntity ?value }
+  FILTER NOT EXISTS { ?newer adprov:supersedes+ ?assertion ; adprov:hasAcceptance adprov:Accepted }
 }
 ```
 
@@ -85,7 +85,7 @@ An assertion that is pending, rejected, outcome-only (`NotPrinted`, `Empty`, `Il
 
 The query gives the whole current set of direct statements. A store that keeps them replaces the statements it derived before with this set: adding the new set to the old one would leave a withdrawn value in place.
 
-> **Design note — Person vs Role:** `Person` models what an individual *is*, not the role they play. Roles (Author, Checker, Approver) are expressed as distinct Object Properties, not as subclasses of `Person`. Each applies to a `DrawingSheet` (the person the drawing names, for example the title block's "drawn by") and to a `DrawingRevision` (the person who made, checked or approved that revision, who can differ from the one named for the drawing). This keeps `Person` reusable across roles. A drawing that records no author of its own is read as authored by the authors of its revisions (the path `metadata:isAuthoredBy|metadata:hasRevision/metadata:isAuthoredBy`); a drawing that records its own author keeps just that author, so this is a reading convention and not an OWL entailment. It applies to the author only. *(Amended in [v0.8](#9-version-history).)*
+> **Design note — Person vs Role:** `Person` models what an individual *is*, not the role they play. Roles (Author, Checker, Approver) are expressed as distinct Object Properties, not as subclasses of `Person`. Each applies to a `DrawingSheet` (the person the drawing names, for example the title block's "drawn by") and to a `DrawingRevision` (the person who made, checked or approved that revision, who can differ from the one named for the drawing). This keeps `Person` reusable across roles. A drawing that records no author of its own is read as authored by the authors of its revisions (the path `admeta:isAuthoredBy|admeta:hasRevision/admeta:isAuthoredBy`); a drawing that records its own author keeps just that author, so this is a reading convention and not an OWL entailment. It applies to the author only. *(Amended in [v0.8](#9-version-history).)*
 
 ### 2.2 Attributes — Datatype Properties
 
@@ -95,7 +95,7 @@ Characteristics of a single entity. **Datatype properties on `DrawingSheet` are 
 | ---------------- | ----------------- | ---------------------- | ------ | ------------- | ----- |
 | `drawingIdentifier`  | `DrawingSheet`    | `adiro_drawing_metadata` | NEW    | `xsd:string`  | Also known as "drawing number". |
 | `drawingTitle`   | `DrawingSheet`    | `adiro_drawing_metadata` | NEW    | `xsd:string`  | |
-| `hasScale`       | `DrawingSheet`, `Layout` | `adiro_drawing_metadata` | NEW    | `xsd:string`  | The general scale property; `drawingScale` and `layoutScale` are its sub-properties. With sub-property entailment a query on `hasScale` returns values recorded with either; without it, a sheet's scale is read with the path `metadata:hasScale\|metadata:drawingScale` and a layout's with `metadata:hasScale\|metadata:layoutScale`. *(Amended in [v0.7](#9-version-history).)* |
+| `hasScale`       | `DrawingSheet`, `Layout` | `adiro_drawing_metadata` | NEW    | `xsd:string`  | The general scale property; `drawingScale` and `layoutScale` are its sub-properties. With sub-property entailment a query on `hasScale` returns values recorded with either; without it, a sheet's scale is read with the path `admeta:hasScale\|admeta:drawingScale` and a layout's with `admeta:hasScale\|admeta:layoutScale`. *(Amended in [v0.7](#9-version-history).)* |
 | `drawingScale`     | `DrawingSheet`    | `adiro_drawing_metadata` | NEW    | `xsd:string`  | The scale of the sheet as a whole: most often printed in the title block, also in general notes or other areas outside any layout. Never copied from a layout. Sub-property of `hasScale`. *(Added in [v0.7](#9-version-history).)* |
 | `layoutScale`    | `Layout`          | `adiro_drawing_metadata` | NEW    | `xsd:string`  | The scale printed in a layout's own caption (or 'NTS' / 'As shown', verbatim); more specific than `drawingScale`; left empty when the layout prints none. Sub-property of `hasScale`. *(Added in [v0.7](#9-version-history).)* |
 | `sheetSize`      | `DrawingSheet`    | `adiro_drawing_metadata` | NEW    | `xsd:string`  | Named for the sheet of paper, which has a size; also known as "drawing size". *(Noted in [v0.7](#9-version-history).)* |
@@ -129,7 +129,7 @@ Links between two entities. New properties are wired into the existing generic t
 | `contains` (sheet)    | `DrawingSheet`    | `Layout` (1..*)     | `adiro_drawing_metadata` | REUSE  | —                       |
 | `hasProperty`         | `Layout`          | `LayoutContentType` | `adiro_drawing_metadata` | REUSE  | —                       |
 | `hasDiscipline` ⚠️    | `Layout`          | `Discipline` (min 1)| `adiro_domain_common`    | REUSE¹ | —                       |
-| `hasRevision`         | `DrawingSheet`    | `DrawingRevision`   | `adiro_drawing_metadata` | NEW    | `metadata:contains`     |
+| `hasRevision`         | `DrawingSheet`    | `DrawingRevision`   | `adiro_drawing_metadata` | NEW    | `admeta:contains`     |
 | `belongsToProject`    | `DrawingSheet`    | `Project`           | `adiro_drawing_metadata` | NEW    | (top-level)             |
 | `assertsProject`      | `Titleblock`      | `Project`           | `adiro_drawing_metadata` | NEW    | (top-level)             |
 | `belongsToPackage`    | `DrawingSheet`    | `DrawingPackage`    | `adiro_drawing_metadata` | NEW    | (top-level)             |
@@ -144,9 +144,9 @@ Links between two entities. New properties are wired into the existing generic t
 | `isReadingOf`         | `TextReading`     | `Titleblock` or `FilePage` | `adiro_provenance` | NEW | (top-level) *(Added in [v0.18](#9-version-history).)* |
 | `coversRegion`        | `CoordinateFrame` (a crop) | `BoundingBox` | `adiro_geometry` | NEW | (top-level) *(Added in [v0.19](#9-version-history).)* |
 | `imageOf`             | `DrawingFile` (a kept image) | `CoordinateFrame` | `adiro_geometry` | NEW | (top-level) *(Added in [v0.19](#9-version-history).)* |
-| `hasStatusCode`       | `DrawingRevision` | `StatusCode`        | `adiro_drawing_metadata` | NEW    | `metadata:hasProperty`  |
+| `hasStatusCode`       | `DrawingRevision` | `StatusCode`        | `adiro_drawing_metadata` | NEW    | `admeta:hasProperty`  |
 
-¹ ⚠️ **Open issue (G5):** `dcommon:hasDiscipline` currently has `rdfs:domain metadata:LayoutContentType`. v0.3 proposes moving the domain to `metadata:Layout` (along with the `min 1` cardinality restriction). Discipline characterises the layout itself, not its content type — and the two are orthogonal axes (see design note below). Pending @alelom / @m-asakihattori sign-off.
+¹ ⚠️ **Open issue (G5):** `dcommon:hasDiscipline` currently has `rdfs:domain admeta:LayoutContentType`. v0.3 proposes moving the domain to `admeta:Layout` (along with the `min 1` cardinality restriction). Discipline characterises the layout itself, not its content type — and the two are orthogonal axes (see design note below). Pending @alelom / @m-asakihattori sign-off.
 
 > **Design note — two orthogonal axes on Layout:**
 >
@@ -173,7 +173,7 @@ Each FR describes one representational capability the ontology must have, in imp
 > The ontology MUST represent the core identity fields of a drawing sheet — drawing number, title, scale, and sheet size — such that sheets can be retrieved and distinguished by these fields.
 
 - Source: UC-01
-- Derived terms: `metadata:DrawingSheet` (REUSE), `metadata:drawingIdentifier`, `metadata:drawingTitle`, `metadata:hasScale`, `metadata:drawingScale`, `metadata:sheetSize` (NEW datatype properties on `DrawingSheet`); `metadata:layoutScale` (NEW, on `Layout`). `drawingScale` and `layoutScale` are sub-properties of `hasScale`. *(Amended in [v0.7](#9-version-history).)*
+- Derived terms: `admeta:DrawingSheet` (REUSE), `admeta:drawingIdentifier`, `admeta:drawingTitle`, `admeta:hasScale`, `admeta:drawingScale`, `admeta:sheetSize` (NEW datatype properties on `DrawingSheet`); `admeta:layoutScale` (NEW, on `Layout`). `drawingScale` and `layoutScale` are sub-properties of `hasScale`. *(Amended in [v0.7](#9-version-history).)*
 
 ---
 
@@ -182,7 +182,7 @@ Each FR describes one representational capability the ontology must have, in imp
 > The ontology MUST represent the relationship between a drawing sheet and the project it belongs to, such that all sheets within a given project can be retrieved as a set.
 
 - Source: UC-01
-- Derived terms: `metadata:Project` (NEW), `metadata:belongsToProject` (NEW), `metadata:assertsProject` (NEW, from a `Titleblock` to the project it names), `metadata:projectName`, `metadata:projectNumber` (NEW datatype properties on `Project`)
+- Derived terms: `admeta:Project` (NEW), `admeta:belongsToProject` (NEW), `admeta:assertsProject` (NEW, from a `Titleblock` to the project it names), `admeta:projectName`, `admeta:projectNumber` (NEW datatype properties on `Project`)
 
 ---
 
@@ -191,7 +191,7 @@ Each FR describes one representational capability the ontology must have, in imp
 > The ontology MUST represent multiple revisions of the same drawing sheet as distinct entities, each carrying a revision code, issue date, and status code, such that both the current state and the full revision history of a sheet can be queried.
 
 - Source: UC-01
-- Derived terms: `metadata:DrawingRevision` (NEW), `metadata:hasRevision` (NEW, `subPropertyOf metadata:contains`), `metadata:assertsRevision` (NEW, from a `RevisionTable` to each revision it lists), `metadata:revisionCode`, `metadata:issueDate` (NEW)
+- Derived terms: `admeta:DrawingRevision` (NEW), `admeta:hasRevision` (NEW, `subPropertyOf admeta:contains`), `admeta:assertsRevision` (NEW, from a `RevisionTable` to each revision it lists), `admeta:revisionCode`, `admeta:issueDate` (NEW)
 
 ---
 
@@ -200,9 +200,9 @@ Each FR describes one representational capability the ontology must have, in imp
 > The ontology MUST distinguish between the roles of Author, Checker, and Approver as separate relationships between a person and a drawing, and between a person and a revision of it, such that drawings can be filtered by a specific person in a specific role, and a drawing with no recorded person in a required role can be found.
 
 - Source: UC-01
-- Derived terms: `metadata:Person` (NEW), `metadata:isAuthoredBy`, `metadata:isCheckedBy`, `metadata:isApprovedBy` (NEW, top-level), `metadata:personName` (NEW)
+- Derived terms: `admeta:Person` (NEW), `admeta:isAuthoredBy`, `admeta:isCheckedBy`, `admeta:isApprovedBy` (NEW, top-level), `admeta:personName` (NEW)
 
-> **Design note — inverse properties:** ADIRO declares **no** named inverse properties and no `owl:inverseOf` axioms. Only forward properties are modelled; reverse navigation uses the SPARQL inverse path, e.g. `?rev ^metadata:hasRevision ?sheet`. Decided project-wide in [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21). *(Changed in [v0.4](#9-version-history).)*
+> **Design note — inverse properties:** ADIRO declares **no** named inverse properties and no `owl:inverseOf` axioms. Only forward properties are modelled; reverse navigation uses the SPARQL inverse path, e.g. `?rev ^admeta:hasRevision ?sheet`. Decided project-wide in [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21). *(Changed in [v0.4](#9-version-history).)*
 
 ---
 
@@ -219,11 +219,11 @@ Each FR describes one representational capability the ontology must have, in imp
 
 **FR 6 — Layout Content Type Classification**
 
-> The ontology MUST support filtering drawing sheets by view type, reusing the existing `metadata:LayoutContentType` controlled vocabulary (`Plan`, `Section`, `Elevation`, `Detail`, `Table`, `Perspective`), attached at the `Layout` level via `metadata:hasProperty`.
+> The ontology MUST support filtering drawing sheets by view type, reusing the existing `admeta:LayoutContentType` controlled vocabulary (`Plan`, `Section`, `Elevation`, `Detail`, `Table`, `Perspective`), attached at the `Layout` level via `admeta:hasProperty`.
 
 - Source: UC-01
-- Derived terms: `metadata:LayoutContentType` (REUSE), `metadata:Layout` (REUSE), `metadata:hasProperty` (REUSE)
-- Note: UC-01 v0.2's `:DrawingType` (with subclasses Plan / Section / Elevation / Detail / Schedule) is **removed** — `metadata:LayoutContentType` already provides this. "Schedule" maps to the existing `metadata:Table` subclass.
+- Derived terms: `admeta:LayoutContentType` (REUSE), `admeta:Layout` (REUSE), `admeta:hasProperty` (REUSE)
+- Note: UC-01 v0.2's `:DrawingType` (with subclasses Plan / Section / Elevation / Detail / Schedule) is **removed** — `admeta:LayoutContentType` already provides this. "Schedule" maps to the existing `admeta:Table` subclass.
 
 ---
 
@@ -232,7 +232,7 @@ Each FR describes one representational capability the ontology must have, in imp
 > The ontology MUST represent the approval status of each drawing revision using a controlled vocabulary of status codes, such that sheets can be filtered by their current or historical approval state.
 
 - Source: UC-01
-- Derived terms: `metadata:StatusCode` (NEW), `metadata:hasStatusCode` (NEW, `subPropertyOf metadata:hasProperty`), `metadata:statusLabel` (NEW)
+- Derived terms: `admeta:StatusCode` (NEW), `admeta:hasStatusCode` (NEW, `subPropertyOf admeta:hasProperty`), `admeta:statusLabel` (NEW)
 
 ---
 
@@ -241,7 +241,7 @@ Each FR describes one representational capability the ontology must have, in imp
 > The ontology SHOULD represent the grouping of drawing sheets into packages or volumes within a project, such that project-scoped and package-scoped searches can both be supported.
 
 - Source: UC-01
-- Derived terms: `metadata:DrawingPackage` (NEW), `metadata:belongsToPackage` (NEW), `metadata:assertsPackage` (NEW, from a `Titleblock` to the package it names, when it names one), `metadata:packageName` (NEW)
+- Derived terms: `admeta:DrawingPackage` (NEW), `admeta:belongsToPackage` (NEW), `admeta:assertsPackage` (NEW, from a `Titleblock` to the package it names, when it names one), `admeta:packageName` (NEW)
 
 
 ---
@@ -251,7 +251,7 @@ Each FR describes one representational capability the ontology must have, in imp
 > The ontology MUST say in which file, and on which page of it, a drawing is stored, identify and locate that file, and say where the file was obtained from, such that a drawing can be traced to its source, the drawings of a file can be listed, and a file can be found again. *(Amended in [v0.15](#9-version-history).)*
 
 - Source: UC-01 (and every use case that must return to the source of an extraction)
-- Derived terms: `aprov:DrawingFile` (NEW), `aprov:FilePage` (NEW), `metadata:isOnPage` (NEW), `aprov:belongsToFile` (NEW), `aprov:pageNumber` (NEW, from 1); the description of a file: `aprov:fileName`, `aprov:storageLocation`, `aprov:contentHash` and `aprov:hashAlgorithm`, `aprov:mediaType`, `aprov:fileCreatedAt`, `aprov:fileModifiedAt`, `aprov:fileCreatedBy`, `aprov:fileModifiedBy`, `aprov:pageCount`, `aprov:fileSize` (all NEW); where it was obtained from: `aprov:sourceLocation`, `aprov:sourcePage` (NEW in [v0.15](#9-version-history)), with `prov:wasDerivedFrom` from a file made from another; and of a page: `aprov:displayWidthPt`, `aprov:displayHeightPt`, `aprov:pdfRotationDeg` (moved from the coordinate frame)
+- Derived terms: `adprov:DrawingFile` (NEW), `adprov:FilePage` (NEW), `admeta:isOnPage` (NEW), `adprov:belongsToFile` (NEW), `adprov:pageNumber` (NEW, from 1); the description of a file: `adprov:fileName`, `adprov:storageLocation`, `adprov:contentHash` and `adprov:hashAlgorithm`, `adprov:mediaType`, `adprov:fileCreatedAt`, `adprov:fileModifiedAt`, `adprov:fileCreatedBy`, `adprov:fileModifiedBy`, `adprov:pageCount`, `adprov:fileSize` (all NEW); where it was obtained from: `adprov:sourceLocation`, `adprov:sourcePage` (NEW in [v0.15](#9-version-history)), with `prov:wasDerivedFrom` from a file made from another; and of a page: `adprov:displayWidthPt`, `adprov:displayHeightPt`, `adprov:pdfRotationDeg` (moved from the coordinate frame)
 
 > **Design note — drawing, file, page.** A PDF holds many drawings and one drawing can exist in several files, so a drawing is linked to the *page* it is on (`isOnPage`), and the page to its file (`belongsToFile`). The coordinate frame of `adiro_geometry` reads a page in one convention (`describesPage`). The measured size of a page is not `sheetSize`, which is the paper format the drawing is meant for. See [the file a drawing is stored in](../../design-decisions/file-and-page-metadata.md). *(Added in [v0.9](#9-version-history).)*
 
@@ -262,7 +262,7 @@ Each FR describes one representational capability the ontology must have, in imp
 > The ontology MUST say which run of an extraction produced a recorded value, which step of that run and which model, with which configuration, what image of the page it saw (its resolution, and the region when it saw only part of the page), and which versions of the ontology the run used, such that a value can be traced to the process that produced it and two runs can be compared. *(Amended in [v0.19](#9-version-history).)*
 
 - Source: UC-01 (every value read from a title block is produced by an extraction, and a reviewer must be able to see how)
-- Derived terms: `aprov:InferenceMeta` (REUSE: a step), `aprov:inferredWith` (REUSE: the model of a step), `aprov:Configuration` and `aprov:configurationContent` (NEW), with the typing stubs `dcterms:isPartOf` (NEW: a step is part of its run), `prov:startedAtTime` (NEW: when a run started) and `prov:used` (REUSE: the configuration and the frame a step used, and the ontology versions a run used); `geom:CoordinateFrame` (REUSE: the image a step saw), `geom:resolutionDpi`, `geom:coversRegion` and `geom:imageOf` (NEW)
+- Derived terms: `adprov:InferenceMeta` (REUSE: a step), `adprov:inferredWith` (REUSE: the model of a step), `adprov:Configuration` and `adprov:configurationContent` (NEW), with the typing stubs `dcterms:isPartOf` (NEW: a step is part of its run), `prov:startedAtTime` (NEW: when a run started) and `prov:used` (REUSE: the configuration and the frame a step used, and the ontology versions a run used); `adgeom:CoordinateFrame` (REUSE: the image a step saw), `adgeom:resolutionDpi`, `adgeom:coversRegion` and `adgeom:imageOf` (NEW)
 
 > **Design note — runs and steps.** An extraction run is a `prov:Activity`. Each of its steps (detecting the title block, reading its text, extracting the fields) is an `InferenceMeta` with the model it used (`inferredWith`), and is part of the run (`dcterms:isPartOf`). A value's assertion points to the step that produced it (`hasInferenceMeta`). What the step used besides its model is a `Configuration` (`prov:used`): a prompt, rendering settings, size limits, kept as text whose format ADIRO does not model, with no credentials in it. A configuration is identified by its content, so one used on every page of a run is one individual. The recommended IRI is built from a hash of the content: the SHA-256 of the UTF-8 bytes of `configurationContent` exactly as recorded, with no normalisation, in lowercase hexadecimal, appended to the producer's own namespace (for example `<producer namespace>/configuration/sha256-9f2c…`). So that the same configuration gives the same text, and the same IRI, whichever producer writes it, the producer writes the text with `\n` line endings and no trailing newline, and writes settings as JSON with sorted keys and no insignificant whitespace. The hash is not recorded: the content is, and anyone can compute it again. Where a configuration varies from page to page, the `InferenceMeta` of that page records it, so one step of a run can be several `InferenceMeta` with the same model; two runs are compared by run and model, not by the IRI of a step. The run records the ADIRO versions it used as `prov:used` their version IRIs (for example `<https://w3id.org/adiro/adiro_provenance/2.1.0>`), written in that form, which is how a query tells them from anything else the run used. The resolution a page was rendered at is not a configuration: coordinates depend on it, so it is recorded on the coordinate frame it gives. Every image a step feeds to its model is a pixel `CoordinateFrame` of the page with its resolution (`resolutionDpi`), and a crop is a frame limited to a region (`coversRegion`, a `BoundingBox` in another frame of the page); the step records the frame it used (`prov:used`), so the data says what each model saw without the image being kept. Between a frame and the page there is only a uniform scale, so no transform is recorded ([#93](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/93) holds the general case). An image that is kept, for a viewer, is a `DrawingFile` that is an image of its frame (`imageOf`), with its `contentHash`, `mediaType` and a `storageLocation` that may be relative to the root of the dataset. *(Amended in [v0.19](#9-version-history).)* UC-03's provenance profile ([#96](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/96)) uses the same pattern. *(Added in [v0.17](#9-version-history).)*
 
@@ -273,7 +273,7 @@ Each FR describes one representational capability the ontology must have, in imp
 > The ontology MUST hold the text an extraction read from a title block and from a whole page, with its language when it is known and whether or not any of it was read as a field, and why none was read (empty, illegible, or a step that failed, with its error); and it MUST say what kind of step each step of a run was, such that a drawing can be found by any text of its title block, and the pages a run processed, and those on which it detected no title block, can be listed.
 
 - Source: UC-01 (a drawing is searched for by any word of its title block, not only by the fields read from it; a reviewer checks what a run covered)
-- Derived terms: `aprov:TextReading`, `aprov:isReadingOf`, `aprov:readText`, `aprov:hasReadingOutcome`, `aprov:errorMessage`, `aprov:StepKind` (`RegionDetection`, `TextRecognition`, `FieldExtraction`) with `aprov:hasStepKind`, and the outcome value `aprov:Failed` (all NEW)
+- Derived terms: `adprov:TextReading`, `adprov:isReadingOf`, `adprov:readText`, `adprov:hasReadingOutcome`, `adprov:errorMessage`, `adprov:StepKind` (`RegionDetection`, `TextRecognition`, `FieldExtraction`) with `adprov:hasStepKind`, and the outcome value `adprov:Failed` (all NEW)
 
 > **Design note — readings and coverage.** A `TextReading` is an `InferredEntity`, so each has the step that produced it, and two runs that read the same title block keep two readings; the latest is the one whose run started last. It reads one thing (`isReadingOf`): a `Titleblock`, or a whole `FilePage`. Its text is `readText`, with the language as the literal's language tag (`"Erdgeschoss"@de`) when it is known. A reading that read nothing has one outcome instead: `Empty`, `Illegible`, or `Failed` with its `errorMessage`; `Failed` is also an outcome of a field assertion. A step that failed before producing anything records its `errorMessage` on itself, so a detection that timed out is not read as a page with no title block. The latest reading of a target is the latest, whatever its outcome: a later failed reading hides an earlier text in CQ 11.2, which answers what the latest run read, while CQ 11.1 still finds the earlier text. A run with no recorded start counts as the oldest. The outcome of a reading is a property of its own (`hasReadingOutcome`), not `hasOutcome`, whose domain is `FieldAssertion`: widening that domain would change what an existing property implies, and a reading is not a claim about a field. Every step says what kind of step it is (`hasStepKind`), so a step that found nothing is still known for what it looked for: "no title block detected" needs no term of its own, it is a page that a region detection that did not fail used, with no title block on it; "not processed" is a page no step used. *(Added in [v0.18](#9-version-history).)*
 
@@ -307,14 +307,14 @@ CQs are grouped by the FR they validate. Each must be translatable directly into
 CQ 2.4 as a query (`assertsProject` is the title block's claim, `belongsToProject` the filing):
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 # CQ 2.4: the drawings filed under another project than their title block names
 SELECT ?drawing ?named ?filed WHERE {
-  ?titleblock a metadata:Titleblock ;
-              metadata:assertsMetadataFor ?drawing ;
-              metadata:assertsProject     ?named .
-  ?drawing metadata:belongsToProject ?filed .
+  ?titleblock a admeta:Titleblock ;
+              admeta:assertsMetadataFor ?drawing ;
+              admeta:assertsProject     ?named .
+  ?drawing admeta:belongsToProject ?filed .
   FILTER (?named != ?filed)
 }
 ```
@@ -342,45 +342,45 @@ SELECT ?drawing ?named ?filed WHERE {
 CQ 3.4 and CQ 4.4 as queries (CQ 4.5 is the same pattern with `isCheckedBy` or `isApprovedBy` alone, without the path through the revisions, which is for the author only):
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 # CQ 3.4: the table a revision was read from
 SELECT ?table WHERE {
-  ?table a metadata:RevisionTable ;
-         metadata:assertsRevision ?revision .
-  ?revision metadata:revisionCode "B" .
+  ?table a admeta:RevisionTable ;
+         admeta:assertsRevision ?revision .
+  ?revision admeta:revisionCode "B" .
 }
 ```
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 # CQ 4.4: the drawings with no recorded author (a revision's author counts when the drawing records none)
 SELECT ?drawing WHERE {
-  ?drawing a metadata:DrawingSheet .
-  FILTER NOT EXISTS { ?drawing metadata:isAuthoredBy|(metadata:hasRevision/metadata:isAuthoredBy) ?person }
+  ?drawing a admeta:DrawingSheet .
+  FILTER NOT EXISTS { ?drawing admeta:isAuthoredBy|(admeta:hasRevision/admeta:isAuthoredBy) ?person }
 }
 ```
 
 A drawing must have an author; whether it was checked or approved varies, so CQ 4.5 is a plain query and not a check. CQ 4.4 is a closed-world check: the ontology cannot state "every drawing has an author" (an OWL cardinality would infer an author, not report its absence), so the same rule is also a data-validation shape ([#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179)). The query lists the drawings with no recorded person; it cannot say whether the extraction missed the author or the drawing names none; CQ 4.6 does.
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
-PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX adprov:    <https://w3id.org/adiro/adiro_provenance#>
 
 # CQ 4.6: why a drawing has no recorded author, one row per assertion about it or one of its revisions
 SELECT ?drawing ?subject ?assertion ?value ?outcome ?acceptance ?reason WHERE {
-  ?drawing a metadata:DrawingSheet .
-  FILTER NOT EXISTS { ?drawing metadata:isAuthoredBy|(metadata:hasRevision/metadata:isAuthoredBy) ?person }
+  ?drawing a admeta:DrawingSheet .
+  FILTER NOT EXISTS { ?drawing admeta:isAuthoredBy|(admeta:hasRevision/admeta:isAuthoredBy) ?person }
   OPTIONAL {
-    ?drawing (metadata:hasRevision)? ?subject .
-    ?assertion aprov:assertedAbout ?subject ; aprov:assertsFieldKind metadata:DrawnByField .
-    FILTER NOT EXISTS { ?newer aprov:supersedes+ ?assertion ; aprov:hasAcceptance aprov:Accepted }
-    OPTIONAL { ?assertion aprov:hasLiteralValue|aprov:hasValueEntity ?value }
-    OPTIONAL { ?assertion aprov:hasOutcome ?o }
-    OPTIONAL { ?assertion aprov:hasAcceptance ?s }
+    ?drawing (admeta:hasRevision)? ?subject .
+    ?assertion adprov:assertedAbout ?subject ; adprov:assertsFieldKind admeta:DrawnByField .
+    FILTER NOT EXISTS { ?newer adprov:supersedes+ ?assertion ; adprov:hasAcceptance adprov:Accepted }
+    OPTIONAL { ?assertion adprov:hasLiteralValue|adprov:hasValueEntity ?value }
+    OPTIONAL { ?assertion adprov:hasOutcome ?o }
+    OPTIONAL { ?assertion adprov:hasAcceptance ?s }
     BIND (STRAFTER(STR(?o), "#") AS ?outcome)
-    BIND (STRAFTER(STR(COALESCE(?s, aprov:Pending)), "#") AS ?acceptance)
+    BIND (STRAFTER(STR(COALESCE(?s, adprov:Pending)), "#") AS ?acceptance)
   }
   BIND (IF(!BOUND(?assertion), "NotProcessed",
         IF(?acceptance = "Rejected", "Rejected",
@@ -434,14 +434,14 @@ The query reads the assertions about the drawing and about each of its revisions
 CQ 8.4 as a query (a title block that names no package is not compared):
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 # CQ 8.4: the drawings filed in another package than their title block names
 SELECT ?drawing ?named ?filed WHERE {
-  ?titleblock a metadata:Titleblock ;
-              metadata:assertsMetadataFor ?drawing ;
-              metadata:assertsPackage     ?named .
-  ?drawing metadata:belongsToPackage ?filed .
+  ?titleblock a admeta:Titleblock ;
+              admeta:assertsMetadataFor ?drawing ;
+              admeta:assertsPackage     ?named .
+  ?drawing admeta:belongsToPackage ?filed .
   FILTER (?named != ?filed)
 }
 ```
@@ -459,44 +459,44 @@ SELECT ?drawing ?named ?filed WHERE {
 CQ 9.1, CQ 9.3 and CQ 9.5 as queries:
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
-PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX adprov:    <https://w3id.org/adiro/adiro_provenance#>
 
 # CQ 9.1: the file and the page of a drawing
 SELECT ?fileName ?pageNumber WHERE {
-  ?drawing metadata:drawingIdentifier "ST-101" ;
-           metadata:isOnPage          ?page .
-  ?page aprov:pageNumber ?pageNumber ;
-        aprov:belongsToFile ?file .
-  ?file aprov:fileName ?fileName .
+  ?drawing admeta:drawingIdentifier "ST-101" ;
+           admeta:isOnPage          ?page .
+  ?page adprov:pageNumber ?pageNumber ;
+        adprov:belongsToFile ?file .
+  ?file adprov:fileName ?fileName .
 }
 ```
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
-PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX adprov:    <https://w3id.org/adiro/adiro_provenance#>
 
 # CQ 9.3: the files that hold more than one drawing
 SELECT ?file (COUNT(DISTINCT ?drawing) AS ?drawings) WHERE {
-  ?drawing metadata:isOnPage ?page .
-  ?page aprov:belongsToFile ?file .
+  ?drawing admeta:isOnPage ?page .
+  ?page adprov:belongsToFile ?file .
 }
 GROUP BY ?file HAVING (COUNT(DISTINCT ?drawing) > 1)
 ```
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
-PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX adprov:    <https://w3id.org/adiro/adiro_provenance#>
 PREFIX prov:     <http://www.w3.org/ns/prov#>
 
 # CQ 9.5: where the file of a drawing was obtained from, following the files it was made from
 SELECT ?file ?origin ?sourceLocation ?sourcePage WHERE {
-  ?drawing metadata:drawingIdentifier "ST-101" ;
-           metadata:isOnPage          ?page .
-  ?page aprov:belongsToFile ?file .
+  ?drawing admeta:drawingIdentifier "ST-101" ;
+           admeta:isOnPage          ?page .
+  ?page adprov:belongsToFile ?file .
   ?file prov:wasDerivedFrom* ?origin .
-  ?origin aprov:sourceLocation ?sourceLocation .
-  OPTIONAL { ?origin aprov:sourcePage ?sourcePage }
+  ?origin adprov:sourceLocation ?sourceLocation .
+  OPTIONAL { ?origin adprov:sourcePage ?sourcePage }
 }
 ```
 
@@ -510,35 +510,35 @@ SELECT ?file ?origin ?sourceLocation ?sourcePage WHERE {
 | CQ 10.4 | For the title of drawing "ST-101": what image did the step that read each value see: at which resolution, which region of the page, and where is the image kept, if it is? *(Added in [v0.19](#9-version-history).)* |
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
-PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX adprov:    <https://w3id.org/adiro/adiro_provenance#>
 PREFIX prov:     <http://www.w3.org/ns/prov#>
 PREFIX dcterms:  <http://purl.org/dc/terms/>
 
 # CQ 10.1: the run, the step, the model and the configuration behind each value of a field of a drawing
 SELECT ?assertion ?value ?run ?started ?step ?model ?agent ?configuration WHERE {
-  ?drawing metadata:drawingIdentifier "ST-101" .
-  ?assertion aprov:assertedAbout    ?drawing ;
-             aprov:assertsFieldKind metadata:DrawingTitleField ;
-             aprov:hasInferenceMeta ?step .
-  OPTIONAL { ?assertion aprov:hasLiteralValue|aprov:hasValueEntity ?value }
-  OPTIONAL { ?step aprov:inferredWith ?model }
-  OPTIONAL { ?step aprov:inferredBy ?agent }
+  ?drawing admeta:drawingIdentifier "ST-101" .
+  ?assertion adprov:assertedAbout    ?drawing ;
+             adprov:assertsFieldKind admeta:DrawingTitleField ;
+             adprov:hasInferenceMeta ?step .
+  OPTIONAL { ?assertion adprov:hasLiteralValue|adprov:hasValueEntity ?value }
+  OPTIONAL { ?step adprov:inferredWith ?model }
+  OPTIONAL { ?step adprov:inferredBy ?agent }
   OPTIONAL { ?step dcterms:isPartOf ?run . OPTIONAL { ?run prov:startedAtTime ?started } }
-  OPTIONAL { ?step prov:used ?configuration . ?configuration a aprov:Configuration }
+  OPTIONAL { ?step prov:used ?configuration . ?configuration a adprov:Configuration }
 }
 ```
 
 The query reads the data as written, with no inference: the configuration is recognised by its type, and the model by `inferredWith`. A value typed by a person has a step with no model and no run, and is listed with the person (`inferredBy`) and those left empty.
 
 ```sparql
-PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX adprov:    <https://w3id.org/adiro/adiro_provenance#>
 PREFIX prov:     <http://www.w3.org/ns/prov#>
 PREFIX dcterms:  <http://purl.org/dc/terms/>
 
 # CQ 10.2: the ADIRO versions each extraction run used
 SELECT DISTINCT ?run ?started ?version WHERE {
-  ?step a aprov:InferenceMeta ;
+  ?step a adprov:InferenceMeta ;
         dcterms:isPartOf ?run .
   ?run prov:used ?version .
   FILTER(REGEX(STR(?version), "^https://w3id[.]org/adiro/[a-z_]+/[0-9]+[.][0-9]+[.][0-9]+$"))
@@ -549,26 +549,26 @@ SELECT DISTINCT ?run ?started ?version WHERE {
 A version is recognised by the form of its IRI, `https://w3id.org/adiro/<module>/<major>.<minor>.<patch>`, which is the `owl:versionIRI` of every ADIRO release, so a run's data answers the question without the ontology loaded beside it. The run is found through its steps, because `dcterms:isPartOf` has no domain and is used for other things too.
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
-PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX adprov:    <https://w3id.org/adiro/adiro_provenance#>
 
 # CQ 10.3: the history of the values of a field of a drawing, oldest first
 SELECT ?assertion ?value ?outcome ?model ?agent ?at ?acceptance ?acceptedBy ?supersededBy WHERE {
-  ?drawing metadata:drawingIdentifier "ST-101" .
-  ?assertion aprov:assertedAbout    ?drawing ;
-             aprov:assertsFieldKind metadata:DrawingTitleField .
-  OPTIONAL { ?assertion aprov:hasLiteralValue|aprov:hasValueEntity ?value }
-  OPTIONAL { ?assertion aprov:hasOutcome ?outcome }
+  ?drawing admeta:drawingIdentifier "ST-101" .
+  ?assertion adprov:assertedAbout    ?drawing ;
+             adprov:assertsFieldKind admeta:DrawingTitleField .
+  OPTIONAL { ?assertion adprov:hasLiteralValue|adprov:hasValueEntity ?value }
+  OPTIONAL { ?assertion adprov:hasOutcome ?outcome }
   OPTIONAL {
-    ?assertion aprov:hasInferenceMeta ?step .
-    OPTIONAL { ?step aprov:inferredWith ?model }
-    OPTIONAL { ?step aprov:inferredBy ?agent }
-    OPTIONAL { ?step aprov:inferredAt ?at }
+    ?assertion adprov:hasInferenceMeta ?step .
+    OPTIONAL { ?step adprov:inferredWith ?model }
+    OPTIONAL { ?step adprov:inferredBy ?agent }
+    OPTIONAL { ?step adprov:inferredAt ?at }
   }
-  OPTIONAL { ?assertion aprov:hasAcceptance ?status }
-  BIND (COALESCE(?status, aprov:Pending) AS ?acceptance)
-  OPTIONAL { ?assertion aprov:acceptedBy ?acceptedBy }
-  OPTIONAL { ?supersededBy aprov:supersedes ?assertion }
+  OPTIONAL { ?assertion adprov:hasAcceptance ?status }
+  BIND (COALESCE(?status, adprov:Pending) AS ?acceptance)
+  OPTIONAL { ?assertion adprov:acceptedBy ?acceptedBy }
+  OPTIONAL { ?supersededBy adprov:supersedes ?assertion }
 }
 ORDER BY ?at ?assertion
 ```
@@ -576,24 +576,24 @@ ORDER BY ?at ?assertion
 Every assertion is listed, the superseded ones included, oldest first: a model's value and a person's correction that supersedes it appear one after the other, with who accepted each. An assertion with no acceptance recorded is `Pending`, as in CQ 4.6. It uses only terms that CQ 4.6 and CQ 10.1 already use.
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
-PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
-PREFIX geom:     <https://w3id.org/adiro/adiro_geometry#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX adprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX adgeom:     <https://w3id.org/adiro/adiro_geometry#>
 PREFIX prov:     <http://www.w3.org/ns/prov#>
 
 # CQ 10.4: the image of the page that the step behind each value of a field saw
 SELECT ?assertion ?value ?step ?frame ?dpi ?region ?box ?image ?location WHERE {
-  ?drawing metadata:drawingIdentifier "ST-101" .
-  ?assertion aprov:assertedAbout    ?drawing ;
-             aprov:assertsFieldKind metadata:DrawingTitleField ;
-             aprov:hasInferenceMeta ?step .
-  OPTIONAL { ?assertion aprov:hasLiteralValue|aprov:hasValueEntity ?value }
+  ?drawing admeta:drawingIdentifier "ST-101" .
+  ?assertion adprov:assertedAbout    ?drawing ;
+             adprov:assertsFieldKind admeta:DrawingTitleField ;
+             adprov:hasInferenceMeta ?step .
+  OPTIONAL { ?assertion adprov:hasLiteralValue|adprov:hasValueEntity ?value }
   OPTIONAL {
-    ?step prov:used|aprov:inferredFrom ?frame .
-    ?frame a geom:CoordinateFrame .
-    OPTIONAL { ?frame geom:resolutionDpi ?dpi }
-    OPTIONAL { ?frame geom:coversRegion ?region . OPTIONAL { ?region geom:bboxXYXY ?box } }
-    OPTIONAL { ?image geom:imageOf ?frame . OPTIONAL { ?image aprov:storageLocation ?location } }
+    ?step prov:used|adprov:inferredFrom ?frame .
+    ?frame a adgeom:CoordinateFrame .
+    OPTIONAL { ?frame adgeom:resolutionDpi ?dpi }
+    OPTIONAL { ?frame adgeom:coversRegion ?region . OPTIONAL { ?region adgeom:bboxXYXY ?box } }
+    OPTIONAL { ?image adgeom:imageOf ?frame . OPTIONAL { ?image adprov:storageLocation ?location } }
   }
 }
 ```
@@ -610,70 +610,70 @@ A frame is recognised by its type, so the page, the configuration and the model,
 | CQ 11.4 | Which pages were searched for a title block by a detection that did not fail, and the store holds no title block on them? *(Added in [v0.18](#9-version-history).)* |
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
-PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX adprov:    <https://w3id.org/adiro/adiro_provenance#>
 
 # CQ 11.1: the drawings whose title block mentions a text, in any reading of it
 SELECT DISTINCT ?drawing ?identifier WHERE {
-  ?drawing metadata:contains ?titleblock .
-  ?titleblock a metadata:Titleblock .
-  ?reading aprov:isReadingOf ?titleblock ;
-           aprov:readText    ?text .
+  ?drawing admeta:contains ?titleblock .
+  ?titleblock a admeta:Titleblock .
+  ?reading adprov:isReadingOf ?titleblock ;
+           adprov:readText    ?text .
   FILTER (CONTAINS(LCASE(STR(?text)), "ground floor"))
-  OPTIONAL { ?drawing metadata:drawingIdentifier ?identifier }
+  OPTIONAL { ?drawing admeta:drawingIdentifier ?identifier }
 }
 ```
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
-PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX adprov:    <https://w3id.org/adiro/adiro_provenance#>
 PREFIX prov:     <http://www.w3.org/ns/prov#>
 PREFIX dcterms:  <http://purl.org/dc/terms/>
 
 # CQ 11.2: what the latest run read from the title block and from the whole of a page, or why it read nothing
 SELECT ?target ?text ?language ?outcome ?error ?run WHERE {
-  ?file aprov:fileName "A101-ground-floor.pdf" .
-  ?page aprov:belongsToFile ?file ;
-        aprov:pageNumber    ?number .
+  ?file adprov:fileName "A101-ground-floor.pdf" .
+  ?page adprov:belongsToFile ?file ;
+        adprov:pageNumber    ?number .
   FILTER (?number = 1)
-  ?page (^metadata:isOnPage/metadata:contains)? ?target .
-  FILTER (?target = ?page || EXISTS { ?target a metadata:Titleblock })
-  ?reading aprov:isReadingOf ?target ;
-           aprov:hasInferenceMeta/dcterms:isPartOf ?run .
+  ?page (^admeta:isOnPage/admeta:contains)? ?target .
+  FILTER (?target = ?page || EXISTS { ?target a admeta:Titleblock })
+  ?reading adprov:isReadingOf ?target ;
+           adprov:hasInferenceMeta/dcterms:isPartOf ?run .
   OPTIONAL { ?run prov:startedAtTime ?started }
   FILTER NOT EXISTS {
-    ?later aprov:isReadingOf ?target ;
-           aprov:hasInferenceMeta/dcterms:isPartOf/prov:startedAtTime ?laterStart .
+    ?later adprov:isReadingOf ?target ;
+           adprov:hasInferenceMeta/dcterms:isPartOf/prov:startedAtTime ?laterStart .
     FILTER (!BOUND(?started) || ?laterStart > ?started)
   }
-  OPTIONAL { ?reading aprov:readText ?text }
-  OPTIONAL { ?reading aprov:hasReadingOutcome ?outcome }
-  OPTIONAL { ?reading aprov:errorMessage ?error }
+  OPTIONAL { ?reading adprov:readText ?text }
+  OPTIONAL { ?reading adprov:hasReadingOutcome ?outcome }
+  OPTIONAL { ?reading adprov:errorMessage ?error }
   BIND (LANG(?text) AS ?language)
 }
 ```
 
 ```sparql
-PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX adprov:    <https://w3id.org/adiro/adiro_provenance#>
 PREFIX prov:     <http://www.w3.org/ns/prov#>
 PREFIX dcterms:  <http://purl.org/dc/terms/>
 
 # CQ 11.3: each page of a file, the runs that processed it, and the outcome of its reading
 SELECT DISTINCT ?number ?run ?status WHERE {
-  ?file aprov:fileName "A101-ground-floor.pdf" .
-  ?page aprov:belongsToFile ?file ;
-        aprov:pageNumber    ?number .
+  ?file adprov:fileName "A101-ground-floor.pdf" .
+  ?page adprov:belongsToFile ?file ;
+        adprov:pageNumber    ?number .
   OPTIONAL {
-    ?step a aprov:InferenceMeta ;
-          prov:used|aprov:inferredFrom ?page ;
+    ?step a adprov:InferenceMeta ;
+          prov:used|adprov:inferredFrom ?page ;
           dcterms:isPartOf ?run .
-    OPTIONAL { ?step aprov:errorMessage ?stepError }
+    OPTIONAL { ?step adprov:errorMessage ?stepError }
   }
   OPTIONAL {
-    ?reading aprov:isReadingOf ?page ;
-             aprov:hasInferenceMeta/dcterms:isPartOf ?run .
-    OPTIONAL { ?reading aprov:readText ?text }
-    OPTIONAL { ?reading aprov:hasReadingOutcome ?o }
+    ?reading adprov:isReadingOf ?page ;
+             adprov:hasInferenceMeta/dcterms:isPartOf ?run .
+    OPTIONAL { ?reading adprov:readText ?text }
+    OPTIONAL { ?reading adprov:hasReadingOutcome ?o }
   }
   BIND (IF(!BOUND(?run), "NotProcessed",
         IF(BOUND(?o), STRAFTER(STR(?o), "#"),
@@ -684,22 +684,22 @@ ORDER BY ?number ?run
 ```
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
-PREFIX aprov:    <https://w3id.org/adiro/adiro_provenance#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX adprov:    <https://w3id.org/adiro/adiro_provenance#>
 PREFIX prov:     <http://www.w3.org/ns/prov#>
 PREFIX dcterms:  <http://purl.org/dc/terms/>
 
 # CQ 11.4: the pages a region detection searched, on which no title block was detected
 SELECT DISTINCT ?file ?number WHERE {
-  ?step aprov:hasStepKind aprov:RegionDetection ;
-        prov:used|aprov:inferredFrom ?page .
-  FILTER NOT EXISTS { ?step aprov:errorMessage ?error }
-  ?page aprov:belongsToFile ?file ;
-        aprov:pageNumber    ?number .
+  ?step adprov:hasStepKind adprov:RegionDetection ;
+        prov:used|adprov:inferredFrom ?page .
+  FILTER NOT EXISTS { ?step adprov:errorMessage ?error }
+  ?page adprov:belongsToFile ?file ;
+        adprov:pageNumber    ?number .
   FILTER NOT EXISTS {
-    ?drawing metadata:isOnPage ?page ;
-             metadata:contains ?titleblock .
-    ?titleblock a metadata:Titleblock .
+    ?drawing admeta:isOnPage ?page ;
+             admeta:contains ?titleblock .
+    ?titleblock a admeta:Titleblock .
   }
 }
 ```
@@ -721,7 +721,7 @@ The queries read the data as written, with no inference. A step records a page i
 **How the recorded queries are run.** *(Added in [v0.18](#9-version-history).)* Every query recorded in this document is written for a store in which each run's data is a named graph of its own, corrections are in another, and nothing is inferred:
 
 - **Union default graph.** The queries name no graph: they read the union of the named graphs, so a value, the step that produced it and the run it is part of are found together wherever each was written, and a correction in its own graph supersedes an assertion of a run. A store whose default graph is not the union of its named graphs is configured so, or each query is given its graphs with `FROM`. A question about one run selects it by its IRI (CQ 10.2, CQ 11.3), not by its graph.
-- **No inference.** The queries read the data as written: a class or a property is matched as stated, never through `rdfs:subClassOf` or `rdfs:subPropertyOf`, and where a sub-property can carry the same fact both are named (`prov:used|aprov:inferredFrom` in CQ 11.3 and CQ 11.4). The one fact the queries take from the ontology, the property a field kind is promoted to (`aprov:mapsToFieldProperty`, read by the promotion), is read from the ontology modules loaded into the store as data, in a graph of their own.
+- **No inference.** The queries read the data as written: a class or a property is matched as stated, never through `rdfs:subClassOf` or `rdfs:subPropertyOf`, and where a sub-property can carry the same fact both are named (`prov:used|adprov:inferredFrom` in CQ 11.3 and CQ 11.4). The one fact the queries take from the ontology, the property a field kind is promoted to (`adprov:mapsToFieldProperty`, read by the promotion), is read from the ontology modules loaded into the store as data, in a graph of their own.
 
 The tests run every recorded query twice: on the case's data as one graph, and on the same triples spread over several named graphs through the union default graph, and the answers must be the same ([#241](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/241); `tests/conftest.py`). No test loads a reasoner.
 
@@ -730,24 +730,24 @@ The following example demonstrates that the term inventory is sufficient to answ
 **CQ-I 1:** *What sheets in project "X" contain a MEP Layout and were approved by "R. Jones" after March 2024?*
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
 PREFIX dcommon:  <https://w3id.org/adiro/adiro_domain_common#>
 PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
 
 SELECT ?sheet ?drawingIdentifier WHERE {
-  ?sheet  a                          metadata:DrawingSheet ;
-          metadata:drawingIdentifier     ?drawingIdentifier ;
-          metadata:belongsToProject  metadata:ProjectX ;
-          metadata:hasRevision       ?rev ;
-          metadata:contains          ?layout .
+  ?sheet  a                          admeta:DrawingSheet ;
+          admeta:drawingIdentifier     ?drawingIdentifier ;
+          admeta:belongsToProject  admeta:ProjectX ;
+          admeta:hasRevision       ?rev ;
+          admeta:contains          ?layout .
 
-  ?layout a                          metadata:Layout ;
+  ?layout a                          admeta:Layout ;
           dcommon:hasDiscipline      ?disc .
   ?disc   a                          dcommon:MEP .
 
-  ?rev    metadata:isApprovedBy       ?person ;
-          metadata:issueDate         ?date .
-  ?person metadata:personName        "R. Jones" .
+  ?rev    admeta:isApprovedBy       ?person ;
+          admeta:issueDate         ?date .
+  ?person admeta:personName        "R. Jones" .
 
   FILTER (?date > "2024-03-01"^^xsd:date)
 }
@@ -755,40 +755,40 @@ SELECT ?sheet ?drawingIdentifier WHERE {
 
 Every filter condition maps to a defined property:
 
-- `metadata:DrawingSheet`, `metadata:drawingIdentifier`, `metadata:belongsToProject`, `metadata:hasRevision`, `metadata:contains` — reused / new in `adiro_drawing_metadata`.
-- `metadata:Layout`, `dcommon:hasDiscipline`, `dcommon:MEP` — reused; note the `rdf:type` check against the class hierarchy automatically matches `Mechanical`, `Electrical`, `Plumbing`, `Lighting` via `rdfs:subClassOf` reasoning.
-- `metadata:isApprovedBy`, `metadata:issueDate`, `metadata:personName` — new in `adiro_drawing_metadata`.
+- `admeta:DrawingSheet`, `admeta:drawingIdentifier`, `admeta:belongsToProject`, `admeta:hasRevision`, `admeta:contains` — reused / new in `adiro_drawing_metadata`.
+- `admeta:Layout`, `dcommon:hasDiscipline`, `dcommon:MEP` — reused; note the `rdf:type` check against the class hierarchy automatically matches `Mechanical`, `Electrical`, `Plumbing`, `Lighting` via `rdfs:subClassOf` reasoning.
+- `admeta:isApprovedBy`, `admeta:issueDate`, `admeta:personName` — new in `adiro_drawing_metadata`.
 
 The query is fully expressible, confirming that CQ-I 1 is covered by the current term inventory. It reads the discipline through the class hierarchy, so it needs subclass reasoning: it illustrates the term inventory and is not one of the recorded queries, which run without inference (see above). For a store without a reasoner, the discipline pattern is `?disc a/rdfs:subClassOf* dcommon:MEP`, with the ontology loaded as data. *(Amended in [v0.20](#9-version-history).)* The previous v0.2 placeholder prefix (`https://example.org/aec-ontology#`) is retired in favour of the real module namespaces.
 
 ### Scale competency questions
 
-CQ 1.3 and the scale questions CQ 1.4–1.7 are expressible without a reasoner. Each path lists the parent property together with its sub-property, so values written with either are found whether or not sub-property entailment has been applied: a sheet's scale is read with `(metadata:drawingScale|metadata:hasScale)` and a layout's with `(metadata:layoutScale|metadata:hasScale)`. A sheet's layouts are reached with `metadata:contains`, as in CQ-I 1. The queries were run with rdflib, without a reasoner, on a small example: a sheet with a title-block scale and three layouts (one with its own scale, one with none, one marked "NTS"), a sheet whose scale was written with `hasScale`, a sheet with no scale, and a sheet with a single detected layout.
+CQ 1.3 and the scale questions CQ 1.4–1.7 are expressible without a reasoner. Each path lists the parent property together with its sub-property, so values written with either are found whether or not sub-property entailment has been applied: a sheet's scale is read with `(admeta:drawingScale|admeta:hasScale)` and a layout's with `(admeta:layoutScale|admeta:hasScale)`. A sheet's layouts are reached with `admeta:contains`, as in CQ-I 1. The queries were run with rdflib, without a reasoner, on a small example: a sheet with a title-block scale and three layouts (one with its own scale, one with none, one marked "NTS"), a sheet whose scale was written with `hasScale`, a sheet with no scale, and a sheet with a single detected layout.
 
 **CQ 1.3:** *What drawing sheets are drawn at scale 1:50?* Only a sheet with a sheet-level scale is returned: a layout's scale is never copied to its sheet, so a sheet whose only scale is in the caption of its single layout is not returned.
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 # CQ 1.3: the drawings drawn at scale 1:50
 SELECT ?sheet WHERE {
-  ?sheet  a                                         metadata:DrawingSheet ;
-          (metadata:drawingScale|metadata:hasScale) "1:50" .
+  ?sheet  a                                         admeta:DrawingSheet ;
+          (admeta:drawingScale|admeta:hasScale) "1:50" .
 }
 ```
 
 **CQ 1.4:** *What scale applies to this layout: its own, or otherwise its sheet's?*
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 # CQ 1.4: the scale of each layout, its own or otherwise its drawing's
 SELECT ?layout ?scale ?basis WHERE {
-  ?sheet  a metadata:DrawingSheet ;
-          metadata:contains ?layout .
-  ?layout a metadata:Layout .
-  OPTIONAL { ?layout (metadata:layoutScale|metadata:hasScale)  ?own }
-  OPTIONAL { ?sheet  (metadata:drawingScale|metadata:hasScale) ?nominal }
+  ?sheet  a admeta:DrawingSheet ;
+          admeta:contains ?layout .
+  ?layout a admeta:Layout .
+  OPTIONAL { ?layout (admeta:layoutScale|admeta:hasScale)  ?own }
+  OPTIONAL { ?sheet  (admeta:drawingScale|admeta:hasScale) ?nominal }
   BIND(COALESCE(?own, ?nominal) AS ?scale)
   BIND(IF(BOUND(?own), "own",
           IF(BOUND(?nominal), "assumed from sheet", "none")) AS ?basis)
@@ -798,42 +798,42 @@ SELECT ?layout ?scale ?basis WHERE {
 **CQ 1.5:** *Which drawing sheets state no scale at all?*
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 # CQ 1.5: the drawings that state no scale
 SELECT ?sheet WHERE {
-  ?sheet a metadata:DrawingSheet .
-  FILTER NOT EXISTS { ?sheet (metadata:drawingScale|metadata:hasScale) ?scale }
+  ?sheet a admeta:DrawingSheet .
+  FILTER NOT EXISTS { ?sheet (admeta:drawingScale|admeta:hasScale) ?scale }
 }
 ```
 
 **CQ 1.6:** *Which layouts have no scale of their own and sit on a sheet with no scale, so that their scale cannot be determined?*
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 # CQ 1.6: the layouts whose scale cannot be determined
 SELECT ?layout WHERE {
-  ?sheet  a metadata:DrawingSheet ;
-          metadata:contains ?layout .
-  ?layout a metadata:Layout .
-  FILTER NOT EXISTS { ?layout (metadata:layoutScale|metadata:hasScale)  ?own }
-  FILTER NOT EXISTS { ?sheet  (metadata:drawingScale|metadata:hasScale) ?nominal }
+  ?sheet  a admeta:DrawingSheet ;
+          admeta:contains ?layout .
+  ?layout a admeta:Layout .
+  FILTER NOT EXISTS { ?layout (admeta:layoutScale|admeta:hasScale)  ?own }
+  FILTER NOT EXISTS { ?sheet  (admeta:drawingScale|admeta:hasScale) ?nominal }
 }
 ```
 
 **CQ 1.7:** *Which layouts are drawn at a different scale from their sheet?*
 
 ```sparql
-PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
+PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
 
 # CQ 1.7: the layouts drawn at another scale than their drawing
 SELECT ?layout ?own ?nominal WHERE {
-  ?sheet  a metadata:DrawingSheet ;
-          (metadata:drawingScale|metadata:hasScale) ?nominal ;
-          metadata:contains ?layout .
-  ?layout a metadata:Layout ;
-          (metadata:layoutScale|metadata:hasScale) ?own .
+  ?sheet  a admeta:DrawingSheet ;
+          (admeta:drawingScale|admeta:hasScale) ?nominal ;
+          admeta:contains ?layout .
+  ?layout a admeta:Layout ;
+          (admeta:layoutScale|admeta:hasScale) ?own .
   FILTER (?own != ?nominal)
 }
 ```
@@ -846,64 +846,64 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 
 | OWL Term                       | Module                 | Action | CQ(s)                                          | FR(s)                              |
 | ------------------------------ | ---------------------- | ------ | ---------------------------------------------- | ---------------------------------- |
-| `metadata:DrawingSheet`        | `adiro_drawing_metadata` | REUSE  | CQ 1.x, CQ 2.x, CQ 3.x, CQ 5.x, CQ 6.x, CQ 8.x | FR 1, FR 2, FR 3, FR 5, FR 6, FR 8 |
-| `metadata:Layout`              | `adiro_drawing_metadata` | REUSE  | CQ 1.4, CQ 1.6, CQ 1.7, CQ 5.x, CQ 6.x, CQ-I 1, CQ-I 2, CQ-I 3         | FR 5, FR 6                         |
-| `metadata:LayoutContentType`   | `adiro_drawing_metadata` | REUSE  | CQ 6.x, CQ-I 3                                 | FR 6                               |
-| `metadata:DrawingRevision`     | `adiro_drawing_metadata` | NEW    | CQ 3.x, CQ 4.x, CQ 7.x                         | FR 3, FR 4, FR 7                   |
-| `metadata:Project`             | `adiro_drawing_metadata` | NEW    | CQ 2.x, CQ-I 1                                 | FR 2                               |
-| `metadata:Person`              | `adiro_drawing_metadata` | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
+| `admeta:DrawingSheet`        | `adiro_drawing_metadata` | REUSE  | CQ 1.x, CQ 2.x, CQ 3.x, CQ 5.x, CQ 6.x, CQ 8.x | FR 1, FR 2, FR 3, FR 5, FR 6, FR 8 |
+| `admeta:Layout`              | `adiro_drawing_metadata` | REUSE  | CQ 1.4, CQ 1.6, CQ 1.7, CQ 5.x, CQ 6.x, CQ-I 1, CQ-I 2, CQ-I 3         | FR 5, FR 6                         |
+| `admeta:LayoutContentType`   | `adiro_drawing_metadata` | REUSE  | CQ 6.x, CQ-I 3                                 | FR 6                               |
+| `admeta:DrawingRevision`     | `adiro_drawing_metadata` | NEW    | CQ 3.x, CQ 4.x, CQ 7.x                         | FR 3, FR 4, FR 7                   |
+| `admeta:Project`             | `adiro_drawing_metadata` | NEW    | CQ 2.x, CQ-I 1                                 | FR 2                               |
+| `admeta:Person`              | `adiro_drawing_metadata` | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
 | `dcommon:Discipline`           | `adiro_domain_common`    | REUSE  | CQ 5.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 5                               |
-| `metadata:StatusCode`          | `adiro_drawing_metadata` | NEW    | CQ 7.x, CQ 8.2                                 | FR 7                               |
-| `metadata:DrawingPackage`      | `adiro_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
-| `metadata:contains`            | `adiro_drawing_metadata` | REUSE  | CQ 1.4, CQ 1.6, CQ 1.7, CQ-I 1, CQ-I 2, CQ-I 3                         | (structural)                       |
-| `metadata:hasRevision`         | `adiro_drawing_metadata` | NEW    | CQ 3.x                                         | FR 3                               |
-| `metadata:isAuthoredBy`           | `adiro_drawing_metadata` | NEW    | CQ 4.1, CQ 4.4                                 | FR 4                               |
-| `metadata:isCheckedBy`          | `adiro_drawing_metadata` | NEW    | CQ 4.2, CQ 4.5                                 | FR 4                               |
-| `metadata:isApprovedBy`         | `adiro_drawing_metadata` | NEW    | CQ 4.3, CQ 4.5, CQ-I 1                         | FR 4                               |
-| `metadata:assertsRevision`      | `adiro_drawing_metadata` | NEW    | CQ 3.4                                         | FR 3                               |
-| `metadata:hasStatusCode`       | `adiro_drawing_metadata` | NEW    | CQ 7.x, CQ 8.2                                 | FR 7                               |
-| `metadata:belongsToProject`    | `adiro_drawing_metadata` | NEW    | CQ 2.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 2                               |
-| `metadata:assertsProject`      | `adiro_drawing_metadata` | NEW    | CQ 2.3, CQ 2.4                                 | FR 2                               |
+| `admeta:StatusCode`          | `adiro_drawing_metadata` | NEW    | CQ 7.x, CQ 8.2                                 | FR 7                               |
+| `admeta:DrawingPackage`      | `adiro_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
+| `admeta:contains`            | `adiro_drawing_metadata` | REUSE  | CQ 1.4, CQ 1.6, CQ 1.7, CQ-I 1, CQ-I 2, CQ-I 3                         | (structural)                       |
+| `admeta:hasRevision`         | `adiro_drawing_metadata` | NEW    | CQ 3.x                                         | FR 3                               |
+| `admeta:isAuthoredBy`           | `adiro_drawing_metadata` | NEW    | CQ 4.1, CQ 4.4                                 | FR 4                               |
+| `admeta:isCheckedBy`          | `adiro_drawing_metadata` | NEW    | CQ 4.2, CQ 4.5                                 | FR 4                               |
+| `admeta:isApprovedBy`         | `adiro_drawing_metadata` | NEW    | CQ 4.3, CQ 4.5, CQ-I 1                         | FR 4                               |
+| `admeta:assertsRevision`      | `adiro_drawing_metadata` | NEW    | CQ 3.4                                         | FR 3                               |
+| `admeta:hasStatusCode`       | `adiro_drawing_metadata` | NEW    | CQ 7.x, CQ 8.2                                 | FR 7                               |
+| `admeta:belongsToProject`    | `adiro_drawing_metadata` | NEW    | CQ 2.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 2                               |
+| `admeta:assertsProject`      | `adiro_drawing_metadata` | NEW    | CQ 2.3, CQ 2.4                                 | FR 2                               |
 | `dcommon:hasDiscipline`        | `adiro_domain_common`    | REUSE  | CQ 5.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 5                               |
-| `metadata:hasProperty`         | `adiro_drawing_metadata` | REUSE  | CQ 6.x, CQ-I 3                                 | FR 6                               |
-| `metadata:belongsToPackage`    | `adiro_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
-| `aprov:DrawingFile`            | `adiro_provenance`       | NEW    | CQ 9.2, CQ 9.3                                 | FR 9                               |
-| `aprov:FilePage`               | `adiro_provenance`       | NEW    | CQ 9.1, CQ 9.3                                 | FR 9                               |
-| `metadata:isOnPage`            | `adiro_drawing_metadata` | NEW    | CQ 9.1, CQ 9.2, CQ 9.3, CQ 9.4                 | FR 9                               |
-| `aprov:belongsToFile`          | `adiro_provenance`       | NEW    | CQ 9.1, CQ 9.2, CQ 9.3, CQ 9.4                 | FR 9                               |
-| `aprov:fileName`, `aprov:pageNumber` | `adiro_provenance` | NEW    | CQ 9.1, CQ 9.2                                 | FR 9                               |
-| `aprov:fileModifiedAt`         | `adiro_provenance`       | NEW    | CQ 9.4                                         | FR 9                               |
-| `aprov:storageLocation`, `aprov:contentHash`, `aprov:hashAlgorithm`, `aprov:mediaType`, `aprov:fileCreatedAt`, `aprov:fileCreatedBy`, `aprov:fileModifiedBy`, `aprov:pageCount`, `aprov:fileSize` | `adiro_provenance` | NEW | none yet: they identify, locate and describe the file (the first set of the file brainstorm) | FR 9 |
-| `aprov:sourceLocation`, `aprov:sourcePage`, `prov:wasDerivedFrom` (a typing stub) | `adiro_provenance` | NEW | CQ 9.5 | FR 9 |
-| `aprov:InferenceMeta`, `aprov:inferredWith`, `aprov:inferredBy` | `adiro_provenance` | REUSE | CQ 10.1, CQ 10.2, CQ 10.3 | FR 10 |
-| `aprov:inferredAt`, `aprov:hasAcceptance`, `aprov:supersedes` | `adiro_provenance` | REUSE | CQ 10.3 | FR 10 |
-| `geom:CoordinateFrame`, `geom:bboxXYXY`, `aprov:storageLocation` | `adiro_geometry`, `adiro_provenance` | REUSE | CQ 10.4 | FR 10 |
-| `geom:resolutionDpi`, `geom:coversRegion`, `geom:imageOf` | `adiro_geometry` | NEW | CQ 10.4 | FR 10 |
-| `aprov:TextReading`, `aprov:isReadingOf`, `aprov:readText`, `aprov:hasReadingOutcome`, `aprov:errorMessage` | `adiro_provenance` | NEW | CQ 11.1, CQ 11.2, CQ 11.3 | FR 11 |
-| `aprov:StepKind` (`RegionDetection`, `TextRecognition`, `FieldExtraction`), `aprov:hasStepKind` | `adiro_provenance` | NEW | CQ 11.4 | FR 11 |
-| `aprov:Configuration`, `aprov:configurationContent` | `adiro_provenance` | NEW | CQ 10.1 | FR 10 |
+| `admeta:hasProperty`         | `adiro_drawing_metadata` | REUSE  | CQ 6.x, CQ-I 3                                 | FR 6                               |
+| `admeta:belongsToPackage`    | `adiro_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
+| `adprov:DrawingFile`            | `adiro_provenance`       | NEW    | CQ 9.2, CQ 9.3                                 | FR 9                               |
+| `adprov:FilePage`               | `adiro_provenance`       | NEW    | CQ 9.1, CQ 9.3                                 | FR 9                               |
+| `admeta:isOnPage`            | `adiro_drawing_metadata` | NEW    | CQ 9.1, CQ 9.2, CQ 9.3, CQ 9.4                 | FR 9                               |
+| `adprov:belongsToFile`          | `adiro_provenance`       | NEW    | CQ 9.1, CQ 9.2, CQ 9.3, CQ 9.4                 | FR 9                               |
+| `adprov:fileName`, `adprov:pageNumber` | `adiro_provenance` | NEW    | CQ 9.1, CQ 9.2                                 | FR 9                               |
+| `adprov:fileModifiedAt`         | `adiro_provenance`       | NEW    | CQ 9.4                                         | FR 9                               |
+| `adprov:storageLocation`, `adprov:contentHash`, `adprov:hashAlgorithm`, `adprov:mediaType`, `adprov:fileCreatedAt`, `adprov:fileCreatedBy`, `adprov:fileModifiedBy`, `adprov:pageCount`, `adprov:fileSize` | `adiro_provenance` | NEW | none yet: they identify, locate and describe the file (the first set of the file brainstorm) | FR 9 |
+| `adprov:sourceLocation`, `adprov:sourcePage`, `prov:wasDerivedFrom` (a typing stub) | `adiro_provenance` | NEW | CQ 9.5 | FR 9 |
+| `adprov:InferenceMeta`, `adprov:inferredWith`, `adprov:inferredBy` | `adiro_provenance` | REUSE | CQ 10.1, CQ 10.2, CQ 10.3 | FR 10 |
+| `adprov:inferredAt`, `adprov:hasAcceptance`, `adprov:supersedes` | `adiro_provenance` | REUSE | CQ 10.3 | FR 10 |
+| `adgeom:CoordinateFrame`, `adgeom:bboxXYXY`, `adprov:storageLocation` | `adiro_geometry`, `adiro_provenance` | REUSE | CQ 10.4 | FR 10 |
+| `adgeom:resolutionDpi`, `adgeom:coversRegion`, `adgeom:imageOf` | `adiro_geometry` | NEW | CQ 10.4 | FR 10 |
+| `adprov:TextReading`, `adprov:isReadingOf`, `adprov:readText`, `adprov:hasReadingOutcome`, `adprov:errorMessage` | `adiro_provenance` | NEW | CQ 11.1, CQ 11.2, CQ 11.3 | FR 11 |
+| `adprov:StepKind` (`RegionDetection`, `TextRecognition`, `FieldExtraction`), `adprov:hasStepKind` | `adiro_provenance` | NEW | CQ 11.4 | FR 11 |
+| `adprov:Configuration`, `adprov:configurationContent` | `adiro_provenance` | NEW | CQ 10.1 | FR 10 |
 | `dcterms:isPartOf`, `prov:startedAtTime` (typing stubs) | `adiro_provenance` | NEW | CQ 10.1, CQ 10.2 | FR 10 |
 | `prov:used` (typing stub) | `adiro_provenance` | REUSE | CQ 10.1, CQ 10.2 | FR 10 |
-| `metadata:assertsPackage`      | `adiro_drawing_metadata` | NEW    | CQ 8.3, CQ 8.4                                 | FR 8                               |
-| `metadata:drawingIdentifier`       | `adiro_drawing_metadata` | NEW    | CQ 1.1, CQ 1.2                                 | FR 1                               |
-| `metadata:drawingTitle`        | `adiro_drawing_metadata` | NEW    | CQ 1.2                                         | FR 1                               |
-| `metadata:hasScale`            | `adiro_drawing_metadata` | NEW    | CQ 1.3–1.7, CQ-I 2                                 | FR 1                               |
-| `metadata:drawingScale`          | `adiro_drawing_metadata` | NEW    | CQ 1.3–1.7, CQ-I 2 (directly, or through `hasScale` with entailment) | FR 1                               |
-| `metadata:layoutScale`         | `adiro_drawing_metadata` | NEW    | CQ 1.4, CQ 1.6, CQ 1.7 (directly, or through `hasScale` with entailment) | FR 1                               |
-| `metadata:sheetSize`           | `adiro_drawing_metadata` | NEW    | —                                              | FR 1                               |
-| `metadata:revisionCode`        | `adiro_drawing_metadata` | NEW    | CQ 3.1, CQ 3.3                                 | FR 3                               |
-| `metadata:issueDate`           | `adiro_drawing_metadata` | NEW    | CQ 3.2, CQ 3.3, CQ-I 1                         | FR 3                               |
-| `aprov:Person`                 | `adiro_provenance`       | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
-| `aprov:AssertionOutcome` (`Empty`, `Illegible`, `NotPrinted`, `NotFound`, `Failed`), `aprov:hasOutcome` | `adiro_provenance` | NEW | CQ 4.6, CQ 10.3, CQ 11.2, CQ 11.3 | FR 4, FR 11 |
-| `aprov:AcceptanceStatus` (`Pending`, `Accepted`, `Rejected`), `aprov:hasAcceptance` | `adiro_provenance` | NEW | CQ 4.6 | FR 4 |
-| `aprov:supersedes`             | `adiro_provenance`       | NEW    | CQ 4.6                                         | FR 4                               |
-| `aprov:acceptedBy` | `adiro_provenance` | NEW | CQ 10.3 | FR 4 |
-| `aprov:acceptedAt`, `aprov:acceptedUnder` | `adiro_provenance` | NEW | none yet: the record of an acceptance (the decision of #85), not asked by a question | FR 4 |
-| `metadata:personName`          | `adiro_drawing_metadata` | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
-| `metadata:statusLabel`         | `adiro_drawing_metadata` | NEW    | CQ 7.x                                         | FR 7                               |
-| `metadata:projectName`         | `adiro_drawing_metadata` | NEW    | CQ 2.x                                         | FR 2                               |
-| `metadata:projectNumber`       | `adiro_drawing_metadata` | NEW    | CQ 2.x                                         | FR 2                               |
-| `metadata:packageName`         | `adiro_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
+| `admeta:assertsPackage`      | `adiro_drawing_metadata` | NEW    | CQ 8.3, CQ 8.4                                 | FR 8                               |
+| `admeta:drawingIdentifier`       | `adiro_drawing_metadata` | NEW    | CQ 1.1, CQ 1.2                                 | FR 1                               |
+| `admeta:drawingTitle`        | `adiro_drawing_metadata` | NEW    | CQ 1.2                                         | FR 1                               |
+| `admeta:hasScale`            | `adiro_drawing_metadata` | NEW    | CQ 1.3–1.7, CQ-I 2                                 | FR 1                               |
+| `admeta:drawingScale`          | `adiro_drawing_metadata` | NEW    | CQ 1.3–1.7, CQ-I 2 (directly, or through `hasScale` with entailment) | FR 1                               |
+| `admeta:layoutScale`         | `adiro_drawing_metadata` | NEW    | CQ 1.4, CQ 1.6, CQ 1.7 (directly, or through `hasScale` with entailment) | FR 1                               |
+| `admeta:sheetSize`           | `adiro_drawing_metadata` | NEW    | —                                              | FR 1                               |
+| `admeta:revisionCode`        | `adiro_drawing_metadata` | NEW    | CQ 3.1, CQ 3.3                                 | FR 3                               |
+| `admeta:issueDate`           | `adiro_drawing_metadata` | NEW    | CQ 3.2, CQ 3.3, CQ-I 1                         | FR 3                               |
+| `adprov:Person`                 | `adiro_provenance`       | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
+| `adprov:AssertionOutcome` (`Empty`, `Illegible`, `NotPrinted`, `NotFound`, `Failed`), `adprov:hasOutcome` | `adiro_provenance` | NEW | CQ 4.6, CQ 10.3, CQ 11.2, CQ 11.3 | FR 4, FR 11 |
+| `adprov:AcceptanceStatus` (`Pending`, `Accepted`, `Rejected`), `adprov:hasAcceptance` | `adiro_provenance` | NEW | CQ 4.6 | FR 4 |
+| `adprov:supersedes`             | `adiro_provenance`       | NEW    | CQ 4.6                                         | FR 4                               |
+| `adprov:acceptedBy` | `adiro_provenance` | NEW | CQ 10.3 | FR 4 |
+| `adprov:acceptedAt`, `adprov:acceptedUnder` | `adiro_provenance` | NEW | none yet: the record of an acceptance (the decision of #85), not asked by a question | FR 4 |
+| `admeta:personName`          | `adiro_drawing_metadata` | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
+| `admeta:statusLabel`         | `adiro_drawing_metadata` | NEW    | CQ 7.x                                         | FR 7                               |
+| `admeta:projectName`         | `adiro_drawing_metadata` | NEW    | CQ 2.x                                         | FR 2                               |
+| `admeta:projectNumber`       | `adiro_drawing_metadata` | NEW    | CQ 2.x                                         | FR 2                               |
+| `admeta:packageName`         | `adiro_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
 
 ---
 
@@ -941,11 +941,11 @@ adiro_provenance                      (NEW - foundational, domain-neutral)
 **SubProperty wiring:**
 
 ```
-metadata:contains (already exists)
-  └── metadata:hasRevision (NEW)
+admeta:contains (already exists)
+  └── admeta:hasRevision (NEW)
 
-metadata:hasProperty (already exists)
-  └── metadata:hasStatusCode (NEW)
+admeta:hasProperty (already exists)
+  └── admeta:hasStatusCode (NEW)
 ```
 
 All other new object properties (`belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `assertsRevision`, `assertsProject`, `assertsPackage`) are declared at the top level — they are associative or role-differentiated and do not fit the "containment" or "characterising property" generalisations.
@@ -964,18 +964,22 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 | G11 | ~~**Direct properties vs `FieldAssertion`.**~~ **Resolved** ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85), [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)): a value is promoted when its assertion is accepted, by a pipeline rule or a person, with the acceptance recorded on the assertion; both layers are kept, and the direct properties are permanent. See the design note in §2.1. |
 | G12 | ~~**A missing person is two different facts.**~~ "The extraction did not find the author" and "the drawing names none" must be told apart (the first is retried or reviewed, the second is a defect of the drawing). Decided: record absence as a value-less `FieldAssertion` with an outcome. **Resolved**: the vocabulary is in `adiro_provenance` (`hasOutcome`, `hasAcceptance`, [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)), and CQ 4.6 reports a drawing by cause. |
 | G10 | ~~`:Metadata` class name misleading~~ — **resolved**: renamed to `:MetadataContainer` (team decision). The class models visual supporting regions (titleblock, legend, etc.), not semantic metadata. |
-| —   | ~~Project-wide convention for `owl:inverseOf`~~ — **resolved** in [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21): ADIRO does not declare inverse properties. `isRevisionOf` removed; use `^metadata:hasRevision`. |
+| —   | ~~Project-wide convention for `owl:inverseOf`~~ — **resolved** in [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21): ADIRO does not declare inverse properties. `isRevisionOf` removed; use `^admeta:hasRevision`. |
 | —   | ~~"Civil" discipline~~ — **resolved**: `Civil` to be added as a direct subclass of `dcommon:Discipline` (team decision).                                           |
 
 ---
 
 ## 9. Version History
 
-### v0.21 (current — draft)
+### v0.22 (current — draft)
+
+Change from v0.21, made when the prefixes were aligned ([#289](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/289)). MINOR: no entity, attribute, relation or competency question changes. The queries and the text name the terms with `admeta:`, `adprov:` and `adgeom:` (before `metadata:`, `aprov:` and `geom:`); a prefix is a label, so no IRI changes.
+
+### v0.21 (draft)
 
 Changes from v0.20, made when field kinds were given a class of their own and their scheme was documented ([#254](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/254), [#255](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/255), planned in [#257](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/257)). MAJOR in substance (an entity added); the number stays in the 0.x series because the document is still a draft:
 
-- **`aprov:FieldKind` added** (§2.1 design note, §7): the field kinds of the `TitleblockFieldScheme` and the sentinel `UnidentifiedField` are individuals of it as well as of `skos:Concept`. It serves the questions that read an assertion's field kind (CQ Group 10, the promotion in §2.1); none of them changes, since they select field kinds by IRI or by scheme.
+- **`adprov:FieldKind` added** (§2.1 design note, §7): the field kinds of the `TitleblockFieldScheme` and the sentinel `UnidentifiedField` are individuals of it as well as of `skos:Concept`. It serves the questions that read an assertion's field kind (CQ Group 10, the promotion in §2.1); none of them changes, since they select field kinds by IRI or by scheme.
 - **The design note on curated values and extracted assertions** (§2.1) says how a field kind relates to a region: through assertions, and through the domain of the property the kind maps to.
 
 ### v0.20 (draft)
@@ -1016,7 +1020,7 @@ Changes from v0.16, made when runs were modelled for UC-01 ([#237](https://githu
 Change from v0.15, made when the meaning of supersession was decided ([#221](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/221)). MINOR: the rule of a recorded query, no entity, attribute, relation or competency question changes; the number stays in the 0.x series because the document is still a draft:
 
 - **Supersession takes effect on acceptance.** The promotion query withdrew any assertion that another one supersedes, whatever that one's acceptance, so a pending re-extraction that superseded an accepted title left the drawing with no title until it was reviewed, and a rejected one left it with none for good. Only an accepted assertion now withdraws the ones it supersedes. A correction by a person, who accepts it, still takes effect at once, and a value known to be wrong is withdrawn by rejecting it. The section after the promotion query states the rule and its cases.
-- **Through a chain.** The withdrawal follows `supersedes` transitively (`aprov:supersedes+`), so an accepted correction of a correction withdraws the original even when the one in between was never accepted, and a chain gives at most one value. A cycle of `supersedes` is a validation error.
+- **Through a chain.** The withdrawal follows `supersedes` transitively (`adprov:supersedes+`), so an accepted correction of a correction withdraws the original even when the one in between was never accepted, and a chain gives at most one value. A cycle of `supersedes` is a validation error.
 - **CQ 4.6 reads the same rule.** It no longer hides an assertion superseded only by a pending or rejected one, so a drawing with two unreviewed attempts shows both.
 - **Keeping the derived statements.** A store that keeps the promoted statements replaces the earlier set; it does not add to it.
 
@@ -1081,8 +1085,8 @@ Changes from v0.7, made when the person roles were extended to the drawing and t
 
 Changes from v0.6, made when the scale was split into a sheet-level and a layout-level property ([#162](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/162)). MAJOR in substance (attributes added); the number stays in the 0.x series because the document is still a draft:
 
-- **`metadata:drawingScale` (on `DrawingSheet`) and `metadata:layoutScale` (on `Layout`) added** as sub-properties of `metadata:hasScale`, in the §2.2 attributes table, the FR 1 derived terms and the §6 traceability matrix. `drawingScale` is the scale of the sheet as a whole (usually in the title block); `layoutScale` is the scale in a layout's own caption.
-- **`hasScale` is unchanged; CQ 1.3 and CQ-I 2 are about the sheet's scale and are answered with or without entailment**: with sub-property entailment a value asserted with `drawingScale` is also a `hasScale` value; without it, the sheet's scale is read with the property path `metadata:hasScale|metadata:drawingScale`. CQ 1.3 and CQ-I 2 are unchanged in substance; their text now states that they return only sheets with a sheet-level scale, so a sheet whose only scale is in its single layout's caption is not returned.
+- **`admeta:drawingScale` (on `DrawingSheet`) and `admeta:layoutScale` (on `Layout`) added** as sub-properties of `admeta:hasScale`, in the §2.2 attributes table, the FR 1 derived terms and the §6 traceability matrix. `drawingScale` is the scale of the sheet as a whole (usually in the title block); `layoutScale` is the scale in a layout's own caption.
+- **`hasScale` is unchanged; CQ 1.3 and CQ-I 2 are about the sheet's scale and are answered with or without entailment**: with sub-property entailment a value asserted with `drawingScale` is also a `hasScale` value; without it, the sheet's scale is read with the property path `admeta:hasScale|admeta:drawingScale`. CQ 1.3 and CQ-I 2 are unchanged in substance; their text now states that they return only sheets with a sheet-level scale, so a sheet whose only scale is in its single layout's caption is not returned.
 - **Where a scale is printed.** §2.2 gains a table of where a scale is printed and which property records it. `drawingScale` is the scale of the sheet as a whole (the title block is the usual place, and a general note outside any layout also counts, judged from context at extraction); `layoutScale` is the scale in a layout's own caption, "NTS" / "As shown" are recorded verbatim, and a layout that prints no scale gets none. A layout's scale is not copied to the sheet: a scale belongs to a drawing view, and a `drawingScale` taken from the only layout detected would stop being true once more layouts are detected.
 - **CQ 1.4–1.7 added** (Group 1): the scale that applies to a layout, sheets with no scale, layouts whose scale cannot be determined, and layouts at a different scale from their sheet. `layoutScale` is now named by CQ 1.4, 1.6 and 1.7. A missing scale is a closed-world check, answered by a query and not by an OWL restriction. §5 gives the SPARQL for CQ 1.3–1.7, run without a reasoner.
 - **`sheetSize` naming noted.** `sheetSize` keeps "sheet" because a sheet of paper has a size, while the printed fields say "drawing"; "drawing size" is recorded as a synonym (`skos:altLabel`) so that a second term is not added. No requirement changed.
@@ -1111,8 +1115,8 @@ Changes from v0.3, made in [PR #76](https://github.com/BuroHappoldMachineLearnin
 
 - **New design note in §2.1, "curated values vs extracted assertions."** UC-01's datatype properties on
   `DrawingSheet` remain the query surface for a *validated* value; a machine-extracted, not-yet-validated
-  value now travels as an `aprov:FieldAssertion` carrying `capturedCaption`, `assertedBy`,
-  `hasInferenceMeta` and `hasConfidence`, and is promoted via `aprov:mapsToFieldProperty`.
+  value now travels as an `adprov:FieldAssertion` carrying `capturedCaption`, `assertedBy`,
+  `hasInferenceMeta` and `hasConfidence`, and is promoted via `adprov:mapsToFieldProperty`.
 - **`aec_provenance` row added to the §7 term-placement table.**
 - **§7 module hierarchy updated** — `aec_provenance` is a new foundational root above
   `aec_drawing_metadata`.
@@ -1120,9 +1124,9 @@ Changes from v0.3, made in [PR #76](https://github.com/BuroHappoldMachineLearnin
   direct properties eventually deprecate
   ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)).
 
-- **BREAKING — `metadata:isRevisionOf` removed.** [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21) decided project-wide that ADIRO declares no
+- **BREAKING — `admeta:isRevisionOf` removed.** [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21) decided project-wide that ADIRO declares no
   named inverse properties and no `owl:inverseOf` axioms. Navigate from a revision to its sheet with the
-  SPARQL inverse path `^metadata:hasRevision`. The §2.3 relations table, the FR 3 derived terms, the
+  SPARQL inverse path `^admeta:hasRevision`. The §2.3 relations table, the FR 3 derived terms, the
   traceability matrix and the §7 module table are updated; no competency question changed, and no SPARQL
   validation query in this document used the removed property.
 
@@ -1133,12 +1137,12 @@ because the document is still a draft and v0.4 was never released.
 
 Aligned with the existing ontology modules (`aec_drawing_metadata`, `aec_domain_common`) per [PR #15](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/15) review (@alelom):
 
-- `Drawing` → `metadata:DrawingSheet`; `Layout` added as a first-class entity (G1).
+- `Drawing` → `admeta:DrawingSheet`; `Layout` added as a first-class entity (G1).
 - `dcommon:hasDiscipline` proposed to move from `LayoutContentType` to `Layout` (G5 — open issue).
 - Reuse `dcommon:Discipline` class hierarchy; drop `disciplineCode` string property (G3).
-- Reuse `metadata:LayoutContentType`; drop `DrawingType` / `hasDrawingType` / `typeLabel` (G4).
+- Reuse `admeta:LayoutContentType`; drop `DrawingType` / `hasDrawingType` / `typeLabel` (G4).
 - Datatype properties (`drawingIdentifier`, `drawingTitle`, `hasScale`, `sheetSize`) attached directly to `DrawingSheet` — no intermediate entity (G2).
-- New object properties wired into `metadata:contains` / `metadata:hasProperty` via `rdfs:subPropertyOf` (G6).
+- New object properties wired into `admeta:contains` / `admeta:hasProperty` via `rdfs:subPropertyOf` (G6).
 - SPARQL placeholder namespace replaced with real module prefixes (G8).
 - Only `isRevisionOf` materialised as `owl:inverseOf`; other inverses deferred (G9). *(Reversed in v0.4 — no inverse properties are declared at all.)*
 - Stray editing artifact on FR 4 removed.

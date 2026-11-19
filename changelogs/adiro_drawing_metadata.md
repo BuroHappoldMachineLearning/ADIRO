@@ -5,6 +5,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+- **The prefixes of the names the module uses are `adprov:` and `adgeom:`** ([#289](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/289)), not `aprov:` and `geom:`; the prefix of the module's own names is `admeta:`, not `metadata:`. A prefix is a label: no IRI changes.
+
 ## [7.1.0] — 2026-11-19
 
 ### Changed

@@ -11,13 +11,13 @@ model could not distinguish.
 
 | Source individual | Meaning | Accepted target edge |
 |---|---|---|
-| `metadata:DrawingIdentifierMention` | One occurrence of sheet-number text | `metadata:denotesDrawingSheet` to a `DrawingSheet`, when resolved |
-| `metadata:LayoutIdentifierMention` | One occurrence of layout-number text | No direct target edge; it is a component of a complete expression |
+| `admeta:DrawingIdentifierMention` | One occurrence of sheet-number text | `admeta:denotesDrawingSheet` to a `DrawingSheet`, when resolved |
+| `admeta:LayoutIdentifierMention` | One occurrence of layout-number text | No direct target edge; it is a component of a complete expression |
 | `csymbol:ReferenceSymbol` | One graphical marker | Existing `csymbol:referencesLayout` to an accepted target `Layout` |
-| `metadata:InlineLayoutSheetReference` | One complete inline expression | `metadata:inlineReferencesLayout` to each accepted target `Layout` |
-| `metadata:StandaloneSheetReference` | One sheet-number occurrence that is itself a complete reference | Inherited `metadata:denotesDrawingSheet` |
+| `admeta:InlineLayoutSheetReference` | One complete inline expression | `admeta:inlineReferencesLayout` to each accepted target `Layout` |
+| `admeta:StandaloneSheetReference` | One sheet-number occurrence that is itself a complete reference | Inherited `admeta:denotesDrawingSheet` |
 
-`metadata:ReferenceExpression` groups the three complete forms for queries. A standalone reference has both
+`admeta:ReferenceExpression` groups the three complete forms for queries. A standalone reference has both
 `DrawingIdentifierMention` and `ReferenceExpression` types through subclassing: **one occurrence, one individual**. It
 does not need an outer wrapper, a self-directed `contains` edge or a duplicate box. An embedded sheet
 number remains a component of its symbol or inline expression; absence of a known parent does not prove that
@@ -26,12 +26,12 @@ it is standalone.
 This is the Semantic part of the [three-layer UC-03 model](uc03-three-layer-model.md); page regions and
 processing history have separate responsibilities.
 
-`metadata:contains`, with a typed mention as its object, expresses accepted composition, not target
-resolution. The existing `metadata:hasLayout` states which Layout belongs to a DrawingSheet; a layout number
+`admeta:contains`, with a typed mention as its object, expresses accepted composition, not target
+resolution. The existing `admeta:hasLayout` states which Layout belongs to a DrawingSheet; a layout number
 alone is not a globally unique Layout identity. The evidenced source Layout of any reference expression, inline or
-standalone, is stated with `metadata:contains` from that Layout (a graphical marker through `csymbol:hasReferenceSymbol`,
-a sub-property of `contains`), and read from the expression's side with the inverse path `^metadata:contains`, as ADIRO
-declares no named inverse properties ([#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21)). Likewise, `metadata:inlineReferencesLayout` is separate from the existing symbol-only
+standalone, is stated with `admeta:contains` from that Layout (a graphical marker through `csymbol:hasReferenceSymbol`,
+a sub-property of `contains`), and read from the expression's side with the inverse path `^admeta:contains`, as ADIRO
+declares no named inverse properties ([#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21)). Likewise, `admeta:inlineReferencesLayout` is separate from the existing symbol-only
 `csymbol:referencesLayout`, so using an inline reference cannot accidentally infer that it is a graphical
 symbol. Source membership is left unset when the evidence supports only a page location. *(Amended in
 [UC-03 v0.7](../UC-03-Reference%20Symbol%20Cross-Sheet%20Linking.md#10-version-history): `appearsOnLayout` was removed.)*
@@ -82,7 +82,7 @@ not OWL geometry cardinality axioms. Geometry roles remain tracked in
 
 ## Existing terms and deliberate limits
 
-- `metadata:TextualNote.refersToDrawingId` stores an identifier string on a free-form note. A
+- `admeta:TextualNote.refersToDrawingId` stores an identifier string on a free-form note. A
   `StandaloneSheetReference` identifies a particular evidenced text occurrence and may have an accepted
   `DrawingSheet` identity. The two can coexist for different query needs; this work does not replace the
   existing note property or infer a target sheet from its string.

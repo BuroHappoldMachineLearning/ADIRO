@@ -12,8 +12,8 @@ ROOT = Path(__file__).resolve().parent.parent
 ORSD = ROOT / "docs" / "specification" / "use-cases" / "UC-01" / "UC-01-Titleblock-Based Drawing Search.md"
 PREFIXES = (
     "@prefix : <https://ex.org/d#> .\n"
-    "@prefix metadata: <https://w3id.org/adiro/adiro_drawing_metadata#> .\n"
-    "@prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .\n"
+    "@prefix admeta: <https://w3id.org/adiro/adiro_drawing_metadata#> .\n"
+    "@prefix adprov: <https://w3id.org/adiro/adiro_provenance#> .\n"
 )
 
 
@@ -32,14 +32,14 @@ def run(query, data):
 
 def test_cq_4_4_lists_the_drawings_with_no_recorded_author():
     query = recorded_query("# CQ 4.4")
-    data = """:a a metadata:DrawingSheet ; metadata:isAuthoredBy :jsmith .
-:b a metadata:DrawingSheet .
-:c a metadata:DrawingSheet ; metadata:isCheckedBy :achen .
-:d a metadata:DrawingSheet ; metadata:hasRevision :rd .
-:rd a metadata:DrawingRevision ; metadata:isAuthoredBy :jsmith .
-:e a metadata:DrawingSheet ; metadata:hasRevision :re .
-:re a metadata:DrawingRevision ; metadata:isCheckedBy :achen .
-:stray a metadata:DrawingRevision ; metadata:isAuthoredBy :jsmith .
+    data = """:a a admeta:DrawingSheet ; admeta:isAuthoredBy :jsmith .
+:b a admeta:DrawingSheet .
+:c a admeta:DrawingSheet ; admeta:isCheckedBy :achen .
+:d a admeta:DrawingSheet ; admeta:hasRevision :rd .
+:rd a admeta:DrawingRevision ; admeta:isAuthoredBy :jsmith .
+:e a admeta:DrawingSheet ; admeta:hasRevision :re .
+:re a admeta:DrawingRevision ; admeta:isCheckedBy :achen .
+:stray a admeta:DrawingRevision ; admeta:isAuthoredBy :jsmith .
 """
     # b has nobody, c has a checker but no author, e has a revision with a checker but no author; d has no author of its own
     # but a revision's author counts; a revision is not a drawing, and one not linked to a drawing counts for none
@@ -52,29 +52,29 @@ def test_cq_4_5_is_cq_4_4_with_the_checker_or_the_approver():
   FILTER NOT EXISTS { ?drawing <https://w3id.org/adiro/adiro_drawing_metadata#isCheckedBy> ?person }
 }"""
     # the revision fallback is for the author only: a checker on a revision does not make the drawing checked
-    data = ":a a metadata:DrawingSheet ; metadata:isCheckedBy :achen .\n:b a metadata:DrawingSheet ; metadata:hasRevision :r .\n:r a metadata:DrawingRevision ; metadata:isCheckedBy :achen .\n"
+    data = ":a a admeta:DrawingSheet ; admeta:isCheckedBy :achen .\n:b a admeta:DrawingSheet ; admeta:hasRevision :r .\n:r a admeta:DrawingRevision ; admeta:isCheckedBy :achen .\n"
     assert run(query, data) == {"b"}
 
 
 def test_cq_3_4_finds_the_table_a_revision_was_read_from():
     query = recorded_query("# CQ 3.4")
-    data = """:t1 a metadata:RevisionTable ; metadata:assertsRevision :ra , :rb .
-:t2 a metadata:RevisionTable ; metadata:assertsRevision :rc .
-:ra a metadata:DrawingRevision ; metadata:revisionCode "A" .
-:rb a metadata:DrawingRevision ; metadata:revisionCode "B" .
-:rc a metadata:DrawingRevision ; metadata:revisionCode "C" .
+    data = """:t1 a admeta:RevisionTable ; admeta:assertsRevision :ra , :rb .
+:t2 a admeta:RevisionTable ; admeta:assertsRevision :rc .
+:ra a admeta:DrawingRevision ; admeta:revisionCode "A" .
+:rb a admeta:DrawingRevision ; admeta:revisionCode "B" .
+:rc a admeta:DrawingRevision ; admeta:revisionCode "C" .
 """
     assert run(query, data) == {"t1"}
 
 
 def test_cq_2_4_finds_the_drawings_filed_under_another_project_than_their_title_block_names():
     query = recorded_query("# CQ 2.4")
-    data = """:t1 a metadata:Titleblock ; metadata:assertsMetadataFor :a ; metadata:assertsProject :p1 .
-:a a metadata:DrawingSheet ; metadata:belongsToProject :p1 .
-:t2 a metadata:Titleblock ; metadata:assertsMetadataFor :b ; metadata:assertsProject :p1 .
-:b a metadata:DrawingSheet ; metadata:belongsToProject :p2 .
-:t3 a metadata:Titleblock ; metadata:assertsMetadataFor :c ; metadata:assertsProject :p1 .
-:c a metadata:DrawingSheet .
+    data = """:t1 a admeta:Titleblock ; admeta:assertsMetadataFor :a ; admeta:assertsProject :p1 .
+:a a admeta:DrawingSheet ; admeta:belongsToProject :p1 .
+:t2 a admeta:Titleblock ; admeta:assertsMetadataFor :b ; admeta:assertsProject :p1 .
+:b a admeta:DrawingSheet ; admeta:belongsToProject :p2 .
+:t3 a admeta:Titleblock ; admeta:assertsMetadataFor :c ; admeta:assertsProject :p1 .
+:c a admeta:DrawingSheet .
 """
     # a agrees, b is filed under p2 while its title block names p1; c is not filed under any project, so nothing to compare
     assert run(query, data) == {"b"}
@@ -82,12 +82,12 @@ def test_cq_2_4_finds_the_drawings_filed_under_another_project_than_their_title_
 
 def test_cq_8_4_finds_the_drawings_filed_in_another_package_than_their_title_block_names():
     query = recorded_query("# CQ 8.4")
-    data = """:t1 a metadata:Titleblock ; metadata:assertsMetadataFor :a ; metadata:assertsPackage :v3 .
-:a a metadata:DrawingSheet ; metadata:belongsToPackage :v3 .
-:t2 a metadata:Titleblock ; metadata:assertsMetadataFor :b ; metadata:assertsPackage :v3 .
-:b a metadata:DrawingSheet ; metadata:belongsToPackage :v4 .
-:t3 a metadata:Titleblock ; metadata:assertsMetadataFor :c .
-:c a metadata:DrawingSheet ; metadata:belongsToPackage :v4 .
+    data = """:t1 a admeta:Titleblock ; admeta:assertsMetadataFor :a ; admeta:assertsPackage :v3 .
+:a a admeta:DrawingSheet ; admeta:belongsToPackage :v3 .
+:t2 a admeta:Titleblock ; admeta:assertsMetadataFor :b ; admeta:assertsPackage :v3 .
+:b a admeta:DrawingSheet ; admeta:belongsToPackage :v4 .
+:t3 a admeta:Titleblock ; admeta:assertsMetadataFor :c .
+:c a admeta:DrawingSheet ; admeta:belongsToPackage :v4 .
 """
     # b is filed in v4 while its title block names v3; c's title block names no package, so there is nothing to compare
     assert run(query, data) == {"b"}
@@ -95,11 +95,11 @@ def test_cq_8_4_finds_the_drawings_filed_in_another_package_than_their_title_blo
 
 def test_cq_9_1_gives_the_file_and_the_page_of_a_drawing():
     query = recorded_query("# CQ 9.1")
-    data = """:d a metadata:DrawingSheet ; metadata:drawingIdentifier "ST-101" ; metadata:isOnPage :p3 .
-:p3 a aprov:FilePage ; aprov:pageNumber 3 ; aprov:belongsToFile :f .
-:f a aprov:DrawingFile ; aprov:fileName "A101-ground-floor.pdf" .
-:other a metadata:DrawingSheet ; metadata:drawingIdentifier "ST-102" ; metadata:isOnPage :p4 .
-:p4 a aprov:FilePage ; aprov:pageNumber 4 ; aprov:belongsToFile :f .
+    data = """:d a admeta:DrawingSheet ; admeta:drawingIdentifier "ST-101" ; admeta:isOnPage :p3 .
+:p3 a adprov:FilePage ; adprov:pageNumber 3 ; adprov:belongsToFile :f .
+:f a adprov:DrawingFile ; adprov:fileName "A101-ground-floor.pdf" .
+:other a admeta:DrawingSheet ; admeta:drawingIdentifier "ST-102" ; admeta:isOnPage :p4 .
+:p4 a adprov:FilePage ; adprov:pageNumber 4 ; adprov:belongsToFile :f .
 """
     graph = Graph().parse(data=PREFIXES + data, format="turtle")
     assert {(str(r[0]), int(r[1])) for r in graph.query(query)} == {("A101-ground-floor.pdf", 3)}
@@ -107,12 +107,12 @@ def test_cq_9_1_gives_the_file_and_the_page_of_a_drawing():
 
 def test_cq_9_3_lists_the_files_that_hold_more_than_one_drawing():
     query = recorded_query("# CQ 9.3")
-    data = """:a a metadata:DrawingSheet ; metadata:isOnPage :pa .
-:b a metadata:DrawingSheet ; metadata:isOnPage :pb .
-:c a metadata:DrawingSheet ; metadata:isOnPage :pc .
-:pa a aprov:FilePage ; aprov:belongsToFile :many .
-:pb a aprov:FilePage ; aprov:belongsToFile :many .
-:pc a aprov:FilePage ; aprov:belongsToFile :single .
+    data = """:a a admeta:DrawingSheet ; admeta:isOnPage :pa .
+:b a admeta:DrawingSheet ; admeta:isOnPage :pb .
+:c a admeta:DrawingSheet ; admeta:isOnPage :pc .
+:pa a adprov:FilePage ; adprov:belongsToFile :many .
+:pb a adprov:FilePage ; adprov:belongsToFile :many .
+:pc a adprov:FilePage ; adprov:belongsToFile :single .
 """
     graph = Graph().parse(data=PREFIXES + data, format="turtle")
     assert {(str(r[0]).rsplit("#", 1)[-1], int(r[1])) for r in graph.query(query)} == {("many", 2)}
@@ -121,35 +121,35 @@ def test_cq_9_3_lists_the_files_that_hold_more_than_one_drawing():
 def test_cq_9_5_finds_where_a_file_was_obtained_from_through_the_files_it_was_made_from():
     query = recorded_query("# CQ 9.5")
     data = """@prefix prov: <http://www.w3.org/ns/prov#> .
-:d a metadata:DrawingSheet ; metadata:drawingIdentifier "ST-101" ; metadata:isOnPage :p .
-:p a aprov:FilePage ; aprov:belongsToFile :png .
-:png a aprov:DrawingFile ; prov:wasDerivedFrom :tif ;
-    aprov:storageLocation "https://storage.example.org/0001.png" .
-:tif a aprov:DrawingFile ; aprov:sourceLocation "https://tile.loc.gov/0001.tif" ;
-    aprov:sourcePage "https://www.loc.gov/item/x/" .
+:d a admeta:DrawingSheet ; admeta:drawingIdentifier "ST-101" ; admeta:isOnPage :p .
+:p a adprov:FilePage ; adprov:belongsToFile :png .
+:png a adprov:DrawingFile ; prov:wasDerivedFrom :tif ;
+    adprov:storageLocation "https://storage.example.org/0001.png" .
+:tif a adprov:DrawingFile ; adprov:sourceLocation "https://tile.loc.gov/0001.tif" ;
+    adprov:sourcePage "https://www.loc.gov/item/x/" .
 """
     graph = Graph().parse(data=PREFIXES + data, format="turtle")
     rows = {(str(r[1]).rsplit("#", 1)[-1], str(r[2]), str(r[3])) for r in graph.query(query)}
     assert rows == {("tif", "https://tile.loc.gov/0001.tif", "https://www.loc.gov/item/x/")}
     # a file with its own origin is found with no derivation at all
-    direct = data.replace(":png a aprov:DrawingFile ; prov:wasDerivedFrom :tif ;", ":png a aprov:DrawingFile ; aprov:sourceLocation \"https://example.org/set.pdf\" ;")
+    direct = data.replace(":png a adprov:DrawingFile ; prov:wasDerivedFrom :tif ;", ":png a adprov:DrawingFile ; adprov:sourceLocation \"https://example.org/set.pdf\" ;")
     graph = Graph().parse(data=PREFIXES + direct, format="turtle")
     assert {str(r[1]).rsplit("#", 1)[-1] for r in graph.query(query)} == {"png"}
 
 
 def test_cq_4_6_says_why_a_drawing_has_no_author():
-    data = """:printed a metadata:DrawingSheet .
-:a1 a aprov:FieldAssertion ; aprov:assertedAbout :printed ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:NotPrinted .
-:blank a metadata:DrawingSheet .
-:a2 a aprov:FieldAssertion ; aprov:assertedAbout :blank ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:Empty .
-:waiting a metadata:DrawingSheet .
-:a3 a aprov:FieldAssertion ; aprov:assertedAbout :waiting ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasLiteralValue "J. Smith" .
-:unseen a metadata:DrawingSheet .
-:retried a metadata:DrawingSheet .
-:old a aprov:FieldAssertion ; aprov:assertedAbout :retried ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:NotFound .
-:newer a aprov:FieldAssertion ; aprov:assertedAbout :retried ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:Illegible ;
-    aprov:hasAcceptance aprov:Accepted ; aprov:acceptedBy :reviewer ; aprov:supersedes :old .
-:done a metadata:DrawingSheet ; metadata:isAuthoredBy :jsmith .
+    data = """:printed a admeta:DrawingSheet .
+:a1 a adprov:FieldAssertion ; adprov:assertedAbout :printed ; adprov:assertsFieldKind admeta:DrawnByField ; adprov:hasOutcome adprov:NotPrinted .
+:blank a admeta:DrawingSheet .
+:a2 a adprov:FieldAssertion ; adprov:assertedAbout :blank ; adprov:assertsFieldKind admeta:DrawnByField ; adprov:hasOutcome adprov:Empty .
+:waiting a admeta:DrawingSheet .
+:a3 a adprov:FieldAssertion ; adprov:assertedAbout :waiting ; adprov:assertsFieldKind admeta:DrawnByField ; adprov:hasLiteralValue "J. Smith" .
+:unseen a admeta:DrawingSheet .
+:retried a admeta:DrawingSheet .
+:old a adprov:FieldAssertion ; adprov:assertedAbout :retried ; adprov:assertsFieldKind admeta:DrawnByField ; adprov:hasOutcome adprov:NotFound .
+:newer a adprov:FieldAssertion ; adprov:assertedAbout :retried ; adprov:assertsFieldKind admeta:DrawnByField ; adprov:hasOutcome adprov:Illegible ;
+    adprov:hasAcceptance adprov:Accepted ; adprov:acceptedBy :reviewer ; adprov:supersedes :old .
+:done a admeta:DrawingSheet ; admeta:isAuthoredBy :jsmith .
 """
     rows = cq_4_6(data)
     reasons = {d: r for d, _, _, r in rows}
@@ -168,18 +168,18 @@ def cq_4_6(data):
 
 def test_cq_4_6_reports_a_rejected_assertion_as_rejected_with_its_value_or_outcome():
     # #219: a rejected value was reported Pending, and a rejected NotPrinted as a finding that the drawing names no author
-    data = """:rejected a metadata:DrawingSheet .
-:a1 a aprov:FieldAssertion ; aprov:assertedAbout :rejected ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasValueEntity :candidate ; aprov:hasAcceptance aprov:Rejected .
-:rejectedAbsence a metadata:DrawingSheet .
-:a2 a aprov:FieldAssertion ; aprov:assertedAbout :rejectedAbsence ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:NotPrinted ; aprov:hasAcceptance aprov:Rejected .
-:acceptedAbsence a metadata:DrawingSheet .
-:a3 a aprov:FieldAssertion ; aprov:assertedAbout :acceptedAbsence ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:NotPrinted ; aprov:hasAcceptance aprov:Accepted .
-:explicitPending a metadata:DrawingSheet .
-:a4 a aprov:FieldAssertion ; aprov:assertedAbout :explicitPending ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasLiteralValue "J. Smith" ; aprov:hasAcceptance aprov:Pending .
-:notPromoted a metadata:DrawingSheet .
-:a5 a aprov:FieldAssertion ; aprov:assertedAbout :notPromoted ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasValueEntity :jsmith ; aprov:hasAcceptance aprov:Accepted .
-:promoted a metadata:DrawingSheet ; metadata:isAuthoredBy :jsmith .
-:a6 a aprov:FieldAssertion ; aprov:assertedAbout :promoted ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasValueEntity :jsmith ; aprov:hasAcceptance aprov:Accepted .
+    data = """:rejected a admeta:DrawingSheet .
+:a1 a adprov:FieldAssertion ; adprov:assertedAbout :rejected ; adprov:assertsFieldKind admeta:DrawnByField ; adprov:hasValueEntity :candidate ; adprov:hasAcceptance adprov:Rejected .
+:rejectedAbsence a admeta:DrawingSheet .
+:a2 a adprov:FieldAssertion ; adprov:assertedAbout :rejectedAbsence ; adprov:assertsFieldKind admeta:DrawnByField ; adprov:hasOutcome adprov:NotPrinted ; adprov:hasAcceptance adprov:Rejected .
+:acceptedAbsence a admeta:DrawingSheet .
+:a3 a adprov:FieldAssertion ; adprov:assertedAbout :acceptedAbsence ; adprov:assertsFieldKind admeta:DrawnByField ; adprov:hasOutcome adprov:NotPrinted ; adprov:hasAcceptance adprov:Accepted .
+:explicitPending a admeta:DrawingSheet .
+:a4 a adprov:FieldAssertion ; adprov:assertedAbout :explicitPending ; adprov:assertsFieldKind admeta:DrawnByField ; adprov:hasLiteralValue "J. Smith" ; adprov:hasAcceptance adprov:Pending .
+:notPromoted a admeta:DrawingSheet .
+:a5 a adprov:FieldAssertion ; adprov:assertedAbout :notPromoted ; adprov:assertsFieldKind admeta:DrawnByField ; adprov:hasValueEntity :jsmith ; adprov:hasAcceptance adprov:Accepted .
+:promoted a admeta:DrawingSheet ; admeta:isAuthoredBy :jsmith .
+:a6 a adprov:FieldAssertion ; adprov:assertedAbout :promoted ; adprov:assertsFieldKind admeta:DrawnByField ; adprov:hasValueEntity :jsmith ; adprov:hasAcceptance adprov:Accepted .
 """
     graph = Graph().parse(data=PREFIXES + data, format="turtle")
     result = list(graph.query(recorded_query("# CQ 4.6")))
@@ -199,16 +199,16 @@ def test_cq_4_6_reports_a_rejected_assertion_as_rejected_with_its_value_or_outco
 
 def test_cq_4_6_reads_the_assertions_about_the_revisions_one_row_each():
     # #219: an assertion about a revision was missed, and the drawing reported NotProcessed
-    data = """:d a metadata:DrawingSheet ; metadata:hasRevision :rb , :rc .
-:rb a metadata:DrawingRevision .
-:rc a metadata:DrawingRevision .
-:ab a aprov:FieldAssertion ; aprov:assertedAbout :rb ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:Illegible .
-:ac a aprov:FieldAssertion ; aprov:assertedAbout :rc ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasLiteralValue "A. Chen" .
-:own a metadata:DrawingSheet ; metadata:hasRevision :ro .
-:ro a metadata:DrawingRevision .
-:ao a aprov:FieldAssertion ; aprov:assertedAbout :own ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:NotFound .
-:none a metadata:DrawingSheet ; metadata:hasRevision :rn .
-:rn a metadata:DrawingRevision .
+    data = """:d a admeta:DrawingSheet ; admeta:hasRevision :rb , :rc .
+:rb a admeta:DrawingRevision .
+:rc a admeta:DrawingRevision .
+:ab a adprov:FieldAssertion ; adprov:assertedAbout :rb ; adprov:assertsFieldKind admeta:DrawnByField ; adprov:hasOutcome adprov:Illegible .
+:ac a adprov:FieldAssertion ; adprov:assertedAbout :rc ; adprov:assertsFieldKind admeta:DrawnByField ; adprov:hasLiteralValue "A. Chen" .
+:own a admeta:DrawingSheet ; admeta:hasRevision :ro .
+:ro a admeta:DrawingRevision .
+:ao a adprov:FieldAssertion ; adprov:assertedAbout :own ; adprov:assertsFieldKind admeta:DrawnByField ; adprov:hasOutcome adprov:NotFound .
+:none a admeta:DrawingSheet ; admeta:hasRevision :rn .
+:rn a admeta:DrawingRevision .
 """
     assert cq_4_6(data) == [
         ("d", "rb", "Pending", "Illegible"),
@@ -221,12 +221,12 @@ def test_cq_4_6_reads_the_assertions_about_the_revisions_one_row_each():
 def test_cq_4_6_reports_an_assertion_with_nothing_to_promote_and_shows_a_disagreement():
     # review of #222: an accepted assertion with no value is NoValue, not AcceptedNotPromoted (it can never be promoted);
     # an assertion that records two values or two statuses (malformed) gives a row for each, so the disagreement is seen
-    data = """:empty a metadata:DrawingSheet .
-:a1 a aprov:FieldAssertion ; aprov:assertedAbout :empty ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasAcceptance aprov:Accepted .
-:bare a metadata:DrawingSheet .
-:a2 a aprov:FieldAssertion ; aprov:assertedAbout :bare ; aprov:assertsFieldKind metadata:DrawnByField .
-:twoStatuses a metadata:DrawingSheet .
-:a3 a aprov:FieldAssertion ; aprov:assertedAbout :twoStatuses ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasLiteralValue "J. Smith" ; aprov:hasAcceptance aprov:Pending , aprov:Accepted .
+    data = """:empty a admeta:DrawingSheet .
+:a1 a adprov:FieldAssertion ; adprov:assertedAbout :empty ; adprov:assertsFieldKind admeta:DrawnByField ; adprov:hasAcceptance adprov:Accepted .
+:bare a admeta:DrawingSheet .
+:a2 a adprov:FieldAssertion ; adprov:assertedAbout :bare ; adprov:assertsFieldKind admeta:DrawnByField .
+:twoStatuses a admeta:DrawingSheet .
+:a3 a adprov:FieldAssertion ; adprov:assertedAbout :twoStatuses ; adprov:assertsFieldKind admeta:DrawnByField ; adprov:hasLiteralValue "J. Smith" ; adprov:hasAcceptance adprov:Pending , adprov:Accepted .
 """
     assert cq_4_6(data) == [
         ("bare", "bare", "Pending", "NoValue"),
@@ -240,15 +240,15 @@ def test_the_promotion_gives_a_direct_statement_only_for_an_accepted_assertion_w
     from rdflib import Namespace
 
     query = recorded_query("# Promotion")
-    data = """:kindTitle aprov:mapsToFieldProperty metadata:drawingTitle .
-:kindAuthor aprov:mapsToFieldProperty metadata:isAuthoredBy .
-:accepted a aprov:FieldAssertion ; aprov:assertedAbout :d1 ; aprov:assertsFieldKind :kindTitle ; aprov:hasAcceptance aprov:Accepted ; aprov:hasLiteralValue "Ground floor plan" .
-:entity a aprov:FieldAssertion ; aprov:assertedAbout :d1 ; aprov:assertsFieldKind :kindAuthor ; aprov:hasAcceptance aprov:Accepted ; aprov:hasValueEntity :jsmith .
-:pending a aprov:FieldAssertion ; aprov:assertedAbout :d2 ; aprov:assertsFieldKind :kindTitle ; aprov:hasAcceptance aprov:Pending ; aprov:hasLiteralValue "Not yet" .
-:rejected a aprov:FieldAssertion ; aprov:assertedAbout :d2 ; aprov:assertsFieldKind :kindTitle ; aprov:hasAcceptance aprov:Rejected ; aprov:hasLiteralValue "Wrong" .
-:absent a aprov:FieldAssertion ; aprov:assertedAbout :d3 ; aprov:assertsFieldKind :kindAuthor ; aprov:hasAcceptance aprov:Accepted ; aprov:hasOutcome aprov:NotPrinted .
-:old a aprov:FieldAssertion ; aprov:assertedAbout :d4 ; aprov:assertsFieldKind :kindTitle ; aprov:hasAcceptance aprov:Accepted ; aprov:hasLiteralValue "Old title" .
-:new a aprov:FieldAssertion ; aprov:assertedAbout :d4 ; aprov:assertsFieldKind :kindTitle ; aprov:hasAcceptance aprov:Accepted ; aprov:hasLiteralValue "Corrected title" ; aprov:supersedes :old .
+    data = """:kindTitle adprov:mapsToFieldProperty admeta:drawingTitle .
+:kindAuthor adprov:mapsToFieldProperty admeta:isAuthoredBy .
+:accepted a adprov:FieldAssertion ; adprov:assertedAbout :d1 ; adprov:assertsFieldKind :kindTitle ; adprov:hasAcceptance adprov:Accepted ; adprov:hasLiteralValue "Ground floor plan" .
+:entity a adprov:FieldAssertion ; adprov:assertedAbout :d1 ; adprov:assertsFieldKind :kindAuthor ; adprov:hasAcceptance adprov:Accepted ; adprov:hasValueEntity :jsmith .
+:pending a adprov:FieldAssertion ; adprov:assertedAbout :d2 ; adprov:assertsFieldKind :kindTitle ; adprov:hasAcceptance adprov:Pending ; adprov:hasLiteralValue "Not yet" .
+:rejected a adprov:FieldAssertion ; adprov:assertedAbout :d2 ; adprov:assertsFieldKind :kindTitle ; adprov:hasAcceptance adprov:Rejected ; adprov:hasLiteralValue "Wrong" .
+:absent a adprov:FieldAssertion ; adprov:assertedAbout :d3 ; adprov:assertsFieldKind :kindAuthor ; adprov:hasAcceptance adprov:Accepted ; adprov:hasOutcome adprov:NotPrinted .
+:old a adprov:FieldAssertion ; adprov:assertedAbout :d4 ; adprov:assertsFieldKind :kindTitle ; adprov:hasAcceptance adprov:Accepted ; adprov:hasLiteralValue "Old title" .
+:new a adprov:FieldAssertion ; adprov:assertedAbout :d4 ; adprov:assertsFieldKind :kindTitle ; adprov:hasAcceptance adprov:Accepted ; adprov:hasLiteralValue "Corrected title" ; adprov:supersedes :old .
 """
     graph = Graph().parse(data=PREFIXES + data, format="turtle")
     promoted = {(str(s).rsplit("#", 1)[-1], str(p).rsplit("#", 1)[-1], str(o).rsplit("#", 1)[-1]) for s, p, o in graph.query(query)}
@@ -256,8 +256,8 @@ def test_the_promotion_gives_a_direct_statement_only_for_an_accepted_assertion_w
 
 
 # --- supersession takes effect when the superseding assertion is accepted, through a chain (#221) --------------------
-TITLE = ":kindTitle aprov:mapsToFieldProperty metadata:drawingTitle .\n"
-ACCEPTED = "aprov:hasAcceptance aprov:Accepted ; aprov:acceptedBy :reviewer"
+TITLE = ":kindTitle adprov:mapsToFieldProperty admeta:drawingTitle .\n"
+ACCEPTED = "adprov:hasAcceptance adprov:Accepted ; adprov:acceptedBy :reviewer"
 
 
 def promoted_titles(data):
@@ -266,44 +266,44 @@ def promoted_titles(data):
 
 
 def assertion(name, about, rest):
-    return f":{name} a aprov:FieldAssertion ; aprov:assertedAbout :{about} ; aprov:assertsFieldKind :kindTitle ; {rest} .\n"
+    return f":{name} a adprov:FieldAssertion ; adprov:assertedAbout :{about} ; adprov:assertsFieldKind :kindTitle ; {rest} .\n"
 
 
 @pytest.mark.parametrize("b, promoted", [
-    ('aprov:hasAcceptance aprov:Pending ; aprov:hasLiteralValue "First Floor Plan"', {"Ground Floor Plan"}),
-    ('aprov:hasAcceptance aprov:Rejected ; aprov:hasLiteralValue "First Floor Plan"', {"Ground Floor Plan"}),
-    ('aprov:hasLiteralValue "First Floor Plan"', {"Ground Floor Plan"}),  # no acceptance recorded: Pending
-    (f'{ACCEPTED} ; aprov:hasLiteralValue "First Floor Plan"', {"First Floor Plan"}),
-    (f"{ACCEPTED} ; aprov:hasOutcome aprov:NotPrinted", set()),  # an accepted outcome-only replacement withdraws the value
+    ('adprov:hasAcceptance adprov:Pending ; adprov:hasLiteralValue "First Floor Plan"', {"Ground Floor Plan"}),
+    ('adprov:hasAcceptance adprov:Rejected ; adprov:hasLiteralValue "First Floor Plan"', {"Ground Floor Plan"}),
+    ('adprov:hasLiteralValue "First Floor Plan"', {"Ground Floor Plan"}),  # no acceptance recorded: Pending
+    (f'{ACCEPTED} ; adprov:hasLiteralValue "First Floor Plan"', {"First Floor Plan"}),
+    (f"{ACCEPTED} ; adprov:hasOutcome adprov:NotPrinted", set()),  # an accepted outcome-only replacement withdraws the value
 ])
 def test_supersession_takes_effect_when_the_new_assertion_is_accepted(b, promoted):
-    a = assertion("a", "d", f'{ACCEPTED} ; aprov:hasLiteralValue "Ground Floor Plan"')
-    assert promoted_titles(a + assertion("b", "d", f"{b} ; aprov:supersedes :a")) == promoted
+    a = assertion("a", "d", f'{ACCEPTED} ; adprov:hasLiteralValue "Ground Floor Plan"')
+    assert promoted_titles(a + assertion("b", "d", f"{b} ; adprov:supersedes :a")) == promoted
 
 
 def test_a_rejected_value_is_withdrawn_without_a_replacement():
-    a = assertion("a", "d", 'aprov:hasAcceptance aprov:Rejected ; aprov:hasLiteralValue "Ground Floor Plan"')
-    b = assertion("b", "d", 'aprov:hasAcceptance aprov:Pending ; aprov:hasLiteralValue "First Floor Plan" ; aprov:supersedes :a')
+    a = assertion("a", "d", 'adprov:hasAcceptance adprov:Rejected ; adprov:hasLiteralValue "Ground Floor Plan"')
+    b = assertion("b", "d", 'adprov:hasAcceptance adprov:Pending ; adprov:hasLiteralValue "First Floor Plan" ; adprov:supersedes :a')
     assert promoted_titles(a + b) == set()
 
 
 def test_an_accepted_correction_withdraws_the_whole_chain_it_ends():
-    a = assertion("a", "d", f'{ACCEPTED} ; aprov:hasLiteralValue "A"')
-    for middle in ("aprov:hasAcceptance aprov:Pending", "aprov:hasAcceptance aprov:Rejected", ACCEPTED):
-        b = assertion("b", "d", f'{middle} ; aprov:hasLiteralValue "B" ; aprov:supersedes :a')
-        c = assertion("c", "d", f'{ACCEPTED} ; aprov:hasLiteralValue "C" ; aprov:supersedes :b')
+    a = assertion("a", "d", f'{ACCEPTED} ; adprov:hasLiteralValue "A"')
+    for middle in ("adprov:hasAcceptance adprov:Pending", "adprov:hasAcceptance adprov:Rejected", ACCEPTED):
+        b = assertion("b", "d", f'{middle} ; adprov:hasLiteralValue "B" ; adprov:supersedes :a')
+        c = assertion("c", "d", f'{ACCEPTED} ; adprov:hasLiteralValue "C" ; adprov:supersedes :b')
         assert promoted_titles(a + b + c) == {"C"}, middle
     # until the end of the chain is accepted, the latest accepted assertion before it stays in force
-    b = assertion("b", "d", f'{ACCEPTED} ; aprov:hasLiteralValue "B" ; aprov:supersedes :a')
-    c = assertion("c", "d", 'aprov:hasAcceptance aprov:Pending ; aprov:hasLiteralValue "C" ; aprov:supersedes :b')
+    b = assertion("b", "d", f'{ACCEPTED} ; adprov:hasLiteralValue "B" ; adprov:supersedes :a')
+    c = assertion("c", "d", 'adprov:hasAcceptance adprov:Pending ; adprov:hasLiteralValue "C" ; adprov:supersedes :b')
     assert promoted_titles(a + b + c) == {"B"}
 
 
 def test_cq_4_6_reads_an_assertion_superseded_only_by_an_unaccepted_one():
-    data = """:d a metadata:DrawingSheet .
-:old a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:NotFound .
-:new a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind metadata:DrawnByField ; aprov:hasOutcome aprov:Illegible ;
-    aprov:hasAcceptance aprov:Rejected ; aprov:supersedes :old .
+    data = """:d a admeta:DrawingSheet .
+:old a adprov:FieldAssertion ; adprov:assertedAbout :d ; adprov:assertsFieldKind admeta:DrawnByField ; adprov:hasOutcome adprov:NotFound .
+:new a adprov:FieldAssertion ; adprov:assertedAbout :d ; adprov:assertsFieldKind admeta:DrawnByField ; adprov:hasOutcome adprov:Illegible ;
+    adprov:hasAcceptance adprov:Rejected ; adprov:supersedes :old .
 """
     assert cq_4_6(data) == [("d", "d", "Pending", "NotFound"), ("d", "d", "Rejected", "Rejected")]
 

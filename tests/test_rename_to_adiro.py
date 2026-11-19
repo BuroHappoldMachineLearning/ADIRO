@@ -123,9 +123,9 @@ def test_links_are_rewritten_but_a_release_keeps_its_iri():
 def test_a_graph_is_rewritten_in_its_own_format(tmp_path):
     source = tmp_path / "data.ttl"
     source.write_text(
-        "@prefix geom: <https://w3id.org/adiro/aec_geometry#> .\n"
-        "@prefix aprov: <https://w3id.org/adiro/aec_provenance#> .\n"
-        "<https://example.org/box1> a geom:BoundingBox ; aprov:hasConfidence 0.9 ;\n"
+        "@prefix adgeom: <https://w3id.org/adiro/aec_geometry#> .\n"
+        "@prefix adprov: <https://w3id.org/adiro/aec_provenance#> .\n"
+        "<https://example.org/box1> a adgeom:BoundingBox ; adprov:hasConfidence 0.9 ;\n"
         "    <http://purl.org/dc/terms/conformsTo> <https://w3id.org/adiro/aec_geometry/2.0.0> .\n", encoding="utf-8")
     mig.main(["rewrite", str(source)])
     out = Graph().parse(str(tmp_path / "data.adiro.ttl"), format="turtle")

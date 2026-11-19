@@ -10,15 +10,15 @@
 
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .
-@prefix geom: <https://w3id.org/adiro/adiro_geometry#> .
+@prefix adprov: <https://w3id.org/adiro/adiro_provenance#> .
+@prefix adgeom: <https://w3id.org/adiro/adiro_geometry#> .
 @prefix dv: <https://w3id.org/adiro/data-validation/frames#> .
 
 dv:Frame a sh:NodeShape ;
-    sh:targetClass geom:CoordinateFrame ;
+    sh:targetClass adgeom:CoordinateFrame ;
     sh:severity sh:Violation ;
     sh:property [
-        sh:path geom:resolutionDpi ;
+        sh:path adgeom:resolutionDpi ;
         sh:maxCount 1 ;
         # 300 is an xsd:integer in Turtle, which the range xsd:decimal admits (integer is derived from decimal), but
         # sh:datatype matches one datatype exactly: both are accepted
@@ -27,31 +27,31 @@ dv:Frame a sh:NodeShape ;
         sh:message "A frame has at most one resolutionDpi, a positive number (300 or 42.35)." ;
         sh:severity sh:Violation ;
     ] , [
-        sh:path geom:coversRegion ;
+        sh:path adgeom:coversRegion ;
         sh:maxCount 1 ;
-        sh:class geom:BoundingBox ;
+        sh:class adgeom:BoundingBox ;
         sh:message "A frame covers at most one region, a BoundingBox." ;
         sh:severity sh:Violation ;
     ] .
 
 # A pixel frame says its resolution.
 dv:PixelFrameResolution a sh:NodeShape ;
-    sh:targetClass geom:CoordinateFrame ;
+    sh:targetClass adgeom:CoordinateFrame ;
     sh:severity sh:Warning ;
     sh:message "A pixel frame (unit px) has a resolutionDpi." ;
     sh:or (
-        [ sh:not [ sh:property [ sh:path geom:unit ; sh:hasValue "px" ] ] ]
-        [ sh:property [ sh:path geom:resolutionDpi ; sh:minCount 1 ] ]
+        [ sh:not [ sh:property [ sh:path adgeom:unit ; sh:hasValue "px" ] ] ]
+        [ sh:property [ sh:path adgeom:resolutionDpi ; sh:minCount 1 ] ]
     ) .
 
 # A kept image is an image of one frame.
 dv:KeptImage a sh:NodeShape ;
-    sh:targetSubjectsOf geom:imageOf ;
+    sh:targetSubjectsOf adgeom:imageOf ;
     sh:severity sh:Violation ;
     sh:property [
-        sh:path geom:imageOf ;
+        sh:path adgeom:imageOf ;
         sh:maxCount 1 ;
-        sh:class geom:CoordinateFrame ;
+        sh:class adgeom:CoordinateFrame ;
         sh:message "A kept image is an image of exactly one frame." ;
         sh:severity sh:Violation ;
     ] .

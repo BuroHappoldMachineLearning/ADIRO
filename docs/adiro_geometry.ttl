@@ -5,7 +5,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix geo: <http://www.opengis.net/ont/geosparql#> .
-@prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .
+@prefix adprov: <https://w3id.org/adiro/adiro_provenance#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
@@ -56,8 +56,8 @@ geo:Geometry rdf:type owl:Class ;
 :BoundingBox rdf:type owl:Class ;
     rdfs:label "Bounding Box" ;
     skos:definition "A rectangular region on a drawing page that locates something there, whether a model detected it or a person marked it - e.g. a title-block field's caption or value."@en ;
-    rdfs:comment "Its coordinates are held as an xyxy string (bboxXYXY) and are meaningless without the CoordinateFrame it points at (inCoordinateFrame), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an InferredEntity: it carries its own provenance (aprov:hasInferenceMeta - a detector, or a human annotator, told apart by aprov:inferredBy) and its own confidence (aprov:hasConfidence, the detector's score, absent for a hand-drawn box), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL geo:Geometry so it is recognised as a spatial shape." ;
-    rdfs:subClassOf geo:Geometry , aprov:InferredEntity .
+    rdfs:comment "Its coordinates are held as an xyxy string (bboxXYXY) and are meaningless without the CoordinateFrame it points at (inCoordinateFrame), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an InferredEntity: it carries its own provenance (adprov:hasInferenceMeta - a detector, or a human annotator, told apart by adprov:inferredBy) and its own confidence (adprov:hasConfidence, the detector's score, absent for a hand-drawn box), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL geo:Geometry so it is recognised as a spatial shape." ;
+    rdfs:subClassOf geo:Geometry , adprov:InferredEntity .
 
 :CoordinateFrame rdf:type owl:Class ;
     rdfs:label "Coordinate Frame" ;
@@ -70,10 +70,10 @@ geo:Geometry rdf:type owl:Class ;
 
 :describesPage rdf:type owl:ObjectProperty ;
     rdfs:label "describesPage" ;
-    skos:definition "The page (an aprov:FilePage) that this coordinate frame reads."@en ;
+    skos:definition "The page (an adprov:FilePage) that this coordinate frame reads."@en ;
     rdfs:comment "The frames of a drawing are reached through its page: the path isOnPage / ^describesPage from the drawing, in adiro_drawing_metadata." ;
     rdfs:domain :CoordinateFrame ;
-    rdfs:range aprov:FilePage .
+    rdfs:range adprov:FilePage .
 
 :inCoordinateFrame rdf:type owl:ObjectProperty ;
     rdfs:label "inCoordinateFrame" ;
@@ -98,8 +98,8 @@ geo:Geometry rdf:type owl:Class ;
 :imageOf rdf:type owl:ObjectProperty ;
     rdfs:label "imageOf" ;
     skos:definition "The coordinate frame that a kept image file shows: the rendering of a page, or a crop of it, as it was fed to a model, kept so a viewer can show it."@en ;
-    rdfs:comment "The image is an aprov:DrawingFile with its contentHash and mediaType, and its pixels are the frame's coordinates. Only an image that is kept has a file: a frame a model saw is recorded whether or not its image is kept." ;
-    rdfs:domain aprov:DrawingFile ;
+    rdfs:comment "The image is an adprov:DrawingFile with its contentHash and mediaType, and its pixels are the frame's coordinates. Only an image that is kept has a file: a frame a model saw is recorded whether or not its image is kept." ;
+    rdfs:domain adprov:DrawingFile ;
     rdfs:range :CoordinateFrame .
 
 #################################################################

@@ -7,10 +7,10 @@ from rdflib import Graph  # noqa: E402
 from conftest import recorded_queries, spread_over_named_graphs  # noqa: E402
 
 DATA = """@prefix : <https://ex.org/d#> .
-@prefix metadata: <https://w3id.org/adiro/adiro_drawing_metadata#> .
-:d1 a metadata:DrawingSheet ; metadata:drawingIdentifier "ST-101" .
-:d2 a metadata:DrawingSheet ; metadata:drawingIdentifier "ST-102" .
-:d3 a metadata:DrawingSheet ; metadata:drawingIdentifier "ST-103" .
+@prefix admeta: <https://w3id.org/adiro/adiro_drawing_metadata#> .
+:d1 a admeta:DrawingSheet ; admeta:drawingIdentifier "ST-101" .
+:d2 a admeta:DrawingSheet ; admeta:drawingIdentifier "ST-102" .
+:d3 a admeta:DrawingSheet ; admeta:drawingIdentifier "ST-103" .
 """
 
 

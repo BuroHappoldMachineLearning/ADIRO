@@ -41,7 +41,7 @@ thing in this document and is not a redundancy question at all.**
 UC-01 is **"Titleblock-Based Drawing Search"**, priority XL, and marked *"Done already"* in the prioritisation
 matrix. Its ORSD contains this design note:
 
-> **Design note — Titleblock as visual region vs titleblock data:** The existing `metadata:Titleblock` class
+> **Design note — Titleblock as visual region vs titleblock data:** The existing `admeta:Titleblock` class
 > models the *visual region* on a sheet (for CV annotation). The *information* conventionally found inside it
 > (`drawingIdentifier`, `drawingTitle`, …) is attached as datatype properties directly on `DrawingSheet`. The two
 > layers coexist independently: a sheet has a drawing number whether or not its visual Titleblock region has been
@@ -62,7 +62,7 @@ intermediate entity"*). It was proposed, reviewed, accepted and implemented. The
 | Purpose | Search and filter sheets by metadata | Extract assertions from a detected region |
 | Multi-sheet conflict | Not a concern — one value per sheet | The central concern — two sheets may disagree |
 | Provenance | Not required | Required per value |
-| Query shape | `?sheet metadata:drawingIdentifier "ST-101"` | `?tb tb:identificationNumber ?v . ?tb tb:assertsMetadataFor ?doc` |
+| Query shape | `?sheet admeta:drawingIdentifier "ST-101"` | `?tb tb:identificationNumber ?v . ?tb tb:assertsMetadataFor ?doc` |
 
 UC-01's CQs never ask "which sheet asserts a conflicting value for this document", so it has no reason to carry
 the indirection. The extraction pipeline's entire justification for the split is that question.
@@ -106,7 +106,7 @@ vocabulary is required to answer any existing CQ.
 | `hasNorthPointOrientation` | 🟠 Marginal | 🔴 **Redundant** | UC-07 specifies `northArrowAngle` (`xsd:decimal`, degrees clockwise from page-up) on the drawing, with a stated datum convention, and **explicitly rejects** modelling the arrow as an entity. ADIRO's version is the same measurement with a vaguer name, a different datatype and no datum. It is also a drawing-level datum, not a title-block field |
 | `scale` | 🟢 Core | 🔴 **Redundant as a term** | `dm:hasScale` (string) exists from UC-01 FR 1, and UC-07 adds `scaleRatio` (decimal) for arithmetic. The scale story is *already* two properties by design. A third string property is duplication. **The field remains core to extraction** — it just binds to `dm:hasScale` |
 | `dimensionUnits` | 🟡 Useful | ~~🟡 Useful — confirmed genuinely new~~ → 🔴 **Withdrawn 2026-09-14, on evidence** | Nothing in any use case or module covers the German `1:50 – m,cm` convention, and **that finding still stands** — this is not a redundancy call. It was withdrawn because it appeared in none of the four surveyed projects and so fails the `<40%` rule. The corpus is UK/US with no German project in it, so treat this as *unevidenced here*, not *not a real field* — see [titleblock-field-survey-2026-09.md](titleblock-field-survey-2026-09.md) §7.3 |
-| `DocumentType` | 🟢 Core | 🟢 **Core, with a warning** | UC-01 v0.2 introduced a `DrawingType` (Plan / Section / Elevation / Detail / Schedule) and v0.3 **deleted it** as a duplicate of `metadata:LayoutContentType` (change G4). ADIRO's `DocumentType` is DIN *Planart* + ISO 19650 type codes — design **stage** and document **kind**, a genuinely different axis from view type. Keep it, but say so in the `rdfs:comment`, or it will be deleted for the same reason `DrawingType` was |
+| `DocumentType` | 🟢 Core | 🟢 **Core, with a warning** | UC-01 v0.2 introduced a `DrawingType` (Plan / Section / Elevation / Detail / Schedule) and v0.3 **deleted it** as a duplicate of `admeta:LayoutContentType` (change G4). ADIRO's `DocumentType` is DIN *Planart* + ISO 19650 type codes — design **stage** and document **kind**, a genuinely different axis from view type. Keep it, but say so in the `rdfs:comment`, or it will be deleted for the same reason `DrawingType` was |
 | `SuitabilityStatus`, `DocumentLifecycleStatus` | 🟡 Useful | 🟡 **Useful, but no CQ demands the split** | UC-01 satisfies CQ 7.1/7.2 with a *single* `StatusCode` + `statusLabel`. RES-A-9 finding 5's three-way split is justified by **standards fidelity**, not by any current query. That is a legitimate reason — but it should be stated as such rather than presented as a requirement |
 | `ContainerState` / `hasContainerState` | 🟠 Marginal | 🟠 **Marginal — confirmed, and now doubly so** | Not printed on a sheet (internal review) **and** no CQ in any of the four use cases references CDE location |
 
@@ -177,7 +177,7 @@ This is the real find. ADIRO §10 proposes six provenance terms; DANO already ha
 
 | ADIRO §10 proposal | DANO equivalent | Assessment |
 | --- | --- | --- |
-| `extractionConfidence` (`xsd:float`) | `dano:hasConfidence` (`xsd:decimal`, on `DrawingElement`) | ~~**Direct equivalent.** Align or reuse~~ → **superseded** — minted as `aprov:hasConfidence`; see the [DAnO comparison](../../../design-decisions/dano-comparison.md) |
+| `extractionConfidence` (`xsd:float`) | `dano:hasConfidence` (`xsd:decimal`, on `DrawingElement`) | ~~**Direct equivalent.** Align or reuse~~ → **superseded** — minted as `adprov:hasConfidence`; see the [DAnO comparison](../../../design-decisions/dano-comparison.md) |
 | `extractedFrom` → `SourceFile` (object) | `dano:inferredFrom` (`xsd:string`, "the origin file") | DANO uses a **string**. Corroborates that `SourceFile`-as-a-class may be over-modelled for current needs |
 | `extractedByModel` → `MLModel` (object) | `dano:inferredBy` (`xsd:string`, actor/company/software) **+** `dano:inferredWith` (`xsd:string`, algorithm) | DANO **splits actor from algorithm**, which is a better decomposition than ADIRO's single property — and both are strings, independently corroborating the #61 verdict that `MLModel` is over-modelled |
 | *(nothing proposed)* | `dano:inferredAt` (`xsd:date`) | **🔴 GAP IN ADIRO.** No extraction timestamp is proposed anywhere. Re-extraction comparison is impossible without one. Add it |
@@ -239,7 +239,7 @@ this review. **#61 has not yet been updated** — apply these before it is used 
 | `MLModel` | 🟠 Over-modelled | 🟠 **Confirmed** — drop to a literal | DANO uses strings (§3.2) |
 | `SourceFile` | 🟢 Core | 🟡 Useful — consider a literal | `dano:inferredFrom` is a string (§3.2) |
 | `BoundingBox` | 🟢 Core | 🟡 Useful — consider a geometry | `dano:hasGeometry` (§3.2) |
-| `extractionConfidence` | 🟡 Needed, blocked | ~~🟡 Align to `dano:hasConfidence`~~ → 🟢 **Minted as `aprov:hasConfidence`** | §3.2; see the [DAnO comparison](../../../design-decisions/dano-comparison.md) |
+| `extractionConfidence` | 🟡 Needed, blocked | ~~🟡 Align to `dano:hasConfidence`~~ → 🟢 **Minted as `adprov:hasConfidence`** | §3.2; see the [DAnO comparison](../../../design-decisions/dano-comparison.md) |
 | `extractedByModel` | 🟡 Useful | 🟡 **Split** into actor + algorithm | `dano:inferredBy` / `inferredWith` (§3.2) |
 | **NEW — extraction timestamp** | *(absent)* | 🟢 **Core — add it** | `dano:inferredAt`; re-extraction comparison needs it (§3.2) |
 | `DocumentType` | 🟢 Core | 🟢 Core **+ comment required** | Must state it is not `LayoutContentType` (§2.3) |
@@ -258,7 +258,7 @@ change shape. The mint shrinks from ~48 to roughly **44**, and gains a timestamp
 | 2 | **Write an extraction ORSD, or cut to use-case demand** (§2.4) | Alessio | the legitimacy of ~40 terms |
 | 3 | Confirm `dcommon:Discipline` reuse and drop the SKOS `Discipline` | — | pass 3 |
 | 4 | Drop `scale`, `hasNorthPointOrientation`; bind to `dm:hasScale` / UC-07 `northArrowAngle` | — | pass 2 |
-| 5 | ~~**Align provenance to `dano:` rather than minting parallel terms**~~; add the timestamp | — | **Resolved.** Timestamp added as `aprov:inferredAt`; the alignment half is **reversed** — see the [DAnO comparison](../../../design-decisions/dano-comparison.md) |
+| 5 | ~~**Align provenance to `dano:` rather than minting parallel terms**~~; add the timestamp | — | **Resolved.** Timestamp added as `adprov:inferredAt`; the alignment half is **reversed** — see the [DAnO comparison](../../../design-decisions/dano-comparison.md) |
 | 6 | Use DANO's `DrawingElementMeta` as evidence in the RDF-star vs reification decision | — | pass 5 |
 | 7 | Flag DANO to the UC-03 / UC-06 / UC-07 owners (§3.4) | — | nothing here |
 

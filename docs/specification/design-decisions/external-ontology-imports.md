@@ -61,7 +61,7 @@ MIREOT's third URI asserts a **local superclass**. It does **not** rewrite an ex
 `rdfs:range`.
 
 So if an external property's domain is too narrow for us — for example `dano:depicts` is asserted with
-`rdfs:domain dano:DisplayElement`, narrower than ADIRO's `metadata:DrawingElement` — that is **not** a MIREOT
+`rdfs:domain dano:DisplayElement`, narrower than ADIRO's `admeta:DrawingElement` — that is **not** a MIREOT
 case. It is an **option 1B** case: mint an ADIRO property and relate it.
 
 !!! warning "And relate it with an *annotation*, not `rdfs:subPropertyOf`"

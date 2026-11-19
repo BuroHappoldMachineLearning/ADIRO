@@ -5,6 +5,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+- **A term's definition is a `skos:definition`, and `rdfs:comment` is its commentary** ([#273](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/273)). For each of the module's 69 terms that had a comment (the classes, the properties and the individuals of the three closed lists) the part of the comment that says what the term is, one to three sentences and always ending at a full stop, is now its `skos:definition`, and the rest stays in `rdfs:comment`; a term whose comment is only a definition has no `rdfs:comment` left. Nothing is reworded: the definition and the comment together are the old comment, word for word. No IRI, axiom or label changes. Downstream consumers that read a term's `rdfs:comment` as its definition may need adjustments. The stubs of the ISO 21597-1 terms are not ADIRO's to define and are unchanged.
+- **The prefix of the module's names, in other modules and in the documentation, is `adprov:`** ([#289](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/289)), not `aprov:`: the "ad" marks a name as ADIRO's, as `adsym:`, `adcore:` and `adfacade:` will. A prefix is a label: no IRI changes.
+
 ## [2.3.0] — 2026-11-19
 
 ### Added

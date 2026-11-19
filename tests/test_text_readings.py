@@ -36,25 +36,25 @@ def test_the_step_kind_is_a_property_of_a_step_with_a_closed_list_of_values():
 RUNS = """@prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-:file a aprov:DrawingFile ; aprov:fileName "A101-ground-floor.pdf" .
-:p1 a aprov:FilePage ; aprov:belongsToFile :file ; aprov:pageNumber 1 .
-:p2 a aprov:FilePage ; aprov:belongsToFile :file ; aprov:pageNumber 2 .
-:p3 a aprov:FilePage ; aprov:belongsToFile :file ; aprov:pageNumber 3 .
-:d1 a metadata:DrawingSheet ; metadata:drawingIdentifier "ST-101" ; metadata:isOnPage :p1 ; metadata:contains :tb1 , :legend1 .
-:tb1 a metadata:Titleblock .
-:legend1 a metadata:Legend .
+:file a adprov:DrawingFile ; adprov:fileName "A101-ground-floor.pdf" .
+:p1 a adprov:FilePage ; adprov:belongsToFile :file ; adprov:pageNumber 1 .
+:p2 a adprov:FilePage ; adprov:belongsToFile :file ; adprov:pageNumber 2 .
+:p3 a adprov:FilePage ; adprov:belongsToFile :file ; adprov:pageNumber 3 .
+:d1 a admeta:DrawingSheet ; admeta:drawingIdentifier "ST-101" ; admeta:isOnPage :p1 ; admeta:contains :tb1 , :legend1 .
+:tb1 a admeta:Titleblock .
+:legend1 a admeta:Legend .
 
 :run1 a prov:Activity ; prov:startedAtTime "2026-10-01T09:00:00Z"^^xsd:dateTime .
-:detect1 a aprov:InferenceMeta ; aprov:hasStepKind aprov:RegionDetection ; dcterms:isPartOf :run1 ; prov:used :p1 , :p2 .
-:ocr1 a aprov:InferenceMeta ; aprov:hasStepKind aprov:TextRecognition ; dcterms:isPartOf :run1 ; aprov:inferredFrom :p1 .
-:r1 a aprov:TextReading ; aprov:isReadingOf :tb1 ; aprov:readText "GROUND FLOOR PLAN  ST-101"@en ; aprov:hasInferenceMeta :ocr1 .
-:r2 a aprov:TextReading ; aprov:isReadingOf :p1 ; aprov:hasReadingOutcome aprov:Failed ;
-    aprov:errorMessage "timeout after 60 s" ; aprov:hasInferenceMeta :ocr1 .
-:r3 a aprov:TextReading ; aprov:isReadingOf :legend1 ; aprov:readText "Ground floor slab" ; aprov:hasInferenceMeta :ocr1 .
+:detect1 a adprov:InferenceMeta ; adprov:hasStepKind adprov:RegionDetection ; dcterms:isPartOf :run1 ; prov:used :p1 , :p2 .
+:ocr1 a adprov:InferenceMeta ; adprov:hasStepKind adprov:TextRecognition ; dcterms:isPartOf :run1 ; adprov:inferredFrom :p1 .
+:r1 a adprov:TextReading ; adprov:isReadingOf :tb1 ; adprov:readText "GROUND FLOOR PLAN  ST-101"@en ; adprov:hasInferenceMeta :ocr1 .
+:r2 a adprov:TextReading ; adprov:isReadingOf :p1 ; adprov:hasReadingOutcome adprov:Failed ;
+    adprov:errorMessage "timeout after 60 s" ; adprov:hasInferenceMeta :ocr1 .
+:r3 a adprov:TextReading ; adprov:isReadingOf :legend1 ; adprov:readText "Ground floor slab" ; adprov:hasInferenceMeta :ocr1 .
 
 :run2 a prov:Activity ; prov:startedAtTime "2026-10-20T09:00:00Z"^^xsd:dateTime .
-:ocr2 a aprov:InferenceMeta ; aprov:hasStepKind aprov:TextRecognition ; dcterms:isPartOf :run2 ; prov:used :p1 .
-:r4 a aprov:TextReading ; aprov:isReadingOf :p1 ; aprov:readText "Erdgeschoss Grundriss"@de ; aprov:hasInferenceMeta :ocr2 .
+:ocr2 a adprov:InferenceMeta ; adprov:hasStepKind adprov:TextRecognition ; dcterms:isPartOf :run2 ; prov:used :p1 .
+:r4 a adprov:TextReading ; adprov:isReadingOf :p1 ; adprov:readText "Erdgeschoss Grundriss"@de ; adprov:hasInferenceMeta :ocr2 .
 """
 
 
@@ -91,8 +91,8 @@ def test_cq_11_2_reads_a_run_with_no_start_as_the_oldest():
 
 
 def test_cq_11_2_gives_a_later_failed_reading_over_an_earlier_text():
-    later_failure = RUNS.replace(':r4 a aprov:TextReading ; aprov:isReadingOf :p1 ; aprov:readText "Erdgeschoss Grundriss"@de ;',
-                                 ':r4 a aprov:TextReading ; aprov:isReadingOf :p1 ; aprov:hasReadingOutcome aprov:Failed ; aprov:errorMessage "timeout" ;')
+    later_failure = RUNS.replace(':r4 a adprov:TextReading ; adprov:isReadingOf :p1 ; adprov:readText "Erdgeschoss Grundriss"@de ;',
+                                 ':r4 a adprov:TextReading ; adprov:isReadingOf :p1 ; adprov:hasReadingOutcome adprov:Failed ; adprov:errorMessage "timeout" ;')
     assert ("p1", None, None, "Failed", "timeout", "run2") in rows(
         later_failure, "# CQ 11.2", "target", "text", "language", "outcome", "error", "run")
 
@@ -106,7 +106,7 @@ def test_cq_11_3_lists_each_page_with_the_runs_that_processed_it():
 
 
 def test_cq_11_3_reports_a_page_whose_step_failed_as_failed():
-    failed = RUNS + ':detect2 a aprov:InferenceMeta ; aprov:hasStepKind aprov:RegionDetection ; dcterms:isPartOf :run2 ; prov:used :p3 ; aprov:errorMessage "timeout" .\n'
+    failed = RUNS + ':detect2 a adprov:InferenceMeta ; adprov:hasStepKind adprov:RegionDetection ; dcterms:isPartOf :run2 ; prov:used :p3 ; adprov:errorMessage "timeout" .\n'
     assert ("3", "run2", "Failed") in rows(failed, "# CQ 11.3", "number", "run", "status")
 
 
@@ -118,7 +118,7 @@ def test_cq_11_4_lists_the_pages_searched_for_a_title_block_with_none_detected()
 
 
 def test_cq_11_4_leaves_out_a_detection_that_failed():
-    failed = RUNS.replace("prov:used :p1 , :p2 .", 'prov:used :p1 , :p2 ; aprov:errorMessage "timeout after 60 s" .')
+    failed = RUNS.replace("prov:used :p1 , :p2 .", 'prov:used :p1 , :p2 ; adprov:errorMessage "timeout after 60 s" .')
     assert rows(failed, "# CQ 11.4", "file", "number") == set()
 
 
@@ -128,14 +128,14 @@ def test_a_step_can_record_that_it_failed():
 
 
 HISTORY = """@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-:d a metadata:DrawingSheet ; metadata:drawingIdentifier "ST-101" .
-:read1 a aprov:InferenceMeta ; aprov:inferredWith :llm ; aprov:inferredAt "2026-10-01T09:00:00Z"^^xsd:dateTime .
-:a1 a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind metadata:DrawingTitleField ;
-    aprov:hasLiteralValue "Ground floor plan" ; aprov:hasInferenceMeta :read1 .
-:byHand a aprov:InferenceMeta ; aprov:inferredBy :reviewer ; aprov:inferredAt "2026-10-02T10:00:00Z"^^xsd:dateTime .
-:a2 a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind metadata:DrawingTitleField ;
-    aprov:hasLiteralValue "Ground Floor Plan" ; aprov:hasInferenceMeta :byHand ; aprov:supersedes :a1 ;
-    aprov:hasAcceptance aprov:Accepted ; aprov:acceptedBy :reviewer .
+:d a admeta:DrawingSheet ; admeta:drawingIdentifier "ST-101" .
+:read1 a adprov:InferenceMeta ; adprov:inferredWith :llm ; adprov:inferredAt "2026-10-01T09:00:00Z"^^xsd:dateTime .
+:a1 a adprov:FieldAssertion ; adprov:assertedAbout :d ; adprov:assertsFieldKind admeta:DrawingTitleField ;
+    adprov:hasLiteralValue "Ground floor plan" ; adprov:hasInferenceMeta :read1 .
+:byHand a adprov:InferenceMeta ; adprov:inferredBy :reviewer ; adprov:inferredAt "2026-10-02T10:00:00Z"^^xsd:dateTime .
+:a2 a adprov:FieldAssertion ; adprov:assertedAbout :d ; adprov:assertsFieldKind admeta:DrawingTitleField ;
+    adprov:hasLiteralValue "Ground Floor Plan" ; adprov:hasInferenceMeta :byHand ; adprov:supersedes :a1 ;
+    adprov:hasAcceptance adprov:Accepted ; adprov:acceptedBy :reviewer .
 """
 
 

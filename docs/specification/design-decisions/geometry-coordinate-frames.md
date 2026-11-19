@@ -12,51 +12,51 @@ An extraction pipeline reads an A1 landscape sheet, detects the title-block regi
 from inside it. In ADIRO that is:
 
 ```turtle
-@prefix geom:  <https://w3id.org/adiro/adiro_geometry#> .
-@prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .
+@prefix adgeom:  <https://w3id.org/adiro/adiro_geometry#> .
+@prefix adprov: <https://w3id.org/adiro/adiro_provenance#> .
 @prefix md:    <https://w3id.org/adiro/adiro_drawing_metadata#> .
 @prefix ex:    <https://example.org/adiro/demo#> .
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 
-ex:file-A101 a aprov:DrawingFile ;                   # the file the drawing is stored in (a reference, not the bytes)
-    aprov:fileName "A101-ground-floor.pdf" ;
-    aprov:contentHash "9f2c…" ; aprov:hashAlgorithm "sha256" ;   # identifies the exact bytes
-    aprov:pageCount 12 .
+ex:file-A101 a adprov:DrawingFile ;                   # the file the drawing is stored in (a reference, not the bytes)
+    adprov:fileName "A101-ground-floor.pdf" ;
+    adprov:contentHash "9f2c…" ; adprov:hashAlgorithm "sha256" ;   # identifies the exact bytes
+    adprov:pageCount 12 .
 
-ex:page-A101 a aprov:FilePage ;                      # one page of that file: what is true of the page itself
-    aprov:belongsToFile ex:file-A101 ;
-    aprov:pageNumber 1 ;                             # counted from 1
-    aprov:displayWidthPt 2384 ; aprov:displayHeightPt 1684 ;
-    aprov:pdfRotationDeg 0 .
+ex:page-A101 a adprov:FilePage ;                      # one page of that file: what is true of the page itself
+    adprov:belongsToFile ex:file-A101 ;
+    adprov:pageNumber 1 ;                             # counted from 1
+    adprov:displayWidthPt 2384 ; adprov:displayHeightPt 1684 ;
+    adprov:pdfRotationDeg 0 .
 
 ex:sheet-A101 a md:DrawingSheet ;
     md:contains ex:tb-A101 ;
     md:isOnPage ex:page-A101 .                       # the drawing is on this page of this file
 
-ex:frame-A101 a geom:CoordinateFrame ;
-    geom:describesPage ex:page-A101 ;                # the frame reads that page…
-    geom:coordinateSpace "page_display_pt" ;         # …in one convention: top-left origin, x right, y down
-    geom:unit "pt" .
+ex:frame-A101 a adgeom:CoordinateFrame ;
+    adgeom:describesPage ex:page-A101 ;                # the frame reads that page…
+    adgeom:coordinateSpace "page_display_pt" ;         # …in one convention: top-left origin, x right, y down
+    adgeom:unit "pt" .
 
 ex:tb-A101 a md:Titleblock ;
-    geom:hasBoundingBox ex:bbox-tb-A101 .            # the TITLE BLOCK carries a box…
+    adgeom:hasBoundingBox ex:bbox-tb-A101 .            # the TITLE BLOCK carries a box…
 
-ex:bbox-tb-A101 a geom:BoundingBox ;
-    geom:bboxXYXY "[1900, 1400, 2360, 1660]" ;       # …its region, in the page's frame
-    geom:inCoordinateFrame ex:frame-A101 ;
-    aprov:hasConfidence 0.97 ;                        # confidence in the BOX (the detector)
-    aprov:hasInferenceMeta [ a aprov:InferenceMeta ;
-        aprov:inferredWith <https://example.org/models/titleblock-detector@2.1> ;
-        aprov:inferredAt "2026-09-20T14:03:00Z"^^xsd:dateTime ] .
+ex:bbox-tb-A101 a adgeom:BoundingBox ;
+    adgeom:bboxXYXY "[1900, 1400, 2360, 1660]" ;       # …its region, in the page's frame
+    adgeom:inCoordinateFrame ex:frame-A101 ;
+    adprov:hasConfidence 0.97 ;                        # confidence in the BOX (the detector)
+    adprov:hasInferenceMeta [ a adprov:InferenceMeta ;
+        adprov:inferredWith <https://example.org/models/titleblock-detector@2.1> ;
+        adprov:inferredAt "2026-09-20T14:03:00Z"^^xsd:dateTime ] .
 
-ex:fa-client-A101 a aprov:FieldAssertion ;           # a value read from within that title block
-    aprov:assertsFieldKind md:ClientField ;
-    aprov:hasLiteralValue "Acme Corp" ;
-    aprov:capturedCaption "Client" ;
-    aprov:assertedBy ex:tb-A101 ;                     # read FROM the title-block region
-    aprov:hasConfidence 0.88 ;                        # confidence in the VALUE (a different model)
-    aprov:hasInferenceMeta [ a aprov:InferenceMeta ;
-        aprov:inferredWith <https://example.org/models/vlm-extractor@5> ] .
+ex:fa-client-A101 a adprov:FieldAssertion ;           # a value read from within that title block
+    adprov:assertsFieldKind md:ClientField ;
+    adprov:hasLiteralValue "Acme Corp" ;
+    adprov:capturedCaption "Client" ;
+    adprov:assertedBy ex:tb-A101 ;                     # read FROM the title-block region
+    adprov:hasConfidence 0.88 ;                        # confidence in the VALUE (a different model)
+    adprov:hasInferenceMeta [ a adprov:InferenceMeta ;
+        adprov:inferredWith <https://example.org/models/vlm-extractor@5> ] .
 ```
 
 Two things are worth reading off this:
@@ -67,7 +67,7 @@ Two things are worth reading off this:
 - **Two independent inferences, two confidences.** The detector found the *box* (0.97, via a detector model);
   a different model read the *value* (0.88, via a VLM). Each is an `InferredEntity`, so each carries its own
   `hasInferenceMeta` / `hasConfidence`. A **human** annotation is an inference step performed by a person, and the same shape with `inferredWith` omitted and
-  the agent (`aprov:inferredBy`) a person.
+  the agent (`adprov:inferredBy`) a person.
 
 ## 2. Reading the numbers: coordinate frames
 

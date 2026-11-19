@@ -84,7 +84,7 @@ def test_every_metadata_container_may_carry_a_bounding_box_and_that_use_is_state
                 if isinstance(r, BNode) and METADATA.value(r, OWL.onProperty) == GEOM.hasBoundingBox]
 
     restrictions = box_restrictions(META.MetadataContainer)
-    assert len(restrictions) == 1, "MetadataContainer has one restriction on geom:hasBoundingBox"
+    assert len(restrictions) == 1, "MetadataContainer has one restriction on adgeom:hasBoundingBox"
     assert METADATA.value(restrictions[0], OWL.onClass) == GEOM.BoundingBox
     assert METADATA.value(restrictions[0], OWL.minQualifiedCardinality) is not None
     children = {"Titleblock", "RevisionTable", "Legend", "KeyPlan", "Note"}
@@ -105,7 +105,7 @@ def described(graph, term):
 
 
 def test_a_human_annotation_is_described_as_an_inference_step_performed_by_a_person():
-    for term, text in ((APROV.InferredEntity, "a person"), (APROV.inferredBy, "aprov:Person")):
+    for term, text in ((APROV.InferredEntity, "a person"), (APROV.inferredBy, "adprov:Person")):
         assert text in described(PROVENANCE, term), f"{term} should be described as having a person as a possible producer"
     assert "person marked it" in described(GEOMETRY, GEOM.BoundingBox), "a bounding box is not only detected"
 
