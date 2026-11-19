@@ -18,6 +18,10 @@
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/adiro_domain_common.html){ .md-button }
 </div>
 
+!!! warning "Deprecated"
+
+    This module is deprecated and receives no further changes. It is replaced by `adiro_discipline_core`, which continues its version numbering. Every release of it stays published at its own IRI.
+
 Concepts shared by several engineering domains. It sits between the common symbols and the discipline-specific modules, holding abstractions that more than one domain reuses, so they are defined once.
 
 - **IRI:** `https://w3id.org/adiro/adiro_domain_common`
@@ -177,7 +181,7 @@ Dead load - the permanent, static load of a structure's own weight and fixed com
 
 ### Discipline {#Discipline}
 
-The engineering or architectural discipline associated with a [Layout](adiro_drawing_metadata.md#Layout).
+The engineering or architectural discipline associated with a Layout.
 
 - **IRI:** `https://w3id.org/adiro/adiro_domain_common#Discipline`
 
@@ -477,8 +481,8 @@ A wall - a vertical structural panel.
 
 ### hasDiscipline {#hasDiscipline}
 
-Links a [Layout](adiro_drawing_metadata.md#Layout) to an AEC discipline. Discipline characterises the Layout itself, not its content type — the two are orthogonal axes.
+Links a Layout to an AEC discipline. Discipline characterises the Layout itself, not its content type — the two are orthogonal axes.
 
 - **IRI:** `https://w3id.org/adiro/adiro_domain_common#hasDiscipline`
-- **Domain:** [`metadata:Layout`](adiro_drawing_metadata.md#Layout)
+- **Domain:** `metadata:Layout`
 - **Range:** [Discipline](#Discipline)

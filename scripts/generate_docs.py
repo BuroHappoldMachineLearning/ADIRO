@@ -182,12 +182,15 @@ def suite_terms(ttl_files: list[Path]) -> dict[str, tuple[str, str, bool]]:
     """Every term the current modules define in their own namespace: IRI -> (module, local name, is an individual) (#252).
 
     The links from a definition to a term of another module point at the page of that module's latest release. A
-    deprecated module (#171) is left out, so its terms, which share their local names with their successors', are never
-    linked from another module.
+    deprecated module (#171) is left out once its successor is among the modules, so its terms, which share their local
+    names with their successors', are never linked from another module. Until the successor is there (a module is
+    deprecated for its final release first, #281), nothing else has those terms: they stay linkable.
     """
     terms: dict[str, tuple[str, str, bool]] = {}
+    modules = {f.stem for f in ttl_files}
     for ttl_file in ttl_files:
-        if pylode_metadata.replacements(ttl_file) is not None:
+        replaced_by = pylode_metadata.replacements(ttl_file)
+        if replaced_by is not None and any(name in modules for name in replaced_by):
             continue
         graph = Graph().parse(str(ttl_file), format="turtle")
         ontology = next((str(o) for o in graph.subjects(RDF.type, OWL.Ontology)), None)

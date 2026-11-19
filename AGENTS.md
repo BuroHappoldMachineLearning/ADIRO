@@ -43,6 +43,13 @@ site, generated from each final release (`generate_docs.find_ttl_files` adds it 
 `scripts/migrate_aec_to_adiro.py` move data and links to the new IRIs (`docs/migrating-from-aec.md`), and
 `tests/test_rename_to_adiro.py` checks that each new module is its predecessor's final release under the new names.
 
+Three of the `adiro_*` modules are being renamed in turn ([#281](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/281)):
+`adiro_common_symbols` to `adiro_drawing_symbology`, `adiro_domain_common` to `adiro_discipline_core` and `adiro_facade_domain`
+to `adiro_facade_discipline`. The order follows the first rename: each of the three says `owl:deprecated true` and
+`dcterms:isReplacedBy` its successor in its `owl:Ontology` header, and its next release is its last; the successors enter `src/`
+in a later pull request, as a copy of that final release under the new names, and the old files leave `src/` a cycle after.
+Until then the module list above still names them as they are.
+
 DAnO is **not** part of the suite: ADIRO ships no DAnO artifact — no module, no import, no annotation-level
 crosswalk. The comparison with DAnO, and the reasons ADIRO mints its own terms rather than importing or aligning
 to it, are **documentation only** — see `docs/specification/design-decisions/dano-comparison.md` and
