@@ -226,7 +226,7 @@ Component of a facade system; a type of drawing element
 ### Facade shape {#FacadeShape}
 
 - **IRI:** `https://w3id.org/adiro/adiro_facade_discipline#FacadeShape`
-- **Sub class of:** [`dcore:GeometricProperties`](adiro_discipline_core.md#GeometricProperties)
+- **Sub class of:** [`adcore:GeometricProperties`](adiro_discipline_core.md#GeometricProperties)
 
 ### Facade system {#FacadeSystem}
 

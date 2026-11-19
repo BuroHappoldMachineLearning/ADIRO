@@ -48,8 +48,8 @@ Three of the `adiro_*` modules were renamed in turn ([#281](https://github.com/B
 `dcterms:isReplacedBy` its successor), and its successor entered `src/` as a copy of that final release under the new names (the history of each
 module now runs through three names, `aec_*`, `adiro_*` and the new one, which `config/module_renames.json` allows as a chain). The old files stay in
 `src/` for one release cycle, with their pages and releases; the compatibility diff reads a successor as a MAJOR change of its predecessor
-(`MODULE_RENAMED`) and, a cycle later, the old module as `MODULE_RETIRED`. The prefixes follow: `dsym:` for `adiro_drawing_symbology` (formerly
-`csymbol:`) and `dcore:` for `adiro_discipline_core` (formerly `dcommon:`). `docs/migrating-from-aec.md` explains how to move data and links.
+(`MODULE_RENAMED`) and, a cycle later, the old module as `MODULE_RETIRED`. The prefixes follow: `adsym:` for `adiro_drawing_symbology` (formerly
+`csymbol:`) and `adcore:` for `adiro_discipline_core` (formerly `dcommon:`). `docs/migrating-from-aec.md` explains how to move data and links.
 
 DAnO is **not** part of the suite: ADIRO ships no DAnO artifact — no module, no import, no annotation-level
 crosswalk. The comparison with DAnO, and the reasons ADIRO mints its own terms rather than importing or aligning

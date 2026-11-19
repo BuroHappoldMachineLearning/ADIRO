@@ -116,13 +116,13 @@
 
 :hasReferenceSymbol rdf:type owl:ObjectProperty ;
     rdfs:label "hasReferenceSymbol" ;
-    rdfs:comment "A Layout contains one or more ReferenceSymbols. To navigate from a symbol back to the Layout it is drawn on, use the SPARQL inverse path ^dsym:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21)." ;
+    rdfs:comment "A Layout contains one or more ReferenceSymbols. To navigate from a symbol back to the Layout it is drawn on, use the SPARQL inverse path ^adsym:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21)." ;
     rdfs:subPropertyOf metadata:contains ;
     rdfs:domain metadata:Layout ;
     rdfs:range :ReferenceSymbol .
 
 :referencesLayout rdf:type owl:ObjectProperty ;
     rdfs:label "referencesLayout" ;
-    rdfs:comment "Target Layout — the Layout this ReferenceSymbol points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^dsym:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21)." ;
+    rdfs:comment "Target Layout — the Layout this ReferenceSymbol points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^adsym:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21)." ;
     rdfs:domain :ReferenceSymbol ;
     rdfs:range metadata:Layout .

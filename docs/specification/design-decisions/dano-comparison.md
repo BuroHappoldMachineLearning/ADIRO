@@ -276,7 +276,7 @@ the same failure mode as the domain leakage in §7: an adopted axiom that entail
 because DAnO fails the first two conditions of the test.
 
 **What is not yet known:** whether UC-03 or UC-07 need DAnO's decomposition at all. UC-03 already ships
-`dsym:ReferenceSymbol` and its own linking properties; UC-07 has no ontology work yet. The question to
+`adsym:ReferenceSymbol` and its own linking properties; UC-07 has no ontology work yet. The question to
 answer when they are picked up is whether DAnO's published decomposition is better than what ADIRO would
 design unaided - and if it is, to adopt the *shape* and mint the terms, which is what ADIRO has already done
 twice with DAnO (see §9).

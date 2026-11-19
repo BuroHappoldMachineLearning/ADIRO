@@ -74,8 +74,8 @@ def test_the_new_module_is_the_old_final_release_under_the_new_names(old, new):
         return out
 
     assert unexplained(only_final) == set() and unexplained(only_current) == set()
-    # a prefix named in a definition follows the module's new prefix (csymbol: -> dsym:, dcommon: -> dcore:, #281)
-    comments = lambda g: {(s, mr.rewrite_text(str(o), RENAMES).replace("aec_", "adiro_").replace("csymbol:", "dsym:").replace("dcommon:", "dcore:"))
+    # a prefix named in a definition follows the module's new prefix (csymbol: -> adsym:, dcommon: -> adcore:, #281)
+    comments = lambda g: {(s, mr.rewrite_text(str(o), RENAMES).replace("aec_", "adiro_").replace("csymbol:", "adsym:").replace("dcommon:", "adcore:"))
                           for s, o in g.subject_objects(RDFS.comment) if s != ontology and not (moved_to_here and str(s) in MOVED)}
     assert comments(final) == comments(current), "a definition differs by more than the module names it mentions"
 

@@ -162,7 +162,7 @@ The accepted [DrawingSheet](adiro_drawing_metadata.md#DrawingSheet) identity den
 
 ### hasReferenceSymbol {#hasReferenceSymbol}
 
-A Layout contains one or more [ReferenceSymbol](#ReferenceSymbol)s. To navigate from a symbol back to the [Layout](adiro_drawing_metadata.md#Layout) it is drawn on, use the SPARQL inverse path ^dsym:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
+A Layout contains one or more [ReferenceSymbol](#ReferenceSymbol)s. To navigate from a symbol back to the [Layout](adiro_drawing_metadata.md#Layout) it is drawn on, use the SPARQL inverse path ^adsym:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#hasReferenceSymbol`
 - **Sub property of:** [`metadata:contains`](adiro_drawing_metadata.md#contains)
@@ -179,7 +179,7 @@ An accepted target [Layout](adiro_drawing_metadata.md#Layout) of an inline layou
 
 ### referencesLayout {#referencesLayout}
 
-Target Layout — the [Layout](adiro_drawing_metadata.md#Layout) this [ReferenceSymbol](#ReferenceSymbol) points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^dsym:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
+Target Layout — the [Layout](adiro_drawing_metadata.md#Layout) this [ReferenceSymbol](#ReferenceSymbol) points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^adsym:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#referencesLayout`
 - **Domain:** [ReferenceSymbol](#ReferenceSymbol)

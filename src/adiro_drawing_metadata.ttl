@@ -9,7 +9,7 @@
 @prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .
 @prefix geom: <https://w3id.org/adiro/adiro_geometry#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix dsym: <https://w3id.org/adiro/adiro_drawing_symbology#> .
+@prefix adsym: <https://w3id.org/adiro/adiro_drawing_symbology#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
 #################################################################
@@ -784,55 +784,55 @@ aprov:Organisation :isComputerVisionLabel "false"^^xsd:boolean .
 
 # The two properties are declared here as typing stubs, like the PROV-O terms in adiro_provenance: without the declaration a
 # reader that does not load adiro_drawing_symbology cannot read the owl:equivalentProperty below, and drops the statement.
-dsym:denotesDrawingSheet rdf:type owl:ObjectProperty .
-dsym:inlineReferencesLayout rdf:type owl:ObjectProperty .
+adsym:denotesDrawingSheet rdf:type owl:ObjectProperty .
+adsym:inlineReferencesLayout rdf:type owl:ObjectProperty .
 
 :ReferenceExpression rdf:type owl:Class ;
     rdfs:subClassOf :DrawingElement ;
     rdfs:label "Reference expression" ;
     rdfs:comment "Deprecated: use ReferenceExpression of adiro_drawing_symbology, the same class defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class." ;
     owl:deprecated "true"^^xsd:boolean ;
-    owl:equivalentClass dsym:ReferenceExpression ;
-    dcterms:isReplacedBy dsym:ReferenceExpression .
+    owl:equivalentClass adsym:ReferenceExpression ;
+    dcterms:isReplacedBy adsym:ReferenceExpression .
 
 :DrawingIdentifierMention rdf:type owl:Class ;
     rdfs:subClassOf :DrawingElement ;
     rdfs:label "Drawing identifier mention" ;
     rdfs:comment "Deprecated: use DrawingIdentifierMention of adiro_drawing_symbology, the same class defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class." ;
     owl:deprecated "true"^^xsd:boolean ;
-    owl:equivalentClass dsym:DrawingIdentifierMention ;
-    dcterms:isReplacedBy dsym:DrawingIdentifierMention .
+    owl:equivalentClass adsym:DrawingIdentifierMention ;
+    dcterms:isReplacedBy adsym:DrawingIdentifierMention .
 
 :LayoutIdentifierMention rdf:type owl:Class ;
     rdfs:subClassOf :DrawingElement ;
     rdfs:label "Layout identifier mention" ;
     rdfs:comment "Deprecated: use LayoutIdentifierMention of adiro_drawing_symbology, the same class defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class." ;
     owl:deprecated "true"^^xsd:boolean ;
-    owl:equivalentClass dsym:LayoutIdentifierMention ;
-    dcterms:isReplacedBy dsym:LayoutIdentifierMention .
+    owl:equivalentClass adsym:LayoutIdentifierMention ;
+    dcterms:isReplacedBy adsym:LayoutIdentifierMention .
 
 :InlineLayoutSheetReference rdf:type owl:Class ;
     rdfs:subClassOf :ReferenceExpression ;
     rdfs:label "Inline layout and sheet reference" ;
     rdfs:comment "Deprecated: use InlineLayoutDrawingReference of adiro_drawing_symbology, the same class under a name that says drawing, not sheet, defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class." ;
     owl:deprecated "true"^^xsd:boolean ;
-    owl:equivalentClass dsym:InlineLayoutDrawingReference ;
-    dcterms:isReplacedBy dsym:InlineLayoutDrawingReference .
+    owl:equivalentClass adsym:InlineLayoutDrawingReference ;
+    dcterms:isReplacedBy adsym:InlineLayoutDrawingReference .
 
 :StandaloneSheetReference rdf:type owl:Class ;
     rdfs:subClassOf :DrawingIdentifierMention , :ReferenceExpression ;
     rdfs:label "Standalone sheet reference" ;
     rdfs:comment "Deprecated: use StandaloneDrawingReference of adiro_drawing_symbology, the same class under a name that says drawing, not sheet, defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class." ;
     owl:deprecated "true"^^xsd:boolean ;
-    owl:equivalentClass dsym:StandaloneDrawingReference ;
-    dcterms:isReplacedBy dsym:StandaloneDrawingReference .
+    owl:equivalentClass adsym:StandaloneDrawingReference ;
+    dcterms:isReplacedBy adsym:StandaloneDrawingReference .
 
 :denotesDrawingSheet rdf:type owl:ObjectProperty ;
     rdfs:label "denotesDrawingSheet" ;
     rdfs:comment "Deprecated: use denotesDrawingSheet of adiro_drawing_symbology, the same property defined in the module that holds the reference symbol." ;
     owl:deprecated "true"^^xsd:boolean ;
-    owl:equivalentProperty dsym:denotesDrawingSheet ;
-    dcterms:isReplacedBy dsym:denotesDrawingSheet ;
+    owl:equivalentProperty adsym:denotesDrawingSheet ;
+    dcterms:isReplacedBy adsym:denotesDrawingSheet ;
     rdfs:domain :DrawingIdentifierMention ;
     rdfs:range :DrawingSheet .
 
@@ -840,7 +840,7 @@ dsym:inlineReferencesLayout rdf:type owl:ObjectProperty .
     rdfs:label "inlineReferencesLayout" ;
     rdfs:comment "Deprecated: use inlineReferencesLayout of adiro_drawing_symbology, the same property defined in the module that holds the reference symbol." ;
     owl:deprecated "true"^^xsd:boolean ;
-    owl:equivalentProperty dsym:inlineReferencesLayout ;
-    dcterms:isReplacedBy dsym:inlineReferencesLayout ;
+    owl:equivalentProperty adsym:inlineReferencesLayout ;
+    dcterms:isReplacedBy adsym:inlineReferencesLayout ;
     rdfs:domain :InlineLayoutSheetReference ;
     rdfs:range :Layout .
