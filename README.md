@@ -13,9 +13,10 @@
       <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_provenance-v2.3.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_provenance.json" alt="adiro_provenance"></a><br>
       <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_geometry-v3.1.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_geometry.json" alt="adiro_geometry"></a><br>
       <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_drawing_metadata-v7.1.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_drawing_metadata.json" alt="adiro_drawing_metadata"></a><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_common_symbols-v5.0.1"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_common_symbols.json" alt="adiro_common_symbols"></a><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_domain_common-v4.0.1"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_domain_common.json" alt="adiro_domain_common"></a><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_facade_domain-v4.0.1"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_facade_domain.json" alt="adiro_facade_domain"></a><br>
+      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_drawing_symbology-v5.0.1"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_drawing_symbology.json" alt="adiro_drawing_symbology"></a><br>
+      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_discipline_core-v4.0.1"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_discipline_core.json" alt="adiro_discipline_core"></a><br>
+      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_facade_discipline-v4.0.1"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_facade_discipline.json" alt="adiro_facade_discipline"></a><br>
+      <sub>Renamed from <code>adiro_common_symbols</code>, <code>adiro_domain_common</code> and <code>adiro_facade_domain</code> (<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/issues/281">#281</a>); the old releases stay published.</sub><br>
     </td>
     <td align="left" valign="middle">
       <b>Build status</b><br>
@@ -53,7 +54,7 @@ The documentation site is built with **[Material for MkDocs](https://squidfunk.g
 - Changes are pushed to the `main` or `master` branch
 - The workflow is manually triggered from the GitHub Actions tab
 
-The site provides a landing page (`docs/index.md`), a **Use Cases** page (`docs/specification/use-cases/README.md`), an **Ontology Requirements (ORSD)** page (`docs/specification/ORSD_v1.5.md`), and a detailed per-ontology reference page for each ontology, generated with **[pyLODE](https://github.com/RDFLib/pyLODE)**.
+The site provides a landing page (`docs/index.md`), a **Use Cases** page (`docs/specification/use-cases/README.md`), an **Ontology Requirements (ORSD)** page (`docs/specification/ORSD_v1.6.md`), and a detailed per-ontology reference page for each ontology, generated with **[pyLODE](https://github.com/RDFLib/pyLODE)**.
 
 
 ### Documentation website automation

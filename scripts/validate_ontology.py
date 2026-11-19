@@ -192,6 +192,17 @@ def find_internal_names(repo_root: Path) -> list[str]:
     return findings
 
 
+def is_own_term(graph, term) -> bool:
+    """
+    Whether `term` is in the namespace of the module the graph holds. A declaration of another module's term
+    (`adsym:x a owl:ObjectProperty`, made so a reader that does not load that module can read an
+    `owl:equivalentProperty`) is a name, not a term to define here: its definition is in its own module.
+    A graph with no `owl:Ontology` has no namespace to compare with, so every term is its own.
+    """
+    modules = [str(o) + "#" for o in graph.subjects(RDF.type, OWL.Ontology) if isinstance(o, URIRef)]
+    return not modules or any(str(term).startswith(m) for m in modules)
+
+
 def find_unsplit_terms(graph) -> list[str]:
     """
     ADIRO-namespace terms whose definition is still an rdfs:comment: they have an rdfs:comment and no skos:definition (#273).
@@ -202,7 +213,7 @@ def find_unsplit_terms(graph) -> list[str]:
     unsplit = []
     for term_type in TERM_TYPES:
         for term in graph.subjects(RDF.type, term_type):
-            if not isinstance(term, URIRef) or not str(term).startswith(ADIRO_NS):
+            if not isinstance(term, URIRef) or not str(term).startswith(ADIRO_NS) or not is_own_term(graph, term):
                 continue
             if (term, SKOS.definition, None) in graph or (term, RDFS.comment, None) not in graph:
                 continue
@@ -222,7 +233,7 @@ def find_undescribed_terms(graph) -> list[str]:
     undescribed = []
     for term_type in TERM_TYPES:
         for term in graph.subjects(RDF.type, term_type):
-            if not isinstance(term, URIRef) or not str(term).startswith(ADIRO_NS):
+            if not isinstance(term, URIRef) or not str(term).startswith(ADIRO_NS) or not is_own_term(graph, term):
                 continue
             if any((term, prop, None) in graph for prop in DESCRIPTION_PROPS):
                 continue

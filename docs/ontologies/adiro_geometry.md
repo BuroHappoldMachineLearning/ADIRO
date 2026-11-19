@@ -36,24 +36,24 @@ graph BT
     adiro_provenance["Adiro Provenance"]
     adiro_geometry["Adiro Geometry"]
     adiro_drawing_metadata["Adiro Drawing Metadata"]
-    adiro_common_symbols["Adiro Common Symbols"]
-    adiro_domain_common["Adiro Domain Common"]
-    adiro_facade_domain["Adiro Facade Domain"]
+    adiro_drawing_symbology["Adiro Drawing Symbology"]
+    adiro_discipline_core["Adiro Discipline Core"]
+    adiro_facade_discipline["Adiro Facade Discipline"]
     adiro_geometry --> adiro_provenance
     adiro_drawing_metadata --> adiro_geometry
     adiro_drawing_metadata --> adiro_provenance
-    adiro_common_symbols --> adiro_drawing_metadata
-    adiro_domain_common --> adiro_drawing_metadata
-    adiro_facade_domain --> adiro_domain_common
-    adiro_facade_domain --> adiro_drawing_metadata
+    adiro_drawing_symbology --> adiro_drawing_metadata
+    adiro_discipline_core --> adiro_drawing_metadata
+    adiro_facade_discipline --> adiro_discipline_core
+    adiro_facade_discipline --> adiro_drawing_metadata
     click adiro_provenance "../adiro_provenance/" "Adiro Provenance reference page"
     click adiro_geometry "../adiro_geometry/" "Adiro Geometry reference page"
     click adiro_drawing_metadata "../adiro_drawing_metadata/" "Adiro Drawing Metadata reference page"
-    click adiro_common_symbols "../adiro_common_symbols/" "Adiro Common Symbols reference page"
-    click adiro_domain_common "../adiro_domain_common/" "Adiro Domain Common reference page"
-    click adiro_facade_domain "../adiro_facade_domain/" "Adiro Facade Domain reference page"
+    click adiro_drawing_symbology "../adiro_drawing_symbology/" "Adiro Drawing Symbology reference page"
+    click adiro_discipline_core "../adiro_discipline_core/" "Adiro Discipline Core reference page"
+    click adiro_facade_discipline "../adiro_facade_discipline/" "Adiro Facade Discipline reference page"
     classDef base fill:#16305f,stroke:#0e2247,stroke-width:2px,color:#9ecbff;
-    class adiro_provenance,adiro_drawing_metadata,adiro_common_symbols,adiro_domain_common,adiro_facade_domain base;
+    class adiro_provenance,adiro_drawing_metadata,adiro_drawing_symbology,adiro_discipline_core,adiro_facade_discipline base;
     classDef current fill:#f58a1f,stroke:#16305f,stroke-width:3px,color:#16305f;
     class adiro_geometry current;
 ```
@@ -62,17 +62,17 @@ graph BT
 
 ### Bounding Box {#BoundingBox}
 
-A rectangular region on a drawing page that locates something there, whether a model detected it or a person marked it - e.g. a title-block field's caption or value.
+A rectangular region on a drawing page that locates something there, whether a model detected it or a person marked it.
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#BoundingBox`
-- **Comment:** Its coordinates are held as an xyxy string ([bboxXYXY](#bboxXYXY)) and are meaningless without the [CoordinateFrame](#CoordinateFrame) it points at ([inCoordinateFrame](#inCoordinateFrame)), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an [InferredEntity](adiro_provenance.md#InferredEntity): it carries its own provenance ([adprov:hasInferenceMeta](adiro_provenance.md#hasInferenceMeta) - a detector, or a human annotator, told apart by [adprov:inferredBy](adiro_provenance.md#inferredBy)) and its own confidence ([adprov:hasConfidence](adiro_provenance.md#hasConfidence), the detector's score, absent for a hand-drawn box), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL [geo:Geometry](#Geometry) so it is recognised as a spatial shape.
+- **Comment:** An example is a title-block field's caption or value. Its coordinates are held as an xyxy string ([bboxXYXY](#bboxXYXY)) and are meaningless without the [CoordinateFrame](#CoordinateFrame) it points at ([inCoordinateFrame](#inCoordinateFrame)), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an [InferredEntity](adiro_provenance.md#InferredEntity): it carries its own provenance ([adprov:hasInferenceMeta](adiro_provenance.md#hasInferenceMeta) - a detector, or a human annotator, told apart by [adprov:inferredBy](adiro_provenance.md#inferredBy)) and its own confidence ([adprov:hasConfidence](adiro_provenance.md#hasConfidence), the detector's score, absent for a hand-drawn box), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL [geo:Geometry](#Geometry) so it is recognised as a spatial shape.
 - **Sub class of:**
     - [Geometry](#Geometry)
     - [`adprov:InferredEntity`](adiro_provenance.md#InferredEntity)
 
 ### Coordinate Frame {#CoordinateFrame}
 
-A page of a file read in one coordinate convention: the named coordinate space, the unit and the profile that defines it (the datatype properties below), for the page it describes ([describesPage](#describesPage)).
+A page of a file read in one coordinate convention: the named coordinate space, the unit and the profile that defines it ([coordinateSpace](#coordinateSpace), unit and [profileRef](#profileRef)), for the page it describes ([describesPage](#describesPage)).
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#CoordinateFrame`
 - **Comment:** A page can have more than one frame (the primary page_display_pt in points, and px for raster evidence), and each states only its convention: what is true of the page itself (its number, file, rotation and size) is on the adiro_provenance:FilePage. Every image of the page that an extraction feeds to a model is a pixel frame of its own, with the resolution it was rendered or scaled to ([resolutionDpi](#resolutionDpi)), and a crop is a frame limited to a region of the page ([coversRegion](#coversRegion)), so a step that records the frame it used (prov:used) says what its model saw without the image being kept. Not an [InferredEntity](adiro_provenance.md#InferredEntity): a declared coordinate context, not a detection with its own confidence.
@@ -87,10 +87,10 @@ Local typing stub for GeoSPARQL's Geometry class (authoritative definition at th
 
 ### coversRegion {#coversRegion}
 
-The region of the page that this frame shows, when it shows only part of it (a crop): the [BoundingBox](#BoundingBox), in another frame of the same page (usually page_display_pt), whose rectangle the frame's image holds.
+The region of the page that this frame shows, when it shows only part of it (a crop): the [BoundingBox](#BoundingBox), in another frame of the same page, whose rectangle the frame's image holds.
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#coversRegion`
-- **Comment:** The frame's own coordinates start at the region's top-left corner. A frame that shows the whole page has no coversRegion. Between the region and the frame there is only a uniform scale, given by the frame's [resolutionDpi](#resolutionDpi), so a box found in the crop is placed on the page without a transform term.
+- **Comment:** That frame is usually page_display_pt. The frame's own coordinates start at the region's top-left corner. A frame that shows the whole page has no coversRegion. Between the region and the frame there is only a uniform scale, given by the frame's [resolutionDpi](#resolutionDpi), so a box found in the crop is placed on the page without a transform term.
 - **Domain:** [Coordinate Frame](#CoordinateFrame)
 - **Range:** [Bounding Box](#BoundingBox)
 

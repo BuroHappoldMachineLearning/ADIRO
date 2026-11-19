@@ -1,0 +1,552 @@
+@prefix : <https://w3id.org/adiro/adiro_facade_discipline#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix adcore: <https://w3id.org/adiro/adiro_discipline_core#> .
+@prefix admeta: <https://w3id.org/adiro/adiro_drawing_metadata#> .
+@prefix img: <https://w3id.org/adiro/adiro_facade_discipline/exampleImage/> .
+
+#################################################################
+#    Ontology
+#################################################################
+
+<https://w3id.org/adiro/adiro_facade_discipline> rdf:type owl:Ontology ;
+    rdfs:label "ADIRO Facade Discipline Ontology" ;
+    rdfs:comment "Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbology, and discipline-core vocabularies." ;
+    dcterms:title "ADIRO Facade Discipline Ontology" ;
+    dcterms:description "Facade-specific concepts and symbols for facade engineering drawings." ;
+    dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
+    dcterms:creator "Buro Happold — Machine Learning R&D" ;
+    dcterms:publisher "Buro Happold" ;
+    dcterms:replaces <https://w3id.org/adiro/adiro_facade_domain> ;
+    owl:priorVersion <https://w3id.org/adiro/aec_facade_domain/1.0.0> ;
+    owl:priorVersion <https://w3id.org/adiro/aec_facade_domain/2.0.0> ;
+    owl:priorVersion <https://w3id.org/adiro/aec_facade_domain/2.0.1> ;
+    owl:priorVersion <https://w3id.org/adiro/aec_facade_domain/2.0.2> ;
+    owl:priorVersion <https://w3id.org/adiro/aec_facade_domain/3.0.0> ;
+    owl:priorVersion <https://w3id.org/adiro/aec_facade_domain/3.0.1> ;
+    owl:priorVersion <https://w3id.org/adiro/adiro_facade_domain/4.0.0> ;
+    owl:versionIRI <https://w3id.org/adiro/adiro_facade_discipline/4.0.1> ;
+    owl:versionInfo "4.0.1" ;
+    owl:imports <https://w3id.org/adiro/adiro_drawing_metadata>,
+                <https://w3id.org/adiro/adiro_discipline_core> .
+
+
+#################################################################
+#    Facade Drawing Elements
+#################################################################
+
+:FacadeComponent rdf:type owl:Class;
+    rdfs:label "Facade component";
+    rdfs:comment "Component of a facade system; a type of drawing element";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf admeta:DrawingElement.
+
+:FacadeSystem rdf:type owl:Class;
+    rdfs:label "Facade system";
+    rdfs:comment "Facade system - part of support type; a type of drawing element";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf admeta:DrawingElement, [ rdf:type owl:Restriction ; owl:onProperty admeta:contains ; owl:someValuesFrom :FacadeComponent ].
+
+:LinearComponent rdf:type owl:Class;
+    rdfs:label "Linear component";
+    rdfs:comment "Element category - linear facade component";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeComponent.
+
+:PanelComponent rdf:type owl:Class;
+    rdfs:label "Panel component";
+    rdfs:comment "Element category - panel-type facade component";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeComponent.
+
+:PointComponent rdf:type owl:Class;
+    rdfs:label "Point component";
+    rdfs:comment "Element category - point-type facade component";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeComponent.
+
+:CavityWallSystem rdf:type owl:Class;
+    rdfs:label "Cavity wall system";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeSystem.
+
+:CurtainWallSystem rdf:type owl:Class;
+    rdfs:label "Curtain wall system";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeSystem.
+
+:PrecastSystem rdf:type owl:Class;
+    rdfs:label "Precast system";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeSystem.
+
+:RainscreenSystem rdf:type owl:Class;
+    rdfs:label "Rainscreen";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeSystem.
+
+:SemiUnitisedCurtainWall rdf:type owl:Class;
+    rdfs:label "Semi Unitised Curtain Wall";
+    rdfs:comment "Semi-unitised curtain wall";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :CurtainWallSystem.
+
+:StickCurtainWall rdf:type owl:Class;
+    rdfs:label "Stick Curtain Wall";
+    rdfs:comment "Stick curtain wall";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :CurtainWallSystem.
+
+:UnitisedCurtainWall rdf:type owl:Class;
+    rdfs:label "Unitised Curtain Wall";
+    rdfs:comment "Unitised curtain wall";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :CurtainWallSystem.
+
+:GRC rdf:type owl:Class;
+    rdfs:label "GRC";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :PrecastSystem.
+
+:UMPC rdf:type owl:Class;
+    rdfs:label "UMPC";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :PrecastSystem.
+
+:Capping rdf:type owl:Class;
+    rdfs:label "Capping";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :LinearComponent.
+
+:CWFrameMember rdf:type owl:Class;
+    rdfs:label "CW frame member";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :LinearComponent.
+
+:FacadeSecondaryStructure rdf:type owl:Class;
+    rdfs:label "Facade secondary structure";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :LinearComponent.
+
+:Fin rdf:type owl:Class;
+    rdfs:label "Fin";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :LinearComponent.
+
+:Firestop rdf:type owl:Class;
+    rdfs:label "Firestop";
+    rdfs:comment "Linear seal that closes a gap in a fire-rated construction, such as the joint between a facade and a floor slab, to slow the passage of fire and smoke; a type of linear component.";
+    admeta:exampleImage img:Firestop_01.png;
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :LinearComponent.
+
+:Gasket rdf:type owl:Class;
+    rdfs:label "Gasket";
+    rdfs:comment "Compressible strip, typically elastomeric, fitted between facade parts to seal the joint against air and water; a type of linear component.";
+    admeta:exampleImage img:Gasket_01.png;
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :LinearComponent.
+
+:Louvre rdf:type owl:Class;
+    rdfs:label "Louvre";
+    rdfs:comment "Fixed or adjustable slatted opening that lets air pass while keeping out rain and direct view; a type of linear component.";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :LinearComponent.
+
+:Sealant rdf:type owl:Class;
+    rdfs:label "Sealant";
+    rdfs:comment "Soft material applied wet into a joint between facade parts. It cures to seal the joint against air and water; a type of linear component.";
+    admeta:exampleImage img:Sealant_01.png;
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :LinearComponent.
+
+:WindowSystem rdf:type owl:Class;
+    rdfs:label "Window system";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :LinearComponent.
+
+:BackingWall rdf:type owl:Class;
+    rdfs:label "Backing wall";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :PanelComponent.
+
+:Board rdf:type owl:Class;
+    rdfs:label "Board";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :PanelComponent.
+
+:FacadeCladding rdf:type owl:Class;
+    rdfs:label "Facade cladding";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :PanelComponent.
+
+:Insulation rdf:type owl:Class;
+    rdfs:label "Insulation";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :PanelComponent.
+
+:Membrane rdf:type owl:Class;
+    rdfs:label "Membrane";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :PanelComponent.
+
+:RoofCladding rdf:type owl:Class;
+    rdfs:label "Roof cladding";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :PanelComponent.
+
+:Bracket rdf:type owl:Class;
+    rdfs:label "Bracket";
+    rdfs:comment "Connection element that fixes a facade component, such as a curtain-wall frame or a cladding panel, back to the building structure and carries its loads; a type of point component.";
+    admeta:exampleImage img:Bracket_01.png;
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :PointComponent.
+
+:Fixing rdf:type owl:Class;
+    rdfs:label "Fixing";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :PointComponent.
+
+:LocalisedPenetration rdf:type owl:Class;
+    rdfs:label "Localised penetration";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :PointComponent.
+
+:Mullion rdf:type owl:Class;
+    rdfs:label "Mullion";
+    rdfs:comment "Vertical frame member of a curtain wall. It carries the glazing or panels and passes wind load to the building structure; a type of curtain-wall frame member.";
+    admeta:exampleImage img:Mullion_01.png;
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :CWFrameMember.
+
+:Transom rdf:type owl:Class;
+    rdfs:label "Transom";
+    rdfs:comment "Horizontal frame member of a curtain wall. It spans between mullions and carries the glazing or panels above and below it; a type of curtain-wall frame member.";
+    admeta:exampleImage img:Transom_01.png;
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :CWFrameMember.
+
+:Rail rdf:type owl:Class;
+    rdfs:label "Rail";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeSecondaryStructure.
+
+:ShelfAngle rdf:type owl:Class;
+    rdfs:label "Shelf angle";
+    rdfs:comment "Angle section fixed to the edge of a floor slab. It supports facade elements, such as spandrel insulation or a panel, along the slab edge; a type of facade secondary structure.";
+    admeta:exampleImage img:ShelfAngle_01.png;
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeSecondaryStructure.
+
+:CavityBarrier rdf:type owl:Class;
+    rdfs:label "Cavity barrier";
+    rdfs:comment "Barrier fitted in a ventilated cavity to limit the spread of fire and smoke through the cavity; modelled here as a kind of gasket.";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Gasket.
+
+:Channel rdf:type owl:Class;
+    rdfs:label "Channel";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Gasket.
+
+:Flipper rdf:type owl:Class;
+    rdfs:label "Flipper";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Gasket.
+
+:HollowGasketShape rdf:type owl:Class;
+    rdfs:label "Hollow gasket shape";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Gasket.
+
+:Reflvet rdf:type owl:Class;
+    rdfs:label "Reflvet";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Gasket.
+
+:SolidGasketShape rdf:type owl:Class;
+    rdfs:label "Solid gasket shape";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Gasket.
+
+:OGasket rdf:type owl:Class;
+    rdfs:label "O-gasket";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :HollowGasketShape.
+
+:PGasket rdf:type owl:Class;
+    rdfs:label "P-gasket";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :HollowGasketShape.
+
+:PushIn rdf:type owl:Class;
+    rdfs:label "Push-in";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :SolidGasketShape.
+
+:SlideIn rdf:type owl:Class;
+    rdfs:label "Slide-in";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :SolidGasketShape.
+
+:Wedge rdf:type owl:Class;
+    rdfs:label "Wedge";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :SolidGasketShape.
+
+:ClosedState rdf:type owl:Class;
+    rdfs:label "Closed state";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :CavityBarrier.
+
+:OpenState rdf:type owl:Class;
+    rdfs:label "Open state";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :CavityBarrier.
+
+:Silicone rdf:type owl:Class;
+    rdfs:label "Silicone";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Sealant.
+
+:DGU rdf:type owl:Class ;
+    rdfs:label "DGU" ;
+    rdfs:comment "Double glazing unit: two panes of glass held apart by a spacer around a sealed gap. The gap gives the glazing its thermal and acoustic performance." ;
+    admeta:exampleImage img:DGU_01.png ;
+    admeta:isComputerVisionLabel "false"^^xsd:boolean ;
+    rdfs:subClassOf :FacadeCladding .
+
+:Masonry rdf:type owl:Class;
+    rdfs:label "Masonry";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeCladding.
+
+:PrecastConcrete rdf:type owl:Class;
+    rdfs:label "Precast concrete";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeCladding.
+
+:ProfiledMetal rdf:type owl:Class;
+    rdfs:label "Profiled metal";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeCladding.
+
+:SmallPanels rdf:type owl:Class;
+    rdfs:label "Small panels";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeCladding.
+
+:TGU rdf:type owl:Class;
+    rdfs:label "TGU";
+    rdfs:comment "Triple Glazed Unit";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeCladding.
+
+:Cementboard rdf:type owl:Class;
+    rdfs:label "Cementboard";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Board.
+
+:Plasterboard rdf:type owl:Class;
+    rdfs:label "Plasterboard";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Board.
+
+:MineralWool rdf:type owl:Class;
+    rdfs:label "Mineral wool";
+    rdfs:comment "Insulation made of spun mineral fibres. In a facade it limits heat loss and, being non-combustible, supports fire performance, typically behind spandrel panels; a type of insulation.";
+    admeta:exampleImage img:MineralWool_01.png;
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Insulation.
+
+:OtherInsulation rdf:type owl:Class;
+    rdfs:label "Other insulation";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Insulation.
+
+:VCL rdf:type owl:Class;
+    rdfs:label "VCL (Vapour control layer)";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Insulation.
+
+:WoodFibre rdf:type owl:Class;
+    rdfs:label "Wood fibre";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Insulation.
+
+:BreatherMembrane rdf:type owl:Class;
+    rdfs:label "Breather";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Membrane.
+
+:EPDM rdf:type owl:Class;
+    rdfs:label "EPDM";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Membrane.
+
+:WaterproofingMembrane rdf:type owl:Class;
+    rdfs:label "Waterproofing";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Membrane.
+
+:Blockwork rdf:type owl:Class;
+    rdfs:label "Blockwork";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :RoofCladding.
+
+:TimberCassette rdf:type owl:Class;
+    rdfs:label "Timber cassette";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :RoofCladding.
+
+:SFS rdf:type owl:Class;
+    rdfs:label "SFS";
+    rdfs:comment "Steel Frame System";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :BackingWall.
+
+:DeadLoadBracket rdf:type owl:Class;
+    rdfs:label "Dead Load Bracket";
+    rdfs:comment "Dead load bracket";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Bracket.
+
+:HelpingHandBracket rdf:type owl:Class;
+    rdfs:label "Helping hand";
+    rdfs:comment "Helping hand bracket";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Bracket.
+
+:PrecastRestraintBracket rdf:type owl:Class;
+    rdfs:label "Precast restraint";
+    rdfs:comment "Precast restraint bracket";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Bracket.
+
+:CastInChannel rdf:type owl:Class;
+    rdfs:label "Cast-in channel";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Fixing.
+
+:Screw rdf:type owl:Class;
+    rdfs:label "Screw";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Fixing.
+
+:WeldedBolt rdf:type owl:Class;
+    rdfs:label "Welded bolt";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :Fixing.
+
+:CWFrameMemberProperties rdf:type owl:Class;
+    rdfs:label "CW frame member properties";
+    rdfs:comment "Specific properties of curtain wall frame members";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean.
+
+:GlazingProperties rdf:type owl:Class;
+    rdfs:label "Glazing properties";
+    rdfs:comment "Specific properties of glazing elements";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean.
+
+:FacadeShape rdf:type owl:Class;
+    rdfs:label "Facade shape";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf adcore:GeometricProperties.
+
+:FrameType rdf:type owl:Class;
+    rdfs:label "Frame type";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :CWFrameMemberProperties.
+
+:GlazingRetention rdf:type owl:Class;
+    rdfs:label "Glazing retention";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :CWFrameMemberProperties.
+
+:CWSystem rdf:type owl:Class;
+    rdfs:label "CW system";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :CWFrameMemberProperties.
+
+:AddOn rdf:type owl:Class;
+    rdfs:label "Add-on";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FrameType.
+
+:Extruded rdf:type owl:Class;
+    rdfs:label "Extruded";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FrameType.
+
+:Fabricated rdf:type owl:Class;
+    rdfs:label "Fabricated";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FrameType.
+
+:Capped rdf:type owl:Class;
+    rdfs:label "Capped";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :GlazingRetention.
+
+:SSG rdf:type owl:Class;
+    rdfs:label "SSG (Structural silicone glazing)";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :GlazingRetention.
+
+:Toggle rdf:type owl:Class;
+    rdfs:label "Toggle";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :GlazingRetention.
+
+:DoubleLaminated rdf:type owl:Class;
+    rdfs:label "Double laminated";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :GlazingProperties.
+
+:Laminated rdf:type owl:Class;
+    rdfs:label "Laminated";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :GlazingProperties.
+
+:Monolithic rdf:type owl:Class;
+    rdfs:label "Monolithic";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :GlazingProperties.
+
+:Stick rdf:type owl:Class;
+    rdfs:label "Stick";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :CWSystem.
+
+:Unitised rdf:type owl:Class;
+    rdfs:label "Unitised";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :CWSystem.
+
+:Curved rdf:type owl:Class;
+    rdfs:label "Curved";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeShape.
+
+:Faceted rdf:type owl:Class;
+    rdfs:label "Faceted";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeShape.
+
+:Planar rdf:type owl:Class;
+    rdfs:label "Planar";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeShape.
+
+:SerratedSawtooth rdf:type owl:Class;
+    rdfs:label "Serrated/Sawtooth";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeShape.
+
+:ZigZag rdf:type owl:Class;
+    rdfs:label "Zig-zag";
+    admeta:isComputerVisionLabel "false"^^xsd:boolean;
+    rdfs:subClassOf :FacadeShape.

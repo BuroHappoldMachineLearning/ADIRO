@@ -7,9 +7,10 @@ search:
 
 <div class="adiro-actions" markdown="span">
 <details class="adiro-version">
-<summary class="md-button">Version 3.0.1 (adiro_domain_common 4.0.1 available)</summary>
+<summary class="md-button">Version 3.0.1 (adiro_discipline_core 4.0.1 available)</summary>
 <ul>
-<li><a href="../adiro_domain_common/">adiro_domain_common 4.0.1 (latest)</a></li>
+<li><a href="../adiro_discipline_core/">adiro_discipline_core 4.0.1 (latest)</a></li>
+<li><a href="../adiro_domain_common/">adiro_domain_common 4.0.1</a></li>
 <li><a href="../adiro_domain_common/4.0.0/">adiro_domain_common 4.0.0</a></li>
 <li><a href="./" class="adiro-version-current" aria-current="page">3.0.1 (final)</a></li>
 <li><a href="3.0.0/">3.0.0</a></li>
@@ -48,24 +49,31 @@ graph BT
     aec_provenance["Aec Provenance"]
     aec_geometry["Aec Geometry"]
     aec_drawing_metadata["Aec Drawing Metadata"]
+    adiro_common_symbols["Adiro Common Symbols"]
     aec_common_symbols["Aec Common Symbols"]
+    adiro_domain_common["Adiro Domain Common"]
     aec_domain_common["Aec Domain Common"]
+    adiro_facade_domain["Adiro Facade Domain"]
     aec_facade_domain["Aec Facade Domain"]
     aec_geometry --> aec_provenance
     aec_drawing_metadata --> aec_geometry
     aec_drawing_metadata --> aec_provenance
     aec_common_symbols --> aec_drawing_metadata
     aec_domain_common --> aec_drawing_metadata
+    adiro_facade_domain --> adiro_domain_common
     aec_facade_domain --> aec_domain_common
     aec_facade_domain --> aec_drawing_metadata
     click aec_provenance "../aec_provenance/" "Aec Provenance reference page"
     click aec_geometry "../aec_geometry/" "Aec Geometry reference page"
     click aec_drawing_metadata "../aec_drawing_metadata/" "Aec Drawing Metadata reference page"
+    click adiro_common_symbols "../adiro_common_symbols/" "Adiro Common Symbols reference page"
     click aec_common_symbols "../aec_common_symbols/" "Aec Common Symbols reference page"
+    click adiro_domain_common "../adiro_domain_common/" "Adiro Domain Common reference page"
     click aec_domain_common "../aec_domain_common/" "Aec Domain Common reference page"
+    click adiro_facade_domain "../adiro_facade_domain/" "Adiro Facade Domain reference page"
     click aec_facade_domain "../aec_facade_domain/" "Aec Facade Domain reference page"
     classDef base fill:#16305f,stroke:#0e2247,stroke-width:2px,color:#9ecbff;
-    class aec_provenance,aec_geometry,aec_drawing_metadata,aec_common_symbols,aec_facade_domain base;
+    class aec_provenance,aec_geometry,aec_drawing_metadata,adiro_common_symbols,aec_common_symbols,adiro_domain_common,adiro_facade_domain,aec_facade_domain base;
     classDef current fill:#f58a1f,stroke:#16305f,stroke-width:3px,color:#16305f;
     class aec_domain_common current;
 ```

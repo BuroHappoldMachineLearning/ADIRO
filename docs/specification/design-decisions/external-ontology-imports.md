@@ -157,5 +157,5 @@ PROV-O IRI.
 |---|---|
 | **PROV-O** | Option 1A (external IRI reused as a local stub) in `adiro_provenance`, referenced from the core. |
 | **GeoSPARQL** | **Reused as a local stub (option 1A)** in `adiro_geometry`: `geo:Geometry` is the supertype of `adiro_geometry:BoundingBox`. No `owl:imports` — declared locally, resolved offline via `catalog-v001.xml` (the same pattern as PROV-O). WKT serialisation and spatial queries remain deferred ([#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36)). |
-| **DAnO** | **Decided: no import, no extraction, and no compatibility layer.** ADIRO mints its own terms; the comparison is documentation-only. Coverage of `adiro_common_symbols` is still open. See the [DAnO comparison](dano-comparison.md) and [#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77). |
+| **DAnO** | **Decided: no import, no extraction, and no compatibility layer.** ADIRO mints its own terms; the comparison is documentation-only. Coverage of `adiro_drawing_symbology` is still open. See the [DAnO comparison](dano-comparison.md) and [#77](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/77). |
 | **ifcOWL / BEO** | Surveyed only — see [Discussion #70](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/70). |

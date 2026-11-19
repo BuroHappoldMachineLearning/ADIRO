@@ -16,7 +16,7 @@ import validate_data as vd  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 PREFIXES = """@prefix : <https://ex.org/d#> .
 @prefix admeta: <https://w3id.org/adiro/adiro_drawing_metadata#> .
-@prefix csymbol: <https://w3id.org/adiro/adiro_common_symbols#> .
+@prefix adsym: <https://w3id.org/adiro/adiro_drawing_symbology#> .
 """
 
 
@@ -29,9 +29,9 @@ def messages(body):
 
 
 # --- the inline reference: one drawing identifier, at least one layout identifier -----------------------------------
-INLINE_OK = """:ref a admeta:InlineLayoutSheetReference ; admeta:contains :sheet , :l1 , :l3 .
-:sheet a admeta:DrawingIdentifierMention .
-:l1 a admeta:LayoutIdentifierMention . :l3 a admeta:LayoutIdentifierMention .
+INLINE_OK = """:ref a adsym:InlineLayoutDrawingReference ; admeta:contains :sheet , :l1 , :l3 .
+:sheet a adsym:DrawingIdentifierMention .
+:l1 a adsym:LayoutIdentifierMention . :l3 a adsym:LayoutIdentifierMention .
 """
 
 
@@ -40,65 +40,77 @@ def test_a_complete_inline_reference_conforms():
 
 
 def test_an_inline_reference_with_two_drawing_identifiers_is_reported():
-    two = INLINE_OK + ":other a admeta:DrawingIdentifierMention . :ref admeta:contains :other .\n"
-    assert messages(two) == ["An inline layout and sheet reference contains exactly one drawing identifier mention."]
+    two = INLINE_OK + ":other a adsym:DrawingIdentifierMention . :ref admeta:contains :other .\n"
+    assert messages(two) == ["An inline layout and drawing reference contains exactly one drawing identifier mention."]
 
 
 def test_an_inline_reference_with_no_drawing_identifier_is_reported():
-    none = """:ref a admeta:InlineLayoutSheetReference ; admeta:contains :l1 .
-:l1 a admeta:LayoutIdentifierMention .
+    none = """:ref a adsym:InlineLayoutDrawingReference ; admeta:contains :l1 .
+:l1 a adsym:LayoutIdentifierMention .
 """
-    assert messages(none) == ["An inline layout and sheet reference contains exactly one drawing identifier mention."]
+    assert messages(none) == ["An inline layout and drawing reference contains exactly one drawing identifier mention."]
 
 
 def test_an_inline_reference_with_no_layout_identifier_is_reported():
-    none = """:ref a admeta:InlineLayoutSheetReference ; admeta:contains :sheet .
-:sheet a admeta:DrawingIdentifierMention .
+    none = """:ref a adsym:InlineLayoutDrawingReference ; admeta:contains :sheet .
+:sheet a adsym:DrawingIdentifierMention .
 """
-    assert messages(none) == ["An inline layout and sheet reference contains at least one layout identifier mention."]
+    assert messages(none) == ["An inline layout and drawing reference contains at least one layout identifier mention."]
+
+
+def test_an_inline_reference_typed_with_the_deprecated_class_is_still_checked():
+    old = ":ref a admeta:InlineLayoutSheetReference ; admeta:contains :l1 .\n:l1 a admeta:LayoutIdentifierMention .\n"
+    assert messages(old) == ["An inline layout and drawing reference contains exactly one drawing identifier mention."]
+
+
+def test_a_mention_typed_with_the_iris_it_had_in_drawing_metadata_is_still_checked():
+    two = ":m a admeta:DrawingIdentifierMention ; admeta:denotesDrawingSheet :s1 , :s2 .\n"
+    assert messages(two) == ["A drawing identifier mention has at most one accepted denotesDrawingSheet target."]
+    inline = ":ref a adsym:InlineLayoutDrawingReference ; admeta:contains :sheet , :l1 .\n:sheet a admeta:DrawingIdentifierMention . :l1 a admeta:LayoutIdentifierMention .\n"
+    assert messages(inline) == []
 
 
 def test_a_standalone_reference_counts_as_a_drawing_identifier_mention():
-    # StandaloneSheetReference is a subclass of DrawingIdentifierMention: the ontology is read as background.
-    nested = """:ref a admeta:InlineLayoutSheetReference ; admeta:contains :sheet , :l1 .
-:sheet a admeta:StandaloneSheetReference . :l1 a admeta:LayoutIdentifierMention .
+    # StandaloneDrawingReference is a subclass of DrawingIdentifierMention: the ontology is read as background.
+    nested = """:ref a adsym:InlineLayoutDrawingReference ; admeta:contains :sheet , :l1 .
+:sheet a adsym:StandaloneDrawingReference . :l1 a adsym:LayoutIdentifierMention .
 """
     assert check(nested) == []
 
 
 # --- the reference symbol: at most one drawing identifier ------------------------------------------------------------
 def test_a_reference_symbol_with_at_most_one_drawing_identifier_conforms():
-    assert check(":s a csymbol:ReferenceSymbol .\n") == []
-    assert check(":s a csymbol:ReferenceSymbol ; admeta:contains :m . :m a admeta:DrawingIdentifierMention .\n") == []
+    assert check(":s a adsym:ReferenceSymbol .\n") == []
+    assert check(":s a adsym:ReferenceSymbol ; admeta:contains :m . :m a adsym:DrawingIdentifierMention .\n") == []
 
 
 def test_a_reference_symbol_with_two_drawing_identifiers_is_reported():
-    two = ":s a csymbol:ReferenceSymbol ; admeta:contains :a , :b . :a a admeta:DrawingIdentifierMention . :b a admeta:DrawingIdentifierMention .\n"
+    two = ":s a adsym:ReferenceSymbol ; admeta:contains :a , :b . :a a adsym:DrawingIdentifierMention . :b a adsym:DrawingIdentifierMention .\n"
     assert messages(two) == ["A reference symbol contains at most one drawing identifier mention."]
 
 
 # --- a mention has at most one accepted target -----------------------------------------------------------------------
 def test_a_mention_with_one_target_conforms_and_with_two_is_reported():
-    one = ":m a admeta:DrawingIdentifierMention ; admeta:denotesDrawingSheet :s1 .\n"
-    two = one + ":m admeta:denotesDrawingSheet :s2 .\n"
+    one = ":m a adsym:DrawingIdentifierMention ; adsym:denotesDrawingSheet :s1 .\n"
+    two = one + ":m adsym:denotesDrawingSheet :s2 .\n"
     assert check(one) == []
     assert messages(two) == ["A drawing identifier mention has at most one accepted denotesDrawingSheet target."]
 
 
 def test_the_rule_reaches_a_standalone_reference_through_its_superclass():
-    two = ":m a admeta:StandaloneSheetReference ; admeta:denotesDrawingSheet :s1 , :s2 .\n"
+    two = ":m a adsym:StandaloneDrawingReference ; adsym:denotesDrawingSheet :s1 , :s2 .\n"
     assert messages(two) == ["A drawing identifier mention has at most one accepted denotesDrawingSheet target."]
 
 
 def test_a_violation_is_reported_with_its_severity_and_focus():
-    result = check(":m a admeta:DrawingIdentifierMention ; admeta:denotesDrawingSheet :s1 , :s2 .\n")[0]
+    result = check(":m a adsym:DrawingIdentifierMention ; adsym:denotesDrawingSheet :s1 , :s2 .\n")[0]
     assert result["severity"] == "Violation" and result["focus"] == "https://ex.org/d#m"
     assert result["path"].endswith("denotesDrawingSheet")
 
 
 def test_the_command_line_exits_one_on_a_violation_and_zero_otherwise(tmp_path):
     bad, good = tmp_path / "bad.ttl", tmp_path / "good.ttl"
-    bad.write_text(PREFIXES + ":m a admeta:DrawingIdentifierMention ; admeta:denotesDrawingSheet :s1 , :s2 .\n", encoding="utf-8")
+    bad.write_text(PREFIXES + ":m a adsym:DrawingIdentifierMention ; adsym:denotesDrawingSheet :s1 , :s2 .\n", encoding="utf-8")
     good.write_text(PREFIXES + INLINE_OK, encoding="utf-8")
     assert vd.main([str(bad)]) == 1
     assert vd.main([str(good)]) == 0

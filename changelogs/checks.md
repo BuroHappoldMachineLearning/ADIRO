@@ -8,6 +8,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+- **The UC-03 composition shapes follow the reference terms to `adiro_drawing_symbology`** ([#277](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/277), with [#271](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/271)): the inline-reference shape targets `InlineLayoutDrawingReference` of `adiro_drawing_symbology` and, still, the `InlineLayoutSheetReference` of `adiro_drawing_metadata`; the mention counts and the `denotesDrawingSheet` limit read the classes and the property from either module, so data typed with the IRIs the terms had in `adiro_drawing_metadata` is checked as before. Its two messages say "inline layout and drawing reference" instead of "inline layout and sheet reference".
+
 ## [1.0.0] — 2026-10-29
 
 ### Added
