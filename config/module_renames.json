@@ -5,6 +5,9 @@
     {"from": "aec_drawing_metadata", "to": "adiro_drawing_metadata", "reason": "#171: the aec_ prefix repeats the A of ADIRO"},
     {"from": "aec_common_symbols", "to": "adiro_common_symbols", "reason": "#171: the aec_ prefix repeats the A of ADIRO"},
     {"from": "aec_domain_common", "to": "adiro_domain_common", "reason": "#171: the aec_ prefix repeats the A of ADIRO"},
-    {"from": "aec_facade_domain", "to": "adiro_facade_domain", "reason": "#171: the aec_ prefix repeats the A of ADIRO"}
+    {"from": "aec_facade_domain", "to": "adiro_facade_domain", "reason": "#171: the aec_ prefix repeats the A of ADIRO"},
+    {"from": "adiro_common_symbols", "to": "adiro_drawing_symbology", "reason": "#281: the module holds the symbols, marks and text a drawing uses, shared by every discipline; the old name says only symbols"},
+    {"from": "adiro_domain_common", "to": "adiro_discipline_core", "reason": "#281: the module is the shared base of the discipline modules and speaks of disciplines, not domains"},
+    {"from": "adiro_facade_domain", "to": "adiro_facade_discipline", "reason": "#281: the facade module is a discipline module, so the suite says discipline throughout"}
   ]
 }

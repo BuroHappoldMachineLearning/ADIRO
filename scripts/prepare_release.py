@@ -53,9 +53,9 @@ MODULE_ORDER = [
     "adiro_provenance",
     "adiro_geometry",
     "adiro_drawing_metadata",
-    "adiro_common_symbols",
-    "adiro_domain_common",
-    "adiro_facade_domain",
+    "adiro_drawing_symbology",
+    "adiro_discipline_core",
+    "adiro_facade_discipline",
 ]
 PENDING_VERDICTS = {"RELEASE_PENDING", "INSUFFICIENT_BUMP"}
 OVERRIDES_FILE = Path("config") / "release_overrides.json"

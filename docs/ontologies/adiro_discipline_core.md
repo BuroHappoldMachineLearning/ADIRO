@@ -1,0 +1,486 @@
+# Adiro Discipline Core
+
+<div class="adiro-actions" markdown="span">
+<details class="adiro-version">
+<summary class="md-button">Version 4.0.1 (latest)</summary>
+<ul>
+<li><a href="./" class="adiro-version-current" aria-current="page">4.0.1 (latest)</a></li>
+<li><a href="../adiro_domain_common/">adiro_domain_common 4.0.1</a></li>
+<li><a href="../adiro_domain_common/4.0.0/">adiro_domain_common 4.0.0</a></li>
+<li><a href="../aec_domain_common/">aec_domain_common 3.0.1</a></li>
+<li><a href="../aec_domain_common/3.0.0/">aec_domain_common 3.0.0</a></li>
+<li><a href="../aec_domain_common/2.0.2/">aec_domain_common 2.0.2</a></li>
+<li><a href="../aec_domain_common/2.0.1/">aec_domain_common 2.0.1</a></li>
+<li><a href="../aec_domain_common/2.0.0/">aec_domain_common 2.0.0</a></li>
+<li><a href="../aec_domain_common/1.0.0/">aec_domain_common 1.0.0</a></li>
+</ul>
+</details>
+[![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_discipline_core.html){ .md-button target=_blank }
+[:material-file-document-outline: TTL source](https://w3id.org/adiro/adiro_discipline_core.ttl){ .md-button }
+[:material-file-code: pyLODE HTML](https://w3id.org/adiro/adiro_discipline_core.html){ .md-button }
+</div>
+
+The vocabulary that several discipline modules share: materials, section shapes and properties, structural components and loads, and the discipline classes. It sits between the drawing symbology and the discipline-specific modules, holding abstractions that more than one discipline reuses, so they are defined once.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core`
+- **Versioned IRI:** `https://w3id.org/adiro/adiro_discipline_core/4.0.1`
+- **Imports:** `adiro_drawing_metadata`
+
+## Interactive view
+
+<iframe src="https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_discipline_core.html" title="Adiro Discipline Core in OntoCanvas" loading="lazy" style="width: 100%; height: 480px; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 4px;"></iframe>
+
+## Dependencies
+
+Arrows point from an ontology to the ontologies it imports; the current ontology is highlighted.
+
+```mermaid
+%%{init: {"themeCSS": ".base .nodeLabel,.base .nodeLabel p,.base text,.base tspan{fill:#9ecbff !important;color:#9ecbff !important}.current .nodeLabel,.current .nodeLabel p,.current text,.current tspan{fill:#16305f !important;color:#16305f !important}"} }%%
+graph BT
+    adiro_provenance["Adiro Provenance"]
+    adiro_geometry["Adiro Geometry"]
+    adiro_drawing_metadata["Adiro Drawing Metadata"]
+    adiro_drawing_symbology["Adiro Drawing Symbology"]
+    adiro_discipline_core["Adiro Discipline Core"]
+    adiro_facade_discipline["Adiro Facade Discipline"]
+    adiro_geometry --> adiro_provenance
+    adiro_drawing_metadata --> adiro_geometry
+    adiro_drawing_metadata --> adiro_provenance
+    adiro_drawing_symbology --> adiro_drawing_metadata
+    adiro_discipline_core --> adiro_drawing_metadata
+    adiro_facade_discipline --> adiro_discipline_core
+    adiro_facade_discipline --> adiro_drawing_metadata
+    click adiro_provenance "../adiro_provenance/" "Adiro Provenance reference page"
+    click adiro_geometry "../adiro_geometry/" "Adiro Geometry reference page"
+    click adiro_drawing_metadata "../adiro_drawing_metadata/" "Adiro Drawing Metadata reference page"
+    click adiro_drawing_symbology "../adiro_drawing_symbology/" "Adiro Drawing Symbology reference page"
+    click adiro_discipline_core "../adiro_discipline_core/" "Adiro Discipline Core reference page"
+    click adiro_facade_discipline "../adiro_facade_discipline/" "Adiro Facade Discipline reference page"
+    classDef base fill:#16305f,stroke:#0e2247,stroke-width:2px,color:#9ecbff;
+    class adiro_provenance,adiro_geometry,adiro_drawing_metadata,adiro_drawing_symbology,adiro_facade_discipline base;
+    classDef current fill:#f58a1f,stroke:#16305f,stroke-width:3px,color:#16305f;
+    class adiro_discipline_core current;
+```
+
+## Classes
+
+### Aluminium {#Aluminium}
+
+Aluminium as a construction material.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Aluminium`
+- **Sub class of:** [Material](#Material)
+
+### Architectural {#Architectural}
+
+The architectural discipline.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Architectural`
+- **Sub class of:** [Discipline](#Discipline)
+
+### Asymmetrical {#Asymmetrical}
+
+An asymmetrical section or shape, without an axis of symmetry.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Asymmetrical`
+- **Sub class of:** [Symmetry](#Symmetry)
+
+### Beam {#Beam}
+
+A beam - a structural member that carries load across a span, usually horizontally.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Beam`
+- **Sub class of:** [Structural member](#StructuralMember)
+
+### Brick {#Brick}
+
+Brick used as a facing material.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Brick`
+- **Sub class of:** [Facing material](#FacingMaterial)
+
+### Cable {#Cable}
+
+A cable - a structural member that carries load in tension.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Cable`
+- **Sub class of:** [Linear structural component](#LinearStructuralComponent)
+
+### Channel (section) {#SectionChannel}
+
+Channel section - a structural section with a C-shaped (channel) profile.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#SectionChannel`
+- **Sub class of:** [Section shape](#SectionShape)
+
+*Example images:*
+
+![Channel (section) — example](https://w3id.org/adiro/adiro_discipline_core/exampleImage/SectionChannel_01.png)
+
+### Chord/bracing {#ChordBracing}
+
+A chord or bracing member of a truss or braced frame.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#ChordBracing`
+- **Sub class of:** [Structural member](#StructuralMember)
+
+### CHS {#CHS}
+
+Circular hollow section - a hollow structural section with a circular profile.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#CHS`
+- **Sub class of:** [Section shape](#SectionShape)
+
+*Example images:*
+
+![CHS — example](https://w3id.org/adiro/adiro_discipline_core/exampleImage/CHS_01.png)
+
+### Circular {#Circular}
+
+A circular shape.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Circular`
+- **Sub class of:** [Generic shape property](#GenericShapeProperty)
+
+### Civil {#Civil}
+
+Civil engineering discipline.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Civil`
+- **Sub class of:** [Discipline](#Discipline)
+
+### Clay {#Clay}
+
+Clay as a construction material, e.g. for bricks or tiles.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Clay`
+- **Sub class of:** [Material](#Material)
+
+### Column {#Column}
+
+A column - a vertical structural member that carries load in compression.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Column`
+- **Sub class of:** [Structural member](#StructuralMember)
+
+### Concrete {#Concrete}
+
+Concrete as a construction material.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Concrete`
+- **Sub class of:** [Material](#Material)
+
+### Dead Load {#DeadLoad}
+
+Dead load - the permanent, static load of a structure's own weight and fixed components.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#DeadLoad`
+- **Sub class of:** [Structural properties](#StructuralProperties)
+
+### Discipline {#Discipline}
+
+The engineering or architectural discipline associated with a [Layout](adiro_drawing_metadata.md#Layout).
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Discipline`
+
+### Electrical {#Electrical}
+
+The electrical-engineering discipline, part of [MEP](#MEP).
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Electrical`
+- **Sub class of:** [MEP](#MEP)
+
+### Facade {#Facade}
+
+The facade-engineering discipline.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Facade`
+- **Sub class of:** [Architectural](#Architectural)
+
+### Facing material {#FacingMaterial}
+
+Can be standalone label - material used for facing
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#FacingMaterial`
+
+### Fire life safety {#FireLifeSafety}
+
+The fire and life-safety discipline.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#FireLifeSafety`
+- **Sub class of:** [Architectural](#Architectural)
+
+### Function {#Function}
+
+The functional role of a drawing element.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Function`
+- **Sub class of:** [Functional properties](#FunctionalProperties)
+
+### Functional properties {#FunctionalProperties}
+
+General property category
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#FunctionalProperties`
+
+### Generic shape property {#GenericShapeProperty}
+
+A generic shape descriptor, such as circular, rectangular or square.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#GenericShapeProperty`
+- **Sub class of:** [Section properties](#SectionProperties)
+
+### Geometric properties {#GeometricProperties}
+
+General property category
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#GeometricProperties`
+
+### Glass {#Glass}
+
+Glass as a construction material.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Glass`
+- **Sub class of:** [Material](#Material)
+
+### I-section {#ISection}
+
+I-section - a structural section with an I- or H-shaped profile, such as a universal beam or column.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#ISection`
+- **Sub class of:** [Section shape](#SectionShape)
+
+*Example images:*
+
+![I-section — example](https://w3id.org/adiro/adiro_discipline_core/exampleImage/ISection_01.png)
+
+### Lighting {#Lighting}
+
+The lighting discipline, a specialisation of electrical.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Lighting`
+- **Sub class of:** [Electrical](#Electrical)
+
+### Linear structural component {#LinearStructuralComponent}
+
+A structural component that is essentially linear, such as a beam, column or cable.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#LinearStructuralComponent`
+- **Sub class of:** [Structural component](#StructuralComponent)
+
+### Masterplan {#Masterplan}
+
+The masterplanning discipline, covering site-wide planning.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Masterplan`
+- **Sub class of:** [Discipline](#Discipline)
+
+### Material {#Material}
+
+A construction material a drawing element is made of.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Material`
+- **Sub class of:** [Material properties](#MaterialProperties)
+
+### Material properties {#MaterialProperties}
+
+General property category
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#MaterialProperties`
+
+### Mechanical {#Mechanical}
+
+The mechanical-engineering discipline, part of [MEP](#MEP).
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Mechanical`
+- **Sub class of:** [MEP](#MEP)
+
+### MEP {#MEP}
+
+Mechanical, [Electrical](#Electrical), and [Plumbing](#Plumbing).
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#MEP`
+- **Sub class of:** [Discipline](#Discipline)
+
+### Metal {#Metal}
+
+Metal as a construction material, such as steel or aluminium.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Metal`
+- **Sub class of:** [Material](#Material)
+
+### Panel structural component {#PanelStructuralComponent}
+
+A structural component that is essentially a panel or plate, such as a slab or wall.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#PanelStructuralComponent`
+- **Sub class of:** [Structural component](#StructuralComponent)
+
+### Plumbing {#Plumbing}
+
+The plumbing discipline, part of [MEP](#MEP).
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Plumbing`
+- **Sub class of:** [MEP](#MEP)
+
+### Polycarbonate {#Polycarbonate}
+
+Polycarbonate, a transparent plastic used as a glazing material.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Polycarbonate`
+- **Sub class of:** [Material](#Material)
+
+### Precast {#Precast}
+
+Precast concrete, cast off-site in reusable moulds before installation.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Precast`
+- **Sub class of:** [Material](#Material)
+
+### Rectangular {#Rectangular}
+
+A rectangular shape.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Rectangular`
+- **Sub class of:** [Generic shape property](#GenericShapeProperty)
+
+### Restraint {#Restraint}
+
+A structural restraint - a support that limits the movement of a member.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Restraint`
+- **Sub class of:** [Structural properties](#StructuralProperties)
+
+### RHS {#RHS}
+
+Rectangular hollow section - a hollow structural section with a rectangular profile.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#RHS`
+- **Sub class of:** [Section shape](#SectionShape)
+
+*Example images:*
+
+![RHS — example](https://w3id.org/adiro/adiro_discipline_core/exampleImage/RHS_01.png)
+
+### Section properties {#SectionProperties}
+
+General property category
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#SectionProperties`
+
+### Section shape {#SectionShape}
+
+The cross-sectional profile of a structural section, such as an I-section, [CHS](#CHS) or [RHS](#RHS).
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#SectionShape`
+- **Sub class of:** [Section properties](#SectionProperties)
+
+### Slab {#Slab}
+
+A slab - a flat horizontal structural panel, such as a floor or roof slab.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Slab`
+- **Sub class of:** [Panel structural component](#PanelStructuralComponent)
+
+### Square {#Square}
+
+A square shape.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Square`
+- **Sub class of:** [Generic shape property](#GenericShapeProperty)
+
+### Stone {#Stone}
+
+Stone used as a facing material.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Stone`
+- **Sub class of:** [Facing material](#FacingMaterial)
+
+### Structural {#Structural}
+
+The structural-engineering discipline.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Structural`
+- **Sub class of:** [Discipline](#Discipline)
+
+### Structural component {#StructuralComponent}
+
+Structural component - part of support type
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#StructuralComponent`
+
+### Structural member {#StructuralMember}
+
+A linear structural member, such as a beam or column.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#StructuralMember`
+- **Sub class of:** [Linear structural component](#LinearStructuralComponent)
+
+### Structural properties {#StructuralProperties}
+
+General property category
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#StructuralProperties`
+
+### Symmetrical {#Symmetrical}
+
+A symmetrical section or shape, with an axis of symmetry.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Symmetrical`
+- **Sub class of:** [Symmetry](#Symmetry)
+
+### Symmetry {#Symmetry}
+
+Whether a section or shape is symmetrical or asymmetrical.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Symmetry`
+- **Sub class of:** [Section properties](#SectionProperties)
+
+### Terracotta {#Terracotta}
+
+Terracotta (fired clay) used as a facing material.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Terracotta`
+- **Sub class of:** [Facing material](#FacingMaterial)
+
+### Timber {#Timber}
+
+Timber (wood) as a construction material.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Timber`
+- **Sub class of:** [Material](#Material)
+
+### Top hat {#TopHat}
+
+Top-hat section - a cold-formed section with a top-hat-shaped profile.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#TopHat`
+- **Sub class of:** [Section shape](#SectionShape)
+
+*Example images:*
+
+![Top hat — example](https://w3id.org/adiro/adiro_discipline_core/exampleImage/TopHat_01.png)
+
+### Upstand {#Upstand}
+
+An upstand - an upward projection at the edge of a slab or panel, such as a parapet.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Upstand`
+- **Sub class of:** [Panel structural component](#PanelStructuralComponent)
+
+### Wall {#Wall}
+
+A wall - a vertical structural panel.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#Wall`
+- **Sub class of:** [Panel structural component](#PanelStructuralComponent)
+
+## Object Properties
+
+### hasDiscipline {#hasDiscipline}
+
+Links a [Layout](adiro_drawing_metadata.md#Layout) to an AEC discipline. Discipline characterises the Layout itself, not its content type — the two are orthogonal axes.
+
+- **IRI:** `https://w3id.org/adiro/adiro_discipline_core#hasDiscipline`
+- **Domain:** [`metadata:Layout`](adiro_drawing_metadata.md#Layout)
+- **Range:** [Discipline](#Discipline)

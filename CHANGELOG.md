@@ -9,12 +9,20 @@ ADIRO's modules are versioned **independently** (per-module SemVer — see
 | `adiro_provenance` | 2.3.0 | [changelogs/adiro_provenance.md](changelogs/adiro_provenance.md) |
 | `adiro_geometry` | 3.1.0 | [changelogs/adiro_geometry.md](changelogs/adiro_geometry.md) |
 | `adiro_drawing_metadata` | 7.1.0 | [changelogs/adiro_drawing_metadata.md](changelogs/adiro_drawing_metadata.md) |
-| `adiro_common_symbols` | 5.0.1 | [changelogs/adiro_common_symbols.md](changelogs/adiro_common_symbols.md) |
-| `adiro_domain_common` | 4.0.1 | [changelogs/adiro_domain_common.md](changelogs/adiro_domain_common.md) |
-| `adiro_facade_domain` | 4.0.1 | [changelogs/adiro_facade_domain.md](changelogs/adiro_facade_domain.md) |
+| `adiro_drawing_symbology` | 5.0.1 | [changelogs/adiro_drawing_symbology.md](changelogs/adiro_drawing_symbology.md) |
+| `adiro_discipline_core` | 4.0.1 | [changelogs/adiro_discipline_core.md](changelogs/adiro_discipline_core.md) |
+| `adiro_facade_discipline` | 4.0.1 | [changelogs/adiro_facade_discipline.md](changelogs/adiro_facade_discipline.md) |
 
 The versions above are the latest released versions. Changes not yet released accumulate in each module's
 `[Unreleased]` changelog section until the next release cut.
+
+Three modules were renamed again ([#281](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/281)); their former modules are deprecated, stay published, and their history continues under the new names.
+
+| Former module | Final release | Changelog |
+|---|---|---|
+| `adiro_common_symbols` | 5.0.1 | [changelogs/adiro_common_symbols.md](changelogs/adiro_common_symbols.md) |
+| `adiro_domain_common` | 4.0.1 | [changelogs/adiro_domain_common.md](changelogs/adiro_domain_common.md) |
+| `adiro_facade_domain` | 4.0.1 | [changelogs/adiro_facade_domain.md](changelogs/adiro_facade_domain.md) |
 
 The `adiro_*` modules were called `aec_*` until the final releases below ([#171](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/171)); those releases are deprecated, stay published, and their history is in their own changelogs. See [Moving from `aec_*` to `adiro_*`](docs/migrating-from-aec.md).
 

@@ -26,7 +26,7 @@ thing in this document and is not a redundancy question at all.**
 | --- | --- | --- |
 | **1** | **UC-01 already implements title-block search, and it made the *opposite* architectural decision to RES-A-9 finding 2 — deliberately, and under review.** | The §1.1 reconciliation is not "reconcile with terms that drifted in". It is "choose between two reviewed architectures". Reframes pass 0 entirely |
 | **2** | **~40 of the 73 terms have no competency question behind them, from any use case.** | Either the extraction work needs its own ORSD, or the vocabulary should be cut to what the use cases demand. Currently it violates the repo's own stated traceability rule |
-| **3** | `Discipline` would duplicate `dcommon:Discipline`, a class hierarchy UC-01 already reuses — and a SKOS scheme would *lose* the sub-discipline reasoning UC-01 chose it for | 🟢 Core → 🔴 Redundant |
+| **3** | `Discipline` would duplicate `dcore:Discipline`, a class hierarchy UC-01 already reuses — and a SKOS scheme would *lose* the sub-discipline reasoning UC-01 chose it for | 🟢 Core → 🔴 Redundant |
 | **4** | `hasNorthPointOrientation` duplicates UC-07's `northArrowAngle`, which is better specified | 🟠 Marginal → 🔴 Redundant |
 | **5** | `scale` duplicates `dm:hasScale`; the scale story is already two properties by design (string + numeric ratio) | 🟢 Core → 🔴 Redundant (the *field* is core; the *term* is not) |
 | **6** | DANO already models the extraction-provenance layer (§10) — including a timestamp ADIRO omits — and its `DrawingElementMeta` is a worked reification pattern | Bears directly on the pass-5 blocker |
@@ -87,10 +87,10 @@ conversation in the whole plan.
 
 Consolidating the four ORSD traceability matrices, the terms with a CQ behind them are:
 
-| Use case | Status | Terms it needs (all already in `adiro_drawing_metadata` / `adiro_domain_common` / `adiro_common_symbols`) |
+| Use case | Status | Terms it needs (all already in `adiro_drawing_metadata` / `adiro_discipline_core` / `adiro_drawing_symbology`) |
 | --- | --- | --- |
-| **UC-01** Titleblock search | ✅ implemented | `DrawingSheet`, `Layout`, `LayoutContentType`, `DrawingRevision`, `Project`, `Person`, `StatusCode`, `DrawingPackage`, `dcommon:Discipline`; `drawingIdentifier`, `drawingTitle`, `hasScale`, `sheetSize`, `revisionCode`, `issueDate`, `personName`, `projectName`, `projectNumber`, `packageName`, `statusLabel`; `contains`, `hasProperty`, `hasDiscipline`, `hasRevision`, `isRevisionOf`, `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `hasStatusCode` |
-| **UC-03** Cross-sheet linking | ✅ implemented | `csymbol:ReferenceSymbol`, `hasReferenceSymbol`, `referencesLayout`, `layoutIdentifier` |
+| **UC-01** Titleblock search | ✅ implemented | `DrawingSheet`, `Layout`, `LayoutContentType`, `DrawingRevision`, `Project`, `Person`, `StatusCode`, `DrawingPackage`, `dcore:Discipline`; `drawingIdentifier`, `drawingTitle`, `hasScale`, `sheetSize`, `revisionCode`, `issueDate`, `personName`, `projectName`, `projectNumber`, `packageName`, `statusLabel`; `contains`, `hasProperty`, `hasDiscipline`, `hasRevision`, `isRevisionOf`, `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `hasStatusCode` |
+| **UC-03** Cross-sheet linking | ✅ implemented | `dsym:ReferenceSymbol`, `hasReferenceSymbol`, `referencesLayout`, `layoutIdentifier` |
 | **UC-06** Content aggregation | ⚠️ draft | `Material`, `HazardClassification`, `depictsMaterial`, `isDepictedOn`, `hasHazardClassification`, `materialName`, `materialSymbol`, `hazardLabel` — **none of them title-block terms** |
 | **UC-07** Wall orientation | ⚠️ draft | `BuildingElement`, `Wall`, `FacingDirection`, `northArrowAngle`, `scaleRatio`, wall dimension properties — **one overlap: the north arrow** |
 
@@ -102,7 +102,7 @@ vocabulary is required to answer any existing CQ.
 
 | Term | Rated in #61 | Revised | Why |
 | --- | --- | --- | --- |
-| `Discipline` (SKOS scheme) | 🟢 Core | 🔴 **Redundant** | `dcommon:Discipline` is a full class hierarchy (`Structural`, `MEP > Mechanical / Electrical > Lighting / Plumbing`, `Architectural > Facade / FireLifeSafety`, `Masterplan`, + `Civil`). UC-01 FR 5 reuses it and **explicitly dropped** a `disciplineCode` string (change G3) because `rdf:type` checks against the hierarchy give **automatic sub-discipline rollup** — querying `dcommon:MEP` matches `Mechanical`, `Electrical`, `Plumbing`, `Lighting` via `rdfs:subClassOf`. A flat SKOS scheme loses exactly that. Reuse `dcommon:Discipline` + `dcommon:hasDiscipline` |
+| `Discipline` (SKOS scheme) | 🟢 Core | 🔴 **Redundant** | `dcore:Discipline` is a full class hierarchy (`Structural`, `MEP > Mechanical / Electrical > Lighting / Plumbing`, `Architectural > Facade / FireLifeSafety`, `Masterplan`, + `Civil`). UC-01 FR 5 reuses it and **explicitly dropped** a `disciplineCode` string (change G3) because `rdf:type` checks against the hierarchy give **automatic sub-discipline rollup** — querying `dcore:MEP` matches `Mechanical`, `Electrical`, `Plumbing`, `Lighting` via `rdfs:subClassOf`. A flat SKOS scheme loses exactly that. Reuse `dcore:Discipline` + `dcore:hasDiscipline` |
 | `hasNorthPointOrientation` | 🟠 Marginal | 🔴 **Redundant** | UC-07 specifies `northArrowAngle` (`xsd:decimal`, degrees clockwise from page-up) on the drawing, with a stated datum convention, and **explicitly rejects** modelling the arrow as an entity. ADIRO's version is the same measurement with a vaguer name, a different datatype and no datum. It is also a drawing-level datum, not a title-block field |
 | `scale` | 🟢 Core | 🔴 **Redundant as a term** | `dm:hasScale` (string) exists from UC-01 FR 1, and UC-07 adds `scaleRatio` (decimal) for arithmetic. The scale story is *already* two properties by design. A third string property is duplication. **The field remains core to extraction** — it just binds to `dm:hasScale` |
 | `dimensionUnits` | 🟡 Useful | ~~🟡 Useful — confirmed genuinely new~~ → 🔴 **Withdrawn 2026-09-14, on evidence** | Nothing in any use case or module covers the German `1:50 – m,cm` convention, and **that finding still stands** — this is not a redundancy call. It was withdrawn because it appeared in none of the four surveyed projects and so fails the `<40%` rule. The corpus is UK/US with no German project in it, so treat this as *unevidenced here*, not *not a real field* — see [titleblock-field-survey-2026-09.md](titleblock-field-survey-2026-09.md) §7.3 |
@@ -218,7 +218,7 @@ Out of scope for RES-89, but this review found it and it should not be lost:
 
 | DANO terms | Relevant to | Note |
 | --- | --- | --- |
-| `SectionSymbol`, `Terminator`, `refersTo`, `isReferredToBy` | **UC-03** cross-sheet linking | UC-03 mints `csymbol:ReferenceSymbol` and `referencesLayout` (no inverse — see [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21)). DANO has a published equivalent pattern. UC-03 is already implemented, so this is an alignment question, not a rebuild — but worth knowing before UC-03 v0.3 |
+| `SectionSymbol`, `Terminator`, `refersTo`, `isReferredToBy` | **UC-03** cross-sheet linking | UC-03 mints `dsym:ReferenceSymbol` and `referencesLayout` (no inverse — see [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21)). DANO has a published equivalent pattern. UC-03 is already implemented, so this is an alignment question, not a rebuild — but worth knowing before UC-03 v0.3 |
 | `Dimension`, `DimensionChain`, `DimensionLine`, `AxisLine`, `hasGeometry` | **UC-07** wall measurement | UC-07 needs on-drawing lengths and angles. DANO models dimension lines and geometry natively |
 | `depicts`, `isDepictedBy` | **UC-06** materials | UC-06 mints `depictsMaterial` / `isDepictedOn`. DANO's generic `depicts` / `isDepictedBy` could be the parent property |
 | `TextField`, `TextElement`, `isText` | The title block itself | A title block *is* a `dano:TextField` (a composite of `min 2` `TextElement`s). This is **complementary, not competing**: DANO gives the CV layer (here is a text region, here is its string), `tb:` gives the semantic layer (this string means "checked by"). The clean division is `dano:` for what was seen, `tb:` for what it means |
@@ -233,7 +233,7 @@ this review. **#61 has not yet been updated** — apply these before it is used 
 
 | Term | #61 | Revised | Driver |
 | --- | --- | --- | --- |
-| `Discipline` | 🟢 Core | 🔴 Redundant | `dcommon:Discipline` (§2.3) |
+| `Discipline` | 🟢 Core | 🔴 Redundant | `dcore:Discipline` (§2.3) |
 | `scale` | 🟢 Core | 🔴 Redundant | `dm:hasScale` + UC-07 `scaleRatio` (§2.3) |
 | `hasNorthPointOrientation` | 🟠 Marginal | 🔴 Redundant | UC-07 `northArrowAngle` (§2.3) |
 | `MLModel` | 🟠 Over-modelled | 🟠 **Confirmed** — drop to a literal | DANO uses strings (§3.2) |
@@ -256,7 +256,7 @@ change shape. The mint shrinks from ~48 to roughly **44**, and gains a timestamp
 | --- | --- | --- | --- |
 | 1 | **Sheet-level (UC-01) vs titleblock-level (RES-A-9) placement** — including the "pipeline stage" fourth option in §2.1 | UC-01 owner + Alessio | pass 1. Supersedes the §1.1 framing |
 | 2 | **Write an extraction ORSD, or cut to use-case demand** (§2.4) | Alessio | the legitimacy of ~40 terms |
-| 3 | Confirm `dcommon:Discipline` reuse and drop the SKOS `Discipline` | — | pass 3 |
+| 3 | Confirm `dcore:Discipline` reuse and drop the SKOS `Discipline` | — | pass 3 |
 | 4 | Drop `scale`, `hasNorthPointOrientation`; bind to `dm:hasScale` / UC-07 `northArrowAngle` | — | pass 2 |
 | 5 | ~~**Align provenance to `dano:` rather than minting parallel terms**~~; add the timestamp | — | **Resolved.** Timestamp added as `aprov:inferredAt`; the alignment half is **reversed** — see the [DAnO comparison](../../../design-decisions/dano-comparison.md) |
 | 6 | Use DANO's `DrawingElementMeta` as evidence in the RDF-star vs reification decision | — | pass 5 |

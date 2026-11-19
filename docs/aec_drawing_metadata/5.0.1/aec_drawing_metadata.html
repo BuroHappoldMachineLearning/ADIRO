@@ -443,7 +443,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Supporting visual region on a drawing sheet (titleblock, legend, etc.). Renamed from :Metadata to avoid confusion with semantic metadata properties on DrawingSheet.</p></td>
+              <td><p>Supporting visual region on a drawing sheet (titleblock, legend, etc.). Renamed from :Metadata to avoid confusion with semantic metadata properties on <a href="#DrawingSheet">DrawingSheet</a>.</p></td>
             </tr>
             <tr>
               <th>
@@ -501,7 +501,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc. May itself contain a KeyPlan, Legend or RevisionTable, which are commonly printed inside the title-block strip rather than standing alone on the page; all three are optional, and each may alternatively be contained directly by the DrawingSheet.</p></td>
+              <td><p>Titleblock containing information about the drawing, for example project name, drawing title, drawing number, etc. May itself contain a <a href="#KeyPlan">KeyPlan</a>, <a href="#Legend">Legend</a> or <a href="#RevisionTable">RevisionTable</a>, which are commonly printed inside the title-block strip rather than standing alone on the page; all three are optional, and each may alternatively be contained directly by the <a href="#DrawingSheet">DrawingSheet</a>.</p></td>
             </tr>
             <tr>
               <th>
@@ -708,7 +708,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A small locator diagram on a drawing sheet showing where the sheet's subject sits within the wider building or site, typically with the relevant area hatched or outlined. A graphical region rather than a text field: its value is the diagram, so it is modelled here as a detectable region alongside Legend and RevisionTable, not as an asserted title-block property. Contained either by a Titleblock, where it is printed inside the title-block strip, or directly by a DrawingSheet where it stands alone on the page; both placements occur and both are optional.</p></td>
+              <td><p>A small locator diagram on a drawing sheet showing where the sheet's subject sits within the wider building or site, typically with the relevant area hatched or outlined. A graphical region rather than a text field: its value is the diagram, so it is modelled here as a detectable region alongside <a href="#Legend">Legend</a> and <a href="#RevisionTable">RevisionTable</a>, not as an asserted title-block property. Contained either by a <a href="#Titleblock">Titleblock</a>, where it is printed inside the title-block strip, or directly by a <a href="#DrawingSheet">DrawingSheet</a> where it stands alone on the page; both placements occur and both are optional.</p></td>
             </tr>
             <tr>
               <th>
@@ -1134,7 +1134,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Drawing layout - contained by DrawingSheet. Contains DrawingElement(s), annotations, drawing type, and content.</p></td>
+              <td><p>Drawing layout - contained by <a href="#DrawingSheet">DrawingSheet</a>. Contains <a href="#Drawingelement">DrawingElement</a>(s), annotations, drawing type, and content.</p></td>
             </tr>
             <tr>
               <th>
@@ -1661,7 +1661,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Enumerated orientation values used with hasOrientation.</p></td>
+              <td><p>Enumerated orientation values used with <a href="#hasOrientation">hasOrientation</a>.</p></td>
             </tr>
             <tr>
               <th>
@@ -1691,7 +1691,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Element depicted on a drawing. Contained by Layout. Can be a <a href="../../adiro_domain_common.html#Facade">Facade</a> system or <a href="../../adiro_domain_common.html#Facade">Facade</a> component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc.</p></td>
+              <td><p>Element depicted on a drawing. Contained by <a href="#Layout">Layout</a>. Can be a <a href="../../adiro_domain_common.html#Facade">Facade</a> system or <a href="../../adiro_domain_common.html#Facade">Facade</a> component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc.</p></td>
             </tr>
             <tr>
               <th>
@@ -1737,7 +1737,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A specific revision of a DrawingSheet. Carries revision-specific metadata: code, issue date, status, and role-differentiated person attribution.</p></td>
+              <td><p>A specific revision of a <a href="#DrawingSheet">DrawingSheet</a>. Carries revision-specific metadata: code, issue date, status, and role-differentiated person attribution.</p></td>
             </tr>
             <tr>
               <th>
@@ -1812,7 +1812,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A project under which DrawingSheets are grouped.</p></td>
+              <td><p>A project under which <a href="#DrawingSheet">DrawingSheet</a>s are grouped.</p></td>
             </tr>
             <tr>
               <th>
@@ -1863,7 +1863,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A named individual associated with a DrawingRevision in some role (author, checker, approver). The role is expressed by the object property, not by subclassing.</p></td>
+              <td><p>A named individual associated with a <a href="#DrawingRevision">DrawingRevision</a> in some role (author, checker, approver). The role is expressed by the object property, not by subclassing.</p></td>
             </tr>
             <tr>
               <th>
@@ -1971,7 +1971,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Controlled-vocabulary status assigned to a DrawingRevision, e.g. IFC (Issued for Construction), IFR (Issued for Review), AFC (Approved for Construction).</p></td>
+              <td><p>Controlled-vocabulary status assigned to a <a href="#DrawingRevision">DrawingRevision</a>, e.g. IFC (Issued for Construction), IFR (Issued for Review), AFC (Approved for Construction).</p></td>
             </tr>
             <tr>
               <th>
@@ -2012,7 +2012,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A grouping of DrawingSheets within a Project, e.g. a volume or submission package.</p></td>
+              <td><p>A grouping of <a href="#DrawingSheet">DrawingSheet</a>s within a <a href="#Project">Project</a>, e.g. a volume or submission package.</p></td>
             </tr>
             <tr>
               <th>
@@ -2115,7 +2115,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>One evidenced occurrence of drawing-identifier (sheet-identifier) text on a source drawing, distinct from the DrawingSheet that the text may denote. Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted sheet resolution: an unlocalisable text block may retain its accepted denotesDrawingSheet edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed.</p></td>
+              <td><p>One evidenced occurrence of drawing-identifier (sheet-identifier) text on a source drawing, distinct from the <a href="#DrawingSheet">DrawingSheet</a> that the text may denote. Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted sheet resolution: an unlocalisable text block may retain its accepted <a href="#denotesDrawingSheet">denotesDrawingSheet</a> edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed.</p></td>
             </tr>
             <tr>
               <th>
@@ -2177,7 +2177,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>One evidenced occurrence of layout-identifier text (a small integer or letter), distinct from a target Layout. A complete inline reference may contain several such occurrences, attached with contains; no target is inferred from matching text alone.</p></td>
+              <td><p>One evidenced occurrence of layout-identifier text (a small integer or letter), distinct from a target <a href="#Layout">Layout</a>. A complete inline reference may contain several such occurrences, attached with contains; no target is inferred from matching text alone.</p></td>
             </tr>
             <tr>
               <th>
@@ -2217,7 +2217,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A complete inline textual expression relating layout number(s) to a sheet number, such as '1, 3, 5 &amp; 7/S601'. The component mentions retain their own identities; accepted Layout targets are connected separately by inlineReferencesLayout. Expected composition: one sheet-identifier mention and at least one layout-identifier mention, attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction.</p></td>
+              <td><p>A complete inline textual expression relating layout number(s) to a sheet number, such as '1, 3, 5 &amp; 7/S601'. The component mentions retain their own identities; accepted <a href="#Layout">Layout</a> targets are connected separately by <a href="#inlineReferencesLayout">inlineReferencesLayout</a>. Expected composition: one sheet-identifier mention and at least one layout-identifier mention, attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction.</p></td>
             </tr>
             <tr>
               <th>
@@ -2268,7 +2268,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A drawing-identifier occurrence that itself constitutes a complete reference. One individual is both the DrawingIdentifierMention and the ReferenceExpression: no duplicate wrapper, self-directed hasDrawingIdentifierMention edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified.</p></td>
+              <td><p>A drawing-identifier occurrence that itself constitutes a complete reference. One individual is both the <a href="#DrawingIdentifierMention">DrawingIdentifierMention</a> and the <a href="#ReferenceExpression">ReferenceExpression</a>: no duplicate wrapper, self-directed hasDrawingIdentifierMention edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified.</p></td>
             </tr>
             <tr>
               <th>
@@ -2491,7 +2491,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Named containment: a DrawingSheet contains one or more Layouts.</p></td>
+              <td><p>Named containment: a <a href="#DrawingSheet">DrawingSheet</a> contains one or more <a href="#Layout">Layout</a>s.</p></td>
             </tr>
             <tr>
               <th>
@@ -2543,7 +2543,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Named characterisation: a Layout has exactly one LayoutContentType.</p></td>
+              <td><p>Named characterisation: a <a href="#Layout">Layout</a> has exactly one <a href="#Layoutcontenttype">LayoutContentType</a>.</p></td>
             </tr>
             <tr>
               <th>
@@ -2595,7 +2595,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A DrawingSheet compositionally contains its DrawingRevisions. To navigate from a revision back to its sheet, use the SPARQL inverse path ^metadata:hasRevision - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).</p></td>
+              <td><p>A <a href="#DrawingSheet">DrawingSheet</a> compositionally contains its <a href="#DrawingRevision">DrawingRevision</a>s. To navigate from a revision back to its sheet, use the SPARQL inverse path ^metadata:hasRevision - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).</p></td>
             </tr>
             <tr>
               <th>
@@ -2647,7 +2647,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Associates a DrawingSheet with the Project it belongs to.</p></td>
+              <td><p>Associates a <a href="#DrawingSheet">DrawingSheet</a> with the <a href="#Project">Project</a> it belongs to.</p></td>
             </tr>
             <tr>
               <th>
@@ -2688,7 +2688,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Associates a DrawingSheet with the DrawingPackage it belongs to.</p></td>
+              <td><p>Associates a <a href="#DrawingSheet">DrawingSheet</a> with the <a href="#DrawingPackage">DrawingPackage</a> it belongs to.</p></td>
             </tr>
             <tr>
               <th>
@@ -2729,7 +2729,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The Person who authored this DrawingRevision.</p></td>
+              <td><p>The Person who authored this <a href="#DrawingRevision">DrawingRevision</a>.</p></td>
             </tr>
             <tr>
               <th>
@@ -2770,7 +2770,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The Person who checked this DrawingRevision.</p></td>
+              <td><p>The Person who checked this <a href="#DrawingRevision">DrawingRevision</a>.</p></td>
             </tr>
             <tr>
               <th>
@@ -2811,7 +2811,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The Person who approved this DrawingRevision.</p></td>
+              <td><p>The Person who approved this <a href="#DrawingRevision">DrawingRevision</a>.</p></td>
             </tr>
             <tr>
               <th>
@@ -2852,7 +2852,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The controlled-vocabulary StatusCode assigned to a DrawingRevision.</p></td>
+              <td><p>The controlled-vocabulary <a href="#StatusCode">StatusCode</a> assigned to a <a href="#DrawingRevision">DrawingRevision</a>.</p></td>
             </tr>
             <tr>
               <th>
@@ -2904,7 +2904,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Links a titleblock region to the drawing sheet whose metadata it asserts. Range is DrawingSheet rather than a separate Document class: the sheet is the unit UC-01 established as searchable, and introducing a competing Document class would deepen an unresolved placement question rather than settle it.</p></td>
+              <td><p>Links a titleblock region to the drawing sheet whose metadata it asserts. Range is <a href="#DrawingSheet">DrawingSheet</a> rather than a separate Document class: the sheet is the unit UC-01 established as searchable, and introducing a competing Document class would deepen an unresolved placement question rather than settle it.</p></td>
             </tr>
             <tr>
               <th>
@@ -2945,7 +2945,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from assertsOriginator, which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value.</p></td>
+              <td><p>The organisation commissioning the work — the client or employer — as named by this title block. Universal on AEC title blocks and absent from ISO 7200, which provides only a legal-owner field. Distinct from <a href="#assertsOriginator">assertsOriginator</a>, which names the organisation that produced the sheet: on an in-house drawing both may print the same name, so the distinction is carried by the property, not by the value.</p></td>
             </tr>
             <tr>
               <th>
@@ -2986,7 +2986,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. This is the practice or consultancy whose name and logo appear as author of the sheet. Distinct from assertsClient, which names who commissioned the work.</p></td>
+              <td><p>The organisation that produced the drawing — the originator in ISO 19650-2 terms, and one segment of the information-container identifier. This is the practice or consultancy whose name and logo appear as author of the sheet. Distinct from <a href="#assertsClient">assertsClient</a>, which names who commissioned the work.</p></td>
             </tr>
             <tr>
               <th>
@@ -3065,7 +3065,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The accepted DrawingSheet identity denoted by one sheet-number occurrence. It does not assert that a Layout target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict.</p></td>
+              <td><p>The accepted <a href="#DrawingSheet">DrawingSheet</a> identity denoted by one sheet-number occurrence. It does not assert that a <a href="#Layout">Layout</a> target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict.</p></td>
             </tr>
             <tr>
               <th>
@@ -3147,7 +3147,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>An accepted target Layout of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges.</p></td>
+              <td><p>An accepted target <a href="#Layout">Layout</a> of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges.</p></td>
             </tr>
             <tr>
               <th>
@@ -3305,7 +3305,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Scale notation, e.g. '1:50'. Applies to a DrawingSheet where one scale governs the whole sheet, and to a Layout where the sheet carries several drawings at different scales — a detail at 1:5 beside a plan at 1:100 is ordinary. Where a Layout carries its own value it is the more specific one and describes that drawing; the sheet-level value, where both are present, is the sheet's nominal or predominant scale rather than a claim about every layout on it.</p></td>
+              <td><p>Scale notation, e.g. '1:50'. Applies to a <a href="#DrawingSheet">DrawingSheet</a> where one scale governs the whole sheet, and to a <a href="#Layout">Layout</a> where the sheet carries several drawings at different scales — a detail at 1:5 beside a plan at 1:100 is ordinary. Where a <a href="#Layout">Layout</a> carries its own value it is the more specific one and describes that drawing; the sheet-level value, where both are present, is the sheet's nominal or predominant scale rather than a claim about every layout on it.</p></td>
             </tr>
             <tr>
               <th>
@@ -3369,7 +3369,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The scale of a DrawingSheet as a whole, e.g. '1:50', or a note such as 'NTS' or 'As shown'. It is most often printed in the title block, and can also appear in a general note or another area outside any layout. It is the sheet's nominal or predominant scale, not a claim about every layout on it: where a Layout prints its own scale, that layoutScale is the more specific value for that drawing. A layout's scale is not copied into drawingScale, because a sheet can gain layouts and the scale of one of them would then no longer describe the sheet. A sub-property of hasScale, so every drawingScale value is also a hasScale value of the sheet.</p></td>
+              <td><p>The scale of a <a href="#DrawingSheet">DrawingSheet</a> as a whole, e.g. '1:50', or a note such as 'NTS' or 'As shown'. It is most often printed in the title block, and can also appear in a general note or another area outside any layout. It is the sheet's nominal or predominant scale, not a claim about every layout on it: where a <a href="#Layout">Layout</a> prints its own scale, that <a href="#layoutScale">layoutScale</a> is the more specific value for that drawing. A layout's scale is not copied into drawingScale, because a sheet can gain layouts and the scale of one of them would then no longer describe the sheet. A sub-property of <a href="#hasScale">hasScale</a>, so every drawingScale value is also a <a href="#hasScale">hasScale</a> value of the sheet.</p></td>
             </tr>
             <tr>
               <th>
@@ -3418,7 +3418,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Sheet size designation, e.g. 'A1', 'A0'. Named for the sheet of paper, which has a size; the printed fields of the drawing itself say 'drawing' (drawingIdentifier, drawingTitle, drawingScale). 'Drawing size' is a synonym of this term, not a second term.</p></td>
+              <td><p>Sheet size designation, e.g. 'A1', 'A0'. Named for the sheet of paper, which has a size; the printed fields of the drawing itself say 'drawing' (<a href="#drawingIdentifier">drawingIdentifier</a>, <a href="#drawingTitle">drawingTitle</a>, <a href="#drawingScale">drawingScale</a>). 'Drawing size' is a synonym of this term, not a second term.</p></td>
             </tr>
             <tr>
               <th>
@@ -3456,7 +3456,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Identifier for a Layout within its parent DrawingSheet. Also known as 'layout number'. Typically a small integer or letter ('1', '2', 'A').</p></td>
+              <td><p>Identifier for a <a href="#Layout">Layout</a> within its parent <a href="#DrawingSheet">DrawingSheet</a>. Also known as 'layout number'. Typically a small integer or letter ('1', '2', 'A').</p></td>
             </tr>
             <tr>
               <th>
@@ -3494,7 +3494,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The caption naming an individual Layout, distinct from the sheet-level drawingTitle. A sheet routinely carries several drawings — details, sections, plans at different scales — each with its own printed title such as 'Mullion Head Detail' or 'Ground Floor Plan'. Pairs with layoutIdentifier as title-to-number: the identifier says which layout, this says what it depicts.</p></td>
+              <td><p>The caption naming an individual <a href="#Layout">Layout</a>, distinct from the sheet-level <a href="#drawingTitle">drawingTitle</a>. A sheet routinely carries several drawings — details, sections, plans at different scales — each with its own printed title such as 'Mullion Head Detail' or 'Ground Floor Plan'. Pairs with <a href="#layoutIdentifier">layoutIdentifier</a> as title-to-number: the identifier says which layout, this says what it depicts.</p></td>
             </tr>
             <tr>
               <th>
@@ -3532,7 +3532,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The scale printed in an individual Layout's own caption, e.g. '1:5' for a detail on a sheet whose plan is drawn at 1:100, or a note such as 'NTS' or 'As shown'. Where a Layout carries one, it is the more specific value and describes that drawing; the sheet-level drawingScale is only the sheet's nominal scale. Where a Layout prints no scale, no layoutScale is recorded: it is left empty, not filled from the sheet. A sub-property of hasScale, so every layoutScale value is also a hasScale value of the layout.</p></td>
+              <td><p>The scale printed in an individual <a href="#Layout">Layout</a>'s own caption, e.g. '1:5' for a detail on a sheet whose plan is drawn at 1:100, or a note such as 'NTS' or 'As shown'. Where a <a href="#Layout">Layout</a> carries one, it is the more specific value and describes that drawing; the sheet-level <a href="#drawingScale">drawingScale</a> is only the sheet's nominal scale. Where a <a href="#Layout">Layout</a> prints no scale, no layoutScale is recorded: it is left empty, not filled from the sheet. A sub-property of <a href="#hasScale">hasScale</a>, so every layoutScale value is also a <a href="#hasScale">hasScale</a> value of the layout.</p></td>
             </tr>
             <tr>
               <th>
@@ -3733,7 +3733,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Project number.</p></td>
+              <td><p><a href="#Project">Project</a> number.</p></td>
             </tr>
             <tr>
               <th>
@@ -3847,7 +3847,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>The name of an organisation as printed. Parallels personName. Verbatim: not normalised, expanded or translated at extraction time.</p></td>
+              <td><p>The name of an organisation as printed. Parallels <a href="#personName">personName</a>. Verbatim: not normalised, expanded or translated at extraction time.</p></td>
             </tr>
             <tr>
               <th>
@@ -3885,7 +3885,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>A second (or third) identifier the title block prints for the same sheet, issued by a system other than the one drawingIdentifier is read from — a design-team-internal number, a client/EDMS document number, or a sketch/site-advice reference. Stored whole and verbatim, not parsed into segments; which system issued it is not modelled as a controlled vocabulary here, so that distinction is carried by extractionHint only.</p></td>
+              <td><p>A second (or third) identifier the title block prints for the same sheet, issued by a system other than the one <a href="#drawingIdentifier">drawingIdentifier</a> is read from — a design-team-internal number, a client/EDMS document number, or a sketch/site-advice reference. Stored whole and verbatim, not parsed into segments; which system issued it is not modelled as a controlled vocabulary here, so that distinction is carried by <a href="#extractionhint">extractionHint</a> only.</p></td>
             </tr>
             <tr>
               <th>
@@ -4015,7 +4015,7 @@ td {
               <th>
                 <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
               </th>
-              <td><p>Presentation hint for computer-vision annotation tooling: when true, the class is presented apart from the required labels (on the trailing side of the label panel rather than the default leading side) and may be left out by annotators, for example a discipline picked as an attribute of a drawing rather than drawn as a shape. Independent of isComputerVisionLabel. Carries no reasoning weight.</p></td>
+              <td><p>Presentation hint for computer-vision annotation tooling: when true, the class is presented apart from the required labels (on the trailing side of the label panel rather than the default leading side) and may be left out by annotators, for example a discipline picked as an attribute of a drawing rather than drawn as a shape. Independent of <a href="#isComputerVisionLabel">isComputerVisionLabel</a>. Carries no reasoning weight.</p></td>
             </tr>
             <tr>
               <th>

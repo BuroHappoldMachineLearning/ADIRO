@@ -19,7 +19,19 @@ import module_renames as mr  # noqa: E402
 
 W3ID = mr.BASE
 RENAMES = mr.load(ROOT)
-PAIRS = sorted((old, new) for new, old in RENAMES.items() if (ROOT / "src" / f"{new}.ttl").is_file())
+# a module renamed twice (aec_x -> adiro_x -> its new name, #281) is checked at its last rename: the history of the first is
+# in tests/test_module_chain_renames.py and in the mapping test below, which follows the chain
+PAIRS = sorted((old, new) for new, old in RENAMES.items() if (ROOT / "src" / f"{new}.ttl").is_file() and mr.successor(RENAMES, new) is None)
+
+
+def last_name(module):
+    """The name a module has now: the end of the chain that starts at it."""
+    while mr.successor(RENAMES, module):
+        module = mr.successor(RENAMES, module)
+    return module
+
+
+MOVED = set(mig.term_renames(ROOT).values())  # the reference terms of #277, defined in a new place and not in the old final release
 
 
 def parse(path):
@@ -42,7 +54,11 @@ def first_release(new):
 @pytest.mark.parametrize("old,new", PAIRS)
 def test_the_new_module_is_the_old_final_release_under_the_new_names(old, new):
     """Apart from its header and the module names its definitions mention, a new module is its predecessor's final release."""
+    # a module that is not released yet (the second rename of #281) is compared with the reference terms moved to it (#277)
+    moved_to_here = first_release(new) == ROOT / "src" / f"{new}.ttl"
     final = mr.rewrite_graph(parse(cd.latest_snapshot(ROOT, old)), RENAMES)
+    if moved_to_here:
+        final = mig.rename_terms_in_graph(final, mig.term_renames(ROOT))
     current = parse(first_release(new))
     ontology = URIRef(W3ID + new)
     _, only_final, only_current = graph_diff(to_isomorphic(final), to_isomorphic(current))
@@ -50,16 +66,17 @@ def test_the_new_module_is_the_old_final_release_under_the_new_names(old, new):
     def unexplained(triples):
         out = set()
         for s, p, o in triples:
-            if s == ontology:
-                continue  # the header: title, label, version, replaces / deprecated
+            if s == ontology or (moved_to_here and str(s) in MOVED):
+                continue  # the header: title, label, version, replaces / deprecated; or a term moved here from another module (#277)
             if p in (RDFS.comment, OWL.versionInfo) and isinstance(o, Literal):
                 continue  # a definition whose prose names a module: compared below
             out.add((s, p, o))
         return out
 
     assert unexplained(only_final) == set() and unexplained(only_current) == set()
-    comments = lambda g: {(s, mr.rewrite_text(str(o), RENAMES).replace("aec_", "adiro_")) for s, o in g.subject_objects(RDFS.comment)
-                          if s != ontology}
+    # a prefix named in a definition follows the module's new prefix (csymbol: -> dsym:, dcommon: -> dcore:, #281)
+    comments = lambda g: {(s, mr.rewrite_text(str(o), RENAMES).replace("aec_", "adiro_").replace("csymbol:", "dsym:").replace("dcommon:", "dcore:"))
+                          for s, o in g.subject_objects(RDFS.comment) if s != ontology and not (moved_to_here and str(s) in MOVED)}
     assert comments(final) == comments(current), "a definition differs by more than the module names it mentions"
 
 
@@ -101,10 +118,11 @@ def test_the_published_mapping_is_up_to_date_and_complete():
     assert committed == mig.mapping_turtle(ROOT), "regenerate it: uv run python scripts/migrate_aec_to_adiro.py mapping"
     graph = Graph().parse(data=committed, format="turtle")
     replaced = {str(s): str(o) for s, _, o in graph}
+    for old, new in sorted((old, new) for new, old in RENAMES.items() if (ROOT / "src" / f"{new}.ttl").is_file()):
+        assert replaced[W3ID + old] == W3ID + last_name(new), "an old module maps to the name it has now, whichever the number of renames"
     for old, new in PAIRS:
-        assert replaced[W3ID + old] == W3ID + new
         current = parse(first_release(new))  # a term added after the rename has no old IRI
-        defined = {str(s) for s in current.subjects(RDF.type, None) if str(s).startswith(W3ID + new + "#")}
+        defined = {str(s) for s in current.subjects(RDF.type, None) if str(s).startswith(W3ID + new + "#") and str(s) not in MOVED}
         assert {mr.rename_iri(o, RENAMES) for o in replaced if o.startswith(W3ID + old + "#")} >= defined
 
 
@@ -196,3 +214,27 @@ def test_trig_rewrites_a_graph_named_by_an_old_iri(tmp_path):
     assert quads(tmp_path / "data.adiro.trig", "trig") == {
         ("https://example.org/f", RDF_TYPE, W3ID + "adiro_geometry#CoordinateFrame", W3ID + "adiro_geometry#Frames"),
         ("https://example.org/x", RDF_TYPE, W3ID + "adiro_geometry#BoundingBox", "urn:x-rdflib:default")}
+
+
+# --- a class renamed inside a module (#271) or moved to another (#277) ---------------------------------------------
+DM = W3ID + "adiro_drawing_metadata#"
+CS = W3ID + "adiro_drawing_symbology#"
+
+
+def test_a_class_renamed_inside_a_module_is_rewritten_from_every_old_iri():
+    text = f"<{W3ID}aec_drawing_metadata#InlineLayoutSheetReference> <{DM}StandaloneSheetReference> <{DM}StandaloneSheetReferenceX>"
+    assert mig.rewrite_text(text, ROOT).split() == [
+        f"<{CS}InlineLayoutDrawingReference>", f"<{CS}StandaloneDrawingReference>", f"<{DM}StandaloneSheetReferenceX>"]
+
+
+def test_a_graph_typed_with_an_old_class_is_rewritten_to_the_new_class(tmp_path):
+    source = tmp_path / "data.ttl"
+    source.write_text(f"<https://ex.org/a> a <{W3ID}aec_drawing_metadata#StandaloneSheetReference> .\n", encoding="utf-8")
+    mig.main(["rewrite", str(source)])
+    assert (URIRef("https://ex.org/a"), RDF.type, URIRef(CS + "StandaloneDrawingReference")) in parse(tmp_path / "data.adiro.ttl")
+
+
+def test_a_term_moved_to_another_module_keeps_its_name_and_changes_its_namespace():
+    text = f"<{DM}ReferenceExpression> <{DM}denotesDrawingSheet> <{DM}DrawingSheet> <{W3ID}aec_drawing_metadata#LayoutIdentifierMention>"
+    assert mig.rewrite_text(text, ROOT).split() == [
+        f"<{CS}ReferenceExpression>", f"<{CS}denotesDrawingSheet>", f"<{DM}DrawingSheet>", f"<{CS}LayoutIdentifierMention>"]

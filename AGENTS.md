@@ -30,9 +30,9 @@ Ontology sources live in `src/` as independently versioned modules (dependency o
    GeoSPARQL `geo:Geometry`) + `CoordinateFrame` (a page of a file read in one coordinate convention: named space, unit, profile). Imports
    `adiro_provenance`, which holds the page; used by UC-01 and UC-03.
 3. `adiro_drawing_metadata` — drawing/layout/document structure (titleblock, legend, revision table, drawing types…).
-4. `adiro_common_symbols` — cross-discipline reusable symbols (dimensions, callouts, grids, levels…).
-5. `adiro_domain_common` — concepts shared across a set of domains.
-6. `adiro_facade_domain` — facade-engineering discipline-specific concepts (`:FacadeComponent`, `:DGU`, …).
+4. `adiro_drawing_symbology` — the symbols, marks and text a drawing uses, shared by every discipline (dimensions, grids, the reference symbol and the reference expressions, levels…).
+5. `adiro_discipline_core` — the shared base of the discipline modules: materials, section shapes, structural components and loads, and the `Discipline` classes.
+6. `adiro_facade_discipline` — facade-engineering discipline-specific concepts (`:FacadeComponent`, `:DGU`, …).
 
 The modules were called `aec_*` until their final releases (`aec_provenance` 1.1.0, `aec_geometry` 2.0.0,
 `aec_drawing_metadata` 6.0.0, `aec_common_symbols` 4.0.1, `aec_domain_common` 3.0.1, `aec_facade_domain` 3.0.1), which are
@@ -43,12 +43,13 @@ site, generated from each final release (`generate_docs.find_ttl_files` adds it 
 `scripts/migrate_aec_to_adiro.py` move data and links to the new IRIs (`docs/migrating-from-aec.md`), and
 `tests/test_rename_to_adiro.py` checks that each new module is its predecessor's final release under the new names.
 
-Three of the `adiro_*` modules are being renamed in turn ([#281](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/281)):
-`adiro_common_symbols` to `adiro_drawing_symbology`, `adiro_domain_common` to `adiro_discipline_core` and `adiro_facade_domain`
-to `adiro_facade_discipline`. The order follows the first rename: each of the three says `owl:deprecated true` and
-`dcterms:isReplacedBy` its successor in its `owl:Ontology` header, and its next release is its last; the successors enter `src/`
-in a later pull request, as a copy of that final release under the new names, and the old files leave `src/` a cycle after.
-Until then the module list above still names them as they are.
+Three of the `adiro_*` modules were renamed in turn ([#281](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/281)): `adiro_common_symbols` to `adiro_drawing_symbology`, `adiro_domain_common` to
+`adiro_discipline_core` and `adiro_facade_domain` to `adiro_facade_discipline`. Each was released once more as deprecated (`owl:deprecated true`,
+`dcterms:isReplacedBy` its successor), and its successor entered `src/` as a copy of that final release under the new names (the history of each
+module now runs through three names, `aec_*`, `adiro_*` and the new one, which `config/module_renames.json` allows as a chain). The old files stay in
+`src/` for one release cycle, with their pages and releases; the compatibility diff reads a successor as a MAJOR change of its predecessor
+(`MODULE_RENAMED`) and, a cycle later, the old module as `MODULE_RETIRED`. The prefixes follow: `dsym:` for `adiro_drawing_symbology` (formerly
+`csymbol:`) and `dcore:` for `adiro_discipline_core` (formerly `dcommon:`). `docs/migrating-from-aec.md` explains how to move data and links.
 
 DAnO is **not** part of the suite: ADIRO ships no DAnO artifact — no module, no import, no annotation-level
 crosswalk. The comparison with DAnO, and the reasons ADIRO mints its own terms rather than importing or aligning
@@ -60,7 +61,7 @@ all, and the optional-compatibility-layer pattern ADIRO does not currently use).
 doc, a PR description, a comparison with another ontology, or an answer to a question — check it against
 **every** module, not the one in front of you. Two real errors came from ignoring this: a DAnO comparison
 asserted that ADIRO and DAnO occupy "different layers", true of the title-block vocabulary it was written
-about but false for `aec_common_symbols` (now `adiro_common_symbols`); and UC-03's design decision 1 placed provenance "upstream/elsewhere",
+about but false for `aec_common_symbols` (now `adiro_drawing_symbology`); and UC-03's design decision 1 placed provenance "upstream/elsewhere",
 a correct statement about one query-layer module read as though it settled the matter for the whole suite.
 
 ## Stack
@@ -257,7 +258,7 @@ commands directly, but Git Bash is simpler.
 
 ## Versioning
 **Per-module SemVer** — each `src/*.ttl` is versioned independently via its own `owl:versionIRI` +
-`owl:versionInfo` (currently `adiro_provenance` 2.3.0; `adiro_geometry` 3.1.0; `adiro_drawing_metadata` 7.1.0; `adiro_common_symbols` 5.0.1; `adiro_domain_common` 4.0.1; `adiro_facade_domain` 4.0.1). The full scheme — IRI
+`owl:versionInfo` (currently `adiro_provenance` 2.3.0; `adiro_geometry` 3.1.0; `adiro_drawing_metadata` 7.1.0; `adiro_drawing_symbology` 5.0.1; `adiro_discipline_core` 4.0.1; `adiro_facade_discipline` 4.0.1). The full scheme — IRI
 strategy, bump rules (compatibility-diff spec), imports policy, deprecation, the tag-driven release flow, and
 changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
 [DATA-A-10](https://bhmlrnd.youtrack.cloud/articles/DATA-A-10); plan/decisions in
@@ -280,7 +281,7 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   change, its terms compared under the new names), its `owl:priorVersion` lines name the old module's releases by their own IRIs, and
   the old module, released once more as deprecated, is `MODULE_RETIRED` when it leaves `src/`. Full rules:
   `docs/contribute/versioning/index.md` ("Renaming a module").
-- **Releases are per-module:** tag `<module>-v<semver>` (e.g. `adiro_common_symbols-v5.1.0`) →
+- **Releases are per-module:** tag `<module>-v<semver>` (e.g. `adiro_drawing_symbology-v5.1.0`) →
   `.github/workflows/backup-version.yml` snapshots that module to `versions/<module>/<semver>/` (the `.ttl` and its
   `<module>.display.json` at the tag, via `scripts/archive_display_config.py`,
   [#140](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/140)), then

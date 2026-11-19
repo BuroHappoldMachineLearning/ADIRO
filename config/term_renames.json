@@ -1,0 +1,53 @@
+{
+  "renames": [
+    {
+      "module": "adiro_drawing_metadata",
+      "to_module": "adiro_drawing_symbology",
+      "from": "ReferenceExpression",
+      "to": "ReferenceExpression",
+      "reason": "#277: moved to adiro_drawing_symbology"
+    },
+    {
+      "module": "adiro_drawing_metadata",
+      "to_module": "adiro_drawing_symbology",
+      "from": "DrawingIdentifierMention",
+      "to": "DrawingIdentifierMention",
+      "reason": "#277: moved to adiro_drawing_symbology"
+    },
+    {
+      "module": "adiro_drawing_metadata",
+      "to_module": "adiro_drawing_symbology",
+      "from": "LayoutIdentifierMention",
+      "to": "LayoutIdentifierMention",
+      "reason": "#277: moved to adiro_drawing_symbology"
+    },
+    {
+      "module": "adiro_drawing_metadata",
+      "to_module": "adiro_drawing_symbology",
+      "from": "InlineLayoutSheetReference",
+      "to": "InlineLayoutDrawingReference",
+      "reason": "#277: moved to adiro_drawing_symbology; #271: say drawing, not sheet"
+    },
+    {
+      "module": "adiro_drawing_metadata",
+      "to_module": "adiro_drawing_symbology",
+      "from": "StandaloneSheetReference",
+      "to": "StandaloneDrawingReference",
+      "reason": "#277: moved to adiro_drawing_symbology; #271: say drawing, not sheet"
+    },
+    {
+      "module": "adiro_drawing_metadata",
+      "to_module": "adiro_drawing_symbology",
+      "from": "denotesDrawingSheet",
+      "to": "denotesDrawingSheet",
+      "reason": "#277: moved to adiro_drawing_symbology"
+    },
+    {
+      "module": "adiro_drawing_metadata",
+      "to_module": "adiro_drawing_symbology",
+      "from": "inlineReferencesLayout",
+      "to": "inlineReferencesLayout",
+      "reason": "#277: moved to adiro_drawing_symbology"
+    }
+  ]
+}

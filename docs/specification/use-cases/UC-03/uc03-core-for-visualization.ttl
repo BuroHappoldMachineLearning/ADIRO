@@ -1,7 +1,7 @@
-@prefix : <https://w3id.org/adiro/adiro_common_symbols#> .
+@prefix : <https://w3id.org/adiro/adiro_drawing_symbology#> .
 @base <https://w3id.org/adiro/> .
 @prefix metadata: <https://w3id.org/adiro/adiro_drawing_metadata#> .
-@prefix csymbol: <https://w3id.org/adiro/adiro_common_symbols#> .
+@prefix dsym: <https://w3id.org/adiro/adiro_drawing_symbology#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -11,7 +11,7 @@
 #  HISTORICAL UC-03 GRAPHICAL-SYMBOL CORE FOR VISUALIZATION
 #  This focused projection predates the v0.5 textual-reference extension.
 #  For the current ontology, use the generated adiro_drawing_metadata
-#  and adiro_common_symbols reference pages sourced from src/*.ttl.
+#  and adiro_drawing_symbology reference pages sourced from src/*.ttl.
 #
 #  Scope: only the core concepts of UC-03 (Reference Symbol
 #  Cross-Sheet Linking), plus the minimum context from
@@ -26,7 +26,7 @@
 #    is left to SPARQL / application layer. See debate document.
 #
 #  Decisions baked in:
-#    - ReferenceSymbol REPLACES the original csymbol:Callout
+#    - ReferenceSymbol REPLACES the original dsym:Callout
 #      (subclass of metadata:DrawingElement).
 #    - ReferenceSymbol mounts on Layout, not on DrawingSheet.
 #      Both source (hasReferenceSymbol) and target (referencesLayout)
@@ -162,14 +162,14 @@ metadata:hasLayoutContentType rdf:type owl:ObjectProperty ;
 #################################################################
 #  PART 2 — UC-03 core: ReferenceSymbol
 #
-#  Replaces the original csymbol:Callout class. Sits in the
-#  adiro_common_symbols module as a subclass of DrawingElement.
+#  Replaces the original dsym:Callout class. Sits in the
+#  adiro_drawing_symbology module as a subclass of DrawingElement.
 #################################################################
 
-csymbol:ReferenceSymbol rdf:type owl:Class ;
+dsym:ReferenceSymbol rdf:type owl:Class ;
     rdfs:subClassOf metadata:DrawingElement ;
     rdfs:label "ReferenceSymbol" ;
-    rdfs:comment "A symbol drawn on a Layout that references another Layout (on the same or a different DrawingSheet). Working name in UC-03 v0.2 — see UC03-1 for final naming decision vs csymbol:Callout. Typical instances include Detail Markers, Section Markers, and Elevation Markers — but the type axis is not modelled (derived from the target Layout's LayoutContentType). See NCS Module 6 and ISO 128-30 for visual conventions.\n\nReferenceSymbol is a PURE RELATIONAL NODE: it has no datatype properties. Instance identity is provided by RDF URI; the displayed marker label (e.g. '2/ST-201') is derivable from referencesLayout → Layout → layoutIdentifier and the target DrawingSheet's drawingIdentifier. See design-debate document for the full reasoning." ;
+    rdfs:comment "A symbol drawn on a Layout that references another Layout (on the same or a different DrawingSheet). Working name in UC-03 v0.2 — see UC03-1 for final naming decision vs dsym:Callout. Typical instances include Detail Markers, Section Markers, and Elevation Markers — but the type axis is not modelled (derived from the target Layout's LayoutContentType). See NCS Module 6 and ISO 128-30 for visual conventions.\n\nReferenceSymbol is a PURE RELATIONAL NODE: it has no datatype properties. Instance identity is provided by RDF URI; the displayed marker label (e.g. '2/ST-201') is derivable from referencesLayout → Layout → layoutIdentifier and the target DrawingSheet's drawingIdentifier. See design-debate document for the full reasoning." ;
     metadata:isComputerVisionLabel "true"^^xsd:boolean .
 
 
@@ -188,18 +188,18 @@ csymbol:ReferenceSymbol rdf:type owl:Class ;
 
 ###  Object properties — Source side (where the symbol is drawn)
 
-csymbol:hasReferenceSymbol rdf:type owl:ObjectProperty ;
+dsym:hasReferenceSymbol rdf:type owl:ObjectProperty ;
     rdfs:label "hasReferenceSymbol" ;
-    rdfs:comment "A Layout contains one or more ReferenceSymbols. Navigate from a symbol back to its Layout with ^csymbol:hasReferenceSymbol - ADIRO declares no inverse properties (GitHub issue #21)." ;
+    rdfs:comment "A Layout contains one or more ReferenceSymbols. Navigate from a symbol back to its Layout with ^dsym:hasReferenceSymbol - ADIRO declares no inverse properties (GitHub issue #21)." ;
     rdfs:subPropertyOf metadata:contains ;
     rdfs:domain metadata:Layout ;
-    rdfs:range csymbol:ReferenceSymbol .
+    rdfs:range dsym:ReferenceSymbol .
 
 
 ###  Object properties — Target side (what the symbol points to)
 
-csymbol:referencesLayout rdf:type owl:ObjectProperty ;
+dsym:referencesLayout rdf:type owl:ObjectProperty ;
     rdfs:label "referencesLayout" ;
     rdfs:comment "Target Layout — the Layout this ReferenceSymbol points to. Note: target is Layout-level, not DrawingSheet-level — the marker resolves to a specific view (e.g. 'Section 2' on sheet ST-201), not just the sheet as a whole." ;
-    rdfs:domain csymbol:ReferenceSymbol ;
+    rdfs:domain dsym:ReferenceSymbol ;
     rdfs:range metadata:Layout .

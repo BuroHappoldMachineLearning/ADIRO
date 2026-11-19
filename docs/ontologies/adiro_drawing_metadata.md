@@ -41,24 +41,24 @@ graph BT
     adiro_provenance["Adiro Provenance"]
     adiro_geometry["Adiro Geometry"]
     adiro_drawing_metadata["Adiro Drawing Metadata"]
-    adiro_common_symbols["Adiro Common Symbols"]
-    adiro_domain_common["Adiro Domain Common"]
-    adiro_facade_domain["Adiro Facade Domain"]
+    adiro_drawing_symbology["Adiro Drawing Symbology"]
+    adiro_discipline_core["Adiro Discipline Core"]
+    adiro_facade_discipline["Adiro Facade Discipline"]
     adiro_geometry --> adiro_provenance
     adiro_drawing_metadata --> adiro_geometry
     adiro_drawing_metadata --> adiro_provenance
-    adiro_common_symbols --> adiro_drawing_metadata
-    adiro_domain_common --> adiro_drawing_metadata
-    adiro_facade_domain --> adiro_domain_common
-    adiro_facade_domain --> adiro_drawing_metadata
+    adiro_drawing_symbology --> adiro_drawing_metadata
+    adiro_discipline_core --> adiro_drawing_metadata
+    adiro_facade_discipline --> adiro_discipline_core
+    adiro_facade_discipline --> adiro_drawing_metadata
     click adiro_provenance "../adiro_provenance/" "Adiro Provenance reference page"
     click adiro_geometry "../adiro_geometry/" "Adiro Geometry reference page"
     click adiro_drawing_metadata "../adiro_drawing_metadata/" "Adiro Drawing Metadata reference page"
-    click adiro_common_symbols "../adiro_common_symbols/" "Adiro Common Symbols reference page"
-    click adiro_domain_common "../adiro_domain_common/" "Adiro Domain Common reference page"
-    click adiro_facade_domain "../adiro_facade_domain/" "Adiro Facade Domain reference page"
+    click adiro_drawing_symbology "../adiro_drawing_symbology/" "Adiro Drawing Symbology reference page"
+    click adiro_discipline_core "../adiro_discipline_core/" "Adiro Discipline Core reference page"
+    click adiro_facade_discipline "../adiro_facade_discipline/" "Adiro Facade Discipline reference page"
     classDef base fill:#16305f,stroke:#0e2247,stroke-width:2px,color:#9ecbff;
-    class adiro_provenance,adiro_geometry,adiro_common_symbols,adiro_domain_common,adiro_facade_domain base;
+    class adiro_provenance,adiro_geometry,adiro_drawing_symbology,adiro_discipline_core,adiro_facade_discipline base;
     classDef current fill:#f58a1f,stroke:#16305f,stroke-width:3px,color:#16305f;
     class adiro_drawing_metadata current;
 ```
@@ -80,7 +80,7 @@ A large-scale zoomed-in drawing of a specific construction assembly or connectio
 
 ### Drawing element {#DrawingElement}
 
-Element depicted on a drawing. Contained by [Layout](#Layout). Can be a [Facade](adiro_domain_common.md#Facade) system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc. It may carry a [BoundingBox](adiro_geometry.md#BoundingBox), its region on the page ([geom:hasBoundingBox](adiro_geometry.md#hasBoundingBox)).
+Element depicted on a drawing. Contained by [Layout](#Layout). Can be a [Facade](adiro_discipline_core.md#Facade) system or Facade component, or other domain-specific symbols, or generic symbols like dimensions, grids, etc. It may carry a [BoundingBox](adiro_geometry.md#BoundingBox), its region on the page ([geom:hasBoundingBox](adiro_geometry.md#hasBoundingBox)).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#DrawingElement`
 - **Restrictions:** [`geom:hasBoundingBox`](adiro_geometry.md#hasBoundingBox) min 0 [`geom:BoundingBox`](adiro_geometry.md#BoundingBox)
@@ -88,15 +88,11 @@ Element depicted on a drawing. Contained by [Layout](#Layout). Can be a [Facade]
 
 ### Drawing identifier mention {#DrawingIdentifierMention}
 
-One evidenced occurrence of drawing-identifier (sheet-identifier) text on a source drawing, distinct from the [DrawingSheet](#DrawingSheet) that the text may denote. Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted sheet resolution: an unlocalisable text block may retain its accepted [denotesDrawingSheet](#denotesDrawingSheet) edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed.
+Deprecated: use DrawingIdentifierMention of adiro_drawing_symbology, the same class defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#DrawingIdentifierMention`
 - **Sub class of:** [Drawing element](#DrawingElement)
-- **isComputerVisionLabel:** true
-
-*Example images:*
-
-![Drawing identifier mention — example](https://w3id.org/adiro/adiro_drawing_metadata/exampleImage/DrawingIdentifierMention_01.png)
+- **Equivalent to:** `dsym:DrawingIdentifierMention`
 
 ### Drawing Sheet {#DrawingSheet}
 
@@ -159,15 +155,11 @@ An image embedded within a note region on a drawing sheet.
 
 ### Inline layout and sheet reference {#InlineLayoutSheetReference}
 
-A complete inline textual expression relating layout number(s) to a sheet number, such as '1, 3, 5 & 7/S601'. The component mentions retain their own identities; accepted [Layout](#Layout) targets are connected separately by [inlineReferencesLayout](#inlineReferencesLayout). Expected composition: one sheet-identifier mention and at least one layout-identifier mention, attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction.
+Deprecated: use [InlineLayoutDrawingReference](adiro_drawing_symbology.md#InlineLayoutDrawingReference) of adiro_drawing_symbology, the same class under a name that says drawing, not sheet, defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#InlineLayoutSheetReference`
 - **Sub class of:** [Reference expression](#ReferenceExpression)
-- **isComputerVisionLabel:** true
-
-*Example images:*
-
-![Inline layout and sheet reference — example](https://w3id.org/adiro/adiro_drawing_metadata/exampleImage/InlineLayoutSheetReference_01.png)
+- **Equivalent to:** [`dsym:InlineLayoutDrawingReference`](adiro_drawing_symbology.md#InlineLayoutDrawingReference)
 
 ### Key Plan {#KeyPlan}
 
@@ -212,15 +204,11 @@ Type of content included in a layout.
 
 ### Layout identifier mention {#LayoutIdentifierMention}
 
-One evidenced occurrence of layout-identifier text (a small integer or letter), distinct from a target [Layout](#Layout). A complete inline reference may contain several such occurrences, attached with contains; no target is inferred from matching text alone.
+Deprecated: use LayoutIdentifierMention of adiro_drawing_symbology, the same class defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#LayoutIdentifierMention`
 - **Sub class of:** [Drawing element](#DrawingElement)
-- **isComputerVisionLabel:** true
-
-*Example images:*
-
-![Layout identifier mention — example](https://w3id.org/adiro/adiro_drawing_metadata/exampleImage/LayoutIdentifierMention_01.png)
+- **Equivalent to:** `dsym:LayoutIdentifierMention`
 
 ### Legend {#Legend}
 
@@ -294,11 +282,11 @@ A project under which [DrawingSheet](#DrawingSheet)s are grouped.
 
 ### Reference expression {#ReferenceExpression}
 
-A complete source reference expression, whether graphical, inline or a standalone sheet-number reference. This superclass groups those forms for queries; it does not require a second individual around any of them.
+Deprecated: use ReferenceExpression of adiro_drawing_symbology, the same class defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#ReferenceExpression`
 - **Sub class of:** [Drawing element](#DrawingElement)
-- **isComputerVisionLabel:** true
+- **Equivalent to:** `dsym:ReferenceExpression`
 
 ### Revision table {#RevisionTable}
 
@@ -327,17 +315,13 @@ Section drawing. Has a required property of orientation, which can be vertical o
 
 ### Standalone sheet reference {#StandaloneSheetReference}
 
-A drawing-identifier occurrence that itself constitutes a complete reference. One individual is both the [DrawingIdentifierMention](#DrawingIdentifierMention) and the [ReferenceExpression](#ReferenceExpression): no duplicate wrapper, self-directed hasDrawingIdentifierMention edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified.
+Deprecated: use [StandaloneDrawingReference](adiro_drawing_symbology.md#StandaloneDrawingReference) of adiro_drawing_symbology, the same class under a name that says drawing, not sheet, defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#StandaloneSheetReference`
 - **Sub class of:**
     - [Drawing identifier mention](#DrawingIdentifierMention)
     - [Reference expression](#ReferenceExpression)
-- **isComputerVisionLabel:** true
-
-*Example images:*
-
-![Standalone sheet reference — example](https://w3id.org/adiro/adiro_drawing_metadata/exampleImage/StandaloneSheetReference_01.png)
+- **Equivalent to:** [`dsym:StandaloneDrawingReference`](adiro_drawing_symbology.md#StandaloneDrawingReference)
 
 ### StatusCode {#StatusCode}
 
@@ -470,11 +454,15 @@ Direct containment: indicates physical containment of something within a parent 
 
 ### denotesDrawingSheet {#denotesDrawingSheet}
 
-The accepted [DrawingSheet](#DrawingSheet) identity denoted by one sheet-number occurrence. It does not assert that a [Layout](#Layout) target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict.
+Deprecated: use denotesDrawingSheet of adiro_drawing_symbology, the same property defined in the module that holds the reference symbol.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#denotesDrawingSheet`
 - **Domain:** [Drawing identifier mention](#DrawingIdentifierMention)
 - **Range:** [Drawing Sheet](#DrawingSheet)
+
+### denotesDrawingSheet {#denotesDrawingSheet}
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#denotesDrawingSheet`
 
 ### hasLayout {#hasLayout}
 
@@ -530,11 +518,15 @@ The controlled-vocabulary [StatusCode](#StatusCode) assigned to a [DrawingRevisi
 
 ### inlineReferencesLayout {#inlineReferencesLayout}
 
-An accepted target [Layout](#Layout) of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges.
+Deprecated: use inlineReferencesLayout of adiro_drawing_symbology, the same property defined in the module that holds the reference symbol.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#inlineReferencesLayout`
 - **Domain:** [Inline layout and sheet reference](#InlineLayoutSheetReference)
 - **Range:** [Layout](#Layout)
+
+### inlineReferencesLayout {#inlineReferencesLayout}
+
+- **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#inlineReferencesLayout`
 
 ### isApprovedBy {#isApprovedBy}
 
@@ -848,10 +840,10 @@ An alternative or external identifier for the drawing - e.g. a client, design-te
 
 #### Discipline Field {#DisciplineField}
 
-The engineering/design discipline the drawing belongs to, e.g. Architecture, Structures, [Mechanical](adiro_domain_common.md#Mechanical).
+The engineering/design discipline the drawing belongs to, e.g. Architecture, Structures, [Mechanical](adiro_discipline_core.md#Mechanical).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#DisciplineField`
-- **Comment:** No dedicated ADIRO property yet (no [mapsToFieldProperty](adiro_provenance.md#mapsToFieldProperty)); a candidate to model - possibly reusing adiro_domain_common:Discipline - tracked with the wider title-block relationship work (GitHub issue #69).
+- **Comment:** No dedicated ADIRO property yet (no [mapsToFieldProperty](adiro_provenance.md#mapsToFieldProperty)); a candidate to model - possibly reusing adiro_discipline_core:Discipline - tracked with the wider title-block relationship work (GitHub issue #69).
 - **Type:** [`aprov:FieldKind`](adiro_provenance.md#FieldKind)
 - **In scheme:** [Titleblock Field Scheme](#TitleblockFieldScheme)
 - **Preferred labels:** "Discipline" (en), "Fachbereich" (de)

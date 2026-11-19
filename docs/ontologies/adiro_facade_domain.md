@@ -1,10 +1,16 @@
+---
+search:
+  exclude: true
+---
+
 # Adiro Facade Domain
 
 <div class="adiro-actions" markdown="span">
 <details class="adiro-version">
-<summary class="md-button">Version 4.0.1 (latest)</summary>
+<summary class="md-button">Version 4.0.1 (adiro_facade_discipline 4.0.1 available)</summary>
 <ul>
-<li><a href="./" class="adiro-version-current" aria-current="page">4.0.1 (latest)</a></li>
+<li><a href="../adiro_facade_discipline/">adiro_facade_discipline 4.0.1 (latest)</a></li>
+<li><a href="./" class="adiro-version-current" aria-current="page">4.0.1 (final)</a></li>
 <li><a href="4.0.0/">4.0.0</a></li>
 <li><a href="../aec_facade_domain/">aec_facade_domain 3.0.1</a></li>
 <li><a href="../aec_facade_domain/3.0.0/">aec_facade_domain 3.0.0</a></li>
@@ -21,7 +27,7 @@
 
 !!! warning "Deprecated"
 
-    This module is deprecated and receives no further changes. It is replaced by `adiro_facade_discipline`, which continues its version numbering. Every release of it stays published at its own IRI.
+    This module is deprecated and receives no further changes. It is replaced by [`adiro_facade_discipline`](adiro_facade_discipline.md), which continues its version numbering. Every release of it stays published at its own IRI.
 
 Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbol, and domain vocabularies.
 
@@ -40,27 +46,34 @@ Arrows point from an ontology to the ontologies it imports; the current ontology
 ```mermaid
 %%{init: {"themeCSS": ".base .nodeLabel,.base .nodeLabel p,.base text,.base tspan{fill:#9ecbff !important;color:#9ecbff !important}.current .nodeLabel,.current .nodeLabel p,.current text,.current tspan{fill:#16305f !important;color:#16305f !important}"} }%%
 graph BT
-    adiro_provenance["Adiro Provenance"]
-    adiro_geometry["Adiro Geometry"]
-    adiro_drawing_metadata["Adiro Drawing Metadata"]
+    aec_provenance["Aec Provenance"]
+    aec_geometry["Aec Geometry"]
+    aec_drawing_metadata["Aec Drawing Metadata"]
     adiro_common_symbols["Adiro Common Symbols"]
+    aec_common_symbols["Aec Common Symbols"]
     adiro_domain_common["Adiro Domain Common"]
+    aec_domain_common["Aec Domain Common"]
     adiro_facade_domain["Adiro Facade Domain"]
-    adiro_geometry --> adiro_provenance
-    adiro_drawing_metadata --> adiro_geometry
-    adiro_drawing_metadata --> adiro_provenance
-    adiro_common_symbols --> adiro_drawing_metadata
-    adiro_domain_common --> adiro_drawing_metadata
+    aec_facade_domain["Aec Facade Domain"]
+    aec_geometry --> aec_provenance
+    aec_drawing_metadata --> aec_geometry
+    aec_drawing_metadata --> aec_provenance
+    aec_common_symbols --> aec_drawing_metadata
+    aec_domain_common --> aec_drawing_metadata
     adiro_facade_domain --> adiro_domain_common
-    adiro_facade_domain --> adiro_drawing_metadata
-    click adiro_provenance "../adiro_provenance/" "Adiro Provenance reference page"
-    click adiro_geometry "../adiro_geometry/" "Adiro Geometry reference page"
-    click adiro_drawing_metadata "../adiro_drawing_metadata/" "Adiro Drawing Metadata reference page"
+    aec_facade_domain --> aec_domain_common
+    aec_facade_domain --> aec_drawing_metadata
+    click aec_provenance "../aec_provenance/" "Aec Provenance reference page"
+    click aec_geometry "../aec_geometry/" "Aec Geometry reference page"
+    click aec_drawing_metadata "../aec_drawing_metadata/" "Aec Drawing Metadata reference page"
     click adiro_common_symbols "../adiro_common_symbols/" "Adiro Common Symbols reference page"
+    click aec_common_symbols "../aec_common_symbols/" "Aec Common Symbols reference page"
     click adiro_domain_common "../adiro_domain_common/" "Adiro Domain Common reference page"
+    click aec_domain_common "../aec_domain_common/" "Aec Domain Common reference page"
     click adiro_facade_domain "../adiro_facade_domain/" "Adiro Facade Domain reference page"
+    click aec_facade_domain "../aec_facade_domain/" "Aec Facade Domain reference page"
     classDef base fill:#16305f,stroke:#0e2247,stroke-width:2px,color:#9ecbff;
-    class adiro_provenance,adiro_geometry,adiro_drawing_metadata,adiro_common_symbols,adiro_domain_common base;
+    class aec_provenance,aec_geometry,aec_drawing_metadata,adiro_common_symbols,aec_common_symbols,adiro_domain_common,aec_domain_common,aec_facade_domain base;
     classDef current fill:#f58a1f,stroke:#16305f,stroke-width:3px,color:#16305f;
     class adiro_facade_domain current;
 ```

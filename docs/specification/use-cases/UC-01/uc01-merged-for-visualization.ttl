@@ -1,7 +1,7 @@
 @prefix : <https://w3id.org/adiro/adiro_drawing_metadata#> .
 @base <https://w3id.org/adiro/> .
 @prefix metadata: <https://w3id.org/adiro/adiro_drawing_metadata#> .
-@prefix dcommon: <https://w3id.org/adiro/adiro_domain_common#> .
+@prefix dcore: <https://w3id.org/adiro/adiro_discipline_core#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace#> .
@@ -16,7 +16,7 @@
 #
 #    1. The existing adiro_drawing_metadata.ttl (sheet/layout
 #       structure, content types, visual regions).
-#    2. The relevant slice of adiro_domain_common.ttl: the
+#    2. The relevant slice of adiro_discipline_core.ttl: the
 #       Discipline class hierarchy and the hasDiscipline
 #       object property, which UC-01 reuses.
 #    3. UC-01 extensions (DrawingRevision, Project, Person,
@@ -227,93 +227,93 @@
 
 
 #################################################################
-#  PART 2 — DISCIPLINE SLICE (reused from adiro_domain_common)
+#  PART 2 — DISCIPLINE SLICE (reused from adiro_discipline_core)
 #  Per UC-01 Decision G3: reuse the existing class hierarchy.
 #  Per UC-01 Decision G5: hasDiscipline domain remains
 #  LayoutContentType (open issue — pending team review).
 #################################################################
 
-dcommon:Discipline rdf:type owl:Class ;
+dcore:Discipline rdf:type owl:Class ;
     rdfs:label "Discipline" ;
     rdfs:comment "The engineering or architectural discipline associated with a drawing content type." ;
     :isComputerVisionLabel "false"^^xsd:boolean .
 
-dcommon:hasDiscipline rdf:type owl:ObjectProperty ;
+dcore:hasDiscipline rdf:type owl:ObjectProperty ;
     rdfs:label "hasDiscipline" ;
     rdfs:comment "Links a Layout to an AEC discipline. (Revised: domain moved from LayoutContentType to Layout — see UC-01 Decision G5 discussion.)" ;
     rdfs:domain :Layout ;
-    rdfs:range dcommon:Discipline .
+    rdfs:range dcore:Discipline .
 
 :Layout rdfs:subClassOf [
     rdf:type owl:Restriction ;
-    owl:onProperty dcommon:hasDiscipline ;
+    owl:onProperty dcore:hasDiscipline ;
     owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-    owl:onClass dcommon:Discipline
+    owl:onClass dcore:Discipline
 ] .
 
-dcommon:Architectural rdf:type owl:Class ;
-    rdfs:subClassOf dcommon:Discipline ;
+dcore:Architectural rdf:type owl:Class ;
+    rdfs:subClassOf dcore:Discipline ;
     rdfs:label "Architectural" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcommon:Facade rdf:type owl:Class ;
-    rdfs:subClassOf dcommon:Architectural ;
+dcore:Facade rdf:type owl:Class ;
+    rdfs:subClassOf dcore:Architectural ;
     rdfs:label "Facade" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcommon:FireLifeSafety rdf:type owl:Class ;
-    rdfs:subClassOf dcommon:Architectural ;
+dcore:FireLifeSafety rdf:type owl:Class ;
+    rdfs:subClassOf dcore:Architectural ;
     rdfs:label "Fire life safety" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcommon:Structural rdf:type owl:Class ;
-    rdfs:subClassOf dcommon:Discipline ;
+dcore:Structural rdf:type owl:Class ;
+    rdfs:subClassOf dcore:Discipline ;
     rdfs:label "Structural" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcommon:MEP rdf:type owl:Class ;
-    rdfs:subClassOf dcommon:Discipline ;
+dcore:MEP rdf:type owl:Class ;
+    rdfs:subClassOf dcore:Discipline ;
     rdfs:label "MEP" ;
     rdfs:comment "Mechanical, Electrical, and Plumbing." ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcommon:Mechanical rdf:type owl:Class ;
-    rdfs:subClassOf dcommon:MEP ;
+dcore:Mechanical rdf:type owl:Class ;
+    rdfs:subClassOf dcore:MEP ;
     rdfs:label "Mechanical" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcommon:Electrical rdf:type owl:Class ;
-    rdfs:subClassOf dcommon:MEP ;
+dcore:Electrical rdf:type owl:Class ;
+    rdfs:subClassOf dcore:MEP ;
     rdfs:label "Electrical" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcommon:Plumbing rdf:type owl:Class ;
-    rdfs:subClassOf dcommon:MEP ;
+dcore:Plumbing rdf:type owl:Class ;
+    rdfs:subClassOf dcore:MEP ;
     rdfs:label "Plumbing" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcommon:Lighting rdf:type owl:Class ;
-    rdfs:subClassOf dcommon:Electrical ;
+dcore:Lighting rdf:type owl:Class ;
+    rdfs:subClassOf dcore:Electrical ;
     rdfs:label "Lighting" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcommon:Masterplan rdf:type owl:Class ;
-    rdfs:subClassOf dcommon:Discipline ;
+dcore:Masterplan rdf:type owl:Class ;
+    rdfs:subClassOf dcore:Discipline ;
     rdfs:label "Masterplan" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcommon:Civil rdf:type owl:Class ;
-    rdfs:subClassOf dcommon:Discipline ;
+dcore:Civil rdf:type owl:Class ;
+    rdfs:subClassOf dcore:Discipline ;
     rdfs:label "Civil" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
@@ -530,5 +530,5 @@ dcommon:Civil rdf:type owl:Class ;
 #  G10 — Resolved: :Metadata renamed to :MetadataContainer
 #         (team decision).
 #  Civil — Confirmed by team: to be added as direct subclass
-#         of dcommon:Discipline.
+#         of dcore:Discipline.
 #################################################################

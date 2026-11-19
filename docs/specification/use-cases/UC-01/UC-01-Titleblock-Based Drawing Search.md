@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.21 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.22 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -37,7 +37,7 @@ Things that exist independently and will become OWL Classes.
 | `Configuration`     | `adiro_provenance`                    | NEW    | The settings a step of an extraction used (a prompt, rendering settings), kept as text. *(Added in [v0.17](#9-version-history).)* |
 | `TextReading`       | `adiro_provenance`                    | NEW    | The text a step read from a title block or a whole page, or why it read none. *(Added in [v0.18](#9-version-history).)* |
 | `StepKind`          | `adiro_provenance`                    | NEW    | What a step of an extraction did: region detection, text recognition or field extraction. *(Added in [v0.18](#9-version-history).)* |
-| `Discipline`        | `adiro_domain_common`                 | REUSE  | Existing class hierarchy (`Structural`, `MEP`, `Architectural`, …).                      |
+| `Discipline`        | `adiro_discipline_core`                 | REUSE  | Existing class hierarchy (`Structural`, `MEP`, `Architectural`, …).                      |
 | `StatusCode`        | `adiro_drawing_metadata`              | NEW    | Approval state (IFC, IFR, AFC…) expressed as a controlled vocabulary.                    |
 | `DrawingPackage`    | `adiro_drawing_metadata`              | NEW    | Drawings are grouped into volumes or packages within a project.                          |
 
@@ -49,7 +49,7 @@ Things that exist independently and will become OWL Classes.
 
 > **Design note — DrawingType deprecated:** UC-01 v0.2 introduced `:DrawingType` (Plan, Section, Elevation, Detail, Schedule). This is the same axis as `metadata:LayoutContentType` (Plan, Section, Elevation, Detail, Table, Perspective). "Schedule" maps to `Table`. `DrawingType` is removed in v0.3 — `LayoutContentType` is reused.
 
-> **Design note — Discipline reuse:** UC-01 v0.2 introduced `:Discipline` plus a `:disciplineCode` string property. The existing `dcommon:Discipline` is already a full class hierarchy (`Structural`, `MEP > Mechanical / Electrical > Lighting / Plumbing`, `Architectural > Facade / FireLifeSafety`, `Masterplan`). v0.3 reuses it and drops `:disciplineCode` — discipline filtering uses `rdf:type` checks against the class hierarchy (e.g. `?disc a dcommon:MEP`), which automatically rolls up sub-disciplines via `rdfs:subClassOf` reasoning.
+> **Design note — Discipline reuse:** UC-01 v0.2 introduced `:Discipline` plus a `:disciplineCode` string property. The existing `dcore:Discipline` is already a full class hierarchy (`Structural`, `MEP > Mechanical / Electrical > Lighting / Plumbing`, `Architectural > Facade / FireLifeSafety`, `Masterplan`). v0.3 reuses it and drops `:disciplineCode` — discipline filtering uses `rdf:type` checks against the class hierarchy (e.g. `?disc a dcore:MEP`), which automatically rolls up sub-disciplines via `rdfs:subClassOf` reasoning.
 
 > **Design note — curated values vs extracted assertions:** UC-01 attaches title-block information as datatype properties **directly on `DrawingSheet`** (`drawingIdentifier`, `drawingTitle`, …). That remains correct for a *validated* value. A second, parallel path exists for values that have been **machine-extracted and not yet validated**: an `aprov:FieldAssertion` reifies the claim - what was read, from which region (`assertedBy`), by what (`hasInferenceMeta`), with what confidence, and with the caption exactly as printed (`capturedCaption`) - bound to a field kind (`aprov:FieldKind`) in the `TitleblockFieldScheme`. `aprov:mapsToFieldProperty` names the UC-01 property a validated assertion is promoted to, and that property's domain is the class of the subject the value is about (`DrawingSheet`, `Titleblock`, `Project`, …): a region and a field kind meet only through assertions. The two coexist: UC-01's properties are the query surface, the assertion layer is the extraction and provenance record. A value moves from the assertion to the direct property when its assertion is **accepted** (`aprov:hasAcceptance` `Accepted`), by a pipeline rule (a confidence threshold, named by `aprov:acceptedUnder`) or by a person, and the acceptance records who and when (`acceptedBy`, `acceptedAt`). The assertions are never deleted, and the direct properties stay as the permanent query surface of accepted values ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)). When a search finds no value, the assertion carries an outcome instead (`aprov:hasOutcome`: `Empty`, `Illegible`, `NotPrinted`, `NotFound`, `Failed`), and is never promoted. *(Added in [v0.4](#9-version-history); amended in [v0.10](#9-version-history), [v0.18](#9-version-history) and [v0.21](#9-version-history).)*
 
@@ -128,7 +128,7 @@ Links between two entities. New properties are wired into the existing generic t
 | --------------------- | ----------------- | ------------------- | ---------------------- | ------ | ----------------------- |
 | `contains` (sheet)    | `DrawingSheet`    | `Layout` (1..*)     | `adiro_drawing_metadata` | REUSE  | —                       |
 | `hasProperty`         | `Layout`          | `LayoutContentType` | `adiro_drawing_metadata` | REUSE  | —                       |
-| `hasDiscipline` ⚠️    | `Layout`          | `Discipline` (min 1)| `adiro_domain_common`    | REUSE¹ | —                       |
+| `hasDiscipline` ⚠️    | `Layout`          | `Discipline` (min 1)| `adiro_discipline_core`    | REUSE¹ | —                       |
 | `hasRevision`         | `DrawingSheet`    | `DrawingRevision`   | `adiro_drawing_metadata` | NEW    | `metadata:contains`     |
 | `belongsToProject`    | `DrawingSheet`    | `Project`           | `adiro_drawing_metadata` | NEW    | (top-level)             |
 | `assertsProject`      | `Titleblock`      | `Project`           | `adiro_drawing_metadata` | NEW    | (top-level)             |
@@ -146,7 +146,7 @@ Links between two entities. New properties are wired into the existing generic t
 | `imageOf`             | `DrawingFile` (a kept image) | `CoordinateFrame` | `adiro_geometry` | NEW | (top-level) *(Added in [v0.19](#9-version-history).)* |
 | `hasStatusCode`       | `DrawingRevision` | `StatusCode`        | `adiro_drawing_metadata` | NEW    | `metadata:hasProperty`  |
 
-¹ ⚠️ **Open issue (G5):** `dcommon:hasDiscipline` currently has `rdfs:domain metadata:LayoutContentType`. v0.3 proposes moving the domain to `metadata:Layout` (along with the `min 1` cardinality restriction). Discipline characterises the layout itself, not its content type — and the two are orthogonal axes (see design note below). Pending @alelom / @m-asakihattori sign-off.
+¹ ⚠️ **Open issue (G5):** `dcore:hasDiscipline` currently has `rdfs:domain metadata:LayoutContentType`. v0.3 proposes moving the domain to `metadata:Layout` (along with the `min 1` cardinality restriction). Discipline characterises the layout itself, not its content type — and the two are orthogonal axes (see design note below). Pending @alelom / @m-asakihattori sign-off.
 
 > **Design note — two orthogonal axes on Layout:**
 >
@@ -208,12 +208,12 @@ Each FR describes one representational capability the ontology must have, in imp
 
 **FR 5 — Discipline Classification**
 
-> The ontology MUST support filtering drawing sheets by engineering discipline, reusing the existing `dcommon:Discipline` class hierarchy (`Structural`, `MEP`, `Architectural`, `Facade`, `FireLifeSafety`, `Masterplan`, plus their sub-disciplines), attached at the `Layout` level via `dcommon:hasDiscipline`.
+> The ontology MUST support filtering drawing sheets by engineering discipline, reusing the existing `dcore:Discipline` class hierarchy (`Structural`, `MEP`, `Architectural`, `Facade`, `FireLifeSafety`, `Masterplan`, plus their sub-disciplines), attached at the `Layout` level via `dcore:hasDiscipline`.
 
 - Source: UC-01
-- Derived terms: `dcommon:Discipline` (REUSE), `dcommon:hasDiscipline` (REUSE — domain proposed to move from `LayoutContentType` to `Layout`, see G5)
-- Note: `disciplineCode` from v0.2 is **removed** — filtering uses `rdf:type` against the class hierarchy, which gives automatic sub-discipline rollup (querying `dcommon:MEP` auto-includes `Mechanical`, `Electrical`, `Plumbing`).
-- Note: `Civil` is to be added to `dcommon:Discipline` as a direct subclass of `Discipline` (confirmed by team discussion).
+- Derived terms: `dcore:Discipline` (REUSE), `dcore:hasDiscipline` (REUSE — domain proposed to move from `LayoutContentType` to `Layout`, see G5)
+- Note: `disciplineCode` from v0.2 is **removed** — filtering uses `rdf:type` against the class hierarchy, which gives automatic sub-discipline rollup (querying `dcore:MEP` auto-includes `Mechanical`, `Electrical`, `Plumbing`).
+- Note: `Civil` is to be added to `dcore:Discipline` as a direct subclass of `Discipline` (confirmed by team discussion).
 
 ---
 
@@ -731,7 +731,7 @@ The following example demonstrates that the term inventory is sufficient to answ
 
 ```sparql
 PREFIX metadata: <https://w3id.org/adiro/adiro_drawing_metadata#>
-PREFIX dcommon:  <https://w3id.org/adiro/adiro_domain_common#>
+PREFIX dcore:  <https://w3id.org/adiro/adiro_discipline_core#>
 PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
 
 SELECT ?sheet ?drawingIdentifier WHERE {
@@ -742,8 +742,8 @@ SELECT ?sheet ?drawingIdentifier WHERE {
           metadata:contains          ?layout .
 
   ?layout a                          metadata:Layout ;
-          dcommon:hasDiscipline      ?disc .
-  ?disc   a                          dcommon:MEP .
+          dcore:hasDiscipline      ?disc .
+  ?disc   a                          dcore:MEP .
 
   ?rev    metadata:isApprovedBy       ?person ;
           metadata:issueDate         ?date .
@@ -756,10 +756,10 @@ SELECT ?sheet ?drawingIdentifier WHERE {
 Every filter condition maps to a defined property:
 
 - `metadata:DrawingSheet`, `metadata:drawingIdentifier`, `metadata:belongsToProject`, `metadata:hasRevision`, `metadata:contains` — reused / new in `adiro_drawing_metadata`.
-- `metadata:Layout`, `dcommon:hasDiscipline`, `dcommon:MEP` — reused; note the `rdf:type` check against the class hierarchy automatically matches `Mechanical`, `Electrical`, `Plumbing`, `Lighting` via `rdfs:subClassOf` reasoning.
+- `metadata:Layout`, `dcore:hasDiscipline`, `dcore:MEP` — reused; note the `rdf:type` check against the class hierarchy automatically matches `Mechanical`, `Electrical`, `Plumbing`, `Lighting` via `rdfs:subClassOf` reasoning.
 - `metadata:isApprovedBy`, `metadata:issueDate`, `metadata:personName` — new in `adiro_drawing_metadata`.
 
-The query is fully expressible, confirming that CQ-I 1 is covered by the current term inventory. It reads the discipline through the class hierarchy, so it needs subclass reasoning: it illustrates the term inventory and is not one of the recorded queries, which run without inference (see above). For a store without a reasoner, the discipline pattern is `?disc a/rdfs:subClassOf* dcommon:MEP`, with the ontology loaded as data. *(Amended in [v0.20](#9-version-history).)* The previous v0.2 placeholder prefix (`https://example.org/aec-ontology#`) is retired in favour of the real module namespaces.
+The query is fully expressible, confirming that CQ-I 1 is covered by the current term inventory. It reads the discipline through the class hierarchy, so it needs subclass reasoning: it illustrates the term inventory and is not one of the recorded queries, which run without inference (see above). For a store without a reasoner, the discipline pattern is `?disc a/rdfs:subClassOf* dcore:MEP`, with the ontology loaded as data. *(Amended in [v0.20](#9-version-history).)* The previous v0.2 placeholder prefix (`https://example.org/aec-ontology#`) is retired in favour of the real module namespaces.
 
 ### Scale competency questions
 
@@ -852,7 +852,7 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `metadata:DrawingRevision`     | `adiro_drawing_metadata` | NEW    | CQ 3.x, CQ 4.x, CQ 7.x                         | FR 3, FR 4, FR 7                   |
 | `metadata:Project`             | `adiro_drawing_metadata` | NEW    | CQ 2.x, CQ-I 1                                 | FR 2                               |
 | `metadata:Person`              | `adiro_drawing_metadata` | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
-| `dcommon:Discipline`           | `adiro_domain_common`    | REUSE  | CQ 5.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 5                               |
+| `dcore:Discipline`           | `adiro_discipline_core`    | REUSE  | CQ 5.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 5                               |
 | `metadata:StatusCode`          | `adiro_drawing_metadata` | NEW    | CQ 7.x, CQ 8.2                                 | FR 7                               |
 | `metadata:DrawingPackage`      | `adiro_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
 | `metadata:contains`            | `adiro_drawing_metadata` | REUSE  | CQ 1.4, CQ 1.6, CQ 1.7, CQ-I 1, CQ-I 2, CQ-I 3                         | (structural)                       |
@@ -864,7 +864,7 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `metadata:hasStatusCode`       | `adiro_drawing_metadata` | NEW    | CQ 7.x, CQ 8.2                                 | FR 7                               |
 | `metadata:belongsToProject`    | `adiro_drawing_metadata` | NEW    | CQ 2.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 2                               |
 | `metadata:assertsProject`      | `adiro_drawing_metadata` | NEW    | CQ 2.3, CQ 2.4                                 | FR 2                               |
-| `dcommon:hasDiscipline`        | `adiro_domain_common`    | REUSE  | CQ 5.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 5                               |
+| `dcore:hasDiscipline`        | `adiro_discipline_core`    | REUSE  | CQ 5.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 5                               |
 | `metadata:hasProperty`         | `adiro_drawing_metadata` | REUSE  | CQ 6.x, CQ-I 3                                 | FR 6                               |
 | `metadata:belongsToPackage`    | `adiro_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
 | `aprov:DrawingFile`            | `adiro_provenance`       | NEW    | CQ 9.2, CQ 9.3                                 | FR 9                               |
@@ -920,11 +920,11 @@ adiro_provenance                      (NEW - foundational, domain-neutral)
                 |
                 +---- adiro_drawing_metadata
                         |
-                        +---- adiro_common_symbols       (imports adiro_drawing_metadata only)
+                        +---- adiro_drawing_symbology       (imports adiro_drawing_metadata only)
                         |
-                        +---- adiro_domain_common        (imports adiro_drawing_metadata only)
+                        +---- adiro_discipline_core        (imports adiro_drawing_metadata only)
                                 |
-                                +---- adiro_facade_domain   (also imports adiro_drawing_metadata)
+                                +---- adiro_facade_discipline   (also imports adiro_drawing_metadata)
 ```
 
 **Term placement:**
@@ -934,9 +934,9 @@ adiro_provenance                      (NEW - foundational, domain-neutral)
 | `adiro_drawing_metadata` | **New classes:** `DrawingRevision`, `Project`, `StatusCode`, `DrawingPackage`. **New properties:** all UC-01 datatype properties; `hasRevision` (⊂ `contains`), `hasStatusCode` (⊂ `hasProperty`), `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `isOnPage`. |
 | `adiro_provenance`       | **New classes:** `FieldKind` (the class of the field kinds of the `TitleblockFieldScheme`), `Configuration` (FR 10, with `configurationContent`), `TextReading` and `StepKind` (FR 11, with the outcome value `Failed`), `DrawingFile`, `FilePage`, and the agents `Party`, `Person` and `Organisation` (moved here from `adiro_drawing_metadata`), with the file and page properties of FR 9. **Reused (new module):** `FieldAssertion`, `InferenceMeta`, `hasConfidence`, `capturedCaption`, `assertedBy`, `inferredBy`/`inferredWith`/`inferredFrom`/`inferredAt`, and the `TitleblockFieldScheme` binding via `assertsFieldKind`. Carries **extracted** title-block values before validation - see the design note in §2.1. |
 | `adiro_geometry`         | **Reused (new module):** the `Titleblock` region may carry a `BoundingBox` (via `hasBoundingBox`) interpreted by a `CoordinateFrame` (which reads the page the drawing is on, via `describesPage`) — i.e. *where the title block sits on the page*. The extracted field values are read from within that one region and are **not** individually localised. **New:** `resolutionDpi`, `coversRegion` and `imageOf` (FR 10): the image of the page, or of a region of it, that a step saw, at its resolution, and the kept image file. *(Added in [v0.5](#9-version-history); amended in [v0.19](#9-version-history).)* |
-| `adiro_common_symbols`   | No UC-01 contribution.                                                                                                                                                      |
-| `adiro_domain_common`    | **Reused:** `Discipline` and its subclasses; `hasDiscipline` (with proposed domain change from `LayoutContentType` to `Layout` — see G5).                                   |
-| `adiro_facade_domain`    | No UC-01 contribution.                                                                                                                                                      |
+| `adiro_drawing_symbology`   | No UC-01 contribution.                                                                                                                                                      |
+| `adiro_discipline_core`    | **Reused:** `Discipline` and its subclasses; `hasDiscipline` (with proposed domain change from `LayoutContentType` to `Layout` — see G5).                                   |
+| `adiro_facade_discipline`    | No UC-01 contribution.                                                                                                                                                      |
 
 **SubProperty wiring:**
 
@@ -965,13 +965,20 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 | G12 | ~~**A missing person is two different facts.**~~ "The extraction did not find the author" and "the drawing names none" must be told apart (the first is retried or reviewed, the second is a defect of the drawing). Decided: record absence as a value-less `FieldAssertion` with an outcome. **Resolved**: the vocabulary is in `adiro_provenance` (`hasOutcome`, `hasAcceptance`, [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)), and CQ 4.6 reports a drawing by cause. |
 | G10 | ~~`:Metadata` class name misleading~~ — **resolved**: renamed to `:MetadataContainer` (team decision). The class models visual supporting regions (titleblock, legend, etc.), not semantic metadata. |
 | —   | ~~Project-wide convention for `owl:inverseOf`~~ — **resolved** in [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21): ADIRO does not declare inverse properties. `isRevisionOf` removed; use `^metadata:hasRevision`. |
-| —   | ~~"Civil" discipline~~ — **resolved**: `Civil` to be added as a direct subclass of `dcommon:Discipline` (team decision).                                           |
+| —   | ~~"Civil" discipline~~ — **resolved**: `Civil` to be added as a direct subclass of `dcore:Discipline` (team decision).                                           |
 
 ---
 
 ## 9. Version History
 
-### v0.21 (current — draft)
+### v0.22 (current — draft)
+
+Changes from v0.21, made when three modules were renamed ([#281](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/281)). MAJOR in substance (the modules and the IRIs of every term they define change); the number stays in the 0.x series because the document is still a draft:
+
+- **The module names and prefixes follow the renames**: `adiro_domain_common` is `adiro_discipline_core` (prefix `dcore:`, formerly `dcommon:`), `adiro_common_symbols` is `adiro_drawing_symbology` and `adiro_facade_domain` is `adiro_facade_discipline`, in the term tables, the CQ-I 1 query and the module-hierarchy diagram.
+- Nothing else changes: the requirements, competency questions, terms and their definitions are those of v0.21. The entries below keep the names of their time.
+
+### v0.21 (draft)
 
 Changes from v0.20, made when field kinds were given a class of their own and their scheme was documented ([#254](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/254), [#255](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/255), planned in [#257](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/257)). MAJOR in substance (an entity added); the number stays in the 0.x series because the document is still a draft:
 

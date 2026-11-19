@@ -12,24 +12,24 @@ graph BT
     adiro_provenance["Adiro Provenance"]
     adiro_geometry["Adiro Geometry"]
     adiro_drawing_metadata["Adiro Drawing Metadata"]
-    adiro_common_symbols["Adiro Common Symbols"]
-    adiro_domain_common["Adiro Domain Common"]
-    adiro_facade_domain["Adiro Facade Domain"]
+    adiro_drawing_symbology["Adiro Drawing Symbology"]
+    adiro_discipline_core["Adiro Discipline Core"]
+    adiro_facade_discipline["Adiro Facade Discipline"]
     adiro_geometry --> adiro_provenance
     adiro_drawing_metadata --> adiro_geometry
     adiro_drawing_metadata --> adiro_provenance
-    adiro_common_symbols --> adiro_drawing_metadata
-    adiro_domain_common --> adiro_drawing_metadata
-    adiro_facade_domain --> adiro_domain_common
-    adiro_facade_domain --> adiro_drawing_metadata
+    adiro_drawing_symbology --> adiro_drawing_metadata
+    adiro_discipline_core --> adiro_drawing_metadata
+    adiro_facade_discipline --> adiro_discipline_core
+    adiro_facade_discipline --> adiro_drawing_metadata
     click adiro_provenance "adiro_provenance/" "Adiro Provenance reference page"
     click adiro_geometry "adiro_geometry/" "Adiro Geometry reference page"
     click adiro_drawing_metadata "adiro_drawing_metadata/" "Adiro Drawing Metadata reference page"
-    click adiro_common_symbols "adiro_common_symbols/" "Adiro Common Symbols reference page"
-    click adiro_domain_common "adiro_domain_common/" "Adiro Domain Common reference page"
-    click adiro_facade_domain "adiro_facade_domain/" "Adiro Facade Domain reference page"
+    click adiro_drawing_symbology "adiro_drawing_symbology/" "Adiro Drawing Symbology reference page"
+    click adiro_discipline_core "adiro_discipline_core/" "Adiro Discipline Core reference page"
+    click adiro_facade_discipline "adiro_facade_discipline/" "Adiro Facade Discipline reference page"
     classDef base fill:#16305f,stroke:#0e2247,stroke-width:2px,color:#9ecbff;
-    class adiro_provenance,adiro_geometry,adiro_drawing_metadata,adiro_common_symbols,adiro_domain_common,adiro_facade_domain base;
+    class adiro_provenance,adiro_geometry,adiro_drawing_metadata,adiro_drawing_symbology,adiro_discipline_core,adiro_facade_discipline base;
 ```
 
 ## Available ontologies
@@ -52,22 +52,22 @@ graph BT
 
     *Imports: adiro_geometry, adiro_provenance*
 
--   ### [Adiro Common Symbols](adiro_common_symbols.md)
+-   ### [Adiro Drawing Symbology](adiro_drawing_symbology.md)
 
-    Reusable symbols that appear across disciplines, such as dimensions, grids, levels, and reference symbols. Every symbol is a kind of drawing element from the drawing-metadata module. The discipline modules build on these shared symbols.
-
-    *Imports: adiro_drawing_metadata*
-
--   ### [Adiro Domain Common](adiro_domain_common.md)
-
-    Concepts shared by several engineering domains. It sits between the common symbols and the discipline-specific modules, holding abstractions that more than one domain reuses, so they are defined once.
+    The symbols and marks a drawing uses, shared by every discipline: reusable symbols and text that appear across disciplines, such as dimensions, grids, levels and references to another layout or drawing: the graphical reference symbol, the inline and standalone reference expressions, and the occurrences of drawing and layout identifiers they are made of. Every one is a kind of drawing element from the drawing-metadata module. The discipline modules build on them.
 
     *Imports: adiro_drawing_metadata*
 
--   ### [Adiro Facade Domain](adiro_facade_domain.md)
+-   ### [Adiro Discipline Core](adiro_discipline_core.md)
 
-    Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbol, and domain vocabularies.
+    The vocabulary that several discipline modules share: materials, section shapes and properties, structural components and loads, and the discipline classes. It sits between the drawing symbology and the discipline-specific modules, holding abstractions that more than one discipline reuses, so they are defined once.
 
-    *Imports: adiro_domain_common, adiro_drawing_metadata*
+    *Imports: adiro_drawing_metadata*
+
+-   ### [Adiro Facade Discipline](adiro_facade_discipline.md)
+
+    Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbology, and discipline-core vocabularies.
+
+    *Imports: adiro_discipline_core, adiro_drawing_metadata*
 
 </div>
