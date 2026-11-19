@@ -13,12 +13,18 @@ The page also gets two rows, added by ``add_links`` to the page itself, not to t
 documentation page, both at ``w3id.org/adiro``. A deprecated module also gets a "Deprecated" row (``add_deprecation``,
 #171), because pyLODE shows neither ``owl:deprecated`` nor ``dcterms:isReplacedBy`` on the ontology. ``check`` compares a generated page with its Turtle, so a module (or an
 archived release) cannot publish the wrong IRI or heading.
+
+A term's definition is a ``skos:definition`` and its commentary an ``rdfs:comment`` (#273), but pyLODE merges both, with
+``dc:description`` and ``sdo:description``, into one unlabelled *Description* list, sorted by text. ``graph_for_pylode``
+therefore marks each ``skos:definition`` with an invisible sequence (``MARK``), which survives pyLODE's Markdown, and
+``separate_definitions`` turns that list into a *Definition* row and a *Comment* row, then removes the mark. A term with no
+``skos:definition`` keeps pyLODE's *Description* row.
 """
 import html as htmllib
 import re
 from pathlib import Path
 
-from rdflib import Graph
+from rdflib import Graph, Literal
 from rdflib.namespace import DCTERMS, OWL, RDF, RDFS, SKOS
 
 SITE = "https://w3id.org/adiro"
@@ -45,12 +51,63 @@ IRI_ROW = re.compile(r"(<dt>\s*<strong>IRI</strong>\s*</dt>\s*<dd>\s*<code>)(.*?
 HEADING = re.compile(r"<h1>(.*?)</h1>", re.S)
 
 
+MARK = "\u2063\u2064\u2063"  # invisible separator, invisible plus, invisible separator: never in a written definition
+_DESCRIPTION_ROW = re.compile(
+    r'<tr>\s*<th>\s*<a class="hover_property" href="http://purl\.org/dc/terms/description"[^>]*>Description</a>\s*</th>\s*'
+    r"<td>(.*?)</td>\s*</tr>", re.S)
+_LIST_ITEM = re.compile(r"<li>(.*?)</li>", re.S)
+_ROW = (
+    "<tr>\n"
+    "              <th>\n"
+    '                <a class="hover_property" href="{href}" title="{title}">{label}</a>\n'
+    "              </th>\n"
+    "              <td>{cell}</td>\n"
+    "            </tr>"
+)
+
+
 def graph_for_pylode(ttl_file) -> Graph:
-    """The module's graph without the type ``skos:ConceptScheme`` (see the module docstring)."""
+    """The module's graph without the type ``skos:ConceptScheme``, and with each ``skos:definition`` marked (see the module
+    docstring)."""
     graph = Graph().parse(str(ttl_file), format="turtle")
     for scheme in list(graph.subjects(RDF.type, SKOS.ConceptScheme)):
         graph.remove((scheme, RDF.type, SKOS.ConceptScheme))
+    for subject, value in list(graph.subject_objects(SKOS.definition)):
+        if isinstance(value, Literal):
+            graph.remove((subject, SKOS.definition, value))
+            marked = MARK + str(value)
+            graph.add((subject, SKOS.definition, Literal(marked, lang=value.language) if value.language
+                       else Literal(marked, datatype=value.datatype)))
     return graph
+
+
+def _cell(items):
+    """A table cell for the texts of one row: the text itself for one, a list for several (as pyLODE writes them)."""
+    if len(items) == 1:
+        return items[0]
+    listed = "".join(f"                  <li>{item}</li>\n" for item in items)
+    return "\n                <ul>\n" + listed + "                </ul>\n              "
+
+
+def separate_definitions(page):
+    """The page with each marked *Description* split into a *Definition* row (the ``skos:definition``) and a *Comment* row
+    (the rest), and the marks removed; a *Description* with no mark, and a page already split, are unchanged (#273)."""
+    def split(match):
+        content = match.group(1)
+        if MARK not in content:
+            return match.group(0)
+        items = [m.strip() for m in _LIST_ITEM.findall(content)] or [content.strip()]
+        definitions = [i for i in items if MARK in i]
+        comments = [i for i in items if MARK not in i]
+        rows = _ROW.format(href="http://www.w3.org/2004/02/skos/core#definition", label="Definition", cell=_cell(definitions),
+                           title="A statement or formal explanation of the meaning of a concept. Defined in SKOS")
+        if comments:
+            rows += "\n            " + _ROW.format(
+                href="http://www.w3.org/2000/01/rdf-schema#comment", label="Comment", cell=_cell(comments),
+                title="A description of the subject resource. Defined in RDF Schema")
+        return rows
+
+    return _DESCRIPTION_ROW.sub(split, page).replace(MARK, "")
 
 
 def links(module, version=None):
