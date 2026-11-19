@@ -103,3 +103,11 @@ def test_enforce_definitions_makes_the_unsplit_terms_an_error(tmp_path, monkeypa
     monkeypatch.setenv("ENFORCE_DEFINITIONS", "1")
     ok, errors, _ = vo.validate_ontology(ttl)
     assert not ok and any("still carry their definition in rdfs:comment" in e for e in errors)
+
+
+def test_a_declaration_of_another_modules_term_is_not_a_term_to_define_here(tmp_path):
+    ttl = _module(tmp_path, '<https://w3id.org/adiro/adiro_y#P> a owl:ObjectProperty .\n'
+                            '<https://w3id.org/adiro/aec_x#A> a owl:Class .\n')
+    _, _, warnings = vo.validate_ontology(ttl)
+    (msg,) = [w for w in warnings if "have no skos:definition (nor" in w]
+    assert msg.startswith("1 term(s)") and "A" in msg and "P" not in msg.split(":")[1]

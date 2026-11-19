@@ -256,3 +256,8 @@ def test_removing_or_renaming_the_example_image_property_is_detected():
     assert len(caution.detect([{"module": "aec_drawing_metadata", "base": base, "head": head}], None)) == 1
     assert caution.detect([{"module": "aec_drawing_metadata", "base": base, "head": base}], None) == []
     assert caution.detect([{"module": "aec_x", "base": g(BASE), "head": g(BASE)}], None) == []
+
+
+def test_a_declaration_of_another_modules_term_is_not_asked_for_a_definition():
+    head = g(BASE + "<https://w3id.org/adiro/aec_x> a owl:Ontology .\n<https://w3id.org/adiro/adiro_y#P> a owl:ObjectProperty .\n")
+    assert name(pg.undescribed(head, pg.touched_terms(g(BASE), head))) == []
