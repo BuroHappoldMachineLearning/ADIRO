@@ -489,13 +489,13 @@ td {
               <th>
                 <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#definition" title="A statement or formal explanation of the meaning of a concept. Defined in SKOS">Definition</a>
               </th>
-              <td><p>A rectangular region on a drawing page that locates something there, whether a model detected it or a person marked it - e.g. a title-block field's caption or value.</p></td>
+              <td><p>A rectangular region on a drawing page that locates something there, whether a model detected it or a person marked it.</p></td>
             </tr>
             <tr>
               <th>
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#comment" title="A description of the subject resource. Defined in RDF Schema">Comment</a>
               </th>
-              <td><p>Its coordinates are held as an xyxy string (<a href="#bboxXYXY">bboxXYXY</a>) and are meaningless without the <a href="#CoordinateFrame">CoordinateFrame</a> it points at (<a href="#inCoordinateFrame">inCoordinateFrame</a>), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an <a href="adiro_provenance.html#InferredEntity">InferredEntity</a>: it carries its own provenance (<a href="adiro_provenance.html#hasInferenceMeta">aprov:hasInferenceMeta</a> - a detector, or a human annotator, told apart by <a href="adiro_provenance.html#inferredBy">aprov:inferredBy</a>) and its own confidence (<a href="adiro_provenance.html#hasConfidence">aprov:hasConfidence</a>, the detector's score, absent for a hand-drawn box), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL <a href="#Geometry">geo:Geometry</a> so it is recognised as a spatial shape.</p></td>
+              <td><p>An example is a title-block field's caption or value. Its coordinates are held as an xyxy string (<a href="#bboxXYXY">bboxXYXY</a>) and are meaningless without the <a href="#CoordinateFrame">CoordinateFrame</a> it points at (<a href="#inCoordinateFrame">inCoordinateFrame</a>), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an <a href="adiro_provenance.html#InferredEntity">InferredEntity</a>: it carries its own provenance (<a href="adiro_provenance.html#hasInferenceMeta">aprov:hasInferenceMeta</a> - a detector, or a human annotator, told apart by <a href="adiro_provenance.html#inferredBy">aprov:inferredBy</a>) and its own confidence (<a href="adiro_provenance.html#hasConfidence">aprov:hasConfidence</a>, the detector's score, absent for a hand-drawn box), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL <a href="#Geometry">geo:Geometry</a> so it is recognised as a spatial shape.</p></td>
             </tr>
             <tr>
               <th>
@@ -564,7 +564,7 @@ td {
               <th>
                 <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#definition" title="A statement or formal explanation of the meaning of a concept. Defined in SKOS">Definition</a>
               </th>
-              <td><p>A page of a file read in one coordinate convention: the named coordinate space, the unit and the profile that defines it (the datatype properties below), for the page it describes (<a href="#describesPage">describesPage</a>).</p></td>
+              <td><p>A page of a file read in one coordinate convention: the named coordinate space, the unit and the profile that defines it (<a href="#coordinateSpace">coordinateSpace</a>, unit and <a href="#profileRef">profileRef</a>), for the page it describes (<a href="#describesPage">describesPage</a>).</p></td>
             </tr>
             <tr>
               <th>
@@ -785,13 +785,13 @@ td {
               <th>
                 <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#definition" title="A statement or formal explanation of the meaning of a concept. Defined in SKOS">Definition</a>
               </th>
-              <td><p>The region of the page that this frame shows, when it shows only part of it (a crop): the <a href="#BoundingBox">BoundingBox</a>, in another frame of the same page (usually page_display_pt), whose rectangle the frame's image holds.</p></td>
+              <td><p>The region of the page that this frame shows, when it shows only part of it (a crop): the <a href="#BoundingBox">BoundingBox</a>, in another frame of the same page, whose rectangle the frame's image holds.</p></td>
             </tr>
             <tr>
               <th>
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#comment" title="A description of the subject resource. Defined in RDF Schema">Comment</a>
               </th>
-              <td><p>The frame's own coordinates start at the region's top-left corner. A frame that shows the whole page has no coversRegion. Between the region and the frame there is only a uniform scale, given by the frame's <a href="#resolutionDpi">resolutionDpi</a>, so a box found in the crop is placed on the page without a transform term.</p></td>
+              <td><p>That frame is usually page_display_pt. The frame's own coordinates start at the region's top-left corner. A frame that shows the whole page has no coversRegion. Between the region and the frame there is only a uniform scale, given by the frame's <a href="#resolutionDpi">resolutionDpi</a>, so a box found in the crop is placed on the page without a transform term.</p></td>
             </tr>
             <tr>
               <th>
