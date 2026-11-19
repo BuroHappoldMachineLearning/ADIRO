@@ -98,11 +98,16 @@ def test_every_metadata_container_may_carry_a_bounding_box_and_that_use_is_state
     assert (GEOM.hasBoundingBox, RDFS.domain, None) not in GEOMETRY
 
 
+def described(graph, term):
+    """What the module says of a term: its skos:definition and its rdfs:comment (the definition is moved to the former
+    module by module, #273), so a test of the meaning does not depend on which of the two holds a sentence."""
+    return " ".join(str(o) for p in (SKOS.definition, RDFS.comment) for o in graph.objects(term, p))
+
+
 def test_a_human_annotation_is_described_as_an_inference_step_performed_by_a_person():
     for term, text in ((APROV.InferredEntity, "a person"), (APROV.inferredBy, "aprov:Person")):
-        comment = str(PROVENANCE.value(term, RDFS.comment))
-        assert text in comment, f"{term}'s comment should say that a person can be the producer"
-    assert "person marked it" in str(GEOMETRY.value(GEOM.BoundingBox, RDFS.comment)), "a bounding box is not only detected"
+        assert text in described(PROVENANCE, term), f"{term} should be described as having a person as a possible producer"
+    assert "person marked it" in described(GEOMETRY, GEOM.BoundingBox), "a bounding box is not only detected"
 
 
 def test_the_agents_live_in_the_provenance_module_and_the_drawing_module_uses_them():

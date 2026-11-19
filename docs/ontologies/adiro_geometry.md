@@ -62,18 +62,20 @@ graph BT
 
 ### Bounding Box {#BoundingBox}
 
-A rectangular region on a drawing page that locates something there, whether a model detected it or a person marked it - e.g. a title-block field's caption or value. Its coordinates are held as an xyxy string ([bboxXYXY](#bboxXYXY)) and are meaningless without the [CoordinateFrame](#CoordinateFrame) it points at ([inCoordinateFrame](#inCoordinateFrame)), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an [InferredEntity](adiro_provenance.md#InferredEntity): it carries its own provenance ([aprov:hasInferenceMeta](adiro_provenance.md#hasInferenceMeta) - a detector, or a human annotator, told apart by [aprov:inferredBy](adiro_provenance.md#inferredBy)) and its own confidence ([aprov:hasConfidence](adiro_provenance.md#hasConfidence), the detector's score, absent for a hand-drawn box), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL [geo:Geometry](#Geometry) so it is recognised as a spatial shape.
+A rectangular region on a drawing page that locates something there, whether a model detected it or a person marked it.
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#BoundingBox`
+- **Comment:** An example is a title-block field's caption or value. Its coordinates are held as an xyxy string ([bboxXYXY](#bboxXYXY)) and are meaningless without the [CoordinateFrame](#CoordinateFrame) it points at ([inCoordinateFrame](#inCoordinateFrame)), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an [InferredEntity](adiro_provenance.md#InferredEntity): it carries its own provenance ([aprov:hasInferenceMeta](adiro_provenance.md#hasInferenceMeta) - a detector, or a human annotator, told apart by [aprov:inferredBy](adiro_provenance.md#inferredBy)) and its own confidence ([aprov:hasConfidence](adiro_provenance.md#hasConfidence), the detector's score, absent for a hand-drawn box), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL [geo:Geometry](#Geometry) so it is recognised as a spatial shape.
 - **Sub class of:**
     - [Geometry](#Geometry)
     - [`aprov:InferredEntity`](adiro_provenance.md#InferredEntity)
 
 ### Coordinate Frame {#CoordinateFrame}
 
-A page of a file read in one coordinate convention: the named coordinate space, the unit and the profile that defines it (the datatype properties below), for the page it describes ([describesPage](#describesPage)). A page can have more than one frame (the primary page_display_pt in points, and px for raster evidence), and each states only its convention: what is true of the page itself (its number, file, rotation and size) is on the adiro_provenance:FilePage. Every image of the page that an extraction feeds to a model is a pixel frame of its own, with the resolution it was rendered or scaled to ([resolutionDpi](#resolutionDpi)), and a crop is a frame limited to a region of the page ([coversRegion](#coversRegion)), so a step that records the frame it used (prov:used) says what its model saw without the image being kept. Not an [InferredEntity](adiro_provenance.md#InferredEntity): a declared coordinate context, not a detection with its own confidence.
+A page of a file read in one coordinate convention: the named coordinate space, the unit and the profile that defines it ([coordinateSpace](#coordinateSpace), unit and [profileRef](#profileRef)), for the page it describes ([describesPage](#describesPage)).
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#CoordinateFrame`
+- **Comment:** A page can have more than one frame (the primary page_display_pt in points, and px for raster evidence), and each states only its convention: what is true of the page itself (its number, file, rotation and size) is on the adiro_provenance:FilePage. Every image of the page that an extraction feeds to a model is a pixel frame of its own, with the resolution it was rendered or scaled to ([resolutionDpi](#resolutionDpi)), and a crop is a frame limited to a region of the page ([coversRegion](#coversRegion)), so a step that records the frame it used (prov:used) says what its model saw without the image being kept. Not an [InferredEntity](adiro_provenance.md#InferredEntity): a declared coordinate context, not a detection with its own confidence.
 
 ### Geometry {#Geometry}
 
@@ -85,40 +87,45 @@ Local typing stub for GeoSPARQL's Geometry class (authoritative definition at th
 
 ### coversRegion {#coversRegion}
 
-The region of the page that this frame shows, when it shows only part of it (a crop): the [BoundingBox](#BoundingBox), in another frame of the same page (usually page_display_pt), whose rectangle the frame's image holds. The frame's own coordinates start at the region's top-left corner. A frame that shows the whole page has no coversRegion. Between the region and the frame there is only a uniform scale, given by the frame's [resolutionDpi](#resolutionDpi), so a box found in the crop is placed on the page without a transform term.
+The region of the page that this frame shows, when it shows only part of it (a crop): the [BoundingBox](#BoundingBox), in another frame of the same page, whose rectangle the frame's image holds.
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#coversRegion`
+- **Comment:** That frame is usually page_display_pt. The frame's own coordinates start at the region's top-left corner. A frame that shows the whole page has no coversRegion. Between the region and the frame there is only a uniform scale, given by the frame's [resolutionDpi](#resolutionDpi), so a box found in the crop is placed on the page without a transform term.
 - **Domain:** [Coordinate Frame](#CoordinateFrame)
 - **Range:** [Bounding Box](#BoundingBox)
 
 ### describesPage {#describesPage}
 
-The page (an [aprov:FilePage](adiro_provenance.md#FilePage)) that this coordinate frame reads. The frames of a drawing are reached through its page: the path [isOnPage](adiro_drawing_metadata.md#isOnPage) / ^describesPage from the drawing, in adiro_drawing_metadata.
+The page (an [aprov:FilePage](adiro_provenance.md#FilePage)) that this coordinate frame reads.
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#describesPage`
+- **Comment:** The frames of a drawing are reached through its page: the path [isOnPage](adiro_drawing_metadata.md#isOnPage) / ^describesPage from the drawing, in adiro_drawing_metadata.
 - **Domain:** [Coordinate Frame](#CoordinateFrame)
 - **Range:** [`aprov:FilePage`](adiro_provenance.md#FilePage)
 
 ### hasBoundingBox {#hasBoundingBox}
 
-The bounding box that locates a region on a drawing page. In UC-01 this is the title block's own region (a adiro_drawing_metadata:Titleblock, like every [MetadataContainer](adiro_drawing_metadata.md#MetadataContainer), may have a hasBoundingBox): the field values are read from within that single region and are not themselves individually localised. No rdfs:domain is asserted, so the same property serves any locatable region or element - e.g. UC-03 reference symbols, when that work extends this module.
+The bounding box that locates a region on a drawing page.
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#hasBoundingBox`
+- **Comment:** In UC-01 this is the title block's own region (a adiro_drawing_metadata:Titleblock, like every [MetadataContainer](adiro_drawing_metadata.md#MetadataContainer), may have a hasBoundingBox): the field values are read from within that single region and are not themselves individually localised. No rdfs:domain is asserted, so the same property serves any locatable region or element - e.g. UC-03 reference symbols, when that work extends this module.
 - **Range:** [Bounding Box](#BoundingBox)
 
 ### imageOf {#imageOf}
 
-The coordinate frame that a kept image file shows: the rendering of a page, or a crop of it, as it was fed to a model, kept so a viewer can show it. The image is an [aprov:DrawingFile](adiro_provenance.md#DrawingFile) with its [contentHash](adiro_provenance.md#contentHash) and [mediaType](adiro_provenance.md#mediaType), and its pixels are the frame's coordinates. Only an image that is kept has a file: a frame a model saw is recorded whether or not its image is kept.
+The coordinate frame that a kept image file shows: the rendering of a page, or a crop of it, as it was fed to a model, kept so a viewer can show it.
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#imageOf`
+- **Comment:** The image is an [aprov:DrawingFile](adiro_provenance.md#DrawingFile) with its [contentHash](adiro_provenance.md#contentHash) and [mediaType](adiro_provenance.md#mediaType), and its pixels are the frame's coordinates. Only an image that is kept has a file: a frame a model saw is recorded whether or not its image is kept.
 - **Domain:** [`aprov:DrawingFile`](adiro_provenance.md#DrawingFile)
 - **Range:** [Coordinate Frame](#CoordinateFrame)
 
 ### inCoordinateFrame {#inCoordinateFrame}
 
-The [CoordinateFrame](#CoordinateFrame) that interprets this geometry's coordinates. Required for a geometry to mean anything: the same xyxy numbers denote different regions in different frames, so equal coordinates alone never establish that two geometries are the same region.
+The [CoordinateFrame](#CoordinateFrame) that interprets this geometry's coordinates.
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#inCoordinateFrame`
+- **Comment:** Required for a geometry to mean anything: the same xyxy numbers denote different regions in different frames, so equal coordinates alone never establish that two geometries are the same region.
 - **Domain:** [Geometry](#Geometry)
 - **Range:** [Coordinate Frame](#CoordinateFrame)
 
@@ -126,17 +133,19 @@ The [CoordinateFrame](#CoordinateFrame) that interprets this geometry's coordina
 
 ### bboxXYXY {#bboxXYXY}
 
-The rectangle as a string "[xmin, ymin, xmax, ymax]" in the coordinate frame's convention (xmin/ymin the top-left corner, xmax/ymax the bottom-right, under page_display_pt). The xyxy ordering is aligned to the Croissant cr:BoundingBox 'XYXY' format token, so an ADIRO box can be mapped to Croissant/CV formats by an exporter - ADIRO stores a page-point xyxy string, whereas Croissant expects a four-number array with a format declaration (background: GitHub issue #91). Interpret only together with [inCoordinateFrame](#inCoordinateFrame).
+The rectangle as a string "[xmin, ymin, xmax, ymax]" in the coordinate frame's convention (xmin/ymin the top-left corner, xmax/ymax the bottom-right, under page_display_pt).
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#bboxXYXY`
+- **Comment:** The xyxy ordering is aligned to the Croissant cr:BoundingBox 'XYXY' format token, so an ADIRO box can be mapped to Croissant/CV formats by an exporter - ADIRO stores a page-point xyxy string, whereas Croissant expects a four-number array with a format declaration (background: GitHub issue #91). Interpret only together with [inCoordinateFrame](#inCoordinateFrame).
 - **Domain:** [Bounding Box](#BoundingBox)
 - **Range:** `xsd:string`
 
 ### coordinateSpace {#coordinateSpace}
 
-The named coordinate convention that fixes the origin and axes. Primary: 'page_display_pt' - top-left origin, x rightwards, y downwards, in points. Native PDF user space and rendered-image pixels are different spaces and must be named as such; do not interchange the names.
+The named coordinate convention that fixes the origin and axes.
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#coordinateSpace`
+- **Comment:** Primary: 'page_display_pt' - top-left origin, x rightwards, y downwards, in points. Native PDF user space and rendered-image pixels are different spaces and must be named as such; do not interchange the names.
 - **Domain:** [Coordinate Frame](#CoordinateFrame)
 - **Range:** `xsd:string`
 
@@ -150,16 +159,18 @@ Reference to the versioned coordinate profile that defines the named [coordinate
 
 ### resolutionDpi {#resolutionDpi}
 
-The resolution of a pixel frame, in pixels per inch of the page. For a frame that shows the whole page, a page_display_pt coordinate times resolutionDpi / 72 gives the pixel; for a crop ([coversRegion](#coversRegion)), the coordinate is first taken from the region's top-left corner: (coordinate - corner) times resolutionDpi / 72. For a page rendered at 300 dpi it is 300; for that image scaled down so that its shorter side is 1200 pixels, it is the resolution the scaling gives (a decimal, such as 42.35). A frame in points has none.
+The resolution of a pixel frame, in pixels per inch of the page.
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#resolutionDpi`
+- **Comment:** For a frame that shows the whole page, a page_display_pt coordinate times resolutionDpi / 72 gives the pixel; for a crop ([coversRegion](#coversRegion)), the coordinate is first taken from the region's top-left corner: (coordinate - corner) times resolutionDpi / 72. For a page rendered at 300 dpi it is 300; for that image scaled down so that its shorter side is 1200 pixels, it is the resolution the scaling gives (a decimal, such as 42.35). A frame in points has none.
 - **Domain:** [Coordinate Frame](#CoordinateFrame)
 - **Range:** `xsd:decimal`
 
 ### unit {#unit}
 
-The unit of the coordinate values: 'pt' for the primary page_display_pt space (1 pt = 1/72 inch), 'px' for raster/pixel evidence. Display-page coordinates in pt are independent of rendering DPI.
+The unit of the coordinate values: 'pt' for the primary page_display_pt space (1 pt = 1/72 inch), 'px' for raster/pixel evidence.
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry#unit`
+- **Comment:** Display-page coordinates in pt are independent of rendering DPI.
 - **Domain:** [Coordinate Frame](#CoordinateFrame)
 - **Range:** `xsd:string`
