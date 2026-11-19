@@ -260,7 +260,7 @@ Sampling one German project would settle all three at once.
 | Proposed | Use instead |
 | --- | --- |
 | `Sheet` | `dm:DrawingSheet` |
-| `Discipline` | `adcore:Discipline` — a class hierarchy, giving sub-discipline rollup a flat SKOS scheme would lose. Referencing it needs an `owl:imports` of `aec_domain_common`, which pulls the whole module chain; that import question is unresolved, so nothing references `dcore:` yet |
+| `Discipline` | `adcore:Discipline` — a class hierarchy, giving sub-discipline rollup a flat SKOS scheme would lose. Referencing it needs an `owl:imports` of `aec_domain_common`, which pulls the whole module chain; that import question is unresolved, so nothing references `adcore:` yet |
 | `hasNorthPointOrientation` | UC-07 `northArrowAngle` (drawing-level) |
 | `hasAnnotationBlock` | `dm:Legend` / `dm:Note` with `dm:contains` |
 | `pageNumber` / `numberOfPages` | duplicated the sheet-position pair, itself withdrawn entirely in §7.3 |
