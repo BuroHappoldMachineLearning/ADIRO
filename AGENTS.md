@@ -410,7 +410,8 @@ For anyone changing an ontology, agent or person. The sections below give the de
         the version is part of the filename, and renaming on a bump is the established convention). Update the
         `# …  — vX.Y` heading and the `**Version:**` line, add an entry to its **Version history** section
         saying what changed and why, and fix every reference to the old filename —
-        `scripts/generate_docs.py` (it writes the landing-page link), `README.md`, and any doc that links it.
+        `scripts/generate_docs.py` (it writes the landing-page link), `README.md`, `docs/specification/.pages` (the
+        navigation: a stale entry fails the docs build), and any doc that links it.
       - **Use-case ORSDs** (`UC-*/UC-*.md`) — bump **both** places: the `**Version:**` field in the header
         line at the top of the file, **and** a new entry in the final *Version History* section listing the
         changes and stating whether the revision is MAJOR or MINOR. Then update that use case's row in

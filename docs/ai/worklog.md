@@ -1,3 +1,8 @@
+## 2026-11-19 - The navigation names the current ORSD ([#293](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/293))
+
+The docs deploy failed on `main` after [#290](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/290) renamed the ORSD to `ORSD_v1.5.md`: `docs/specification/.pages` still listed `ORSD_v1.4.md`, and the awesome-pages plugin stops the build on a missing entry (`NavEntryNotFound`). The entry now names `ORSD_v1.5.md`, and `AGENTS.md` lists `.pages` among the references to fix when the ORSD is renamed.
+- Verified: `generate_docs.py` and `mkdocs build` pass locally. The alert issue closes itself when the next deploy passes.
+
 ## 2026-11-19 - Another module's declaration is not a term to define ([#290](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/290))
 
 A review of the PR found that `adiro_drawing_metadata` declares `adsym:denotesDrawingSheet` and `adsym:inlineReferencesLayout` bare, so a reader without `adiro_drawing_symbology` can read the `owl:equivalentProperty`, and that the validator and the guidance bot counted them as undefined terms of the module. `scripts/validate_ontology.py` (`is_own_term`, used by the undescribed and not-yet-split checks) and `scripts/pr_guidance.py` now skip a subject outside the module's own namespace; a graph with no `owl:Ontology` keeps every term. A test for each. The definitions added in the previous commit stay (the deprecated stubs and the live properties in `adiro_drawing_symbology`).
