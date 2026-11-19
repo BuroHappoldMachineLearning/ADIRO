@@ -14,16 +14,16 @@
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix metadata: <https://w3id.org/adiro/adiro_drawing_metadata#> .
-@prefix dsym: <https://w3id.org/adiro/adiro_drawing_symbology#> .
+@prefix adsym: <https://w3id.org/adiro/adiro_drawing_symbology#> .
 @prefix dv: <https://w3id.org/adiro/data-validation/uc03-composition#> .
 
 dv:InlineReferenceComposition a sh:NodeShape ;
-    sh:targetClass dsym:InlineLayoutDrawingReference , metadata:InlineLayoutSheetReference ;
+    sh:targetClass adsym:InlineLayoutDrawingReference , metadata:InlineLayoutSheetReference ;
     sh:severity sh:Violation ;
     sh:property [
         sh:severity sh:Violation ;
         sh:path metadata:contains ;
-        sh:qualifiedValueShape [ sh:or ( [ sh:class dsym:DrawingIdentifierMention ] [ sh:class metadata:DrawingIdentifierMention ] ) ] ;
+        sh:qualifiedValueShape [ sh:or ( [ sh:class adsym:DrawingIdentifierMention ] [ sh:class metadata:DrawingIdentifierMention ] ) ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
         sh:message "An inline layout and drawing reference contains exactly one drawing identifier mention."
@@ -31,28 +31,28 @@ dv:InlineReferenceComposition a sh:NodeShape ;
     sh:property [
         sh:severity sh:Violation ;
         sh:path metadata:contains ;
-        sh:qualifiedValueShape [ sh:or ( [ sh:class dsym:LayoutIdentifierMention ] [ sh:class metadata:LayoutIdentifierMention ] ) ] ;
+        sh:qualifiedValueShape [ sh:or ( [ sh:class adsym:LayoutIdentifierMention ] [ sh:class metadata:LayoutIdentifierMention ] ) ] ;
         sh:qualifiedMinCount 1 ;
         sh:message "An inline layout and drawing reference contains at least one layout identifier mention."
     ] .
 
 dv:ReferenceSymbolComposition a sh:NodeShape ;
-    sh:targetClass dsym:ReferenceSymbol ;
+    sh:targetClass adsym:ReferenceSymbol ;
     sh:severity sh:Violation ;
     sh:property [
         sh:severity sh:Violation ;
         sh:path metadata:contains ;
-        sh:qualifiedValueShape [ sh:or ( [ sh:class dsym:DrawingIdentifierMention ] [ sh:class metadata:DrawingIdentifierMention ] ) ] ;
+        sh:qualifiedValueShape [ sh:or ( [ sh:class adsym:DrawingIdentifierMention ] [ sh:class metadata:DrawingIdentifierMention ] ) ] ;
         sh:qualifiedMaxCount 1 ;
         sh:message "A reference symbol contains at most one drawing identifier mention."
     ] .
 
 dv:MentionTarget a sh:NodeShape ;
-    sh:targetClass dsym:DrawingIdentifierMention , metadata:DrawingIdentifierMention ;
+    sh:targetClass adsym:DrawingIdentifierMention , metadata:DrawingIdentifierMention ;
     sh:severity sh:Violation ;
     sh:property [
         sh:severity sh:Violation ;
-        sh:path dsym:denotesDrawingSheet ;
+        sh:path adsym:denotesDrawingSheet ;
         sh:maxCount 1 ;
         sh:message "A drawing identifier mention has at most one accepted denotesDrawingSheet target."
     ] ;

@@ -61,4 +61,4 @@ final release plus a MAJOR). The old modules stay published, deprecated, for one
 
 The mapping above, the `rewrite` command and the `links` command send an IRI of the first, the second or any earlier name straight to the module's
 current name, so a graph written against `aec_common_symbols` or `adiro_common_symbols` ends at `adiro_drawing_symbology`. The prefixes used in this
-repository follow (`csymbol:` is `dsym:`, `dcommon:` is `dcore:`), and a SPARQL query written with the old namespaces needs the new ones.
+repository follow (`csymbol:` is `adsym:`, `dcommon:` is `adcore:`), and a SPARQL query written with the old namespaces needs the new ones.

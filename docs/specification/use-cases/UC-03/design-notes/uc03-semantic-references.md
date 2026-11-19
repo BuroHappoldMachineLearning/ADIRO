@@ -11,13 +11,13 @@ model could not distinguish.
 
 | Source individual | Meaning | Accepted target edge |
 |---|---|---|
-| `dsym:DrawingIdentifierMention` | One occurrence of sheet-number text | `dsym:denotesDrawingSheet` to a `DrawingSheet`, when resolved |
-| `dsym:LayoutIdentifierMention` | One occurrence of layout-number text | No direct target edge; it is a component of a complete expression |
-| `dsym:ReferenceSymbol` | One graphical marker | Existing `dsym:referencesLayout` to an accepted target `Layout` |
-| `dsym:InlineLayoutDrawingReference` | One complete inline expression | `dsym:inlineReferencesLayout` to each accepted target `Layout` |
-| `dsym:StandaloneDrawingReference` | One sheet-number occurrence that is itself a complete reference | Inherited `dsym:denotesDrawingSheet` |
+| `adsym:DrawingIdentifierMention` | One occurrence of sheet-number text | `adsym:denotesDrawingSheet` to a `DrawingSheet`, when resolved |
+| `adsym:LayoutIdentifierMention` | One occurrence of layout-number text | No direct target edge; it is a component of a complete expression |
+| `adsym:ReferenceSymbol` | One graphical marker | Existing `adsym:referencesLayout` to an accepted target `Layout` |
+| `adsym:InlineLayoutDrawingReference` | One complete inline expression | `adsym:inlineReferencesLayout` to each accepted target `Layout` |
+| `adsym:StandaloneDrawingReference` | One sheet-number occurrence that is itself a complete reference | Inherited `adsym:denotesDrawingSheet` |
 
-`dsym:ReferenceExpression` groups the three complete forms for queries. A standalone reference has both
+`adsym:ReferenceExpression` groups the three complete forms for queries. A standalone reference has both
 `DrawingIdentifierMention` and `ReferenceExpression` types through subclassing: **one occurrence, one individual**. It
 does not need an outer wrapper, a self-directed `contains` edge or a duplicate box. An embedded sheet
 number remains a component of its symbol or inline expression; absence of a known parent does not prove that
@@ -29,10 +29,10 @@ processing history have separate responsibilities.
 `metadata:contains`, with a typed mention as its object, expresses accepted composition, not target
 resolution. The existing `metadata:hasLayout` states which Layout belongs to a DrawingSheet; a layout number
 alone is not a globally unique Layout identity. The evidenced source Layout of any reference expression, inline or
-standalone, is stated with `metadata:contains` from that Layout (a graphical marker through `dsym:hasReferenceSymbol`,
+standalone, is stated with `metadata:contains` from that Layout (a graphical marker through `adsym:hasReferenceSymbol`,
 a sub-property of `contains`), and read from the expression's side with the inverse path `^metadata:contains`, as ADIRO
-declares no named inverse properties ([#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21)). Likewise, `dsym:inlineReferencesLayout` is separate from the existing symbol-only
-`dsym:referencesLayout`, so using an inline reference cannot accidentally infer that it is a graphical
+declares no named inverse properties ([#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21)). Likewise, `adsym:inlineReferencesLayout` is separate from the existing symbol-only
+`adsym:referencesLayout`, so using an inline reference cannot accidentally infer that it is a graphical
 symbol. Source membership is left unset when the evidence supports only a page location. *(Amended in
 [UC-03 v0.7](../UC-03-Reference%20Symbol%20Cross-Sheet%20Linking.md#10-version-history): `appearsOnLayout` was removed.)*
 

@@ -32,7 +32,7 @@ from pathlib import Path
 
 from rdflib import Graph, URIRef
 from rdflib.compare import isomorphic
-from rdflib.namespace import OWL, RDF, RDFS
+from rdflib.namespace import DCTERMS, OWL, RDF, RDFS
 from rdflib.term import BNode
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -77,8 +77,18 @@ def undescribed(head, terms):
     return [t for t in terms if not any((t, p, None) in head for p in DESCRIPTION_PROPS)]
 
 
+def replaced_by(suite, old, new):
+    """True when ``old`` is ``owl:deprecated`` and says ``dcterms:isReplacedBy`` ``new`` (#290)."""
+    return (any(str(v).lower() == "true" for v in suite.objects(old, OWL.deprecated))
+            and (old, DCTERMS.isReplacedBy, new) in suite)
+
+
 def label_clashes(suite, terms):
-    """{term: [other terms with the same rdfs:label]} for the given terms, across the whole suite."""
+    """{term: [other terms with the same rdfs:label]} for the given terms, across the whole suite.
+
+    A deprecated term and the term that replaces it share their label on purpose (the same class under a new IRI, whose
+    released label stays as it was), so that pair is not a clash (#290).
+    """
     by_label = {}
     for t in adiro_terms(suite):
         for lab in suite.objects(t, RDFS.label):
@@ -88,6 +98,7 @@ def label_clashes(suite, terms):
         others = set()
         for lab in suite.objects(t, RDFS.label):
             others |= by_label.get(str(lab).strip().lower(), set()) - {t}
+        others = {o for o in others if not (replaced_by(suite, t, o) or replaced_by(suite, o, t))}
         if others:
             out[t] = sorted(others, key=str)
     return out

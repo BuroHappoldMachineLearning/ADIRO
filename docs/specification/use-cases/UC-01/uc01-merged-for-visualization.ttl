@@ -1,7 +1,7 @@
 @prefix : <https://w3id.org/adiro/adiro_drawing_metadata#> .
 @base <https://w3id.org/adiro/> .
 @prefix metadata: <https://w3id.org/adiro/adiro_drawing_metadata#> .
-@prefix dcore: <https://w3id.org/adiro/adiro_discipline_core#> .
+@prefix adcore: <https://w3id.org/adiro/adiro_discipline_core#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace#> .
@@ -233,87 +233,87 @@
 #  LayoutContentType (open issue — pending team review).
 #################################################################
 
-dcore:Discipline rdf:type owl:Class ;
+adcore:Discipline rdf:type owl:Class ;
     rdfs:label "Discipline" ;
     rdfs:comment "The engineering or architectural discipline associated with a drawing content type." ;
     :isComputerVisionLabel "false"^^xsd:boolean .
 
-dcore:hasDiscipline rdf:type owl:ObjectProperty ;
+adcore:hasDiscipline rdf:type owl:ObjectProperty ;
     rdfs:label "hasDiscipline" ;
     rdfs:comment "Links a Layout to an AEC discipline. (Revised: domain moved from LayoutContentType to Layout — see UC-01 Decision G5 discussion.)" ;
     rdfs:domain :Layout ;
-    rdfs:range dcore:Discipline .
+    rdfs:range adcore:Discipline .
 
 :Layout rdfs:subClassOf [
     rdf:type owl:Restriction ;
-    owl:onProperty dcore:hasDiscipline ;
+    owl:onProperty adcore:hasDiscipline ;
     owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
-    owl:onClass dcore:Discipline
+    owl:onClass adcore:Discipline
 ] .
 
-dcore:Architectural rdf:type owl:Class ;
-    rdfs:subClassOf dcore:Discipline ;
+adcore:Architectural rdf:type owl:Class ;
+    rdfs:subClassOf adcore:Discipline ;
     rdfs:label "Architectural" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcore:Facade rdf:type owl:Class ;
-    rdfs:subClassOf dcore:Architectural ;
+adcore:Facade rdf:type owl:Class ;
+    rdfs:subClassOf adcore:Architectural ;
     rdfs:label "Facade" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcore:FireLifeSafety rdf:type owl:Class ;
-    rdfs:subClassOf dcore:Architectural ;
+adcore:FireLifeSafety rdf:type owl:Class ;
+    rdfs:subClassOf adcore:Architectural ;
     rdfs:label "Fire life safety" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcore:Structural rdf:type owl:Class ;
-    rdfs:subClassOf dcore:Discipline ;
+adcore:Structural rdf:type owl:Class ;
+    rdfs:subClassOf adcore:Discipline ;
     rdfs:label "Structural" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcore:MEP rdf:type owl:Class ;
-    rdfs:subClassOf dcore:Discipline ;
+adcore:MEP rdf:type owl:Class ;
+    rdfs:subClassOf adcore:Discipline ;
     rdfs:label "MEP" ;
     rdfs:comment "Mechanical, Electrical, and Plumbing." ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcore:Mechanical rdf:type owl:Class ;
-    rdfs:subClassOf dcore:MEP ;
+adcore:Mechanical rdf:type owl:Class ;
+    rdfs:subClassOf adcore:MEP ;
     rdfs:label "Mechanical" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcore:Electrical rdf:type owl:Class ;
-    rdfs:subClassOf dcore:MEP ;
+adcore:Electrical rdf:type owl:Class ;
+    rdfs:subClassOf adcore:MEP ;
     rdfs:label "Electrical" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcore:Plumbing rdf:type owl:Class ;
-    rdfs:subClassOf dcore:MEP ;
+adcore:Plumbing rdf:type owl:Class ;
+    rdfs:subClassOf adcore:MEP ;
     rdfs:label "Plumbing" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcore:Lighting rdf:type owl:Class ;
-    rdfs:subClassOf dcore:Electrical ;
+adcore:Lighting rdf:type owl:Class ;
+    rdfs:subClassOf adcore:Electrical ;
     rdfs:label "Lighting" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcore:Masterplan rdf:type owl:Class ;
-    rdfs:subClassOf dcore:Discipline ;
+adcore:Masterplan rdf:type owl:Class ;
+    rdfs:subClassOf adcore:Discipline ;
     rdfs:label "Masterplan" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
 
-dcore:Civil rdf:type owl:Class ;
-    rdfs:subClassOf dcore:Discipline ;
+adcore:Civil rdf:type owl:Class ;
+    rdfs:subClassOf adcore:Discipline ;
     rdfs:label "Civil" ;
     :isComputerVisionLabel "false"^^xsd:boolean ;
     :isComputerVisionOptionalLabel "true"^^xsd:boolean .
@@ -530,5 +530,5 @@ dcore:Civil rdf:type owl:Class ;
 #  G10 — Resolved: :Metadata renamed to :MetadataContainer
 #         (team decision).
 #  Civil — Confirmed by team: to be added as direct subclass
-#         of dcore:Discipline.
+#         of adcore:Discipline.
 #################################################################

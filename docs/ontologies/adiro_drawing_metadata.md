@@ -92,7 +92,7 @@ Deprecated: use DrawingIdentifierMention of adiro_drawing_symbology, the same cl
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#DrawingIdentifierMention`
 - **Sub class of:** [Drawing element](#DrawingElement)
-- **Equivalent to:** `dsym:DrawingIdentifierMention`
+- **Equivalent to:** `adsym:DrawingIdentifierMention`
 
 ### Drawing Sheet {#DrawingSheet}
 
@@ -159,7 +159,7 @@ Deprecated: use [InlineLayoutDrawingReference](adiro_drawing_symbology.md#Inline
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#InlineLayoutSheetReference`
 - **Sub class of:** [Reference expression](#ReferenceExpression)
-- **Equivalent to:** [`dsym:InlineLayoutDrawingReference`](adiro_drawing_symbology.md#InlineLayoutDrawingReference)
+- **Equivalent to:** [`adsym:InlineLayoutDrawingReference`](adiro_drawing_symbology.md#InlineLayoutDrawingReference)
 
 ### Key Plan {#KeyPlan}
 
@@ -208,7 +208,7 @@ Deprecated: use LayoutIdentifierMention of adiro_drawing_symbology, the same cla
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#LayoutIdentifierMention`
 - **Sub class of:** [Drawing element](#DrawingElement)
-- **Equivalent to:** `dsym:LayoutIdentifierMention`
+- **Equivalent to:** `adsym:LayoutIdentifierMention`
 
 ### Legend {#Legend}
 
@@ -286,7 +286,7 @@ Deprecated: use ReferenceExpression of adiro_drawing_symbology, the same class d
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#ReferenceExpression`
 - **Sub class of:** [Drawing element](#DrawingElement)
-- **Equivalent to:** `dsym:ReferenceExpression`
+- **Equivalent to:** `adsym:ReferenceExpression`
 
 ### Revision table {#RevisionTable}
 
@@ -321,7 +321,7 @@ Deprecated: use [StandaloneDrawingReference](adiro_drawing_symbology.md#Standalo
 - **Sub class of:**
     - [Drawing identifier mention](#DrawingIdentifierMention)
     - [Reference expression](#ReferenceExpression)
-- **Equivalent to:** [`dsym:StandaloneDrawingReference`](adiro_drawing_symbology.md#StandaloneDrawingReference)
+- **Equivalent to:** [`adsym:StandaloneDrawingReference`](adiro_drawing_symbology.md#StandaloneDrawingReference)
 
 ### StatusCode {#StatusCode}
 

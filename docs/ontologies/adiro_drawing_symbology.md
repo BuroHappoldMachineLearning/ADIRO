@@ -69,7 +69,7 @@ graph BT
 A dimension line or dimension annotation on a drawing, indicating measurements or distances.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#Dimension`
-- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
+- **Sub class of:** [`admeta:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
 
 *Example images:*
 
@@ -80,7 +80,7 @@ A dimension line or dimension annotation on a drawing, indicating measurements o
 One evidenced occurrence of drawing-identifier (sheet-identifier) text on a source drawing, distinct from the [DrawingSheet](adiro_drawing_metadata.md#DrawingSheet) that the text may denote. Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted sheet resolution: an unlocalisable text block may retain its accepted [denotesDrawingSheet](#denotesDrawingSheet) edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#DrawingIdentifierMention`
-- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
+- **Sub class of:** [`admeta:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
 
 *Example images:*
 
@@ -91,7 +91,7 @@ One evidenced occurrence of drawing-identifier (sheet-identifier) text on a sour
 A grid line or grid system used for alignment and reference in architectural drawings.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#Grid`
-- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
+- **Sub class of:** [`admeta:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
 
 *Example images:*
 
@@ -113,7 +113,7 @@ A complete inline textual expression relating layout number(s) to a sheet number
 One evidenced occurrence of layout-identifier text (a small integer or letter), distinct from a target [Layout](adiro_drawing_metadata.md#Layout). A complete inline reference may contain several such occurrences, attached with contains; no target is inferred from matching text alone.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#LayoutIdentifierMention`
-- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
+- **Sub class of:** [`admeta:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
 
 *Example images:*
 
@@ -124,7 +124,7 @@ One evidenced occurrence of layout-identifier text (a small integer or letter), 
 A complete source reference expression, whether graphical, inline or a standalone sheet-number reference. This superclass groups those forms for queries; it does not require a second individual around any of them.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#ReferenceExpression`
-- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
+- **Sub class of:** [`admeta:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
 
 ### ReferenceSymbol {#ReferenceSymbol}
 
@@ -158,15 +158,15 @@ The accepted [DrawingSheet](adiro_drawing_metadata.md#DrawingSheet) identity den
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#denotesDrawingSheet`
 - **Domain:** [Drawing identifier mention](#DrawingIdentifierMention)
-- **Range:** [`metadata:DrawingSheet`](adiro_drawing_metadata.md#DrawingSheet)
+- **Range:** [`admeta:DrawingSheet`](adiro_drawing_metadata.md#DrawingSheet)
 
 ### hasReferenceSymbol {#hasReferenceSymbol}
 
-A Layout contains one or more [ReferenceSymbol](#ReferenceSymbol)s. To navigate from a symbol back to the [Layout](adiro_drawing_metadata.md#Layout) it is drawn on, use the SPARQL inverse path ^dsym:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
+A Layout contains one or more [ReferenceSymbol](#ReferenceSymbol)s. To navigate from a symbol back to the [Layout](adiro_drawing_metadata.md#Layout) it is drawn on, use the SPARQL inverse path ^adsym:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#hasReferenceSymbol`
-- **Sub property of:** [`metadata:contains`](adiro_drawing_metadata.md#contains)
-- **Domain:** [`metadata:Layout`](adiro_drawing_metadata.md#Layout)
+- **Sub property of:** [`admeta:contains`](adiro_drawing_metadata.md#contains)
+- **Domain:** [`admeta:Layout`](adiro_drawing_metadata.md#Layout)
 - **Range:** [ReferenceSymbol](#ReferenceSymbol)
 
 ### inlineReferencesLayout {#inlineReferencesLayout}
@@ -175,12 +175,12 @@ An accepted target [Layout](adiro_drawing_metadata.md#Layout) of an inline layou
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#inlineReferencesLayout`
 - **Domain:** [Inline Layout and Drawing Reference](#InlineLayoutDrawingReference)
-- **Range:** [`metadata:Layout`](adiro_drawing_metadata.md#Layout)
+- **Range:** [`admeta:Layout`](adiro_drawing_metadata.md#Layout)
 
 ### referencesLayout {#referencesLayout}
 
-Target Layout — the [Layout](adiro_drawing_metadata.md#Layout) this [ReferenceSymbol](#ReferenceSymbol) points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^dsym:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
+Target Layout — the [Layout](adiro_drawing_metadata.md#Layout) this [ReferenceSymbol](#ReferenceSymbol) points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^adsym:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#referencesLayout`
 - **Domain:** [ReferenceSymbol](#ReferenceSymbol)
-- **Range:** [`metadata:Layout`](adiro_drawing_metadata.md#Layout)
+- **Range:** [`admeta:Layout`](adiro_drawing_metadata.md#Layout)

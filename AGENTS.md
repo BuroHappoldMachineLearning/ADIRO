@@ -48,8 +48,8 @@ Three of the `adiro_*` modules were renamed in turn ([#281](https://github.com/B
 `dcterms:isReplacedBy` its successor), and its successor entered `src/` as a copy of that final release under the new names (the history of each
 module now runs through three names, `aec_*`, `adiro_*` and the new one, which `config/module_renames.json` allows as a chain). The old files stay in
 `src/` for one release cycle, with their pages and releases; the compatibility diff reads a successor as a MAJOR change of its predecessor
-(`MODULE_RENAMED`) and, a cycle later, the old module as `MODULE_RETIRED`. The prefixes follow: `dsym:` for `adiro_drawing_symbology` (formerly
-`csymbol:`) and `dcore:` for `adiro_discipline_core` (formerly `dcommon:`). `docs/migrating-from-aec.md` explains how to move data and links.
+(`MODULE_RENAMED`) and, a cycle later, the old module as `MODULE_RETIRED`. The prefixes follow: `adsym:` for `adiro_drawing_symbology` (formerly
+`csymbol:`) and `adcore:` for `adiro_discipline_core` (formerly `dcommon:`). `docs/migrating-from-aec.md` explains how to move data and links.
 
 DAnO is **not** part of the suite: ADIRO ships no DAnO artifact — no module, no import, no annotation-level
 crosswalk. The comparison with DAnO, and the reasons ADIRO mints its own terms rather than importing or aligning
@@ -322,7 +322,7 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   published docs (pyLODE / ttl2md) and label-based search display `rdfs:label`, so duplicates confuse a human
   reader — and because for `owl:oneOf` **enumeration values** the `rdfs:label` *is* the option a
   person picks in the annotation tool. Enforced by ROBOT `report` `duplicate_label` ([RES-36](https://bhmlrnd.youtrack.cloud/issue/RES-36)),
-  as a **warning** (exceptions allowed). Legacy-label conformance is tracked in
+  as a **warning** (exceptions allowed; a deprecated term and the term that replaces it share their label on purpose, and the guidance bot does not list that pair, [#290](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/290)). Legacy-label conformance is tracked in
   [RES-92](https://bhmlrnd.youtrack.cloud/issue/RES-92).
 - **Annotation label text comes from the IRI, not `rdfs:label`.** The downstream annotation pipeline builds each
   *class* label from the class **IRI local name** (fragment after `#`), normalised by its own rules; it does **not**

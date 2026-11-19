@@ -56,7 +56,7 @@ Cross-checking the survey against `src/aec_drawing_metadata.ttl` and the shipped
 | --- | --- | --- | --- |
 | Project / Building / Site (100%, A) · Project Title (100%, B) · Project Name (100%, D) | `dm:Project` + `dm:projectName` + `dm:belongsToProject` | 3/4 | **Already modelled.** Same shape as decision 1 (Option 1) — no `tb:` counterpart needed |
 | Component / Package (100%, B) | `dm:DrawingPackage` + `dm:packageName` + `dm:belongsToPackage` | 1/4 | **Already modelled** |
-| Department (5.1%, A) · Discipline (100%, B, same template field as Department) | `dcore:Discipline` (per [titleblock-vocabulary-review.md](titleblock-vocabulary-review.md) §2.3) | 2/4 | **Already dropped as redundant** — footer (b). Survey does not change this; 5.1% on the one heterogeneous sample confirms it, if anything |
+| Department (5.1%, A) · Discipline (100%, B, same template field as Department) | `adcore:Discipline` (per [titleblock-vocabulary-review.md](titleblock-vocabulary-review.md) §2.3) | 2/4 | **Already dropped as redundant** — footer (b). Survey does not change this; 5.1% on the one heterogeneous sample confirms it, if anything |
 | Client (100%, B and D) | `tb:assertsClient` | 2/4 | **Already shipped** |
 | Architect / Design Practice (95.8%, A) | `tb:assertsOriginator` | 1/4, near-universal within it | **Already shipped** |
 | Drawn / Drawn By (100% in all four) · Checked / Checked by (22.8–100%) | `dm:isAuthoredBy` / `dm:isCheckedBy` (Option 1) | 4/4 | **Already resolved, reused from `dm:`** |
@@ -260,7 +260,7 @@ Sampling one German project would settle all three at once.
 | Proposed | Use instead |
 | --- | --- |
 | `Sheet` | `dm:DrawingSheet` |
-| `Discipline` | `dcore:Discipline` — a class hierarchy, giving sub-discipline rollup a flat SKOS scheme would lose. Referencing it needs an `owl:imports` of `aec_domain_common`, which pulls the whole module chain; that import question is unresolved, so nothing references `dcore:` yet |
+| `Discipline` | `adcore:Discipline` — a class hierarchy, giving sub-discipline rollup a flat SKOS scheme would lose. Referencing it needs an `owl:imports` of `aec_domain_common`, which pulls the whole module chain; that import question is unresolved, so nothing references `dcore:` yet |
 | `hasNorthPointOrientation` | UC-07 `northArrowAngle` (drawing-level) |
 | `hasAnnotationBlock` | `dm:Legend` / `dm:Note` with `dm:contains` |
 | `pageNumber` / `numberOfPages` | duplicated the sheet-position pair, itself withdrawn entirely in §7.3 |
