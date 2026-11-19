@@ -46,7 +46,7 @@ itself.)
   reference pages, builds a description by normalising from exactly four properties — `dc:description`,
   `rdfs:comment`, `skos:definition` and `sdo:description`. `IAO:0000115` is not among them and IAO is not
   referenced anywhere in pyLODE, so moving the text there would blank the descriptions on the site. `skos:definition`
-  is among them, and pyLODE lists it and `rdfs:comment` together in one *Description* entry.
+  is among them. pyLODE lists it and `rdfs:comment` together in one *Description* entry, so the documentation generator (`scripts/pylode_metadata.py`) gives them their own *Definition* and *Comment* rows.
 - **The conversion is editorial, not mechanical.** An IAO definition is the definition alone; a good number
   of ADIRO's comments deliberately carry the definition *plus* the design rationale, which would have to be
   split by hand, as the move to `skos:definition` is.
