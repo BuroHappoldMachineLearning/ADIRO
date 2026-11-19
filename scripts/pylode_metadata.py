@@ -14,10 +14,11 @@ documentation page, both at ``w3id.org/adiro``. A deprecated module also gets a 
 #171), because pyLODE shows neither ``owl:deprecated`` nor ``dcterms:isReplacedBy`` on the ontology. ``check`` compares a generated page with its Turtle, so a module (or an
 archived release) cannot publish the wrong IRI or heading.
 
-A term's definition is a ``skos:definition`` and its commentary an ``rdfs:comment`` (#273), but pyLODE merges both, with
-``dc:description`` and ``sdo:description``, into one unlabelled *Description* list, sorted by text. ``graph_for_pylode``
-therefore marks each ``skos:definition`` with an invisible sequence (``MARK``), which survives pyLODE's Markdown, and
-``separate_definitions`` turns that list into a *Definition* row and a *Comment* row, then removes the mark. A term with no
+A term's definition is a ``skos:definition`` and its commentary an ``rdfs:comment`` (#273). Left alone, pyLODE shows both
+(with ``dc:description`` and ``sdo:description``) together in one list under a single *Description* label, so a reader cannot
+tell the definition from the commentary. The generated page shows them apart instead: a labelled *Definition* row, then a
+labelled *Comment* row. ``graph_for_pylode`` marks each ``skos:definition`` with an invisible sequence (``MARK``), which survives
+pyLODE's Markdown, and ``separate_definitions`` uses the mark to build the two rows, then removes it. A term with no
 ``skos:definition`` keeps pyLODE's *Description* row.
 """
 import html as htmllib
