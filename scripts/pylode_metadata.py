@@ -20,6 +20,11 @@ tell the definition from the commentary. The generated page shows them apart ins
 labelled *Comment* row. ``graph_for_pylode`` marks each ``skos:definition`` with an invisible sequence (``MARK``), which survives
 pyLODE's Markdown, and ``separate_definitions`` uses the mark to build the two rows, then removes it. A term with no
 ``skos:definition`` keeps pyLODE's *Description* row.
+
+The *Comment* row holds everything in that cell that is not the ``skos:definition``, and its label links ``rdfs:comment``: a
+``dc:description`` or an ``sdo:description`` on a term is therefore shown as a comment. No term in ``src/`` has one (the
+``dcterms:description`` values are on the ontology headers), and ADIRO keeps a term's commentary in ``rdfs:comment``; a term that
+gets another description property is a decision to make here, not a case this module handles.
 """
 import html as htmllib
 import re
