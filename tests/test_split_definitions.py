@@ -74,6 +74,20 @@ def test_nothing_else_changes_and_the_skos_prefix_is_added_once(tmp_path):
     assert path.read_text(encoding="utf-8").count("@prefix skos:") == 1
 
 
+def test_a_module_with_blank_nodes_can_be_split(tmp_path):
+    """A datatype restriction or a list is a blank node, labelled afresh on every parse: it is not a change."""
+    text = MODULE + '''
+:hasValue rdf:type owl:DatatypeProperty ;
+    rdfs:label "hasValue" ;
+    rdfs:comment "A value in range. It is checked." ;
+    rdfs:range [ rdf:type rdfs:Datatype ; owl:onDatatype <http://www.w3.org/2001/XMLSchema#decimal> ;
+                 owl:withRestrictions ( [ <http://www.w3.org/2001/XMLSchema#minInclusive> "0.0"^^<http://www.w3.org/2001/XMLSchema#decimal> ] ) ] .
+'''
+    path = write(tmp_path, text)
+    assert sd.split_file(path, {"hasValue": "A value in range."}) == ["hasValue"]
+    assert values(path, "hasValue", SKOS.definition) == ["A value in range."]
+
+
 def test_line_endings_are_kept(tmp_path):
     path = write(tmp_path, crlf=True)
     sd.split_file(path, {"Box": BOX})
