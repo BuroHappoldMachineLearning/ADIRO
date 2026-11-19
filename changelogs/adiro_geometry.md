@@ -5,6 +5,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+- **A term's definition is a `skos:definition`, and `rdfs:comment` is its commentary** ([#273](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/273)). For each of the module's twelve terms (`BoundingBox`, `CoordinateFrame` and their properties) the first sentence of its comment, which says what the term is, is now its `skos:definition`, and the rest of the comment stays in `rdfs:comment`; `profileRef`, whose comment is one sentence, has a `skos:definition` and no `rdfs:comment`. No wording, IRI, axiom or label changes. Downstream consumers that read a term's `rdfs:comment` as its definition may need adjustments. The `Geometry` stub of the GeoSPARQL class is not ADIRO's to define and is unchanged.
+
 ## [3.1.0] — 2026-10-29
 
 ### Added
