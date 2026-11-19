@@ -18,6 +18,10 @@
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/adiro_common_symbols.html){ .md-button }
 </div>
 
+!!! warning "Deprecated"
+
+    This module is deprecated and receives no further changes. It is replaced by `adiro_drawing_symbology`, which continues its version numbering. Every release of it stays published at its own IRI.
+
 Reusable symbols that appear across disciplines, such as dimensions, grids, levels, and reference symbols. Every symbol is a kind of drawing element from the drawing-metadata module. The discipline modules build on these shared symbols.
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols`
@@ -67,7 +71,7 @@ graph BT
 A dimension line or dimension annotation on a drawing, indicating measurements or distances.
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#Dimension`
-- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
+- **Sub class of:** `metadata:DrawingElement`
 
 *Example images:*
 
@@ -78,7 +82,7 @@ A dimension line or dimension annotation on a drawing, indicating measurements o
 A grid line or grid system used for alignment and reference in architectural drawings.
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#Grid`
-- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
+- **Sub class of:** `metadata:DrawingElement`
 
 *Example images:*
 
@@ -86,10 +90,10 @@ A grid line or grid system used for alignment and reference in architectural dra
 
 ### ReferenceSymbol {#ReferenceSymbol}
 
-A symbol drawn on a [Layout](adiro_drawing_metadata.md#Layout) that references another Layout (on the same or a different [DrawingSheet](adiro_drawing_metadata.md#DrawingSheet)). Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target Layout's [LayoutContentType](adiro_drawing_metadata.md#LayoutContentType).
+A symbol drawn on a Layout that references another Layout (on the same or a different DrawingSheet). Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target Layout's LayoutContentType.
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#ReferenceSymbol`
-- **Sub class of:** [`metadata:ReferenceExpression`](adiro_drawing_metadata.md#ReferenceExpression)
+- **Sub class of:** `metadata:ReferenceExpression`
 
 *Example images:*
 
@@ -99,17 +103,17 @@ A symbol drawn on a [Layout](adiro_drawing_metadata.md#Layout) that references a
 
 ### hasReferenceSymbol {#hasReferenceSymbol}
 
-A Layout contains one or more [ReferenceSymbol](#ReferenceSymbol)s. To navigate from a symbol back to the [Layout](adiro_drawing_metadata.md#Layout) it is drawn on, use the SPARQL inverse path ^csymbol:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
+A Layout contains one or more [ReferenceSymbol](#ReferenceSymbol)s. To navigate from a symbol back to the Layout it is drawn on, use the SPARQL inverse path ^csymbol:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#hasReferenceSymbol`
-- **Sub property of:** [`metadata:contains`](adiro_drawing_metadata.md#contains)
-- **Domain:** [`metadata:Layout`](adiro_drawing_metadata.md#Layout)
+- **Sub property of:** `metadata:contains`
+- **Domain:** `metadata:Layout`
 - **Range:** [ReferenceSymbol](#ReferenceSymbol)
 
 ### referencesLayout {#referencesLayout}
 
-Target Layout — the [Layout](adiro_drawing_metadata.md#Layout) this [ReferenceSymbol](#ReferenceSymbol) points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^csymbol:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
+Target Layout — the Layout this [ReferenceSymbol](#ReferenceSymbol) points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^csymbol:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#referencesLayout`
 - **Domain:** [ReferenceSymbol](#ReferenceSymbol)
-- **Range:** [`metadata:Layout`](adiro_drawing_metadata.md#Layout)
+- **Range:** `metadata:Layout`
