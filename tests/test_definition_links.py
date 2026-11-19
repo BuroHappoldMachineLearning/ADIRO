@@ -190,3 +190,19 @@ def test_a_term_moved_to_another_module_is_linked_from_its_new_home_and_from_the
     z = tmp_path / "adiro_z.ttl"
     z.write_text(head + '<https://w3id.org/adiro/adiro_z> a owl:Ontology .', encoding="utf-8")
     assert gd.elsewhere_links(suite, z, "adiro_z", "") == {"https://w3id.org/adiro/adiro_y#Box": "adiro_y.md#Box"}
+
+
+def test_a_deprecated_module_stays_a_link_target_until_its_successor_is_there(tmp_path):
+    """#281: a module is deprecated for its final release before its successor enters src/, and nothing else has its terms."""
+    head = ("@prefix owl: <http://www.w3.org/2002/07/owl#> . @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> . "
+            "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> . @prefix dcterms: <http://purl.org/dc/terms/> . ")
+    old = tmp_path / "adiro_x.ttl"
+    old.write_text(head + '<https://w3id.org/adiro/adiro_x> a owl:Ontology ; owl:deprecated "true"^^xsd:boolean ; '
+                   'dcterms:isReplacedBy <https://w3id.org/adiro/adiro_y> . <https://w3id.org/adiro/adiro_x#Box> a owl:Class .', encoding="utf-8")
+    other = tmp_path / "adiro_w.ttl"
+    other.write_text(head + '<https://w3id.org/adiro/adiro_w> a owl:Ontology . <https://w3id.org/adiro/adiro_w#Lid> a owl:Class .', encoding="utf-8")
+    assert X + "Box" in gd.suite_terms([old, other]), "no successor yet: the deprecated module's terms stay linkable"
+    successor = tmp_path / "adiro_y.ttl"
+    successor.write_text(head + '<https://w3id.org/adiro/adiro_y> a owl:Ontology . <https://w3id.org/adiro/adiro_y#Box> a owl:Class .', encoding="utf-8")
+    terms = gd.suite_terms([old, other, successor])
+    assert X + "Box" not in terms and terms["https://w3id.org/adiro/adiro_y#Box"][0] == "adiro_y", "with the successor, only its term is a target"

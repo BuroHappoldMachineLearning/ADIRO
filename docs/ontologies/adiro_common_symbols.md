@@ -2,9 +2,10 @@
 
 <div class="adiro-actions" markdown="span">
 <details class="adiro-version">
-<summary class="md-button">Version 5.0.0 (latest)</summary>
+<summary class="md-button">Version 5.0.1 (latest)</summary>
 <ul>
-<li><a href="./" class="adiro-version-current" aria-current="page">5.0.0 (latest)</a></li>
+<li><a href="./" class="adiro-version-current" aria-current="page">5.0.1 (latest)</a></li>
+<li><a href="5.0.0/">5.0.0</a></li>
 <li><a href="../aec_common_symbols/">aec_common_symbols 4.0.1</a></li>
 <li><a href="../aec_common_symbols/4.0.0/">aec_common_symbols 4.0.0</a></li>
 <li><a href="../aec_common_symbols/3.0.1/">aec_common_symbols 3.0.1</a></li>
@@ -18,10 +19,14 @@
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/adiro_common_symbols.html){ .md-button }
 </div>
 
+!!! warning "Deprecated"
+
+    This module is deprecated and receives no further changes. It is replaced by `adiro_drawing_symbology`, which continues its version numbering. Every release of it stays published at its own IRI.
+
 Reusable symbols and text that appear across disciplines, such as dimensions, grids, levels and references to another layout or drawing: the graphical reference symbol, the inline and standalone reference expressions, and the occurrences of drawing and layout identifiers they are made of. Every one is a kind of drawing element from the drawing-metadata module. The discipline modules build on them.
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols`
-- **Versioned IRI:** `https://w3id.org/adiro/adiro_common_symbols/5.0.0`
+- **Versioned IRI:** `https://w3id.org/adiro/adiro_common_symbols/5.0.1`
 - **Imports:** `adiro_drawing_metadata`
 
 ## Interactive view
@@ -67,7 +72,7 @@ graph BT
 A dimension line or dimension annotation on a drawing, indicating measurements or distances.
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#Dimension`
-- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
+- **Sub class of:** `metadata:DrawingElement`
 
 *Example images:*
 
@@ -75,10 +80,10 @@ A dimension line or dimension annotation on a drawing, indicating measurements o
 
 ### Drawing identifier mention {#DrawingIdentifierMention}
 
-One evidenced occurrence of drawing-identifier (sheet-identifier) text on a source drawing, distinct from the [DrawingSheet](adiro_drawing_metadata.md#DrawingSheet) that the text may denote. Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted sheet resolution: an unlocalisable text block may retain its accepted [denotesDrawingSheet](#denotesDrawingSheet) edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed.
+One evidenced occurrence of drawing-identifier (sheet-identifier) text on a source drawing, distinct from the DrawingSheet that the text may denote. Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted sheet resolution: an unlocalisable text block may retain its accepted [denotesDrawingSheet](#denotesDrawingSheet) edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed.
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#DrawingIdentifierMention`
-- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
+- **Sub class of:** `metadata:DrawingElement`
 
 *Example images:*
 
@@ -89,7 +94,7 @@ One evidenced occurrence of drawing-identifier (sheet-identifier) text on a sour
 A grid line or grid system used for alignment and reference in architectural drawings.
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#Grid`
-- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
+- **Sub class of:** `metadata:DrawingElement`
 
 *Example images:*
 
@@ -97,7 +102,7 @@ A grid line or grid system used for alignment and reference in architectural dra
 
 ### Inline Layout and Drawing Reference {#InlineLayoutDrawingReference}
 
-A complete inline textual expression relating layout number(s) to a sheet number, such as '1, 3, 5 & 7/S601'. The component mentions retain their own identities; accepted [Layout](adiro_drawing_metadata.md#Layout) targets are connected separately by [inlineReferencesLayout](#inlineReferencesLayout). Expected composition: one sheet-identifier mention and at least one layout-identifier mention, attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction.
+A complete inline textual expression relating layout number(s) to a sheet number, such as '1, 3, 5 & 7/S601'. The component mentions retain their own identities; accepted Layout targets are connected separately by [inlineReferencesLayout](#inlineReferencesLayout). Expected composition: one sheet-identifier mention and at least one layout-identifier mention, attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction.
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#InlineLayoutDrawingReference`
 - **Sub class of:** [Reference expression](#ReferenceExpression)
@@ -108,10 +113,10 @@ A complete inline textual expression relating layout number(s) to a sheet number
 
 ### Layout identifier mention {#LayoutIdentifierMention}
 
-One evidenced occurrence of layout-identifier text (a small integer or letter), distinct from a target [Layout](adiro_drawing_metadata.md#Layout). A complete inline reference may contain several such occurrences, attached with contains; no target is inferred from matching text alone.
+One evidenced occurrence of layout-identifier text (a small integer or letter), distinct from a target Layout. A complete inline reference may contain several such occurrences, attached with contains; no target is inferred from matching text alone.
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#LayoutIdentifierMention`
-- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
+- **Sub class of:** `metadata:DrawingElement`
 
 *Example images:*
 
@@ -122,11 +127,11 @@ One evidenced occurrence of layout-identifier text (a small integer or letter), 
 A complete source reference expression, whether graphical, inline or a standalone sheet-number reference. This superclass groups those forms for queries; it does not require a second individual around any of them.
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#ReferenceExpression`
-- **Sub class of:** [`metadata:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
+- **Sub class of:** `metadata:DrawingElement`
 
 ### ReferenceSymbol {#ReferenceSymbol}
 
-A symbol drawn on a [Layout](adiro_drawing_metadata.md#Layout) that references another Layout (on the same or a different [DrawingSheet](adiro_drawing_metadata.md#DrawingSheet)). Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target Layout's [LayoutContentType](adiro_drawing_metadata.md#LayoutContentType).
+A symbol drawn on a Layout that references another Layout (on the same or a different DrawingSheet). Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target Layout's LayoutContentType.
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#ReferenceSymbol`
 - **Sub class of:** [Reference expression](#ReferenceExpression)
@@ -152,33 +157,33 @@ A drawing-identifier occurrence that itself constitutes a complete reference. On
 
 ### denotesDrawingSheet {#denotesDrawingSheet}
 
-The accepted [DrawingSheet](adiro_drawing_metadata.md#DrawingSheet) identity denoted by one sheet-number occurrence. It does not assert that a [Layout](adiro_drawing_metadata.md#Layout) target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict.
+The accepted DrawingSheet identity denoted by one sheet-number occurrence. It does not assert that a Layout target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict.
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#denotesDrawingSheet`
 - **Domain:** [Drawing identifier mention](#DrawingIdentifierMention)
-- **Range:** [`metadata:DrawingSheet`](adiro_drawing_metadata.md#DrawingSheet)
+- **Range:** `metadata:DrawingSheet`
 
 ### hasReferenceSymbol {#hasReferenceSymbol}
 
-A Layout contains one or more [ReferenceSymbol](#ReferenceSymbol)s. To navigate from a symbol back to the [Layout](adiro_drawing_metadata.md#Layout) it is drawn on, use the SPARQL inverse path ^csymbol:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
+A Layout contains one or more [ReferenceSymbol](#ReferenceSymbol)s. To navigate from a symbol back to the Layout it is drawn on, use the SPARQL inverse path ^csymbol:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#hasReferenceSymbol`
-- **Sub property of:** [`metadata:contains`](adiro_drawing_metadata.md#contains)
-- **Domain:** [`metadata:Layout`](adiro_drawing_metadata.md#Layout)
+- **Sub property of:** `metadata:contains`
+- **Domain:** `metadata:Layout`
 - **Range:** [ReferenceSymbol](#ReferenceSymbol)
 
 ### inlineReferencesLayout {#inlineReferencesLayout}
 
-An accepted target [Layout](adiro_drawing_metadata.md#Layout) of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges.
+An accepted target Layout of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges.
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#inlineReferencesLayout`
 - **Domain:** [Inline Layout and Drawing Reference](#InlineLayoutDrawingReference)
-- **Range:** [`metadata:Layout`](adiro_drawing_metadata.md#Layout)
+- **Range:** `metadata:Layout`
 
 ### referencesLayout {#referencesLayout}
 
-Target Layout — the [Layout](adiro_drawing_metadata.md#Layout) this [ReferenceSymbol](#ReferenceSymbol) points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^csymbol:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
+Target Layout — the Layout this [ReferenceSymbol](#ReferenceSymbol) points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^csymbol:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).
 
 - **IRI:** `https://w3id.org/adiro/adiro_common_symbols#referencesLayout`
 - **Domain:** [ReferenceSymbol](#ReferenceSymbol)
-- **Range:** [`metadata:Layout`](adiro_drawing_metadata.md#Layout)
+- **Range:** `metadata:Layout`

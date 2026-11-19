@@ -5,6 +5,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.0.1] — 2026-11-19
+
+### Deprecated
+- **This module is deprecated, and this is its final release** ([#281](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/281)). It is replaced by `adiro_discipline_core` (`https://w3id.org/adiro/adiro_discipline_core`), the shared base that the discipline modules build on, under a name that says what it holds. The new module continues this module's version history and every term keeps its local name; only the namespace changes. Nothing in this module changes: the header says `owl:deprecated true` and `dcterms:isReplacedBy` the new module. The new module is introduced in a following release.
+
 ## [4.0.0] — 2026-10-21
 
 ### Changed

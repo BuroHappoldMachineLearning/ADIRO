@@ -12,6 +12,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 ### Changed
 - **`ReferenceSymbol` specialises this module's `ReferenceExpression`** ([#277](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/277)), not the `ReferenceExpression` of `adiro_drawing_metadata`, which is equivalent to it. The meaning is unchanged, but the compatibility diff reads a new superclass IRI as a superclass change, so this module's next release is a MAJOR one.
 
+## [5.0.1] — 2026-11-19
+
+### Deprecated
+- **This module is deprecated, and this is its final release** ([#281](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/281)). It is replaced by `adiro_drawing_symbology` (`https://w3id.org/adiro/adiro_drawing_symbology`), the module that holds the symbols and marks a drawing uses, shared by every discipline, under a name that says what it holds. The new module continues this module's version history and every term keeps its local name; only the namespace changes. Nothing in this module changes: the header says `owl:deprecated true` and `dcterms:isReplacedBy` the new module. The new module is introduced in a following release.
+
 ## [5.0.0] — 2026-10-21
 
 ### Changed
