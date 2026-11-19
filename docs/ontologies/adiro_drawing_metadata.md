@@ -454,9 +454,10 @@ Direct containment: indicates physical containment of something within a parent 
 
 ### denotesDrawingSheet {#denotesDrawingSheet}
 
-Deprecated: use denotesDrawingSheet of adiro_drawing_symbology, the same property defined in the module that holds the reference symbol.
+The drawing that a reference in a drawing names. Deprecated: it is the same property as denotesDrawingSheet of adiro_drawing_symbology.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#denotesDrawingSheet`
+- **Comment:** Deprecated: use denotesDrawingSheet of adiro_drawing_symbology, the same property defined in the module that holds the reference symbol.
 - **Domain:** [Drawing identifier mention](#DrawingIdentifierMention)
 - **Range:** [Drawing Sheet](#DrawingSheet)
 
@@ -518,9 +519,10 @@ The controlled-vocabulary [StatusCode](#StatusCode) assigned to a [DrawingRevisi
 
 ### inlineReferencesLayout {#inlineReferencesLayout}
 
-Deprecated: use inlineReferencesLayout of adiro_drawing_symbology, the same property defined in the module that holds the reference symbol.
+The layout that a reference placed in the running text of a drawing names. Deprecated: it is the same property as inlineReferencesLayout of adiro_drawing_symbology.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata#inlineReferencesLayout`
+- **Comment:** Deprecated: use inlineReferencesLayout of adiro_drawing_symbology, the same property defined in the module that holds the reference symbol.
 - **Domain:** [Inline layout and sheet reference](#InlineLayoutSheetReference)
 - **Range:** [Layout](#Layout)
 

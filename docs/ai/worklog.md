@@ -1,3 +1,8 @@
+## 2026-11-19 - Definitions for `denotesDrawingSheet` and `inlineReferencesLayout` ([#281](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/281), [#290](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/290))
+
+The guidance bot asked for a `skos:definition` on the two deprecated stubs in `adiro_drawing_metadata`; they have one now, and so do the live properties in `adiro_drawing_symbology` (the first sentence of the old comment, rewritten as a definition, with the rest left as the comment; the module gains the `skos:` prefix). No IRI, axiom or label changes.
+- Verified: `validate_ontology.py` no errors, `tests/` pass. Not run: the reasoner.
+
 ## 2026-11-19 - Prefixes `adsym:` and `adcore:`, and no label clash for a deprecated term ([#281](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/281), [#290](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/290))
 
 Merged `main` into the branch (conflicts only in the worklog and `tests/test_definition_links.py`, both sides kept). `dsym:` and `dcore:` became `adsym:` and `adcore:` (the agreed "ad" convention) in the new modules, `adiro_drawing_metadata`'s deprecated stubs, the SHACL file, the tests, the hand-written specification and `AGENTS.md`; the new modules also use `adprov:`, `adgeom:` and `admeta:` for the older prefixes. `adiro_drawing_metadata`'s own other prefixes are relabelled in [#291](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/291), after this PR.

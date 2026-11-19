@@ -6,6 +6,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
 <https://w3id.org/adiro/adiro_drawing_symbology> rdf:type owl:Ontology ;
     rdfs:label "ADIRO Drawing Symbology Ontology" ;
@@ -89,13 +90,15 @@
 
 :denotesDrawingSheet rdf:type owl:ObjectProperty ;
     rdfs:label "denotesDrawingSheet" ;
-    rdfs:comment "The accepted DrawingSheet identity denoted by one sheet-number occurrence. It does not assert that a Layout target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict." ;
+    skos:definition "The DrawingSheet that one occurrence of a drawing number on a drawing has been accepted as naming."@en ;
+    rdfs:comment "It does not assert that a Layout target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict." ;
     rdfs:domain :DrawingIdentifierMention ;
     rdfs:range admeta:DrawingSheet .
 
 :inlineReferencesLayout rdf:type owl:ObjectProperty ;
     rdfs:label "inlineReferencesLayout" ;
-    rdfs:comment "An accepted target Layout of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges." ;
+    skos:definition "An accepted target Layout of an inline reference to layouts and a drawing."@en ;
+    rdfs:comment "Multiple supported targets may be asserted; unresolved members do not acquire target edges." ;
     rdfs:domain :InlineLayoutDrawingReference ;
     rdfs:range admeta:Layout .
 

@@ -154,9 +154,10 @@ A drawing-identifier occurrence that itself constitutes a complete reference. On
 
 ### denotesDrawingSheet {#denotesDrawingSheet}
 
-The accepted [DrawingSheet](adiro_drawing_metadata.md#DrawingSheet) identity denoted by one sheet-number occurrence. It does not assert that a [Layout](adiro_drawing_metadata.md#Layout) target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict.
+The [DrawingSheet](adiro_drawing_metadata.md#DrawingSheet) that one occurrence of a drawing number on a drawing has been accepted as naming.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#denotesDrawingSheet`
+- **Comment:** It does not assert that a [Layout](adiro_drawing_metadata.md#Layout) target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict.
 - **Domain:** [Drawing identifier mention](#DrawingIdentifierMention)
 - **Range:** [`admeta:DrawingSheet`](adiro_drawing_metadata.md#DrawingSheet)
 
@@ -171,9 +172,10 @@ A Layout contains one or more [ReferenceSymbol](#ReferenceSymbol)s. To navigate 
 
 ### inlineReferencesLayout {#inlineReferencesLayout}
 
-An accepted target [Layout](adiro_drawing_metadata.md#Layout) of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges.
+An accepted target [Layout](adiro_drawing_metadata.md#Layout) of an inline reference to layouts and a drawing.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#inlineReferencesLayout`
+- **Comment:** Multiple supported targets may be asserted; unresolved members do not acquire target edges.
 - **Domain:** [Inline Layout and Drawing Reference](#InlineLayoutDrawingReference)
 - **Range:** [`admeta:Layout`](adiro_drawing_metadata.md#Layout)
 

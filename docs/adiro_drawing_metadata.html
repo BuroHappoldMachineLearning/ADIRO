@@ -2696,12 +2696,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <a href="#DrawingRevision">DrawingRevision</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#DrawingRevision">DrawingRevision</a>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -2782,12 +2782,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#DrawingRevision">DrawingRevision</a>
+                  <a href="#DrawingSheet">Drawing Sheet</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#DrawingSheet">Drawing Sheet</a>
+                  <a href="#DrawingRevision">DrawingRevision</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -3171,7 +3171,13 @@ td {
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+                <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#definition" title="A statement or formal explanation of the meaning of a concept. Defined in SKOS">Definition</a>
+              </th>
+              <td><p>The drawing that a reference in a drawing names. Deprecated: it is the same property as denotesDrawingSheet of adiro_drawing_symbology.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#comment" title="A description of the subject resource. Defined in RDF Schema">Comment</a>
               </th>
               <td><p>Deprecated: use denotesDrawingSheet of adiro_drawing_symbology, the same property defined in the module that holds the reference symbol.</p></td>
             </tr>
@@ -3212,7 +3218,13 @@ td {
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+                <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#definition" title="A statement or formal explanation of the meaning of a concept. Defined in SKOS">Definition</a>
+              </th>
+              <td><p>The layout that a reference placed in the running text of a drawing names. Deprecated: it is the same property as inlineReferencesLayout of adiro_drawing_symbology.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#comment" title="A description of the subject resource. Defined in RDF Schema">Comment</a>
               </th>
               <td><p>Deprecated: use inlineReferencesLayout of adiro_drawing_symbology, the same property defined in the module that holds the reference symbol.</p></td>
             </tr>

@@ -817,9 +817,15 @@ td {
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+                <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#definition" title="A statement or formal explanation of the meaning of a concept. Defined in SKOS">Definition</a>
               </th>
-              <td><p>The accepted <a href="adiro_drawing_metadata.html#DrawingSheet">DrawingSheet</a> identity denoted by one sheet-number occurrence. It does not assert that a <a href="adiro_drawing_metadata.html#Layout">Layout</a> target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict.</p></td>
+              <td><p>The <a href="adiro_drawing_metadata.html#DrawingSheet">DrawingSheet</a> that one occurrence of a drawing number on a drawing has been accepted as naming.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#comment" title="A description of the subject resource. Defined in RDF Schema">Comment</a>
+              </th>
+              <td><p>It does not assert that a <a href="adiro_drawing_metadata.html#Layout">Layout</a> target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict.</p></td>
             </tr>
             <tr>
               <th>
@@ -855,9 +861,15 @@ td {
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+                <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#definition" title="A statement or formal explanation of the meaning of a concept. Defined in SKOS">Definition</a>
               </th>
-              <td><p>An accepted target <a href="adiro_drawing_metadata.html#Layout">Layout</a> of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges.</p></td>
+              <td><p>An accepted target <a href="adiro_drawing_metadata.html#Layout">Layout</a> of an inline reference to layouts and a drawing.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#comment" title="A description of the subject resource. Defined in RDF Schema">Comment</a>
+              </th>
+              <td><p>Multiple supported targets may be asserted; unresolved members do not acquire target edges.</p></td>
             </tr>
             <tr>
               <th>
@@ -1004,6 +1016,10 @@ td {
           <dd>
             <code>http://www.w3.org/2000/01/rdf-schema#</code>
           </dd>
+          <dt id="skos">skos</dt>
+          <dd>
+            <code>http://www.w3.org/2004/02/skos/core#</code>
+          </dd>
         </dl>
       </div>
       <div id="legend">
@@ -1126,6 +1142,9 @@ td {
             </li>
             <li>
               <a href="#rdfs">rdfs</a>
+            </li>
+            <li>
+              <a href="#skos">skos</a>
             </li>
           </ul>
         </li>

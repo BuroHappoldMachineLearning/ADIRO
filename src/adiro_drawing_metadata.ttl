@@ -829,6 +829,7 @@ adsym:inlineReferencesLayout rdf:type owl:ObjectProperty .
 
 :denotesDrawingSheet rdf:type owl:ObjectProperty ;
     rdfs:label "denotesDrawingSheet" ;
+    skos:definition "The drawing that a reference in a drawing names. Deprecated: it is the same property as denotesDrawingSheet of adiro_drawing_symbology."@en ;
     rdfs:comment "Deprecated: use denotesDrawingSheet of adiro_drawing_symbology, the same property defined in the module that holds the reference symbol." ;
     owl:deprecated "true"^^xsd:boolean ;
     owl:equivalentProperty adsym:denotesDrawingSheet ;
@@ -838,6 +839,7 @@ adsym:inlineReferencesLayout rdf:type owl:ObjectProperty .
 
 :inlineReferencesLayout rdf:type owl:ObjectProperty ;
     rdfs:label "inlineReferencesLayout" ;
+    skos:definition "The layout that a reference placed in the running text of a drawing names. Deprecated: it is the same property as inlineReferencesLayout of adiro_drawing_symbology."@en ;
     rdfs:comment "Deprecated: use inlineReferencesLayout of adiro_drawing_symbology, the same property defined in the module that holds the reference symbol." ;
     owl:deprecated "true"^^xsd:boolean ;
     owl:equivalentProperty adsym:inlineReferencesLayout ;
