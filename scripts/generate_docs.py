@@ -12,7 +12,7 @@ import shutil
 import re
 from pathlib import Path
 from pylode.profiles.ontpub import OntPub
-from rdflib import Graph, URIRef
+from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import RDF, RDFS, OWL, SKOS
 from rdflib.namespace import split_uri
 
@@ -86,9 +86,9 @@ def sort_by_dependency(ttl_files: list[Path]) -> list[Path]:
         'adiro_provenance': 0,
         'adiro_geometry': 1,       # foundational, imports adiro_provenance
         'adiro_drawing_metadata': 2,
-        'adiro_common_symbols': 3,
-        'adiro_domain_common': 4,
-        'adiro_facade_domain': 5,
+        'adiro_drawing_symbology': 3,
+        'adiro_discipline_core': 4,
+        'adiro_facade_discipline': 5,
     }
     
     def get_order(file_path: Path) -> int:
@@ -185,7 +185,9 @@ def suite_terms(ttl_files: list[Path]) -> dict[str, tuple[str, str, bool]]:
     The links from a definition to a term of another module point at the page of that module's latest release. A
     deprecated module (#171) is left out once its successor is among the modules, so its terms, which share their local
     names with their successors', are never linked from another module. Until the successor is there (a module is
-    deprecated for its final release first, #281), nothing else has those terms: they stay linkable.
+    deprecated for its final release first, #281), nothing else has those terms: they stay linkable. A deprecated term
+    (#277), such as the IRI a term had before it moved to another module, is never linked either: it shares its local
+    name with the term that replaced it.
     """
     terms: dict[str, tuple[str, str, bool]] = {}
     modules = {f.stem for f in ttl_files}
@@ -203,20 +205,33 @@ def suite_terms(ttl_files: list[Path]) -> dict[str, tuple[str, str, bool]]:
                 iri = str(subject)
                 if iri in terms or not (iri.startswith(ontology) and iri[len(ontology):][:1] in ("#", "/")):
                     continue
+                if (subject, OWL.deprecated, Literal(True)) in graph:
+                    continue
                 # an individual that is also a class or a property (punning) has an entry on the pyLODE page too
                 individual = not any((subject, RDF.type, k) in graph for k in documented)
                 terms[iri] = (ttl_file.stem, ttl2md.local_name(iri), individual)
     return terms
 
 
+def own_local_names(ttl_file: Path) -> set[str]:
+    """The local names of the terms a module file defines in its own namespace."""
+    graph = Graph().parse(str(ttl_file), format="turtle")
+    ontology = next((str(o) for o in graph.subjects(RDF.type, OWL.Ontology)), None)
+    return {ttl2md.local_name(str(s)) for s in graph.subjects() if ontology and isinstance(s, URIRef)
+            and str(s).startswith(ontology) and str(s)[len(ontology):][:1] in ("#", "/")}
+
+
 def elsewhere_links(suite: dict | None, ttl_file: Path, module: str, prefix: str) -> dict[str, str]:
     """IRI -> URL of the terms of the other modules on their latest Markdown page, from a page ``prefix`` away (#252).
 
-    ttl2md gives every entry its local name as its anchor. The page of a deprecated module links only within itself.
+    ttl2md gives every entry its local name as its anchor. The page of a deprecated module links only within itself. A name
+    that a term of this page's own ontology also has is left out (#277): when a term moves to another module, the page of the
+    release that defined it keeps the old term under the same local name, and a definition on that page names its own term.
     """
     if not suite or pylode_metadata.replacements(ttl_file) is not None:
         return {}
-    return {iri: f"{prefix}{other}.md#{name}" for iri, (other, name, _) in suite.items() if other != module}
+    own = own_local_names(ttl_file)
+    return {iri: f"{prefix}{other}.md#{name}" for iri, (other, name, _) in suite.items() if other != module and name not in own}
 
 
 _ENTITY_DIV = re.compile(r'<div class="property entity" id="([^"]+)">')
@@ -302,10 +317,11 @@ def link_pylode_pages(ttl_files: list[Path], repo_root: Path, output_dir: Path) 
             continue
         module = page_file.stem
         # the site serves docs/ontologies/<module>.md at ontologies/<module>/ (and <module>/<version>.md one level down)
+        own = own_local_names(ttl_file)  # a name this page's own term has wins over a moved term's (#277)
         elsewhere = {} if pylode_metadata.replacements(ttl_file) is not None else {
             iri: f"{prefix}{other}.html#{ids[other][iri]}" if iri in ids.get(other, {})
             else f"{prefix}ontologies/{other}/#{name}"
-            for iri, (other, name, _) in suite.items() if other != module
+            for iri, (other, name, _) in suite.items() if other != module and name not in own
         }
         markdown_page = f"{prefix}ontologies/{module}/" + (f"{version}/" if version else "")
         page = page_file.read_text(encoding="utf-8")
@@ -636,7 +652,7 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
         "users and uses, and the functional/non-functional requirements."
     )
     lines.append("")
-    lines.append("    [:octicons-arrow-right-24: ORSD](specification/ORSD_v1.4.md)")
+    lines.append("    [:octicons-arrow-right-24: ORSD](specification/ORSD_v1.5.md)")
     lines.append("")
     lines.append("-   :material-clipboard-list-outline: __Use Cases__")
     lines.append("")
@@ -955,7 +971,7 @@ def generate_ontology_markdown_pages(ttl_files: list[Path], output_dir: Path, re
 
     # Order the left-nav sidebar (awesome-pages `.pages`) to follow the module
     # dependency chain — adiro_provenance, adiro_geometry, adiro_drawing_metadata,
-    # adiro_common_symbols, adiro_domain_common, adiro_facade_domain — rather than the
+    # adiro_drawing_symbology, adiro_discipline_core, adiro_facade_discipline — rather than the
     # default alphabetical order, so the nav mirrors the `owl:imports` graph.
     # ttl_files is already dependency-sorted. See AGENTS.md / the deploy skill.
     pages_lines = ["nav:", "  - index.md"]

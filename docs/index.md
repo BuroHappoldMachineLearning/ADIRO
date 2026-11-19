@@ -18,7 +18,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     Ontology Requirements Specification Document: purpose, scope, intended users and uses, and the functional/non-functional requirements.
 
-    [:octicons-arrow-right-24: ORSD](specification/ORSD_v1.4.md)
+    [:octicons-arrow-right-24: ORSD](specification/ORSD_v1.5.md)
 
 -   :material-clipboard-list-outline: __Use Cases__
 
@@ -60,34 +60,34 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
     [![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_drawing_metadata.html){ .md-button target=_blank }
 
--   ### [Adiro Common Symbols](adiro_common_symbols.html)
+-   ### [Adiro Drawing Symbology](adiro_drawing_symbology.html)
 
-    Reusable symbols that appear across disciplines, such as dimensions, grids, levels, and reference symbols. Every symbol is a kind of drawing element from the drawing-metadata module. The discipline modules build on these shared symbols.
-
-    *Imports: adiro_drawing_metadata*
-
-    Source: [`adiro_common_symbols.ttl`](adiro_common_symbols.ttl)
-
-    [![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_common_symbols.html){ .md-button target=_blank }
-
--   ### [Adiro Domain Common](adiro_domain_common.html)
-
-    Concepts shared by several engineering domains. It sits between the common symbols and the discipline-specific modules, holding abstractions that more than one domain reuses, so they are defined once.
+    The symbols and marks a drawing uses, shared by every discipline: reusable symbols and text that appear across disciplines, such as dimensions, grids, levels and references to another layout or drawing: the graphical reference symbol, the inline and standalone reference expressions, and the occurrences of drawing and layout identifiers they are made of. Every one is a kind of drawing element from the drawing-metadata module. The discipline modules build on them.
 
     *Imports: adiro_drawing_metadata*
 
-    Source: [`adiro_domain_common.ttl`](adiro_domain_common.ttl)
+    Source: [`adiro_drawing_symbology.ttl`](adiro_drawing_symbology.ttl)
 
-    [![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_domain_common.html){ .md-button target=_blank }
+    [![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_drawing_symbology.html){ .md-button target=_blank }
 
--   ### [Adiro Facade Domain](adiro_facade_domain.html)
+-   ### [Adiro Discipline Core](adiro_discipline_core.html)
 
-    Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbol, and domain vocabularies.
+    The vocabulary that several discipline modules share: materials, section shapes and properties, structural components and loads, and the discipline classes. It sits between the drawing symbology and the discipline-specific modules, holding abstractions that more than one discipline reuses, so they are defined once.
 
-    *Imports: adiro_domain_common, adiro_drawing_metadata*
+    *Imports: adiro_drawing_metadata*
 
-    Source: [`adiro_facade_domain.ttl`](adiro_facade_domain.ttl)
+    Source: [`adiro_discipline_core.ttl`](adiro_discipline_core.ttl)
 
-    [![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_facade_domain.html){ .md-button target=_blank }
+    [![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_discipline_core.html){ .md-button target=_blank }
+
+-   ### [Adiro Facade Discipline](adiro_facade_discipline.html)
+
+    Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbology, and discipline-core vocabularies.
+
+    *Imports: adiro_discipline_core, adiro_drawing_metadata*
+
+    Source: [`adiro_facade_discipline.ttl`](adiro_facade_discipline.ttl)
+
+    [![OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/OntoCanvas.png){ .ontocanvas-icon } Open in OntoCanvas](https://burohappoldmachinelearning.github.io/OntoCanvas/?onto=https://w3id.org/adiro/adiro_facade_discipline.html){ .md-button target=_blank }
 
 </div>

@@ -1,0 +1,131 @@
+@prefix : <https://w3id.org/adiro/adiro_drawing_symbology#> .
+@prefix admeta: <https://w3id.org/adiro/adiro_drawing_metadata#> .
+@prefix img: <https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<https://w3id.org/adiro/adiro_drawing_symbology> rdf:type owl:Ontology ;
+    rdfs:label "ADIRO Drawing Symbology Ontology" ;
+    rdfs:comment "The symbols and marks a drawing uses, shared by every discipline: reusable symbols and text that appear across disciplines, such as dimensions, grids, levels and references to another layout or drawing: the graphical reference symbol, the inline and standalone reference expressions, and the occurrences of drawing and layout identifiers they are made of. Every one is a kind of drawing element from the drawing-metadata module. The discipline modules build on them." ;
+    dcterms:title "ADIRO Drawing Symbology Ontology" ;
+    dcterms:description "Cross-discipline layout content. Generic symbol classes like dimensions, reference symbols, grids, etc. (mostly reusable non-domain symbols). All symbols are subclasses of DrawingElement from the drawing metadata ontology." ;
+    dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
+    dcterms:creator "Buro Happold — Machine Learning R&D" ;
+    dcterms:publisher "Buro Happold" ;
+    dcterms:replaces <https://w3id.org/adiro/adiro_common_symbols> ;
+    owl:priorVersion <https://w3id.org/adiro/aec_common_symbols/1.0.0> ;
+    owl:priorVersion <https://w3id.org/adiro/aec_common_symbols/2.0.0> ;
+    owl:priorVersion <https://w3id.org/adiro/aec_common_symbols/3.0.0> ;
+    owl:priorVersion <https://w3id.org/adiro/aec_common_symbols/3.0.1> ;
+    owl:priorVersion <https://w3id.org/adiro/aec_common_symbols/4.0.0> ;
+    owl:priorVersion <https://w3id.org/adiro/aec_common_symbols/4.0.1> ;
+    owl:priorVersion <https://w3id.org/adiro/adiro_common_symbols/5.0.0> ;
+    owl:versionIRI <https://w3id.org/adiro/adiro_drawing_symbology/5.0.1> ;
+    owl:versionInfo "5.0.1" ;
+    owl:imports <https://w3id.org/adiro/adiro_drawing_metadata> .
+
+#################################################################
+#    Classes — Generic drawing symbols
+#################################################################
+
+:Dimension rdf:type owl:Class;
+    rdfs:subClassOf admeta:DrawingElement;
+    rdfs:label "Dimension";
+    rdfs:comment "A dimension line or dimension annotation on a drawing, indicating measurements or distances.";
+    admeta:exampleImage img:Dimension_01.png;
+    admeta:isComputerVisionLabel "true"^^xsd:boolean.
+
+:Grid rdf:type owl:Class;
+    rdfs:subClassOf admeta:DrawingElement;
+    rdfs:label "Grid";
+    rdfs:comment "A grid line or grid system used for alignment and reference in architectural drawings.";
+    admeta:exampleImage img:Grid_01.png;
+    admeta:isComputerVisionLabel "true"^^xsd:boolean.
+
+#################################################################
+#    Classes — UC-03 reference expressions and text occurrences
+#################################################################
+
+:ReferenceExpression rdf:type owl:Class;
+    rdfs:subClassOf admeta:DrawingElement;
+    rdfs:label "Reference expression";
+    rdfs:comment "A complete source reference expression, whether graphical, inline or a standalone sheet-number reference. This superclass groups those forms for queries; it does not require a second individual around any of them.";
+    admeta:isComputerVisionLabel "true"^^xsd:boolean.
+
+:DrawingIdentifierMention rdf:type owl:Class;
+    rdfs:subClassOf admeta:DrawingElement;
+    rdfs:label "Drawing identifier mention";
+    rdfs:comment "One evidenced occurrence of drawing-identifier (sheet-identifier) text on a source drawing, distinct from the DrawingSheet that the text may denote. Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted sheet resolution: an unlocalisable text block may retain its accepted denotesDrawingSheet edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed.";
+    admeta:exampleImage img:DrawingIdentifierMention_01.png;
+    admeta:isComputerVisionLabel "true"^^xsd:boolean.
+
+:LayoutIdentifierMention rdf:type owl:Class;
+    rdfs:subClassOf admeta:DrawingElement;
+    rdfs:label "Layout identifier mention";
+    rdfs:comment "One evidenced occurrence of layout-identifier text (a small integer or letter), distinct from a target Layout. A complete inline reference may contain several such occurrences, attached with contains; no target is inferred from matching text alone.";
+    admeta:exampleImage img:LayoutIdentifierMention_01.png;
+    admeta:isComputerVisionLabel "true"^^xsd:boolean.
+
+:InlineLayoutDrawingReference rdf:type owl:Class;
+    rdfs:subClassOf :ReferenceExpression;
+    rdfs:label "Inline Layout and Drawing Reference";
+    rdfs:comment "A complete inline textual expression relating layout number(s) to a sheet number, such as '1, 3, 5 & 7/S601'. The component mentions retain their own identities; accepted Layout targets are connected separately by inlineReferencesLayout. Expected composition: one sheet-identifier mention and at least one layout-identifier mention, attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction.";
+    admeta:exampleImage img:InlineLayoutDrawingReference_01.png;
+    admeta:isComputerVisionLabel "true"^^xsd:boolean.
+
+:StandaloneDrawingReference rdf:type owl:Class;
+    rdfs:subClassOf :DrawingIdentifierMention, :ReferenceExpression;
+    rdfs:label "Standalone Drawing Reference";
+    rdfs:comment "A drawing-identifier occurrence that itself constitutes a complete reference. One individual is both the DrawingIdentifierMention and the ReferenceExpression: no duplicate wrapper, self-directed hasDrawingIdentifierMention edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified.";
+    admeta:exampleImage img:StandaloneDrawingReference_01.png;
+    admeta:isComputerVisionLabel "true"^^xsd:boolean.
+
+#################################################################
+#    Object Properties — UC-03 reference occurrences
+#################################################################
+
+:denotesDrawingSheet rdf:type owl:ObjectProperty ;
+    rdfs:label "denotesDrawingSheet" ;
+    skos:definition "The DrawingSheet that one occurrence of a drawing number on a drawing has been accepted as naming."@en ;
+    rdfs:comment "It does not assert that a Layout target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict." ;
+    rdfs:domain :DrawingIdentifierMention ;
+    rdfs:range admeta:DrawingSheet .
+
+:inlineReferencesLayout rdf:type owl:ObjectProperty ;
+    rdfs:label "inlineReferencesLayout" ;
+    skos:definition "An accepted target Layout of an inline reference to layouts and a drawing."@en ;
+    rdfs:comment "Multiple supported targets may be asserted; unresolved members do not acquire target edges." ;
+    rdfs:domain :InlineLayoutDrawingReference ;
+    rdfs:range admeta:Layout .
+
+#################################################################
+#    Classes — UC-03 Reference Symbol (cross-sheet linking)
+#################################################################
+
+:ReferenceSymbol rdf:type owl:Class;
+    rdfs:subClassOf :ReferenceExpression;
+    rdfs:label "ReferenceSymbol";
+    rdfs:comment "A symbol drawn on a Layout that references another Layout (on the same or a different DrawingSheet). Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target Layout's LayoutContentType.";
+    admeta:exampleImage img:ReferenceSymbol_01.png;
+    admeta:isComputerVisionLabel "true"^^xsd:boolean.
+
+#################################################################
+#    Object Properties — UC-03 Reference Symbol relations
+#################################################################
+
+:hasReferenceSymbol rdf:type owl:ObjectProperty ;
+    rdfs:label "hasReferenceSymbol" ;
+    rdfs:comment "A Layout contains one or more ReferenceSymbols. To navigate from a symbol back to the Layout it is drawn on, use the SPARQL inverse path ^adsym:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21)." ;
+    rdfs:subPropertyOf admeta:contains ;
+    rdfs:domain admeta:Layout ;
+    rdfs:range :ReferenceSymbol .
+
+:referencesLayout rdf:type owl:ObjectProperty ;
+    rdfs:label "referencesLayout" ;
+    rdfs:comment "Target Layout — the Layout this ReferenceSymbol points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^adsym:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21)." ;
+    rdfs:domain :ReferenceSymbol ;
+    rdfs:range admeta:Layout .

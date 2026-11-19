@@ -9,6 +9,7 @@
 @prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .
 @prefix geom: <https://w3id.org/adiro/adiro_geometry#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix adsym: <https://w3id.org/adiro/adiro_drawing_symbology#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
 #################################################################
@@ -711,7 +712,7 @@ aprov:Organisation :isComputerVisionLabel "false"^^xsd:boolean .
     skos:example "A" , "S" , "M" ;
     skos:inScheme :TitleblockFieldScheme ;
     aprov:expectedRange xsd:string ;
-    rdfs:comment "No dedicated ADIRO property yet (no mapsToFieldProperty); a candidate to model - possibly reusing adiro_domain_common:Discipline - tracked with the wider title-block relationship work (GitHub issue #69)." .
+    rdfs:comment "No dedicated ADIRO property yet (no mapsToFieldProperty); a candidate to model - possibly reusing adiro_discipline_core:Discipline - tracked with the wider title-block relationship work (GitHub issue #69)." .
 
 :ProjectTitleField rdf:type skos:Concept , aprov:FieldKind ;
     rdfs:label "Project Title Field" ;
@@ -773,57 +774,75 @@ aprov:Organisation :isComputerVisionLabel "false"^^xsd:boolean .
     skos:definition "The field kind of an extracted title-block field whose kind matched no member of the TitleblockFieldScheme. Its assertion keeps the caption as printed (aprov:capturedCaption) and the value, so nothing is lost, and is never promoted (this kind has no aprov:mapsToFieldProperty). It is not a member of the scheme, so it is never looked for. A high share of assertions bound to it points to a field ADIRO does not cover yet, or to a failure in extraction."@en .
 
 #################################################################
-#    Object Properties — UC-03 reference occurrences
+#    Deprecated — the UC-03 reference terms, now defined in adiro_drawing_symbology (#277)
 #################################################################
+
+# Each IRI below was released in this module. The term is now defined in adiro_drawing_symbology, which imports this
+# module, so a reference expression is defined next to ReferenceSymbol. The old IRI stays, deprecated and equivalent to
+# the new term, so data typed with it is also typed with the new one; it carries no isComputerVisionLabel and no
+# exampleImage, so the annotation tooling offers one label, not two.
+
+# The two properties are declared here as typing stubs, like the PROV-O terms in adiro_provenance: without the declaration a
+# reader that does not load adiro_drawing_symbology cannot read the owl:equivalentProperty below, and drops the statement.
+adsym:denotesDrawingSheet rdf:type owl:ObjectProperty .
+adsym:inlineReferencesLayout rdf:type owl:ObjectProperty .
+
+:ReferenceExpression rdf:type owl:Class ;
+    rdfs:subClassOf :DrawingElement ;
+    rdfs:label "Reference expression" ;
+    rdfs:comment "Deprecated: use ReferenceExpression of adiro_drawing_symbology, the same class defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class." ;
+    owl:deprecated "true"^^xsd:boolean ;
+    owl:equivalentClass adsym:ReferenceExpression ;
+    dcterms:isReplacedBy adsym:ReferenceExpression .
+
+:DrawingIdentifierMention rdf:type owl:Class ;
+    rdfs:subClassOf :DrawingElement ;
+    rdfs:label "Drawing identifier mention" ;
+    rdfs:comment "Deprecated: use DrawingIdentifierMention of adiro_drawing_symbology, the same class defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class." ;
+    owl:deprecated "true"^^xsd:boolean ;
+    owl:equivalentClass adsym:DrawingIdentifierMention ;
+    dcterms:isReplacedBy adsym:DrawingIdentifierMention .
+
+:LayoutIdentifierMention rdf:type owl:Class ;
+    rdfs:subClassOf :DrawingElement ;
+    rdfs:label "Layout identifier mention" ;
+    rdfs:comment "Deprecated: use LayoutIdentifierMention of adiro_drawing_symbology, the same class defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class." ;
+    owl:deprecated "true"^^xsd:boolean ;
+    owl:equivalentClass adsym:LayoutIdentifierMention ;
+    dcterms:isReplacedBy adsym:LayoutIdentifierMention .
+
+:InlineLayoutSheetReference rdf:type owl:Class ;
+    rdfs:subClassOf :ReferenceExpression ;
+    rdfs:label "Inline layout and sheet reference" ;
+    rdfs:comment "Deprecated: use InlineLayoutDrawingReference of adiro_drawing_symbology, the same class under a name that says drawing, not sheet, defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class." ;
+    owl:deprecated "true"^^xsd:boolean ;
+    owl:equivalentClass adsym:InlineLayoutDrawingReference ;
+    dcterms:isReplacedBy adsym:InlineLayoutDrawingReference .
+
+:StandaloneSheetReference rdf:type owl:Class ;
+    rdfs:subClassOf :DrawingIdentifierMention , :ReferenceExpression ;
+    rdfs:label "Standalone sheet reference" ;
+    rdfs:comment "Deprecated: use StandaloneDrawingReference of adiro_drawing_symbology, the same class under a name that says drawing, not sheet, defined in the module that holds the reference symbol. Everything typed with this class is also typed with that class." ;
+    owl:deprecated "true"^^xsd:boolean ;
+    owl:equivalentClass adsym:StandaloneDrawingReference ;
+    dcterms:isReplacedBy adsym:StandaloneDrawingReference .
 
 :denotesDrawingSheet rdf:type owl:ObjectProperty ;
     rdfs:label "denotesDrawingSheet" ;
-    rdfs:comment "The accepted DrawingSheet identity denoted by one sheet-number occurrence. It does not assert that a Layout target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict." ;
+    skos:definition "The drawing that a reference in a drawing names. Deprecated: it is the same property as denotesDrawingSheet of adiro_drawing_symbology."@en ;
+    rdfs:comment "Deprecated: use denotesDrawingSheet of adiro_drawing_symbology, the same property defined in the module that holds the reference symbol." ;
+    owl:deprecated "true"^^xsd:boolean ;
+    owl:equivalentProperty adsym:denotesDrawingSheet ;
+    dcterms:isReplacedBy adsym:denotesDrawingSheet ;
     rdfs:domain :DrawingIdentifierMention ;
     rdfs:range :DrawingSheet .
 
 :inlineReferencesLayout rdf:type owl:ObjectProperty ;
     rdfs:label "inlineReferencesLayout" ;
-    rdfs:comment "An accepted target Layout of an inline layout/sheet reference. Multiple supported targets may be asserted; unresolved members do not acquire target edges." ;
+    skos:definition "The layout that a reference placed in the running text of a drawing names. Deprecated: it is the same property as inlineReferencesLayout of adiro_drawing_symbology."@en ;
+    rdfs:comment "Deprecated: use inlineReferencesLayout of adiro_drawing_symbology, the same property defined in the module that holds the reference symbol." ;
+    owl:deprecated "true"^^xsd:boolean ;
+    owl:equivalentProperty adsym:inlineReferencesLayout ;
+    dcterms:isReplacedBy adsym:inlineReferencesLayout ;
     rdfs:domain :InlineLayoutSheetReference ;
     rdfs:range :Layout .
-
-
-#################################################################
-#    Classes — UC-03 reference expressions and text occurrences
-#################################################################
-
-:ReferenceExpression rdf:type owl:Class ;
-    rdfs:subClassOf :DrawingElement ;
-    rdfs:label "Reference expression" ;
-    rdfs:comment "A complete source reference expression, whether graphical, inline or a standalone sheet-number reference. This superclass groups those forms for queries; it does not require a second individual around any of them." ;
-    :isComputerVisionLabel "true"^^xsd:boolean .
-
-:DrawingIdentifierMention rdf:type owl:Class ;
-    rdfs:subClassOf :DrawingElement ;
-    rdfs:label "Drawing identifier mention" ;
-    rdfs:comment "One evidenced occurrence of drawing-identifier (sheet-identifier) text on a source drawing, distinct from the DrawingSheet that the text may denote. Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted sheet resolution: an unlocalisable text block may retain its accepted denotesDrawingSheet edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed." ;
-    :exampleImage img:DrawingIdentifierMention_01.png ;
-    :isComputerVisionLabel "true"^^xsd:boolean .
-
-:LayoutIdentifierMention rdf:type owl:Class ;
-    rdfs:subClassOf :DrawingElement ;
-    rdfs:label "Layout identifier mention" ;
-    rdfs:comment "One evidenced occurrence of layout-identifier text (a small integer or letter), distinct from a target Layout. A complete inline reference may contain several such occurrences, attached with contains; no target is inferred from matching text alone." ;
-    :exampleImage img:LayoutIdentifierMention_01.png ;
-    :isComputerVisionLabel "true"^^xsd:boolean .
-
-:InlineLayoutSheetReference rdf:type owl:Class ;
-    rdfs:subClassOf :ReferenceExpression ;
-    rdfs:label "Inline layout and sheet reference" ;
-    rdfs:comment "A complete inline textual expression relating layout number(s) to a sheet number, such as '1, 3, 5 & 7/S601'. The component mentions retain their own identities; accepted Layout targets are connected separately by inlineReferencesLayout. Expected composition: one sheet-identifier mention and at least one layout-identifier mention, attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction." ;
-    :exampleImage img:InlineLayoutSheetReference_01.png ;
-    :isComputerVisionLabel "true"^^xsd:boolean .
-
-:StandaloneSheetReference rdf:type owl:Class ;
-    rdfs:subClassOf :DrawingIdentifierMention , :ReferenceExpression ;
-    rdfs:label "Standalone sheet reference" ;
-    rdfs:comment "A drawing-identifier occurrence that itself constitutes a complete reference. One individual is both the DrawingIdentifierMention and the ReferenceExpression: no duplicate wrapper, self-directed hasDrawingIdentifierMention edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified." ;
-    :exampleImage img:StandaloneSheetReference_01.png ;
-    :isComputerVisionLabel "true"^^xsd:boolean .
-

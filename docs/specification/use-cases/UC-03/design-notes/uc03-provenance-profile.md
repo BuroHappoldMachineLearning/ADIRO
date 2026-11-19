@@ -72,7 +72,7 @@ and evidence lookup. Verify actual PDF emission and clicks separately when navig
 
 These rules are checked on the data, not asserted as OWL axioms:
 
-- An `InlineLayoutSheetReference` has exactly one `DrawingIdentifierMention` and at least one
+- An `InlineLayoutDrawingReference` has exactly one `DrawingIdentifierMention` and at least one
   `LayoutIdentifierMention`, attached with `contains`.
 - A `ReferenceSymbol` has at most one `DrawingIdentifierMention`.
 - A mention has at most one accepted `denotesDrawingSheet` target.

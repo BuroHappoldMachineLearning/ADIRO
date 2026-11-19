@@ -49,6 +49,21 @@ def test_label_clash_is_case_insensitive_and_names_the_other_term():
     assert {pg.local_name(t): name(o) for t, o in clashes.items()} == {"C": ["A"]}
 
 
+def test_a_deprecated_term_and_its_replacement_may_share_a_label_but_another_clash_is_still_reported():
+    """#290: a deprecated stub keeps its released label, as the class that replaces it has it."""
+    head = g(PREFIXES + """@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+:Old a owl:Class ; rdfs:label "Box" ; rdfs:comment "d" ; owl:deprecated "true"^^xsd:boolean ;
+    dcterms:isReplacedBy <https://w3id.org/adiro/aec_y#Box> .
+<https://w3id.org/adiro/aec_y#Box> a owl:Class ; rdfs:label "Box" ; rdfs:comment "d" .
+:Other a owl:Class ; rdfs:label "Box" ; rdfs:comment "d" .
+""")
+    terms = [URIRef("https://w3id.org/adiro/aec_x#Old"), URIRef("https://w3id.org/adiro/aec_y#Box")]
+    clashes = {pg.local_name(t): name(o) for t, o in pg.label_clashes(head, terms).items()}
+    # the replacement pair is no clash, but each still shares the label with the unrelated :Other
+    assert clashes == {"Old": ["Other"], "Box": ["Other"]}
+
+
 def test_definition_line_finds_the_term_block():
     assert pg.definition_line(HEAD, URIRef("https://w3id.org/adiro/aec_x#B")) == 5
     assert pg.definition_line(HEAD, URIRef("https://w3id.org/adiro/aec_x#Missing")) is None
@@ -241,3 +256,8 @@ def test_removing_or_renaming_the_example_image_property_is_detected():
     assert len(caution.detect([{"module": "aec_drawing_metadata", "base": base, "head": head}], None)) == 1
     assert caution.detect([{"module": "aec_drawing_metadata", "base": base, "head": base}], None) == []
     assert caution.detect([{"module": "aec_x", "base": g(BASE), "head": g(BASE)}], None) == []
+
+
+def test_a_declaration_of_another_modules_term_is_not_asked_for_a_definition():
+    head = g(BASE + "<https://w3id.org/adiro/aec_x> a owl:Ontology .\n<https://w3id.org/adiro/adiro_y#P> a owl:ObjectProperty .\n")
+    assert name(pg.undescribed(head, pg.touched_terms(g(BASE), head))) == []

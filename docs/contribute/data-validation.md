@@ -25,7 +25,7 @@ The ontology is validated by `scripts/validate_ontology.py` and the reasoner. Da
 | `readings.shacl.ttl` | A text reading (`TextReading`, [#238](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/238)) reads exactly one region or page (`isReadingOf`), and has either one text (`readText`, a string with or without a language tag) or one outcome (`hasReadingOutcome`: `Empty`, `Illegible` or `Failed`), never both and never neither. It supports competency questions CQ 11.1 to CQ 11.3 of the UC-01 ORSD. |
 | `frames.shacl.ttl` | The frames a model saw ([#239](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/239)): a frame has at most one `resolutionDpi`, a positive decimal, and covers at most one region (`coversRegion`, a `BoundingBox`); a kept image is an image of exactly one frame (`imageOf`); a pixel frame (unit `px`) with no resolution is a warning. It supports competency question CQ 10.4 of the UC-01 ORSD. |
 | `file-source.shacl.ttl` | A file records where it was obtained from (`sourceLocation`), itself or through the files it was derived from (`prov:wasDerivedFrom`), as a warning ([#229](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/229)). It answers competency question CQ 9.5 of the UC-01 ORSD. |
-| `uc03-composition.shacl.ttl` | The composition rules of the UC-03 reference expressions: an inline layout and sheet reference contains exactly one drawing identifier mention and at least one layout identifier mention; a reference symbol contains at most one drawing identifier mention; a drawing identifier mention has at most one accepted `denotesDrawingSheet` target. |
+| `uc03-composition.shacl.ttl` | The composition rules of the UC-03 reference expressions: an inline layout and drawing reference contains exactly one drawing identifier mention and at least one layout identifier mention; a reference symbol contains at most one drawing identifier mention; a drawing identifier mention has at most one accepted `denotesDrawingSheet` target. |
 
 A file holds the rules of one use case or one topic, and is named `<topic>.shacl.ttl`. The suffix names the technology;
 a `.ttl` in the folder without it is never run, and a test reports it.
@@ -44,7 +44,7 @@ Each shape states `sh:severity`:
 uv run --with pyshacl python scripts/validate_data.py path/to/data.ttl
 ```
 
-The script reads the ontology modules as background, so a subclass counts as its superclass (a standalone sheet reference is
+The script reads the ontology modules as background, so a subclass counts as its superclass (a standalone drawing reference is
 a drawing identifier mention). It exits with 1 when a result is a violation, and with 0 otherwise.
 
 ## Check data before a public release

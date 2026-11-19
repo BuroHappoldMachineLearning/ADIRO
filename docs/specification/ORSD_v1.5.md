@@ -1,7 +1,7 @@
-# ADIRO Ontology Requirements Specification — v1.4
+# ADIRO Ontology Requirements Specification — v1.5
 
 **Author:** ADIRO project team
-**Version:** 1.4 (October 2026) — see [Version history](#version-history)
+**Version:** 1.5 (November 2026) — see [Version history](#version-history)
 
 ---
 
@@ -66,7 +66,7 @@ The ontology is implemented using RDF and OWL to establish a standardized and in
 |----|-------------|-------------|
 | NFR 1 | **Concise terminology** | The ontology shall use precise, domain-appropriate terms aligned with international standards and established engineering vocabulary. |
 | NFR 2 | **Consistency** | The model shall avoid contradictory assertions and redundant modelling to support the logical interpretation of classes and properties. ADIRO individuals are **detections, not idealised drawing constructs** - historical sheets are routinely clipped, torn or partially legible - so structural axioms must not assert a completeness the extraction cannot guarantee. Closed-world completeness checks belong in SHACL over a finished extraction, not in OWL cardinality over detections ([#84](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/84)). |
-| NFR 3 | **Extendability** | The ontology shall be built to accommodate new AEC disciplines (e.g., Facade, MEP) without restructuring the core model, and shall reuse established external ontologies where doing so is sound. Extendability is achieved today through the modular internal package structure (e.g. `adiro_domain_common`, `adiro_facade_domain`). ADIRO imports no external ontology: how external terms may be reused is governed by [External ontology imports](design-decisions/external-ontology-imports.md), which prefers the lightest option that meets the need and sets a test for when a core module may reference an external vocabulary at all. PROV-O is reused directly in `adiro_provenance`; DAnO is compared at documentation level only — no import, no compatibility layer ([DAnO comparison](design-decisions/dano-comparison.md)); GeoSPARQL is reused as a local stub (option 1A) in the new `adiro_geometry` module, with WKT/spatial queries deferred ([#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36)). A per-vocabulary reuse justification is being added to the ORSD ([#82](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/82)). |
+| NFR 3 | **Extendability** | The ontology shall be built to accommodate new AEC disciplines (e.g., Facade, MEP) without restructuring the core model, and shall reuse established external ontologies where doing so is sound. Extendability is achieved today through the modular internal package structure (e.g. `adiro_discipline_core`, `adiro_facade_discipline`). ADIRO imports no external ontology: how external terms may be reused is governed by [External ontology imports](design-decisions/external-ontology-imports.md), which prefers the lightest option that meets the need and sets a test for when a core module may reference an external vocabulary at all. PROV-O is reused directly in `adiro_provenance`; DAnO is compared at documentation level only — no import, no compatibility layer ([DAnO comparison](design-decisions/dano-comparison.md)); GeoSPARQL is reused as a local stub (option 1A) in the new `adiro_geometry` module, with WKT/spatial queries deferred ([#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36)). A per-vocabulary reuse justification is being added to the ORSD ([#82](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/82)). |
 | NFR 4 | **Reliability** | The ontology and its metadata shall be structured to ensure sustained availability and traceability for long-term use in the AECO industry. |
 | NFR 5 | **FAIR principles** | The ontology shall be developed, documented, and published to ensure it is Findable, Accessible, Interoperable, and Reusable. |
 | NFR 6 | **Modularity and Scalability** | The ontology shall support a modular framework where different aspects of a drawing can be processed by independent extraction services and subsequently aggregated without loss of semantic integrity or performance degradation when scaled to multi-document collections. |
@@ -127,6 +127,10 @@ What is the complete set of drawings reachable from a given drawing through refe
 ---
 
 ## Version history
+
+### v1.5 (November 2026)
+
+MINOR: three modules are renamed ([#281](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/281)): `adiro_common_symbols` is `adiro_drawing_symbology`, `adiro_domain_common` is `adiro_discipline_core` and `adiro_facade_domain` is `adiro_facade_discipline`, and NFR 3 follows. No requirement, competency question or scope changes: the renamed modules hold the same terms, under new IRIs. The entries below keep the names of their time.
 
 ### v1.4 (October 2026)
 
