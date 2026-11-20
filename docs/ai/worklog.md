@@ -1,7 +1,8 @@
-## 2026-11-19 - The navigation names the current ORSD ([#293](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/293))
+## 2026-11-19 - The navigation names the current ORSD, and tests for it ([#293](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/293), [#295](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/295))
 
 The docs deploy failed on `main` after [#290](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/290) renamed the ORSD to `ORSD_v1.5.md`: `docs/specification/.pages` still listed `ORSD_v1.4.md`, and the awesome-pages plugin stops the build on a missing entry (`NavEntryNotFound`). The entry now names `ORSD_v1.5.md`, and `AGENTS.md` lists `.pages` among the references to fix when the ORSD is renamed.
-- Verified: `generate_docs.py` and `mkdocs build` pass locally. The alert issue closes itself when the next deploy passes.
+- Tests that would have caught it ([#295](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/295)): `tests/test_docs_navigation.py` checks that every `.pages` entry exists, that the ORSD states one version in its file name, heading, version line and history, that every reference to the ORSD file is current, that each use case states one version in its header, history and README row, and that relative links in the hand-written pages reach a file. It runs on the pull request, where the site build does not. A pull-request job running `mkdocs build --strict` was left out (minutes per pull request).
+- Verified: the new tests pass (44), and two of them fail with the stale `.pages` entry restored. `generate_docs.py` and `mkdocs build` pass locally. The alert issue closes itself when the next deploy passes.
 
 ## 2026-11-19 - Another module's declaration is not a term to define ([#290](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/290))
 

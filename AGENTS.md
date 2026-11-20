@@ -405,7 +405,10 @@ For anyone changing an ontology, agent or person. The sections below give the de
     silently adding untraceable terms — see `titleblock-vocabulary-review.md` §2.4.
   - **Do the module-hierarchy diagrams still hold?** UC-01 §7 and UC-03 §7 each embed one.
   - **Version the document you edited.** The specification documents are versioned in their own text, and a
-    change that is not versioned is invisible to anyone reading the published site:
+    change that is not versioned is invisible to anyone reading the published site (`tests/test_docs_navigation.py`
+    checks, on the pull request, that the navigation names existing files, that the ORSD and each use case state one
+    version everywhere they state it, that every reference to the ORSD file is current and that relative links reach a
+    file, [#295](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/295)):
       - **ORSD** — bump the semantic version and **rename the file to match** (`ORSD_v<major>.<minor>.md`;
         the version is part of the filename, and renaming on a bump is the established convention). Update the
         `# …  — vX.Y` heading and the `**Version:**` line, add an entry to its **Version history** section
