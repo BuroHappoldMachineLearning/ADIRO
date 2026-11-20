@@ -79,16 +79,48 @@ def test_every_reference_to_the_orsd_names_the_current_file():
     assert not any(stale.values()), f"these still name an earlier ORSD file (the current one is {current}): {({k: v for k, v in stale.items() if v})}"
 
 
-@pytest.mark.parametrize("path", use_case_files(), ids=lambda p: p.parent.name)
-def test_a_use_case_states_one_version_in_its_header_its_history_and_the_use_case_table(path):
-    text = read(path)
+# Use cases that may have no "Version History" section: UC-06 is a first draft. Any other use case must have one.
+NO_HISTORY_YET = {"UC-06"}
+
+
+def use_case_problems(path_name, text, readme, no_history_yet=NO_HISTORY_YET):
+    """What disagrees about a use case's version, or is missing so that it cannot be checked."""
     version = VERSION_FIELD.search(text).group(1)
+    problems = []
     history = history_versions(text, r"^##\s+\d+\.\s+Version History")
     if history:
-        assert history[0] == version, f"{path.name}: the header says {version}, the newest history entry says v{history[0]}"
-    row = next((line for line in read(USE_CASES / "README.md").splitlines() if "ORSD Status" in line and path.name in line), None)
-    if row:
-        assert re.search(rf"\(v{re.escape(version)}\)", row), f"{path.name}: its row in use-cases/README.md does not say (v{version})"
+        if history[0] != version:
+            problems.append(f"the header says {version}, the newest history entry says v{history[0]}")
+    elif re.match(r"UC-\d+", path_name).group(0) not in no_history_yet:
+        problems.append("it has no 'N. Version History' section with a '### vX.Y' entry")
+    row = next((line for line in readme.splitlines() if "ORSD Status" in line and path_name in line), None)
+    if row is None:
+        problems.append("use-cases/README.md has no 'ORSD Status' row that links it")
+    elif not re.search(rf"\(v{re.escape(version)}\)", row):
+        problems.append(f"its row in use-cases/README.md does not say (v{version})")
+    return problems
+
+
+@pytest.mark.parametrize("path", use_case_files(), ids=lambda p: p.parent.name)
+def test_a_use_case_states_one_version_in_its_header_its_history_and_the_use_case_table(path):
+    problems = use_case_problems(path.name, read(path), read(USE_CASES / "README.md"))
+    assert not problems, f"{path.name}: " + "; ".join(problems)
+
+
+UC_TEXT = "**Version:** 0.2 (draft)\n\n## 9. Version History\n\n### v0.2\n\nx\n"
+UC_README = "| **ORSD Status** | [Draft (v0.2)](<UC-09/UC-09 x.md>) |\n"
+
+
+def test_a_use_case_with_nothing_to_compare_is_reported_not_skipped():
+    assert use_case_problems("UC-09 x.md", UC_TEXT, UC_README) == []
+    assert use_case_problems("UC-09 x.md", UC_TEXT.replace("0.2 (draft)", "0.3 (draft)"), UC_README) == [
+        "the header says 0.3, the newest history entry says v0.2", "its row in use-cases/README.md does not say (v0.3)"]
+    (no_history,) = use_case_problems("UC-09 x.md", "**Version:** 0.2\n", UC_README)
+    assert "no 'N. Version History' section" in no_history
+    uc06_readme = UC_README.replace("UC-09/UC-09 x", "UC-06/UC-06 x")
+    assert use_case_problems("UC-06 x.md", "**Version:** 0.2\n", uc06_readme) == []
+    (no_row,) = use_case_problems("UC-09 y.md", UC_TEXT, UC_README)
+    assert "no 'ORSD Status' row" in no_row
 
 
 def link_targets(text):
@@ -106,7 +138,31 @@ def hand_written_pages():
             yield path
 
 
+def broken_links(path, docs=DOCS):
+    """Relative links of a page whose target is not a file inside `docs`: the build rejects a link that leaves it."""
+    root = docs.resolve()
+    broken = []
+    for target in link_targets(read(path)):
+        if not target:
+            continue
+        resolved = (path.parent / target).resolve()
+        if not (resolved.exists() and root in resolved.parents):
+            broken.append(target)
+    return broken
+
+
 @pytest.mark.parametrize("path", list(hand_written_pages()), ids=lambda p: p.relative_to(DOCS).as_posix())
-def test_a_relative_link_in_a_hand_written_page_reaches_a_file(path):
-    broken = [t for t in link_targets(read(path)) if t and not (path.parent / t).exists()]
-    assert not broken, f"{path.relative_to(ROOT).as_posix()} links to files that are not there: {broken}"
+def test_a_relative_link_in_a_hand_written_page_reaches_a_file_inside_docs(path):
+    broken = broken_links(path)
+    assert not broken, f"{path.relative_to(ROOT).as_posix()} links to files that are not in docs/ (the build rejects them): {broken}"
+
+
+def test_a_link_to_a_file_outside_docs_or_a_missing_file_is_broken(tmp_path):
+    docs = tmp_path / "docs"
+    (docs / "sub").mkdir(parents=True)
+    (tmp_path / "README.md").write_text("x", encoding="utf-8")
+    (docs / "other.md").write_text("x", encoding="utf-8")
+    page = docs / "sub" / "page.md"
+    page.write_text("[ok](../other.md) [anchor](../other.md#a) [web](https://x.org/a.md) "
+                    "[outside](../../README.md) [missing](../gone.md)", encoding="utf-8")
+    assert broken_links(page, docs) == ["../../README.md", "../gone.md"]
