@@ -1,7 +1,7 @@
-# ADIRO Ontology Requirements Specification — v1.5
+# ADIRO Ontology Requirements Specification — v1.6
 
 **Author:** ADIRO project team
-**Version:** 1.5 (November 2026) — see [Version history](#version-history)
+**Version:** 1.6 (November 2026) — see [Version history](#version-history)
 
 ---
 
@@ -122,11 +122,15 @@ What is the complete set of drawings reachable from a given drawing through refe
 #### CQG 5. Discipline and Data Interoperability
 
 - **CQ 5.1:** Which DrawingElement types are consistently identified across different engineering drawing sets?
-- **CQ 5.2:** Which external ontology classes are linked to a given metadata:DrawingElement for cross-domain interoperability?  *(the linking property itself — working name `depicts` — is not yet defined in the ontology, so let's treat it as a proposed pending Open Issue **OI-1**. Note that UC-06 and UC-07 each specify their own (`depictsMaterial`, `depictsElement`), both with domain `Drawing` rather than `DrawingElement`; reconciling that is part of OI-1. See [#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80).)*
+- **CQ 5.2:** Which external ontology classes are linked to a given admeta:DrawingElement for cross-domain interoperability?  *(the linking property itself — working name `depicts` — is not yet defined in the ontology, so let's treat it as a proposed pending Open Issue **OI-1**. Note that UC-06 and UC-07 each specify their own (`depictsMaterial`, `depictsElement`), both with domain `Drawing` rather than `DrawingElement`; reconciling that is part of OI-1. See [#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80).)*
 
 ---
 
 ## Version history
+
+### v1.6 (November 2026)
+
+MINOR: the prefixes of the names in a competency question follow the "ad" convention ([#289](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/289)): `admeta:`, `adprov:` and `adgeom:` for `adiro_drawing_metadata`, `adiro_provenance` and `adiro_geometry`. No requirement, competency question or scope changes; a prefix is a label and no IRI changes.
 
 ### v1.5 (November 2026)
 

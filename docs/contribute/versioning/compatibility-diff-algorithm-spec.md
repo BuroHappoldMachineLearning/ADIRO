@@ -77,10 +77,10 @@ Detect the following delta records:
 - `TERM_RENAMED`
 - `NAMESPACE_MOVED`
 - `TYPE_CHANGED` (e.g., datatype property -> object property)
-- `MEMBERSHIP_ADDED` / `MEMBERSHIP_REMOVED` (an individual, including a SKOS concept or concept scheme, gained or lost a class: a field kind typed `aprov:FieldKind` as well as `skos:Concept`)
+- `MEMBERSHIP_ADDED` / `MEMBERSHIP_REMOVED` (an individual, including a SKOS concept or concept scheme, gained or lost a class: a field kind typed `adprov:FieldKind` as well as `skos:Concept`)
 - `SCHEME_MEMBERSHIP_ADDED` / `SCHEME_MEMBERSHIP_REMOVED` (a concept was put in, or taken out of, a scheme (`skos:inScheme`): taken out, it is no longer looked for)
 - `NAME_ADDED` / `NAME_REMOVED` (a `skos:prefLabel`, `skos:altLabel` or `skos:hiddenLabel` of an individual was added or removed, compared with its language: a name that changes language is removed and added)
-- `LINK_ADDED` / `LINK_CHANGED` (a statement of an individual whose value is a term, such as `aprov:mapsToFieldProperty`, `aprov:expectedRange` or `skos:broader`, was added, or removed or given another value)
+- `LINK_ADDED` / `LINK_CHANGED` (a statement of an individual whose value is a term, such as `adprov:mapsToFieldProperty`, `adprov:expectedRange` or `skos:broader`, was added, or removed or given another value)
 - `DOMAIN_CHANGED`
 - `RANGE_CHANGED`
 - `SUPERCLASS_CHANGED`

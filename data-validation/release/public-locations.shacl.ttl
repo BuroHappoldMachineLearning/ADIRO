@@ -24,15 +24,15 @@
 
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .
+@prefix adprov: <https://w3id.org/adiro/adiro_provenance#> .
 @prefix dvr: <https://w3id.org/adiro/data-validation/release#> .
 
 dvr: sh:declare
-    [ sh:prefix "aprov" ; sh:namespace "https://w3id.org/adiro/adiro_provenance#"^^xsd:anyURI ] ,
+    [ sh:prefix "adprov" ; sh:namespace "https://w3id.org/adiro/adiro_provenance#"^^xsd:anyURI ] ,
     [ sh:prefix "dvr" ; sh:namespace "https://w3id.org/adiro/data-validation/release#"^^xsd:anyURI ] .
 
 dvr:PublicLocations a sh:NodeShape ;
-    sh:targetSubjectsOf aprov:sourceLocation , aprov:sourcePage , aprov:storageLocation , aprov:acceptedUnder ;
+    sh:targetSubjectsOf adprov:sourceLocation , adprov:sourcePage , adprov:storageLocation , adprov:acceptedUnder ;
     sh:severity sh:Violation ;
     sh:sparql [
         a sh:SPARQLConstraint ;
@@ -41,7 +41,7 @@ dvr:PublicLocations a sh:NodeShape ;
         sh:select """
             SELECT $this ?path ?value WHERE {
                 $this ?path ?value .
-                FILTER (?path IN (aprov:sourceLocation, aprov:sourcePage, aprov:storageLocation, aprov:acceptedUnder))
+                FILTER (?path IN (adprov:sourceLocation, adprov:sourcePage, adprov:storageLocation, adprov:acceptedUnder))
                 # The whole value must be scheme://[user@]host[tail]; the host is group 2, lower-cased. Only the characters
                 # a URL may contain are allowed, so a backslash, a space or a line break gives no match and the host "",
                 # which no allowed host matches (fail closed).

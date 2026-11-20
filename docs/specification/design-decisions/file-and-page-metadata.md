@@ -61,11 +61,11 @@ and is another `DrawingFile`. It points back with `prov:wasDerivedFrom`, and onl
 origin of any derived file is found by following that link.
 
 ```turtle
-:scan  a aprov:DrawingFile ; aprov:mediaType "image/tiff" ;
-    aprov:sourceLocation "https://tile.loc.gov/storage-services/…/0001.tif"^^xsd:anyURI ;
-    aprov:sourcePage     "https://www.loc.gov/item/…/"^^xsd:anyURI ;
-    aprov:storageLocation "https://storage.example.org/drawings/0001.tif"^^xsd:anyURI .
-:image a aprov:DrawingFile ; aprov:mediaType "image/png" ;
+:scan  a adprov:DrawingFile ; adprov:mediaType "image/tiff" ;
+    adprov:sourceLocation "https://tile.loc.gov/storage-services/…/0001.tif"^^xsd:anyURI ;
+    adprov:sourcePage     "https://www.loc.gov/item/…/"^^xsd:anyURI ;
+    adprov:storageLocation "https://storage.example.org/drawings/0001.tif"^^xsd:anyURI .
+:image a adprov:DrawingFile ; adprov:mediaType "image/png" ;
     prov:wasDerivedFrom :scan .
 ```
 

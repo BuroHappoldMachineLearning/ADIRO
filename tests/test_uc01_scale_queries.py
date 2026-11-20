@@ -13,15 +13,15 @@ from test_uc01_competency_queries import PREFIXES, recorded_query  # noqa: E402
 # A drawing with a title-block scale and three layouts (one with its own scale, one with none, one marked "NTS"), a drawing
 # whose scale was written with hasScale, a drawing with no scale, and a drawing with no scale and a single detected layout
 # whose caption gives one.
-EXAMPLE = """:s1 a metadata:DrawingSheet ; metadata:drawingScale "1:50" ; metadata:contains :l1 , :l2 , :l3 .
-:l1 a metadata:Layout ; metadata:layoutScale "1:20" .
-:l2 a metadata:Layout .
-:l3 a metadata:Layout ; metadata:layoutScale "NTS" .
-:s2 a metadata:DrawingSheet ; metadata:hasScale "1:50" .
-:s3 a metadata:DrawingSheet ; metadata:contains :l4 .
-:l4 a metadata:Layout .
-:s4 a metadata:DrawingSheet ; metadata:contains :l5 .
-:l5 a metadata:Layout ; metadata:layoutScale "1:50" .
+EXAMPLE = """:s1 a admeta:DrawingSheet ; admeta:drawingScale "1:50" ; admeta:contains :l1 , :l2 , :l3 .
+:l1 a admeta:Layout ; admeta:layoutScale "1:20" .
+:l2 a admeta:Layout .
+:l3 a admeta:Layout ; admeta:layoutScale "NTS" .
+:s2 a admeta:DrawingSheet ; admeta:hasScale "1:50" .
+:s3 a admeta:DrawingSheet ; admeta:contains :l4 .
+:l4 a admeta:Layout .
+:s4 a admeta:DrawingSheet ; admeta:contains :l5 .
+:l5 a admeta:Layout ; admeta:layoutScale "1:50" .
 """
 
 

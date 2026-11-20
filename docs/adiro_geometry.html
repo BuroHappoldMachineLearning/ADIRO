@@ -495,7 +495,7 @@ td {
               <th>
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#comment" title="A description of the subject resource. Defined in RDF Schema">Comment</a>
               </th>
-              <td><p>An example is a title-block field's caption or value. Its coordinates are held as an xyxy string (<a href="#bboxXYXY">bboxXYXY</a>) and are meaningless without the <a href="#CoordinateFrame">CoordinateFrame</a> it points at (<a href="#inCoordinateFrame">inCoordinateFrame</a>), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an <a href="adiro_provenance.html#InferredEntity">InferredEntity</a>: it carries its own provenance (<a href="adiro_provenance.html#hasInferenceMeta">aprov:hasInferenceMeta</a> - a detector, or a human annotator, told apart by <a href="adiro_provenance.html#inferredBy">aprov:inferredBy</a>) and its own confidence (<a href="adiro_provenance.html#hasConfidence">aprov:hasConfidence</a>, the detector's score, absent for a hand-drawn box), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL <a href="#Geometry">geo:Geometry</a> so it is recognised as a spatial shape.</p></td>
+              <td><p>An example is a title-block field's caption or value. Its coordinates are held as an xyxy string (<a href="#bboxXYXY">bboxXYXY</a>) and are meaningless without the <a href="#CoordinateFrame">CoordinateFrame</a> it points at (<a href="#inCoordinateFrame">inCoordinateFrame</a>), which fixes the unit, coordinate space, origin, axes, page and exact PDF. A BoundingBox is itself an <a href="adiro_provenance.html#InferredEntity">InferredEntity</a>: it carries its own provenance (<a href="adiro_provenance.html#hasInferenceMeta">adprov:hasInferenceMeta</a> - a detector, or a human annotator, told apart by <a href="adiro_provenance.html#inferredBy">adprov:inferredBy</a>) and its own confidence (<a href="adiro_provenance.html#hasConfidence">adprov:hasConfidence</a>, the detector's score, absent for a hand-drawn box), which is DISTINCT from the confidence in a value read at that box. A subclass of GeoSPARQL <a href="#Geometry">geo:Geometry</a> so it is recognised as a spatial shape.</p></td>
             </tr>
             <tr>
               <th>
@@ -510,7 +510,7 @@ td {
                     </span>
                   </li>
                   <li>
-                    <a href="https://w3id.org/adiro/adiro_provenance#InferredEntity">aprov:InferredEntity</a>
+                    <a href="https://w3id.org/adiro/adiro_provenance#InferredEntity">adprov:InferredEntity</a>
                   </li>
                 </ul>
               </td>
@@ -658,7 +658,7 @@ td {
               <th>
                 <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#definition" title="A statement or formal explanation of the meaning of a concept. Defined in SKOS">Definition</a>
               </th>
-              <td><p>The page (an <a href="adiro_provenance.html#FilePage">aprov:FilePage</a>) that this coordinate frame reads.</p></td>
+              <td><p>The page (an <a href="adiro_provenance.html#FilePage">adprov:FilePage</a>) that this coordinate frame reads.</p></td>
             </tr>
             <tr>
               <th>
@@ -682,7 +682,7 @@ td {
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#range" title="A range of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Range</a>
               </th>
               <td>
-                <a href="https://w3id.org/adiro/adiro_provenance#FilePage">aprov:FilePage</a>
+                <a href="https://w3id.org/adiro/adiro_provenance#FilePage">adprov:FilePage</a>
               </td>
             </tr>
           </table>
@@ -838,14 +838,14 @@ td {
               <th>
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#comment" title="A description of the subject resource. Defined in RDF Schema">Comment</a>
               </th>
-              <td><p>The image is an <a href="adiro_provenance.html#DrawingFile">aprov:DrawingFile</a> with its <a href="adiro_provenance.html#contentHash">contentHash</a> and <a href="adiro_provenance.html#mediaType">mediaType</a>, and its pixels are the frame's coordinates. Only an image that is kept has a file: a frame a model saw is recorded whether or not its image is kept.</p></td>
+              <td><p>The image is an <a href="adiro_provenance.html#DrawingFile">adprov:DrawingFile</a> with its <a href="adiro_provenance.html#contentHash">contentHash</a> and <a href="adiro_provenance.html#mediaType">mediaType</a>, and its pixels are the frame's coordinates. Only an image that is kept has a file: a frame a model saw is recorded whether or not its image is kept.</p></td>
             </tr>
             <tr>
               <th>
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#domain" title="A domain of the subject property. Defined in The RDF Schema vocabulary (RDFS)">Domain</a>
               </th>
               <td>
-                <a href="https://w3id.org/adiro/adiro_provenance#DrawingFile">aprov:DrawingFile</a>
+                <a href="https://w3id.org/adiro/adiro_provenance#DrawingFile">adprov:DrawingFile</a>
               </td>
             </tr>
             <tr>
@@ -1086,7 +1086,7 @@ td {
           <dd>
             <code>https://w3id.org/adiro/adiro_geometry#</code>
           </dd>
-          <dt id="aprov">aprov</dt>
+          <dt id="adprov">adprov</dt>
           <dd>
             <code>https://w3id.org/adiro/adiro_provenance#</code>
           </dd>
@@ -1242,7 +1242,7 @@ td {
               <a href="#"></a>
             </li>
             <li>
-              <a href="#aprov">aprov</a>
+              <a href="#adprov">adprov</a>
             </li>
             <li>
               <a href="#dcterms">dcterms</a>

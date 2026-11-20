@@ -32,7 +32,7 @@ This pipeline enforces **forward traceability** (every OWL term traces back to a
 | **Actor**       | Engineer                                                                                                  |
 | **Goal**        | Search drawings based on titleblock information                                                          |
 | **Description** | As an engineer, I want to search easily a number of drawings based on the information in the titleblock. |
-| **ORSD Status** | ✅ [Completed (v0.22)](<UC-01/UC-01-Titleblock-Based Drawing Search.md>) |
+| **ORSD Status** | ✅ [Completed (v0.23)](<UC-01/UC-01-Titleblock-Based Drawing Search.md>) |
 
 ### UC-02: Facade Performance Lines
 
@@ -50,7 +50,7 @@ This pipeline enforces **forward traceability** (every OWL term traces back to a
 | **Actor**       | Designer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | **Goal**        | Navigate across sheets via reference symbols                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | **Description** | As a designer, I want to understand how a certain building element or parts are designed, so I want to find all the drawings that are connected to a drawing. In engineering drawings, there are typically Reference Symbols such as Detail Markers, Section Markers, and Elevation Markers. By recognising these Reference Symbols, we can automatically match and link the Sections, Details, and Elevations they reference -- enabling navigation across sheets and even across drawing sets. |
-| **ORSD Status** | ✅ [Semantic extension (v0.11), pending review](<UC-03/UC-03-Reference Symbol Cross-Sheet Linking.md>) — geometry and navigation cases deferred |
+| **ORSD Status** | ✅ [Semantic extension (v0.12), pending review](<UC-03/UC-03-Reference Symbol Cross-Sheet Linking.md>) — geometry and navigation cases deferred |
 
 ### UC-04: Element Similarity Search
 
@@ -124,7 +124,7 @@ Following the LOT pipeline (`Use Case → Information Needs → Functional Requi
 
 | Milestone | UC-01 | UC-03 |
 |---|:---:|:---:|
-| ORSD (Use Case → CQs) | ✅ v0.22 | ✅ v0.11 |
+| ORSD (Use Case → CQs) | ✅ v0.23 | ✅ v0.12 |
 | OWL Terms Specification | ✅ | ✅ |
 | ORSD Review & Alignment | ✅ | ✅ (3 open issues) |
 | T-Box Implementation (.owl/.ttl) | ✅ | ✅ |
@@ -139,7 +139,7 @@ Populate the ontology with sample instance data (Named Individuals) based on rea
 
 - Creating RDF individuals for `DrawingSheet`, `Project`, `Person`, `Discipline`, `DrawingRevision`, etc. (UC-01)
 - Creating RDF individuals for `ReferenceSymbol` and cross-sheet linking relationships (UC-03)
-- Covering **both** ways a title-block value can be carried: validated values as direct datatype properties on `DrawingSheet`, and machine-extracted values as `aprov:FieldAssertion` individuals with provenance and confidence. A CQ that only queries the direct properties will return empty against extraction output until a value is promoted — see [#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)
+- Covering **both** ways a title-block value can be carried: validated values as direct datatype properties on `DrawingSheet`, and machine-extracted values as `adprov:FieldAssertion` individuals with provenance and confidence. A CQ that only queries the direct properties will return empty against extraction output until a value is promoted — see [#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)
 - Ensuring test data covers edge cases identified in the Competency Questions (e.g. multi-revision drawings, cross-discipline queries)
 
 **Step 2 — SPARQL Competency Question Validation**

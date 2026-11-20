@@ -26,11 +26,11 @@ it is standalone.
 This is the Semantic part of the [three-layer UC-03 model](uc03-three-layer-model.md); page regions and
 processing history have separate responsibilities.
 
-`metadata:contains`, with a typed mention as its object, expresses accepted composition, not target
-resolution. The existing `metadata:hasLayout` states which Layout belongs to a DrawingSheet; a layout number
+`admeta:contains`, with a typed mention as its object, expresses accepted composition, not target
+resolution. The existing `admeta:hasLayout` states which Layout belongs to a DrawingSheet; a layout number
 alone is not a globally unique Layout identity. The evidenced source Layout of any reference expression, inline or
-standalone, is stated with `metadata:contains` from that Layout (a graphical marker through `adsym:hasReferenceSymbol`,
-a sub-property of `contains`), and read from the expression's side with the inverse path `^metadata:contains`, as ADIRO
+standalone, is stated with `admeta:contains` from that Layout (a graphical marker through `adsym:hasReferenceSymbol`,
+a sub-property of `contains`), and read from the expression's side with the inverse path `^admeta:contains`, as ADIRO
 declares no named inverse properties ([#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21)). Likewise, `adsym:inlineReferencesLayout` is separate from the existing symbol-only
 `adsym:referencesLayout`, so using an inline reference cannot accidentally infer that it is a graphical
 symbol. Source membership is left unset when the evidence supports only a page location. *(Amended in
@@ -83,7 +83,7 @@ not OWL geometry cardinality axioms. Geometry roles remain tracked in
 
 ## Existing terms and deliberate limits
 
-- `metadata:TextualNote.refersToDrawingId` stores an identifier string on a free-form note. A
+- `admeta:TextualNote.refersToDrawingId` stores an identifier string on a free-form note. A
   `StandaloneDrawingReference` identifies a particular evidenced text occurrence and may have an accepted
   `DrawingSheet` identity. The two can coexist for different query needs; this work does not replace the
   existing note property or infer a target sheet from its string.

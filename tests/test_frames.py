@@ -36,26 +36,26 @@ def test_no_crop_class_and_no_transform_term():
 # One page rendered at 300 dpi; the detector saw it scaled so that its shorter side is 1200 px; the reader saw a crop of the
 # title block at 300 dpi, which was kept next to the data; a hand-typed value saw nothing.
 SEEN = """@prefix prov: <http://www.w3.org/ns/prov#> .
-@prefix geom: <https://w3id.org/adiro/adiro_geometry#> .
+@prefix adgeom: <https://w3id.org/adiro/adiro_geometry#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-:d a metadata:DrawingSheet ; metadata:drawingIdentifier "ST-101" ; metadata:isOnPage :p1 ; metadata:contains :tb .
-:p1 a aprov:FilePage ; aprov:pageNumber 1 .
-:pt a geom:CoordinateFrame ; geom:describesPage :p1 ; geom:coordinateSpace "page_display_pt" ; geom:unit "pt" .
-:full a geom:CoordinateFrame ; geom:describesPage :p1 ; geom:unit "px" ; geom:resolutionDpi 300 .
-:small a geom:CoordinateFrame ; geom:describesPage :p1 ; geom:unit "px" ; geom:resolutionDpi 51.31 .
-:tbBox a geom:BoundingBox ; geom:bboxXYXY "[1900, 1400, 2360, 1660]" ; geom:inCoordinateFrame :pt ; aprov:hasInferenceMeta :detect .
-:tb a metadata:Titleblock ; geom:hasBoundingBox :tbBox .
-:crop a geom:CoordinateFrame ; geom:describesPage :p1 ; geom:unit "px" ; geom:resolutionDpi 300.0 ; geom:coversRegion :tbBox .
-:cropImage a aprov:DrawingFile ; geom:imageOf :crop ; aprov:mediaType "image/png" ;
-    aprov:storageLocation "crops/ST-101-titleblock.png"^^xsd:anyURI .
-:detect a aprov:InferenceMeta ; aprov:hasStepKind aprov:RegionDetection ; prov:used :small , :p1 .
-:read a aprov:InferenceMeta ; aprov:hasStepKind aprov:FieldExtraction ; aprov:inferredWith :llm ; prov:used :crop , :p1 , :prompt .
-:prompt a aprov:Configuration ; aprov:configurationContent "Read the title block." .
-:a1 a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind metadata:DrawingTitleField ;
-    aprov:hasLiteralValue "Ground floor plan" ; aprov:hasInferenceMeta :read .
-:byHand a aprov:InferenceMeta ; aprov:inferredBy :reviewer .
-:a2 a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind metadata:DrawingTitleField ;
-    aprov:hasLiteralValue "Ground Floor Plan" ; aprov:hasInferenceMeta :byHand .
+:d a admeta:DrawingSheet ; admeta:drawingIdentifier "ST-101" ; admeta:isOnPage :p1 ; admeta:contains :tb .
+:p1 a adprov:FilePage ; adprov:pageNumber 1 .
+:pt a adgeom:CoordinateFrame ; adgeom:describesPage :p1 ; adgeom:coordinateSpace "page_display_pt" ; adgeom:unit "pt" .
+:full a adgeom:CoordinateFrame ; adgeom:describesPage :p1 ; adgeom:unit "px" ; adgeom:resolutionDpi 300 .
+:small a adgeom:CoordinateFrame ; adgeom:describesPage :p1 ; adgeom:unit "px" ; adgeom:resolutionDpi 51.31 .
+:tbBox a adgeom:BoundingBox ; adgeom:bboxXYXY "[1900, 1400, 2360, 1660]" ; adgeom:inCoordinateFrame :pt ; adprov:hasInferenceMeta :detect .
+:tb a admeta:Titleblock ; adgeom:hasBoundingBox :tbBox .
+:crop a adgeom:CoordinateFrame ; adgeom:describesPage :p1 ; adgeom:unit "px" ; adgeom:resolutionDpi 300.0 ; adgeom:coversRegion :tbBox .
+:cropImage a adprov:DrawingFile ; adgeom:imageOf :crop ; adprov:mediaType "image/png" ;
+    adprov:storageLocation "crops/ST-101-titleblock.png"^^xsd:anyURI .
+:detect a adprov:InferenceMeta ; adprov:hasStepKind adprov:RegionDetection ; prov:used :small , :p1 .
+:read a adprov:InferenceMeta ; adprov:hasStepKind adprov:FieldExtraction ; adprov:inferredWith :llm ; prov:used :crop , :p1 , :prompt .
+:prompt a adprov:Configuration ; adprov:configurationContent "Read the title block." .
+:a1 a adprov:FieldAssertion ; adprov:assertedAbout :d ; adprov:assertsFieldKind admeta:DrawingTitleField ;
+    adprov:hasLiteralValue "Ground floor plan" ; adprov:hasInferenceMeta :read .
+:byHand a adprov:InferenceMeta ; adprov:inferredBy :reviewer .
+:a2 a adprov:FieldAssertion ; adprov:assertedAbout :d ; adprov:assertsFieldKind admeta:DrawingTitleField ;
+    adprov:hasLiteralValue "Ground Floor Plan" ; adprov:hasInferenceMeta :byHand .
 """
 
 

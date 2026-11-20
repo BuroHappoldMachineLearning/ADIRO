@@ -52,13 +52,13 @@ DELTA_SEVERITY = {
     "RESTRICTION_TIGHTENED": POTENTIALLY,
     "TERM_REMOVED": BREAKING,
     "TYPE_CHANGED": BREAKING,
-    # An individual's classes (#254): one more class is an addition (a field kind typed aprov:FieldKind as well), one less
+    # An individual's classes (#254): one more class is an addition (a field kind typed adprov:FieldKind as well), one less
     # removes what a consumer could select it by.
     "MEMBERSHIP_ADDED": NON_BREAKING,
     "MEMBERSHIP_REMOVED": BREAKING,
     # What a consumer of a controlled vocabulary acts on (#254). Its scheme: a concept taken out of a scheme is no longer
     # looked for. Its names (skos:prefLabel, altLabel, hiddenLabel, compared with their language): a removed name stops
-    # matching. Its links to other terms (aprov:mapsToFieldProperty, aprov:expectedRange, skos:broader, ...): a changed
+    # matching. Its links to other terms (adprov:mapsToFieldProperty, adprov:expectedRange, skos:broader, ...): a changed
     # one changes what an assertion of it means; a new one only adds.
     "SCHEME_MEMBERSHIP_ADDED": NON_BREAKING,
     "SCHEME_MEMBERSHIP_REMOVED": BREAKING,

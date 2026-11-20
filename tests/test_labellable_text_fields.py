@@ -61,7 +61,7 @@ def test_has_scale_is_the_unlabelled_parent_of_the_two_scales(metadata):
 
 
 def _titleblock_promotions(graph):
-    """Property that each title-block field kind is promoted to (aprov:mapsToFieldProperty)."""
+    """Property that each title-block field kind is promoted to (adprov:mapsToFieldProperty)."""
     return {kind: graph.value(kind, APROV.mapsToFieldProperty)
             for kind in graph.subjects(SKOS.inScheme, M.TitleblockFieldScheme)}
 

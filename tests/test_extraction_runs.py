@@ -38,20 +38,20 @@ def test_the_run_stubs_name_their_source_and_carry_no_axioms(stub, kind, source)
 RUN = """@prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-:d a metadata:DrawingSheet ; metadata:drawingIdentifier "ST-101" .
+:d a admeta:DrawingSheet ; admeta:drawingIdentifier "ST-101" .
 :run1 a prov:Activity ; prov:startedAtTime "2026-10-28T09:00:00Z"^^xsd:dateTime ;
     prov:used <https://w3id.org/adiro/adiro_provenance/2.1.0> , <https://w3id.org/adiro/adiro_drawing_metadata/7.0.0> ,
         <https://w3id.org/adiro/adiro_provenance> , <https://w3id.org/adiro/adiro_provenance/2.1.0/adiro_provenance.ttl> ,
         :lookupTable .
-:read1 a aprov:InferenceMeta ; dcterms:isPartOf :run1 ; aprov:inferredWith :llm ; prov:used :prompt .
-:prompt a aprov:Configuration ; aprov:configurationContent "Read the title block and return each field." .
-:a1 a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind metadata:DrawingTitleField ;
-    aprov:hasLiteralValue "Ground floor plan" ; aprov:hasInferenceMeta :read1 .
-:byHand a aprov:InferenceMeta ; aprov:inferredBy :reviewer .
-:a2 a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind metadata:DrawingTitleField ;
-    aprov:hasLiteralValue "Ground Floor Plan" ; aprov:hasInferenceMeta :byHand ; aprov:supersedes :a1 .
-:a3 a aprov:FieldAssertion ; aprov:assertedAbout :d ; aprov:assertsFieldKind metadata:DrawnByField ;
-    aprov:hasLiteralValue "J. Smith" ; aprov:hasInferenceMeta :read1 .
+:read1 a adprov:InferenceMeta ; dcterms:isPartOf :run1 ; adprov:inferredWith :llm ; prov:used :prompt .
+:prompt a adprov:Configuration ; adprov:configurationContent "Read the title block and return each field." .
+:a1 a adprov:FieldAssertion ; adprov:assertedAbout :d ; adprov:assertsFieldKind admeta:DrawingTitleField ;
+    adprov:hasLiteralValue "Ground floor plan" ; adprov:hasInferenceMeta :read1 .
+:byHand a adprov:InferenceMeta ; adprov:inferredBy :reviewer .
+:a2 a adprov:FieldAssertion ; adprov:assertedAbout :d ; adprov:assertsFieldKind admeta:DrawingTitleField ;
+    adprov:hasLiteralValue "Ground Floor Plan" ; adprov:hasInferenceMeta :byHand ; adprov:supersedes :a1 .
+:a3 a adprov:FieldAssertion ; adprov:assertedAbout :d ; adprov:assertsFieldKind admeta:DrawnByField ;
+    adprov:hasLiteralValue "J. Smith" ; adprov:hasInferenceMeta :read1 .
 """
 
 
@@ -96,7 +96,7 @@ def test_cq_10_2_matches_the_version_iri_of_every_module_in_src():
         version = Graph().parse(ttl, format="turtle").value(predicate=OWL.versionIRI)
         if version is None:
             continue
-        data = f":step a aprov:InferenceMeta ; dcterms:isPartOf :run . :run prov:used <{version}> ."
+        data = f":step a adprov:InferenceMeta ; dcterms:isPartOf :run . :run prov:used <{version}> ."
         rows = list(Graph().parse(data=PREFIXES + "@prefix prov: <http://www.w3.org/ns/prov#> .\n"
                                   "@prefix dcterms: <http://purl.org/dc/terms/> .\n" + data, format="turtle").query(query))
         assert [str(r.version) for r in rows] == [str(version)], ttl.name

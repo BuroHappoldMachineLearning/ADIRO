@@ -11,7 +11,7 @@ X = "https://w3id.org/adiro/adiro_x#"
 P = "https://w3id.org/adiro/adiro_provenance#"
 
 MODULE = """@prefix : <https://w3id.org/adiro/adiro_x#> .
-@prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .
+@prefix adprov: <https://w3id.org/adiro/adiro_provenance#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .

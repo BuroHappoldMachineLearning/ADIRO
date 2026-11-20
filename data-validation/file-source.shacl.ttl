@@ -1,6 +1,6 @@
 # Where a file came from (#229).
 #
-# A file records where it was obtained from (aprov:sourceLocation), so that a drawing can always be traced to its origin:
+# A file records where it was obtained from (adprov:sourceLocation), so that a drawing can always be traced to its origin:
 # a public archive's address for a public drawing, an organisation's own storage when that is the only origin known.
 # The ontology cannot require it: under the open-world assumption a minimum cardinality would infer an origin nobody
 # recorded (#84). So the rule is a closed-world check on DATA. It serves FR 9 of the UC-01 ORSD (a drawing can be
@@ -14,14 +14,14 @@
 
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
-@prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .
+@prefix adprov: <https://w3id.org/adiro/adiro_provenance#> .
 @prefix dv: <https://w3id.org/adiro/data-validation/file-source#> .
 
 dv:FileSource a sh:NodeShape ;
-    sh:targetClass aprov:DrawingFile ;
+    sh:targetClass adprov:DrawingFile ;
     sh:severity sh:Warning ;
     sh:property [
-        sh:path [ sh:alternativePath ( aprov:sourceLocation ( [ sh:oneOrMorePath prov:wasDerivedFrom ] aprov:sourceLocation ) ) ] ;
+        sh:path [ sh:alternativePath ( adprov:sourceLocation ( [ sh:oneOrMorePath prov:wasDerivedFrom ] adprov:sourceLocation ) ) ] ;
         sh:severity sh:Warning ;  # a property shape does not inherit the severity of its node shape
         sh:minCount 1 ;
         sh:message "A file records where it was obtained from (sourceLocation), or was derived from a file that does."

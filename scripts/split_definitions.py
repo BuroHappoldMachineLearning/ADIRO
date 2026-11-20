@@ -29,6 +29,7 @@ import sys
 from pathlib import Path
 
 from rdflib import Graph, URIRef
+from rdflib.compare import graph_diff, to_isomorphic
 from rdflib.namespace import OWL, RDF, RDFS, SKOS
 
 SKOS_PREFIX = "@prefix skos: <http://www.w3.org/2004/02/skos/core#> ."
@@ -121,7 +122,9 @@ def with_skos_prefix(text: str) -> str:
 def check(before: Graph, after: Graph, mapping: dict[str, str]) -> None:
     """Exactly the comment triples of the mapped terms changed, and each comment is its definition plus its remainder."""
     namespace = module_namespace(before)
-    removed, added = set(before) - set(after), set(after) - set(before)
+    # blank nodes (a datatype restriction, a list) get new labels on every parse, so compare the canonical forms
+    _, only_before, only_after = graph_diff(to_isomorphic(before), to_isomorphic(after))
+    removed, added = set(only_before), set(only_after)
     for s, p, o in removed:
         if not (p == RDFS.comment and str(s)[len(namespace):] in mapping):
             raise SplitError(f"unexpected triple removed: {s} {p} {o}")

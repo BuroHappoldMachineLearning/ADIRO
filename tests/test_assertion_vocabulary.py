@@ -6,12 +6,17 @@ import pytest
 pytest.importorskip("rdflib")
 from rdflib import Graph, Namespace  # noqa: E402
 from rdflib.collection import Collection  # noqa: E402
-from rdflib.namespace import OWL, RDF, RDFS, XSD  # noqa: E402
+from rdflib.namespace import OWL, RDF, RDFS, SKOS, XSD  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 APROV = Namespace("https://w3id.org/adiro/adiro_provenance#")
 PROV = Namespace("http://www.w3.org/ns/prov#")
 G = Graph().parse(str(ROOT / "src" / "adiro_provenance.ttl"), format="turtle")
+
+
+def described(term):
+    """The definition and the commentary of a term: a test of the meaning does not depend on which of the two holds a sentence."""
+    return " ".join(str(o) for p in (SKOS.definition, RDFS.comment) for o in G.objects(term, p))
 
 
 def members(cls):
@@ -33,7 +38,7 @@ def test_every_individual_is_typed_labelled_and_described():
     for cls in (APROV.AssertionOutcome, APROV.AcceptanceStatus, APROV.StepKind):
         for individual in members(cls):
             assert (individual, RDF.type, OWL.NamedIndividual) in G and (individual, RDF.type, cls) in G
-            assert G.value(individual, RDFS.label) and G.value(individual, RDFS.comment), individual
+            assert G.value(individual, RDFS.label) and described(individual), individual
 
 
 def test_the_properties_belong_to_a_field_assertion_and_are_per_assertion():
@@ -47,9 +52,9 @@ def test_the_properties_belong_to_a_field_assertion_and_are_per_assertion():
 
 
 def test_the_promotion_comment_says_it_is_for_an_accepted_assertion_with_a_value():
-    comment = str(G.value(APROV.mapsToFieldProperty, RDFS.comment))
+    comment = described(APROV.mapsToFieldProperty)
     assert "accepted" in comment and "has a value" in comment
-    assert "supersedes" in str(G.value(APROV.FieldAssertion, RDFS.comment))
+    assert "supersedes" in described(APROV.FieldAssertion)
 
 
 def test_supersedes_is_related_to_prov_by_annotation_only():

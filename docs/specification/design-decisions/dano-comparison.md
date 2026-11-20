@@ -153,12 +153,12 @@ then why even a machine-readable annotation crosswalk was dropped.
 The cheap-looking alternative is `rdfs:subPropertyOf`, so that DAnO-aware consumers understand us. That move is
 unavailable for three separate reasons, worth separating because only the first fails our own CI.
 
-**Type mismatch (fails locally).** `aprov:inferredBy`, `inferredWith` and `inferredFrom` are **object**
+**Type mismatch (fails locally).** `adprov:inferredBy`, `inferredWith` and `inferredFrom` are **object**
 properties; DAnO's are **datatype** properties holding strings. OWL 2 DL has no sub-property axiom crossing
 that boundary, so the axiom is ill-typed and non-DL, and the blocking reasoning gate rejects it. Declaring the
 stub dishonestly as an object property would move the failure downstream onto anyone merging real DAnO.
 
-**Range conflict (fails on merge).** `aprov:inferredAt` has range `xsd:dateTime`; `dano:inferredAt` has range
+**Range conflict (fails on merge).** `adprov:inferredAt` has range `xsd:dateTime`; `dano:inferredAt` has range
 `xsd:date`. The two datatypes are disjoint, so an inherited range makes **every recorded timestamp**
 inconsistent.
 
@@ -292,9 +292,9 @@ None of this required importing anything, and all of it changed ADIRO:
 
 - **It corroborated the reification choice.** ADIRO was holding open RDF-star versus a meta-object for
   per-value provenance. DAnO had already chosen the meta-object. A peer group meeting the same problem the
-  same way is real evidence, and `aprov:InferenceMeta` follows it.
+  same way is real evidence, and `adprov:InferenceMeta` follows it.
 - **It exposed a genuine gap.** ADIRO proposed no extraction timestamp anywhere. `dano:inferredAt` made the
-  omission obvious; `aprov:inferredAt` exists because of it.
+  omission obvious; `adprov:inferredAt` exists because of it.
 - **It corroborated two over-modelling suspicions.** DAnO carries source and model as plain strings, which
   supported the independent finding that `SourceFile` and `MLModel` as classes were heavier than the
   requirements justified.
@@ -305,12 +305,12 @@ This is the pattern worth keeping: **adopt the shape, mint the terms, map the na
 
 | DAnO term | Verdict | Reason |
 |---|---|---|
-| `dano:inferredBy` | Superseded by `aprov:inferredBy` (documented correspondence) | Object/datatype type mismatch; ADIRO's resolves an agent |
-| `dano:inferredWith` | Superseded by `aprov:inferredWith` (documented correspondence) | As above |
-| `dano:inferredFrom` | Superseded by `aprov:inferredFrom` (documented correspondence) | As above; ADIRO's is PROV-aligned |
-| `dano:inferredAt` | Superseded by `aprov:inferredAt` (documented correspondence) | `xsd:date` disjoint from ADIRO's `xsd:dateTime` |
-| `dano:hasConfidence` | Superseded by `aprov:hasConfidence` (documented correspondence) | Domain leakage; ADIRO's is per-assertion |
-| `dano:DrawingElementMeta` | Superseded by `aprov:InferenceMeta` (documented correspondence) | Same pattern, PROV-aligned |
+| `dano:inferredBy` | Superseded by `adprov:inferredBy` (documented correspondence) | Object/datatype type mismatch; ADIRO's resolves an agent |
+| `dano:inferredWith` | Superseded by `adprov:inferredWith` (documented correspondence) | As above |
+| `dano:inferredFrom` | Superseded by `adprov:inferredFrom` (documented correspondence) | As above; ADIRO's is PROV-aligned |
+| `dano:inferredAt` | Superseded by `adprov:inferredAt` (documented correspondence) | `xsd:date` disjoint from ADIRO's `xsd:dateTime` |
+| `dano:hasConfidence` | Superseded by `adprov:hasConfidence` (documented correspondence) | Domain leakage; ADIRO's is per-assertion |
+| `dano:DrawingElementMeta` | Superseded by `adprov:InferenceMeta` (documented correspondence) | Same pattern, PROV-aligned |
 | `dano:depicts` | **Not reused, and no ADIRO counterpart minted yet** | Domain `dano:DisplayElement` is wrong for a class that also covers dimensions and grids. The ADIRO term is unminted because its consumers specify their own - [#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80) |
 | `dano:isDepictedBy` | Not reused | Same as `dano:depicts` - [#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80) |
 | `dano:Dimension`, `DimensionChain`, `DimensionLine`, `AxisLine`, `Terminator`, `SectionSymbol` | **Open**, but reuse of the IRIs is disfavoured | `adiro_drawing_symbology` / UC-03 / UC-07 - see §8, [#79](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/79). `dano:Dimension`'s exact cardinalities would infer undetected parts into existence on clipped drawings - [#84](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/84) |
@@ -319,9 +319,9 @@ This is the pattern worth keeping: **adopt the shape, mint the terms, map the na
 | `dano:hasIfcRepresentation` | Not assessed | Possible cheap alternative to IFC alignment axioms |
 
 **ORSD CQ 5.2 and its open issue OI-1 remain open.** An earlier revision of this work minted a generic
-`metadata:depicts` here; it was withdrawn, because the use cases that need depiction have each already
+`admeta:depicts` here; it was withdrawn, because the use cases that need depiction have each already
 specified their own - UC-06's `depictsMaterial` and UC-07's `depictsElement`, both with domain `Drawing`
-rather than the `metadata:DrawingElement` that CQ 5.2 frames. Minting a parent ahead of them would have
+rather than the `admeta:DrawingElement` that CQ 5.2 frames. Minting a parent ahead of them would have
 pre-empted a decision belonging to those use cases, in a PR scoped to UC-01 and UC-03. Tracked in
 [#80](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/80).
 

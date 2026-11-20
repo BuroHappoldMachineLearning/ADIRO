@@ -9,22 +9,22 @@
 
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix aprov: <https://w3id.org/adiro/adiro_provenance#> .
+@prefix adprov: <https://w3id.org/adiro/adiro_provenance#> .
 @prefix dv: <https://w3id.org/adiro/data-validation/assertions#> .
 
-dv: sh:declare [ sh:prefix "aprov" ; sh:namespace "https://w3id.org/adiro/adiro_provenance#"^^xsd:anyURI ] .
+dv: sh:declare [ sh:prefix "adprov" ; sh:namespace "https://w3id.org/adiro/adiro_provenance#"^^xsd:anyURI ] .
 
 # An assertion has a value or an outcome, never both. (An assertion with neither is allowed: it may still be being filled in.)
 dv:ValueOrOutcome a sh:NodeShape ;
-    sh:targetClass aprov:FieldAssertion ;
+    sh:targetClass adprov:FieldAssertion ;
     sh:severity sh:Violation ;
     sh:message "An assertion has a value or an outcome, never both." ;
     sh:not [
         sh:and (
-            [ sh:property [ sh:path aprov:hasOutcome ; sh:minCount 1 ] ]
+            [ sh:property [ sh:path adprov:hasOutcome ; sh:minCount 1 ] ]
             [ sh:or (
-                [ sh:property [ sh:path aprov:hasLiteralValue ; sh:minCount 1 ] ]
-                [ sh:property [ sh:path aprov:hasValueEntity ; sh:minCount 1 ] ]
+                [ sh:property [ sh:path adprov:hasLiteralValue ; sh:minCount 1 ] ]
+                [ sh:property [ sh:path adprov:hasValueEntity ; sh:minCount 1 ] ]
             ) ]
         )
     ] .
@@ -33,43 +33,43 @@ dv:ValueOrOutcome a sh:NodeShape ;
 # status is not a history (Accepted then Rejected): RDF keeps both triples, and Accepted would still be promoted. A different
 # result is a different assertion. No minimum: an assertion with no acceptance is Pending, and one with a value has no outcome.
 dv:OneAllowedStatusAndOutcome a sh:NodeShape ;
-    sh:targetClass aprov:FieldAssertion ;
+    sh:targetClass adprov:FieldAssertion ;
     sh:severity sh:Violation ;
     sh:property [
-        sh:path aprov:hasAcceptance ;
+        sh:path adprov:hasAcceptance ;
         sh:maxCount 1 ;
         sh:message "An assertion has at most one acceptance status." ;
         sh:severity sh:Violation ;
     ] , [
-        sh:path aprov:hasAcceptance ;
-        sh:in ( aprov:Pending aprov:Accepted aprov:Rejected ) ;
+        sh:path adprov:hasAcceptance ;
+        sh:in ( adprov:Pending adprov:Accepted adprov:Rejected ) ;
         sh:message "An acceptance status is Pending, Accepted or Rejected." ;
         sh:severity sh:Violation ;
     ] , [
-        sh:path aprov:hasOutcome ;
+        sh:path adprov:hasOutcome ;
         sh:maxCount 1 ;
         sh:message "An assertion has at most one outcome." ;
         sh:severity sh:Violation ;
     ] , [
-        sh:path aprov:hasOutcome ;
-        sh:in ( aprov:Empty aprov:Illegible aprov:NotPrinted aprov:NotFound aprov:Failed ) ;
+        sh:path adprov:hasOutcome ;
+        sh:in ( adprov:Empty adprov:Illegible adprov:NotPrinted adprov:NotFound adprov:Failed ) ;
         sh:message "An outcome is Empty, Illegible, NotPrinted, NotFound or Failed." ;
         sh:severity sh:Violation ;
     ] .
 
 # An accepted assertion says who accepted it.
 dv:AcceptedHasAgent a sh:NodeShape ;
-    sh:targetClass aprov:FieldAssertion ;
+    sh:targetClass adprov:FieldAssertion ;
     sh:severity sh:Violation ;
     sh:message "An accepted assertion has an acceptedBy." ;
     sh:or (
-        [ sh:not [ sh:property [ sh:path aprov:hasAcceptance ; sh:hasValue aprov:Accepted ] ] ]
-        [ sh:property [ sh:path aprov:acceptedBy ; sh:minCount 1 ] ]
+        [ sh:not [ sh:property [ sh:path adprov:hasAcceptance ; sh:hasValue adprov:Accepted ] ] ]
+        [ sh:property [ sh:path adprov:acceptedBy ; sh:minCount 1 ] ]
     ) .
 
 # An assertion that supersedes another is about the same subject and the same field kind.
 dv:SupersedesTheSameThing a sh:NodeShape ;
-    sh:targetClass aprov:FieldAssertion ;
+    sh:targetClass adprov:FieldAssertion ;
     sh:severity sh:Violation ;
     sh:sparql [
         a sh:SPARQLConstraint ;
@@ -77,23 +77,23 @@ dv:SupersedesTheSameThing a sh:NodeShape ;
         sh:prefixes dv: ;
         sh:select """
             SELECT $this ?other WHERE {
-                $this aprov:supersedes ?other .
-                { $this aprov:assertedAbout ?a . ?other aprov:assertedAbout ?b . FILTER (?a != ?b) }
+                $this adprov:supersedes ?other .
+                { $this adprov:assertedAbout ?a . ?other adprov:assertedAbout ?b . FILTER (?a != ?b) }
                 UNION
-                { $this aprov:assertsFieldKind ?a . ?other aprov:assertsFieldKind ?b . FILTER (?a != ?b) }
+                { $this adprov:assertsFieldKind ?a . ?other adprov:assertsFieldKind ?b . FILTER (?a != ?b) }
             }
         """
     ] .
 
 # Supersession follows a chain (#221): an assertion that supersedes itself through others would withdraw itself once accepted.
 dv:NoSupersessionCycle a sh:NodeShape ;
-    sh:targetClass aprov:FieldAssertion ;
+    sh:targetClass adprov:FieldAssertion ;
     sh:severity sh:Violation ;
     sh:sparql [
         a sh:SPARQLConstraint ;
         sh:message "An assertion does not supersede itself, directly or through other assertions." ;
         sh:prefixes dv: ;
         sh:select """
-            SELECT $this WHERE { $this aprov:supersedes+ $this }
+            SELECT $this WHERE { $this adprov:supersedes+ $this }
         """
     ] .
