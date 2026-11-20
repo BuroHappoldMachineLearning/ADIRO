@@ -125,8 +125,8 @@ skos:Concept rdf:type owl:Class ;
 
 :mapsToFieldProperty rdf:type owl:AnnotationProperty ;
     rdfs:label "mapsToFieldProperty" ;
-    skos:definition "On a FieldKind: the ADIRO property that an accepted assertion of this kind (hasAcceptance Accepted) that has a value is promoted to, on the subject of the assertion (assertedAbout): ?a assertedAbout ?s ; assertsFieldKind ?k . ?k mapsToFieldProperty ?p gives ?s ?p with the value."@en ;
-    rdfs:comment "The domain of that property is the class of the subject, such as Titleblock for assertsClient or Project for projectNumber. Annotation only: the promotion is a query that tooling runs on acceptance, not reasoning." .
+    skos:definition "On a FieldKind, the ADIRO property that an accepted assertion of this kind (hasAcceptance Accepted) that has a value is promoted to, on the subject of the assertion (assertedAbout)."@en ;
+    rdfs:comment "For example, ?a assertedAbout ?s ; assertsFieldKind ?k . ?k mapsToFieldProperty ?p gives ?s ?p with the value. The domain of that property is the class of the subject, such as Titleblock for assertsClient or Project for projectNumber. Annotation only: the promotion is a query that tooling runs on acceptance, not reasoning." .
 
 #################################################################
 #    Classes

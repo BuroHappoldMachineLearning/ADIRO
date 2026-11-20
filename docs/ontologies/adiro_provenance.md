@@ -657,10 +657,10 @@ On a [FieldKind](#FieldKind): the type of its value, a datatype (such as xsd:str
 
 ### mapsToFieldProperty {#mapsToFieldProperty}
 
-On a [FieldKind](#FieldKind): the ADIRO property that an accepted assertion of this kind ([hasAcceptance](#hasAcceptance) Accepted) that has a value is promoted to, on the subject of the assertion ([assertedAbout](#assertedAbout)): ?a assertedAbout ?s ; [assertsFieldKind](#assertsFieldKind) ?k . ?k mapsToFieldProperty ?p gives ?s ?p with the value.
+On a [FieldKind](#FieldKind), the ADIRO property that an accepted assertion of this kind ([hasAcceptance](#hasAcceptance) Accepted) that has a value is promoted to, on the subject of the assertion ([assertedAbout](#assertedAbout)).
 
 - **IRI:** `https://w3id.org/adiro/adiro_provenance#mapsToFieldProperty`
-- **Comment:** The domain of that property is the class of the subject, such as [Titleblock](adiro_drawing_metadata.md#Titleblock) for [assertsClient](adiro_drawing_metadata.md#assertsClient) or [Project](adiro_drawing_metadata.md#Project) for [projectNumber](adiro_drawing_metadata.md#projectNumber). Annotation only: the promotion is a query that tooling runs on acceptance, not reasoning.
+- **Comment:** For example, ?a [assertedAbout](#assertedAbout) ?s ; [assertsFieldKind](#assertsFieldKind) ?k . ?k mapsToFieldProperty ?p gives ?s ?p with the value. The domain of that property is the class of the subject, such as [Titleblock](adiro_drawing_metadata.md#Titleblock) for [assertsClient](adiro_drawing_metadata.md#assertsClient) or [Project](adiro_drawing_metadata.md#Project) for [projectNumber](adiro_drawing_metadata.md#projectNumber). Annotation only: the promotion is a query that tooling runs on acceptance, not reasoning.
 
 ## Named Individuals
 
