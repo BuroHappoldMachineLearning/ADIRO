@@ -401,3 +401,29 @@ def test_a_changed_skos_definition_of_a_class_is_an_annotation_change():
     one = _skos(BASE).replace(":A a owl:Class .\n", ':A a owl:Class ; skos:definition "one" .\n')
     two = one.replace('"one"', '"two"')
     assert cd.annotation_details(_syms(one), _syms(two)) == {"https://ex.org/m#A": ["skos:definition"]}
+
+
+def _changes(n):
+    deltas = [("ANNOTATION_CHANGED", f"https://ex.org/m#T{i}") for i in range(n)]
+    return [{"module": "m", "deltas": deltas, "required_bump": cd.BUMP_PATCH,
+             "details": {iri: ["skos:definition"] for _, iri in deltas}}]
+
+
+def test_a_module_with_more_than_five_changes_has_its_list_collapsed_and_its_summary_visible():
+    md = cd.to_markdown([], _changes(cd.COLLAPSE_OVER + 1))
+    head, rest = md.split("- **`m`** — 6 change(s), **PATCH**-level:\n", 1)
+    assert rest.startswith("  <details><summary>Show the 6 changes</summary>\n\n  - `[non-breaking]`")
+    assert rest.count("ANNOTATION_CHANGED") == 6 and "  </details>" in rest
+    assert rest.index("</details>") > rest.index("T5")  # every change is inside the block
+
+
+def test_a_module_with_five_changes_or_fewer_is_listed_as_before():
+    md = cd.to_markdown([], _changes(cd.COLLAPSE_OVER))
+    assert "- **`m`** — 5 change(s), **PATCH**-level:\n  - `[non-breaking]`" in md
+    assert "Show the" not in md
+
+
+def test_the_threshold_is_the_one_the_guidance_comment_collapses_at():
+    import pr_guidance
+
+    assert cd.COLLAPSE_OVER == pr_guidance.COLLAPSE_OVER
