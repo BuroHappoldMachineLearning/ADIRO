@@ -1,5 +1,5 @@
 nav:
-  - ORSD_v1.6.md
+  - ... | ORSD_*.md
   - use-cases
   - design-decisions
   - ...

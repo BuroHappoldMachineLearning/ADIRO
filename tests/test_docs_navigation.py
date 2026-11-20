@@ -27,14 +27,14 @@ def pages_files():
 
 
 def nav_entries(pages):
-    """The plain file or folder names under `nav:` (the `...` rest marker and titled entries are not names)."""
+    """The plain file or folder names under `nav:` (the `...` rest marker, a `... | pattern` rule and titled entries are not names)."""
     entries, in_nav = [], False
     for line in read(pages).splitlines():
         if line.startswith("nav:"):
             in_nav = True
         elif in_nav and line.startswith("  - "):
             entry = line[4:].strip()
-            if entry != "..." and ": " not in entry:
+            if not entry.startswith("...") and ": " not in entry:
                 entries.append(entry)
         elif in_nav and line.strip() and not line.startswith(" "):
             in_nav = False
@@ -55,6 +55,18 @@ def history_versions(text, heading):
     """The versions of the `### vX.Y` entries after the `heading` line, newest first (the page's own order)."""
     start = re.search(heading, text, re.M)
     return HISTORY_ENTRY.findall(text[start.end():]) if start else []
+
+
+def nav_rules(pages):
+    """The glob patterns of the `- ... | pattern` entries under `nav:`."""
+    return [line.split("|", 1)[1].strip() for line in read(pages).splitlines()
+            if line.startswith("  - ...") and "|" in line]
+
+
+@pytest.mark.parametrize("pages", pages_files(), ids=lambda p: p.parent.relative_to(DOCS).as_posix() or "docs")
+def test_every_navigation_pattern_matches_a_file(pages):
+    unmatched = [rule for rule in nav_rules(pages) if not list(pages.parent.glob(rule))]
+    assert not unmatched, f"{pages.relative_to(ROOT).as_posix()} has a rule that matches no file: {unmatched}"
 
 
 @pytest.mark.parametrize("pages", pages_files(), ids=lambda p: p.parent.relative_to(DOCS).as_posix() or "docs")

@@ -143,11 +143,12 @@ def merge(repo: Path, head: str, base: str, branch: str, verify=None, runner=sub
     """
     head_sha = git(repo, "rev-parse", head).stdout.strip()
     base_sha = git(repo, "rev-parse", base).stdout.strip()
-    result = {"head_sha": head_sha, "base_sha": base_sha}
+    result = {"head_sha": head_sha, "base_sha": base_sha, "branch": branch}
     git(repo, "checkout", "--quiet", "--detach", head_sha)
     merged = git(repo, "-c", f"user.name={BOT_NAME}", "-c", f"user.email={BOT_EMAIL}",
                  "merge", "--no-ff", "--no-commit", base_sha, check=False)
-    conflicts = git(repo, "diff", "--name-only", "--diff-filter=U").stdout.split()
+    # NUL-separated: a file name may hold spaces (the UC pages do), and git quotes a name with unusual characters otherwise.
+    conflicts = [name for name in git(repo, "diff", "--name-only", "--diff-filter=U", "-z").stdout.split("\0") if name]
     if merged.returncode == 0 and not conflicts:
         git(repo, "merge", "--abort", check=False)
         return {**result, "status": CLEAN}
@@ -179,8 +180,31 @@ def merge(repo: Path, head: str, base: str, branch: str, verify=None, runner=sub
 
 # --- comment --------------------------------------------------------------------------------------------------------
 
+RELEASE_BRANCH = "release/next"  # rebuilt by the Release PR workflow: nobody merges into it by hand
+
+
+def file_hint(path: str) -> str:
+    """What to do with one conflicting file, for the comment: the bot's rule where it has one, else nothing."""
+    if path == WORKLOG:
+        return "both sides add an entry: keep both, yours first"
+    if re.fullmatch(r"docs/[^/]+\.(html|ttl)|docs/ontologies/.+", path):
+        return "a generated page: take `main`'s copy, then run `uv run python scripts/generate_docs.py`"
+    if re.fullmatch(r"changelogs/.+\.md", path):
+        return "both sides add under `[Unreleased]`: keep both entries"
+    return ""
+
+
 def comment(status: dict, run_url: str) -> str:
     """The sticky comment for a pull request the bot could not update, or "" (which removes the comment)."""
+    if status.get("status") == OTHER and status.get("branch") != RELEASE_BRANCH:
+        lines = []
+        for path in status.get("files", []):
+            hint = file_hint(path)
+            lines.append(f"- `{path}`" + (f": {hint}" if hint else ""))
+        return ("This pull request conflicts with `main`, and the ADIRO Bot only merges when the worklog is the sole conflicting "
+                "file, so it left the merge to you. The conflicting files:\n\n" + "\n".join(lines) + "\n\n"
+                "Merge `main` into the branch, resolve these, and push "
+                f"([run]({run_url}); see [#206](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/206)).")
     if status.get("status") != FAILED:
         return ""
     check = status.get("failed") if status.get("failed") in dict(VERIFY) else "a check"

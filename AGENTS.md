@@ -157,7 +157,7 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   the gate is the warn step above. Each listed change names what changed (for an annotation change, which annotation)
   and links to its line in the PR diff (`diff`) and in `src/<module>.ttl` at the PR's head commit (`file`)
   ([#181](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/181), [#183](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/183));
-  the link context comes from `COMPAT_LINK_REPO` / `COMPAT_LINK_SHA` / `COMPAT_LINK_PR` / `COMPAT_LINK_BASE_REPO`, so a local run lists the changes without links.
+  the link context comes from `COMPAT_LINK_REPO` / `COMPAT_LINK_SHA` / `COMPAT_LINK_PR` / `COMPAT_LINK_BASE_REPO`, so a local run lists the changes without links. A module with more than 5 changes has its list collapsed behind `<details>` (the module's line, its count and its bump level stay visible; the threshold is the guidance comment's, [#297](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/297)).
 - **`.github/workflows/ontology-reasoning.yml`** — on PRs touching `src/**.ttl` (RES-36), runs an OWL 2 DL
   reasoner (**HermiT**) + ROBOT `report` over the whole suite at latest and posts a sticky comment (built by `scripts/qc_comment.py`: the verdict, then **Important checks** (the repository's own, from `validate_ontology.py`, with each module's findings in an expandable Findings column), then **Minor checks** (ROBOT: a row per rule with a grouped preview, the full rows kept as a run artifact), and the introduction collapsed at the bottom, with no internal tracker IDs). The
   **reasoner is a blocking gate** — a PR that makes the merged suite inconsistent / unsatisfiable / non-DL (the script also validates the OWL 2 DL profile with ROBOT, because the reasoner accepts illegal punning; the standing "undeclared term" violations are left out, [#157](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/157))
@@ -192,7 +192,7 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   the merged tree; if one fails, it pushes nothing and says so in a comment on the pull request. It pushes the merge with the `main`
   commit it verified, even when `main` has moved on since, because the docs deploy commits to `main` about a minute after every merge
   ([#224](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/224)), and accepts that commit only if it is a commit of `main`;
-  the next run merges the rest. The run summary says, for each pull request (forks included), what it did or why it did not push; a push that fails for another reason than a moved branch fails the job, with git's error. Any other conflict, a fork pull request
+  the next run merges the rest. The run summary says, for each pull request (forks included), what it did or why it did not push; a push that fails for another reason than a moved branch fails the job, with git's error. Any other conflict (the bot then comments on the pull request with the conflicting files and, for the worklog, a generated page and a changelog, what to do with each; not on `release/next`, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296)), a fork pull request
   and a branch that moved during the run are left to the author (the push is leased on the head the run saw). The job that runs the pull request's code
   has no secrets; the job that pushes runs only `main`'s `scripts/worklog_conflicts.py` and pushes only the tree that was verified.
 
@@ -414,8 +414,7 @@ For anyone changing an ontology, agent or person. The sections below give the de
         the version is part of the filename, and renaming on a bump is the established convention). Update the
         `# …  — vX.Y` heading and the `**Version:**` line, add an entry to its **Version history** section
         saying what changed and why, and fix every reference to the old filename —
-        `scripts/generate_docs.py` (it writes the landing-page link), `README.md`, `docs/specification/.pages` (the
-        navigation: a stale entry fails the docs build), and any doc that links it.
+        `scripts/generate_docs.py` (it writes the landing-page link), `README.md`, and any doc that links it (`docs/specification/.pages` names the ORSD by the pattern `ORSD_*.md`, so a rename needs no edit there, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296)).
       - **Use-case ORSDs** (`UC-*/UC-*.md`) — bump **both** places: the `**Version:**` field in the header
         line at the top of the file, **and** a new entry in the final *Version History* section listing the
         changes and stating whether the revision is MAJOR or MINOR. Then update that use case's row in

@@ -228,3 +228,34 @@ def test_a_line_that_ends_both_entries_stays_in_both(tmp_path):
     repo = make_repo(tmp_path, {wc.WORKLOG: pr + OLD}, {wc.WORKLOG: main + OLD})
     assert wc.merge(repo, "pr", "main", "pr")["status"] == wc.READY
     assert git(repo, "show", f"HEAD:{wc.WORKLOG}") + "\n" == pr + main + OLD
+
+
+def test_a_conflicting_file_name_with_spaces_is_one_name(tmp_path):
+    name = "docs/UC-01/UC-01-Titleblock-Based Drawing Search.md"
+    repo = make_repo(tmp_path, {wc.WORKLOG: entry("PR") + OLD, name: "pr\n"}, {wc.WORKLOG: entry("Main") + OLD, name: "main\n"})
+    # both sides add the file, so it conflicts "both added"; the worklog conflicts too
+    status = wc.merge(repo, "pr", "main", "pr")
+    assert status["status"] == wc.OTHER and sorted(status["files"]) == [name, wc.WORKLOG]
+
+
+def test_the_comment_names_each_blocking_file_and_what_to_do_with_it():
+    status = {"status": wc.OTHER, "branch": "feat/x",
+              "files": [wc.WORKLOG, "docs/adiro_provenance.html", "docs/ontologies/adiro_geometry.md",
+                        "changelogs/adiro_geometry.md", "docs/specification/.pages", "docs/specification/UC-01 x.md"]}
+    text = wc.comment(status, "https://run")
+    assert "only merges when the worklog is the sole conflicting file" in text and "https://run" in text
+    assert f"- `{wc.WORKLOG}`: both sides add an entry: keep both, yours first" in text
+    assert "- `docs/adiro_provenance.html`: a generated page" in text and "- `docs/ontologies/adiro_geometry.md`: a generated page" in text
+    assert "- `changelogs/adiro_geometry.md`: both sides add under `[Unreleased]`" in text
+    assert "- `docs/specification/.pages`\n" in text and "- `docs/specification/UC-01 x.md`\n" in text, "no advice where the bot has no rule"
+    assert "docs/specification/UC-01 x.md: a generated" not in text
+
+
+def test_the_release_pr_branch_gets_no_comment_and_a_clean_or_ready_merge_removes_it():
+    assert wc.comment({"status": wc.OTHER, "branch": wc.RELEASE_BRANCH, "files": ["AGENTS.md"]}, "https://run") == ""
+    assert wc.comment({"status": wc.CLEAN}, "https://run") == "" and wc.comment({"status": wc.READY}, "https://run") == ""
+
+
+def test_the_status_of_a_merge_names_the_branch(tmp_path):
+    repo = make_repo(tmp_path, {"c.txt": "pr\n"}, {wc.WORKLOG: entry("Main") + OLD})
+    assert wc.merge(repo, "pr", "main", "feat/y")["branch"] == "feat/y"
