@@ -80,7 +80,7 @@ A dimension line or dimension annotation on a drawing, indicating measurements o
 One evidenced occurrence of drawing-identifier text on a source drawing, distinct from the [DrawingSheet](adiro_drawing_metadata.md#DrawingSheet) that the text may denote.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#DrawingIdentifierMention`
-- **Comment:** Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted resolution to a [DrawingSheet](adiro_drawing_metadata.md#DrawingSheet): an unlocalisable text block may retain its accepted [denotesDrawingSheet](#denotesDrawingSheet) edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed. The text it records is a drawing's identification number (ISO 7200:2004 §5.1.3); under the UK National Annex to BS EN ISO 19650-2 it is an information-container identifier.
+- **Comment:** Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted resolution to a [DrawingSheet](adiro_drawing_metadata.md#DrawingSheet): an unlocalisable text block may retain its accepted [denotesDrawingSheet](#denotesDrawingSheet) edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed. The text it records is a drawing's identification number (ISO 7200:2004 §5.1.3). Where a project uses its file information container ID as the drawing number, a drawing identifier mention may reproduce that ID; the UK National Annex to BS EN ISO 19650-2:2018 (2021 revision), NA.2.2 and Figure NA.1, describes the composition of that ID.
 - **Sub class of:** [`admeta:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
 
 *Example images:*
@@ -106,7 +106,7 @@ A grid line or grid system used for alignment and reference in architectural dra
 A complete inline textual expression relating layout identifier(s) to a drawing identifier, such as '1, 3, 5 & 7/S601'.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#InlineLayoutDrawingReference`
-- **Comment:** The component mentions retain their own identities; accepted [Layout](adiro_drawing_metadata.md#Layout) targets are connected separately by [inlineReferencesLayout](#inlineReferencesLayout). Expected composition: one [DrawingIdentifierMention](#DrawingIdentifierMention) and at least one [LayoutIdentifierMention](#LayoutIdentifierMention), attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction. Corresponds to a view designation followed by a slash and the drawing number, as in ISO 128-33:2018 §5 and its predecessor ISO 8048:1984 cl. 4; ISO 128-33 has since been replaced by ISO 128-3. ISO shows one designation per reference; ADIRO also allows several layouts on one drawing.
+- **Comment:** The component mentions retain their own identities; accepted [Layout](adiro_drawing_metadata.md#Layout) targets are connected separately by [inlineReferencesLayout](#inlineReferencesLayout). Expected composition: one [DrawingIdentifierMention](#DrawingIdentifierMention) and at least one [LayoutIdentifierMention](#LayoutIdentifierMention), attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction. Corresponds to the designation of a view or section supplemented by a slash and the drawing number, which ISO 128-3:2022 Annex F, F.4, allows. ISO shows one designation per reference; ADIRO also allows several layouts on one drawing.
 - **Sub class of:** [Reference expression](#ReferenceExpression)
 
 *Example images:*
@@ -134,7 +134,7 @@ One evidenced occurrence of layout-identifier text (a short identifier, such as 
 A complete source reference expression, whether graphical, inline or a standalone drawing-identifier reference.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#ReferenceExpression`
-- **Comment:** This superclass groups those forms for queries; it does not require a second individual around any of them. ISO 7519:2024 §4.3.1 asks that a set of drawings reference its views, sections and callouts, and ISO 128-3:2022 §5.1 allows the designation on a construction drawing to be complemented by a reference to other drawings; neither records whether a reference has been resolved to its target, which ADIRO records as a separate accepted edge.
+- **Comment:** This superclass groups those forms for queries; it does not require a second individual around any of them. ISO 7519:2025 §4.3.1 asks that a set of drawings reference the views and details that give further information, and allows hyperlinks to other drawings, files or digital objects, and ISO 128-3:2022 §5.1 allows the designation on a construction drawing to be complemented by a reference to other drawings; neither records whether a reference has been resolved to its target, which ADIRO records as a separate accepted edge.
 - **Sub class of:** [`admeta:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
 
 ### ReferenceSymbol {#ReferenceSymbol}
@@ -142,7 +142,7 @@ A complete source reference expression, whether graphical, inline or a standalon
 A symbol drawn on a [Layout](adiro_drawing_metadata.md#Layout) that references another Layout (on the same or a different [DrawingSheet](adiro_drawing_metadata.md#DrawingSheet)).
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#ReferenceSymbol`
-- **Comment:** Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target [Layout](adiro_drawing_metadata.md#Layout)'s [LayoutContentType](adiro_drawing_metadata.md#LayoutContentType). Corresponds to a view designation with its reference arrow or cutting-plane line in ISO 128-3:2022 (§4.1, §4.12, §6.2.1 to §6.2.3) and to a callout in ISO 7519:2024 §4.3.1.
+- **Comment:** Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target [Layout](adiro_drawing_metadata.md#Layout)'s [LayoutContentType](adiro_drawing_metadata.md#LayoutContentType). Corresponds to a view designation with its reference arrow or cutting-plane line in ISO 128-3:2022 (§4.1, §4.12, §6.2.1 to §6.2.4) and to a callout in ISO 7519:2025 §4.3.1.
 - **Sub class of:** [Reference expression](#ReferenceExpression)
 
 *Example images:*
@@ -164,7 +164,7 @@ A symbol drawn on a [Layout](adiro_drawing_metadata.md#Layout) that references a
 A drawing-identifier occurrence that itself constitutes a complete reference to a drawing. An entry naming a drawing in a drawing index is one.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#StandaloneDrawingReference`
-- **Comment:** One individual is both the [DrawingIdentifierMention](#DrawingIdentifierMention) and the [ReferenceExpression](#ReferenceExpression): no duplicate wrapper, self-directed contains edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified. Corresponds to a reference to another drawing in ISO 9431:1990 §5.2.4.
+- **Comment:** One individual is both the [DrawingIdentifierMention](#DrawingIdentifierMention) and the [ReferenceExpression](#ReferenceExpression): no duplicate wrapper, self-directed contains edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified. Corresponds to a reference to another drawing in ISO 9431:1990 §5.2.4, and more generally to the references between the drawings of a set in ISO 7519:2025 §4.3.1. That an identifier standing alone is a complete reference is ADIRO's rule, not a requirement of either standard.
 - **Sub class of:**
     - [Drawing identifier mention](#DrawingIdentifierMention)
     - [Reference expression](#ReferenceExpression)
