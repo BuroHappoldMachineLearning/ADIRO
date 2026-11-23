@@ -84,9 +84,9 @@ One evidenced occurrence of drawing-identifier (sheet-identifier) text on a sour
 
 *Example images:*
 
-![Drawing identifier mention — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/DrawingIdentifierMention_01.png)
-
 ![Drawing identifier mention — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/DrawingIdentifierMention_02.png)
+
+![Drawing identifier mention — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/DrawingIdentifierMention_03.png)
 
 ### Grid {#Grid}
 
@@ -108,9 +108,9 @@ A complete inline textual expression relating layout number(s) to a sheet number
 
 *Example images:*
 
-![Inline Layout and Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/InlineLayoutDrawingReference_01.png)
-
 ![Inline Layout and Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/InlineLayoutDrawingReference_02.png)
+
+![Inline Layout and Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/InlineLayoutDrawingReference_03.png)
 
 ### Layout identifier mention {#LayoutIdentifierMention}
 
@@ -121,9 +121,9 @@ One evidenced occurrence of layout-identifier text (a small integer or letter), 
 
 *Example images:*
 
-![Layout identifier mention — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/LayoutIdentifierMention_01.png)
-
 ![Layout identifier mention — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/LayoutIdentifierMention_02.png)
+
+![Layout identifier mention — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/LayoutIdentifierMention_03.png)
 
 ### Reference expression {#ReferenceExpression}
 
@@ -164,8 +164,6 @@ A drawing-identifier occurrence that itself constitutes a complete reference. On
 
 *Example images:*
 
-![Standalone Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/StandaloneDrawingReference_01.png)
-
 ![Standalone Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/StandaloneDrawingReference_02.png)
 
 ![Standalone Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/StandaloneDrawingReference_03.png)
@@ -177,6 +175,8 @@ A drawing-identifier occurrence that itself constitutes a complete reference. On
 ![Standalone Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/StandaloneDrawingReference_06.png)
 
 ![Standalone Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/StandaloneDrawingReference_07.png)
+
+![Standalone Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/StandaloneDrawingReference_08.png)
 
 ## Object Properties
 
