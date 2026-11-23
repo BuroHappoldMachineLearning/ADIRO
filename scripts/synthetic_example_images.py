@@ -796,6 +796,208 @@ def layout_identifier_mention():
     return _expression(NOTE, [(NOTE.index(n, EXPRESSION), 1) for n in ("1", "3", "5", "7")], "Layout identifier mention")
 
 
+# --- adiro_drawing_symbology: the varieties of each reference form (#269) ------------------------------------------
+# Drawn after the shapes that real drawings use (marker geometry, notes, tables, match lines); every number and word
+# is fictional, and nothing is traced from a real drawing.
+
+def _mark(ax, artist, start=0, length=None):
+    """A dashed box round characters `start`..`start + length` of a text `artist` in the fixed-width face (all of it by default)."""
+    fig = ax.figure
+    extent = artist.get_window_extent(fig.canvas.get_renderer()).transformed(ax.transData.inverted())
+    n = len(artist.get_text())
+    length = n - start if length is None else length
+    cw = extent.width / n
+    x, y = extent.x0 + start * cw, extent.y0
+    ax.add_patch(Rectangle((x - 3, y - 4), length * cw + 6, extent.height + 8, fill=False, edgecolor=INK, lw=1.8, ls="--"))
+
+
+def _mono(ax, x, y, s, size=18, ha="left", rotation=0):
+    return ax.text(x, y, s, fontsize=size, ha=ha, va="center", color=INK, family=MONO, rotation=rotation)
+
+
+def _mark_in(ax, artist, part):
+    """A dashed box round the first occurrence of `part` in a fixed-width text `artist`."""
+    _mark(ax, artist, artist.get_text().index(part), len(part))
+
+
+def _ref_bubble(ax, x, y, top, bottom, r=34, size=13):
+    """The split bubble of a reference marker: the layout number above the line, the drawing number below (or none)."""
+    ax.add_patch(Circle((x, y), r, facecolor="white", edgecolor=INK, lw=1.6, zorder=3))
+    ax.plot([x - r, x + r], [y, y], color=INK, lw=1.2, zorder=4)
+    upper = ax.text(x, y + r * 0.45, top, fontsize=size + 2, ha="center", va="center", color=INK, zorder=5)
+    lower = ax.text(x, y - r * 0.47, bottom, fontsize=size - 2, ha="center", va="center", color=INK, zorder=5) if bottom else None
+    return upper, lower
+
+
+def _caption(ax, x, y, s):
+    text(ax, x, y, s, 15, "bold")
+
+
+def section_marker_on_cutting_line():
+    fig, ax = canvas(900, 360)
+    for x in (300, 330, 570, 600):  # two walls the section cuts through
+        line(ax, [x, x], [80, 300], lw=1.0)
+    line(ax, [142, 758], [190, 190], lw=3.0, ls="-.")
+    for x in (100, 800):  # a bubble at each end, its arrow showing the direction of view
+        poly(ax, [(x - 42, 190), (x + 42, 190), (x, 190 - 42 - 32)], fill=INK)
+        _ref_bubble(ax, x, 190, "4", "A-310", r=42, size=15)
+    _caption(ax, 40, 40, "Section marker on its cutting line")
+    return finish(fig)
+
+
+def elevation_marker():
+    fig, ax = canvas(700, 360)
+    box(ax, 120, 250, 460, 26, hatch="////")  # the wall the elevation looks at
+    x, y, r = 350, 150, 36
+    poly(ax, [(x - r - 24, y), (x + r + 24, y), (x, y + r + 26)], fill=INK)
+    _ref_bubble(ax, x, y, "2", "A-401", r=r)
+    _caption(ax, 40, 40, "Elevation marker")
+    return finish(fig)
+
+
+def interior_elevation_marker():
+    fig, ax = canvas(700, 460)
+    box(ax, 170, 100, 360, 310, lw=2.4)  # the room whose four walls are elevated
+    x, y, big, r = 350, 255, 82, 44
+    poly(ax, [(x, y + big), (x + big, y), (x, y - big), (x - big, y)], fill=INK)
+    ax.add_patch(Circle((x, y), r + 4, facecolor="white", edgecolor=INK, lw=1.6, zorder=3))
+    ax.text(x, y, "A-420", fontsize=14, ha="center", va="center", color=INK, zorder=5)
+    for dx, dy, n in [(0, 1, "1"), (1, 0, "2"), (0, -1, "3"), (-1, 0, "4")]:  # one layout number per wall
+        text(ax, x + dx * (big + 18), y + dy * (big + 18), n, 15, "bold", "center")
+    _caption(ax, 40, 40, "Interior elevation marker")
+    return finish(fig)
+
+
+def detail_marker_with_leader():
+    fig, ax = canvas(760, 400)
+    box(ax, 110, 190, 260, 30, hatch="////")  # a slab edge and the angle the detail enlarges
+    box(ax, 340, 120, 30, 70, lw=1.4)
+    ax.add_patch(Circle((330, 200), 95, fill=False, edgecolor=INK, lw=1.6, ls="--"))
+    line(ax, [397, 560], [267, 290], lw=1.2)
+    _ref_bubble(ax, 596, 296, "7", "A-520", r=36)
+    _caption(ax, 40, 40, "Detail marker with leader")
+    return finish(fig)
+
+
+def same_drawing_marker():
+    fig, ax = canvas(900, 360)
+    for x in (330, 570):
+        line(ax, [x, x], [80, 300], lw=1.0)
+    line(ax, [130, 770], [190, 190], lw=3.0, ls="-.")
+    for x in (100, 800):  # the target is on this drawing, so the bubble prints the layout letter only
+        poly(ax, [(x - 30, 190), (x + 30, 190), (x, 190 - 30 - 28)], fill=INK)
+        ax.add_patch(Circle((x, 190), 30, facecolor="white", edgecolor=INK, lw=1.6, zorder=3))
+        ax.text(x, 190, "B", fontsize=15, ha="center", va="center", color=INK, zorder=5)
+    _caption(ax, 40, 40, "Same-drawing marker: no drawing number")
+    return finish(fig)
+
+
+def standalone_match_line():
+    fig, ax = canvas(900, 330)
+    line(ax, [60, 840], [180, 180], lw=3.4, ls="-.")
+    _mark_in(ax, _mono(ax, 60, 222, "MATCH LINE - SEE A-102"), "A-102")
+    _mono(ax, 60, 140, "MATCH LINE - SEE A-101")
+    _caption(ax, 60, 50, "Standalone reference at a match line")
+    return finish(fig)
+
+
+def standalone_legend():
+    fig, ax = canvas(900, 330)
+    box(ax, 40, 90, 820, 200, lw=1.6)
+    line(ax, [40, 860], [250, 250], lw=1.2)
+    _mono(ax, 60, 270, "SYMBOL LEGEND", 16)
+    line(ax, [70, 250], [170, 170], lw=3.4, ls="-.")
+    _mark_in(ax, _mono(ax, 120, 202, "A-102", 14), "A-102")
+    _mono(ax, 120, 140, "A-101", 14)
+    _mono(ax, 290, 186, "MATCH LINE: CONTINUES ON THE", 14)
+    _mono(ax, 290, 158, "DRAWING NAMED ON EACH SIDE", 14)
+    _caption(ax, 40, 50, "Standalone reference in a legend")
+    return finish(fig)
+
+
+def standalone_general_notes():
+    fig, ax = canvas(980, 330)
+    _mono(ax, 40, 280, "GENERAL NOTES", 18)
+    line(ax, [40, 250], [262, 262], lw=1.4)
+    _mono(ax, 40, 225, "1. DIMENSIONS ARE IN MILLIMETRES.", 16)
+    _mark_in(ax, _mono(ax, 40, 190, "2. SEE A-001 FOR ABBREVIATIONS.", 16), "A-001")
+    _mono(ax, 40, 155, "3. DO NOT SCALE FROM THIS DRAWING.", 16)
+    _caption(ax, 40, 80, "Standalone reference in general notes")
+    return finish(fig)
+
+
+def _table(ax, x, top, widths, rows, h=36, size=14, marked=None):
+    """A ruled table; `marked` is the (row, column) of the cell whose text is boxed."""
+    width = sum(widths)
+    for i in range(len(rows) + 1):
+        line(ax, [x, x + width], [top - i * h, top - i * h], lw=1.6 if i in (0, 1, len(rows)) else 0.9)
+    edges = [x]
+    for w in widths:
+        edges.append(edges[-1] + w)
+    for e in edges:
+        line(ax, [e, e], [top, top - len(rows) * h], lw=1.2)
+    for i, row in enumerate(rows):
+        for j, cell in enumerate(row):
+            artist = _mono(ax, edges[j] + 10, top - i * h - h / 2, cell, size)
+            if marked == (i, j):
+                _mark(ax, artist)
+
+
+def standalone_schedule():
+    fig, ax = canvas(900, 330)
+    rows = [("DOOR", "SIZE", "FRAME", "SEE"), ("D01", "900 x 2100", "F1", "A-610"), ("D02", "1000 x 2100", "F2", "A-611"),
+            ("D03", "900 x 2100", "F1", "A-610")]
+    _table(ax, 40, 280, [110, 220, 110, 130], rows, marked=(2, 3))
+    _caption(ax, 40, 70, "Standalone reference in a schedule")
+    return finish(fig)
+
+
+def standalone_drawing_index():
+    fig, ax = canvas(900, 370)
+    rows = [("NUMBER", "TITLE"), ("A-001", "NOTES AND SYMBOLS"), ("A-101", "GROUND FLOOR PLAN"), ("A-102", "FIRST FLOOR PLAN"),
+            ("A-301", "SECTIONS")]
+    _table(ax, 40, 320, [130, 330], rows, marked=(3, 0))
+    _caption(ax, 40, 90, "Standalone reference in a drawing index")
+    return finish(fig)
+
+
+def standalone_continuation_note():
+    fig, ax = canvas(900, 330)
+    line(ax, [60, 420], [230, 230], lw=2.0)  # a pipe run, broken where it leaves this drawing
+    line(ax, [60, 420], [216, 216], lw=2.0)
+    line(ax, [420, 432, 410, 422], [240, 226, 220, 206], lw=1.4)
+    line(ax, [400, 470], [216, 160], lw=1.0)
+    _mono(ax, 478, 172, "INCOMING SERVICE", 16)
+    _mark_in(ax, _mono(ax, 478, 142, "(SEE M-201 FOR", 16), "M-201")
+    _mono(ax, 478, 112, " CONTINUATION)", 16)
+    _caption(ax, 60, 50, "Standalone reference: \"for continuation\" note")
+    return finish(fig)
+
+
+def inline_single_pair():
+    note = "BRACKET FIXING AS DETAIL 4/A-520"
+    return _expression(note, [(note.index("4/A-520"), len("4/A-520"))], "Inline reference: a single layout and drawing")
+
+
+def _marker_mention(upper_marked, caption):
+    fig, ax = canvas(560, 340)
+    upper, lower = _ref_bubble(ax, 280, 200, "4", "A-310", r=80, size=28)
+    artist = upper if upper_marked else lower
+    extent = artist.get_window_extent(fig.canvas.get_renderer()).transformed(ax.transData.inverted())
+    ax.add_patch(Rectangle((extent.x0 - 5, extent.y0 - 5), extent.width + 10, extent.height + 10, fill=False, edgecolor=INK,
+                           lw=1.8, ls="--", zorder=6))
+    _caption(ax, 40, 50, caption)
+    return finish(fig)
+
+
+def drawing_identifier_mention_in_marker():
+    return _marker_mention(False, "Drawing identifier mention in a marker")
+
+
+def layout_identifier_mention_in_marker():
+    return _marker_mention(True, "Layout identifier mention in a marker")
+
+
 METADATA = {
     "Titleblock_01.png": titleblock_side,
     "Titleblock_02.png": titleblock_strip,
@@ -843,6 +1045,21 @@ DRAWING_SYMBOLOGY = {
     "StandaloneDrawingReference_01.png": standalone_drawing_reference,
     "DrawingIdentifierMention_01.png": drawing_identifier_mention,
     "LayoutIdentifierMention_01.png": layout_identifier_mention,
+    # the varieties of each form (#269)
+    "ReferenceSymbol_02.png": section_marker_on_cutting_line,
+    "ReferenceSymbol_03.png": elevation_marker,
+    "ReferenceSymbol_04.png": interior_elevation_marker,
+    "ReferenceSymbol_05.png": detail_marker_with_leader,
+    "ReferenceSymbol_06.png": same_drawing_marker,
+    "StandaloneDrawingReference_02.png": standalone_match_line,
+    "StandaloneDrawingReference_03.png": standalone_legend,
+    "StandaloneDrawingReference_04.png": standalone_general_notes,
+    "StandaloneDrawingReference_05.png": standalone_schedule,
+    "StandaloneDrawingReference_06.png": standalone_drawing_index,
+    "StandaloneDrawingReference_07.png": standalone_continuation_note,
+    "InlineLayoutDrawingReference_02.png": inline_single_pair,
+    "DrawingIdentifierMention_02.png": drawing_identifier_mention_in_marker,
+    "LayoutIdentifierMention_02.png": layout_identifier_mention_in_marker,
 }
 
 DOMAIN_COMMON = {
