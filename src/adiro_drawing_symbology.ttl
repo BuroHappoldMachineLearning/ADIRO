@@ -119,12 +119,12 @@
     rdfs:subClassOf :ReferenceExpression;
     rdfs:label "ReferenceSymbol";
     rdfs:comment "A symbol drawn on a Layout that references another Layout (on the same or a different DrawingSheet). Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target Layout's LayoutContentType.";
-    admeta:exampleImage img:ReferenceSymbol_01.png;
     admeta:exampleImage img:ReferenceSymbol_02.png;
     admeta:exampleImage img:ReferenceSymbol_03.png;
     admeta:exampleImage img:ReferenceSymbol_04.png;
     admeta:exampleImage img:ReferenceSymbol_05.png;
     admeta:exampleImage img:ReferenceSymbol_06.png;
+    admeta:exampleImage img:ReferenceSymbol_07.png;
     admeta:isComputerVisionLabel "true"^^xsd:boolean.
 
 #################################################################

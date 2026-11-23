@@ -141,8 +141,6 @@ A symbol drawn on a [Layout](adiro_drawing_metadata.md#Layout) that references a
 
 *Example images:*
 
-![ReferenceSymbol — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/ReferenceSymbol_01.png)
-
 ![ReferenceSymbol — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/ReferenceSymbol_02.png)
 
 ![ReferenceSymbol — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/ReferenceSymbol_03.png)
@@ -152,6 +150,8 @@ A symbol drawn on a [Layout](adiro_drawing_metadata.md#Layout) that references a
 ![ReferenceSymbol — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/ReferenceSymbol_05.png)
 
 ![ReferenceSymbol — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/ReferenceSymbol_06.png)
+
+![ReferenceSymbol — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/ReferenceSymbol_07.png)
 
 ### Standalone Drawing Reference {#StandaloneDrawingReference}
 

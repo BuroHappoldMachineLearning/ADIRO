@@ -833,6 +833,25 @@ def _caption(ax, x, y, s):
     text(ax, x, y, s, 15, "bold")
 
 
+def reference_symbol_overview():
+    """The three common markers of ReferenceSymbol_01, redrawn: the arrows are wedges on the bubble, pointing outwards."""
+    fig, ax = canvas(1100, 380)
+    x, y, r = 90, 220, 38  # section marker: the arrow is perpendicular to the cutting line, in the direction of view
+    poly(ax, [(x - r, y), (x + r, y), (x, y + r + 48)], fill=INK)
+    _ref_bubble(ax, x, y, "1", "A-301", r=r, size=14)
+    line(ax, [x + r, 330], [y, y], lw=3.0, ls="-.")
+    ax.add_patch(Circle((520, 220), 85, fill=False, edgecolor=INK, lw=1.6, ls="--"))  # detail marker: ringed area and bubble
+    box(ax, 480, 195, 80, 50, lw=1.4, hatch="////")
+    _ref_bubble(ax, 740, 300, "3", "A-501", r=r, size=14)
+    line(ax, [592, 702], [275, 296], lw=1.2)
+    x = 960  # elevation marker: the arrow points away from the bubble, towards the face it shows
+    poly(ax, [(x, y + r), (x, y - r), (x + r + 48, y)], fill=INK)
+    _ref_bubble(ax, x, y, "2", "A-201", r=r, size=14)
+    for cx, label in [(220, "SECTION MARKER"), (630, "DETAIL MARKER"), (990, "ELEVATION MARKER")]:
+        text(ax, cx, 70, label, 12, "bold", "center")
+    return finish(fig)
+
+
 def section_marker_on_cutting_line():
     fig, ax = canvas(900, 360)
     for x in (300, 330, 570, 600):  # two walls the section cuts through
@@ -1040,17 +1059,18 @@ COMMON_SYMBOLS = {  # adiro_common_symbols 5.0.x (#281): the folder stays, becau
 }
 
 DRAWING_SYMBOLOGY = {
-    **COMMON_SYMBOLS,
+    **{name: draw for name, draw in COMMON_SYMBOLS.items() if name != "ReferenceSymbol_01.png"},  # _02 redraws it (#269)
     "InlineLayoutDrawingReference_01.png": inline_layout_drawing_reference,
     "StandaloneDrawingReference_01.png": standalone_drawing_reference,
     "DrawingIdentifierMention_01.png": drawing_identifier_mention,
     "LayoutIdentifierMention_01.png": layout_identifier_mention,
     # the varieties of each form (#269)
-    "ReferenceSymbol_02.png": section_marker_on_cutting_line,
-    "ReferenceSymbol_03.png": elevation_marker,
-    "ReferenceSymbol_04.png": interior_elevation_marker,
-    "ReferenceSymbol_05.png": detail_marker_with_leader,
-    "ReferenceSymbol_06.png": same_drawing_marker,
+    "ReferenceSymbol_02.png": reference_symbol_overview,
+    "ReferenceSymbol_03.png": section_marker_on_cutting_line,
+    "ReferenceSymbol_04.png": elevation_marker,
+    "ReferenceSymbol_05.png": interior_elevation_marker,
+    "ReferenceSymbol_06.png": detail_marker_with_leader,
+    "ReferenceSymbol_07.png": same_drawing_marker,
     "StandaloneDrawingReference_02.png": standalone_match_line,
     "StandaloneDrawingReference_03.png": standalone_legend,
     "StandaloneDrawingReference_04.png": standalone_general_notes,
@@ -1092,6 +1112,8 @@ ARCHIVED.update({  # the folders of the modules renamed in #281 keep what their 
     "adiro_common_symbols": COMMON_SYMBOLS,
     "adiro_domain_common": DOMAIN_COMMON,
     "adiro_facade_domain": FACADE,
+    # adiro_drawing_symbology 6.0.0 names ReferenceSymbol_01.png; the term now links its redrawing, _02 (#269)
+    "adiro_drawing_symbology": {"ReferenceSymbol_01.png": reference_symbol},
 })
 
 
