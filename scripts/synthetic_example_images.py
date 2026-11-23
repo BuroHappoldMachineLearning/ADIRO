@@ -755,7 +755,7 @@ def layout_detail():
 MONO = "DejaVu Sans Mono"
 
 
-def _expression(note, marked, caption):
+def _expression(note, marked, caption, colour=INK):
     """A drawing note in a fixed-width face with dashed boxes round the parts `marked` ((start, length) in characters)."""
     size = 24
     cw = size * 100 / 72 * 0.602  # one character, in drawing units: points to pixels at 100 dpi, times the face's advance
@@ -763,7 +763,7 @@ def _expression(note, marked, caption):
     fig, ax = canvas(900, 240)
     text(ax, x0, y0, note, size, family=MONO)
     for start, length in marked:
-        ax.add_patch(Rectangle((x0 + start * cw - 2, y0 - 26), length * cw + 4, 52, fill=False, edgecolor=INK, lw=1.8, ls="--"))
+        ax.add_patch(Rectangle((x0 + start * cw - 2, y0 - 26), length * cw + 4, 52, fill=False, edgecolor=colour, lw=1.8, ls="--"))
     text(ax, x0, 60, caption, 15, "bold")
     return finish(fig)
 
@@ -798,7 +798,8 @@ def layout_identifier_mention():
 
 # --- adiro_drawing_symbology: the varieties of each reference form (#269) ------------------------------------------
 # Drawn after the shapes that real drawings use (marker geometry, notes, tables, match lines); every number and word
-# is fictional, and nothing is traced from a real drawing.
+# is fictional, and nothing is traced from a real drawing. The part an image is about is boxed in red.
+HIGHLIGHT = "#d62728"
 
 def _mark(ax, artist, start=0, length=None):
     """A dashed box round characters `start`..`start + length` of a text `artist` in the fixed-width face (all of it by default)."""
@@ -808,7 +809,7 @@ def _mark(ax, artist, start=0, length=None):
     length = n - start if length is None else length
     cw = extent.width / n
     x, y = extent.x0 + start * cw, extent.y0
-    ax.add_patch(Rectangle((x - 3, y - 4), length * cw + 6, extent.height + 8, fill=False, edgecolor=INK, lw=1.8, ls="--"))
+    ax.add_patch(Rectangle((x - 3, y - 4), length * cw + 6, extent.height + 8, fill=False, edgecolor=HIGHLIGHT, lw=2.0, ls="--"))
 
 
 def _mono(ax, x, y, s, size=18, ha="left", rotation=0):
@@ -995,7 +996,7 @@ def standalone_continuation_note():
 
 def inline_single_pair():
     note = "BRACKET FIXING AS DETAIL 4/A-520"
-    return _expression(note, [(note.index("4/A-520"), len("4/A-520"))], "Inline reference: a single layout and drawing")
+    return _expression(note, [(note.index("4/A-520"), len("4/A-520"))], "Inline reference: a single layout and drawing", HIGHLIGHT)
 
 
 def _marker_mention(upper_marked, caption):
@@ -1003,8 +1004,8 @@ def _marker_mention(upper_marked, caption):
     upper, lower = _ref_bubble(ax, 280, 200, "4", "A-310", r=80, size=28)
     artist = upper if upper_marked else lower
     extent = artist.get_window_extent(fig.canvas.get_renderer()).transformed(ax.transData.inverted())
-    ax.add_patch(Rectangle((extent.x0 - 5, extent.y0 - 5), extent.width + 10, extent.height + 10, fill=False, edgecolor=INK,
-                           lw=1.8, ls="--", zorder=6))
+    ax.add_patch(Rectangle((extent.x0 - 5, extent.y0 - 5), extent.width + 10, extent.height + 10, fill=False, edgecolor=HIGHLIGHT,
+                           lw=2.2, ls="--", zorder=6))
     _caption(ax, 40, 50, caption)
     return finish(fig)
 
