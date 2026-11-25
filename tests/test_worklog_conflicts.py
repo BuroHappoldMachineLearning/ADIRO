@@ -253,7 +253,7 @@ def test_the_comment_names_each_blocking_file_and_what_to_do_with_it():
                         "changelogs/adiro_geometry.md", "docs/specification/.pages", "docs/specification/UC-01 x.md",
                         "docs/index.md", "docs/adiro_geometry.display.json"]}
     text = wc.comment(status)
-    assert "only merges when the worklog is the sole conflicting file" in text
+    assert "only merges when every conflicting file is the worklog or a changelog" in text
     assert "/actions/runs/" not in text, "a run link in the text would repost the comment on every push to main"
     assert "- `docs/index.md`: a generated page" in text and "- `docs/adiro_geometry.display.json`: a generated page" in text
     assert f"- `{wc.WORKLOG}`: both sides add an entry: keep both, yours first" in text
@@ -271,3 +271,62 @@ def test_the_release_pr_branch_gets_no_comment_and_a_clean_or_ready_merge_remove
 def test_the_status_of_a_merge_names_the_branch(tmp_path):
     repo = make_repo(tmp_path, {"c.txt": "pr\n"}, {wc.WORKLOG: entry("Main") + OLD})
     assert wc.merge(repo, "pr", "main", "feat/y")["branch"] == "feat/y"
+
+
+# --- changelogs (#296) ----------------------------------------------------------------------------------------------
+
+LOG = "changelogs/adiro_x.md"
+UNRELEASED = "# Changelog\n\n## [Unreleased]\n\n### Changed\n- Earlier.\n\n## [1.0.0]\n\n- Released.\n"
+
+
+def log_repo(tmp_path, pr_log, main_log, start=UNRELEASED):
+    """Like make_repo, with a module changelog in the starting commit; both sides add a worklog entry and edit it."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    git(repo, "init", "--quiet", "-b", "main")
+    git(repo, "config", "user.name", "t")
+    git(repo, "config", "user.email", "t@example.com")
+    git(repo, "config", "core.autocrlf", "false")
+    commit(repo, {wc.WORKLOG: OLD, LOG: start}, "start")
+    git(repo, "checkout", "--quiet", "-b", "pr")
+    commit(repo, {wc.WORKLOG: entry("PR") + OLD, LOG: pr_log}, "pr change")
+    git(repo, "checkout", "--quiet", "main")
+    commit(repo, {wc.WORKLOG: entry("Main") + OLD, LOG: main_log}, "main change")
+    return repo
+
+
+def test_a_changelog_where_both_sides_add_an_entry_is_merged_with_both(tmp_path):
+    pr = UNRELEASED.replace("- Earlier.\n", "- Earlier.\n- From the PR.\n")
+    main = UNRELEASED.replace("- Earlier.\n", "- Earlier.\n- From main.\n")
+    repo = log_repo(tmp_path, pr, main)
+    status = wc.merge(repo, "pr", "main", "pr")
+    assert status["status"] == wc.READY
+    merged = git(repo, "show", f"HEAD:{LOG}") + "\n"
+    assert merged == UNRELEASED.replace("- Earlier.\n", "- Earlier.\n- From the PR.\n- From main.\n"), "one list, no blank line"
+    assert git(repo, "show", f"HEAD:{wc.WORKLOG}") + "\n" == entry("PR") + entry("Main") + OLD
+    assert LOG in git(repo, "log", "-1", "--format=%B")
+
+
+def test_a_changelog_after_a_release_cut_is_left_to_the_author_with_a_comment(tmp_path):
+    """The cut below only inserts `## [1.1.0]`, a pure addition, where the PR adds its section: keeping both is wrong."""
+    pr = UNRELEASED.replace("## [Unreleased]\n\n", "## [Unreleased]\n\n### Added\n- From the PR.\n\n")
+    cut = "# Changelog\n\n## [Unreleased]\n\n## [1.1.0]\n\n### Changed\n- Earlier.\n\n## [1.0.0]\n\n- Released.\n"
+    repo = log_repo(tmp_path, pr, cut)
+    status = wc.merge(repo, "pr", "main", "pr")
+    assert status["status"] == wc.EDITED and sorted(status["files"]) == [LOG, wc.WORKLOG]
+    assert git(repo, "status", "--porcelain") == "", "the aborted merge leaves nothing behind"
+    text = wc.comment({**status, "branch": "feat/x"})
+    assert "a release cut moves `[Unreleased]`" in text and f"- `{LOG}`: keep `main`'s released sections" in text
+
+
+def test_the_same_heading_added_on_both_sides_is_left_to_the_author(tmp_path):
+    empty = "# Changelog\n\n## [Unreleased]\n\n## [1.0.0]\n\n- Released.\n"
+    pr = empty.replace("## [Unreleased]\n", "## [Unreleased]\n\n### Added\n- From the PR.\n")
+    main = empty.replace("## [Unreleased]\n", "## [Unreleased]\n\n### Added\n- From main.\n")
+    status = wc.merge(log_repo(tmp_path, pr, main, start=empty), "pr", "main", "pr")
+    assert status["status"] == wc.EDITED, "two `### Added` headings would be kept"
+
+
+def test_the_root_changelog_and_other_files_are_not_resolved():
+    assert wc.resolvable(wc.WORKLOG) and wc.resolvable("changelogs/adiro_geometry.md")
+    assert not wc.resolvable("CHANGELOG.md") and not wc.resolvable("changelogs/sub/x.md") and not wc.resolvable("AGENTS.md")
