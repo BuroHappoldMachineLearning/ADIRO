@@ -197,6 +197,15 @@ def test_the_push_is_leased_on_the_head_find_saw_and_the_bot_token_job_checks_ou
     assert 'git worktree add --quiet --detach "$RUNNER_TEMP/merge"' in push, "the checkout that loads the local action stays on main"
 
 
+def test_a_resolved_pull_request_has_its_conflict_comment_removed():
+    """`find` never lists a resolved pull request again, so `push` (which removes the comment) never runs for it (#302)."""
+    clear = job(WORKFLOW.read_text(encoding="utf-8"), "clear")
+    assert "github.event_name == 'pull_request_target' && needs.find.outputs.prs == '[]'" in clear
+    assert '= "MERGEABLE" ]' in clear, "not when the state is still UNKNOWN"
+    assert '"<!-- worklog-conflict -->"' in clear and "none.md" in clear
+    assert "ref: ${{ github.event.repository.default_branch }}" in clear and "head.ref" not in clear
+
+
 def test_the_workflow_runs_main_s_copy_of_itself_and_runs_on_a_conflicting_pull_request():
     """`pull_request` does not run while a pull request conflicts, and runs the pull request's own copy of the file."""
     triggers = WORKFLOW.read_text(encoding="utf-8").split("\npermissions:")[0]
