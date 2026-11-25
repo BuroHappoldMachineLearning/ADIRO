@@ -221,3 +221,19 @@ def test_when_every_finding_only_records_a_deprecation_the_comment_says_so_besid
     only_cycle = HEADER + f"WARN\tequivalent_pair\t{O}Mention\towl:equivalentClass\t{N}Mention\n"
     text = qc.render("0", None, only_cycle, VALIDATE, suite=_suite())
     assert "✅ No findings. (1 that only record a deprecation are left out; see *About these checks*.)" in text
+
+
+def test_a_stubs_own_restriction_is_left_out_but_a_live_restriction_on_a_deprecated_property_is_reported():
+    """A restriction on a stub gave three rows with ROBOT v1.9.10: its anonymous superclass, the restriction's value and the
+    deprecated property it uses (review of #308). The first and the last are the stub's own axioms."""
+    report = HEADER + "".join([
+        f"ERROR\tdeprecated_class_reference\t{O}Standalone\trdfs:subClassOf\t_:genid42\n",       # the stub's own restriction
+        f"ERROR\tdeprecated_property_reference\t{O}Standalone\tinlineReferences\tblank node\n",  # the same, on a deprecated property
+        f"ERROR\tdeprecated_class_reference\tblank node\towl:someValuesFrom\t{O}Mention\n",      # cannot be told from a live one
+        f"ERROR\tdeprecated_property_reference\t{O}LiveUser\tinlineReferences\tblank node\n",    # a LIVE class uses it
+        f"ERROR\tdeprecated_property_reference\t{O}Standalone\tinlineReferences\t{O}Base\n",     # an IRI value: either direction
+    ])
+    kept, left_out = qc.leave_out_deprecation_cycle(qc.parse_report(report), _suite())
+    assert left_out == {"deprecated_class_reference": 1, "deprecated_property_reference": 1}
+    assert [(r["subject"], r["value"]) for r in kept] == [
+        ("blank node", f"{O}Mention"), (f"{O}LiveUser", "blank node"), (f"{O}Standalone", f"{O}Base")]

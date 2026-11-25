@@ -49,7 +49,7 @@ ABOUT = (
 
 # The rules whose findings can only record a deprecation: a stub (owl:deprecated, dcterms:isReplacedBy) keeps its released
 # axioms and label and is equivalent to the term that replaces it (#281, #290). Those findings are left out (#299).
-CYCLE_RULES = ("deprecated_class_reference", "equivalent_pair", "duplicate_label")
+CYCLE_RULES = ("deprecated_class_reference", "deprecated_property_reference", "equivalent_pair", "duplicate_label")
 PROPERTIES = {"rdfs:subClassOf": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
               "owl:equivalentClass": "http://www.w3.org/2002/07/owl#equivalentClass",
               "owl:disjointWith": "http://www.w3.org/2002/07/owl#disjointWith"}
@@ -78,6 +78,9 @@ def leave_out_deprecation_cycle(rows, suite):
     - `deprecated_class_reference`: a stub's own axiom (a superclass, its equivalence to its replacement), or another
       deprecated term that refers to it. A live class or a restriction that refers to a deprecated class is a defect
       and stays: ROBOT shows both directions as the same row, so the asserted triple decides which one it is.
+      A stub's own restriction (its value is a blank node, not an IRI) is left out too.
+    - `deprecated_property_reference`: a stub's own restriction on a deprecated property. A row whose subject is a
+      blank node cannot be told from a live class's restriction, so it stays.
     - `equivalent_pair`: a stub and the term that replaces it.
     - `duplicate_label`: a term whose every namesake is its replacement or the stub it replaces.
     """
@@ -95,10 +98,15 @@ def leave_out_deprecation_cycle(rows, suite):
         if not row["subject"].startswith("http"):
             return False  # "blank node": a restriction that refers to a deprecated class is a defect
         rule, subject, value = row["rule"], URIRef(row["subject"]), row["value"]
+        if rule == "deprecated_property_reference":
+            # a stub's own restriction on a deprecated property; an IRI value could be either direction, so it stays
+            return deprecated(subject) and not value.startswith("http")
         if rule == "deprecated_class_reference":
             prop = PROPERTIES.get(row["property"])
             if prop is None or not deprecated(subject):
                 return False
+            if not value.startswith("http"):
+                return True  # the stub's own anonymous superclass (a restriction), which ROBOT names by a generated id
             other = URIRef(value)
             if (subject, URIRef(prop), other) in suite:
                 return True  # the stub's own axiom
