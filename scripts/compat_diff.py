@@ -629,6 +629,11 @@ def print_report(result):
 
 
 _BUMP_LABEL = {BUMP_MAJOR: "MAJOR", BUMP_MINOR: "MINOR", BUMP_PATCH: "PATCH", BUMP_NONE: "none"}
+# A module with more changes than this has its list collapsed behind <details> in "Changes in this PR" (#297); the guidance
+# comment collapses a type's list at the same number (`pr_guidance.COLLAPSE_OVER`, #144), and a test keeps the two equal.
+COLLAPSE_OVER = 5
+
+
 def to_markdown(results, pr_results=None, links=None):
     """Render a GitHub-flavored Markdown report (for a PR comment).
 
@@ -655,6 +660,7 @@ def to_markdown(results, pr_results=None, links=None):
                     f"- **`{r['module']}`** — {len(r['deltas'])} change(s), "
                     f"**{_BUMP_LABEL[r['required_bump']]}**-level:"
                 )
+                module_lines = []  # the module's changes, collapsed when there are many (#297)
                 by_sev = {}
                 for d, iri in r["deltas"]:
                     by_sev.setdefault(DELTA_SEVERITY[d], []).append((d, iri))
@@ -695,11 +701,15 @@ def to_markdown(results, pr_results=None, links=None):
                             for name in names:
                                 line = where.get(name) or subject
                                 parts.append(f"`{name}`" + (f" (line {line}: {refs(line)})" if line else ""))
-                            out.append(f"  - `[{sev}]` {d} — `{local}`: " + ", ".join(parts))
+                            module_lines.append(f"  - `[{sev}]` {d} — `{local}`: " + ", ".join(parts))
                         elif subject and refs(subject, side):
-                            out.append(f"  - `[{sev}]` {d} — `{local}` (line {subject}: {refs(subject, side)})")
+                            module_lines.append(f"  - `[{sev}]` {d} — `{local}` (line {subject}: {refs(subject, side)})")
                         else:
-                            out.append(f"  - `[{sev}]` {d} — `{local}`")
+                            module_lines.append(f"  - `[{sev}]` {d} — `{local}`")
+                if len(r["deltas"]) > COLLAPSE_OVER:
+                    out += [f"  <details><summary>Show the {len(r['deltas'])} changes</summary>", "", *module_lines, "", "  </details>"]
+                else:
+                    out += module_lines
         out.append("")
 
     # --- Section 2: cumulative next-version forecast (src vs last released) ----
