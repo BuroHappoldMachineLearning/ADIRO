@@ -187,15 +187,20 @@ def file_hint(path: str) -> str:
     """What to do with one conflicting file, for the comment: the bot's rule where it has one, else nothing."""
     if path == WORKLOG:
         return "both sides add an entry: keep both, yours first"
-    if re.fullmatch(r"docs/[^/]+\.(html|ttl)|docs/ontologies/.+", path):
+    if re.fullmatch(r"docs/[^/]+\.(html|ttl|display\.json)|docs/index\.md|docs/ontologies/.+", path):
         return "a generated page: take `main`'s copy, then run `uv run python scripts/generate_docs.py`"
     if re.fullmatch(r"changelogs/.+\.md", path):
-        return "both sides add under `[Unreleased]`: keep both entries"
+        return ("keep `main`'s released sections as they are and put only your new entries under `[Unreleased]`, "
+                "with any of `main`'s that are still there")
     return ""
 
 
-def comment(status: dict, run_url: str) -> str:
-    """The sticky comment for a pull request the bot could not update, or "" (which removes the comment)."""
+def comment(status: dict) -> str:
+    """The sticky comment for a pull request the bot could not update, or "" (which removes the comment).
+
+    No link to the run in the text: the sticky comment's footer has it, and a text that changes on every run would
+    repost the comment, with a notification, on every push to `main`.
+    """
     if status.get("status") == OTHER and status.get("branch") != RELEASE_BRANCH:
         lines = []
         for path in status.get("files", []):
@@ -204,12 +209,12 @@ def comment(status: dict, run_url: str) -> str:
         return ("This pull request conflicts with `main`, and the ADIRO Bot only merges when the worklog is the sole conflicting "
                 "file, so it left the merge to you. The conflicting files:\n\n" + "\n".join(lines) + "\n\n"
                 "Merge `main` into the branch, resolve these, and push "
-                f"([run]({run_url}); see [#206](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/206)).")
+                "(see [#206](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/206)).")
     if status.get("status") != FAILED:
         return ""
     check = status.get("failed") if status.get("failed") in dict(VERIFY) else "a check"
     return (f"This pull request conflicts with `main` only in `{WORKLOG}`, and the ADIRO Bot can keep both entries, but on the "
-            f"merged result **{check}** fails ([run]({run_url})), so it did not push the merge. Something on `main` breaks this "
+            f"merged result **{check}** fails, so it did not push the merge. Something on `main` breaks this "
             f"pull request: merge `main` into the branch, fix what fails, and push. See "
             f"[#206](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/206).")
 
@@ -231,7 +236,6 @@ def main(argv: list[str] | None = None) -> int:
         m.add_argument("--out", type=Path, required=True, help="the status file to write (merge) or read (push)")
     c = sub.add_parser("comment", help="print the sticky comment for a status file")
     c.add_argument("status", type=Path)
-    c.add_argument("--run-url", required=True)
     args = parser.parse_args(argv)
 
     if args.cmd == "find":
@@ -242,7 +246,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.cmd == "comment":
         status = json.loads(args.status.read_text(encoding="utf-8")) if args.status.exists() else {}
-        print(comment(status, args.run_url))
+        print(comment(status))
         return 0
     if args.cmd == "merge":
         status = merge(args.repo, args.head, args.base, args.branch, verify=VERIFY)

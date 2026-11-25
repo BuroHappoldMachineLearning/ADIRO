@@ -97,8 +97,8 @@ def test_a_failing_check_stops_the_push_and_names_the_check(tmp_path):
 
     status = wc.merge(repo, "pr", "main", "pr", verify=verify, runner=runner)
     assert status["status"] == wc.FAILED and status["failed"] == "tests"
-    assert "**tests** fails" in wc.comment(status, "https://run")
-    assert wc.comment({"status": wc.READY}, "https://run") == "", "a pushed merge removes an earlier failure comment"
+    assert "**tests** fails" in wc.comment(status)
+    assert wc.comment({"status": wc.READY}) == "", "a pushed merge removes an earlier failure comment"
 
 
 def test_push_refuses_a_merge_that_is_not_the_verified_one(tmp_path):
@@ -250,19 +250,22 @@ def test_a_conflicting_file_name_with_spaces_is_one_name(tmp_path):
 def test_the_comment_names_each_blocking_file_and_what_to_do_with_it():
     status = {"status": wc.OTHER, "branch": "feat/x",
               "files": [wc.WORKLOG, "docs/adiro_provenance.html", "docs/ontologies/adiro_geometry.md",
-                        "changelogs/adiro_geometry.md", "docs/specification/.pages", "docs/specification/UC-01 x.md"]}
-    text = wc.comment(status, "https://run")
-    assert "only merges when the worklog is the sole conflicting file" in text and "https://run" in text
+                        "changelogs/adiro_geometry.md", "docs/specification/.pages", "docs/specification/UC-01 x.md",
+                        "docs/index.md", "docs/adiro_geometry.display.json"]}
+    text = wc.comment(status)
+    assert "only merges when the worklog is the sole conflicting file" in text
+    assert "/actions/runs/" not in text, "a run link in the text would repost the comment on every push to main"
+    assert "- `docs/index.md`: a generated page" in text and "- `docs/adiro_geometry.display.json`: a generated page" in text
     assert f"- `{wc.WORKLOG}`: both sides add an entry: keep both, yours first" in text
     assert "- `docs/adiro_provenance.html`: a generated page" in text and "- `docs/ontologies/adiro_geometry.md`: a generated page" in text
-    assert "- `changelogs/adiro_geometry.md`: both sides add under `[Unreleased]`" in text
+    assert "- `changelogs/adiro_geometry.md`: keep `main`'s released sections as they are" in text
     assert "- `docs/specification/.pages`\n" in text and "- `docs/specification/UC-01 x.md`\n" in text, "no advice where the bot has no rule"
     assert "docs/specification/UC-01 x.md: a generated" not in text
 
 
 def test_the_release_pr_branch_gets_no_comment_and_a_clean_or_ready_merge_removes_it():
-    assert wc.comment({"status": wc.OTHER, "branch": wc.RELEASE_BRANCH, "files": ["AGENTS.md"]}, "https://run") == ""
-    assert wc.comment({"status": wc.CLEAN}, "https://run") == "" and wc.comment({"status": wc.READY}, "https://run") == ""
+    assert wc.comment({"status": wc.OTHER, "branch": wc.RELEASE_BRANCH, "files": ["AGENTS.md"]}) == ""
+    assert wc.comment({"status": wc.CLEAN}) == "" and wc.comment({"status": wc.READY}) == ""
 
 
 def test_the_status_of_a_merge_names_the_branch(tmp_path):
