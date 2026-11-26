@@ -482,6 +482,14 @@ For anyone changing an ontology, agent or person. The sections below give the de
     classes declared as local stubs (PROV, GeoSPARQL) are not ours to classify. It only produced a standing list of root
     classes nobody acts on. **Do not assert `rdfs:subClassOf owl:Thing` to silence it**: `owl:Thing` is implicit for every
     class, and the compatibility diff reads an added superclass as a change (a potentially breaking, MAJOR one).
+  - **`missing_obsolete_label` is deliberately absent too** ([#299](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/299)).
+    It is an OBO convention (a deprecated term's label starts with "obsolete") that ADIRO's deprecation policy does not
+    follow: a deprecated term keeps its released label, beside `owl:deprecated` and `dcterms:isReplacedBy`. For the same
+    reason `scripts/qc_comment.py` leaves out of the QC comment, and counts in its "About these checks" note, the
+    findings that only record a deprecation: a stub's own axioms, its restrictions included (`deprecated_class_reference`,
+    `deprecated_property_reference`), its equivalence to its
+    replacement (`equivalent_pair`) and their shared label (`duplicate_label`). A live term that refers to a deprecated
+    class is still shown.
 - **Every ADIRO term needs a `skos:definition`.** A term's **definition** (what it is, one to three sentences, in your
   own words, `@en`) is a `skos:definition`, and **`rdfs:comment` is the commentary**: rationale, examples, the standard a
   term corresponds to and how it differs, links to issues ([#273](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/273), decided in

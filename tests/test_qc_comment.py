@@ -131,3 +131,109 @@ def test_main_reads_the_output_directory(tmp_path, capsysbinary, monkeypatch):
 def test_main_treats_a_missing_reasoner_result_as_a_failure(tmp_path, capsysbinary):
     qc.main(["--out-dir", str(tmp_path)])  # nothing was written: the reasoner step did not complete
     assert "Reasoner failed" in capsysbinary.readouterr().out.decode("utf-8")
+
+
+# #299: the findings that only record a deprecation (a stub and the term that replaces it) are left out, counted
+
+def _suite():
+    import pytest
+    pytest.importorskip("rdflib")
+    from rdflib import Graph
+    return Graph().parse(format="turtle", data="""
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix o: <https://w3id.org/adiro/old#> .
+@prefix n: <https://w3id.org/adiro/new#> .
+o:Base a owl:Class ; rdfs:label "Base" .
+o:Mention a owl:Class ; rdfs:label "Mention" ; rdfs:subClassOf o:Base ; owl:equivalentClass n:Mention ;
+    owl:deprecated true ; dcterms:isReplacedBy n:Mention .
+o:Standalone a owl:Class ; rdfs:label "Standalone" ; rdfs:subClassOf o:Mention ;
+    owl:deprecated true ; dcterms:isReplacedBy n:Standalone .
+n:Mention a owl:Class ; rdfs:label "Mention" .
+n:Standalone a owl:Class ; rdfs:label "Standalone" .
+o:LiveUser a owl:Class ; rdfs:label "Live user" ; rdfs:subClassOf o:Mention .
+o:Other a owl:Class ; rdfs:label "Base" .
+""")
+
+
+O, N = "https://w3id.org/adiro/old#", "https://w3id.org/adiro/new#"
+CYCLE = HEADER + "".join([
+    f"ERROR\tdeprecated_class_reference\t{O}Mention\trdfs:subClassOf\t{O}Base\n",          # the stub's own superclass
+    f"ERROR\tdeprecated_class_reference\t{O}Mention\towl:equivalentClass\t{N}Mention\n",  # the stub and its replacement
+    f"ERROR\tdeprecated_class_reference\t{O}Mention\trdfs:subClassOf\t{O}Standalone\n",    # another stub refers to it
+    f"ERROR\tdeprecated_class_reference\t{O}Mention\trdfs:subClassOf\t{O}LiveUser\n",      # a LIVE class refers to it
+    f"ERROR\tdeprecated_class_reference\tblank node\towl:someValuesFrom\t{O}Mention\n",    # a restriction refers to it
+    f"WARN\tequivalent_pair\t{O}Mention\towl:equivalentClass\t{N}Mention\n",
+    f"WARN\tduplicate_label\t{O}Mention\trdfs:label\tMention\n",
+    f"WARN\tduplicate_label\t{N}Mention\trdfs:label\tMention\n",
+    f"WARN\tduplicate_label\t{O}Base\trdfs:label\tBase\n",                                # a real clash: not a replacement
+    f"WARN\tduplicate_label\t{O}Other\trdfs:label\tBase\n",
+])
+
+
+def test_a_stubs_own_axioms_and_its_replacement_are_left_out_of_the_deprecated_class_references():
+    kept, left_out = qc.leave_out_deprecation_cycle(qc.parse_report(CYCLE), _suite())
+    refs = [(r["subject"], r["value"]) for r in kept if r["rule"] == "deprecated_class_reference"]
+    assert (f"{O}Mention", f"{O}Base") not in refs and (f"{O}Mention", f"{N}Mention") not in refs
+    assert (f"{O}Mention", f"{O}Standalone") not in refs  # Standalone is itself deprecated
+    assert left_out["deprecated_class_reference"] == 3
+
+
+def test_a_live_class_or_a_restriction_that_refers_to_a_deprecated_class_is_still_reported():
+    kept, _ = qc.leave_out_deprecation_cycle(qc.parse_report(CYCLE), _suite())
+    refs = [(r["subject"], r["value"]) for r in kept if r["rule"] == "deprecated_class_reference"]
+    assert refs == [(f"{O}Mention", f"{O}LiveUser"), ("blank node", f"{O}Mention")]
+
+
+def test_the_equivalence_of_a_stub_and_its_replacement_is_left_out():
+    kept, left_out = qc.leave_out_deprecation_cycle(qc.parse_report(CYCLE), _suite())
+    assert not [r for r in kept if r["rule"] == "equivalent_pair"] and left_out["equivalent_pair"] == 1
+
+
+def test_a_stub_and_its_replacement_may_share_a_label_but_another_clash_is_still_reported():
+    kept, left_out = qc.leave_out_deprecation_cycle(qc.parse_report(CYCLE), _suite())
+    assert sorted(r["subject"] for r in kept if r["rule"] == "duplicate_label") == [f"{O}Base", f"{O}Other"]
+    assert left_out["duplicate_label"] == 2
+
+
+def test_the_comment_says_how_many_findings_were_left_out_and_that_robot_errors_are_advisory():
+    text = qc.render("0", None, CYCLE, VALIDATE, suite=_suite())
+    minor = text[text.index("### Minor checks"):text.index("<details><summary>About")]
+    assert "| ERROR | `deprecated_class_reference` | 2 |" in minor and "equivalent_pair" not in minor
+    about = text[text.index("<details><summary>About"):]
+    assert "6 ROBOT findings are left out" in about and "only the reasoner blocks" in about
+
+
+def test_without_the_ontology_nothing_is_left_out():
+    text = qc.render("0", None, CYCLE, VALIDATE)
+    assert "| ERROR | `deprecated_class_reference` | 5 |" in text and "left out" not in text
+
+
+def test_robot_may_report_the_equivalence_from_the_replacements_side_and_it_is_still_left_out():
+    """ROBOT showed `New equivalentClass Old` for an axiom asserted as `Old equivalentClass New` (checked on ROBOT v1.9.10, the version run_reasoning.sh pins)."""
+    report = HEADER + f"WARN\tequivalent_pair\t{N}Mention\towl:equivalentClass\t{O}Mention\n"
+    kept, left_out = qc.leave_out_deprecation_cycle(qc.parse_report(report), _suite())
+    assert kept == [] and left_out["equivalent_pair"] == 1
+
+
+def test_when_every_finding_only_records_a_deprecation_the_comment_says_so_beside_no_findings():
+    only_cycle = HEADER + f"WARN\tequivalent_pair\t{O}Mention\towl:equivalentClass\t{N}Mention\n"
+    text = qc.render("0", None, only_cycle, VALIDATE, suite=_suite())
+    assert "✅ No findings. (1 that only record a deprecation are left out; see *About these checks*.)" in text
+
+
+def test_a_stubs_own_restriction_is_left_out_but_a_live_restriction_on_a_deprecated_property_is_reported():
+    """A restriction on a stub gave three rows with ROBOT v1.9.10: its anonymous superclass, the restriction's value and the
+    deprecated property it uses (review of #308). The first and the last are the stub's own axioms."""
+    report = HEADER + "".join([
+        f"ERROR\tdeprecated_class_reference\t{O}Standalone\trdfs:subClassOf\t_:genid42\n",       # the stub's own restriction
+        f"ERROR\tdeprecated_property_reference\t{O}Standalone\tinlineReferences\tblank node\n",  # the same, on a deprecated property
+        f"ERROR\tdeprecated_class_reference\tblank node\towl:someValuesFrom\t{O}Mention\n",      # cannot be told from a live one
+        f"ERROR\tdeprecated_property_reference\t{O}LiveUser\tinlineReferences\tblank node\n",    # a LIVE class uses it
+        f"ERROR\tdeprecated_property_reference\t{O}Standalone\tinlineReferences\t{O}Base\n",     # an IRI value: either direction
+    ])
+    kept, left_out = qc.leave_out_deprecation_cycle(qc.parse_report(report), _suite())
+    assert left_out == {"deprecated_class_reference": 1, "deprecated_property_reference": 1}
+    assert [(r["subject"], r["value"]) for r in kept] == [
+        ("blank node", f"{O}Mention"), (f"{O}LiveUser", "blank node"), (f"{O}Standalone", f"{O}Base")]
