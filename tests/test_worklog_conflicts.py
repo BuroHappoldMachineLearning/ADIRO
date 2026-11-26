@@ -212,6 +212,7 @@ def test_the_workflow_runs_main_s_copy_of_itself_and_runs_on_a_conflicting_pull_
     assert "pull_request_target:" in triggers
     assert not re.search(r"^\s+pull_request:", triggers, re.M)
     assert "workflow_dispatch" not in triggers.split("\non:")[1], "a dispatch runs the file of the branch it names"
+    assert re.search(r"^  schedule:\n    - cron: ", triggers, re.M), "a daily run in case GitHub drops an event (#296)"
     assert "enable-cache: false" in job(WORKFLOW.read_text(encoding="utf-8"), "merge")
 
 

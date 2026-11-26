@@ -11,7 +11,7 @@ name: Worklog conflicts
 # not `pull_request`, for two reasons: GitHub does not run a `pull_request` workflow while the pull request has a merge
 # conflict, and `pull_request_target` always runs THIS file as it is on main, so a pull request cannot change the
 # workflow that receives the bot's secrets. There is no `workflow_dispatch` for the same reason (a dispatch runs the
-# file of the branch it names).
+# file of the branch it names); the daily `schedule` is the way to run it again without a push.
 #
 # The three jobs keep the bot token away from the pull request's code:
 #   find  - read-only GITHUB_TOKEN; lists the conflicting pull requests.
@@ -31,6 +31,10 @@ on:
     branches: [main]
   pull_request_target:
     types: [opened, reopened, synchronize, ready_for_review]
+  # A safety net (#296): GitHub can drop an event (the push of #308 started no workflow during an incident on
+  # 2026-11-25), and nothing else would run the bot until the next merge. A schedule always runs main's copy.
+  schedule:
+    - cron: "17 5 * * *"
 
 permissions:
   contents: read

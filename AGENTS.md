@@ -185,7 +185,7 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   label, which the README's "Build status" column counts (`docs/contribute/build-status.md` explains each badge).
 - **`.github/workflows/worklog-conflicts.yml`** ([#206](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/206)) — every
   pull request adds a worklog entry at the top of `docs/ai/worklog.md`, so two open pull requests conflict there once one merges. After
-  every push to `main` (and when a pull request is opened or pushed to, through `pull_request_target`, which runs even on a conflicting pull
+  every push to `main` (once a day too, in case GitHub drops an event, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296); and when a pull request is opened or pushed to, through `pull_request_target`, which runs even on a conflicting pull
   request and always runs `main`'s copy of the workflow), the **ADIRO Bot** merges `main` into each open same-repository
   pull request whose **only** conflicting files are the worklog and the module changelogs (`changelogs/*.md`, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296)) and whose two sides only *add* lines to them, keeping both entries (the pull
   request's first; not in a changelog where either side adds a version heading, a release cut, or both add the same heading), and pushes the merge commit, which starts the checks again. It pushes only after the validation and the tests pass on
