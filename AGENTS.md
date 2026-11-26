@@ -188,10 +188,10 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   label, which the README's "Build status" column counts (`docs/contribute/build-status.md` explains each badge).
 - **`.github/workflows/worklog-conflicts.yml`** ([#206](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/206)) — every
   pull request adds a worklog entry at the top of `docs/ai/worklog.md`, so two open pull requests conflict there once one merges. After
-  every push to `main` (and when a pull request is opened or pushed to, through `pull_request_target`, which runs even on a conflicting pull
+  every push to `main` (once a day too, in case GitHub drops an event, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296); and when a pull request is opened or pushed to, through `pull_request_target`, which runs even on a conflicting pull
   request and always runs `main`'s copy of the workflow), the **ADIRO Bot** merges `main` into each open same-repository
-  pull request whose **only** conflicting file is the worklog and whose two sides only *add* lines to it, keeping both entries (the pull
-  request's first), and pushes the merge commit, which starts the checks again. It pushes only after the validation and the tests pass on
+  pull request whose **only** conflicting files are the worklog and the module changelogs (`changelogs/*.md`, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296)) and whose two sides only *add* lines to them, keeping both entries (the pull
+  request's first; not in a changelog where either side adds a version heading, a release cut, or both add the same heading), and pushes the merge commit, which starts the checks again. It pushes only after the validation and the tests pass on
   the merged tree; if one fails, it pushes nothing and says so in a comment on the pull request. It pushes the merge with the `main`
   commit it verified, even when `main` has moved on since, because the docs deploy commits to `main` about a minute after every merge
   ([#224](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/224)), and accepts that commit only if it is a commit of `main`;
@@ -249,7 +249,7 @@ commands directly, but Git Bash is simpler.
   rare, serious findings rendered as a red `[!CAUTION]` alert (the first one is removing or renaming the `exampleImage`
   property), a registry in `scripts/pr_guidance.py` like the issue types; a caution or a suggestion alone is enough for
   the comment to exist. All three PR comments (version impact, QC, guidance) are posted as the
-  ADIRO Bot through `.github/actions/sticky-comment`; a same-repo PR is handled by each workflow itself; a **fork PR** (no access to the app secrets) is handled by
+  ADIRO Bot through `.github/actions/sticky-comment` (a report over GitHub's 65,536-character limit is cut at a line, with the full report in the run summary, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296)); a same-repo PR is handled by each workflow itself; a **fork PR** (no access to the app secrets) is handled by
   `.github/workflows/pr-comments-fork.yml` (`pull_request_target`), which posts the version-impact and guidance
   comments from **base-branch code only**, reading the fork's `src/` and `changelogs/` as data (never run
   anything from the fork there). The QC report for a fork PR is in the `reason` job's summary; the reasoner still gates.
@@ -503,7 +503,9 @@ For anyone changing an ontology, agent or person. The sections below give the de
   **absent** from `config/robot_report_profile.txt` (a profile lists the checks that run; omitting one
   disables it, and the file format accepts no comments to say so). Reasons in
   `docs/specification/design-decisions/usage-of-annotation-properties.md`. `scripts/validate_ontology.py` reports
-  ADIRO-namespace terms that lack a description (external stubs exempt — their definitions live at the source). It is
+  ADIRO-namespace terms that lack a description (external stubs exempt — their definitions live at the source; so are
+  the terms of a deprecated module, and a deprecated stub is not asked to split its "Deprecated: use …" comment,
+  [#298](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/298)). It is
   advisory while the backlog in [#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87) is
   cleared; `ENFORCE_DESCRIPTIONS=1` makes it blocking, `LIST_UNDESCRIBED=1` lists every term.
 - **Versioning.** Record any change to a module's semantics under that module's `changelogs/<module>.md`

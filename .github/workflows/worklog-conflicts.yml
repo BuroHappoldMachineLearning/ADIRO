@@ -11,7 +11,7 @@ name: Worklog conflicts
 # not `pull_request`, for two reasons: GitHub does not run a `pull_request` workflow while the pull request has a merge
 # conflict, and `pull_request_target` always runs THIS file as it is on main, so a pull request cannot change the
 # workflow that receives the bot's secrets. There is no `workflow_dispatch` for the same reason (a dispatch runs the
-# file of the branch it names).
+# file of the branch it names); the daily `schedule` is the way to run it again without a push.
 #
 # The three jobs keep the bot token away from the pull request's code:
 #   find  - read-only GITHUB_TOKEN; lists the conflicting pull requests.
@@ -31,6 +31,11 @@ on:
     branches: [main]
   pull_request_target:
     types: [opened, reopened, synchronize, ready_for_review]
+  # A safety net (#296): GitHub can drop an event (the push of #308 started no workflow during an incident on
+  # 2026-11-25), and nothing else would run the bot until the next merge. A schedule always runs main's copy. Its event
+  # has no `repository`, so every `default_branch` below falls back to `github.ref_name`, which is main on a schedule.
+  schedule:
+    - cron: "17 5 * * *"
 
 permissions:
   contents: read
@@ -50,7 +55,7 @@ jobs:
       - name: Checkout the default branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.repository.default_branch }}   # main's script (pull_request_target checks out main anyway)
+          ref: ${{ github.event.repository.default_branch || github.ref_name }}   # main's script (pull_request_target checks out main anyway)
           persist-credentials: false
 
       - name: List the conflicting pull requests
@@ -58,7 +63,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          BASE: ${{ github.event.repository.default_branch }}
+          BASE: ${{ github.event.repository.default_branch || github.ref_name }}
           PR: ${{ github.event.pull_request.number }}
         run: |
           if ! prs="$(python3 scripts/worklog_conflicts.py find --base "$BASE" ${PR:+--pr "$PR"} 2> "$RUNNER_TEMP/find.err")"; then
@@ -82,7 +87,7 @@ jobs:
       - name: Checkout the default branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.repository.default_branch }}
+          ref: ${{ github.event.repository.default_branch || github.ref_name }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -97,7 +102,7 @@ jobs:
 
       - name: Merge, resolve the worklog and verify
         env:
-          BASE: ${{ github.event.repository.default_branch }}
+          BASE: ${{ github.event.repository.default_branch || github.ref_name }}
           BRANCH: ${{ matrix.pr.branch }}
           HEAD_SHA: ${{ matrix.pr.head_sha }}
         run: |
@@ -133,14 +138,14 @@ jobs:
       - name: Checkout the default branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.repository.default_branch }}
+          ref: ${{ github.event.repository.default_branch || github.ref_name }}
           fetch-depth: 0
           persist-credentials: false
 
       - name: Redo the merge and compare it with the verified one
         id: prepare
         env:
-          BASE: ${{ github.event.repository.default_branch }}
+          BASE: ${{ github.event.repository.default_branch || github.ref_name }}
           BRANCH: ${{ matrix.pr.branch }}
           HEAD_SHA: ${{ matrix.pr.head_sha }}
           PR: ${{ matrix.pr.number }}
@@ -227,7 +232,7 @@ jobs:
         if: steps.state.outputs.clear == 'true'
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.repository.default_branch }}
+          ref: ${{ github.event.repository.default_branch || github.ref_name }}
           persist-credentials: false
 
       - name: Create ADIRO Bot token
