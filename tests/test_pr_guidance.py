@@ -43,6 +43,20 @@ def test_undescribed_looks_only_at_the_given_terms():
     assert name(pg.undescribed(head, [t for t in pg.touched_terms(g(BASE), head) if pg.local_name(t) == "C"])) == []
 
 
+def test_undescribed_skips_the_terms_of_a_deprecated_module_but_not_a_live_module():
+    """#298: a deprecated module had its final release; its backlog cannot be fixed in it."""
+    head = g(PREFIXES + "<https://w3id.org/adiro/aec_x> a owl:Ontology ; owl:deprecated true .\n:B a owl:Class .\n")
+    assert name(pg.undescribed(head, [URIRef("https://w3id.org/adiro/aec_x#B")])) == []
+    live = g(PREFIXES + "<https://w3id.org/adiro/aec_x> a owl:Ontology .\n:B a owl:Class .\n")
+    assert name(pg.undescribed(live, [URIRef("https://w3id.org/adiro/aec_x#B")])) == ["B"]
+
+
+def test_a_deprecated_stub_with_no_text_at_all_is_still_undescribed():
+    """#298: a stub should say what replaces it, so a stub with no text is still reported."""
+    head = g(PREFIXES + "<https://w3id.org/adiro/aec_x> a owl:Ontology .\n:Old a owl:Class ; owl:deprecated true .\n")
+    assert name(pg.undescribed(head, [URIRef("https://w3id.org/adiro/aec_x#Old")])) == ["Old"]
+
+
 def test_label_clash_is_case_insensitive_and_names_the_other_term():
     head = g(HEAD)
     clashes = pg.label_clashes(head, pg.touched_terms(g(BASE), head))
