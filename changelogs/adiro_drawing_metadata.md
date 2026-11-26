@@ -5,6 +5,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [8.0.0] — 2026-11-26
+
 ### Changed
 - **The prefixes of the names the module uses are `adprov:` and `adgeom:`** ([#289](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/289)), not `aprov:` and `geom:`; the prefix of the module's own names is `admeta:`, not `metadata:`. A prefix is a label: no IRI changes.
 - **BREAKING: the UC-03 reference terms are defined in `adiro_drawing_symbology`** ([#277](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/277), with [#271](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/271)): `ReferenceExpression`, `DrawingIdentifierMention`, `LayoutIdentifierMention`, `InlineLayoutSheetReference` (now `InlineLayoutDrawingReference`), `StandaloneSheetReference` (now `StandaloneDrawingReference`), and the properties `denotesDrawingSheet` and `inlineReferencesLayout` move to `adiro_drawing_symbology`, where `ReferenceSymbol`, a graphical form of the same reference, already is, so a reference expression is defined in one module. `DrawingElement`, `Layout` and `DrawingSheet` stay here, and `adiro_drawing_symbology` still imports this module. Each term has the definition, superclasses, example image and `isComputerVisionLabel` it had here; the two sheet names became drawing names ("Inline Layout and Drawing Reference", "Standalone Drawing Reference"), because a thing ADIRO describes is a drawing and "sheet" stays for the paper format. `DrawingSheet`, `denotesDrawingSheet` and `SheetSizeField` keep their names.
