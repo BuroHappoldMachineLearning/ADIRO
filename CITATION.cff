@@ -34,7 +34,9 @@ authors:
     given-names: Mohamed
     orcid: "https://orcid.org/0000-0002-9048-7873"
     affiliation: "Birmingham City University, Birmingham, United Kingdom"
-license: GPL-3.0-only
+license:
+  - CC-BY-4.0
+  - GPL-3.0-only
 repository-code: "https://github.com/BuroHappoldMachineLearning/ADIRO"
 url: "https://w3id.org/adiro/"
 keywords:

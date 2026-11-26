@@ -17,7 +17,7 @@
     rdfs:comment "Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the drawing-metadata and discipline-core modules." ;
     dcterms:title "ADIRO Facade Discipline Ontology" ;
     dcterms:description "Facade-specific concepts and symbols for facade engineering drawings." ;
-    dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
     dcterms:replaces <https://w3id.org/adiro/adiro_facade_domain> ;

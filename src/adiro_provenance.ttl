@@ -19,7 +19,7 @@
     rdfs:comment "Foundational, domain-neutral module for provenance. It lets any value inferred from a drawing be recorded as an assertion that carries its own source, confidence, and how it was produced, aligned to W3C PROV-O. The drawing modules import it." ;
     dcterms:title "ADIRO Provenance Ontology" ;
     dcterms:description "Reified assertion + inference provenance + confidence for AEC drawing extraction. Domain-neutral; PROV-O-aligned." ;
-    dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     dcterms:creator "Buro Happold - Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
     dcterms:replaces <https://w3id.org/adiro/aec_provenance> ;

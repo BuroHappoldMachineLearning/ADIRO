@@ -21,7 +21,7 @@
     rdfs:comment "The core drawing vocabulary. It describes the structure of a drawing: its layouts, title block, revisions, and the fields read from them. It imports the provenance module (which also holds the file, the page and the agents) and the geometry module (where a title block's region is located), and the discipline modules build on it." ;
     dcterms:title "ADIRO Drawing Metadata Ontology" ;
     dcterms:description "Sheet/layout/document structure for AEC drawings." ;
-    dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
     dcterms:replaces <https://w3id.org/adiro/aec_drawing_metadata> ;

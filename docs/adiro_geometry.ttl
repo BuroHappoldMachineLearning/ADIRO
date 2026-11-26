@@ -18,7 +18,7 @@
     rdfs:comment "Foundational, domain-neutral module for geometry. It records where something sits on a drawing page as a bounding box, read against an explicit coordinate frame. Each box carries its own provenance and confidence. It reuses GeoSPARQL, is imported by the drawing modules, and is shared across use cases." ;
     dcterms:title "ADIRO Geometry Ontology" ;
     dcterms:description "Bounding boxes + coordinate frames for AEC drawing extraction. Domain-neutral; provenance-bearing; GeoSPARQL-aligned." ;
-    dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     dcterms:creator "Buro Happold - Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
     dcterms:replaces <https://w3id.org/adiro/aec_geometry> ;
