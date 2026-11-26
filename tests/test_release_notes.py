@@ -111,3 +111,10 @@ def test_render_with_an_untagged_previous_release_has_no_compare_or_pr_list_but_
     assert "**MAJOR release** · 2.0.0 → 3.0.0" in text and "Compare" not in text
     assert "previous release (2.0.0) was not tagged" in text
     assert "First release" not in text
+
+
+def test_every_release_says_its_licence_and_the_grant_for_earlier_releases():
+    """#333: a catalogue or a contributor reading any release learns that every earlier release is also CC BY 4.0."""
+    body = rn.render("adiro_x", "2.0.0", "1.0.0", "### Changed\n- x", [], "o/r")
+    line = next(l for l in body.splitlines() if l.startswith("- Licence:"))
+    assert "https://creativecommons.org/licenses/by/4.0/" in line and "Every earlier release" in line and "LICENSING.md" in line
