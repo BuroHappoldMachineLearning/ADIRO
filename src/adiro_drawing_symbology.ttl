@@ -45,7 +45,7 @@
     rdfs:subClassOf admeta:DrawingElement;
     rdfs:label "Grid";
     skos:definition "A grid line or grid system used for alignment and reference in architectural drawings."@en;
-    rdfs:comment "Not the grid reference system of ISO 5457:1999 §4.4, which divides the sheet into lettered and numbered fields; Grid is the building's grid of lines.";
+    rdfs:comment "Not the grid reference system of ISO 5457:1999 §4.4, which divides the sheet into lettered and numbered fields; Grid is about the building's grid, not the sheet's.";
     admeta:exampleImage img:Grid_01.png;
     admeta:isComputerVisionLabel "true"^^xsd:boolean.
 

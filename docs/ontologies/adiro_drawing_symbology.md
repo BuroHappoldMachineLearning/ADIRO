@@ -94,7 +94,7 @@ One evidenced occurrence of drawing-identifier text on a source drawing, distinc
 A grid line or grid system used for alignment and reference in architectural drawings.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#Grid`
-- **Comment:** Not the grid reference system of ISO 5457:1999 §4.4, which divides the sheet into lettered and numbered fields; Grid is the building's grid of lines.
+- **Comment:** Not the grid reference system of ISO 5457:1999 §4.4, which divides the sheet into lettered and numbered fields; Grid is about the building's grid, not the sheet's.
 - **Sub class of:** [`admeta:DrawingElement`](adiro_drawing_metadata.md#DrawingElement)
 
 *Example images:*
