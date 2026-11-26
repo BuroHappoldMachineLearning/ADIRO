@@ -5,5 +5,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [5.0.0] — 2026-11-26
+
 ### Changed
 - **BREAKING: renamed from `adiro_facade_domain`** ([#281](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/281)). The module, its ontology IRI and the IRI of every term it defines now use `adiro_facade_discipline` (`https://w3id.org/adiro/adiro_facade_discipline`) instead of `adiro_facade_domain`, and the title says "ADIRO Facade Discipline Ontology". Nothing else changes: the terms, their definitions and their axioms are those of the old module's final release, whose version this release follows with a MAJOR bump. Its import and its prefix follow `adiro_discipline_core`. Every release of the old module stays published at its own IRI and is named here with `owl:priorVersion`; its history is in [its changelog](adiro_facade_domain.md), and the old module is deprecated for its final release (adiro_facade_domain 4.0.1) and stays in `src/` for one release cycle. The example images are published under the new module's path. `migration/aec_to_adiro.ttl` maps each old term IRI, from `aec_*` and from the earlier `adiro_*` module, to the new one, and `scripts/migrate_aec_to_adiro.py` rewrites a graph or a list of links. Downstream consumers may need adjustments: the annotation tooling reads the class IRIs, so every class and property of the module has a new IRI.

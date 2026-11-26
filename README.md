@@ -10,12 +10,12 @@
     <td><img src="docs/img/adiro_banner.png" alt="ADIRO" width="320"></td>
     <td align="left" valign="middle">
       <b>Latest releases</b><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_provenance-v2.3.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_provenance.json" alt="adiro_provenance"></a><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_geometry-v3.1.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_geometry.json" alt="adiro_geometry"></a><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_drawing_metadata-v7.1.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_drawing_metadata.json" alt="adiro_drawing_metadata"></a><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_drawing_symbology-v5.0.1"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_drawing_symbology.json" alt="adiro_drawing_symbology"></a><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_discipline_core-v4.0.1"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_discipline_core.json" alt="adiro_discipline_core"></a><br>
-      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_facade_discipline-v4.0.1"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_facade_discipline.json" alt="adiro_facade_discipline"></a><br>
+      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_provenance-v2.3.1"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_provenance.json" alt="adiro_provenance"></a><br>
+      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_geometry-v3.1.1"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_geometry.json" alt="adiro_geometry"></a><br>
+      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_drawing_metadata-v8.0.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_drawing_metadata.json" alt="adiro_drawing_metadata"></a><br>
+      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_drawing_symbology-v6.0.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_drawing_symbology.json" alt="adiro_drawing_symbology"></a><br>
+      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_discipline_core-v5.0.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_discipline_core.json" alt="adiro_discipline_core"></a><br>
+      <a href="https://github.com/BuroHappoldMachineLearning/ADIRO/releases/tag/adiro_facade_discipline-v5.0.0"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fburohappoldmachinelearning.github.io%2FADIRO%2Fbadges%2Fadiro_facade_discipline.json" alt="adiro_facade_discipline"></a><br>
       <sub>Renamed from <code>adiro_common_symbols</code>, <code>adiro_domain_common</code> and <code>adiro_facade_domain</code> (<a href="https://github.com/BuroHappoldMachineLearning/ADIRO/issues/281">#281</a>); the old releases stay published.</sub><br>
     </td>
     <td align="left" valign="middle">
@@ -31,7 +31,7 @@
   </tr>
 </table>
 
-<p align="center"><a href="https://doi.org/10.5281/zenodo.24319134"><img src="https://zenodo.org/badge/1165500639.svg" alt="DOI"></a></p>
+<p align="center"><a href="https://doi.org/10.5281/zenodo.24319134"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.24319134.svg" alt="DOI"></a></p>
 
 ADIRO (*AEC Drawing Information Representation Ontologies*) is a set of ontologies for AEC (*Architecture, Engineering, and Construction*) drawing representation, designed to support machine learning tasks, in particular information extraction workflows.
 

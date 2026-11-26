@@ -62,6 +62,9 @@ carries a description: a `skos:definition`, or, until its module is split, an `r
 is accepted too, since pyLODE renders it as well). A second check lists the terms that have an `rdfs:comment` and no
 `skos:definition`, advisory until the last module is split (`ENFORCE_DEFINITIONS=1` makes it blocking). Terms from other namespaces are exempt by design: an external term declared as a local stub is
 a name, not a definition — the definition lives at the source, which is what its `rdfs:isDefinedBy` points at.
+A deprecated module is exempt too: it had its final release and cannot be released again, so its terms are its
+successor's to define. A deprecated term of a live module is not asked to split its comment, which points to the term
+that replaces it, but a stub with no text at all is still reported ([#298](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/298)).
 The check is advisory while the existing backlog is cleared ([#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87)); set `ENFORCE_DESCRIPTIONS=1`
 to promote it to a blocking error, and `LIST_UNDESCRIBED=1` to list every term it finds.
 

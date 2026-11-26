@@ -74,7 +74,9 @@ a correct statement about one query-layer module read as though it settled the m
 Material-for-MkDocs static site → GitHub Pages at **https://burohappoldmachinelearning.github.io/ADIRO/**.
 
 - **Deploy workflow:** `.github/workflows/generate-deploy-docs.yml`. Triggers on push to `main`/`master` and
-  manual `workflow_dispatch`. Jobs: `validate` + `test-ttl2md` + `test-docs` → `generate-docs` → `deploy`. Its runs are
+  manual `workflow_dispatch`. Jobs: `validate` + `test-ttl2md` + `test-docs` → `generate-docs` → `deploy`. `generate-docs` uploads the Pages artifact, a job
+  before `deploy` uses it, and `deploy` tries `deploy-pages` a second time after a pause: uploaded a second earlier, the artifact was sometimes
+  not yet listed ([#319](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/319)). Its runs are
   serialised; the checks of the published site run after it in **`post-deploy-checks.yml`** ([#217](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/217)): started by
   `workflow_run` when a deploy of `main` succeeds, with its own queue (a newer successful deploy cancels the checks of an older one; a failed one cancels nothing), so a
   deploy never waits for the previous deploy's checks. Its jobs are `check-links` (lychee, external links of the built site,
@@ -138,13 +140,16 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   modularization write-ups) in `docs/specification/design-decisions/`.
 
 ## Validation & YouTrack-sync CI
-- **`.github/workflows/validate-ontology.yml`** — on PRs to any branch; runs `scripts/validate_ontology.py`
+- **`.github/workflows/validate-ontology.yml`** — on PRs to any branch that change what it reads (`src/`, `versions/`, `assets/`,
+  `changelogs/`, `config/`, the scripts it runs and imports, the dependencies; [#316](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/316)); runs `scripts/validate_ontology.py`
   over `src/*.ttl` (parse check, circular-subclass detection, ensures an `owl:Ontology` declaration, and
   per-module version consistency — `owl:versionInfo` == `owl:versionIRI` tail == ontology IRI + version), plus
   `scripts/compat_diff.py` (RES-67, *warn* mode) which flags when a module's declared SemVer bump is smaller
   than its change requires. It compares SKOS concepts and schemes too, as individuals: their classes and everything said of
-  them, so a change to a field kind is released ([#254](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/254)). The same validate step gates the deploy workflow. The workflow also runs the repository's
-  `tests/` (`pytest`) on the PR; they used to run only on a push to `main`, after a failing test could already have merged. On a PR (`BASE_REF` set) it also
+  them, so a change to a field kind is released ([#254](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/254)). The same validate step gates the deploy workflow. The repository's `tests/` (`pytest`) run on **every** PR in their own
+  check, **`tests.yml`** ("Tests", [#316](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/316)); they used to run only on a push to `main`, after a failing test could already have merged, and then as a step of
+  this workflow, where a failing test read as an ontology failure. The validator's check for internal tool names, which reads files outside
+  the paths above, is also a test of the real repository (`tests/test_internal_names.py`), so it runs on every PR. On a PR (`BASE_REF` set) it also
   warns when `src/<module>.ttl` changed but `changelogs/<module>.md` did not
   ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)); advisory, and `ENFORCE_CHANGELOG=1`
   makes it blocking. The warning appears in the QC comment (`ontology-reasoning.yml`). It also requires every module's
@@ -157,9 +162,9 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   the gate is the warn step above. Each listed change names what changed (for an annotation change, which annotation)
   and links to its line in the PR diff (`diff`) and in `src/<module>.ttl` at the PR's head commit (`file`)
   ([#181](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/181), [#183](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/183));
-  the link context comes from `COMPAT_LINK_REPO` / `COMPAT_LINK_SHA` / `COMPAT_LINK_PR` / `COMPAT_LINK_BASE_REPO`, so a local run lists the changes without links.
+  the link context comes from `COMPAT_LINK_REPO` / `COMPAT_LINK_SHA` / `COMPAT_LINK_PR` / `COMPAT_LINK_BASE_REPO`, so a local run lists the changes without links. A module with more than 5 changes has its list collapsed behind `<details>` (the module's line, its count and its bump level stay visible; the threshold is the guidance comment's, [#297](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/297)).
 - **`.github/workflows/ontology-reasoning.yml`** — on PRs touching `src/**.ttl` (RES-36), runs an OWL 2 DL
-  reasoner (**HermiT**) + ROBOT `report` over the whole suite at latest and posts a sticky comment (built by `scripts/qc_comment.py`: the verdict, then **Important checks** (the repository's own, from `validate_ontology.py`, with each module's findings in an expandable Findings column), then **Minor checks** (ROBOT: a row per rule with a grouped preview, the full rows kept as a run artifact), and the introduction collapsed at the bottom, with no internal tracker IDs). The
+  reasoner (**HermiT**) + ROBOT `report` over the whole suite at latest and posts a sticky comment (built by `scripts/qc_comment.py`: the verdict, then **Important checks** (the repository's own, from `validate_ontology.py`, with each module's findings in an expandable Findings column; compared with the base branch, whose findings the workflow computes with the base's own script (`--json`), so the table lists only the modules whose findings the pull request changed (new ones marked, resolved ones listed) and every error, and the unchanged warnings go into a collapsed "Backlog" block; a renamed module is compared with its predecessor, and without base findings every module is listed, [#311](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/311)), then **Minor checks** (ROBOT: a row per rule with a grouped preview, the full rows kept as a run artifact), and the introduction collapsed at the bottom, with no internal tracker IDs). The
   **reasoner is a blocking gate** — a PR that makes the merged suite inconsistent / unsatisfiable / non-DL (the script also validates the OWL 2 DL profile with ROBOT, because the reasoner accepts illegal punning; the standing "undeclared term" violations are left out, [#157](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/157))
   fails the check; ROBOT `report` stays **advisory** (warn-only). It calls `scripts/run_reasoning.sh` — the
   *same* script you run locally (below) — so CI and local match. Imports resolve offline via `src/catalog-v001.xml`.
@@ -185,14 +190,17 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   label, which the README's "Build status" column counts (`docs/contribute/build-status.md` explains each badge).
 - **`.github/workflows/worklog-conflicts.yml`** ([#206](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/206)) — every
   pull request adds a worklog entry at the top of `docs/ai/worklog.md`, so two open pull requests conflict there once one merges. After
-  every push to `main` (and when a pull request is opened or pushed to, through `pull_request_target`, which runs even on a conflicting pull
+  every push to `main` (once a day too, in case GitHub drops an event, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296); and when a pull request is opened or pushed to, through `pull_request_target`, which runs even on a conflicting pull
   request and always runs `main`'s copy of the workflow), the **ADIRO Bot** merges `main` into each open same-repository
-  pull request whose **only** conflicting file is the worklog and whose two sides only *add* lines to it, keeping both entries (the pull
-  request's first), and pushes the merge commit, which starts the checks again. It pushes only after the validation and the tests pass on
-  the merged tree; if one fails, it pushes nothing and says so in a comment on the pull request. It pushes the merge with the `main`
+  pull request whose **only** conflicting files are the worklog and the module changelogs (`changelogs/*.md`, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296)) and whose two sides only *add* lines to them, keeping both entries (the pull
+  request's first; not in a changelog where either side adds a version heading, a release cut, or both add the same heading), and pushes the merge commit, which starts the checks again. It pushes only after the validation and the tests pass on
+  the merged tree; if one fails, it pushes nothing and says so in a comment on the pull request. So **Tests**, **Validate Ontology** and the
+  guidance comment skip its merge commits (`github.actor` is the bot, except on `release/next`), and its verification runs the validator
+  with the same `ENFORCE_*` flags as `validate-ontology.yml` (`tests/test_ci_split.py`, [#316](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/316)); the reasoner, a gate the bot does not run,
+  still runs. It pushes the merge with the `main`
   commit it verified, even when `main` has moved on since, because the docs deploy commits to `main` about a minute after every merge
   ([#224](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/224)), and accepts that commit only if it is a commit of `main`;
-  the next run merges the rest. The run summary says, for each pull request (forks included), what it did or why it did not push; a push that fails for another reason than a moved branch fails the job, with git's error. Any other conflict, a fork pull request
+  the next run merges the rest. The run summary says, for each pull request (forks included), what it did or why it did not push; a push that fails for another reason than a moved branch fails the job, with git's error. Any other conflict (the bot then comments on the pull request with the conflicting files and, for the worklog, a generated page and a changelog, what to do with each, and removes the comment when a push to the branch leaves it mergeable; not on `release/next`, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296)), a fork pull request
   and a branch that moved during the run are left to the author (the push is leased on the head the run saw). The job that runs the pull request's code
   has no secrets; the job that pushes runs only `main`'s `scripts/worklog_conflicts.py` and pushes only the tree that was verified.
 
@@ -246,7 +254,7 @@ commands directly, but Git Bash is simpler.
   rare, serious findings rendered as a red `[!CAUTION]` alert (the first one is removing or renaming the `exampleImage`
   property), a registry in `scripts/pr_guidance.py` like the issue types; a caution or a suggestion alone is enough for
   the comment to exist. All three PR comments (version impact, QC, guidance) are posted as the
-  ADIRO Bot through `.github/actions/sticky-comment`; a same-repo PR is handled by each workflow itself; a **fork PR** (no access to the app secrets) is handled by
+  ADIRO Bot through `.github/actions/sticky-comment` (a report over GitHub's 65,536-character limit is cut at a line, with the full report in the run summary, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296)); a same-repo PR is handled by each workflow itself; a **fork PR** (no access to the app secrets) is handled by
   `.github/workflows/pr-comments-fork.yml` (`pull_request_target`), which posts the version-impact and guidance
   comments from **base-branch code only**, reading the fork's `src/` and `changelogs/` as data (never run
   anything from the fork there). The QC report for a fork PR is in the `reason` job's summary; the reasoner still gates.
@@ -259,7 +267,7 @@ commands directly, but Git Bash is simpler.
 
 ## Versioning
 **Per-module SemVer** — each `src/*.ttl` is versioned independently via its own `owl:versionIRI` +
-`owl:versionInfo` (currently `adiro_provenance` 2.3.0; `adiro_geometry` 3.1.0; `adiro_drawing_metadata` 7.1.0; `adiro_drawing_symbology` 5.0.1; `adiro_discipline_core` 4.0.1; `adiro_facade_discipline` 4.0.1). The full scheme — IRI
+`owl:versionInfo` (currently `adiro_provenance` 2.3.1; `adiro_geometry` 3.1.1; `adiro_drawing_metadata` 8.0.0; `adiro_common_symbols` 5.0.1; `adiro_drawing_symbology` 6.0.0; `adiro_discipline_core` 5.0.0; `adiro_domain_common` 4.0.1; `adiro_facade_discipline` 5.0.0; `adiro_facade_domain` 4.0.1). The full scheme — IRI
 strategy, bump rules (compatibility-diff spec), imports policy, deprecation, the tag-driven release flow, and
 changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
 [DATA-A-10](https://bhmlrnd.youtrack.cloud/articles/DATA-A-10); plan/decisions in
@@ -414,8 +422,7 @@ For anyone changing an ontology, agent or person. The sections below give the de
         the version is part of the filename, and renaming on a bump is the established convention). Update the
         `# …  — vX.Y` heading and the `**Version:**` line, add an entry to its **Version history** section
         saying what changed and why, and fix every reference to the old filename —
-        `scripts/generate_docs.py` (it writes the landing-page link), `README.md`, `docs/specification/.pages` (the
-        navigation: a stale entry fails the docs build), and any doc that links it.
+        `scripts/generate_docs.py` (it writes the landing-page link), `README.md`, and any doc that links it (`docs/specification/.pages` names the ORSD by the pattern `ORSD_*.md`, so a rename needs no edit there, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296)).
       - **Use-case ORSDs** (`UC-*/UC-*.md`) — bump **both** places: the `**Version:**` field in the header
         line at the top of the file, **and** a new entry in the final *Version History* section listing the
         changes and stating whether the revision is MAJOR or MINOR. Then update that use case's row in
@@ -483,6 +490,14 @@ For anyone changing an ontology, agent or person. The sections below give the de
     classes declared as local stubs (PROV, GeoSPARQL) are not ours to classify. It only produced a standing list of root
     classes nobody acts on. **Do not assert `rdfs:subClassOf owl:Thing` to silence it**: `owl:Thing` is implicit for every
     class, and the compatibility diff reads an added superclass as a change (a potentially breaking, MAJOR one).
+  - **`missing_obsolete_label` is deliberately absent too** ([#299](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/299)).
+    It is an OBO convention (a deprecated term's label starts with "obsolete") that ADIRO's deprecation policy does not
+    follow: a deprecated term keeps its released label, beside `owl:deprecated` and `dcterms:isReplacedBy`. For the same
+    reason `scripts/qc_comment.py` leaves out of the QC comment, and counts in its "About these checks" note, the
+    findings that only record a deprecation: a stub's own axioms, its restrictions included (`deprecated_class_reference`,
+    `deprecated_property_reference`), its equivalence to its
+    replacement (`equivalent_pair`) and their shared label (`duplicate_label`). A live term that refers to a deprecated
+    class is still shown.
 - **Every ADIRO term needs a `skos:definition`.** A term's **definition** (what it is, one to three sentences, in your
   own words, `@en`) is a `skos:definition`, and **`rdfs:comment` is the commentary**: rationale, examples, the standard a
   term corresponds to and how it differs, links to issues ([#273](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/273), decided in
@@ -493,7 +508,9 @@ For anyone changing an ontology, agent or person. The sections below give the de
   **absent** from `config/robot_report_profile.txt` (a profile lists the checks that run; omitting one
   disables it, and the file format accepts no comments to say so). Reasons in
   `docs/specification/design-decisions/usage-of-annotation-properties.md`. `scripts/validate_ontology.py` reports
-  ADIRO-namespace terms that lack a description (external stubs exempt — their definitions live at the source). It is
+  ADIRO-namespace terms that lack a description (external stubs exempt — their definitions live at the source; so are
+  the terms of a deprecated module, and a deprecated stub is not asked to split its "Deprecated: use …" comment,
+  [#298](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/298)). It is
   advisory while the backlog in [#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87) is
   cleared; `ENFORCE_DESCRIPTIONS=1` makes it blocking, `LIST_UNDESCRIBED=1` lists every term.
 - **Versioning.** Record any change to a module's semantics under that module's `changelogs/<module>.md`

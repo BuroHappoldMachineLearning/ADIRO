@@ -2,9 +2,10 @@
 
 <div class="adiro-actions" markdown="span">
 <details class="adiro-version">
-<summary class="md-button">Version 3.1.0 (latest)</summary>
+<summary class="md-button">Version 3.1.1 (latest)</summary>
 <ul>
-<li><a href="./" class="adiro-version-current" aria-current="page">3.1.0 (latest)</a></li>
+<li><a href="./" class="adiro-version-current" aria-current="page">3.1.1 (latest)</a></li>
+<li><a href="3.1.0/">3.1.0</a></li>
 <li><a href="3.0.0/">3.0.0</a></li>
 <li><a href="../aec_geometry/">aec_geometry 2.0.0</a></li>
 <li><a href="../aec_geometry/1.0.1/">aec_geometry 1.0.1</a></li>
@@ -19,7 +20,7 @@
 Foundational, domain-neutral module for geometry. It records where something sits on a drawing page as a bounding box, read against an explicit coordinate frame. Each box carries its own provenance and confidence. It reuses GeoSPARQL, is imported by the drawing modules, and is shared across use cases.
 
 - **IRI:** `https://w3id.org/adiro/adiro_geometry`
-- **Versioned IRI:** `https://w3id.org/adiro/adiro_geometry/3.1.0`
+- **Versioned IRI:** `https://w3id.org/adiro/adiro_geometry/3.1.1`
 - **Imports:** `adiro_provenance`
 
 ## Interactive view

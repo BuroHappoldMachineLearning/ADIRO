@@ -167,32 +167,40 @@ jobs:
           # A week, not a day: post-deploy-checks.yml reads it after the run, and a manual run of it checks the latest
           # successful deploy, which can be days old (#217)
           retention-days: 7
+
+      - name: Upload the Pages artifact
+        # Here, a job before the deploy (#319): uploaded in the deploy job, a second before `deploy-pages` asked for it,
+        # the artifact was sometimes not yet listed ("No artifacts named github-pages"), and the deploy failed.
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/
   
   deploy:
     needs: generate-docs
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment_retry.outputs.page_url }}
     permissions:
       pages: write
       id-token: write
     
     steps:
-      - name: Download workflow artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: docs
-          path: site/
-      
       - name: Setup Pages
         uses: actions/configure-pages@v4
-      
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: site/
-      
+
+      # The Pages artifact is uploaded by generate-docs (#319). GitHub's list of a run's artifacts can still lag, so a
+      # failed deploy is tried once more after a pause; the second failure fails the job (and opens the alert issue).
       - name: Deploy to GitHub Pages
         id: deployment
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+
+      - name: Wait before the second try
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 30
+
+      - name: Deploy to GitHub Pages (second try)
+        id: deployment_retry
+        if: steps.deployment.outcome == 'failure'
         uses: actions/deploy-pages@v4

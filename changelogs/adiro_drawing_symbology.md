@@ -5,6 +5,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [6.0.0] — 2026-11-26
+
 ### Changed
 - **`StandaloneDrawingReference` says that an entry in a drawing index is one** ([#269](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/269)): the drawing number in a row naming a drawing is a complete reference to that drawing. Nothing else in the definition changes.
 - **`denotesDrawingSheet` and `inlineReferencesLayout` have a `skos:definition`** ([#273](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/273)); the rest of each old comment stays as the `rdfs:comment`.

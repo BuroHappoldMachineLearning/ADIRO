@@ -1,12 +1,14 @@
-"""Merge `main` into a pull request whose only conflict is the worklog (#206).
+"""Merge `main` into a pull request whose only conflicts are the worklog and the changelogs (#206, #296).
 
 Every pull request adds an entry at the top of `docs/ai/worklog.md`, so two open pull requests conflict there as soon as one
 merges. The conflict carries no information: both sides add a new, independent entry and the resolution is always "keep both".
+The same holds for a module's changelog, where two pull requests on one module each add an entry under `[Unreleased]`
+(#296), except when both add the same heading (`### Changed` under an empty `[Unreleased]`), which would be repeated.
 `.github/workflows/worklog-conflicts.yml` runs this script in three steps:
 
 - ``find``   lists the open same-repository pull requests into the default branch that GitHub reports as conflicting.
-- ``merge``  merges the default branch into one of them in a scratch checkout. It acts only when the worklog is the sole
-             conflicting file and both sides only *add* lines to it; it then keeps both sides (the pull request's entry first,
+- ``merge``  merges the default branch into one of them in a scratch checkout. It acts only when every conflicting file is
+             the worklog or a changelog and both sides only *add* lines to it; it then keeps both sides (the pull request's first,
              because it merges last), commits, and with ``--verify`` runs the validation and the tests on the merged tree.
              This step runs the pull request's code, so the workflow gives it no secrets.
 - ``push``   is the same merge without ``--verify``, run from the default branch's copy of this script, with the default
@@ -17,7 +19,8 @@ merges. The conflict carries no information: both sides add a new, independent e
              pushes it as the ADIRO Bot, leased on the head ``find`` saw, so a branch that moved meanwhile is left alone. A
              default branch that moved on is merged by the next run.
 
-Any other conflict, a worklog edit that is not a pure addition, or a failing check is left to the author.
+Any other conflict, a worklog or changelog edit that is not a pure addition (a release cut moves `[Unreleased]`), the
+same heading added on both sides, or a failing check is left to the author, with a comment naming the files.
 Standard library only, so the workflow runs it with the runner's ``python3``.
 """
 from __future__ import annotations
@@ -34,7 +37,8 @@ WORKLOG = "docs/ai/worklog.md"
 BOT_NAME = "adiro-bot[bot]"
 BOT_EMAIL = "340218862+adiro-bot[bot]@users.noreply.github.com"
 
-# The checks `validate-ontology.yml` runs on every pull request; tests/test_worklog_conflicts.py keeps the two in step.
+# The checks a pull request runs (`validate-ontology.yml`, and `tests.yml` for the tests, #316); tests/test_worklog_conflicts.py
+# keeps the test command in step.
 VERIFY = [
     ("dependencies", ["uv", "sync", "--python", "3.12", "--no-install-project"]),
     ("validation", ["uv", "run", "--python", "3.12", "--no-project", "python", "scripts/validate_ontology.py"]),
@@ -48,8 +52,8 @@ READY, CLEAN, OTHER, EDITED, FAILED = "ready", "clean", "other-conflicts", "work
 # Why a pull request is not pushed, for the run summary (#224: a run that pushes nothing must say why).
 REASONS = {
     CLEAN: "it no longer conflicts with the default branch",
-    OTHER: "it conflicts in other files than the worklog; left to its author",
-    EDITED: "its worklog change is not a pure addition; left to its author",
+    OTHER: "it conflicts in other files than the worklog and the changelogs; left to its author",
+    EDITED: "a worklog or changelog change is not a pure addition, or both sides add the same heading; left to its author",
     FAILED: "a check fails on the merged tree; the comment on the pull request says which",
 }
 SHA_RE = re.compile(r"[0-9a-f]{40}")
@@ -100,17 +104,25 @@ def candidates(prs: list[dict]) -> tuple[list[dict], list[int]]:
 HUNK = re.compile(r"^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@", re.M)
 
 
-def show(repo: Path, rev: str) -> list[str]:
-    return git(repo, "show", f"{rev}:{WORKLOG}").stdout.splitlines(keepends=True)
+CHANGELOG = re.compile(r"changelogs/[^/]+\.md")  # a module's changelog: pull requests add under [Unreleased] (#296)
 
 
-def insertions(repo: Path, base: str, side: str) -> dict[int, list[str]] | None:
-    """The lines `side` adds to the worklog since `base`, keyed by the base line they follow (0 = the top).
+def resolvable(path: str) -> bool:
+    """A file whose conflict the bot resolves, when both sides only add lines: the worklog and the module changelogs."""
+    return path == WORKLOG or bool(CHANGELOG.fullmatch(path))
+
+
+def show(repo: Path, rev: str, path: str = WORKLOG) -> list[str]:
+    return git(repo, "show", f"{rev}:{path}").stdout.splitlines(keepends=True)
+
+
+def insertions(repo: Path, base: str, side: str, path: str = WORKLOG) -> dict[int, list[str]] | None:
+    """The lines `side` adds to `path` since `base`, keyed by the base line they follow (0 = the top).
 
     None when `side` also removes or rewrites a line: then it is not a pure addition and the bot leaves it alone.
     """
-    diff = git(repo, "diff", "--no-ext-diff", "--no-color", "-U0", base, side, "--", WORKLOG).stdout
-    lines = show(repo, side)
+    diff = git(repo, "diff", "--no-ext-diff", "--no-color", "-U0", base, side, "--", path).stdout
+    lines = show(repo, side, path)
     added = {}
     for old_start, old_count, new_start, new_count in HUNK.findall(diff):
         if old_count != "0":
@@ -120,17 +132,35 @@ def insertions(repo: Path, base: str, side: str) -> dict[int, list[str]] | None:
     return added
 
 
-def keep_both(base: list[str], ours: dict[int, list[str]], theirs: dict[int, list[str]]) -> str:
-    """The base worklog with both sides' additions, ours (the pull request's) first where both add at the same point.
+RELEASE_HEADING = re.compile(r"## \[\d")  # `## [1.1.0]`: only a release cut adds one
+
+
+def unsafe_changelog_merge(ours: dict[int, list[str]], theirs: dict[int, list[str]]) -> bool:
+    """Keeping both sides' additions to a changelog would be wrong.
+
+    Either side adds a version heading: a release cut, which can be a pure addition (it inserts `## [1.1.0]` above the
+    entries it releases), so the other side's entry would land in the released section. Or both add the same heading
+    (`### Changed` under an empty `[Unreleased]`), which would be repeated.
+    """
+    added = lambda side: [line for lines in side.values() for line in lines]
+    if any(RELEASE_HEADING.match(line) for line in added(ours) + added(theirs)):
+        return True
+    headings = lambda side: {line.strip() for line in added(side) if line.startswith("#")}
+    return bool(headings(ours) & headings(theirs))
+
+
+def keep_both(base: list[str], ours: dict[int, list[str]], theirs: dict[int, list[str]], gap: bool = True) -> str:
+    """The base file with both sides' additions, ours (the pull request's) first where both add at the same point.
 
     Built from the two sides' insertions rather than from `git merge-file`, which treats a line that ends both new entries
-    (a blank line, or the same closing sentence) as shared and keeps it once, under the second entry.
+    (a blank line, or the same closing sentence) as shared and keeps it once, under the second entry. `gap` puts a blank
+    line between two worklog entries; two changelog bullets at the same point stay one list.
     """
     out = []
     for i in range(len(base) + 1):
         a, b = ours.get(i, []), theirs.get(i, [])
-        gap = ["\n"] if a and b and a[-1].strip() else []
-        out += a + gap + b
+        gap_line = ["\n"] if gap and a and b and a[-1].strip() else []
+        out += a + gap_line + b
         if i < len(base):
             out.append(base[i])
     return "".join(out)
@@ -143,27 +173,35 @@ def merge(repo: Path, head: str, base: str, branch: str, verify=None, runner=sub
     """
     head_sha = git(repo, "rev-parse", head).stdout.strip()
     base_sha = git(repo, "rev-parse", base).stdout.strip()
-    result = {"head_sha": head_sha, "base_sha": base_sha}
+    result = {"head_sha": head_sha, "base_sha": base_sha, "branch": branch}
     git(repo, "checkout", "--quiet", "--detach", head_sha)
     merged = git(repo, "-c", f"user.name={BOT_NAME}", "-c", f"user.email={BOT_EMAIL}",
                  "merge", "--no-ff", "--no-commit", base_sha, check=False)
-    conflicts = git(repo, "diff", "--name-only", "--diff-filter=U").stdout.split()
+    # NUL-separated: a file name may hold spaces (the UC pages do), and git quotes a name with unusual characters otherwise.
+    conflicts = [name for name in git(repo, "diff", "--name-only", "--diff-filter=U", "-z").stdout.split("\0") if name]
     if merged.returncode == 0 and not conflicts:
         git(repo, "merge", "--abort", check=False)
         return {**result, "status": CLEAN}
-    if conflicts != [WORKLOG]:
+    if not all(resolvable(path) for path in conflicts):
         git(repo, "merge", "--abort", check=False)
         return {**result, "status": OTHER, "files": conflicts}
     fork_point = git(repo, "merge-base", head_sha, base_sha).stdout.strip()
-    ours, theirs = insertions(repo, fork_point, head_sha), insertions(repo, fork_point, base_sha)
-    if ours is None or theirs is None:
-        git(repo, "merge", "--abort", check=False)
-        return {**result, "status": EDITED}
+    resolved = {}
+    for path in conflicts:
+        in_base = git(repo, "cat-file", "-e", f"{fork_point}:{path}", check=False).returncode == 0
+        ours = insertions(repo, fork_point, head_sha, path) if in_base else None
+        theirs = insertions(repo, fork_point, base_sha, path) if in_base else None
+        if ours is None or theirs is None or (path != WORKLOG and unsafe_changelog_merge(ours, theirs)):
+            git(repo, "merge", "--abort", check=False)
+            return {**result, "status": EDITED, "files": conflicts}
+        resolved[path] = keep_both(show(repo, fork_point, path), ours, theirs, gap=path == WORKLOG)
 
-    (repo / WORKLOG).write_text(keep_both(show(repo, fork_point), ours, theirs), encoding="utf-8", newline="")
-    git(repo, "add", WORKLOG)
-    message = (f"Merge main into {branch}: keep both worklog entries\n\n"
-               f"The only conflict was {WORKLOG}, where both sides add an entry, so both are kept (#206).")
+    for path, text in resolved.items():
+        (repo / path).write_text(text, encoding="utf-8", newline="")
+        git(repo, "add", path)
+    names = ", ".join(conflicts)
+    message = (f"Merge main into {branch}: keep both sides' additions\n\n"
+               f"The only conflicts were in {names}, where both sides only add lines, so both are kept (#206, #296).")
     git(repo, "-c", f"user.name={BOT_NAME}", "-c", f"user.email={BOT_EMAIL}", "commit", "--quiet", "-m", message)
     result["merge_sha"] = git(repo, "rev-parse", "HEAD").stdout.strip()
     result["tree"] = git(repo, "rev-parse", "HEAD^{tree}").stdout.strip()
@@ -179,13 +217,46 @@ def merge(repo: Path, head: str, base: str, branch: str, verify=None, runner=sub
 
 # --- comment --------------------------------------------------------------------------------------------------------
 
-def comment(status: dict, run_url: str) -> str:
-    """The sticky comment for a pull request the bot could not update, or "" (which removes the comment)."""
+RELEASE_BRANCH = "release/next"  # rebuilt by the Release PR workflow: nobody merges into it by hand
+
+
+def file_hint(path: str) -> str:
+    """What to do with one conflicting file, for the comment: the bot's rule where it has one, else nothing."""
+    if path == WORKLOG:
+        return "both sides add an entry: keep both, yours first"
+    if re.fullmatch(r"docs/[^/]+\.(html|ttl|display\.json)|docs/index\.md|docs/ontologies/.+", path):
+        return "a generated page: take `main`'s copy, then run `uv run python scripts/generate_docs.py`"
+    if re.fullmatch(r"changelogs/.+\.md", path):
+        return ("keep `main`'s released sections as they are and put only your new entries under `[Unreleased]`, "
+                "with any of `main`'s that are still there")
+    return ""
+
+
+def comment(status: dict) -> str:
+    """The sticky comment for a pull request the bot could not update, or "" (which removes the comment).
+
+    No link to the run in the text: the sticky comment's footer has it, and a text that changes on every run would
+    repost the comment, with a notification, on every push to `main`.
+    """
+    if status.get("status") in (OTHER, EDITED) and status.get("branch") != RELEASE_BRANCH:
+        lines = []
+        for path in status.get("files", []):
+            hint = file_hint(path)
+            lines.append(f"- `{path}`" + (f": {hint}" if hint else ""))
+        why = ("the ADIRO Bot only merges when every conflicting file is the worklog or a changelog"
+               if status["status"] == OTHER else
+               "the ADIRO Bot merges the worklog and the changelogs only when both sides just add lines, and here one side "
+               "also changes or moves lines (a release cut moves `[Unreleased]`), or both add the same heading")
+        return (f"This pull request conflicts with `main`, and {why}, so it left the merge to you. The conflicting files:\n\n"
+                + "\n".join(lines) + "\n\n"
+                "Merge `main` into the branch, resolve these, and push "
+                "(see [#206](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/206)).")
     if status.get("status") != FAILED:
         return ""
     check = status.get("failed") if status.get("failed") in dict(VERIFY) else "a check"
-    return (f"This pull request conflicts with `main` only in `{WORKLOG}`, and the ADIRO Bot can keep both entries, but on the "
-            f"merged result **{check}** fails ([run]({run_url})), so it did not push the merge. Something on `main` breaks this "
+    return (f"This pull request conflicts with `main` only where both sides add lines (the worklog or a changelog), and the "
+            f"ADIRO Bot can keep both, but on the "
+            f"merged result **{check}** fails, so it did not push the merge. Something on `main` breaks this "
             f"pull request: merge `main` into the branch, fix what fails, and push. See "
             f"[#206](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/206).")
 
@@ -207,7 +278,6 @@ def main(argv: list[str] | None = None) -> int:
         m.add_argument("--out", type=Path, required=True, help="the status file to write (merge) or read (push)")
     c = sub.add_parser("comment", help="print the sticky comment for a status file")
     c.add_argument("status", type=Path)
-    c.add_argument("--run-url", required=True)
     args = parser.parse_args(argv)
 
     if args.cmd == "find":
@@ -218,7 +288,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.cmd == "comment":
         status = json.loads(args.status.read_text(encoding="utf-8")) if args.status.exists() else {}
-        print(comment(status, args.run_url))
+        print(comment(status))
         return 0
     if args.cmd == "merge":
         status = merge(args.repo, args.head, args.base, args.branch, verify=VERIFY)
