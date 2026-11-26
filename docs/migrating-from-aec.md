@@ -57,7 +57,7 @@ whether `aec_drawing_metadata#…` or `adiro_drawing_metadata#…`, straight to 
 Three modules changed name a second time ([#281](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/281)): `adiro_common_symbols` is now `adiro_drawing_symbology`, `adiro_domain_common` is now
 `adiro_discipline_core` and `adiro_facade_domain` is now `adiro_facade_discipline`. Nothing else about them changes: the terms, definitions and axioms are
 those of the final release of the module they replace, under new IRIs, and the numbering continues (the first release of each new module is the old
-final release plus a MAJOR). The old modules stay published, deprecated, for one release cycle, and every old release keeps its IRI.
+final release plus a MAJOR). The old modules stayed in the repository's sources for one release cycle; their releases stay published, deprecated, and every old release keeps its IRI.
 
 The mapping above, the `rewrite` command and the `links` command send an IRI of the first, the second or any earlier name straight to the module's
 current name, so a graph written against `aec_common_symbols` or `adiro_common_symbols` ends at `adiro_drawing_symbology`. The prefixes used in this

@@ -97,10 +97,22 @@ def superseded(renames, modules):
 
 
 def retired(renames, modules):
-    """The modules a renamed one replaced that have left `modules` (src/) while their successor is there: their releases stay
-    published, and their pages are generated from their final release."""
+    """The modules a renamed one replaced that have left `modules` (src/) while a later name of theirs is there: their
+    releases stay published, and their pages are generated from their final release.
+
+    The later name is followed along a chain (#323): once `adiro_common_symbols` leaves src/, `aec_common_symbols`, which it
+    replaced, is still retired, because `adiro_drawing_symbology` carries the line on."""
     present = set(modules)
-    return {old for new, old in renames.items() if old not in present and new in present}
+
+    def continues(module):
+        seen = set()
+        while (module := successor(renames, module)) is not None and module not in seen:
+            if module in present:
+                return True
+            seen.add(module)
+        return False
+
+    return {old for old in renames.values() if old not in present and continues(old)}
 
 
 def iri_map(renames):

@@ -46,9 +46,10 @@ site, generated from each final release (`generate_docs.find_ttl_files` adds it 
 Three of the `adiro_*` modules were renamed in turn ([#281](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/281)): `adiro_common_symbols` to `adiro_drawing_symbology`, `adiro_domain_common` to
 `adiro_discipline_core` and `adiro_facade_domain` to `adiro_facade_discipline`. Each was released once more as deprecated (`owl:deprecated true`,
 `dcterms:isReplacedBy` its successor), and its successor entered `src/` as a copy of that final release under the new names (the history of each
-module now runs through three names, `aec_*`, `adiro_*` and the new one, which `config/module_renames.json` allows as a chain). The old files stay in
-`src/` for one release cycle, with their pages and releases; the compatibility diff reads a successor as a MAJOR change of its predecessor
-(`MODULE_RENAMED`) and, a cycle later, the old module as `MODULE_RETIRED`. The prefixes follow: `adsym:` for `adiro_drawing_symbology` (formerly
+module now runs through three names, `aec_*`, `adiro_*` and the new one, which `config/module_renames.json` allows as a chain). The old files stayed in
+`src/` for one release cycle and then left it ([#323](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/323)); their releases stay, and their pages are generated from each final release, as
+for the `aec_*` modules (`module_renames.retired` follows the chain, so the `aec_*` predecessors of the three stay retired too). The compatibility diff reads a successor as a MAJOR change of its predecessor
+(`MODULE_RENAMED`) and the old module, when it leaves `src/`, as `MODULE_RETIRED`. The prefixes follow: `adsym:` for `adiro_drawing_symbology` (formerly
 `csymbol:`) and `adcore:` for `adiro_discipline_core` (formerly `dcommon:`). `docs/migrating-from-aec.md` explains how to move data and links.
 
 DAnO is **not** part of the suite: ADIRO ships no DAnO artifact — no module, no import, no annotation-level

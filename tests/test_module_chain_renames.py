@@ -79,7 +79,8 @@ def test_the_superseded_modules_of_a_chain(repo):
     renames = mr.load(repo)
     assert mr.superseded(renames, ["aec_a", "adiro_a", "adiro_z"]) == {"aec_a", "adiro_a"}
     assert mr.superseded(renames, ["adiro_a", "adiro_z"]) == {"adiro_a"}  # aec_a has left src/
-    assert mr.retired(renames, ["adiro_z"]) == {"adiro_a"}
+    # both old names: aec_a has left src/ too, and adiro_z carries its line on, so its pages keep being generated (#323)
+    assert mr.retired(renames, ["adiro_z"]) == {"aec_a", "adiro_a"}
 
 
 # --- the compatibility check ----------------------------------------------------------------------------------------
@@ -242,3 +243,13 @@ def test_the_generated_page_of_the_new_module_links_the_pages_of_both_old_names(
     page = (repo / "docs" / "ontologies" / "adiro_z.md").read_text(encoding="utf-8")
     assert "Version 3.0.1 (latest)" in page
     assert '<a href="../adiro_a/3.0.0/">adiro_a 3.0.0</a>' in page and '<a href="../aec_a/1.0.0/">aec_a 1.0.0</a>' in page
+
+
+def test_both_old_names_are_retired_once_the_middle_one_leaves_src(repo):
+    """#323: when adiro_a leaves src/, aec_a is still retired, because adiro_z carries the line on; so their pages keep being
+    generated from their final releases, and neither needs a changelog entry or a fix."""
+    (repo / "src" / "adiro_a.ttl").unlink()
+    renames = mr.load(repo)
+    assert mr.retired(renames, [p.stem for p in (repo / "src").glob("*.ttl")]) == {"aec_a", "adiro_a"}
+    assert mr.retired(renames, ["adiro_a", "adiro_z"]) == {"aec_a"}, "while the middle one is there, only the first is retired"
+    assert mr.retired(renames, []) == set(), "a line with no module left in src/ is not retired but removed"
