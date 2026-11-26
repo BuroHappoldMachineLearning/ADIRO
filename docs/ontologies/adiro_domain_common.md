@@ -7,9 +7,9 @@ search:
 
 <div class="adiro-actions" markdown="span">
 <details class="adiro-version">
-<summary class="md-button">Version 4.0.1 (adiro_discipline_core 4.0.1 available)</summary>
+<summary class="md-button">Version 4.0.1 (adiro_discipline_core 5.0.0 available)</summary>
 <ul>
-<li><a href="../adiro_discipline_core/">adiro_discipline_core 4.0.1 (latest)</a></li>
+<li><a href="../adiro_discipline_core/">adiro_discipline_core 5.0.0 (latest)</a></li>
 <li><a href="./" class="adiro-version-current" aria-current="page">4.0.1 (final)</a></li>
 <li><a href="4.0.0/">4.0.0</a></li>
 <li><a href="../aec_domain_common/">aec_domain_common 3.0.1</a></li>

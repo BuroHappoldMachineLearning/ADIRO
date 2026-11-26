@@ -2,9 +2,9 @@
 
 <div class="adiro-actions" markdown="span">
 <details class="adiro-version">
-<summary class="md-button">Version 4.0.1 (latest)</summary>
+<summary class="md-button">Version 5.0.0 (latest)</summary>
 <ul>
-<li><a href="./" class="adiro-version-current" aria-current="page">4.0.1 (latest)</a></li>
+<li><a href="./" class="adiro-version-current" aria-current="page">5.0.0 (latest)</a></li>
 <li><a href="../adiro_facade_domain/">adiro_facade_domain 4.0.1</a></li>
 <li><a href="../adiro_facade_domain/4.0.0/">adiro_facade_domain 4.0.0</a></li>
 <li><a href="../aec_facade_domain/">aec_facade_domain 3.0.1</a></li>
@@ -23,7 +23,7 @@
 Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbology, and discipline-core vocabularies.
 
 - **IRI:** `https://w3id.org/adiro/adiro_facade_discipline`
-- **Versioned IRI:** `https://w3id.org/adiro/adiro_facade_discipline/4.0.1`
+- **Versioned IRI:** `https://w3id.org/adiro/adiro_facade_discipline/5.0.0`
 - **Imports:** `adiro_discipline_core`, `adiro_drawing_metadata`
 
 ## Interactive view
