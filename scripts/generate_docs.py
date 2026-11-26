@@ -618,7 +618,7 @@ def generate_index(ttl_files: list[Path], output_dir: Path) -> None:
     lines.append('![ADIRO](img/adiro_banner.png){ .adiro-banner }')
     lines.append("")
     # The DOI of the repository on Zenodo (#275): the concept DOI, which always resolves to the latest archived release
-    lines.append("[![DOI](https://zenodo.org/badge/1165500639.svg)](https://doi.org/10.5281/zenodo.24319134)")
+    lines.append("[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24319134.svg)](https://doi.org/10.5281/zenodo.24319134)")
     lines.append("")
     lines.append(
         "ADIRO (*AEC Drawing Information Representation Ontologies*) is a set of "
