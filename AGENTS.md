@@ -185,10 +185,10 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   label, which the README's "Build status" column counts (`docs/contribute/build-status.md` explains each badge).
 - **`.github/workflows/worklog-conflicts.yml`** ([#206](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/206)) — every
   pull request adds a worklog entry at the top of `docs/ai/worklog.md`, so two open pull requests conflict there once one merges. After
-  every push to `main` (and when a pull request is opened or pushed to, through `pull_request_target`, which runs even on a conflicting pull
+  every push to `main` (once a day too, in case GitHub drops an event, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296); and when a pull request is opened or pushed to, through `pull_request_target`, which runs even on a conflicting pull
   request and always runs `main`'s copy of the workflow), the **ADIRO Bot** merges `main` into each open same-repository
-  pull request whose **only** conflicting file is the worklog and whose two sides only *add* lines to it, keeping both entries (the pull
-  request's first), and pushes the merge commit, which starts the checks again. It pushes only after the validation and the tests pass on
+  pull request whose **only** conflicting files are the worklog and the module changelogs (`changelogs/*.md`, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296)) and whose two sides only *add* lines to them, keeping both entries (the pull
+  request's first; not in a changelog where either side adds a version heading, a release cut, or both add the same heading), and pushes the merge commit, which starts the checks again. It pushes only after the validation and the tests pass on
   the merged tree; if one fails, it pushes nothing and says so in a comment on the pull request. It pushes the merge with the `main`
   commit it verified, even when `main` has moved on since, because the docs deploy commits to `main` about a minute after every merge
   ([#224](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/224)), and accepts that commit only if it is a commit of `main`;
@@ -246,7 +246,7 @@ commands directly, but Git Bash is simpler.
   rare, serious findings rendered as a red `[!CAUTION]` alert (the first one is removing or renaming the `exampleImage`
   property), a registry in `scripts/pr_guidance.py` like the issue types; a caution or a suggestion alone is enough for
   the comment to exist. All three PR comments (version impact, QC, guidance) are posted as the
-  ADIRO Bot through `.github/actions/sticky-comment`; a same-repo PR is handled by each workflow itself; a **fork PR** (no access to the app secrets) is handled by
+  ADIRO Bot through `.github/actions/sticky-comment` (a report over GitHub's 65,536-character limit is cut at a line, with the full report in the run summary, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296)); a same-repo PR is handled by each workflow itself; a **fork PR** (no access to the app secrets) is handled by
   `.github/workflows/pr-comments-fork.yml` (`pull_request_target`), which posts the version-impact and guidance
   comments from **base-branch code only**, reading the fork's `src/` and `changelogs/` as data (never run
   anything from the fork there). The QC report for a fork PR is in the `reason` job's summary; the reasoner still gates.
@@ -482,6 +482,14 @@ For anyone changing an ontology, agent or person. The sections below give the de
     classes declared as local stubs (PROV, GeoSPARQL) are not ours to classify. It only produced a standing list of root
     classes nobody acts on. **Do not assert `rdfs:subClassOf owl:Thing` to silence it**: `owl:Thing` is implicit for every
     class, and the compatibility diff reads an added superclass as a change (a potentially breaking, MAJOR one).
+  - **`missing_obsolete_label` is deliberately absent too** ([#299](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/299)).
+    It is an OBO convention (a deprecated term's label starts with "obsolete") that ADIRO's deprecation policy does not
+    follow: a deprecated term keeps its released label, beside `owl:deprecated` and `dcterms:isReplacedBy`. For the same
+    reason `scripts/qc_comment.py` leaves out of the QC comment, and counts in its "About these checks" note, the
+    findings that only record a deprecation: a stub's own axioms, its restrictions included (`deprecated_class_reference`,
+    `deprecated_property_reference`), its equivalence to its
+    replacement (`equivalent_pair`) and their shared label (`duplicate_label`). A live term that refers to a deprecated
+    class is still shown.
 - **Every ADIRO term needs a `skos:definition`.** A term's **definition** (what it is, one to three sentences, in your
   own words, `@en`) is a `skos:definition`, and **`rdfs:comment` is the commentary**: rationale, examples, the standard a
   term corresponds to and how it differs, links to issues ([#273](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/273), decided in

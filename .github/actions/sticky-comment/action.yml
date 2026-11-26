@@ -3,7 +3,8 @@ description: >
   Keep one comment per PR, identified by a hidden marker, authored by whatever identity the token
   belongs to (the ADIRO Bot). When the report changes it is deleted and reposted at the bottom of the
   thread; when it is unchanged only the footer is refreshed in place, so the thread stays quiet. An empty
-  or missing report file removes the comment. Comments with the marker written by another identity (the
+  or missing report file removes the comment. A report over GitHub's comment limit is cut at a line, with
+  the full report in the run summary. Comments with the marker written by another identity (the
   old github-actions[bot] ones) are removed best-effort so no duplicate is left behind.
 
 inputs:
@@ -69,7 +70,7 @@ runs:
             }
           }
 
-          const report = fs.existsSync(process.env.STICKY_FILE)
+          let report = fs.existsSync(process.env.STICKY_FILE)
             ? fs.readFileSync(process.env.STICKY_FILE, 'utf8').trim() : '';
           if (!report) {
             if (existing) {
@@ -82,6 +83,22 @@ runs:
           // The footer carries the head SHA and the time, so a reader can tell the report is current.
           const head = (process.env.STICKY_SHA || context.payload.pull_request.head.sha).substring(0, 7);
           const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+
+          // GitHub rejects a comment longer than 65,536 characters (#296). Keep whole lines up to a margin for the marker,
+          // the footer and the note, close any <details> the cut left open, and put the full report in the run summary.
+          const LIMIT = 60000;
+          if (report.length > LIMIT) {
+            const length = report.length;
+            await core.summary.addRaw(report).write();
+            let kept = report.substring(0, LIMIT);
+            kept = kept.substring(0, kept.lastIndexOf('\n'));
+            const open = (kept.match(/<details>/g) || []).length - (kept.match(/<\/details>/g) || []).length;
+            // No run link here: the text must not change from run to run, or the comment is reposted (the footer links it).
+            report = kept + '\n\n' + '</details>\n'.repeat(Math.max(open, 0)) +
+              '\n**Cut short:** GitHub limits a comment to 65,536 characters. The full report is in the summary of the ' +
+              'workflow run linked below.';
+            core.warning(`The report was ${length} characters; the comment carries the first part.`);
+          }
           const stamp = new Date().toISOString().replace('T', ' ').substring(0, 16);
           const footer = '\n\n<sub>Recomputed for `' + head + '` at ' + stamp + ' UTC - [workflow run](' + runUrl + ')</sub>';
           const body = (report.includes(marker) ? report : marker + '\n' + report) + footer;
