@@ -5,6 +5,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 WORKFLOWS = ROOT / ".github" / "workflows"
 ENTRY_POINTS = ("validate_ontology.py", "compat_diff.py")
+# Imported only to order the QC comment's table (#300), which ontology-reasoning.yml renders; validate-ontology.yml
+# never writes the table, so a change to it changes nothing this workflow checks.
+NOT_INPUTS = {"generate_docs.py"}
 
 
 def paths(workflow):
@@ -19,7 +22,7 @@ def local_imports(script, seen=None):
     text = (ROOT / "scripts" / script).read_text(encoding="utf-8")
     for name in re.findall(r"(?m)^\s*(?:import|from) (\w+)", text):
         module = f"{name}.py"
-        if (ROOT / "scripts" / module).is_file() and module not in seen:
+        if (ROOT / "scripts" / module).is_file() and module not in seen and module not in NOT_INPUTS:
             seen.add(module)
             local_imports(module, seen)
     return seen

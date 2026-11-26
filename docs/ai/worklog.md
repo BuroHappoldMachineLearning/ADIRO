@@ -1,3 +1,9 @@
+## 2026-11-26 - The Important checks read in the suite's order, whole, with the checks that are not modules apart ([#300](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/300))
+
+Three changes to the Important checks section of the QC comment, all in `scripts/validate_ontology.py` (not `qc_comment.py`, which the issue named: the section is built by the validator). (1) The definition warnings name every term; the first eight and "... and N more" sat inside a collapsed block anyway. (2) The modules come in the order of the suite, read from `generate_docs.sort_by_dependency` so there is one list (the navigation's), with deprecated modules last (`suite_order`; alphabetical if the docs dependencies are missing). (3) The checks that are not modules (public-repo names, the example image budget, the changelog check when it cannot diff) are lines under the table; against the base ([#311](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/311)) they show only when they changed or have an error.
+- Verified: `tests/test_validate_markdown.py` (4 new tests) and the related QC tests; the section rendered on `main`'s tree.
+- Not run: the workflow (it runs on a pull request touching `src/` or the script; this one touches the script).
+
 ## 2026-11-26 - Documentation sweep: references, tracker keys, stale statements, "drawing", the modularization page and the guide to adding a module ([#304](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/304), [#305](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/305), [#306](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/306))
 
 One pull request for the three issues, as the user asked, opened after [#303](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/303) merged (#306 item 4 edits the note #303 changed). Decisions taken with the user:
