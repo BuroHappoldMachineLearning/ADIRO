@@ -193,7 +193,7 @@ def test_the_push_is_leased_on_the_head_find_saw_and_the_bot_token_job_checks_ou
     push = job(text, "push")
     assert '--force-with-lease="refs/heads/${BRANCH}:${HEAD_SHA}"' in push
     assert not re.search(r"--force(?!-with-lease=)", push) and "+HEAD" not in push, "no bare --force and no + refspec"
-    assert "ref: ${{ github.event.repository.default_branch }}" in push
+    assert "ref: ${{ github.event.repository.default_branch || github.ref_name }}" in push
     assert 'git worktree add --quiet --detach "$RUNNER_TEMP/merge"' in push, "the checkout that loads the local action stays on main"
 
 
@@ -203,7 +203,7 @@ def test_a_resolved_pull_request_has_its_conflict_comment_removed():
     assert "github.event_name == 'pull_request_target' && needs.find.outputs.prs == '[]'" in clear
     assert '= "MERGEABLE" ]' in clear, "not when the state is still UNKNOWN"
     assert '"<!-- worklog-conflict -->"' in clear and "none.md" in clear
-    assert "ref: ${{ github.event.repository.default_branch }}" in clear and "head.ref" not in clear
+    assert "ref: ${{ github.event.repository.default_branch || github.ref_name }}" in clear and "head.ref" not in clear
 
 
 def test_the_workflow_runs_main_s_copy_of_itself_and_runs_on_a_conflicting_pull_request():
@@ -213,6 +213,14 @@ def test_the_workflow_runs_main_s_copy_of_itself_and_runs_on_a_conflicting_pull_
     assert not re.search(r"^\s+pull_request:", triggers, re.M)
     assert "workflow_dispatch" not in triggers.split("\non:")[1], "a dispatch runs the file of the branch it names"
     assert re.search(r"^  schedule:\n    - cron: ", triggers, re.M), "a daily run in case GitHub drops an event (#296)"
+
+
+def test_every_use_of_the_default_branch_has_a_fallback_for_a_scheduled_run():
+    """A `schedule` event has no `repository` in its payload, so `default_branch` is empty there: `--base ""` lists the pull
+    requests into every branch, and `origin/` is not a ref (review of #313). On a schedule `github.ref_name` is main."""
+    text = WORKFLOW.read_text(encoding="utf-8")
+    uses = re.findall(r"\$\{\{ github\.event\.repository\.default_branch[^}]*\}\}", text)
+    assert uses and all(use == "${{ github.event.repository.default_branch || github.ref_name }}" for use in uses), uses
     assert "enable-cache: false" in job(WORKFLOW.read_text(encoding="utf-8"), "merge")
 
 
