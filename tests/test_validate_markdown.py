@@ -113,6 +113,36 @@ def test_a_declaration_of_another_modules_term_is_not_a_term_to_define_here(tmp_
     assert msg.startswith("1 term(s)") and "A" in msg and "P" not in msg.split(":")[1]
 
 
+# #298: a deprecated term or module cannot be fixed without releasing it again, so the definition checks skip it
+
+DEPRECATED_MODULE = MODULE.replace('    owl:versionInfo "1.0.0" .\n', '    owl:versionInfo "1.0.0" ;\n    owl:deprecated true .\n')
+
+
+def test_a_deprecated_stub_that_points_to_its_replacement_is_not_reported_as_unsplit(tmp_path):
+    ttl = _module(tmp_path, '<https://w3id.org/adiro/aec_x#Old> a owl:Class ; rdfs:comment "Deprecated: use New." ;\n'
+                            '    owl:deprecated true .\n'
+                            '<https://w3id.org/adiro/aec_x#Live> a owl:Class ; rdfs:comment "Old style." .\n')
+    _, _, warnings = vo.validate_ontology(ttl)
+    (msg,) = [w for w in warnings if "still carry their definition" in w]
+    assert msg.startswith("1 term(s)") and "Live" in msg and "Old" not in msg
+
+
+def test_a_deprecated_stub_with_no_text_at_all_is_still_reported_as_undescribed(tmp_path):
+    ttl = _module(tmp_path, '<https://w3id.org/adiro/aec_x#Old> a owl:Class ; owl:deprecated true .\n')
+    _, _, warnings = vo.validate_ontology(ttl)
+    (msg,) = [w for w in warnings if "have no skos:definition (nor" in w]
+    assert "Old" in msg
+
+
+def test_the_terms_of_a_deprecated_module_are_not_terms_to_define(tmp_path):
+    (tmp_path / "src").mkdir()
+    ttl = tmp_path / "src" / "aec_x.ttl"
+    ttl.write_text(DEPRECATED_MODULE + '<https://w3id.org/adiro/aec_x#A> a owl:Class ; rdfs:comment "Old style." .\n'
+                   '<https://w3id.org/adiro/aec_x#B> a owl:Class .\n', encoding="utf-8")
+    _, errors, warnings = vo.validate_ontology(ttl)
+    assert not any("still carry their definition" in w or "have no skos:definition" in w for w in warnings) and not errors
+
+
 # --- compared with the base branch (#311) ---------------------------------------------------------------------------
 
 def against(tmp_path, results, base, renames=None):

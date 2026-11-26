@@ -204,17 +204,34 @@ def is_own_term(graph, term) -> bool:
     return not modules or any(str(term).startswith(m) for m in modules)
 
 
+def is_deprecated(graph, node) -> bool:
+    """Whether `node` (a term or an `owl:Ontology`) says `owl:deprecated true`."""
+    return any(str(v).lower() == "true" for v in graph.objects(node, OWL.deprecated))
+
+
+def in_deprecated_module(graph, term) -> bool:
+    """
+    Whether `term` belongs to a module whose `owl:Ontology` is deprecated (#298). Such a module had its final release
+    and cannot be released again, so its backlog is one nobody can act on; it is its successor's to clear.
+    """
+    return any(str(term).startswith(str(o) + "#") for o in graph.subjects(RDF.type, OWL.Ontology)
+               if isinstance(o, URIRef) and is_deprecated(graph, o))
+
+
 def find_unsplit_terms(graph) -> list[str]:
     """
     ADIRO-namespace terms whose definition is still an rdfs:comment: they have an rdfs:comment and no skos:definition (#273).
 
     A term with neither is reported by find_undescribed_terms; a term with a skos:definition is split, whatever
-    commentary it also carries.
+    commentary it also carries. A deprecated term is skipped, and so is every term of a deprecated module (#298): a
+    stub's comment ("Deprecated: use …") points to its replacement and is no definition to split.
     """
     unsplit = []
     for term_type in TERM_TYPES:
         for term in graph.subjects(RDF.type, term_type):
             if not isinstance(term, URIRef) or not str(term).startswith(ADIRO_NS) or not is_own_term(graph, term):
+                continue
+            if is_deprecated(graph, term) or in_deprecated_module(graph, term):
                 continue
             if (term, SKOS.definition, None) in graph or (term, RDFS.comment, None) not in graph:
                 continue
@@ -230,11 +247,16 @@ def find_undescribed_terms(graph) -> list[str]:
     as a local stub is a name, not a definition - the definition lives at the
     source, which is what its rdfs:isDefinedBy points at. Describing it here
     would be asserting someone else's definition.
+
+    The terms of a deprecated module are skipped (#298). A deprecated term of a live module is not: a stub with no
+    text at all should still say what replaces it.
     """
     undescribed = []
     for term_type in TERM_TYPES:
         for term in graph.subjects(RDF.type, term_type):
             if not isinstance(term, URIRef) or not str(term).startswith(ADIRO_NS) or not is_own_term(graph, term):
+                continue
+            if in_deprecated_module(graph, term):
                 continue
             if any((term, prop, None) in graph for prop in DESCRIPTION_PROPS):
                 continue
