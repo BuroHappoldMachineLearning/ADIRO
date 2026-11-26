@@ -2,6 +2,7 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix adcore: <https://w3id.org/adiro/adiro_discipline_core#> .
@@ -16,7 +17,11 @@
     rdfs:label "ADIRO Facade Discipline Ontology" ;
     rdfs:comment "Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the drawing-metadata and discipline-core modules." ;
     dcterms:title "ADIRO Facade Discipline Ontology" ;
-    dcterms:description "Facade-specific concepts and symbols for facade engineering drawings." ;
+    vann:preferredNamespacePrefix "adfacade" ;
+    vann:preferredNamespaceUri "https://w3id.org/adiro/adiro_facade_discipline#"^^xsd:anyURI ;
+    dcterms:issued "2026-11-26"^^xsd:date ;
+    dcterms:modified "2026-11-26"^^xsd:date ;
+    dcterms:description "Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the drawing-metadata and discipline-core modules." ;
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;

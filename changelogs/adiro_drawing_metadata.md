@@ -6,6 +6,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 ## [Unreleased]
 
 ### Changed
+- **The header carries the metadata vocabulary catalogues read** ([#284](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/284)): `vann:preferredNamespacePrefix` and `vann:preferredNamespaceUri`, `dcterms:issued` (the first release under this name) and `dcterms:modified` (the latest release, which the release cut now keeps up to date). `dcterms:description` is the module's introduction, the same text as its `rdfs:comment`; it was an older, shorter text that said something else. No IRI, axiom or term changes.
+
+### Changed
 - **The module's introduction says "drawing", not "drawing sheet"** ([#324](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/324)): the `rdfs:comment` of the ontology describes "the structure of a drawing". No IRI, axiom or term changes.
 
 ## [8.0.0] — 2026-11-26

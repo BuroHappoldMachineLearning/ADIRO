@@ -6,6 +6,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 ## [Unreleased]
 
 ### Changed
+- **The header carries the metadata vocabulary catalogues read** ([#284](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/284)): `vann:preferredNamespacePrefix` and `vann:preferredNamespaceUri`, `dcterms:issued` (the first release under this name) and `dcterms:modified` (the latest release, which the release cut now keeps up to date). `dcterms:description` is the module's introduction, the same text as its `rdfs:comment`; it was an older, shorter text that said something else. No IRI, axiom or term changes.
+
+### Changed
 - **The module's introduction names the modules it builds on** ([#324](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/324)): it named the symbology module, which it does not import. It now says it builds on the drawing-metadata and discipline-core modules. No IRI, axiom or term changes.
 
 ## [5.0.0] — 2026-11-26

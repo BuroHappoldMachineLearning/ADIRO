@@ -5,6 +5,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+- **The header carries the metadata vocabulary catalogues read** ([#284](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/284)): `vann:preferredNamespacePrefix` and `vann:preferredNamespaceUri`, `dcterms:issued` (the first release under this name) and `dcterms:modified` (the latest release, which the release cut now keeps up to date). `dcterms:description` is the module's introduction, the same text as its `rdfs:comment`; it was an older, shorter text that said something else. No IRI, axiom or term changes.
+
 ## [3.1.1] — 2026-11-26
 
 ### Changed
