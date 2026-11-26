@@ -54,8 +54,9 @@ def first_release(new):
 @pytest.mark.parametrize("old,new", PAIRS)
 def test_the_new_module_is_the_old_final_release_under_the_new_names(old, new):
     """Apart from its header and the module names its definitions mention, a new module is its predecessor's final release."""
-    # a module that is not released yet (the second rename of #281) is compared with the reference terms moved to it (#277)
-    moved_to_here = first_release(new) == ROOT / "src" / f"{new}.ttl"
+    # a module that received the reference terms moved by #277 (adiro_drawing_symbology, in the second rename of #281) is
+    # compared with them, before its first release and after it, since that release holds them too (#321)
+    moved_to_here = any(term.startswith(f"{W3ID}{new}#") for term in MOVED)
     final = mr.rewrite_graph(parse(cd.latest_snapshot(ROOT, old)), RENAMES)
     if moved_to_here:
         final = mig.rename_terms_in_graph(final, mig.term_renames(ROOT))

@@ -11,7 +11,7 @@ name: Worklog conflicts
 # not `pull_request`, for two reasons: GitHub does not run a `pull_request` workflow while the pull request has a merge
 # conflict, and `pull_request_target` always runs THIS file as it is on main, so a pull request cannot change the
 # workflow that receives the bot's secrets. There is no `workflow_dispatch` for the same reason (a dispatch runs the
-# file of the branch it names).
+# file of the branch it names); the daily `schedule` is the way to run it again without a push.
 #
 # The three jobs keep the bot token away from the pull request's code:
 #   find  - read-only GITHUB_TOKEN; lists the conflicting pull requests.
@@ -22,6 +22,8 @@ name: Worklog conflicts
 #           saw: a branch that moved meanwhile (a new commit, a rebase or a reset) rejects the push and is left alone.
 #           A push with the app token starts the PR checks again. The run summary says, per pull request, what was
 #           done or why nothing was.
+#   clear - the ADIRO Bot token, main's checkout only; on a pull request's push that left it mergeable, removes the
+#           comment `push` posted before (a resolved pull request is never listed by `find` again).
 # Fork pull requests are skipped (the bot cannot push to a fork); the run summary says so.
 
 on:
@@ -29,6 +31,11 @@ on:
     branches: [main]
   pull_request_target:
     types: [opened, reopened, synchronize, ready_for_review]
+  # A safety net (#296): GitHub can drop an event (the push of #308 started no workflow during an incident on
+  # 2026-11-25), and nothing else would run the bot until the next merge. A schedule always runs main's copy. Its event
+  # has no `repository`, so every `default_branch` below falls back to `github.ref_name`, which is main on a schedule.
+  schedule:
+    - cron: "17 5 * * *"
 
 permissions:
   contents: read
@@ -48,7 +55,7 @@ jobs:
       - name: Checkout the default branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.repository.default_branch }}   # main's script (pull_request_target checks out main anyway)
+          ref: ${{ github.event.repository.default_branch || github.ref_name }}   # main's script (pull_request_target checks out main anyway)
           persist-credentials: false
 
       - name: List the conflicting pull requests
@@ -56,7 +63,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          BASE: ${{ github.event.repository.default_branch }}
+          BASE: ${{ github.event.repository.default_branch || github.ref_name }}
           PR: ${{ github.event.pull_request.number }}
         run: |
           if ! prs="$(python3 scripts/worklog_conflicts.py find --base "$BASE" ${PR:+--pr "$PR"} 2> "$RUNNER_TEMP/find.err")"; then
@@ -80,7 +87,7 @@ jobs:
       - name: Checkout the default branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.repository.default_branch }}
+          ref: ${{ github.event.repository.default_branch || github.ref_name }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -95,7 +102,9 @@ jobs:
 
       - name: Merge, resolve the worklog and verify
         env:
-          BASE: ${{ github.event.repository.default_branch }}
+          # The validator runs as validate-ontology.yml runs it, which skips the bot's merge commits (#316).
+          ENFORCE_ARCHIVED_IMAGES: "1"
+          BASE: ${{ github.event.repository.default_branch || github.ref_name }}
           BRANCH: ${{ matrix.pr.branch }}
           HEAD_SHA: ${{ matrix.pr.head_sha }}
         run: |
@@ -131,21 +140,20 @@ jobs:
       - name: Checkout the default branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.repository.default_branch }}
+          ref: ${{ github.event.repository.default_branch || github.ref_name }}
           fetch-depth: 0
           persist-credentials: false
 
       - name: Redo the merge and compare it with the verified one
         id: prepare
         env:
-          BASE: ${{ github.event.repository.default_branch }}
+          BASE: ${{ github.event.repository.default_branch || github.ref_name }}
           BRANCH: ${{ matrix.pr.branch }}
           HEAD_SHA: ${{ matrix.pr.head_sha }}
           PR: ${{ matrix.pr.number }}
         run: |
           cp scripts/worklog_conflicts.py "$RUNNER_TEMP/worklog_conflicts.py"
-          python3 "$RUNNER_TEMP/worklog_conflicts.py" comment "$RUNNER_TEMP/result/status.json" \
-            --run-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" > "$RUNNER_TEMP/comment.md"
+          python3 "$RUNNER_TEMP/worklog_conflicts.py" comment "$RUNNER_TEMP/result/status.json" > "$RUNNER_TEMP/comment.md"
           git fetch --quiet origin "$HEAD_SHA"
           # Merge in a separate worktree: this checkout must stay on main, because the comment step loads
           # ./.github/actions/sticky-comment from it with the bot token.
@@ -202,3 +210,48 @@ jobs:
           file: ${{ runner.temp }}/comment.md
           pr-number: ${{ matrix.pr.number }}
           head-sha: ${{ matrix.pr.head_sha }}
+
+  clear:
+    # The author resolved the conflict and pushed: `find` no longer lists the pull request, so `push`, which removes the
+    # comment, never runs for it. Remove the comment here. Runs nothing from the pull request (main's checkout).
+    needs: find
+    if: github.event_name == 'pull_request_target' && needs.find.outputs.prs == '[]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check that the pull request merges cleanly
+        id: state
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          # Only MERGEABLE: `find` also returns [] when GitHub has not computed the state yet (UNKNOWN).
+          if [ "$(gh pr view "$PR" --json mergeable --jq .mergeable)" = "MERGEABLE" ]; then
+            echo "clear=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout the default branch
+        if: steps.state.outputs.clear == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch || github.ref_name }}
+          persist-credentials: false
+
+      - name: Create ADIRO Bot token
+        if: steps.state.outputs.clear == 'true'
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ADIRO_BOT_APP_ID }}
+          private-key: ${{ secrets.ADIRO_BOT_PRIVATE_KEY }}
+          permission-pull-requests: write
+
+      - name: Remove the conflict comment
+        if: steps.state.outputs.clear == 'true'
+        uses: ./.github/actions/sticky-comment
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          marker: "<!-- worklog-conflict -->"
+          file: ${{ runner.temp }}/none.md   # a missing file: the action removes the comment
+          pr-number: ${{ github.event.pull_request.number }}
+          head-sha: ${{ github.event.pull_request.head.sha }}

@@ -97,8 +97,8 @@ def test_a_failing_check_stops_the_push_and_names_the_check(tmp_path):
 
     status = wc.merge(repo, "pr", "main", "pr", verify=verify, runner=runner)
     assert status["status"] == wc.FAILED and status["failed"] == "tests"
-    assert "**tests** fails" in wc.comment(status, "https://run")
-    assert wc.comment({"status": wc.READY}, "https://run") == "", "a pushed merge removes an earlier failure comment"
+    assert "**tests** fails" in wc.comment(status)
+    assert wc.comment({"status": wc.READY}) == "", "a pushed merge removes an earlier failure comment"
 
 
 def test_push_refuses_a_merge_that_is_not_the_verified_one(tmp_path):
@@ -170,7 +170,7 @@ def test_find_waits_for_github_to_compute_mergeable_and_skips_forks():
 
 
 def test_the_verification_runs_the_same_tests_as_the_pull_request_check():
-    text = (ROOT / ".github" / "workflows" / "validate-ontology.yml").read_text(encoding="utf-8")
+    text = (ROOT / ".github" / "workflows" / "tests.yml").read_text(encoding="utf-8")
     ci = re.search(r"run: (uv run [^\n]*pytest tests -q)", text).group(1)
     assert " ".join(dict(wc.VERIFY)["tests"]) == ci
 
@@ -193,8 +193,17 @@ def test_the_push_is_leased_on_the_head_find_saw_and_the_bot_token_job_checks_ou
     push = job(text, "push")
     assert '--force-with-lease="refs/heads/${BRANCH}:${HEAD_SHA}"' in push
     assert not re.search(r"--force(?!-with-lease=)", push) and "+HEAD" not in push, "no bare --force and no + refspec"
-    assert "ref: ${{ github.event.repository.default_branch }}" in push
+    assert "ref: ${{ github.event.repository.default_branch || github.ref_name }}" in push
     assert 'git worktree add --quiet --detach "$RUNNER_TEMP/merge"' in push, "the checkout that loads the local action stays on main"
+
+
+def test_a_resolved_pull_request_has_its_conflict_comment_removed():
+    """`find` never lists a resolved pull request again, so `push` (which removes the comment) never runs for it (#302)."""
+    clear = job(WORKFLOW.read_text(encoding="utf-8"), "clear")
+    assert "github.event_name == 'pull_request_target' && needs.find.outputs.prs == '[]'" in clear
+    assert '= "MERGEABLE" ]' in clear, "not when the state is still UNKNOWN"
+    assert '"<!-- worklog-conflict -->"' in clear and "none.md" in clear
+    assert "ref: ${{ github.event.repository.default_branch || github.ref_name }}" in clear and "head.ref" not in clear
 
 
 def test_the_workflow_runs_main_s_copy_of_itself_and_runs_on_a_conflicting_pull_request():
@@ -203,6 +212,15 @@ def test_the_workflow_runs_main_s_copy_of_itself_and_runs_on_a_conflicting_pull_
     assert "pull_request_target:" in triggers
     assert not re.search(r"^\s+pull_request:", triggers, re.M)
     assert "workflow_dispatch" not in triggers.split("\non:")[1], "a dispatch runs the file of the branch it names"
+    assert re.search(r"^  schedule:\n    - cron: ", triggers, re.M), "a daily run in case GitHub drops an event (#296)"
+
+
+def test_every_use_of_the_default_branch_has_a_fallback_for_a_scheduled_run():
+    """A `schedule` event has no `repository` in its payload, so `default_branch` is empty there: `--base ""` lists the pull
+    requests into every branch, and `origin/` is not a ref (review of #313). On a schedule `github.ref_name` is main."""
+    text = WORKFLOW.read_text(encoding="utf-8")
+    uses = re.findall(r"\$\{\{ github\.event\.repository\.default_branch[^}]*\}\}", text)
+    assert uses and all(use == "${{ github.event.repository.default_branch || github.ref_name }}" for use in uses), uses
     assert "enable-cache: false" in job(WORKFLOW.read_text(encoding="utf-8"), "merge")
 
 
@@ -228,3 +246,96 @@ def test_a_line_that_ends_both_entries_stays_in_both(tmp_path):
     repo = make_repo(tmp_path, {wc.WORKLOG: pr + OLD}, {wc.WORKLOG: main + OLD})
     assert wc.merge(repo, "pr", "main", "pr")["status"] == wc.READY
     assert git(repo, "show", f"HEAD:{wc.WORKLOG}") + "\n" == pr + main + OLD
+
+
+def test_a_conflicting_file_name_with_spaces_is_one_name(tmp_path):
+    name = "docs/UC-01/UC-01-Titleblock-Based Drawing Search.md"
+    repo = make_repo(tmp_path, {wc.WORKLOG: entry("PR") + OLD, name: "pr\n"}, {wc.WORKLOG: entry("Main") + OLD, name: "main\n"})
+    # both sides add the file, so it conflicts "both added"; the worklog conflicts too
+    status = wc.merge(repo, "pr", "main", "pr")
+    assert status["status"] == wc.OTHER and sorted(status["files"]) == [name, wc.WORKLOG]
+
+
+def test_the_comment_names_each_blocking_file_and_what_to_do_with_it():
+    status = {"status": wc.OTHER, "branch": "feat/x",
+              "files": [wc.WORKLOG, "docs/adiro_provenance.html", "docs/ontologies/adiro_geometry.md",
+                        "changelogs/adiro_geometry.md", "docs/specification/.pages", "docs/specification/UC-01 x.md",
+                        "docs/index.md", "docs/adiro_geometry.display.json"]}
+    text = wc.comment(status)
+    assert "only merges when every conflicting file is the worklog or a changelog" in text
+    assert "/actions/runs/" not in text, "a run link in the text would repost the comment on every push to main"
+    assert "- `docs/index.md`: a generated page" in text and "- `docs/adiro_geometry.display.json`: a generated page" in text
+    assert f"- `{wc.WORKLOG}`: both sides add an entry: keep both, yours first" in text
+    assert "- `docs/adiro_provenance.html`: a generated page" in text and "- `docs/ontologies/adiro_geometry.md`: a generated page" in text
+    assert "- `changelogs/adiro_geometry.md`: keep `main`'s released sections as they are" in text
+    assert "- `docs/specification/.pages`\n" in text and "- `docs/specification/UC-01 x.md`\n" in text, "no advice where the bot has no rule"
+    assert "docs/specification/UC-01 x.md: a generated" not in text
+
+
+def test_the_release_pr_branch_gets_no_comment_and_a_clean_or_ready_merge_removes_it():
+    assert wc.comment({"status": wc.OTHER, "branch": wc.RELEASE_BRANCH, "files": ["AGENTS.md"]}) == ""
+    assert wc.comment({"status": wc.CLEAN}) == "" and wc.comment({"status": wc.READY}) == ""
+
+
+def test_the_status_of_a_merge_names_the_branch(tmp_path):
+    repo = make_repo(tmp_path, {"c.txt": "pr\n"}, {wc.WORKLOG: entry("Main") + OLD})
+    assert wc.merge(repo, "pr", "main", "feat/y")["branch"] == "feat/y"
+
+
+# --- changelogs (#296) ----------------------------------------------------------------------------------------------
+
+LOG = "changelogs/adiro_x.md"
+UNRELEASED = "# Changelog\n\n## [Unreleased]\n\n### Changed\n- Earlier.\n\n## [1.0.0]\n\n- Released.\n"
+
+
+def log_repo(tmp_path, pr_log, main_log, start=UNRELEASED):
+    """Like make_repo, with a module changelog in the starting commit; both sides add a worklog entry and edit it."""
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    git(repo, "init", "--quiet", "-b", "main")
+    git(repo, "config", "user.name", "t")
+    git(repo, "config", "user.email", "t@example.com")
+    git(repo, "config", "core.autocrlf", "false")
+    commit(repo, {wc.WORKLOG: OLD, LOG: start}, "start")
+    git(repo, "checkout", "--quiet", "-b", "pr")
+    commit(repo, {wc.WORKLOG: entry("PR") + OLD, LOG: pr_log}, "pr change")
+    git(repo, "checkout", "--quiet", "main")
+    commit(repo, {wc.WORKLOG: entry("Main") + OLD, LOG: main_log}, "main change")
+    return repo
+
+
+def test_a_changelog_where_both_sides_add_an_entry_is_merged_with_both(tmp_path):
+    pr = UNRELEASED.replace("- Earlier.\n", "- Earlier.\n- From the PR.\n")
+    main = UNRELEASED.replace("- Earlier.\n", "- Earlier.\n- From main.\n")
+    repo = log_repo(tmp_path, pr, main)
+    status = wc.merge(repo, "pr", "main", "pr")
+    assert status["status"] == wc.READY
+    merged = git(repo, "show", f"HEAD:{LOG}") + "\n"
+    assert merged == UNRELEASED.replace("- Earlier.\n", "- Earlier.\n- From the PR.\n- From main.\n"), "one list, no blank line"
+    assert git(repo, "show", f"HEAD:{wc.WORKLOG}") + "\n" == entry("PR") + entry("Main") + OLD
+    assert LOG in git(repo, "log", "-1", "--format=%B")
+
+
+def test_a_changelog_after_a_release_cut_is_left_to_the_author_with_a_comment(tmp_path):
+    """The cut below only inserts `## [1.1.0]`, a pure addition, where the PR adds its section: keeping both is wrong."""
+    pr = UNRELEASED.replace("## [Unreleased]\n\n", "## [Unreleased]\n\n### Added\n- From the PR.\n\n")
+    cut = "# Changelog\n\n## [Unreleased]\n\n## [1.1.0]\n\n### Changed\n- Earlier.\n\n## [1.0.0]\n\n- Released.\n"
+    repo = log_repo(tmp_path, pr, cut)
+    status = wc.merge(repo, "pr", "main", "pr")
+    assert status["status"] == wc.EDITED and sorted(status["files"]) == [LOG, wc.WORKLOG]
+    assert git(repo, "status", "--porcelain") == "", "the aborted merge leaves nothing behind"
+    text = wc.comment({**status, "branch": "feat/x"})
+    assert "a release cut moves `[Unreleased]`" in text and f"- `{LOG}`: keep `main`'s released sections" in text
+
+
+def test_the_same_heading_added_on_both_sides_is_left_to_the_author(tmp_path):
+    empty = "# Changelog\n\n## [Unreleased]\n\n## [1.0.0]\n\n- Released.\n"
+    pr = empty.replace("## [Unreleased]\n", "## [Unreleased]\n\n### Added\n- From the PR.\n")
+    main = empty.replace("## [Unreleased]\n", "## [Unreleased]\n\n### Added\n- From main.\n")
+    status = wc.merge(log_repo(tmp_path, pr, main, start=empty), "pr", "main", "pr")
+    assert status["status"] == wc.EDITED, "two `### Added` headings would be kept"
+
+
+def test_the_root_changelog_and_other_files_are_not_resolved():
+    assert wc.resolvable(wc.WORKLOG) and wc.resolvable("changelogs/adiro_geometry.md")
+    assert not wc.resolvable("CHANGELOG.md") and not wc.resolvable("changelogs/sub/x.md") and not wc.resolvable("AGENTS.md")

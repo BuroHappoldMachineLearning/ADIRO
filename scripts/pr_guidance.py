@@ -41,7 +41,8 @@ import module_renames  # noqa: E402
 from ontology_versions import archived_versions, version_key  # noqa: E402
 from ontocanvas import ONTOCANVAS_URL  # noqa: E402
 from validate_ontology import (  # noqa: E402
-    ADIRO_NS, DESCRIPTION_PROPS, TERM_TYPES, find_unused_imports, is_own_term, find_unused_prefixes, missing_changelog_modules)
+    ADIRO_NS, DESCRIPTION_PROPS, TERM_TYPES, find_unused_imports, in_deprecated_module, is_own_term, find_unused_prefixes,
+    missing_changelog_modules)
 
 MARKER = "<!-- adiro-pr-guidance -->"
 RELEASE_BRANCH = "release/next"
@@ -74,7 +75,9 @@ def touched_terms(base, head):
 
 
 def undescribed(head, terms):
-    return [t for t in terms if is_own_term(head, t) and not any((t, p, None) in head for p in DESCRIPTION_PROPS)]
+    """The given terms with no description; the terms of a deprecated module are not counted (#298)."""
+    return [t for t in terms if is_own_term(head, t) and not in_deprecated_module(head, t)
+            and not any((t, p, None) in head for p in DESCRIPTION_PROPS)]
 
 
 def replaced_by(suite, old, new):

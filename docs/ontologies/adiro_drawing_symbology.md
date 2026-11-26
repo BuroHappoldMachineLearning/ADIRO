@@ -2,9 +2,9 @@
 
 <div class="adiro-actions" markdown="span">
 <details class="adiro-version">
-<summary class="md-button">Version 5.0.1 (latest)</summary>
+<summary class="md-button">Version 6.0.0 (latest)</summary>
 <ul>
-<li><a href="./" class="adiro-version-current" aria-current="page">5.0.1 (latest)</a></li>
+<li><a href="./" class="adiro-version-current" aria-current="page">6.0.0 (latest)</a></li>
 <li><a href="../adiro_common_symbols/">adiro_common_symbols 5.0.1</a></li>
 <li><a href="../adiro_common_symbols/5.0.0/">adiro_common_symbols 5.0.0</a></li>
 <li><a href="../aec_common_symbols/">aec_common_symbols 4.0.1</a></li>
@@ -23,7 +23,7 @@
 The symbols and marks a drawing uses, shared by every discipline: reusable symbols and text that appear across disciplines, such as dimensions, grids, levels and references to another layout or drawing: the graphical reference symbol, the inline and standalone reference expressions, and the occurrences of drawing and layout identifiers they are made of. Every one is a kind of drawing element from the drawing-metadata module. The discipline modules build on them.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology`
-- **Versioned IRI:** `https://w3id.org/adiro/adiro_drawing_symbology/5.0.1`
+- **Versioned IRI:** `https://w3id.org/adiro/adiro_drawing_symbology/6.0.0`
 - **Imports:** `adiro_drawing_metadata`
 
 ## Interactive view

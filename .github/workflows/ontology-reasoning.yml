@@ -80,6 +80,18 @@ jobs:
       - name: Install dependencies
         run: uv sync --python 3.12 --no-install-project
 
+      # The same checks on the base branch, with the base's own script, so the section below shows only the findings
+      # this pull request changed and collapses the standing backlog (#311). If this fails (or the base's script has
+      # no --json yet), no findings file is written and the section lists every module, saying the comparison did not run.
+      - name: Repo-specific checks — the base branch's findings
+        continue-on-error: true
+        env:
+          BASE: origin/${{ github.base_ref }}
+        run: |
+          git worktree add --quiet --detach "$RUNNER_TEMP/base" "$BASE"
+          cd "$RUNNER_TEMP/base"
+          "$GITHUB_WORKSPACE/.venv/bin/python" scripts/validate_ontology.py --json "$RUNNER_TEMP/base-findings.json" > /dev/null || true
+
       # Repo-specific checks live in validate_ontology.py, and their findings are
       # folded into the same comment below. Adding a check there needs no change
       # here: --markdown renders whatever the script reports. Warnings must not
@@ -89,7 +101,8 @@ jobs:
         env:
           BASE_REF: origin/${{ github.base_ref }}   # enables the PR-time changelog check (#105)
         run: |
-          uv run --python 3.12 --no-project python scripts/validate_ontology.py             --markdown .tools/reasoning-out/validate.md || true
+          uv run --python 3.12 --no-project python scripts/validate_ontology.py \
+            --markdown .tools/reasoning-out/validate.md --base-findings "$RUNNER_TEMP/base-findings.json" || true
 
       - name: Compose comment
         # The comment is built by scripts/qc_comment.py (tested), from what the steps above left in .tools/reasoning-out.

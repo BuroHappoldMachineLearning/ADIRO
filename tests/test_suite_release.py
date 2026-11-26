@@ -28,13 +28,19 @@ def test_the_citation_file_names_no_module_and_no_version():
 
 
 def test_the_zenodo_doi_is_the_same_in_the_readme_and_the_documentation_index():
-    """#275: the README and the generated index carry the same concept DOI, and the badge is keyed by the repository's ID."""
-    badge = re.compile(r"zenodo\.org/badge/(\d+)\.svg.*?doi\.org/(10\.5281/zenodo\.\d+)", re.S)
+    """#275: the README and the generated index carry the same concept DOI, and the badge shows the DOI it links to.
+
+    The badge is Zenodo's badge by DOI (#314): the badge by repository ID redirects to an address that returns 500.
+    """
+    badge = re.compile(r"zenodo\.org/badge/DOI/(10\.5281/zenodo\.\d+)\.svg")
+    link = re.compile(r"doi\.org/(10\.5281/zenodo\.\d+)")
     found = {}
     for name, text in (("README", (ROOT / "README.md").read_text(encoding="utf-8")),
                        ("generator", (ROOT / "scripts" / "generate_docs.py").read_text(encoding="utf-8")),
                        ("index", (ROOT / "docs" / "index.md").read_text(encoding="utf-8"))):
-        m = badge.search(text) or re.search(r"doi\.org/(10\.5281/zenodo\.\d+).*?zenodo\.org/badge/(\d+)\.svg", text, re.S)
-        assert m, f"{name} has a Zenodo DOI badge"
-        found[name] = tuple(sorted(m.groups()))
+        shown, target = badge.search(text), link.search(text)
+        assert shown and target, f"{name} has a Zenodo DOI badge linked to its DOI"
+        assert shown.group(1) == target.group(1), f"{name}: the badge shows the DOI it links to"
+        assert "zenodo.org/badge/1" not in text, f"{name}: no badge by repository ID (#314)"
+        found[name] = target.group(1)
     assert len(set(found.values())) == 1, found
