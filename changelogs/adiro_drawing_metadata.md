@@ -5,6 +5,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+- **The module's introduction says "drawing", not "drawing sheet"** ([#324](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/324)): the `rdfs:comment` of the ontology describes "the structure of a drawing". No IRI, axiom or term changes.
+
 ## [8.0.0] — 2026-11-26
 
 ### Changed
