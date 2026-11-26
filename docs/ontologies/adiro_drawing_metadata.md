@@ -22,7 +22,7 @@
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/adiro_drawing_metadata.html){ .md-button }
 </div>
 
-The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance module (which also holds the file, the page and the agents) and the geometry module (where a title block's region is located), and the discipline modules build on it.
+The core drawing vocabulary. It describes the structure of a drawing: its layouts, title block, revisions, and the fields read from them. It imports the provenance module (which also holds the file, the page and the agents) and the geometry module (where a title block's region is located), and the discipline modules build on it.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_metadata`
 - **Versioned IRI:** `https://w3id.org/adiro/adiro_drawing_metadata/8.0.0`

@@ -52,7 +52,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
 -   ### [Adiro Drawing Metadata](adiro_drawing_metadata.html)
 
-    The core drawing vocabulary. It describes the structure of a drawing sheet: its layouts, title block, revisions, and the fields read from them. It imports the provenance module (which also holds the file, the page and the agents) and the geometry module (where a title block's region is located), and the discipline modules build on it.
+    The core drawing vocabulary. It describes the structure of a drawing: its layouts, title block, revisions, and the fields read from them. It imports the provenance module (which also holds the file, the page and the agents) and the geometry module (where a title block's region is located), and the discipline modules build on it.
 
     *Imports: adiro_geometry, adiro_provenance*
 
@@ -72,7 +72,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
 -   ### [Adiro Discipline Core](adiro_discipline_core.html)
 
-    The vocabulary that several discipline modules share: materials, section shapes and properties, structural components and loads, and the discipline classes. It sits between the drawing symbology and the discipline-specific modules, holding abstractions that more than one discipline reuses, so they are defined once.
+    The vocabulary that several discipline modules share: materials, section shapes and properties, structural components and loads, and the discipline classes. It builds on the drawing-metadata module and holds the abstractions that more than one discipline reuses, so they are defined once.
 
     *Imports: adiro_drawing_metadata*
 
@@ -82,7 +82,7 @@ The ontologies include concepts for drawing metadata, common symbols, domain-com
 
 -   ### [Adiro Facade Discipline](adiro_facade_discipline.html)
 
-    Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbology, and discipline-core vocabularies.
+    Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the drawing-metadata and discipline-core modules.
 
     *Imports: adiro_discipline_core, adiro_drawing_metadata*
 

@@ -14,7 +14,7 @@
 
 <https://w3id.org/adiro/adiro_facade_discipline> rdf:type owl:Ontology ;
     rdfs:label "ADIRO Facade Discipline Ontology" ;
-    rdfs:comment "Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbology, and discipline-core vocabularies." ;
+    rdfs:comment "Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the drawing-metadata and discipline-core modules." ;
     dcterms:title "ADIRO Facade Discipline Ontology" ;
     dcterms:description "Facade-specific concepts and symbols for facade engineering drawings." ;
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;

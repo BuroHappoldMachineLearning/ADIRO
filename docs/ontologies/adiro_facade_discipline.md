@@ -20,7 +20,7 @@
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/adiro_facade_discipline.html){ .md-button }
 </div>
 
-Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the shared drawing, symbology, and discipline-core vocabularies.
+Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the drawing-metadata and discipline-core modules.
 
 - **IRI:** `https://w3id.org/adiro/adiro_facade_discipline`
 - **Versioned IRI:** `https://w3id.org/adiro/adiro_facade_discipline/5.0.0`
