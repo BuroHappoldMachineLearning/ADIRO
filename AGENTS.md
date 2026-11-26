@@ -540,6 +540,8 @@ under `docs/`. The former YouTrack KB articles for the title-block work (`RES-A-
 remains the **issue tracker** (and the KB for material that must stay internal — e.g. anything carrying client,
 project or security-classification detail, which must not be published to this public repo).
 
+**Licensing** ([#276](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/276)). The ontologies and what is published with them (the documentation, the data checks, the migration mapping, the example images, the display configurations) are CC BY 4.0 (`LICENSES/CC-BY-4.0.txt`); the code (`scripts/`, `ttl2md/`, `tests/`, `.github/`) is GPL-3.0 (`LICENSE`). `LICENSING.md` holds the map; each module's `dcterms:license` and `CITATION.cff` follow it, and `tests/test_licensing.py` keeps them in step. A released version keeps the licence it was released under. A new module declares CC BY 4.0.
+
 **Publishing standards content.** ISO / DIN / IEC / ASME documents are licensed. Published pages may cite clause
 numbers and reproduce **field names and obligation status** where that is the minimum needed to record how ADIRO
 maps to a standard, under an explicit licensing notice — but **never** normative text, definitions, figures,
