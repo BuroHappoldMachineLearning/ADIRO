@@ -16,6 +16,10 @@ jobs:
   tests:
     # Not on a merge commit the worklog bot pushed (#316): it ran this check on that exact tree before pushing, and
     # pushes only if it passes. The Release PR's branch, also pushed by the bot, keeps the check.
+    # "Skipped" here still means "checked", and a re-run would be no more independent: the bot's verdict comes from a
+    # job that runs the pull request's code (worklog-conflicts.yml, `merge`), and so would this check, on the same tree
+    # (`push` refuses any other). What a re-run would add is a check of the bot's own plumbing, main's code, which
+    # tests/test_worklog_conflicts.py covers; the bot's run summary says what it verified for each pull request.
     if: github.actor != 'adiro-bot[bot]' || github.head_ref == 'release/next'
     runs-on: ubuntu-latest
 
