@@ -450,7 +450,7 @@ td {
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+                <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#definition" title="A statement or formal explanation of the meaning of a concept. Defined in SKOS">Definition</a>
               </th>
               <td><p>A dimension line or dimension annotation on a drawing, indicating measurements or distances.</p></td>
             </tr>
@@ -487,9 +487,15 @@ td {
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+                <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#definition" title="A statement or formal explanation of the meaning of a concept. Defined in SKOS">Definition</a>
               </th>
               <td><p>A grid line or grid system used for alignment and reference in architectural drawings.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#comment" title="A description of the subject resource. Defined in RDF Schema">Comment</a>
+              </th>
+              <td><p>Not the grid reference system of ISO 5457:1999 §4.4, which divides the sheet into lettered and numbered fields; Grid is about the building's grid, not the sheet's.</p></td>
             </tr>
             <tr>
               <th>
@@ -524,9 +530,15 @@ td {
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+                <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#definition" title="A statement or formal explanation of the meaning of a concept. Defined in SKOS">Definition</a>
               </th>
-              <td><p>A complete source reference expression, whether graphical, inline or a standalone sheet-number reference. This superclass groups those forms for queries; it does not require a second individual around any of them.</p></td>
+              <td><p>A complete source reference expression, whether graphical, inline or a standalone drawing-identifier reference.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#comment" title="A description of the subject resource. Defined in RDF Schema">Comment</a>
+              </th>
+              <td><p>This superclass groups those forms for queries; it does not require a second individual around any of them. ISO 7519:2025 §4.3.1 asks that a set of drawings reference the views and details that give further information, and allows hyperlinks to other drawings, files or digital objects, and ISO 128-3:2022 §5.1 allows the designation on a construction drawing to be complemented by a reference to other drawings; neither records whether a reference has been resolved to its target, which ADIRO records as a separate accepted edge.</p></td>
             </tr>
             <tr>
               <th>
@@ -578,9 +590,15 @@ td {
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+                <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#definition" title="A statement or formal explanation of the meaning of a concept. Defined in SKOS">Definition</a>
               </th>
-              <td><p>One evidenced occurrence of drawing-identifier (sheet-identifier) text on a source drawing, distinct from the <a href="adiro_drawing_metadata.html#DrawingSheet">DrawingSheet</a> that the text may denote. Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted sheet resolution: an unlocalisable text block may retain its accepted <a href="#denotesDrawingSheet">denotesDrawingSheet</a> edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed.</p></td>
+              <td><p>One evidenced occurrence of drawing-identifier text on a source drawing, distinct from the <a href="adiro_drawing_metadata.html#DrawingSheet">DrawingSheet</a> that the text may denote.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#comment" title="A description of the subject resource. Defined in RDF Schema">Comment</a>
+              </th>
+              <td><p>Source-text evidence and an immutable source identity are admission requirements for exported UC-03 mentions. Precise localisation is required for navigation, not for an independently accepted resolution to a <a href="adiro_drawing_metadata.html#DrawingSheet">DrawingSheet</a>: an unlocalisable text block may retain its accepted <a href="#denotesDrawingSheet">denotesDrawingSheet</a> edge without a fabricated bounding box or clickable link. Unresolved candidates remain in extraction evidence; no geometry cardinality axiom is imposed. The text it records is a drawing's identification number (ISO 7200:2004 §5.1.3). Where a project uses its file information container ID as the drawing number, a drawing identifier mention may reproduce that ID; the UK National Annex to BS EN ISO 19650-2:2018 (2021 revision), NA.2.2 and Figure NA.1, describes the composition of that ID.</p></td>
             </tr>
             <tr>
               <th>
@@ -627,9 +645,15 @@ td {
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+                <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#definition" title="A statement or formal explanation of the meaning of a concept. Defined in SKOS">Definition</a>
               </th>
-              <td><p>One evidenced occurrence of layout-identifier text (a small integer or letter), distinct from a target <a href="adiro_drawing_metadata.html#Layout">Layout</a>. A complete inline reference may contain several such occurrences, attached with contains; no target is inferred from matching text alone.</p></td>
+              <td><p>One evidenced occurrence of layout-identifier text (a short identifier, such as a number, a letter or a sheet-grid coordinate), distinct from a target <a href="adiro_drawing_metadata.html#Layout">Layout</a>.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#comment" title="A description of the subject resource. Defined in RDF Schema">Comment</a>
+              </th>
+              <td><p>A complete inline reference may contain several such occurrences, attached with contains; no target is inferred from matching text alone. The text it records is the designation of a view in ISO 128-3:2022 §4.1.</p></td>
             </tr>
             <tr>
               <th>
@@ -654,9 +678,15 @@ td {
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+                <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#definition" title="A statement or formal explanation of the meaning of a concept. Defined in SKOS">Definition</a>
               </th>
-              <td><p>A complete inline textual expression relating layout number(s) to a sheet number, such as '1, 3, 5 &amp; 7/S601'. The component mentions retain their own identities; accepted <a href="adiro_drawing_metadata.html#Layout">Layout</a> targets are connected separately by <a href="#inlineReferencesLayout">inlineReferencesLayout</a>. Expected composition: one sheet-identifier mention and at least one layout-identifier mention, attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction.</p></td>
+              <td><p>A complete inline textual expression relating layout identifier(s) to a drawing identifier, such as '1, 3, 5 &amp; 7/S601'.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#comment" title="A description of the subject resource. Defined in RDF Schema">Comment</a>
+              </th>
+              <td><p>The component mentions retain their own identities; accepted <a href="adiro_drawing_metadata.html#Layout">Layout</a> targets are connected separately by <a href="#inlineReferencesLayout">inlineReferencesLayout</a>. Expected composition: one <a href="#Drawingidentifiermention">DrawingIdentifierMention</a> and at least one <a href="#Layoutidentifiermention">LayoutIdentifierMention</a>, attached with contains; this is checked as an application-profile condition, not asserted as an OWL restriction. Corresponds to the designation of a view or section supplemented by a slash and the drawing number, which ISO 128-3:2022 Annex F, F.4, allows. ISO shows one designation per reference; ADIRO also allows several layouts on one drawing.</p></td>
             </tr>
             <tr>
               <th>
@@ -708,9 +738,15 @@ td {
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+                <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#definition" title="A statement or formal explanation of the meaning of a concept. Defined in SKOS">Definition</a>
               </th>
-              <td><p>A drawing-identifier occurrence that itself constitutes a complete reference. One individual is both the <a href="#Drawingidentifiermention">DrawingIdentifierMention</a> and the <a href="#Referenceexpression">ReferenceExpression</a>: no duplicate wrapper, self-directed hasDrawingIdentifierMention edge or second geometry is needed. An entry in a drawing index (a row naming a drawing) is one: the drawing number there is a complete reference to a drawing. An ungrouped mention is not automatically standalone merely because its parent has not been identified.</p></td>
+              <td><p>A drawing-identifier occurrence that itself constitutes a complete reference to a drawing. An entry naming a drawing in a drawing index is one.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#comment" title="A description of the subject resource. Defined in RDF Schema">Comment</a>
+              </th>
+              <td><p>One individual is both the <a href="#Drawingidentifiermention">DrawingIdentifierMention</a> and the <a href="#Referenceexpression">ReferenceExpression</a>: no duplicate wrapper, self-directed contains edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified. Corresponds to a reference to another drawing in ISO 9431:1990 §5.2.4, and more generally to the references between the drawings of a set in ISO 7519:2025 §4.3.1. That an identifier standing alone is a complete reference is ADIRO's rule, not a requirement of either standard.</p></td>
             </tr>
             <tr>
               <th>
@@ -776,9 +812,15 @@ td {
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+                <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#definition" title="A statement or formal explanation of the meaning of a concept. Defined in SKOS">Definition</a>
               </th>
-              <td><p>A symbol drawn on a <a href="adiro_drawing_metadata.html#Layout">Layout</a> that references another Layout (on the same or a different <a href="adiro_drawing_metadata.html#DrawingSheet">DrawingSheet</a>). Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target Layout's <a href="adiro_drawing_metadata.html#Layoutcontenttype">LayoutContentType</a>.</p></td>
+              <td><p>A symbol drawn on a <a href="adiro_drawing_metadata.html#Layout">Layout</a> that references another Layout (on the same or a different <a href="adiro_drawing_metadata.html#DrawingSheet">DrawingSheet</a>).</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#comment" title="A description of the subject resource. Defined in RDF Schema">Comment</a>
+              </th>
+              <td><p>Replaces the earlier Callout class. Typical instances include Detail Markers, Section Markers, and Elevation Markers. The marker type is not modelled — it is derivable from the target <a href="adiro_drawing_metadata.html#Layout">Layout</a>'s <a href="adiro_drawing_metadata.html#Layoutcontenttype">LayoutContentType</a>. Corresponds to a view designation with its reference arrow or cutting-plane line in ISO 128-3:2022 (§4.1, §4.12, §6.2.1 to §6.2.4) and to a callout in ISO 7519:2025 §4.3.1.</p></td>
             </tr>
             <tr>
               <th>
@@ -864,7 +906,7 @@ td {
               <th>
                 <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#comment" title="A description of the subject resource. Defined in RDF Schema">Comment</a>
               </th>
-              <td><p>It does not assert that a <a href="adiro_drawing_metadata.html#Layout">Layout</a> target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted sheet; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two sheets instead of reporting the conflict.</p></td>
+              <td><p>It does not assert that a <a href="adiro_drawing_metadata.html#Layout">Layout</a> target or an output-PDF navigation link was resolved. A mention is expected to have at most one accepted <a href="adiro_drawing_metadata.html#DrawingSheet">DrawingSheet</a>; this is an application-profile condition, not an OWL functional axiom, because a functional axiom would make a reasoner merge two drawings instead of reporting the conflict.</p></td>
             </tr>
             <tr>
               <th>
@@ -944,9 +986,15 @@ td {
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+                <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#definition" title="A statement or formal explanation of the meaning of a concept. Defined in SKOS">Definition</a>
               </th>
-              <td><p>A Layout contains one or more <a href="#ReferenceSymbol">ReferenceSymbol</a>s. To navigate from a symbol back to the <a href="adiro_drawing_metadata.html#Layout">Layout</a> it is drawn on, use the SPARQL inverse path ^adsym:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).</p></td>
+              <td><p>A <a href="#ReferenceSymbol">ReferenceSymbol</a> drawn on this <a href="adiro_drawing_metadata.html#Layout">Layout</a>.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#comment" title="A description of the subject resource. Defined in RDF Schema">Comment</a>
+              </th>
+              <td><p>A Layout may contain several. To navigate from a symbol back to the <a href="adiro_drawing_metadata.html#Layout">Layout</a> it is drawn on, use the SPARQL inverse path ^adsym:hasReferenceSymbol - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).</p></td>
             </tr>
             <tr>
               <th>
@@ -990,9 +1038,15 @@ td {
             </tr>
             <tr>
               <th>
-                <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+                <a class="hover_property" href="http://www.w3.org/2004/02/skos/core#definition" title="A statement or formal explanation of the meaning of a concept. Defined in SKOS">Definition</a>
               </th>
-              <td><p>Target Layout — the <a href="adiro_drawing_metadata.html#Layout">Layout</a> this <a href="#ReferenceSymbol">ReferenceSymbol</a> points to. The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a Layout, use the SPARQL inverse path ^adsym:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21).</p></td>
+              <td><p>The target <a href="adiro_drawing_metadata.html#Layout">Layout</a> that this <a href="#ReferenceSymbol">ReferenceSymbol</a> points to.</p></td>
+            </tr>
+            <tr>
+              <th>
+                <a class="hover_property" href="http://www.w3.org/2000/01/rdf-schema#comment" title="A description of the subject resource. Defined in RDF Schema">Comment</a>
+              </th>
+              <td><p>The target is Layout-level, not DrawingSheet-level. To find the symbols pointing AT a <a href="adiro_drawing_metadata.html#Layout">Layout</a>, use the SPARQL inverse path ^adsym:referencesLayout - ADIRO declares no named inverse properties and no owl:inverseOf axioms (see GitHub issue #21). In ISO 128-3:2022 §4.1 a reference and the view it points to are linked only by carrying the same designation; ADIRO records the accepted target as an edge.</p></td>
             </tr>
             <tr>
               <th>
