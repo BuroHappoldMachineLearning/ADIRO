@@ -292,10 +292,19 @@ td {
         "@value": "Buro Happold — Machine Learning R&D"
       }
     ],
-    "https://schema.org/description": [
+    "https://schema.org/dateIssued": [
       {
-        "@value": "Shared discipline abstractions reused across multiple discipline ontologies (e.g., facade+structural)."
-      },
+        "@type": "http://www.w3.org/2001/XMLSchema#date",
+        "@value": "2026-11-26"
+      }
+    ],
+    "https://schema.org/dateModified": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#date",
+        "@value": "2026-11-26"
+      }
+    ],
+    "https://schema.org/description": [
       {
         "@value": "The vocabulary that several discipline modules share: materials, section shapes and properties, structural components and loads, and the discipline classes. It builds on the drawing-metadata module and holds the abstractions that more than one discipline reuses, so they are defined once."
       }
@@ -369,6 +378,18 @@ td {
           </div>
           <div>
             <dt>
+              <a class="hover_property" href="http://purl.org/dc/terms/modified" title="Date on which the resource was changed. Defined in DCMI Metadata Terms">Date Modified</a>
+            </dt>
+            <dd><p>2026-11-26</p></dd>
+          </div>
+          <div>
+            <dt>
+              <a class="hover_property" href="http://purl.org/dc/terms/issued" title="Date of formal issuance of the resource. Defined in DCMI Metadata Terms">Date Issued</a>
+            </dt>
+            <dd><p>2026-11-26</p></dd>
+          </div>
+          <div>
+            <dt>
               <a class="hover_property" href="http://purl.org/dc/terms/license" title="A legal document giving official permission to do something with the resource. Defined in DCMI Metadata Terms">License</a>
             </dt>
             <dd>
@@ -380,7 +401,7 @@ td {
               <a class="hover_property" href="http://www.w3.org/2002/07/owl#versionIRI" title="The property that identifies the version IRI of an ontology. Defined in The OWL 2 Schema vocabulary (OWL 2)">Version Iri</a>
             </dt>
             <dd>
-              <a href="#5.0.0">https://w3id.org/adiro/adiro_discipline_core/5.0.0</a>
+              <a href="https://w3id.org/adiro/adiro_discipline_core/5.0.0">https://w3id.org/adiro/adiro_discipline_core/5.0.0</a>
             </dd>
           </div>
           <div>
@@ -424,14 +445,23 @@ td {
           </div>
           <div>
             <dt>
-              <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              <a class="hover_property" href="http://purl.org/vocab/vann/preferredNamespacePrefix" title="None. Defined in None">Preferred Namespace Prefix</a>
+            </dt>
+            <dd><p>adcore</p></dd>
+          </div>
+          <div>
+            <dt>
+              <a class="hover_property" href="http://purl.org/vocab/vann/preferredNamespaceUri" title="None. Defined in None">Preferred Namespace Uri</a>
             </dt>
             <dd>
-              <ul>
-                <li><p>Shared discipline abstractions reused across multiple discipline ontologies (e.g., facade+structural).</p></li>
-                <li><p>The vocabulary that several discipline modules share: materials, section shapes and properties, structural components and loads, and the discipline classes. It builds on the drawing-metadata module and holds the abstractions that more than one discipline reuses, so they are defined once.</p></li>
-              </ul>
+              <a href="https://w3id.org/adiro/adiro_discipline_core#">https://w3id.org/adiro/adiro_discipline_core#</a>
             </dd>
+          </div>
+          <div>
+            <dt>
+              <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+            </dt>
+            <dd><p>The vocabulary that several discipline modules share: materials, section shapes and properties, structural components and loads, and the discipline classes. It builds on the drawing-metadata module and holds the abstractions that more than one discipline reuses, so they are defined once.</p></dd>
           </div>
         </dl>
       </div>
@@ -2616,10 +2646,6 @@ td {
           <dd>
             <code>https://w3id.org/adiro/adiro_discipline_core/exampleImage/</code>
           </dd>
-          <dt id="ns1">ns1</dt>
-          <dd>
-            <code>https://w3id.org/adiro/</code>
-          </dd>
           <dt id="owl">owl</dt>
           <dd>
             <code>http://www.w3.org/2002/07/owl#</code>
@@ -2635,6 +2661,10 @@ td {
           <dt id="rdfs">rdfs</dt>
           <dd>
             <code>http://www.w3.org/2000/01/rdf-schema#</code>
+          </dd>
+          <dt id="vann">vann</dt>
+          <dd>
+            <code>http://purl.org/vocab/vann/</code>
           </dd>
         </dl>
       </div>
@@ -2883,9 +2913,6 @@ td {
               <a href="#img">img</a>
             </li>
             <li>
-              <a href="#ns1">ns1</a>
-            </li>
-            <li>
               <a href="#owl">owl</a>
             </li>
             <li>
@@ -2896,6 +2923,9 @@ td {
             </li>
             <li>
               <a href="#rdfs">rdfs</a>
+            </li>
+            <li>
+              <a href="#vann">vann</a>
             </li>
           </ul>
         </li>

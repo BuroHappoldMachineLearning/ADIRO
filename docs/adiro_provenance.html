@@ -292,10 +292,19 @@ td {
         "@value": "Buro Happold - Machine Learning R&D"
       }
     ],
-    "https://schema.org/description": [
+    "https://schema.org/dateIssued": [
       {
-        "@value": "Reified assertion + inference provenance + confidence for AEC drawing extraction. Domain-neutral; PROV-O-aligned."
-      },
+        "@type": "http://www.w3.org/2001/XMLSchema#date",
+        "@value": "2026-10-21"
+      }
+    ],
+    "https://schema.org/dateModified": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#date",
+        "@value": "2026-11-26"
+      }
+    ],
+    "https://schema.org/description": [
       {
         "@value": "Foundational, domain-neutral module for provenance. It lets any value inferred from a drawing be recorded as an assertion that carries its own source, confidence, and how it was produced, aligned to W3C PROV-O. The drawing modules import it."
       }
@@ -369,6 +378,18 @@ td {
           </div>
           <div>
             <dt>
+              <a class="hover_property" href="http://purl.org/dc/terms/modified" title="Date on which the resource was changed. Defined in DCMI Metadata Terms">Date Modified</a>
+            </dt>
+            <dd><p>2026-11-26</p></dd>
+          </div>
+          <div>
+            <dt>
+              <a class="hover_property" href="http://purl.org/dc/terms/issued" title="Date of formal issuance of the resource. Defined in DCMI Metadata Terms">Date Issued</a>
+            </dt>
+            <dd><p>2026-10-21</p></dd>
+          </div>
+          <div>
+            <dt>
               <a class="hover_property" href="http://purl.org/dc/terms/license" title="A legal document giving official permission to do something with the resource. Defined in DCMI Metadata Terms">License</a>
             </dt>
             <dd>
@@ -380,7 +401,7 @@ td {
               <a class="hover_property" href="http://www.w3.org/2002/07/owl#versionIRI" title="The property that identifies the version IRI of an ontology. Defined in The OWL 2 Schema vocabulary (OWL 2)">Version Iri</a>
             </dt>
             <dd>
-              <a href="#2.3.1">https://w3id.org/adiro/adiro_provenance/2.3.1</a>
+              <a href="https://w3id.org/adiro/adiro_provenance/2.3.1">https://w3id.org/adiro/adiro_provenance/2.3.1</a>
             </dd>
           </div>
           <div>
@@ -405,30 +426,39 @@ td {
                   <a href="https://w3id.org/adiro/aec_provenance/1.1.0">https://w3id.org/adiro/aec_provenance/1.1.0</a>
                 </li>
                 <li>
-                  <a href="#2.0.0">https://w3id.org/adiro/adiro_provenance/2.0.0</a>
+                  <a href="https://w3id.org/adiro/adiro_provenance/2.0.0">https://w3id.org/adiro/adiro_provenance/2.0.0</a>
                 </li>
                 <li>
-                  <a href="#2.1.0">https://w3id.org/adiro/adiro_provenance/2.1.0</a>
+                  <a href="https://w3id.org/adiro/adiro_provenance/2.1.0">https://w3id.org/adiro/adiro_provenance/2.1.0</a>
                 </li>
                 <li>
-                  <a href="#2.2.0">https://w3id.org/adiro/adiro_provenance/2.2.0</a>
+                  <a href="https://w3id.org/adiro/adiro_provenance/2.2.0">https://w3id.org/adiro/adiro_provenance/2.2.0</a>
                 </li>
                 <li>
-                  <a href="#2.3.0">https://w3id.org/adiro/adiro_provenance/2.3.0</a>
+                  <a href="https://w3id.org/adiro/adiro_provenance/2.3.0">https://w3id.org/adiro/adiro_provenance/2.3.0</a>
                 </li>
               </ul>
             </dd>
           </div>
           <div>
             <dt>
-              <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+              <a class="hover_property" href="http://purl.org/vocab/vann/preferredNamespacePrefix" title="None. Defined in None">Preferred Namespace Prefix</a>
+            </dt>
+            <dd><p>adprov</p></dd>
+          </div>
+          <div>
+            <dt>
+              <a class="hover_property" href="http://purl.org/vocab/vann/preferredNamespaceUri" title="None. Defined in None">Preferred Namespace Uri</a>
             </dt>
             <dd>
-              <ul>
-                <li><p>Reified assertion + inference provenance + confidence for AEC drawing extraction. Domain-neutral; PROV-O-aligned.</p></li>
-                <li><p>Foundational, domain-neutral module for provenance. It lets any value inferred from a drawing be recorded as an assertion that carries its own source, confidence, and how it was produced, aligned to W3C PROV-O. The drawing modules import it.</p></li>
-              </ul>
+              <a href="https://w3id.org/adiro/adiro_provenance#">https://w3id.org/adiro/adiro_provenance#</a>
             </dd>
+          </div>
+          <div>
+            <dt>
+              <a class="hover_property" href="http://purl.org/dc/terms/description" title="An account of the resource. Defined in DCMI Metadata Terms">Description</a>
+            </dt>
+            <dd><p>Foundational, domain-neutral module for provenance. It lets any value inferred from a drawing be recorded as an assertion that carries its own source, confidence, and how it was produced, aligned to W3C PROV-O. The drawing modules import it.</p></dd>
           </div>
         </dl>
       </div>
@@ -3654,12 +3684,12 @@ td {
               </th>
               <td>
                 <span>
-                  <a href="#InferenceMeta">Inference Meta</a>
+                  <a href="#InferredEntity">Inferred Entity</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
                 <span class="cardinality">or</span>
                 <span>
-                  <a href="#InferredEntity">Inferred Entity</a>
+                  <a href="#InferenceMeta">Inference Meta</a>
                   <sup class="sup-c" title="OWL/RDFS Class">c</sup>
                 </span>
               </td>
@@ -3862,10 +3892,6 @@ td {
           <dd>
             <code>http://purl.org/dc/terms/</code>
           </dd>
-          <dt id="ns1">ns1</dt>
-          <dd>
-            <code>https://w3id.org/adiro/</code>
-          </dd>
           <dt id="owl">owl</dt>
           <dd>
             <code>http://www.w3.org/2002/07/owl#</code>
@@ -3885,6 +3911,10 @@ td {
           <dt id="skos">skos</dt>
           <dd>
             <code>http://www.w3.org/2004/02/skos/core#</code>
+          </dd>
+          <dt id="vann">vann</dt>
+          <dd>
+            <code>http://purl.org/vocab/vann/</code>
           </dd>
           <dt id="xsd">xsd</dt>
           <dd>
@@ -4208,9 +4238,6 @@ td {
               <a href="#dcterms">dcterms</a>
             </li>
             <li>
-              <a href="#ns1">ns1</a>
-            </li>
-            <li>
               <a href="#owl">owl</a>
             </li>
             <li>
@@ -4224,6 +4251,9 @@ td {
             </li>
             <li>
               <a href="#skos">skos</a>
+            </li>
+            <li>
+              <a href="#vann">vann</a>
             </li>
             <li>
               <a href="#xsd">xsd</a>

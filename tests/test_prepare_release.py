@@ -333,3 +333,11 @@ def test_tag_exists_asks_git(tmp_path):
     git("commit", "-q", "-m", "c")
     git("tag", "aec_x-v1.0.0")
     assert pr._tag_exists(tmp_path, "aec_x-v1.0.0") and not pr._tag_exists(tmp_path, "aec_x-v2.0.0")
+
+
+def test_the_cut_sets_dcterms_modified_to_its_day():
+    """#284: catalogues read a vocabulary's last change from `dcterms:modified`; the release cut keeps it current."""
+    text = 'x dcterms:issued "2026-10-21"^^xsd:date ;\n    dcterms:modified "2026-10-21"^^xsd:date ;\n'
+    out = pr._set_modified(text, "2026-12-01")
+    assert 'dcterms:modified "2026-12-01"^^xsd:date' in out and 'dcterms:issued "2026-10-21"^^xsd:date' in out
+    assert pr._set_modified("no date here", "2026-12-01") == "no date here", "a module without one is left alone"
