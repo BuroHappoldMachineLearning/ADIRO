@@ -65,8 +65,11 @@ The prefix expands to the full IRI, so `img:Titleblock_01.png` is
 ## The statement in the pull request
 
 A pull request that adds or replaces an image has a section **Example images** in its description. For each image, or
-group of images, it says where the image comes from and why it may be published (your own work, public domain, licensed
-with the licence named, or cleared by its owner), and what was obscured or removed. A sentence is enough. The reviewer
+group of images, it says where the image comes from and why it may be published under CC BY 4.0, the licence of ADIRO's
+images (`LICENSING.md`): your own work, public domain, licensed under terms compatible with CC BY 4.0 (with the
+attribution it requires recorded), or cleared by its owner for publication under CC BY 4.0. An image whose terms forbid
+that (non-commercial, no-derivatives, share-alike, or permission to publish only) is not added. It also says what was
+obscured or removed. A sentence is enough. The reviewer
 judges it; the checks cannot.
 
 ## When a term is renamed or removed

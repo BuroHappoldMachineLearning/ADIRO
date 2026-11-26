@@ -28,8 +28,10 @@ def test_the_licence_texts_and_the_map_exist():
     assert (ROOT / "LICENSES" / "CC-BY-4.0.txt").read_text(encoding="utf-8").startswith("Attribution 4.0 International")
     assert "GNU GENERAL PUBLIC LICENSE" in (ROOT / "LICENSE").read_text(encoding="utf-8")
     licensing = (ROOT / "LICENSING.md").read_text(encoding="utf-8")
-    for path in ("src/", "docs/", "data-validation/", "migration/", "assets/", "scripts/", "ttl2md/", "tests/", ".github/"):
+    for path in ("src/", "docs/", "data-validation/", "migration/", "assets/", "changelogs/", "scripts/", "ttl2md/", "tests/",
+                 ".github/", "docs/javascripts/", "docs/stylesheets/", "config/"):
         assert f"`{path}" in licensing, path
+    assert "Anything not listed is GPL-3.0" in licensing, "a default for what the map does not name"
 
 
 def test_the_citation_file_names_both_licences():

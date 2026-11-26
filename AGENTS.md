@@ -349,7 +349,8 @@ changelogs — is in **`docs/contribute/versioning/`**; rationale in KB
   placeholder `removed/after-v<x.y.z>.png` there, [#154](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/154)). The images are committed once, in `assets/`; the docs
   build stages a git-ignored copy into `docs/<module>/exampleImage/`. The images of every module are synthetic,
   drawn by `scripts/synthetic_example_images.py` ([#149](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/149), [#152](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/152));
-  never publish a drawing from a real project unless its owner has cleared it and every name, logo and seal is removed. `scripts/example_images.py` holds the checks that
+  never publish a drawing from a real project unless its owner has cleared it for publication under CC BY 4.0 (the licence of
+  the images, `LICENSING.md`) and every name, logo and seal is removed. `scripts/example_images.py` holds the checks that
   `validate_ontology.py` reports (advisory for the older values, blocking for the limits on files; `ENFORCE_EXAMPLE_IMAGES=1`
   makes all of it blocking; the check that every address an archived release names is still served is blocking, via
   `ENFORCE_ARCHIVED_IMAGES=1` in `validate-ontology.yml`, since the first release cycle after [#154](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/154)
