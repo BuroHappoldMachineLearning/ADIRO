@@ -138,13 +138,16 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   modularization write-ups) in `docs/specification/design-decisions/`.
 
 ## Validation & YouTrack-sync CI
-- **`.github/workflows/validate-ontology.yml`** — on PRs to any branch; runs `scripts/validate_ontology.py`
+- **`.github/workflows/validate-ontology.yml`** — on PRs to any branch that change what it reads (`src/`, `versions/`, `assets/`,
+  `changelogs/`, `config/`, the scripts it runs and imports, the dependencies; [#316](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/316)); runs `scripts/validate_ontology.py`
   over `src/*.ttl` (parse check, circular-subclass detection, ensures an `owl:Ontology` declaration, and
   per-module version consistency — `owl:versionInfo` == `owl:versionIRI` tail == ontology IRI + version), plus
   `scripts/compat_diff.py` (RES-67, *warn* mode) which flags when a module's declared SemVer bump is smaller
   than its change requires. It compares SKOS concepts and schemes too, as individuals: their classes and everything said of
-  them, so a change to a field kind is released ([#254](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/254)). The same validate step gates the deploy workflow. The workflow also runs the repository's
-  `tests/` (`pytest`) on the PR; they used to run only on a push to `main`, after a failing test could already have merged. On a PR (`BASE_REF` set) it also
+  them, so a change to a field kind is released ([#254](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/254)). The same validate step gates the deploy workflow. The repository's `tests/` (`pytest`) run on **every** PR in their own
+  check, **`tests.yml`** ("Tests", [#316](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/316)); they used to run only on a push to `main`, after a failing test could already have merged, and then as a step of
+  this workflow, where a failing test read as an ontology failure. The validator's check for internal tool names, which reads files outside
+  the paths above, is also a test of the real repository (`tests/test_internal_names.py`), so it runs on every PR. On a PR (`BASE_REF` set) it also
   warns when `src/<module>.ttl` changed but `changelogs/<module>.md` did not
   ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)); advisory, and `ENFORCE_CHANGELOG=1`
   makes it blocking. The warning appears in the QC comment (`ontology-reasoning.yml`). It also requires every module's
@@ -189,7 +192,10 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   request and always runs `main`'s copy of the workflow), the **ADIRO Bot** merges `main` into each open same-repository
   pull request whose **only** conflicting files are the worklog and the module changelogs (`changelogs/*.md`, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296)) and whose two sides only *add* lines to them, keeping both entries (the pull
   request's first; not in a changelog where either side adds a version heading, a release cut, or both add the same heading), and pushes the merge commit, which starts the checks again. It pushes only after the validation and the tests pass on
-  the merged tree; if one fails, it pushes nothing and says so in a comment on the pull request. It pushes the merge with the `main`
+  the merged tree; if one fails, it pushes nothing and says so in a comment on the pull request. So **Tests**, **Validate Ontology** and the
+  guidance comment skip its merge commits (`github.actor` is the bot, except on `release/next`), and its verification runs the validator
+  with the same `ENFORCE_*` flags as `validate-ontology.yml` (`tests/test_ci_split.py`, [#316](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/316)); the reasoner, a gate the bot does not run,
+  still runs. It pushes the merge with the `main`
   commit it verified, even when `main` has moved on since, because the docs deploy commits to `main` about a minute after every merge
   ([#224](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/224)), and accepts that commit only if it is a commit of `main`;
   the next run merges the rest. The run summary says, for each pull request (forks included), what it did or why it did not push; a push that fails for another reason than a moved branch fails the job, with git's error. Any other conflict (the bot then comments on the pull request with the conflicting files and, for the worklog, a generated page and a changelog, what to do with each, and removes the comment when a push to the branch leaves it mergeable; not on `release/next`, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296)), a fork pull request

@@ -37,7 +37,8 @@ WORKLOG = "docs/ai/worklog.md"
 BOT_NAME = "adiro-bot[bot]"
 BOT_EMAIL = "340218862+adiro-bot[bot]@users.noreply.github.com"
 
-# The checks `validate-ontology.yml` runs on every pull request; tests/test_worklog_conflicts.py keeps the two in step.
+# The checks a pull request runs (`validate-ontology.yml`, and `tests.yml` for the tests, #316); tests/test_worklog_conflicts.py
+# keeps the test command in step.
 VERIFY = [
     ("dependencies", ["uv", "sync", "--python", "3.12", "--no-install-project"]),
     ("validation", ["uv", "run", "--python", "3.12", "--no-project", "python", "scripts/validate_ontology.py"]),

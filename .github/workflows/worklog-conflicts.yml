@@ -102,6 +102,8 @@ jobs:
 
       - name: Merge, resolve the worklog and verify
         env:
+          # The validator runs as validate-ontology.yml runs it, which skips the bot's merge commits (#316).
+          ENFORCE_ARCHIVED_IMAGES: "1"
           BASE: ${{ github.event.repository.default_branch || github.ref_name }}
           BRANCH: ${{ matrix.pr.branch }}
           HEAD_SHA: ${{ matrix.pr.head_sha }}

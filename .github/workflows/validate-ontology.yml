@@ -1,15 +1,39 @@
 name: Validate Ontology
 
+# The ontology checks (validate_ontology.py, compat_diff.py) on a pull request that changes what they read (#316).
+# The repository's tests are tests.yml, on every pull request; the one check of the validator that reads other
+# files (no internal tool names, #89) is also a test of the real repository there (tests/test_internal_names.py).
+
 on:
   pull_request:
     branches:
       - '**'  # Run on PRs to any branch
+    paths:
+      - 'src/**'
+      - 'versions/**'
+      - 'assets/**'
+      - 'changelogs/**'
+      - 'config/**'
+      - 'scripts/validate_ontology.py'
+      - 'scripts/example_images.py'
+      - 'scripts/module_renames.py'
+      - 'scripts/compat_diff.py'
+      - 'pyproject.toml'
+      - 'uv.lock'
+      - '.github/workflows/validate-ontology.yml'
 
 permissions:
   contents: read
 
 jobs:
   validate:
+    # Not on a merge commit the worklog bot pushed (#316): it ran this check on that exact tree before pushing, and
+    # pushes only if it passes. The Release PR's branch, also pushed by the bot, keeps the check.
+    # "Skipped" here still means "checked", and a re-run would be no more independent: the bot's verdict comes from a
+    # job that runs the pull request's code (worklog-conflicts.yml, `merge`), and so would this check, on the same tree
+    # (`push` refuses any other). What a re-run would add is a check of the bot's own plumbing, main's code, which
+    # tests/test_worklog_conflicts.py covers; the bot's run summary says what it verified for each pull request.
+    if: github.actor != 'adiro-bot[bot]' || github.head_ref == 'release/next'
     runs-on: ubuntu-latest
     
     steps:
@@ -35,11 +59,6 @@ jobs:
           # ENFORCE_CHANGELOG: "1"   # uncomment to make a missing changelog entry blocking
           ENFORCE_ARCHIVED_IMAGES: "1"   # an archived release's image that is no longer served blocks (#154; advisory for the first release cycle, #156)
         run: uv run --python 3.12 --no-project python scripts/validate_ontology.py
-
-      - name: Run the repository tests
-        # `tests/` used to run only on a push to main (generate-deploy-docs.yml), so a failing test could merge and
-        # break the deploy afterwards. Run them on the PR too; the command is the one the deploy workflow uses.
-        run: uv run --python 3.12 --no-project --with pytest --with pillow --with rdflib --with pyshacl --with pylode==3.2.3 python -m pytest tests -q
 
       - name: Compatibility diff (warn)
         # RES-67, warn mode: classifies each module's change vs its last released
