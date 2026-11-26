@@ -500,7 +500,9 @@ For anyone changing an ontology, agent or person. The sections below give the de
   **absent** from `config/robot_report_profile.txt` (a profile lists the checks that run; omitting one
   disables it, and the file format accepts no comments to say so). Reasons in
   `docs/specification/design-decisions/usage-of-annotation-properties.md`. `scripts/validate_ontology.py` reports
-  ADIRO-namespace terms that lack a description (external stubs exempt — their definitions live at the source). It is
+  ADIRO-namespace terms that lack a description (external stubs exempt — their definitions live at the source; so are
+  the terms of a deprecated module, and a deprecated stub is not asked to split its "Deprecated: use …" comment,
+  [#298](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/298)). It is
   advisory while the backlog in [#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87) is
   cleared; `ENFORCE_DESCRIPTIONS=1` makes it blocking, `LIST_UNDESCRIBED=1` lists every term.
 - **Versioning.** Record any change to a module's semantics under that module's `changelogs/<module>.md`
