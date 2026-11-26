@@ -452,8 +452,8 @@ def validate_ontology(ttl_file: Path) -> tuple[bool, list[str], list[str]]:
 
         undescribed = find_undescribed_terms(graph)
         if undescribed:
-            head = ", ".join(undescribed[:8])
-            more = f" ... and {len(undescribed) - 8} more" if len(undescribed) > 8 else ""
+            head = ", ".join(undescribed)  # every name: the list sits in a collapsed block (#300)
+            more = ""
             msg = (f"{len(undescribed)} term(s) have no skos:definition "
                    f"(nor rdfs:comment / dcterms:description): {head}{more}. "
                    "Backlog: [#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87); "
@@ -469,8 +469,8 @@ def validate_ontology(ttl_file: Path) -> tuple[bool, list[str], list[str]]:
         # one by one; ENFORCE_DEFINITIONS=1 makes it blocking once the last is.
         unsplit = find_unsplit_terms(graph)
         if unsplit:
-            head = ", ".join(unsplit[:8])
-            more = f" ... and {len(unsplit) - 8} more" if len(unsplit) > 8 else ""
+            head = ", ".join(unsplit)
+            more = ""
             msg = (f"{len(unsplit)} term(s) still carry their definition in rdfs:comment and have no skos:definition: "
                    f"{head}{more}. Move the definition to skos:definition and keep rdfs:comment for commentary "
                    "([#273](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/273)).")
@@ -555,6 +555,29 @@ def _findings_cell(errors: list[str], warnings: list[str], err_marker: str, warn
     return f"<details><summary>Show</summary>{body}</details>"
 
 
+def suite_order(ttl_files: list[Path]) -> list[Path]:
+    """The modules in the order of the suite, deprecated ones last (#300), so the QC table reads like the navigation.
+
+    The order is the one `scripts/generate_docs.py` keeps for the navigation, the index and the diagrams, read from it so
+    there is one list. Without the docs dependencies the files are sorted by name, still a stable order.
+    """
+    try:
+        from generate_docs import sort_by_dependency
+        ordered = sort_by_dependency(list(ttl_files))
+    except Exception:  # noqa: BLE001 - an order is a convenience, never a reason for the validator to fail
+        ordered = sorted(ttl_files)
+
+    def deprecated(path: Path) -> bool:
+        try:
+            graph = Graph().parse(str(path), format="turtle")
+        except Exception:  # noqa: BLE001 - a file that does not parse is reported by validate_ontology
+            return False
+        return any(str(v).lower() == "true" for o in graph.subjects(RDF.type, OWL.Ontology)
+                   for v in graph.objects(o, OWL.deprecated))
+
+    return sorted(ordered, key=deprecated)  # stable: the order within each group is kept
+
+
 def write_json(results: list[tuple[str, list[str], list[str]]], out_path: Path) -> None:
     """The findings per module, for a later run to compare with (#311)."""
     data = [{"module": name, "errors": errs, "warnings": warns} for name, errs, warns in results]
@@ -603,6 +626,7 @@ def write_markdown(results: list[tuple[str, list[str], list[str]]], out_path: Pa
         out_path.write_text(_markdown_against_base(results, base, renames or {}), encoding="utf-8")
         return
     OK, WARN, ERR = "\u2705", "\u26a0\ufe0f", "\u26d4"
+    results, checks = _split(results)
     lines = ["### Important checks", ""]
     if base_missing:
         lines += ["The comparison with the base branch did not run, so every module is listed.", ""]
@@ -619,13 +643,36 @@ def write_markdown(results: list[tuple[str, list[str], list[str]]], out_path: Pa
             # a non-breaking space keeps the status icon with the module name when a wide Findings cell squeezes this column
             lines.append("| %s&nbsp;`%s` | %d | %d | %s |" % (mark, name, len(errs), len(warns), _findings_cell(errs, warns, ERR, WARN)))
         lines.append("")
+    lines += _check_lines(checks)
 
     out_path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def _is_module(name: str) -> bool:
+    """A module's row is named for its file; a check that is not a module has a name in words (\"public-repo names\")."""
+    return bool(re.fullmatch(r"[a-z0-9_]+", name))
+
+
+def _split(results):
+    """The module rows, and the checks that are not modules, which go on lines of their own under the table (#300)."""
+    return [r for r in results if _is_module(r[0])], [r for r in results if not _is_module(r[0])]
+
+
+def _check_lines(checks) -> list[str]:
+    """One line per check that is not a module: its name and a mark, with its findings collapsed when it has any."""
+    OK, WARN, ERR = "\u2705", "\u26a0\ufe0f", "\u26d4"
+    out = []
+    for name, errs, warns in checks:
+        mark = ERR if errs else (WARN if warns else OK)
+        findings = _findings_cell(errs, warns, ERR, WARN)
+        out.append(f"- {mark} {name[0].upper()}{name[1:]}" + (f": {findings}" if findings else ""))
+    return out + [""] if out else []
 
 
 def _markdown_against_base(results, base, renames) -> str:
     """The Important checks section of `write_markdown` when the base branch's findings are known (#311)."""
     OK, WARN, ERR, NEW, DONE = "✅", "⚠️", "⛔", "\U0001f195", "✔️"
+    results, checks = _split(results)
     rows, backlog = [], []
     for name, errs, warns in results:
         before = base_for(name, base, renames)
@@ -651,19 +698,22 @@ def _markdown_against_base(results, base, renames) -> str:
     # which the table says rather than letting the backlog shrink without a word (review of #312).
     present = {name for name, _, _ in results}
     replaced = {module_renames.predecessor(renames, name) for name in present}
-    for name in sorted(set(base) - present - replaced):
+    for name in sorted(n for n in set(base) - present - replaced if _is_module(n)):
         b_errs, b_warns = base[name]
         if b_errs or b_warns:
             items = [f"{DONE} gone with the module: {_escape_cell(x)}" for x in b_errs + b_warns]
             rows.append("| %s&nbsp;`%s` | %d → 0 | %d → 0 | <details><summary>Show</summary>%s</details> |"
                         % (OK, name, len(b_errs), len(b_warns), "<br>".join(items)))
 
+    # A check that is not a module follows the rule of the table: shown when it changed or has an error.
+    changed_checks = [(n, e, w) for n, e, w in checks if e or set(e + w) != set(sum(base.get(n, ([], [])), []))]
     lines = ["### Important checks", ""]
     if rows:
         lines += ["Only what this pull request changed, and every error.", "",
                   "| Module | Errors | Warnings | Findings |", "|---|--:|--:|:--|", *rows, ""]
     else:
         lines += [OK + " This pull request changes no finding, and there is no error.", ""]
+    lines += _check_lines(changed_checks)
     if backlog:
         total = sum(len(kept) for _, kept in backlog)
         lines += [f"<details><summary>Backlog, unchanged by this pull request: {total} warning(s) in {len(backlog)} "
@@ -701,7 +751,9 @@ def main():
         print("No files specified. Validating all .ttl files in src/ directory...")
         src_dir = repo_root / "src"
         if src_dir.exists():
-            ttl_files = list(src_dir.glob("*.ttl"))
+            ttl_files = sorted(src_dir.glob("*.ttl"))
+            if markdown_path is not None or json_path is not None:  # the order is for the QC comment only (#300)
+                ttl_files = suite_order(ttl_files)
         else:
             ttl_files = []
         if not ttl_files:

@@ -237,3 +237,37 @@ def test_a_module_the_pull_request_removes_shows_its_findings_as_gone(tmp_path):
 def test_a_renamed_modules_predecessor_is_not_reported_as_removed(tmp_path):
     text = against(tmp_path, [("adiro_new", [], ["w"])], {"adiro_old": ([], ["w"])}, {"adiro_new": "adiro_old"})
     assert "adiro_old" not in text and table_rows(text) == []
+
+
+# --- readability (#300) ----------------------------------------------------------------------------------------------
+
+def test_a_check_that_is_not_a_module_is_a_line_under_the_table_not_a_row(tmp_path):
+    text = render(tmp_path, [("adiro_a", [], ["w"]), ("public-repo names", [], []), ("example image budget", ["too big"], [])])
+    table = [l for l in text.splitlines() if l.startswith("| ")]
+    assert not any("public-repo" in l or "image budget" in l for l in table)
+    assert "- ✅ Public-repo names" in text and "- ⛔ Example image budget: <details><summary>Show</summary>⛔ too big" in text
+
+
+def test_against_the_base_a_check_that_is_not_a_module_shows_only_when_it_changed_or_has_an_error(tmp_path):
+    quiet = against(tmp_path, [("adiro_a", [], []), ("public-repo names", [], [])], {"adiro_a": ([], []), "public-repo names": ([], [])})
+    assert "Public-repo names" not in quiet
+    loud = against(tmp_path, [("adiro_a", [], []), ("public-repo names", ["leak"], [])], {"adiro_a": ([], []), "public-repo names": ([], [])})
+    assert "- ⛔ Public-repo names:" in loud and not any("public-repo" in l for l in table_rows(loud))
+
+
+def test_every_term_is_named_and_none_is_cut(tmp_path):
+    body = "".join(f'<https://w3id.org/adiro/aec_x#T{i}> a owl:Class ; rdfs:comment "Old style." .\n' for i in range(12))
+    _, _, warnings = vo.validate_ontology(_module(tmp_path, body))
+    (msg,) = [w for w in warnings if "still carry their definition" in w]
+    assert all(f"T{i}" in msg for i in range(12)) and "more" not in msg
+
+
+def test_the_modules_follow_the_suite_order_with_deprecated_ones_last(tmp_path):
+    names = ["adiro_facade_discipline", "adiro_provenance", "adiro_domain_common", "adiro_drawing_metadata", "adiro_geometry"]
+    for n in names:
+        deprecated = "    owl:deprecated true ;\n" if n == "adiro_domain_common" else ""
+        (tmp_path / f"{n}.ttl").write_text(
+            "@prefix owl: <http://www.w3.org/2002/07/owl#> .\n"
+            f"<https://w3id.org/adiro/{n}> a owl:Ontology ;\n{deprecated}    owl:versionInfo \"1.0.0\" .\n", encoding="utf-8")
+    order = [p.stem for p in vo.suite_order([tmp_path / f"{n}.ttl" for n in names])]
+    assert order == ["adiro_provenance", "adiro_geometry", "adiro_drawing_metadata", "adiro_facade_discipline", "adiro_domain_common"]
