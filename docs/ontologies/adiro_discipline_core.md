@@ -20,7 +20,7 @@
 [:material-file-code: pyLODE HTML](https://w3id.org/adiro/adiro_discipline_core.html){ .md-button }
 </div>
 
-The vocabulary that several discipline modules share: materials, section shapes and properties, structural components and loads, and the discipline classes. It sits between the drawing symbology and the discipline-specific modules, holding abstractions that more than one discipline reuses, so they are defined once.
+The vocabulary that several discipline modules share: materials, section shapes and properties, structural components and loads, and the discipline classes. It builds on the drawing-metadata module and holds the abstractions that more than one discipline reuses, so they are defined once.
 
 - **IRI:** `https://w3id.org/adiro/adiro_discipline_core`
 - **Versioned IRI:** `https://w3id.org/adiro/adiro_discipline_core/5.0.0`

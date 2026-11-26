@@ -9,7 +9,7 @@
 
 <https://w3id.org/adiro/adiro_discipline_core> rdf:type owl:Ontology ;
     rdfs:label "ADIRO Discipline Core Ontology" ;
-    rdfs:comment "The vocabulary that several discipline modules share: materials, section shapes and properties, structural components and loads, and the discipline classes. It sits between the drawing symbology and the discipline-specific modules, holding abstractions that more than one discipline reuses, so they are defined once." ;
+    rdfs:comment "The vocabulary that several discipline modules share: materials, section shapes and properties, structural components and loads, and the discipline classes. It builds on the drawing-metadata module and holds the abstractions that more than one discipline reuses, so they are defined once." ;
     dcterms:title "ADIRO Discipline Core Ontology" ;
     dcterms:description "Shared discipline abstractions reused across multiple discipline ontologies (e.g., facade+structural)." ;
     dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;

@@ -5,6 +5,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+- **The module's introduction names the module it builds on** ([#324](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/324)): it said the module "sits between the drawing symbology and the discipline-specific modules", but it imports only `adiro_drawing_metadata`. It now says it builds on the drawing-metadata module. No IRI, axiom or term changes.
+
 ## [5.0.0] — 2026-11-26
 
 ### Changed
