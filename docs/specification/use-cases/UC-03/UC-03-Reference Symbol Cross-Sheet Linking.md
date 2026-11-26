@@ -1,6 +1,6 @@
 # UC-03: Reference Symbol Cross-Sheet Linking
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-03 · **Version:** 0.12 (semantic extension implemented on this branch, pending review — see [§8](#8-open-issues-pending-team-discussion) for deferred items, [§10](#10-version-history) for changelog)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-03 · **Version:** 0.13 (semantic extension in the ontology; geometry and navigation cases deferred — see [§8](#8-open-issues-pending-team-discussion) for deferred items, [§10](#10-version-history) for changelog)
 
 ---
 
@@ -326,11 +326,11 @@ Per the project's import hierarchy and [PR #15](https://github.com/BuroHappoldMa
 **Module hierarchy** *(updated in [v0.6](#10-version-history))*:
 
 ```
-adiro_provenance                      (NEW - foundational, domain-neutral)
+adiro_provenance                      (foundational, domain-neutral: provenance and confidence, files, agents)
         |
-        +---- adiro_geometry          (NEW - foundational: BoundingBox + CoordinateFrame; imports adiro_provenance)
+        +---- adiro_geometry          (foundational: BoundingBox + CoordinateFrame; imports adiro_provenance)
                 |
-                +---- adiro_drawing_metadata
+                +---- adiro_drawing_metadata  (imports adiro_geometry and adiro_provenance)
                         |
                         +---- adiro_drawing_symbology       (imports adiro_drawing_metadata only)
                         |
@@ -369,7 +369,7 @@ These items were raised during UC-03 drafting. **UC03-1 and UC03-2 are resolved*
 | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | UC03-1 | **✅ RESOLVED (implemented).** Adopted `ReferenceSymbol` and removed the earlier `Callout` class (option b) — see `src/adiro_drawing_symbology.ttl`. *(Original question: name/relationship of the cross-sheet linking class vs `Callout`; scope was agreed, name was open.)* |
 | UC03-2 | **✅ RESOLVED (implemented).** `admeta:layoutIdentifier` is now declared in `adiro_drawing_metadata` (`src/`). *(Original: UC-03 introduced it provisionally, pending UC-01 formally adopting it as an identity field.)* |
-| UC03-3 | **→ Tracked as [#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36) (deferred).** A GeoSPARQL WKT/CRS profile and source-Layout spatial containment queries remain optional. The shared `BoundingBox` / `CoordinateFrame` already exist in PR #76; UC-03 localisation and navigation geometry are separately tracked in [#93](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/93). A title/number strip is not a full Layout polygon, and spatial overlap alone does not establish accepted source membership. |
+| UC03-3 | **→ Tracked as [#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36) (deferred).** A GeoSPARQL WKT/CRS profile and source-Layout spatial containment queries remain optional. The shared `BoundingBox` / `CoordinateFrame` already exist in [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76); UC-03 localisation and navigation geometry are separately tracked in [#93](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/93). A title/number strip is not a full Layout polygon, and spatial overlap alone does not establish accepted source membership. |
 | UC03-4 | **→ Tracked as [#37](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/37) (backlog; out of UC-03 core scope).** Match Lines and other reference symbol types. Industry usage extends beyond Detail/Section/Elevation markers (Match Lines for split-sheet continuation, Schedule references, Key Plan references, etc.). UC-03's current scope covers the three primary types; broader coverage may need additional modelling if a CQ requires it. |
 | UC03-5 | **→ Tracked as [#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38) (backlog).** A graphical marker targeting an entire DrawingSheet remains an open case; the existing `adsym:referencesLayout` is Layout-level and no general `referencesSheet` property is introduced here. For textual sources, `admeta:TextualNote.refersToDrawingId` remains available for a note's identifier string. The new `StandaloneDrawingReference` instead represents one evidenced sheet-number occurrence whose accepted sheet identity may be expressed by `denotesDrawingSheet`; it does not change the graphical-marker question. |
 | —     | **✅ RESOLVED — [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21).** Inverse-property convention (project-wide, not UC-03-specific). Decided: ADIRO declares **no** named inverse properties and no `owl:inverseOf` axioms; reverse navigation uses SPARQL inverse paths. `appearsOn` and `isReferencedBy` removed from `adiro_drawing_symbology`; `isRevisionOf` removed from `adiro_drawing_metadata`. *(Applied in [v0.3](#10-version-history).)* |
@@ -392,11 +392,19 @@ For the full design-debate reasoning behind the v0.2 modelling choices, see the 
 
 ## 10. Version History
 
-### v0.12 (current)
+### v0.13 (current)
+
+Corrections from v0.12, found in a consistency sweep of the documentation ([#306](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/306)). MINOR: no entity, attribute, relation or competency question changes.
+
+- **The version line** said the semantic extension was "implemented on this branch, pending review"; it is in the ontology, and the geometry and navigation cases stay deferred (§8).
+- **The module hierarchy of §7** no longer labels `adiro_provenance` and `adiro_geometry` "NEW"; each says what it holds, and `adiro_drawing_metadata` names its two imports.
+- **Every pull request named on the page is a link.**
+
+### v0.12 (previous)
 
 Change from v0.11, made when the prefixes were aligned ([#289](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/289)). MINOR: no entity, attribute, relation or competency question changes. The text names the terms with `admeta:`, `adprov:` and `adgeom:` (before `metadata:`, `aprov:` and `geom:`); a prefix is a label, so no IRI changes.
 
-### v0.11 (previous)
+### v0.11
 
 Change from v0.10, made when `adiro_common_symbols` was renamed `adiro_drawing_symbology` ([#281](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/281)). MAJOR in substance (the module and the IRIs of every term it defines change); the number stays in the 0.x series because the document is still a draft:
 

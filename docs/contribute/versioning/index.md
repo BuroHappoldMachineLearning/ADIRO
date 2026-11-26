@@ -7,7 +7,7 @@ ADIRO is a suite of **four independently-versioned OWL modules** (dependency ord
 3. `aec_domain_common`
 4. `aec_facade_domain`
 
-Each module carries **its own [SemVer](https://semver.org/) version** and is released on its own cadence — there is **no single umbrella version**. (Architecture & rationale: KB [DATA-A-10](https://bhmlrnd.youtrack.cloud/articles/DATA-A-10); plan & decisions: [RES-27](https://bhmlrnd.youtrack.cloud/issue/RES-27).)
+Each module carries **its own [SemVer](https://semver.org/) version** and is released on its own cadence — there is **no single umbrella version**.
 
 Current versions: `aec_drawing_metadata` **2.0.0**; the other three **1.0.0**. These are per-module starting points, not a suite version.
 
@@ -46,7 +46,7 @@ The ontology IRIs are `w3id.org/adiro/…` **identifiers**, distinct from the ph
 | `w3id.org/adiro/<module>/<semver>` | that version's `.ttl` |
 | `w3id.org/adiro/<any path>` | passthrough to `…/ADIRO/<any path>` |
 
-w3id is a **host-independent** front door: it redirects *to* github.io today, so if hosting ever moves only the `.htaccess` changes and pinned `w3id` URLs keep working. **The ontology's own IRIs are still `github.io`** — repointing them to `w3id.org/adiro` is a separate, deliberate identity change (deferred; [RES-69](https://bhmlrnd.youtrack.cloud/issue/RES-69)). Until then, consumers may pin **either** front door for a given version.
+w3id is a **host-independent** front door: it redirects *to* github.io today, so if hosting ever moves only the `.htaccess` changes and pinned `w3id` URLs keep working. **The ontology's own IRIs are `w3id.org/adiro` IRIs too** ([#53](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/53)): an IRI and the address that serves it are one name, and `github.io` is only the host the files are fetched from.
 
 ## Pinning a version when you label data
 
@@ -80,11 +80,11 @@ The bump for a module is decided by classifying its change against **that module
 
 - **Internal imports default to "latest"** — modules import each other via the **unversioned** IRI (`owl:imports <…/aec_drawing_metadata>`). The working norm is to keep every module functioning against every other module's *latest*.
 - **Version-pinned imports are allowed only for WIP / specific cases**, and each pinned import **must be documented and justified**: an `rdfs:comment` on the `owl:imports` axiom **plus** a note in the module's changelog. Treat a pin as **temporary** unless the justification is permanent.
-- **External-ontology imports** (geometry, PROV-O, DAnO, …) follow a separate strategy — prefer a **local stub + alignment** with no import at all; where the source's entailments are actually needed, **SLME extraction** (`robot extract --method STAR`) from the **version-pinned core file**, with the reasoner gate as the safeguard. A pinned external source is subject to the same document-and-justify rule as above. Full rule: **[External ontology imports](../../specification/design-decisions/external-ontology-imports.md)**; decision record in [Discussion #74](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/74); implementation in [RES-68](https://bhmlrnd.youtrack.cloud/issue/RES-68).
+- **External-ontology imports** (geometry, PROV-O, DAnO, …) follow a separate strategy — prefer a **local stub + alignment** with no import at all; where the source's entailments are actually needed, **SLME extraction** (`robot extract --method STAR`) from the **version-pinned core file**, with the reasoner gate as the safeguard. A pinned external source is subject to the same document-and-justify rule as above. Full rule: **[External ontology imports](../../specification/design-decisions/external-ontology-imports.md)**; decision record in [Discussion #74](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/74).
 
 ### Root change that could break dependents
 
-Because dependents import a root (e.g. `aec_drawing_metadata`) at **latest**, a **MAJOR** bump on a root can break them at latest. Rule: after any module bump, the OWL reasoner should be run across the **whole suite at latest** to catch this — **now automated as a blocking CI gate** (`ontology-reasoning.yml`, [RES-36](https://bhmlrnd.youtrack.cloud/issue/RES-36)): every ontology PR is reasoned (HermiT) over the merged suite at latest and fails if it becomes inconsistent or gains an unsatisfiable class. Any dependent that breaks gets **its own follow-up release** (bumped per its own compat classification). As a temporary WIP measure, a dependent may pin the prior root version (the documented+justified exception above) until updated.
+Because dependents import a root (e.g. `aec_drawing_metadata`) at **latest**, a **MAJOR** bump on a root can break them at latest. Rule: after any module bump, the OWL reasoner should be run across the **whole suite at latest** to catch this — **now automated as a blocking CI gate** (`ontology-reasoning.yml`): every ontology PR is reasoned (HermiT) over the merged suite at latest and fails if it becomes inconsistent or gains an unsatisfiable class. Any dependent that breaks gets **its own follow-up release** (bumped per its own compat classification). As a temporary WIP measure, a dependent may pin the prior root version (the documented+justified exception above) until updated.
 
 ## Deprecation — never delete
 
@@ -144,13 +144,13 @@ A module's name is part of every term IRI it defines, so a rename is a new ontol
 
 ## Validation
 
-Every PR that changes the ontology or what the validator reads runs `scripts/validate_ontology.py` (via `validate-ontology.yml`), which checks TTL parsing, circular subclass hierarchies, an `owl:Ontology` declaration, **and per-module version consistency** ([RES-66](https://bhmlrnd.youtrack.cloud/issue/RES-66)): each module must carry exactly one `owl:versionInfo` and one `owl:versionIRI`, and the versionIRI must equal the unversioned ontology IRI + `/` + the versionInfo.
+Every PR that changes the ontology or what the validator reads runs `scripts/validate_ontology.py` (via `validate-ontology.yml`), which checks TTL parsing, circular subclass hierarchies, an `owl:Ontology` declaration, **and per-module version consistency** ([#6](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/6)): each module must carry exactly one `owl:versionInfo` and one `owl:versionIRI`, and the versionIRI must equal the unversioned ontology IRI + `/` + the versionInfo.
 
-The same `validate-ontology.yml` run also runs `scripts/compat_diff.py` ([RES-67](https://bhmlrnd.youtrack.cloud/issue/RES-67), **warn** mode): it classifies each module's change against its last released snapshot (per the [compatibility-diff spec](compatibility-diff-algorithm-spec.md)) and flags when the **declared** version bump is smaller than the change requires. It's advisory for now; the entailment-based upgrade and `enforce` mode are Phase 2b (RES-78 / RES-81).
+The same `validate-ontology.yml` run also runs `scripts/compat_diff.py` (**warn** mode): it classifies each module's change against its last released snapshot (per the [compatibility-diff spec](compatibility-diff-algorithm-spec.md)) and flags when the **declared** version bump is smaller than the change requires. It's advisory for now; the entailment-based upgrade and `enforce` mode are planned.
 
 On any PR that touches an ontology, a second workflow (`compat-diff-comment.yml`) posts a **sticky comment** with two parts: **Changes in this PR** (deltas diffed against the base branch — what the PR itself touches; an annotation change names the annotation, and each change links to its line in the PR diff and in the PR's head commit) and **Next version if released** (the cumulative forecast — each module's `src/` vs its last released snapshot, i.e. the running total of *all* unreleased changes). Because `owl:versionInfo` is only bumped at the release cut, the forecast spans every unreleased PR, not just this one; an under-bump warning appears only on a release-cut PR that bumped `owl:versionInfo` by less than the change requires.
 
-Ontology PRs also run **`ontology-reasoning.yml`** ([RES-36](https://bhmlrnd.youtrack.cloud/issue/RES-36)): HermiT reasons over the whole suite at latest — a **blocking gate** on inconsistency / unsatisfiable classes / non-OWL-2-DL — plus ROBOT `report` for structural QC (**advisory**; e.g. `duplicate_label` is a warning). This backs the root-change reasoner gate above. Reproduce it locally with `scripts/run_reasoning.sh` (see the repo `AGENTS.md`).
+Ontology PRs also run **`ontology-reasoning.yml`**: HermiT reasons over the whole suite at latest — a **blocking gate** on inconsistency / unsatisfiable classes / non-OWL-2-DL — plus ROBOT `report` for structural QC (**advisory**; e.g. `duplicate_label` is a warning). This backs the root-change reasoner gate above. Reproduce it locally with `scripts/run_reasoning.sh` (see the repo `AGENTS.md`).
 
 ## How ADIRO versioning compares to ODK / OBO Foundry
 

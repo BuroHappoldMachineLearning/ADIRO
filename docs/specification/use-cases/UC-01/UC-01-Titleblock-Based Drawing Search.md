@@ -1,6 +1,6 @@
 # UC-01: Titleblock-Based Drawing Search
 
-> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.23 (draft) — see [§9 Version History](#9-version-history)
+> **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-01 · **Version:** 0.24 (draft) — see [§9 Version History](#9-version-history)
 
 ---
 
@@ -211,9 +211,9 @@ Each FR describes one representational capability the ontology must have, in imp
 > The ontology MUST support filtering drawing sheets by engineering discipline, reusing the existing `adcore:Discipline` class hierarchy (`Structural`, `MEP`, `Architectural`, `Facade`, `FireLifeSafety`, `Masterplan`, plus their sub-disciplines), attached at the `Layout` level via `adcore:hasDiscipline`.
 
 - Source: UC-01
-- Derived terms: `adcore:Discipline` (REUSE), `adcore:hasDiscipline` (REUSE — domain proposed to move from `LayoutContentType` to `Layout`, see G5)
+- Derived terms: `adcore:Discipline` (REUSE), `adcore:hasDiscipline` (REUSE; its domain is `admeta:Layout`) *(Amended in [v0.24](#9-version-history).)*
 - Note: `disciplineCode` from v0.2 is **removed** — filtering uses `rdf:type` against the class hierarchy, which gives automatic sub-discipline rollup (querying `adcore:MEP` auto-includes `Mechanical`, `Electrical`, `Plumbing`).
-- Note: `Civil` is to be added to `adcore:Discipline` as a direct subclass of `Discipline` (confirmed by team discussion).
+- Note: `Civil` is a direct subclass of `adcore:Discipline`. *(Amended in [v0.24](#9-version-history).)*
 
 ---
 
@@ -898,7 +898,7 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `adprov:AcceptanceStatus` (`Pending`, `Accepted`, `Rejected`), `adprov:hasAcceptance` | `adiro_provenance` | NEW | CQ 4.6 | FR 4 |
 | `adprov:supersedes`             | `adiro_provenance`       | NEW    | CQ 4.6                                         | FR 4                               |
 | `adprov:acceptedBy` | `adiro_provenance` | NEW | CQ 10.3 | FR 4 |
-| `adprov:acceptedAt`, `adprov:acceptedUnder` | `adiro_provenance` | NEW | none yet: the record of an acceptance (the decision of #85), not asked by a question | FR 4 |
+| `adprov:acceptedAt`, `adprov:acceptedUnder` | `adiro_provenance` | NEW | none yet: the record of an acceptance (the decision of [#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)), not asked by a question | FR 4 |
 | `admeta:personName`          | `adiro_drawing_metadata` | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
 | `admeta:statusLabel`         | `adiro_drawing_metadata` | NEW    | CQ 7.x                                         | FR 7                               |
 | `admeta:projectName`         | `adiro_drawing_metadata` | NEW    | CQ 2.x                                         | FR 2                               |
@@ -914,11 +914,11 @@ This section makes the placement of every UC-01 term in the existing module hier
 **Module hierarchy** *(updated in [v0.6](#9-version-history))*:
 
 ```
-adiro_provenance                      (NEW - foundational, domain-neutral)
+adiro_provenance                      (foundational, domain-neutral: provenance and confidence, files, agents)
         |
-        +---- adiro_geometry          (NEW - foundational: BoundingBox + CoordinateFrame; imports adiro_provenance)
+        +---- adiro_geometry          (foundational: BoundingBox + CoordinateFrame; imports adiro_provenance)
                 |
-                +---- adiro_drawing_metadata
+                +---- adiro_drawing_metadata  (imports adiro_geometry and adiro_provenance)
                         |
                         +---- adiro_drawing_symbology       (imports adiro_drawing_metadata only)
                         |
@@ -958,20 +958,28 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 
 | ID  | Issue                                                                                                                                                              |
 | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| G5  | Should `hasDiscipline` domain move from `LayoutContentType` to `Layout`? v0.3 proposes yes — discipline characterises the layout, not its content type.            |
+| G5  | ~~Should `hasDiscipline` domain move from `LayoutContentType` to `Layout`?~~ **Resolved**: its domain is `admeta:Layout`; discipline characterises the layout, not its content type. |
 | G13 | **What a region detection looked for.** CQ 11.4 reads every page that a region detection used as searched for a title block, which holds while UC-01's extraction detects only title blocks. A run that detects several kinds of region (a title block, a legend) in separate steps would need each step to say what it looked for, which ADIRO does not record yet. Nor is a region tied to the run that detected it, so CQ 11.4 cannot say which run missed a title block another run found. *(Added in [v0.18](#9-version-history).)* |
 | G5b | Should `DrawingSheet` itself carry a `hasDiscipline` (a "primary discipline" for the whole sheet) in addition to Layout-level discipline?                          |
 | G11 | ~~**Direct properties vs `FieldAssertion`.**~~ **Resolved** ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85), [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)): a value is promoted when its assertion is accepted, by a pipeline rule or a person, with the acceptance recorded on the assertion; both layers are kept, and the direct properties are permanent. See the design note in §2.1. |
 | G12 | ~~**A missing person is two different facts.**~~ "The extraction did not find the author" and "the drawing names none" must be told apart (the first is retried or reviewed, the second is a defect of the drawing). Decided: record absence as a value-less `FieldAssertion` with an outcome. **Resolved**: the vocabulary is in `adiro_provenance` (`hasOutcome`, `hasAcceptance`, [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)), and CQ 4.6 reports a drawing by cause. |
 | G10 | ~~`:Metadata` class name misleading~~ — **resolved**: renamed to `:MetadataContainer` (team decision). The class models visual supporting regions (titleblock, legend, etc.), not semantic metadata. |
 | —   | ~~Project-wide convention for `owl:inverseOf`~~ — **resolved** in [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21): ADIRO does not declare inverse properties. `isRevisionOf` removed; use `^admeta:hasRevision`. |
-| —   | ~~"Civil" discipline~~ — **resolved**: `Civil` to be added as a direct subclass of `adcore:Discipline` (team decision).                                           |
+| —   | ~~"Civil" discipline~~ — **resolved**: `Civil` is a direct subclass of `adcore:Discipline` (team decision).                                           |
 
 ---
 
 ## 9. Version History
 
-### v0.23 (current — draft)
+### v0.24 (current — draft)
+
+Corrections from v0.23, found in a consistency sweep of the documentation ([#306](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/306)). MINOR: no entity, attribute, relation or competency question changes.
+
+- **Statements the ontology had overtaken**: §3 said `Civil` "is to be added" to `adcore:Discipline` and that the domain of `adcore:hasDiscipline` was "proposed to move" to `Layout`; both are in `adiro_discipline_core`. Open point G5 and the "Civil" row of §8 are marked resolved.
+- **The module hierarchy of §7** no longer labels `adiro_provenance` and `adiro_geometry` "NEW" (both have been released for several versions); each says what it holds, and `adiro_drawing_metadata` names its two imports.
+- **Every issue and pull request named on the page is a link.**
+
+### v0.23 (draft)
 
 Change from v0.22, made when the prefixes were aligned ([#289](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/289)). MINOR: no entity, attribute, relation or competency question changes. The queries and the text name the terms with `admeta:`, `adprov:` and `adgeom:` (before `metadata:`, `aprov:` and `geom:`); a prefix is a label, so no IRI changes.
 
@@ -1008,7 +1016,7 @@ Changes from v0.18, made when the images a model sees were modelled for UC-01 ([
 
 Changes from v0.17, made when text readings were modelled for UC-01 ([#238](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/238), decided on [Discussion #235](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/235)) the history of a value was asked for ([#236](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/236)), and the queries were checked over named graphs ([#241](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/241)). MAJOR in substance (a functional requirement, classes, attributes and competency questions added); the number stays in the 0.x series because the document is still a draft:
 
-- **FR 11 and CQ Group 11 added** (§3, §4): the text read from a title block or a page, its language and why none was read (CQ 11.1, CQ 11.2), which pages a run processed (CQ 11.3) and on which it detected no title block (CQ 11.4). The coverage questions that #236 would have recorded as pending in §8 are answered here instead.
+- **FR 11 and CQ Group 11 added** (§3, §4): the text read from a title block or a page, its language and why none was read (CQ 11.1, CQ 11.2), which pages a run processed (CQ 11.3) and on which it detected no title block (CQ 11.4). The coverage questions that [#236](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/236) would have recorded as pending in §8 are answered here instead.
 - **CQ 10.3 added** (§4): the history of the values of a field, by model or person, with how each was reviewed, from existing terms only. `acceptedBy` is now asked by a question (§6).
 - **`TextReading`, `StepKind` and the outcome `Failed` added** (§2.1, §2.3, §6, §7), with `isReadingOf`, `readText`, `hasReadingOutcome`, `errorMessage` and `hasStepKind`; a shape checks that a reading has a text or an outcome (`data-validation/readings.shacl.ttl`). The design note under FR 11 says why a reading has its own outcome property.
 - **CQ 4.6 gains the reason `Failed`**, retried like `NotFound`.
@@ -1058,7 +1066,7 @@ Change from v0.11, made when the modules were renamed from `aec_*` to `adiro_*` 
 
 Change from v0.10, made when the promotion rule was written down ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)). MINOR: an example added; the number stays in the 0.x series because the document is still a draft:
 
-- **The promotion is recorded as a SPARQL `CONSTRUCT`** after the design note in §2.1: an accepted assertion that has a value, and that no later assertion supersedes, gives the direct statement its field kind maps to. It runs on small data in `tests/test_uc01_competency_queries.py`. This is the "documented rule that the tooling runs" of the decision on #85.
+- **The promotion is recorded as a SPARQL `CONSTRUCT`** after the design note in §2.1: an accepted assertion that has a value, and that no later assertion supersedes, gives the direct statement its field kind maps to. It runs on small data in `tests/test_uc01_competency_queries.py`. This is the "documented rule that the tooling runs" of the decision on [#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85).
 
 ### v0.10 (draft)
 
@@ -1080,7 +1088,7 @@ Changes from v0.8, made when the file a drawing is stored in was modelled ([#192
 
 Changes from v0.7, made when the person roles were extended to the drawing and the revision table was linked to its revisions ([#179](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/179), [#69](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/69)). MAJOR in substance (relations re-scoped and added, competency questions added); the number stays in the 0.x series because the document is still a draft:
 
-- **`isAuthoredBy`, `isCheckedBy` and `isApprovedBy` now apply to a `DrawingSheet` as well as a `DrawingRevision`** (§2.3, FR 4, §6). The title block names who drew, checked and approved the drawing; a revision can be made by other people, so the two are different facts and both are kept. The "Person vs Role" note is amended. The domain is the union of the two classes; no cardinality, because an extraction may find nobody (#84). A drawing that records no author is read as authored by its revisions' authors (a path, not an entailment).
+- **`isAuthoredBy`, `isCheckedBy` and `isApprovedBy` now apply to a `DrawingSheet` as well as a `DrawingRevision`** (§2.3, FR 4, §6). The title block names who drew, checked and approved the drawing; a revision can be made by other people, so the two are different facts and both are kept. The "Person vs Role" note is amended. The domain is the union of the two classes; no cardinality, because an extraction may find nobody ([#84](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/84)). A drawing that records no author is read as authored by its revisions' authors (a path, not an entailment).
 - **`assertsRevision` added** (`RevisionTable` to `DrawingRevision`, §2.3, FR 3, §6): one link per row of a printed revision table, so a table with revisions A, B and C asserts three. It records which table a revision was read from; it does not say which revision is the latest (that is read from `issueDate`).
 - **`issueDate` applies to a `DrawingSheet` as well as a `DrawingRevision`** (§2.2): the title block's date is the drawing's, and "date authored" is the same property, not a second one.
 - **`assertsProject` added** (`Titleblock` to `Project`, §2.3, FR 2, §6) with CQ 2.3 and CQ 2.4: the project a title block names is a claim, and the project a drawing is filed under (`belongsToProject`) is a fact; the two can differ, and CQ 2.4 finds the drawings where they do.

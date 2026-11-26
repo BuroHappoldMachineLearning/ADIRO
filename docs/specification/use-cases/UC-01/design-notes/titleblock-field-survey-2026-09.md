@@ -5,7 +5,7 @@ candidates in §3.1 are **parked for future discussion**
 **Author:** drafted 2026-09-01, following PR [#66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) review round 1
 **Answers:** the field-frequency survey that `docs/ai/worklog.md` (2026-08-13 entry) and the TTL footer's
 withdrawal of `hasLegalOwner` both said was still pending
-**Also relevant to:** Ahmed Zaalouk's PR #66 comment (2026-08-19) deferring detailed review of the organisation
+**Also relevant to:** Ahmed Zaalouk's [PR #66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) comment (2026-08-19) deferring detailed review of the organisation
 properties until he could "take a look at the title blocks" — this is that look
 **Scope:** which `tb:` terms to add in the *next* pass, not a re-litigation of the 11 terms already shipped or of
 decision 1 (Option 1, resolved — the former `titleblock-placement-option1-plan.md` is no longer in the repo)
@@ -41,7 +41,7 @@ the **four independent projects** the field (or an obvious synonym) appears in a
 the stronger signal here — a field that only one template happens to print is weak evidence for a general-purpose
 ontology term, however high its in-project percentage.
 
-**Applying the acceptance criterion already agreed** (Discussion #61, Zaalouk 1 / Alessio, recorded in the build
+**Applying the acceptance criterion already agreed** ([Discussion #61](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/61), Zaalouk 1 / Alessio, recorded in the build
 plan §5): *defer any field appearing on <~40% of sampled sheets.* Read per-project below; the crosscheck is
 breadth.
 
@@ -73,7 +73,7 @@ print, and the gaps below are the genuine remainder rather than an oversight.
 
 ## 3. Two genuine gaps, both crossing multiple projects
 
-Neither of these appeared in the original 73-term brainstorm (Discussion #61 §11.1) or in the ISO 7200 pass —
+Neither of these appeared in the original 73-term brainstorm ([Discussion #61](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/61) §11.1) or in the ISO 7200 pass —
 they surface only because this is real drawings, not a standards reading. That is exactly the kind of evidence
 the team asked for before deciding `hasLegalOwner` and the acceptance criterion.
 
@@ -89,7 +89,7 @@ the team asked for before deciding `hasLegalOwner` and the acceptance criterion.
 | Contractor | D | 10 / 10 = 100% |
 
 **Breadth: 4/4 projects**, under five different labels. That is the strongest cross-project signal in the whole
-survey, and it lines up with the thing Zaalouk himself flagged on PR #66 (2026-08-19) as needing "a robust
+survey, and it lines up with the thing Zaalouk himself flagged on [PR #66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) (2026-08-19) as needing "a robust
 analysis" before he could review the organisation properties. `tb:Organisation` and the `asserts<Thing>` naming
 pattern already exist and generalise cleanly — the open question is **shape, not whether**:
 
@@ -128,7 +128,7 @@ sheets often carry a **second** number from a different system — the design te
 the originator's), an EDMS/CDE document number (Aconex), or a sketch/site-advice reference (SA/SK). This is not
 in the original 73-term list; the closest existing candidate, `hasTechnicalReference` (ISO 7200 §5.3.3, *who to
 contact* — a `Person`), is a different concept and was already correctly rated "do not implement" (Discussion
-#61 §11.2, manufacturing heritage). Project A's SA/SK No. alone clears the 40% line (61.4%); Aconex Document
+[#61](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/61) §11.2, manufacturing heritage). Project A's SA/SK No. alone clears the 40% line (61.4%); Aconex Document
 Number and Design team drawing number are 100% of Project B's single-project template each, which — per the same
 caution as §3.1 — is one data point, not three.
 
@@ -219,7 +219,7 @@ ten.)
 | `approvedBy` | `dm:isApprovedBy` | `DrawingRevision` → `Person` |
 | `status` | `dm:hasStatusCode` | `DrawingRevision` → `StatusCode` |
 
-### 7.2 Withdrawn after review of PR #66 (2026-08-13)
+### 7.2 Withdrawn after review of [PR #66](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/66) (2026-08-13)
 
 - **`hasLegalOwner`** — Alessio Lombardi and Tianyang Huang both observe that a title block does not normally
   express legal ownership. Deferred pending the field survey; under the agreed `<40%` rule it is unlikely to
