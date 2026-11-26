@@ -29,8 +29,9 @@
     owl:priorVersion <https://w3id.org/adiro/adiro_provenance/2.0.0> ;
     owl:priorVersion <https://w3id.org/adiro/adiro_provenance/2.1.0> ;
     owl:priorVersion <https://w3id.org/adiro/adiro_provenance/2.2.0> ;
-    owl:versionIRI <https://w3id.org/adiro/adiro_provenance/2.3.0> ;
-    owl:versionInfo "2.3.0" .
+    owl:priorVersion <https://w3id.org/adiro/adiro_provenance/2.3.0> ;
+    owl:versionIRI <https://w3id.org/adiro/adiro_provenance/2.3.1> ;
+    owl:versionInfo "2.3.1" .
 
 #################################################################
 #    PROV-O terms referenced for alignment
