@@ -18,7 +18,7 @@
     dcterms:issued "2026-11-26"^^xsd:date ;
     dcterms:modified "2026-11-26"^^xsd:date ;
     dcterms:description "The symbols and marks a drawing uses, shared by every discipline: reusable symbols and text that appear across disciplines, such as dimensions, grids, levels and references to another layout or drawing: the graphical reference symbol, the inline and standalone reference expressions, and the occurrences of drawing and layout identifiers they are made of. Every one is a kind of drawing element from the drawing-metadata module. The discipline modules build on them." ;
-    dcterms:license <https://www.gnu.org/licenses/gpl-3.0.html> ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
     dcterms:publisher "Buro Happold" ;
     dcterms:replaces <https://w3id.org/adiro/adiro_common_symbols> ;
