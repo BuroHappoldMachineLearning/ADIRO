@@ -84,7 +84,9 @@ One evidenced occurrence of drawing-identifier (sheet-identifier) text on a sour
 
 *Example images:*
 
-![Drawing identifier mention — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/DrawingIdentifierMention_01.png)
+![Drawing identifier mention — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/DrawingIdentifierMention_02.png)
+
+![Drawing identifier mention — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/DrawingIdentifierMention_03.png)
 
 ### Grid {#Grid}
 
@@ -106,7 +108,9 @@ A complete inline textual expression relating layout number(s) to a sheet number
 
 *Example images:*
 
-![Inline Layout and Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/InlineLayoutDrawingReference_01.png)
+![Inline Layout and Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/InlineLayoutDrawingReference_02.png)
+
+![Inline Layout and Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/InlineLayoutDrawingReference_03.png)
 
 ### Layout identifier mention {#LayoutIdentifierMention}
 
@@ -117,7 +121,9 @@ One evidenced occurrence of layout-identifier text (a small integer or letter), 
 
 *Example images:*
 
-![Layout identifier mention — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/LayoutIdentifierMention_01.png)
+![Layout identifier mention — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/LayoutIdentifierMention_02.png)
+
+![Layout identifier mention — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/LayoutIdentifierMention_03.png)
 
 ### Reference expression {#ReferenceExpression}
 
@@ -135,11 +141,21 @@ A symbol drawn on a [Layout](adiro_drawing_metadata.md#Layout) that references a
 
 *Example images:*
 
-![ReferenceSymbol — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/ReferenceSymbol_01.png)
+![ReferenceSymbol — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/ReferenceSymbol_02.png)
+
+![ReferenceSymbol — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/ReferenceSymbol_03.png)
+
+![ReferenceSymbol — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/ReferenceSymbol_04.png)
+
+![ReferenceSymbol — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/ReferenceSymbol_05.png)
+
+![ReferenceSymbol — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/ReferenceSymbol_06.png)
+
+![ReferenceSymbol — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/ReferenceSymbol_07.png)
 
 ### Standalone Drawing Reference {#StandaloneDrawingReference}
 
-A drawing-identifier occurrence that itself constitutes a complete reference. One individual is both the [DrawingIdentifierMention](#DrawingIdentifierMention) and the [ReferenceExpression](#ReferenceExpression): no duplicate wrapper, self-directed hasDrawingIdentifierMention edge or second geometry is needed. An ungrouped mention is not automatically standalone merely because its parent has not been identified.
+A drawing-identifier occurrence that itself constitutes a complete reference. One individual is both the [DrawingIdentifierMention](#DrawingIdentifierMention) and the [ReferenceExpression](#ReferenceExpression): no duplicate wrapper, self-directed hasDrawingIdentifierMention edge or second geometry is needed. An entry in a drawing index (a row naming a drawing) is one: the drawing number there is a complete reference to a drawing. An ungrouped mention is not automatically standalone merely because its parent has not been identified.
 
 - **IRI:** `https://w3id.org/adiro/adiro_drawing_symbology#StandaloneDrawingReference`
 - **Sub class of:**
@@ -148,7 +164,19 @@ A drawing-identifier occurrence that itself constitutes a complete reference. On
 
 *Example images:*
 
-![Standalone Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/StandaloneDrawingReference_01.png)
+![Standalone Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/StandaloneDrawingReference_02.png)
+
+![Standalone Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/StandaloneDrawingReference_03.png)
+
+![Standalone Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/StandaloneDrawingReference_04.png)
+
+![Standalone Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/StandaloneDrawingReference_05.png)
+
+![Standalone Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/StandaloneDrawingReference_06.png)
+
+![Standalone Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/StandaloneDrawingReference_07.png)
+
+![Standalone Drawing Reference — example](https://w3id.org/adiro/adiro_drawing_symbology/exampleImage/StandaloneDrawingReference_08.png)
 
 ## Object Properties
 
