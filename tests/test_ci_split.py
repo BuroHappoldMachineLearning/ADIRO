@@ -44,3 +44,24 @@ def test_the_internal_names_check_runs_on_every_pull_request_as_a_test():
     """It reads files outside the ontology paths (#89), so the filtered validator alone would miss a pull request."""
     text = (ROOT / "tests" / "test_internal_names.py").read_text(encoding="utf-8")
     assert "find_internal_names(Path(__file__).resolve().parent.parent) == []" in text
+
+
+BOT_SKIP = "github.actor != 'adiro-bot[bot]' || github.head_ref == 'release/next'"
+
+
+def test_the_checks_the_worklog_bot_already_ran_skip_its_merge_commits_but_not_the_release_pr():
+    """The bot runs the validator and the tests on its merge before pushing it, and pushes only if they pass (#206).
+    Running them again on its commit is the same work twice; the Release PR, also pushed by the bot, is checked."""
+    for workflow in ("tests.yml", "validate-ontology.yml", "pr-guidance.yml"):
+        text = (WORKFLOWS / workflow).read_text(encoding="utf-8")
+        assert BOT_SKIP in text, workflow
+    assert "adiro-bot" not in (WORKFLOWS / "ontology-reasoning.yml").read_text(encoding="utf-8"), \
+        "the reasoner is a gate the bot does not run"
+
+
+def test_the_bot_runs_the_validator_as_the_pull_request_check_does():
+    """What the skip relies on: the same enforcement flags in the bot's verification as in validate-ontology.yml."""
+    flags = lambda text: set(re.findall(r"(?m)^\s+(ENFORCE_\w+): \"1\"", text))  # set, not commented out
+    ci = flags((WORKFLOWS / "validate-ontology.yml").read_text(encoding="utf-8"))
+    merge = (WORKFLOWS / "worklog-conflicts.yml").read_text(encoding="utf-8").split("Merge, resolve the worklog and verify")[1]
+    assert ci and ci <= flags(merge.split("- name:")[0]), (ci, merge[:300])

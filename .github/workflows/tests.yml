@@ -14,6 +14,9 @@ permissions:
 
 jobs:
   tests:
+    # Not on a merge commit the worklog bot pushed (#316): it ran this check on that exact tree before pushing, and
+    # pushes only if it passes. The Release PR's branch, also pushed by the bot, keeps the check.
+    if: github.actor != 'adiro-bot[bot]' || github.head_ref == 'release/next'
     runs-on: ubuntu-latest
 
     steps:

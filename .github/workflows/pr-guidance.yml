@@ -22,7 +22,11 @@ concurrency:
 
 jobs:
   guidance:
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    # Not on a merge commit the worklog bot pushed (#316): merging main does not change this pull request's own
+    # changes, which are all this comment is about. The Release PR's branch, also pushed by the bot, keeps it.
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      (github.actor != 'adiro-bot[bot]' || github.head_ref == 'release/next')
     runs-on: ubuntu-latest
     steps:
       - name: Create ADIRO Bot token

@@ -192,7 +192,10 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   request and always runs `main`'s copy of the workflow), the **ADIRO Bot** merges `main` into each open same-repository
   pull request whose **only** conflicting files are the worklog and the module changelogs (`changelogs/*.md`, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296)) and whose two sides only *add* lines to them, keeping both entries (the pull
   request's first; not in a changelog where either side adds a version heading, a release cut, or both add the same heading), and pushes the merge commit, which starts the checks again. It pushes only after the validation and the tests pass on
-  the merged tree; if one fails, it pushes nothing and says so in a comment on the pull request. It pushes the merge with the `main`
+  the merged tree; if one fails, it pushes nothing and says so in a comment on the pull request. So **Tests**, **Validate Ontology** and the
+  guidance comment skip its merge commits (`github.actor` is the bot, except on `release/next`), and its verification runs the validator
+  with the same `ENFORCE_*` flags as `validate-ontology.yml` (`tests/test_ci_split.py`, [#316](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/316)); the reasoner, a gate the bot does not run,
+  still runs. It pushes the merge with the `main`
   commit it verified, even when `main` has moved on since, because the docs deploy commits to `main` about a minute after every merge
   ([#224](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/224)), and accepts that commit only if it is a commit of `main`;
   the next run merges the rest. The run summary says, for each pull request (forks included), what it did or why it did not push; a push that fails for another reason than a moved branch fails the job, with git's error. Any other conflict (the bot then comments on the pull request with the conflicting files and, for the worklog, a generated page and a changelog, what to do with each, and removes the comment when a push to the branch leaves it mergeable; not on `release/next`, [#296](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/296)), a fork pull request
