@@ -141,3 +141,99 @@ def test_the_terms_of_a_deprecated_module_are_not_terms_to_define(tmp_path):
                    '<https://w3id.org/adiro/aec_x#B> a owl:Class .\n', encoding="utf-8")
     _, errors, warnings = vo.validate_ontology(ttl)
     assert not any("still carry their definition" in w or "have no skos:definition" in w for w in warnings) and not errors
+
+
+# --- compared with the base branch (#311) ---------------------------------------------------------------------------
+
+def against(tmp_path, results, base, renames=None):
+    out = tmp_path / "validate.md"
+    vo.write_markdown(results, out, base=base, renames=renames or {})
+    return out.read_text(encoding="utf-8")
+
+
+def table_rows(text):
+    """The main table's module rows (the backlog block's rows come after its <summary>)."""
+    main = text.split("<details><summary>Backlog")[0]
+    return [line for line in main.splitlines() if line.startswith("| ") and "`" in line]
+
+
+def test_an_unchanged_module_has_no_row_and_its_warnings_go_to_the_collapsed_backlog(tmp_path):
+    text = against(tmp_path, [("adiro_a", [], ["w1", "w2"]), ("adiro_b", [], [])],
+                   {"adiro_a": ([], ["w1", "w2"]), "adiro_b": ([], [])})
+    assert table_rows(text) == [] and "This pull request changes no finding" in text
+    assert "<details><summary>Backlog, unchanged by this pull request: 2 warning(s) in 1 module(s)</summary>" in text
+    assert "`adiro_a` | 2 | <details><summary>Show</summary>⚠️ w1<br>⚠️ w2</details> |" in text
+    assert "adiro_b" not in text, "a clean, unchanged module is not listed"
+
+
+def test_a_new_warning_gets_a_row_naming_it_and_the_rest_stays_in_the_backlog(tmp_path):
+    text = against(tmp_path, [("adiro_a", [], ["old", "new"])], {"adiro_a": ([], ["old"])})
+    (row,) = table_rows(text)
+    assert row.startswith("| ⚠️&nbsp;`adiro_a` | 0 | 1 → 2 |")
+    assert "⚠️ 🆕 new" in row and "🆕 old" not in row and "and 1 unchanged warning(s), in the backlog below" in row
+    assert "1 warning(s) in 1 module(s)" in text
+
+
+def test_a_resolved_warning_is_shown_and_counted(tmp_path):
+    text = against(tmp_path, [("adiro_a", [], ["kept"])], {"adiro_a": ([], ["kept", "fixed"])})
+    (row,) = table_rows(text)
+    assert row.startswith("| ✅&nbsp;`adiro_a` | 0 | 2 → 1 |") and "✔️ resolved: fixed" in row
+
+
+def test_an_error_is_shown_even_when_the_base_had_it(tmp_path):
+    text = against(tmp_path, [("adiro_a", ["broken"], [])], {"adiro_a": (["broken"], [])})
+    (row,) = table_rows(text)
+    assert row.startswith("| ⛔&nbsp;`adiro_a` | 1 | 0 |") and "⛔ broken" in row and "🆕" not in row
+
+
+def test_a_renamed_module_is_compared_with_its_predecessor(tmp_path):
+    base = {"adiro_old": ([], ["https://w3id.org/adiro/adiro_old#A has no definition", "changelogs/adiro_old.md was not changed"])}
+    renames = {"adiro_new": "adiro_old"}
+    text = against(tmp_path, [("adiro_new", [], ["https://w3id.org/adiro/adiro_new#A has no definition"])], base, renames)
+    (row,) = table_rows(text)
+    assert "✔️ resolved: changelogs/adiro_new.md was not changed" in row, "only what the pull request changed"
+    assert "🆕" not in row, "the inherited finding is not new"
+
+
+def test_a_new_module_has_no_base_and_shows_everything(tmp_path):
+    text = against(tmp_path, [("adiro_new", [], ["w"])], {})
+    (row,) = table_rows(text)
+    assert "⚠️ 🆕 w" in row
+
+
+def test_no_base_findings_gives_today_s_table_and_says_the_comparison_did_not_run(tmp_path):
+    missing = tmp_path / "none.json"
+    assert vo.read_base_findings(missing) is None
+    (tmp_path / "bad.json").write_text("not json", encoding="utf-8")
+    assert vo.read_base_findings(tmp_path / "bad.json") is None
+    out = tmp_path / "validate.md"
+    vo.write_markdown([("adiro_a", [], ["w"])], out, base=None, base_missing=True)
+    text = out.read_text(encoding="utf-8")
+    assert "The comparison with the base branch did not run" in text and "`adiro_a` | 0 | 1 |" in text
+
+
+def test_the_json_findings_round_trip(tmp_path):
+    path = tmp_path / "findings.json"
+    vo.write_json([("adiro_a", ["e"], ["w"])], path)
+    assert vo.read_base_findings(path) == {"adiro_a": (["e"], ["w"])}
+
+
+def test_the_workflow_compares_with_the_base_branch():
+    workflow = (Path(__file__).resolve().parent.parent / ".github" / "workflows" / "ontology-reasoning.yml").read_text(encoding="utf-8")
+    base_step = workflow.split("the base branch's findings")[1].split("- name:")[0]
+    assert "continue-on-error: true" in base_step and '--json "$RUNNER_TEMP/base-findings.json"' in base_step
+    assert 'cd "$RUNNER_TEMP/base"' in base_step, "the base's own script, on the base's files"
+    assert '--base-findings "$RUNNER_TEMP/base-findings.json"' in workflow
+
+
+def test_a_module_the_pull_request_removes_shows_its_findings_as_gone(tmp_path):
+    """Review of #312: without this row the backlog shrank without a word, and a removal alone read as 'no change'."""
+    text = against(tmp_path, [("adiro_a", [], ["w"])], {"adiro_a": ([], ["w"]), "adiro_gone": ([], ["g1", "g2"])})
+    (row,) = table_rows(text)
+    assert row.startswith("| ✅&nbsp;`adiro_gone` | 0 → 0 | 2 → 0 |") and "✔️ gone with the module: g1" in row
+    assert "This pull request changes no finding" not in text
+
+
+def test_a_renamed_modules_predecessor_is_not_reported_as_removed(tmp_path):
+    text = against(tmp_path, [("adiro_new", [], ["w"])], {"adiro_old": ([], ["w"])}, {"adiro_new": "adiro_old"})
+    assert "adiro_old" not in text and table_rows(text) == []

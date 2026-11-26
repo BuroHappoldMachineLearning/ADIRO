@@ -10,6 +10,7 @@ This script parses ontology files and checks for:
 """
 
 import html
+import json
 import os
 import subprocess
 import sys
@@ -554,7 +555,36 @@ def _findings_cell(errors: list[str], warnings: list[str], err_marker: str, warn
     return f"<details><summary>Show</summary>{body}</details>"
 
 
-def write_markdown(results: list[tuple[str, list[str], list[str]]], out_path: Path) -> None:
+def write_json(results: list[tuple[str, list[str], list[str]]], out_path: Path) -> None:
+    """The findings per module, for a later run to compare with (#311)."""
+    data = [{"module": name, "errors": errs, "warnings": warns} for name, errs, warns in results]
+    out_path.write_text(json.dumps(data, indent=1), encoding="utf-8")
+
+
+def read_base_findings(path: Path) -> dict[str, tuple[list[str], list[str]]] | None:
+    """The base branch's findings written by `--json`, or None when there are none to read."""
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return {row["module"]: (list(row["errors"]), list(row["warnings"])) for row in data}
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
+def base_for(module: str, base: dict, renames: dict) -> tuple[list[str], list[str]] | None:
+    """The base findings of `module`, or of the module it replaced (#171, #281) with its names rewritten; None for a new module."""
+    if module in base:
+        return base[module]
+    old = module_renames.predecessor(renames, module)
+    if old is None or old not in base:
+        return None
+    rename = lambda text: re.sub(rf"\b{re.escape(old)}\b", module, module_renames.rewrite_text(text, renames))
+    errs, warns = base[old]
+    return [rename(e) for e in errs], [rename(w) for w in warns]
+
+
+def write_markdown(results: list[tuple[str, list[str], list[str]]], out_path: Path,
+                   base: dict[str, tuple[list[str], list[str]]] | None = None, renames: dict | None = None,
+                   base_missing: bool = False) -> None:
     """
     Render this script's findings as a markdown section for the PR comment.
 
@@ -564,9 +594,18 @@ def write_markdown(results: list[tuple[str, list[str], list[str]]], out_path: Pa
     quality check". The findings of a module sit in its own row, in a column of
     their own that expands in place, so a reader never has to match a count to a
     list further down.
+
+    With the base branch's findings (`base`, #311) the table shows only what the pull request changed: a module has a row
+    when its findings differ from the base or it has an error (errors block), and the warnings it did not change go
+    into one collapsed backlog block. `base_missing` says the comparison was asked for but did not run.
     """
+    if base is not None:
+        out_path.write_text(_markdown_against_base(results, base, renames or {}), encoding="utf-8")
+        return
     OK, WARN, ERR = "\u2705", "\u26a0\ufe0f", "\u26d4"
     lines = ["### Important checks", ""]
+    if base_missing:
+        lines += ["The comparison with the base branch did not run, so every module is listed.", ""]
     total_err = sum(len(e) for _, e, _ in results)
     total_warn = sum(len(w) for _, _, w in results)
 
@@ -584,6 +623,57 @@ def write_markdown(results: list[tuple[str, list[str], list[str]]], out_path: Pa
     out_path.write_text("\n".join(lines), encoding="utf-8")
 
 
+def _markdown_against_base(results, base, renames) -> str:
+    """The Important checks section of `write_markdown` when the base branch's findings are known (#311)."""
+    OK, WARN, ERR, NEW, DONE = "✅", "⚠️", "⛔", "\U0001f195", "✔️"
+    rows, backlog = [], []
+    for name, errs, warns in results:
+        before = base_for(name, base, renames)
+        b_errs, b_warns = before if before is not None else ([], [])
+        new_warns = [w for w in warns if w not in b_warns]
+        resolved = [x for x in b_errs + b_warns if x not in errs + warns]
+        kept = [w for w in warns if w in b_warns]
+        if kept:
+            backlog.append((name, kept))
+        if not errs and not new_warns and not resolved:
+            continue
+        count = lambda now, was: str(now) if now == was else f"{was} → {now}"
+        items = ([f"{ERR}{' ' + NEW if e not in b_errs else ''} {_escape_cell(e)}" for e in errs]
+                 + [f"{WARN} {NEW} {_escape_cell(w)}" for w in new_warns]
+                 + [f"{DONE} resolved: {_escape_cell(x)}" for x in resolved])
+        if kept:
+            items.append(f"and {len(kept)} unchanged warning(s), in the backlog below")
+        mark = ERR if errs else (WARN if new_warns else OK)
+        rows.append("| %s&nbsp;`%s` | %s | %s | <details><summary>Show</summary>%s</details> |"
+                    % (mark, name, count(len(errs), len(b_errs)), count(len(warns), len(b_warns)), "<br>".join(items)))
+
+    # A base module the pull request removed (one that is not replaced by a renamed module): its findings are gone with it,
+    # which the table says rather than letting the backlog shrink without a word (review of #312).
+    present = {name for name, _, _ in results}
+    replaced = {module_renames.predecessor(renames, name) for name in present}
+    for name in sorted(set(base) - present - replaced):
+        b_errs, b_warns = base[name]
+        if b_errs or b_warns:
+            items = [f"{DONE} gone with the module: {_escape_cell(x)}" for x in b_errs + b_warns]
+            rows.append("| %s&nbsp;`%s` | %d → 0 | %d → 0 | <details><summary>Show</summary>%s</details> |"
+                        % (OK, name, len(b_errs), len(b_warns), "<br>".join(items)))
+
+    lines = ["### Important checks", ""]
+    if rows:
+        lines += ["Only what this pull request changed, and every error.", "",
+                  "| Module | Errors | Warnings | Findings |", "|---|--:|--:|:--|", *rows, ""]
+    else:
+        lines += [OK + " This pull request changes no finding, and there is no error.", ""]
+    if backlog:
+        total = sum(len(kept) for _, kept in backlog)
+        lines += [f"<details><summary>Backlog, unchanged by this pull request: {total} warning(s) in {len(backlog)} "
+                  "module(s)</summary>", "", "| Module | Warnings | Findings |", "|---|--:|:--|"]
+        lines += ["| %s&nbsp;`%s` | %d | %s |" % (WARN, name, len(kept), _findings_cell([], kept, ERR, WARN))
+                  for name, kept in backlog]
+        lines += ["", "</details>", ""]
+    return "\n".join(lines)
+
+
 def main():
     """Main function to validate ontology files."""
     repo_root = Path(__file__).parent.parent
@@ -591,11 +681,19 @@ def main():
 
     # --markdown <path> emits a PR-comment section alongside the console output.
     argv = sys.argv[1:]
-    markdown_path = None
-    if "--markdown" in argv:
-        i = argv.index("--markdown")
-        markdown_path = Path(argv[i + 1])
+    # --json <path> writes the findings per module; --base-findings <path> reads the base branch's, so the markdown
+    # shows only what changed (#311).
+    def option(flag):
+        if flag not in argv:
+            return None
+        i = argv.index(flag)
+        value = Path(argv[i + 1])
         del argv[i:i + 2]
+        return value
+
+    markdown_path = option("--markdown")
+    json_path = option("--json")
+    base_path = option("--base-findings")
     sys.argv = [sys.argv[0]] + argv
 
     if len(sys.argv) < 2:
@@ -684,8 +782,13 @@ def main():
             print(f"  [WARN] {msg}")
         all_valid = all_valid and not budget_errors
 
+    if json_path is not None:
+        write_json(results, json_path)
+        print(f"Wrote the findings to {json_path}")
     if markdown_path is not None:
-        write_markdown(results, markdown_path)
+        base = read_base_findings(base_path) if base_path is not None else None
+        write_markdown(results, markdown_path, base=base, renames=module_renames.load(repo_root),
+                       base_missing=base_path is not None and base is None)
         print(f"Wrote markdown summary to {markdown_path}")
 
     if not all_valid:
