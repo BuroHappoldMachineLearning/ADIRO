@@ -1,6 +1,7 @@
 ## 2026-11-26 - The DOI badge uses Zenodo's DOI badge ([#314](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/314))
 
 The post-deploy link check failed on one link: `https://zenodo.org/badge/1165500639.svg` (the badge by GitHub repository id) now redirects to `/badge/github/1165500639.svg`, which returns 500, checked several times on 2026-11-26, after the GitHub incident of 2026-11-25 had ended. The badge by DOI (`https://zenodo.org/badge/DOI/10.5281/zenodo.24319134.svg`) returns the image, so `README.md`, `scripts/generate_docs.py` and the line it writes in `docs/index.md` use it. The link target (`doi.org/10.5281/zenodo.24319134`, the concept DOI) is unchanged. The PR says `Related #314`: the next passing post-deploy run closes the alert issue.
+- `tests/test_suite_release.py` required the badge by repository ID; it now requires the badge by DOI, showing the DOI it links to, and no badge by repository ID. It failed on the first push of this PR (the search for references matched the URL, not the test's regex).
 - Not run: the link check itself (it runs after the deploy of `main`).
 
 ## 2026-11-23 - The QC comment no longer reports the deprecation cycle as problems ([#299](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/299))
