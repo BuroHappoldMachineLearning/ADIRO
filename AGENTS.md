@@ -138,13 +138,16 @@ which must point at the branch's raw file, because `w3id.org/adiro` resolves to 
   modularization write-ups) in `docs/specification/design-decisions/`.
 
 ## Validation & YouTrack-sync CI
-- **`.github/workflows/validate-ontology.yml`** — on PRs to any branch; runs `scripts/validate_ontology.py`
+- **`.github/workflows/validate-ontology.yml`** — on PRs to any branch that change what it reads (`src/`, `versions/`, `assets/`,
+  `changelogs/`, `config/`, the scripts it runs and imports, the dependencies; [#316](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/316)); runs `scripts/validate_ontology.py`
   over `src/*.ttl` (parse check, circular-subclass detection, ensures an `owl:Ontology` declaration, and
   per-module version consistency — `owl:versionInfo` == `owl:versionIRI` tail == ontology IRI + version), plus
   `scripts/compat_diff.py` (RES-67, *warn* mode) which flags when a module's declared SemVer bump is smaller
   than its change requires. It compares SKOS concepts and schemes too, as individuals: their classes and everything said of
-  them, so a change to a field kind is released ([#254](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/254)). The same validate step gates the deploy workflow. The workflow also runs the repository's
-  `tests/` (`pytest`) on the PR; they used to run only on a push to `main`, after a failing test could already have merged. On a PR (`BASE_REF` set) it also
+  them, so a change to a field kind is released ([#254](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/254)). The same validate step gates the deploy workflow. The repository's `tests/` (`pytest`) run on **every** PR in their own
+  check, **`tests.yml`** ("Tests", [#316](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/316)); they used to run only on a push to `main`, after a failing test could already have merged, and then as a step of
+  this workflow, where a failing test read as an ontology failure. The validator's check for internal tool names, which reads files outside
+  the paths above, is also a test of the real repository (`tests/test_internal_names.py`), so it runs on every PR. On a PR (`BASE_REF` set) it also
   warns when `src/<module>.ttl` changed but `changelogs/<module>.md` did not
   ([#105](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/105)); advisory, and `ENFORCE_CHANGELOG=1`
   makes it blocking. The warning appears in the QC comment (`ontology-reasoning.yml`). It also requires every module's

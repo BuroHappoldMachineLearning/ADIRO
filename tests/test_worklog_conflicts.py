@@ -170,7 +170,7 @@ def test_find_waits_for_github_to_compute_mergeable_and_skips_forks():
 
 
 def test_the_verification_runs_the_same_tests_as_the_pull_request_check():
-    text = (ROOT / ".github" / "workflows" / "validate-ontology.yml").read_text(encoding="utf-8")
+    text = (ROOT / ".github" / "workflows" / "tests.yml").read_text(encoding="utf-8")
     ci = re.search(r"run: (uv run [^\n]*pytest tests -q)", text).group(1)
     assert " ".join(dict(wc.VERIFY)["tests"]) == ci
 
