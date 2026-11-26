@@ -91,7 +91,7 @@ def test_published_inline_query_returns_only_accepted_targets() -> None:
 
     page = (
         ROOT
-        / "docs/specification/use-cases/UC-03/UC-03-Reference Symbol Cross-Sheet Linking.md"
+        / "docs/specification/use-cases/UC-03/UC-03-Reference Symbol Cross-Drawing Linking.md"
     ).read_text(encoding="utf-8")
     match = re.search(r"\*\*CQ 4\.2[^\n]*\n+```sparql\n(.*?)\n```", page, re.DOTALL)
     assert match, "CQ 4.2 query not found under its heading"

@@ -82,7 +82,7 @@ different things. An existential restriction (`contains some DrawingIdentifierMe
 missing mention; it would infer an anonymous one with no source text, box or evidence. A `max 1` or functional
 axiom would not report a second mention or a second sheet; it would infer that the two are the same individual
 and merge them, silently, including two different drawing sheets that share a printed number. A completeness or
-cardinality rule on detections is a closed-world check, so it belongs in validation (NFR 2 of the ORSD, #84).
+cardinality rule on detections is a closed-world check, so it belongs in validation (NFR 2 of the ORSD, [#84](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/84)).
 
 **Status of the checks.** These rules are specified here and are **not yet implemented** as SHACL shapes.
 Where shapes live is still open (a file under `src/` would be treated as an ontology module), and is tracked with

@@ -10,7 +10,7 @@ documentation, only.
     [#76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76). The rule it applies is
     [External ontology imports](external-ontology-imports.md). The term survey that preceded it is
     [Discussion #70](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/70).
-    **Revised 2026-09-25:** an earlier revision of #76 shipped an optional `aec_dano_alignment` crosswalk
+    **Revised 2026-09-25:** an earlier revision of [#76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76) shipped an optional `aec_dano_alignment` crosswalk
     module; it was withdrawn so ADIRO ships no DAnO artifact and the comparison is documentation-only.
 
 ## Summary
@@ -107,7 +107,7 @@ On that ground DAnO is the more developed vocabulary, and any claim that ADIRO i
 would be false there. ADIRO's symbol coverage is thin because the use cases that need it have not been built
 yet, not because a decomposition was considered and rejected.
 
-This matters now rather than later: **UC-03** (Reference Symbol Cross-Sheet Linking) is the highest-priority
+This matters now rather than later: **UC-03** (Reference Symbol Cross-Drawing Linking) is the highest-priority
 open use case and touches `SectionSymbol` / `Terminator` / `refersTo` / `isReferredToBy`, and **UC-07** (Wall
 Orientation and Measurement) needs exactly the dimension and axis-line territory. See §8.
 
@@ -182,7 +182,7 @@ shipped, so there is nothing in any ADIRO file for a reasoner to misread and not
 
 ### Why the correspondence is documentation, not a shipped crosswalk
 
-An earlier revision of #76 shipped a machine-readable crosswalk — first with `skos:closeMatch`, then with a
+An earlier revision of [#76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76) shipped a machine-readable crosswalk — first with `skos:closeMatch`, then with a
 minted ADIRO annotation property in an optional `aec_dano_alignment` module. Both were withdrawn on 2026-09-25:
 a crosswalk embedded in the ontology was judged more likely to confuse consumers than to help them, and it
 carried maintenance cost for no current consumer.

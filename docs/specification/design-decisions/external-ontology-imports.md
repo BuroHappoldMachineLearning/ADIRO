@@ -6,8 +6,7 @@ deliberately *doesn't*.
 !!! info "Where the decision lives"
     The reasoning, evidence and references behind this page are in
     **[Discussion #74](https://github.com/BuroHappoldMachineLearning/ADIRO/discussions/74)**
-    (ported from the internal KB note RES-A-12, now frozen). Implementation is tracked in
-    [RES-68](https://bhmlrnd.youtrack.cloud/issue/RES-68). This page is the short, normative version.
+    This page is the short, normative version.
 
 ## The rule
 
