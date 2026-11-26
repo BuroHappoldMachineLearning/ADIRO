@@ -17,6 +17,21 @@ model could not distinguish.
 | `adsym:InlineLayoutDrawingReference` | One complete inline expression | `adsym:inlineReferencesLayout` to each accepted target `Layout` |
 | `adsym:StandaloneDrawingReference` | One sheet-number occurrence that is itself a complete reference | Inherited `adsym:denotesDrawingSheet` |
 
+The classes and their superclasses; all of them are in `adiro_drawing_symbology` except `DrawingElement`, which is in
+`adiro_drawing_metadata`:
+
+```mermaid
+flowchart BT
+    RS[ReferenceSymbol] -- subClassOf --> RE[ReferenceExpression]
+    IR[InlineLayoutDrawingReference] -- subClassOf --> RE
+    SR[StandaloneDrawingReference] -- subClassOf --> RE
+    SR -- subClassOf --> DM[DrawingIdentifierMention]
+    LM[LayoutIdentifierMention]
+    RE -- subClassOf --> DE[DrawingElement]
+    DM -- subClassOf --> DE
+    LM -- subClassOf --> DE
+```
+
 `adsym:ReferenceExpression` groups the three complete forms for queries. A standalone reference has both
 `DrawingIdentifierMention` and `ReferenceExpression` types through subclassing: **one occurrence, one individual**. It
 does not need an outer wrapper, a self-directed `contains` edge or a duplicate box. An embedded sheet
@@ -37,6 +52,58 @@ symbol. Source membership is left unset when the evidence supports only a page l
 [UC-03 v0.7](../UC-03-Reference%20Symbol%20Cross-Drawing%20Linking.md#10-version-history): `appearsOnLayout` was removed.)*
 
 ## Worked examples
+
+The three diagrams below show one reference of each form. A solid arrow is composition: `contains` and its
+sub-property `hasReferenceSymbol`, and `hasLayout`. A dashed arrow is an accepted target edge, asserted only once the
+target has been resolved and accepted; before that, the source individuals exist without it. No
+`LayoutIdentifierMention` has a target edge of its own: the Layout a reference points to is recorded on the complete
+expression.
+
+**A graphical marker, `2/ST-201`.** The upper text of the marker is the layout number, the lower text the drawing
+number.
+
+```mermaid
+flowchart TB
+    SL["Layout<br/>(where the marker is drawn)"] -- hasReferenceSymbol --> RS["ReferenceSymbol<br/>2/ST-201"]
+    RS -- contains --> LM["LayoutIdentifierMention<br/>'2'"]
+    RS -- contains --> DM["DrawingIdentifierMention<br/>'ST-201'"]
+    RS -. referencesLayout .-> TL["Layout 2"]
+    DM -. denotesDrawingSheet .-> SH["DrawingSheet ST-201"]
+    SH -- hasLayout --> TL
+```
+
+A marker whose target is on the same drawing may print no drawing number; it then contains no
+`DrawingIdentifierMention`, and at most one in any case (`data-validation/uc03-composition.shacl.ttl`).
+
+**An inline reference, `1, 3, 5 & 7/S601`.** One drawing number is shared by four layout numbers; two of the four
+are shown, with both of their targets accepted.
+
+```mermaid
+flowchart TB
+    SL["Layout<br/>(where the note is printed)"] -- contains --> IR["InlineLayoutDrawingReference<br/>1, 3, 5 & 7/S601"]
+    IR -- contains --> DM["DrawingIdentifierMention<br/>'S601'"]
+    IR -- contains --> L1["LayoutIdentifierMention<br/>'1'"]
+    IR -- contains --> L3["LayoutIdentifierMention<br/>'3'"]
+    IR -. inlineReferencesLayout .-> T1["Layout 1"]
+    IR -. inlineReferencesLayout .-> T3["Layout 3"]
+    DM -. denotesDrawingSheet .-> SH["DrawingSheet S601"]
+    SH -- hasLayout --> T1
+    SH -- hasLayout --> T3
+```
+
+**A standalone reference, `SEE S601`.** The drawing number is the whole reference, so one individual is both the
+mention and the expression, and its target is the drawing, not a Layout.
+
+```mermaid
+flowchart LR
+    SL["Layout<br/>(where the note is printed)"] -- contains --> SR["StandaloneDrawingReference<br/>(also a DrawingIdentifierMention)<br/>'S601'"]
+    SR -. denotesDrawingSheet .-> SH["DrawingSheet S601"]
+```
+
+Each form has example images of its common varieties on the
+[`adiro_drawing_symbology` page](../../../../ontologies/adiro_drawing_symbology.md): graphical markers of several
+shapes, standalone references at a match line, in a legend, general notes, a schedule, a drawing index and a
+"for continuation" note, and the mentions both inside a marker and inside inline text.
 
 | Source | Individuals and relationships | What remains outside the accepted graph |
 |---|---|---|

@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Changed
+- **`StandaloneDrawingReference` says that an entry in a drawing index is one** ([#269](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/269)): the drawing number in a row naming a drawing is a complete reference to that drawing. Nothing else in the definition changes.
+
+### Added
+- **Example images of each variety of reference** ([#269](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/269)), synthetic like the others, drawn after the shapes real drawings use, with fictional numbers, and with the reference text boxed in red in the standalone, inline and mention images (a marker image shows the marker itself): `ReferenceSymbol` a section marker on its cutting line, an elevation marker, an interior elevation marker, a detail marker with a leader and a same-drawing marker with no drawing number (`_03` to `_07`); `StandaloneDrawingReference` at a match line, in a legend, in general notes, in a schedule, in a drawing index and in a "for continuation" note (`_03` to `_08`); `InlineLayoutDrawingReference` with a single layout and drawing (`_03`); `DrawingIdentifierMention` and `LayoutIdentifierMention` inside a graphical marker (`_03`). Each of these five terms now links a redrawing of its `_01` image as `_02` in place of `_01`: the same picture, with the reference text boxed in red where it has one, and, for `ReferenceSymbol`, the section marker's arrow on its bubble, perpendicular to the cutting line, and the elevation marker's arrow pointing away from its bubble, towards the face it shows (in `ReferenceSymbol_01.png` it pointed back at the bubble). The `_01` images stay served unchanged, because released versions name them.
+
 ## [6.0.0] — 2026-11-26
 
 ### Changed
