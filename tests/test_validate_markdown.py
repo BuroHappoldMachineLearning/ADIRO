@@ -224,3 +224,16 @@ def test_the_workflow_compares_with_the_base_branch():
     assert "continue-on-error: true" in base_step and '--json "$RUNNER_TEMP/base-findings.json"' in base_step
     assert 'cd "$RUNNER_TEMP/base"' in base_step, "the base's own script, on the base's files"
     assert '--base-findings "$RUNNER_TEMP/base-findings.json"' in workflow
+
+
+def test_a_module_the_pull_request_removes_shows_its_findings_as_gone(tmp_path):
+    """Review of #312: without this row the backlog shrank without a word, and a removal alone read as 'no change'."""
+    text = against(tmp_path, [("adiro_a", [], ["w"])], {"adiro_a": ([], ["w"]), "adiro_gone": ([], ["g1", "g2"])})
+    (row,) = table_rows(text)
+    assert row.startswith("| ✅&nbsp;`adiro_gone` | 0 → 0 | 2 → 0 |") and "✔️ gone with the module: g1" in row
+    assert "This pull request changes no finding" not in text
+
+
+def test_a_renamed_modules_predecessor_is_not_reported_as_removed(tmp_path):
+    text = against(tmp_path, [("adiro_new", [], ["w"])], {"adiro_old": ([], ["w"])}, {"adiro_new": "adiro_old"})
+    assert "adiro_old" not in text and table_rows(text) == []

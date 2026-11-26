@@ -647,6 +647,17 @@ def _markdown_against_base(results, base, renames) -> str:
         rows.append("| %s&nbsp;`%s` | %s | %s | <details><summary>Show</summary>%s</details> |"
                     % (mark, name, count(len(errs), len(b_errs)), count(len(warns), len(b_warns)), "<br>".join(items)))
 
+    # A base module the pull request removed (one that is not replaced by a renamed module): its findings are gone with it,
+    # which the table says rather than letting the backlog shrink without a word (review of #312).
+    present = {name for name, _, _ in results}
+    replaced = {module_renames.predecessor(renames, name) for name in present}
+    for name in sorted(set(base) - present - replaced):
+        b_errs, b_warns = base[name]
+        if b_errs or b_warns:
+            items = [f"{DONE} gone with the module: {_escape_cell(x)}" for x in b_errs + b_warns]
+            rows.append("| %s&nbsp;`%s` | %d → 0 | %d → 0 | <details><summary>Show</summary>%s</details> |"
+                        % (OK, name, len(b_errs), len(b_warns), "<br>".join(items)))
+
     lines = ["### Important checks", ""]
     if rows:
         lines += ["Only what this pull request changed, and every error.", "",
