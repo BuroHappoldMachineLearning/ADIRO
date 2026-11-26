@@ -9,7 +9,7 @@ ADIRO is a suite of **four independently-versioned OWL modules** (dependency ord
 
 Each module carries **its own [SemVer](https://semver.org/) version** and is released on its own cadence — there is **no single umbrella version**.
 
-Current versions: `aec_drawing_metadata` **2.0.0**; the other three **1.0.0**. These are per-module starting points, not a suite version.
+Each module's current version is its `owl:versionInfo`, shown by its release badge in the README and on its page; there is no suite version.
 
 ## IRIs
 

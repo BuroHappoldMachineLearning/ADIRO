@@ -23,8 +23,9 @@ Validate it at once: `uv run python scripts/validate_ontology.py src/<module>.tt
 
 ## 2. Pin its imports in `config/module_imports.json`
 
-Add an entry for the module, with each module it imports and the reason (`{}` when it imports none).
-`tests/test_module_imports.py` fails while the pin and the real `owl:imports` differ.
+Add an entry for the module, with each module it imports and the reason, a sentence of at least five words that says which of
+its terms use the import (`{}` when it imports none). `tests/test_module_imports.py` fails while the pin and the real `owl:imports`
+differ, or when a reason is shorter.
 
 ## 3. Add it to `src/catalog-v001.xml`
 
