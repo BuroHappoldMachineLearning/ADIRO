@@ -107,7 +107,7 @@ On that ground DAnO is the more developed vocabulary, and any claim that ADIRO i
 would be false there. ADIRO's symbol coverage is thin because the use cases that need it have not been built
 yet, not because a decomposition was considered and rejected.
 
-This matters now rather than later: **UC-03** (Reference Symbol Cross-Sheet Linking) is the highest-priority
+This matters now rather than later: **UC-03** (Reference Symbol Cross-Drawing Linking) is the highest-priority
 open use case and touches `SectionSymbol` / `Terminator` / `refersTo` / `isReferredToBy`, and **UC-07** (Wall
 Orientation and Measurement) needs exactly the dimension and axis-line territory. See §8.
 

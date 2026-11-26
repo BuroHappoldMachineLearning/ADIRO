@@ -12,9 +12,9 @@
 | **Title**         | Titleblock-Based Drawing Search                                                                               |
 | **Statement**     | As an engineer, I want to search and filter drawings based on the information in the titleblock.              |
 | **Primary Actor** | Engineer                                                                                                      |
-| **Goal**          | Retrieve a set of drawing sheets matching one or more titleblock metadata criteria, individually or in combination. |
+| **Goal**          | Retrieve a set of drawings matching one or more titleblock metadata criteria, individually or in combination. |
 
-> **Terminology note:** Throughout this ORSD, the user-facing term "drawing" refers to a `admeta:DrawingSheet` — the top-level, titleblock-bearing, searchable unit in the existing ontology. A sheet contains one or more `Layout`s, each of which carries its content type (Plan / Section / Detail / …) and discipline classification.
+> **Terminology note:** Throughout this ORSD, the user-facing term "drawing" refers to a `admeta:DrawingSheet` — the top-level, titleblock-bearing, searchable unit in the existing ontology. A drawing contains one or more `Layout`s, each of which carries its content type (Plan / Section / Detail / …) and discipline classification.
 
 ---
 
@@ -41,15 +41,17 @@ Things that exist independently and will become OWL Classes.
 | `StatusCode`        | `adiro_drawing_metadata`              | NEW    | Approval state (IFC, IFR, AFC…) expressed as a controlled vocabulary.                    |
 | `DrawingPackage`    | `adiro_drawing_metadata`              | NEW    | Drawings are grouped into volumes or packages within a project.                          |
 
-> **Design note — DrawingSheet vs Layout:** A `DrawingSheet` may contain multiple `Layout`s, each with its own `LayoutContentType` and `Discipline`. Queries for "Structural Plan drawings" filter for sheets containing at least one Layout whose content type is `Plan` and whose discipline is (a subclass of) `Structural`.
+*Action* is the LOT step for the term: NEW, introduced by this use case (it may since have been released); REUSE, an existing term this use case reuses.
 
-> **Design note — Titleblock as visual region vs titleblock data:** The existing `admeta:Titleblock` class models the *visual region* on a sheet (for CV annotation). The *information* conventionally found inside it (`drawingIdentifier`, `drawingTitle`, …) is attached as datatype properties directly on `DrawingSheet`. The two layers coexist independently: a sheet has a drawing number whether or not its visual Titleblock region has been bounded in annotation.
+> **Design note — DrawingSheet vs Layout:** A `DrawingSheet` may contain multiple `Layout`s, each with its own `LayoutContentType` and `Discipline`. Queries for "Structural Plan drawings" filter for drawings containing at least one Layout whose content type is `Plan` and whose discipline is (a subclass of) `Structural`.
+
+> **Design note — Titleblock as visual region vs titleblock data:** The existing `admeta:Titleblock` class models the *visual region* on a drawing (for CV annotation). The *information* conventionally found inside it (`drawingIdentifier`, `drawingTitle`, …) is attached as datatype properties directly on `DrawingSheet`. The two layers coexist independently: a drawing has a drawing number whether or not its visual Titleblock region has been bounded in annotation.
 
 > **Design note — `:Metadata` → `:MetadataContainer`:** The existing `:Metadata` class has been renamed to `:MetadataContainer` (team decision). It is the parent of `Titleblock`, `RevisionTable`, `Legend`, and `Note` — i.e. it models *visual supporting regions*, not semantic metadata. The rename avoids confusion with UC-01's datatype properties (`drawingIdentifier`, `drawingTitle`, etc.) on `DrawingSheet`.
 
 > **Design note — DrawingType deprecated:** UC-01 v0.2 introduced `:DrawingType` (Plan, Section, Elevation, Detail, Schedule). This is the same axis as `admeta:LayoutContentType` (Plan, Section, Elevation, Detail, Table, Perspective). "Schedule" maps to `Table`. `DrawingType` is removed in v0.3 — `LayoutContentType` is reused.
 
-> **Design note — Discipline reuse:** UC-01 v0.2 introduced `:Discipline` plus a `:disciplineCode` string property. The existing `adcore:Discipline` is already a full class hierarchy (`Structural`, `MEP > Mechanical / Electrical > Lighting / Plumbing`, `Architectural > Facade / FireLifeSafety`, `Masterplan`). v0.3 reuses it and drops `:disciplineCode` — discipline filtering uses `rdf:type` checks against the class hierarchy (e.g. `?disc a adcore:MEP`), which automatically rolls up sub-disciplines via `rdfs:subClassOf` reasoning.
+> **Design note — Discipline reuse:** UC-01 v0.2 introduced `:Discipline` plus a `:disciplineCode` string property. The existing `adcore:Discipline` is already a full class hierarchy (`Structural`, `MEP` (`Mechanical`, `Electrical` > `Lighting`, `Plumbing`), `Architectural` (`Facade`, `FireLifeSafety`), `Masterplan`, `Civil`). v0.3 reuses it and drops `:disciplineCode` — discipline filtering uses `rdf:type` checks against the class hierarchy (e.g. `?disc a adcore:MEP`), which automatically rolls up sub-disciplines via `rdfs:subClassOf` reasoning.
 
 > **Design note — curated values vs extracted assertions:** UC-01 attaches title-block information as datatype properties **directly on `DrawingSheet`** (`drawingIdentifier`, `drawingTitle`, …). That remains correct for a *validated* value. A second, parallel path exists for values that have been **machine-extracted and not yet validated**: an `adprov:FieldAssertion` reifies the claim - what was read, from which region (`assertedBy`), by what (`hasInferenceMeta`), with what confidence, and with the caption exactly as printed (`capturedCaption`) - bound to a field kind (`adprov:FieldKind`) in the `TitleblockFieldScheme`. `adprov:mapsToFieldProperty` names the UC-01 property a validated assertion is promoted to, and that property's domain is the class of the subject the value is about (`DrawingSheet`, `Titleblock`, `Project`, …): a region and a field kind meet only through assertions. The two coexist: UC-01's properties are the query surface, the assertion layer is the extraction and provenance record. A value moves from the assertion to the direct property when its assertion is **accepted** (`adprov:hasAcceptance` `Accepted`), by a pipeline rule (a confidence threshold, named by `adprov:acceptedUnder`) or by a person, and the acceptance records who and when (`acceptedBy`, `acceptedAt`). The assertions are never deleted, and the direct properties stay as the permanent query surface of accepted values ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85)). When a search finds no value, the assertion carries an outcome instead (`adprov:hasOutcome`: `Empty`, `Illegible`, `NotPrinted`, `NotFound`, `Failed`), and is never promoted. *(Added in [v0.4](#9-version-history); amended in [v0.10](#9-version-history), [v0.18](#9-version-history) and [v0.21](#9-version-history).)*
 
@@ -95,10 +97,10 @@ Characteristics of a single entity. **Datatype properties on `DrawingSheet` are 
 | ---------------- | ----------------- | ---------------------- | ------ | ------------- | ----- |
 | `drawingIdentifier`  | `DrawingSheet`    | `adiro_drawing_metadata` | NEW    | `xsd:string`  | Also known as "drawing number". |
 | `drawingTitle`   | `DrawingSheet`    | `adiro_drawing_metadata` | NEW    | `xsd:string`  | |
-| `hasScale`       | `DrawingSheet`, `Layout` | `adiro_drawing_metadata` | NEW    | `xsd:string`  | The general scale property; `drawingScale` and `layoutScale` are its sub-properties. With sub-property entailment a query on `hasScale` returns values recorded with either; without it, a sheet's scale is read with the path `admeta:hasScale\|admeta:drawingScale` and a layout's with `admeta:hasScale\|admeta:layoutScale`. *(Amended in [v0.7](#9-version-history).)* |
-| `drawingScale`     | `DrawingSheet`    | `adiro_drawing_metadata` | NEW    | `xsd:string`  | The scale of the sheet as a whole: most often printed in the title block, also in general notes or other areas outside any layout. Never copied from a layout. Sub-property of `hasScale`. *(Added in [v0.7](#9-version-history).)* |
+| `hasScale`       | `DrawingSheet`, `Layout` | `adiro_drawing_metadata` | NEW    | `xsd:string`  | The general scale property; `drawingScale` and `layoutScale` are its sub-properties. With sub-property entailment a query on `hasScale` returns values recorded with either; without it, a drawing's scale is read with the path `admeta:hasScale\|admeta:drawingScale` and a layout's with `admeta:hasScale\|admeta:layoutScale`. *(Amended in [v0.7](#9-version-history).)* |
+| `drawingScale`     | `DrawingSheet`    | `adiro_drawing_metadata` | NEW    | `xsd:string`  | The scale of the drawing as a whole: most often printed in the title block, also in general notes or other areas outside any layout. Never copied from a layout. Sub-property of `hasScale`. *(Added in [v0.7](#9-version-history).)* |
 | `layoutScale`    | `Layout`          | `adiro_drawing_metadata` | NEW    | `xsd:string`  | The scale printed in a layout's own caption (or 'NTS' / 'As shown', verbatim); more specific than `drawingScale`; left empty when the layout prints none. Sub-property of `hasScale`. *(Added in [v0.7](#9-version-history).)* |
-| `sheetSize`      | `DrawingSheet`    | `adiro_drawing_metadata` | NEW    | `xsd:string`  | Named for the sheet of paper, which has a size; also known as "drawing size". *(Noted in [v0.7](#9-version-history).)* |
+| `sheetSize`      | `DrawingSheet`    | `adiro_drawing_metadata` | NEW    | `xsd:string`  | Named for the drawing of paper, which has a size; also known as "drawing size". *(Noted in [v0.7](#9-version-history).)* |
 | `revisionCode`   | `DrawingRevision` | `adiro_drawing_metadata` | NEW    | `xsd:string`  | |
 | `issueDate`      | `DrawingSheet` or `DrawingRevision` | `adiro_drawing_metadata` | NEW    | `xsd:date`    | The date a drawing, or a revision of it, was issued; the title block's date is the drawing's, and "date authored" is the same property. *(Amended in [v0.8](#9-version-history).)* |
 | `personName`     | `Person`          | `adiro_drawing_metadata` | NEW    | `xsd:string`  | |
@@ -107,18 +109,20 @@ Characteristics of a single entity. **Datatype properties on `DrawingSheet` are 
 | `packageName`    | `DrawingPackage`  | `adiro_drawing_metadata` | NEW    | `xsd:string`  | |
 | `statusLabel`    | `StatusCode`      | `adiro_drawing_metadata` | NEW    | `xsd:string`  | |
 
+*Action* is the LOT step for the term: NEW, introduced by this use case (it may since have been released); REUSE, an existing term this use case reuses.
+
 #### Where a scale is printed, and which property records it
 
 | Where the scale is printed | Recorded as | Note |
 | -------------------------- | ----------- | ---- |
-| In the title block (the "Scale" cell), the usual place | `drawingScale` on the `DrawingSheet` | The sheet's nominal scale. |
-| In a general note or another area of the drawing outside the title block and outside any layout ("all drawings 1:50 unless noted") | `drawingScale` on the `DrawingSheet` | Whether such a scale applies to the whole sheet is judged from its context when the value is extracted; that is a matter for extraction, not for the ontology. |
-| In a layout's own caption | `layoutScale` on that `Layout` | More specific than the sheet's, and may differ from it (a 1:500 plan on a 1:50 sheet). |
-| In the caption of the only layout detected on the sheet | `layoutScale` on that `Layout`, and nothing on the sheet | Not repeated as `drawingScale`. A scale belongs to a drawing view: if more layouts are detected later, a `drawingScale` copied from the first would no longer be true of the sheet. |
+| In the title block (the "Scale" cell), the usual place | `drawingScale` on the `DrawingSheet` | The drawing's nominal scale. |
+| In a general note or another area of the drawing outside the title block and outside any layout ("all drawings 1:50 unless noted") | `drawingScale` on the `DrawingSheet` | Whether such a scale applies to the whole drawing is judged from its context when the value is extracted; that is a matter for extraction, not for the ontology. |
+| In a layout's own caption | `layoutScale` on that `Layout` | More specific than the drawing's, and may differ from it (a 1:500 plan on a 1:50 drawing). |
+| In the caption of the only layout detected on the drawing | `layoutScale` on that `Layout`, and nothing on the drawing | Not repeated as `drawingScale`. A scale belongs to a drawing view: if more layouts are detected later, a `drawingScale` copied from the first would no longer be true of the drawing. |
 | A layout printing "NTS" or "As shown" instead of a ratio | `layoutScale` with that text, verbatim | Tells a layout drawn out of scale apart from one that prints no scale. |
-| A layout printing no scale | nothing | `layoutScale` stays empty; the sheet's scale is not written into it. |
+| A layout printing no scale | nothing | `layoutScale` stays empty; the drawing's scale is not written into it. |
 
-What scale applies to a layout is answered by a query (CQ 1.4), not by a stored value: the layout's own `layoutScale` if it has one, otherwise the sheet's scale, reported as "assumed from sheet". The fallback is an assumption (a scale can be missing by mistake), so it is never asserted as a `layoutScale`, which would present an assumption as a printed value. "No scale" (CQ 1.5, CQ 1.6) is a closed-world check: OWL reads a missing value as "not stated", never as an error, so a `someValuesFrom` restriction would only make a reasoner infer that a scale exists. Such checks are queries, or validation shapes in the wider ABox validation work ([#22](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/22)).
+What scale applies to a layout is answered by a query (CQ 1.4), not by a stored value: the layout's own `layoutScale` if it has one, otherwise the drawing's scale, reported as "assumed from drawing". The fallback is an assumption (a scale can be missing by mistake), so it is never asserted as a `layoutScale`, which would present an assumption as a printed value. "No scale" (CQ 1.5, CQ 1.6) is a closed-world check: OWL reads a missing value as "not stated", never as an error, so a `someValuesFrom` restriction would only make a reasoner infer that a scale exists. Such checks are queries, or SHACL shapes in `data-validation/` ([#168](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/168)); there is none for scale yet. *(Amended in [v0.24](#9-version-history).)*
 
 ### 2.3 Relations — Object Properties
 
@@ -126,9 +130,9 @@ Links between two entities. New properties are wired into the existing generic t
 
 | Relation              | Domain            | Range               | Module                 | Action | `subPropertyOf`         |
 | --------------------- | ----------------- | ------------------- | ---------------------- | ------ | ----------------------- |
-| `contains` (sheet)    | `DrawingSheet`    | `Layout` (1..*)     | `adiro_drawing_metadata` | REUSE  | —                       |
+| `contains` (drawing)    | `DrawingSheet`    | `Layout` (1..*)     | `adiro_drawing_metadata` | REUSE  | —                       |
 | `hasProperty`         | `Layout`          | `LayoutContentType` | `adiro_drawing_metadata` | REUSE  | —                       |
-| `hasDiscipline` ⚠️    | `Layout`          | `Discipline` (min 1)| `adiro_discipline_core`    | REUSE¹ | —                       |
+| `hasDiscipline`       | `Layout`          | `Discipline` (min 1)| `adiro_discipline_core`    | REUSE¹ | —                       |
 | `hasRevision`         | `DrawingSheet`    | `DrawingRevision`   | `adiro_drawing_metadata` | NEW    | `admeta:contains`     |
 | `belongsToProject`    | `DrawingSheet`    | `Project`           | `adiro_drawing_metadata` | NEW    | (top-level)             |
 | `assertsProject`      | `Titleblock`      | `Project`           | `adiro_drawing_metadata` | NEW    | (top-level)             |
@@ -146,7 +150,9 @@ Links between two entities. New properties are wired into the existing generic t
 | `imageOf`             | `DrawingFile` (a kept image) | `CoordinateFrame` | `adiro_geometry` | NEW | (top-level) *(Added in [v0.19](#9-version-history).)* |
 | `hasStatusCode`       | `DrawingRevision` | `StatusCode`        | `adiro_drawing_metadata` | NEW    | `admeta:hasProperty`  |
 
-¹ ⚠️ **Open issue (G5):** `adcore:hasDiscipline` currently has `rdfs:domain admeta:LayoutContentType`. v0.3 proposes moving the domain to `admeta:Layout` (along with the `min 1` cardinality restriction). Discipline characterises the layout itself, not its content type — and the two are orthogonal axes (see design note below). Pending @alelom / @m-asakihattori sign-off.
+*Action* is the LOT step for the term: NEW, introduced by this use case (it may since have been released); REUSE, an existing term this use case reuses.
+
+¹ `adcore:hasDiscipline` has `rdfs:domain admeta:Layout`, with a `min 1` restriction on `Layout` (G5, resolved). *(Amended in [v0.24](#9-version-history).)* Discipline characterises the layout itself, not its content type — and the two are orthogonal axes (see design note below). Pending @alelom / @m-asakihattori sign-off.
 
 > **Design note — two orthogonal axes on Layout:**
 >
@@ -170,7 +176,7 @@ Each FR describes one representational capability the ontology must have, in imp
 
 **FR 1 — Drawing Identity Fields**
 
-> The ontology MUST represent the core identity fields of a drawing sheet — drawing number, title, scale, and sheet size — such that sheets can be retrieved and distinguished by these fields.
+> The ontology MUST represent the core identity fields of a drawing — drawing number, title, scale, and sheet size — such that drawings can be retrieved and distinguished by these fields.
 
 - Source: UC-01
 - Derived terms: `admeta:DrawingSheet` (REUSE), `admeta:drawingIdentifier`, `admeta:drawingTitle`, `admeta:hasScale`, `admeta:drawingScale`, `admeta:sheetSize` (NEW datatype properties on `DrawingSheet`); `admeta:layoutScale` (NEW, on `Layout`). `drawingScale` and `layoutScale` are sub-properties of `hasScale`. *(Amended in [v0.7](#9-version-history).)*
@@ -179,7 +185,7 @@ Each FR describes one representational capability the ontology must have, in imp
 
 **FR 2 — Project Membership**
 
-> The ontology MUST represent the relationship between a drawing sheet and the project it belongs to, such that all sheets within a given project can be retrieved as a set.
+> The ontology MUST represent the relationship between a drawing and the project it belongs to, such that all drawings within a given project can be retrieved as a set.
 
 - Source: UC-01
 - Derived terms: `admeta:Project` (NEW), `admeta:belongsToProject` (NEW), `admeta:assertsProject` (NEW, from a `Titleblock` to the project it names), `admeta:projectName`, `admeta:projectNumber` (NEW datatype properties on `Project`)
@@ -188,7 +194,7 @@ Each FR describes one representational capability the ontology must have, in imp
 
 **FR 3 — Revision History and Temporal Metadata**
 
-> The ontology MUST represent multiple revisions of the same drawing sheet as distinct entities, each carrying a revision code, issue date, and status code, such that both the current state and the full revision history of a sheet can be queried.
+> The ontology MUST represent multiple revisions of the same drawing as distinct entities, each carrying a revision code, issue date, and status code, such that both the current state and the full revision history of a drawing can be queried.
 
 - Source: UC-01
 - Derived terms: `admeta:DrawingRevision` (NEW), `admeta:hasRevision` (NEW, `subPropertyOf admeta:contains`), `admeta:assertsRevision` (NEW, from a `RevisionTable` to each revision it lists), `admeta:revisionCode`, `admeta:issueDate` (NEW)
@@ -200,7 +206,7 @@ Each FR describes one representational capability the ontology must have, in imp
 > The ontology MUST distinguish between the roles of Author, Checker, and Approver as separate relationships between a person and a drawing, and between a person and a revision of it, such that drawings can be filtered by a specific person in a specific role, and a drawing with no recorded person in a required role can be found.
 
 - Source: UC-01
-- Derived terms: `admeta:Person` (NEW), `admeta:isAuthoredBy`, `admeta:isCheckedBy`, `admeta:isApprovedBy` (NEW, top-level), `admeta:personName` (NEW)
+- Derived terms: `adprov:Person` (NEW; in `adiro_provenance`), `admeta:isAuthoredBy`, `admeta:isCheckedBy`, `admeta:isApprovedBy` (NEW, top-level), `admeta:personName` (NEW)
 
 > **Design note — inverse properties:** ADIRO declares **no** named inverse properties and no `owl:inverseOf` axioms. Only forward properties are modelled; reverse navigation uses the SPARQL inverse path, e.g. `?rev ^admeta:hasRevision ?sheet`. Decided project-wide in [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21). *(Changed in [v0.4](#9-version-history).)*
 
@@ -208,7 +214,7 @@ Each FR describes one representational capability the ontology must have, in imp
 
 **FR 5 — Discipline Classification**
 
-> The ontology MUST support filtering drawing sheets by engineering discipline, reusing the existing `adcore:Discipline` class hierarchy (`Structural`, `MEP`, `Architectural`, `Facade`, `FireLifeSafety`, `Masterplan`, plus their sub-disciplines), attached at the `Layout` level via `adcore:hasDiscipline`.
+> The ontology MUST support filtering drawings by engineering discipline, reusing the existing `adcore:Discipline` class hierarchy (`Structural`, `MEP`, `Architectural`, `Facade`, `FireLifeSafety`, `Masterplan`, plus their sub-disciplines), attached at the `Layout` level via `adcore:hasDiscipline`.
 
 - Source: UC-01
 - Derived terms: `adcore:Discipline` (REUSE), `adcore:hasDiscipline` (REUSE; its domain is `admeta:Layout`) *(Amended in [v0.24](#9-version-history).)*
@@ -219,7 +225,7 @@ Each FR describes one representational capability the ontology must have, in imp
 
 **FR 6 — Layout Content Type Classification**
 
-> The ontology MUST support filtering drawing sheets by view type, reusing the existing `admeta:LayoutContentType` controlled vocabulary (`Plan`, `Section`, `Elevation`, `Detail`, `Table`, `Perspective`), attached at the `Layout` level via `admeta:hasProperty`.
+> The ontology MUST support filtering drawings by view type, reusing the existing `admeta:LayoutContentType` controlled vocabulary (`Plan`, `Section`, `Elevation`, `Detail`, `Table`, `Perspective`), attached at the `Layout` level via `admeta:hasProperty`.
 
 - Source: UC-01
 - Derived terms: `admeta:LayoutContentType` (REUSE), `admeta:Layout` (REUSE), `admeta:hasProperty` (REUSE)
@@ -229,7 +235,7 @@ Each FR describes one representational capability the ontology must have, in imp
 
 **FR 7 — Issue Status**
 
-> The ontology MUST represent the approval status of each drawing revision using a controlled vocabulary of status codes, such that sheets can be filtered by their current or historical approval state.
+> The ontology MUST represent the approval status of each drawing revision using a controlled vocabulary of status codes, such that drawings can be filtered by their current or historical approval state.
 
 - Source: UC-01
 - Derived terms: `admeta:StatusCode` (NEW), `admeta:hasStatusCode` (NEW, `subPropertyOf admeta:hasProperty`), `admeta:statusLabel` (NEW)
@@ -238,7 +244,7 @@ Each FR describes one representational capability the ontology must have, in imp
 
 **FR 8 — Package / Volume Grouping** — *Lowest priority*
 
-> The ontology SHOULD represent the grouping of drawing sheets into packages or volumes within a project, such that project-scoped and package-scoped searches can both be supported.
+> The ontology SHOULD represent the grouping of drawings into packages or volumes within a project, such that project-scoped and package-scoped searches can both be supported.
 
 - Source: UC-01
 - Derived terms: `admeta:DrawingPackage` (NEW), `admeta:belongsToPackage` (NEW), `admeta:assertsPackage` (NEW, from a `Titleblock` to the package it names, when it names one), `admeta:packageName` (NEW)
@@ -287,20 +293,20 @@ CQs are grouped by the FR they validate. Each must be translatable directly into
 
 | ID     | Competency Question                                              |
 | ------ | ---------------------------------------------------------------- |
-| CQ 1.1 | What drawing sheets have a drawing number beginning with "ST-"?  |
-| CQ 1.2 | What is the title of the sheet with drawing number "ST-101"?     |
-| CQ 1.3 | What drawing sheets are drawn at scale 1:50? (Only sheets with a sheet-level scale are returned; a sheet whose only scale is in its single layout's caption is not.) |
-| CQ 1.4 | What scale applies to this layout: its own, or otherwise its sheet's? |
-| CQ 1.5 | Which drawing sheets state no scale at all? |
-| CQ 1.6 | Which layouts have no scale of their own and sit on a sheet with no scale, so that their scale cannot be determined? |
-| CQ 1.7 | Which layouts are drawn at a different scale from their sheet? |
+| CQ 1.1 | What drawings have a drawing number beginning with "ST-"?  |
+| CQ 1.2 | What is the title of the drawing with drawing number "ST-101"?     |
+| CQ 1.3 | What drawings are drawn at scale 1:50? (Only drawings with a drawing-level scale are returned; a drawing whose only scale is in its single layout's caption is not.) |
+| CQ 1.4 | What scale applies to this layout: its own, or otherwise its drawing's? |
+| CQ 1.5 | Which drawings state no scale at all? |
+| CQ 1.6 | Which layouts have no scale of their own and sit on a drawing with no scale, so that their scale cannot be determined? |
+| CQ 1.7 | Which layouts are drawn at a different scale from their drawing? |
 
 ### CQ Group 2 — Project Membership (validates FR 2)
 
 | ID     | Competency Question                                                 |
 | ------ | ------------------------------------------------------------------- |
-| CQ 2.1 | What drawing sheets belong to project "HS 2-N 400"?                 |
-| CQ 2.2 | How many drawing sheets are currently registered under project "X"? |
+| CQ 2.1 | What drawings belong to project "HS 2-N 400"?                 |
+| CQ 2.2 | How many drawings are currently registered under project "X"? |
 | CQ 2.3 | Which project does the title block of drawing "ST-101" name? *(Added in [v0.8](#9-version-history).)* |
 | CQ 2.4 | Which drawings are filed under a project other than the one their title block names? *(Added in [v0.8](#9-version-history).)* |
 
@@ -323,18 +329,18 @@ SELECT ?drawing ?named ?filed WHERE {
 
 | ID     | Competency Question                                                                         |
 | ------ | ------------------------------------------------------------------------------------------- |
-| CQ 3.1 | What is the latest revision code of the sheet with drawing number "ST-101"?                 |
-| CQ 3.2 | What sheets were issued after 1 January 2024?                                               |
-| CQ 3.3 | How many revisions has sheet "ST-101" gone through, and what were their issue dates?        |
+| CQ 3.1 | What is the latest revision code of the drawing with drawing number "ST-101"?                 |
+| CQ 3.2 | What drawings were issued after 1 January 2024?                                               |
+| CQ 3.3 | How many revisions has drawing "ST-101" gone through, and what were their issue dates?        |
 | CQ 3.4 | From which revision table was revision "B" of drawing "ST-101" read? *(Added in [v0.8](#9-version-history).)* |
 
 ### CQ Group 4 — Role-Differentiated Persons (validates FR 4)
 
 | ID     | Competency Question                                          |
 | ------ | ------------------------------------------------------------ |
-| CQ 4.1 | What sheets were authored by "J. Smith"?                     |
-| CQ 4.2 | What sheets were checked by "A. Chen"?                       |
-| CQ 4.3 | For sheet "ST-101 Rev C", who was the approving authority?   |
+| CQ 4.1 | What drawings were authored by "J. Smith"?                     |
+| CQ 4.2 | What drawings were checked by "A. Chen"?                       |
+| CQ 4.3 | For drawing "ST-101 Rev C", who was the approving authority?   |
 | CQ 4.4 | Which drawings have no recorded author, neither their own nor a revision's? *(Added in [v0.8](#9-version-history).)* |
 | CQ 4.5 | Which drawings have no recorded checker, or no recorded approver? *(Added in [v0.8](#9-version-history).)* |
 | CQ 4.6 | For each drawing with no recorded author, why: not printed, empty, illegible, not found, failed, awaiting acceptance, rejected, accepted and not yet promoted, or recorded with no value? *(Added in [v0.10](#9-version-history), amended in [v0.13](#9-version-history) and [v0.18](#9-version-history).)* |
@@ -405,29 +411,29 @@ The query reads the assertions about the drawing and about each of its revisions
 
 | ID     | Competency Question                                                                 |
 | ------ | ----------------------------------------------------------------------------------- |
-| CQ 5.1 | What sheets contain at least one Layout classified under the `Structural` discipline? |
+| CQ 5.1 | What drawings contain at least one Layout classified under the `Structural` discipline? |
 | CQ 5.2 | What disciplines are represented across the Layouts of project "X"?                 |
 
 ### CQ Group 6 — Layout Content Type (validates FR 6)
 
 | ID     | Competency Question                                                          |
 | ------ | ---------------------------------------------------------------------------- |
-| CQ 6.1 | What sheets contain a Layout of content type `Section`?                       |
+| CQ 6.1 | What drawings contain a Layout of content type `Section`?                       |
 | CQ 6.2 | What content types are used across the Layouts of project "X"?               |
 
 ### CQ Group 7 — Issue Status (validates FR 7)
 
 | ID     | Competency Question                                                                                     |
 | ------ | ------------------------------------------------------------------------------------------------------- |
-| CQ 7.1 | What sheets currently carry the status "Issued for Construction"?                                       |
-| CQ 7.2 | Which sheets changed from status "Issued for Review" to "Approved for Construction" across revisions?   |
+| CQ 7.1 | What drawings currently carry the status "Issued for Construction"?                                       |
+| CQ 7.2 | Which drawings changed from status "Issued for Review" to "Approved for Construction" across revisions?   |
 
 ### CQ Group 8 — Package Grouping (validates FR 8)
 
 | ID     | Competency Question                                                              |
 | ------ | -------------------------------------------------------------------------------- |
-| CQ 8.1 | What sheets belong to package "Volume 3"?                                        |
-| CQ 8.2 | Which sheets in package "Volume 3" still have status "Issued for Comment"?       |
+| CQ 8.1 | What drawings belong to package "Volume 3"?                                        |
+| CQ 8.2 | Which drawings in package "Volume 3" still have status "Issued for Comment"?       |
 | CQ 8.3 | Which package does the title block of drawing "ST-101" name, if it names one? *(Added in [v0.8](#9-version-history).)* |
 | CQ 8.4 | Which drawings are filed in a package other than the one their title block names? *(Added in [v0.8](#9-version-history).)* |
 
@@ -710,9 +716,9 @@ The queries read the data as written, with no inference. A step records a page i
 
 | ID     | Competency Question                                                                                  | FRs exercised               |
 | ------ | ---------------------------------------------------------------------------------------------------- | --------------------------- |
-| CQ-I 1 | What sheets in project "X" contain a `MEP` Layout and were approved by "R. Jones" after March 2024?  | FR 2, FR 4, FR 5, FR 7      |
-| CQ-I 2 | What sheets at scale 1:50 contain a `Structural` Layout and belong to project "Y"? (Only sheets with a sheet-level scale are returned; see CQ 1.3.) | FR 1, FR 2, FR 5            |
-| CQ-I 3 | What sheets in project "X" contain a `Structural` Layout of content type `Detail`?                   | FR 2, FR 5, FR 6            |
+| CQ-I 1 | What drawings in project "X" contain a `MEP` Layout and were approved by "R. Jones" after March 2024?  | FR 2, FR 4, FR 5, FR 7      |
+| CQ-I 2 | What drawings at scale 1:50 contain a `Structural` Layout and belong to project "Y"? (Only drawings with a drawing-level scale are returned; see CQ 1.3.) | FR 1, FR 2, FR 5            |
+| CQ-I 3 | What drawings in project "X" contain a `Structural` Layout of content type `Detail`?                   | FR 2, FR 5, FR 6            |
 
 ---
 
@@ -727,7 +733,7 @@ The tests run every recorded query twice: on the case's data as one graph, and o
 
 The following example demonstrates that the term inventory is sufficient to answer integration query CQ-I 1.
 
-**CQ-I 1:** *What sheets in project "X" contain a MEP Layout and were approved by "R. Jones" after March 2024?*
+**CQ-I 1:** *What drawings in project "X" contain a MEP Layout and were approved by "R. Jones" after March 2024?*
 
 ```sparql
 PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
@@ -763,9 +769,9 @@ The query is fully expressible, confirming that CQ-I 1 is covered by the current
 
 ### Scale competency questions
 
-CQ 1.3 and the scale questions CQ 1.4–1.7 are expressible without a reasoner. Each path lists the parent property together with its sub-property, so values written with either are found whether or not sub-property entailment has been applied: a sheet's scale is read with `(admeta:drawingScale|admeta:hasScale)` and a layout's with `(admeta:layoutScale|admeta:hasScale)`. A sheet's layouts are reached with `admeta:contains`, as in CQ-I 1. The queries were run with rdflib, without a reasoner, on a small example: a sheet with a title-block scale and three layouts (one with its own scale, one with none, one marked "NTS"), a sheet whose scale was written with `hasScale`, a sheet with no scale, and a sheet with a single detected layout.
+CQ 1.3 and the scale questions CQ 1.4–1.7 are expressible without a reasoner. Each path lists the parent property together with its sub-property, so values written with either are found whether or not sub-property entailment has been applied: a drawing's scale is read with `(admeta:drawingScale|admeta:hasScale)` and a layout's with `(admeta:layoutScale|admeta:hasScale)`. A drawing's layouts are reached with `admeta:contains`, as in CQ-I 1. The queries were run with rdflib, without a reasoner, on a small example: a drawing with a title-block scale and three layouts (one with its own scale, one with none, one marked "NTS"), a drawing whose scale was written with `hasScale`, a drawing with no scale, and a drawing with a single detected layout.
 
-**CQ 1.3:** *What drawing sheets are drawn at scale 1:50?* Only a sheet with a sheet-level scale is returned: a layout's scale is never copied to its sheet, so a sheet whose only scale is in the caption of its single layout is not returned.
+**CQ 1.3:** *What drawings are drawn at scale 1:50?* Only a drawing with a drawing-level scale is returned: a layout's scale is never copied to its drawing, so a drawing whose only scale is in the caption of its single layout is not returned.
 
 ```sparql
 PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
@@ -777,7 +783,7 @@ SELECT ?sheet WHERE {
 }
 ```
 
-**CQ 1.4:** *What scale applies to this layout: its own, or otherwise its sheet's?*
+**CQ 1.4:** *What scale applies to this layout: its own, or otherwise its drawing's?*
 
 ```sparql
 PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
@@ -795,7 +801,7 @@ SELECT ?layout ?scale ?basis WHERE {
 }
 ```
 
-**CQ 1.5:** *Which drawing sheets state no scale at all?*
+**CQ 1.5:** *Which drawings state no scale at all?*
 
 ```sparql
 PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
@@ -807,7 +813,7 @@ SELECT ?sheet WHERE {
 }
 ```
 
-**CQ 1.6:** *Which layouts have no scale of their own and sit on a sheet with no scale, so that their scale cannot be determined?*
+**CQ 1.6:** *Which layouts have no scale of their own and sit on a drawing with no scale, so that their scale cannot be determined?*
 
 ```sparql
 PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
@@ -822,7 +828,7 @@ SELECT ?layout WHERE {
 }
 ```
 
-**CQ 1.7:** *Which layouts are drawn at a different scale from their sheet?*
+**CQ 1.7:** *Which layouts are drawn at a different scale from their drawing?*
 
 ```sparql
 PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
@@ -851,7 +857,6 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `admeta:LayoutContentType`   | `adiro_drawing_metadata` | REUSE  | CQ 6.x, CQ-I 3                                 | FR 6                               |
 | `admeta:DrawingRevision`     | `adiro_drawing_metadata` | NEW    | CQ 3.x, CQ 4.x, CQ 7.x                         | FR 3, FR 4, FR 7                   |
 | `admeta:Project`             | `adiro_drawing_metadata` | NEW    | CQ 2.x, CQ-I 1                                 | FR 2                               |
-| `admeta:Person`              | `adiro_drawing_metadata` | NEW    | CQ 4.x, CQ-I 1                                 | FR 4                               |
 | `adcore:Discipline`           | `adiro_discipline_core`    | REUSE  | CQ 5.x, CQ-I 1, CQ-I 2, CQ-I 3                 | FR 5                               |
 | `admeta:StatusCode`          | `adiro_drawing_metadata` | NEW    | CQ 7.x, CQ 8.2                                 | FR 7                               |
 | `admeta:DrawingPackage`      | `adiro_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
@@ -905,6 +910,8 @@ CQ 1.5 and CQ 1.6 are the closed-world checks for a missing scale (see §2.2).
 | `admeta:projectNumber`       | `adiro_drawing_metadata` | NEW    | CQ 2.x                                         | FR 2                               |
 | `admeta:packageName`         | `adiro_drawing_metadata` | NEW    | CQ 8.x                                         | FR 8                               |
 
+*Action* is the LOT step for the term: NEW, introduced by this use case (it may since have been released); REUSE, an existing term this use case reuses.
+
 ---
 
 ## 7. Module Alignment Summary
@@ -932,10 +939,10 @@ adiro_provenance                      (foundational, domain-neutral: provenance 
 | Module                 | UC-01 contribution                                                                                                                                                          |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `adiro_drawing_metadata` | **New classes:** `DrawingRevision`, `Project`, `StatusCode`, `DrawingPackage`. **New properties:** all UC-01 datatype properties; `hasRevision` (⊂ `contains`), `hasStatusCode` (⊂ `hasProperty`), `belongsToProject`, `belongsToPackage`, `isAuthoredBy`, `isCheckedBy`, `isApprovedBy`, `isOnPage`. |
-| `adiro_provenance`       | **New classes:** `FieldKind` (the class of the field kinds of the `TitleblockFieldScheme`), `Configuration` (FR 10, with `configurationContent`), `TextReading` and `StepKind` (FR 11, with the outcome value `Failed`), `DrawingFile`, `FilePage`, and the agents `Party`, `Person` and `Organisation` (moved here from `adiro_drawing_metadata`), with the file and page properties of FR 9. **Reused (new module):** `FieldAssertion`, `InferenceMeta`, `hasConfidence`, `capturedCaption`, `assertedBy`, `inferredBy`/`inferredWith`/`inferredFrom`/`inferredAt`, and the `TitleblockFieldScheme` binding via `assertsFieldKind`. Carries **extracted** title-block values before validation - see the design note in §2.1. |
-| `adiro_geometry`         | **Reused (new module):** the `Titleblock` region may carry a `BoundingBox` (via `hasBoundingBox`) interpreted by a `CoordinateFrame` (which reads the page the drawing is on, via `describesPage`) — i.e. *where the title block sits on the page*. The extracted field values are read from within that one region and are **not** individually localised. **New:** `resolutionDpi`, `coversRegion` and `imageOf` (FR 10): the image of the page, or of a region of it, that a step saw, at its resolution, and the kept image file. *(Added in [v0.5](#9-version-history); amended in [v0.19](#9-version-history).)* |
+| `adiro_provenance`       | **New classes:** `FieldKind` (the class of the field kinds of the `TitleblockFieldScheme`), `Configuration` (FR 10, with `configurationContent`), `TextReading` and `StepKind` (FR 11, with the outcome value `Failed`), `DrawingFile`, `FilePage`, and the agents `Party`, `Person` and `Organisation` (moved here from `adiro_drawing_metadata`), with the file and page properties of FR 9. **Reused:** `FieldAssertion`, `InferenceMeta`, `hasConfidence`, `capturedCaption`, `assertedBy`, `inferredBy`/`inferredWith`/`inferredFrom`/`inferredAt`, and the `TitleblockFieldScheme` binding via `assertsFieldKind`. Carries **extracted** title-block values before validation - see the design note in §2.1. |
+| `adiro_geometry`         | **Reused:** the `Titleblock` region may carry a `BoundingBox` (via `hasBoundingBox`) interpreted by a `CoordinateFrame` (which reads the page the drawing is on, via `describesPage`) — i.e. *where the title block sits on the page*. The extracted field values are read from within that one region and are **not** individually localised. **New:** `resolutionDpi`, `coversRegion` and `imageOf` (FR 10): the image of the page, or of a region of it, that a step saw, at its resolution, and the kept image file. *(Added in [v0.5](#9-version-history); amended in [v0.19](#9-version-history).)* |
 | `adiro_drawing_symbology`   | No UC-01 contribution.                                                                                                                                                      |
-| `adiro_discipline_core`    | **Reused:** `Discipline` and its subclasses; `hasDiscipline` (with proposed domain change from `LayoutContentType` to `Layout` — see G5).                                   |
+| `adiro_discipline_core`    | **Reused:** `Discipline` and its subclasses; `hasDiscipline`, whose domain is `admeta:Layout` (G5). *(Amended in [v0.24](#9-version-history).)*                                   |
 | `adiro_facade_discipline`    | No UC-01 contribution.                                                                                                                                                      |
 
 **SubProperty wiring:**
@@ -960,7 +967,7 @@ These items affect UC-01 but cannot be unilaterally decided in the ORSD; recordi
 | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | G5  | ~~Should `hasDiscipline` domain move from `LayoutContentType` to `Layout`?~~ **Resolved**: its domain is `admeta:Layout`; discipline characterises the layout, not its content type. |
 | G13 | **What a region detection looked for.** CQ 11.4 reads every page that a region detection used as searched for a title block, which holds while UC-01's extraction detects only title blocks. A run that detects several kinds of region (a title block, a legend) in separate steps would need each step to say what it looked for, which ADIRO does not record yet. Nor is a region tied to the run that detected it, so CQ 11.4 cannot say which run missed a title block another run found. *(Added in [v0.18](#9-version-history).)* |
-| G5b | Should `DrawingSheet` itself carry a `hasDiscipline` (a "primary discipline" for the whole sheet) in addition to Layout-level discipline?                          |
+| G5b | Should `DrawingSheet` itself carry a `hasDiscipline` (a "primary discipline" for the whole drawing) in addition to Layout-level discipline?                          |
 | G11 | ~~**Direct properties vs `FieldAssertion`.**~~ **Resolved** ([#85](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/85), [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)): a value is promoted when its assertion is accepted, by a pipeline rule or a person, with the acceptance recorded on the assertion; both layers are kept, and the direct properties are permanent. See the design note in §2.1. |
 | G12 | ~~**A missing person is two different facts.**~~ "The extraction did not find the author" and "the drawing names none" must be told apart (the first is retried or reviewed, the second is a defect of the drawing). Decided: record absence as a value-less `FieldAssertion` with an outcome. **Resolved**: the vocabulary is in `adiro_provenance` (`hasOutcome`, `hasAcceptance`, [#187](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/187)), and CQ 4.6 reports a drawing by cause. |
 | G10 | ~~`:Metadata` class name misleading~~ — **resolved**: renamed to `:MetadataContainer` (team decision). The class models visual supporting regions (titleblock, legend, etc.), not semantic metadata. |
@@ -978,6 +985,9 @@ Corrections from v0.23, found in a consistency sweep of the documentation ([#306
 - **Statements the ontology had overtaken**: §3 said `Civil` "is to be added" to `adcore:Discipline` and that the domain of `adcore:hasDiscipline` was "proposed to move" to `Layout`; both are in `adiro_discipline_core`. Open point G5 and the "Civil" row of §8 are marked resolved.
 - **The module hierarchy of §7** no longer labels `adiro_provenance` and `adiro_geometry` "NEW" (both have been released for several versions); each says what it holds, and `adiro_drawing_metadata` names its two imports.
 - **Every issue and pull request named on the page is a link.**
+- **More statements the ontology had overtaken**: the `hasDiscipline` row of §2.3 and its footnote, and §7, still called its domain a pending change; `Person` is `adprov:Person` in `adiro_provenance` (FR 4 named it `admeta:Person`, and the §6 matrix listed it twice, once under the wrong module); the discipline hierarchy of the design note in §2.1 shows `Plumbing` under `MEP` and includes `Civil`; §7 no longer calls `adiro_provenance` and `adiro_geometry` "new"; the closed-world checks of §2.2 are SHACL shapes in `data-validation/`, not "the wider ABox validation work".
+- **"Drawing", not "sheet"**, in the prose, the requirements and the competency questions, by the convention of `AGENTS.md`: a sheet is only the paper format ("sheet size"); the class `DrawingSheet` keeps its name. No question changes what it asks.
+- **The *Action* column is explained** under each table: NEW is the LOT step "introduced by this use case", not a release status.
 
 ### v0.23 (draft)
 

@@ -1,4 +1,4 @@
-# UC-03: Reference Symbol Cross-Sheet Linking
+# UC-03: Reference Symbol Cross-Drawing Linking
 
 > **Methodology:** LOT (Linked Open Terms) · **Use Case ID:** UC-03 · **Version:** 0.13 (semantic extension in the ontology; geometry and navigation cases deferred — see [§8](#8-open-issues-pending-team-discussion) for deferred items, [§10](#10-version-history) for changelog)
 
@@ -9,12 +9,12 @@
 | Field             | Content                                                                                                                                                                                                                                              |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **ID**            | UC-03                                                                                                                                                                                                                                                |
-| **Title**         | Reference Symbol Cross-Sheet Linking                                                                                                                                                                                                                 |
-| **Statement**     | As a designer, I want to discover accepted connections between drawings through graphical reference symbols and evidenced inline or standalone sheet references, so that I can trace how a building element is documented across sheets and drawing sets in both directions. |
+| **Title**         | Reference Symbol Cross-drawing Linking                                                                                                                                                                                                                 |
+| **Statement**     | As a designer, I want to discover accepted connections between drawings through graphical reference symbols and evidenced inline or standalone drawing references, so that I can trace how a building element is documented across drawings and drawing sets in both directions. |
 | **Primary Actor** | Designer                                                                                                                                                                                                                                             |
-| **Goal**          | Given a drawing sheet or Layout, retrieve accepted target Layouts reached through graphical markers and accepted sheet/layout targets reached through evidenced textual references; keep outgoing and incoming source relationships queryable. |
+| **Goal**          | Given a drawing or Layout, retrieve accepted target Layouts reached through graphical markers and accepted drawing/layout targets reached through evidenced textual references; keep outgoing and incoming source relationships queryable. |
 
-> **Terminology note:** A `DrawingSheet` and its `Layout` are target identities, while a `DrawingIdentifierMention` is one occurrence of source text. Graphical symbols normally reference a specific Layout, such as view 2 on ST-201. An evidenced standalone sheet-number reference may denote a DrawingSheet without claiming a Layout target or an emitted PDF link. *(Amended in [v0.6](#10-version-history).)*
+> **Terminology note:** A `DrawingSheet` and its `Layout` are target identities, while a `DrawingIdentifierMention` is one occurrence of source text. Graphical symbols normally reference a specific Layout, such as view 2 on ST-201. An evidenced standalone drawing-number reference may denote a DrawingSheet without claiming a Layout target or an emitted PDF link. *(Amended in [v0.6](#10-version-history).)*
 
 ---
 
@@ -27,19 +27,21 @@
 | `DrawingSheet`           | `adiro_drawing_metadata` | REUSE  | Parent container of the Layouts being linked. Carries `drawingIdentifier`. UC-01 owns this.                                                |
 | `Layout`                 | `adiro_drawing_metadata` | REUSE  | The source/target view for a graphical symbol and an accepted target for an inline reference. Carries `layoutIdentifier`. |
 | `LayoutContentType`      | `adiro_drawing_metadata` | REUSE  | Plan / Section / Detail / Elevation / Table / Perspective. UC-03 can derive a ReferenceSymbol's type when its target Layout is accepted. |
-| `ReferenceSymbol`        | `adiro_drawing_symbology`   | REUSE | A graphical linking entity drawn on a source Layout and pointing to an accepted target Layout. |
+| `ReferenceSymbol`        | `adiro_drawing_symbology`   | NEW   | A graphical linking entity drawn on a source Layout and pointing to an accepted target Layout. |
 | `ReferenceExpression` | `adiro_drawing_symbology` | NEW | Common type for a complete graphical, inline or standalone reference; no extra wrapper individual is required. |
 | `DrawingIdentifierMention` / `LayoutIdentifierMention` | `adiro_drawing_symbology` | NEW | Distinct, evidenced occurrences of source number text, separate from target identities. |
 | `InlineLayoutDrawingReference` | `adiro_drawing_symbology` | NEW | One complete inline expression, possibly with several layout-number components and accepted target Layouts. |
 | `StandaloneDrawingReference` | `adiro_drawing_symbology` | NEW | One occurrence typed as both `DrawingIdentifierMention` and `ReferenceExpression`. |
 
-> **Design note — graphical symbols and text.** `adsym:ReferenceSymbol` is the established class for graphical cross-sheet markers. `adsym:ReferenceExpression` now groups it with inline and standalone textual forms for source-reference queries. A graphical marker is still a `admeta:DrawingElement`; its accepted `adsym:referencesLayout` target remains Layout-level. *(Amended in [v0.6](#10-version-history) and [v0.10](#10-version-history).)*
+*Action* is the LOT step for the term: NEW, introduced by this use case (it may since have been released); REUSE, an existing term this use case reuses.
 
-> **Design note — Layout-level mounting.** v0.1 had ReferenceSymbol link `Drawing → Drawing`. v0.2 links `Layout → Layout`: a marker like "2/ST-201" specifies view 2 on sheet ST-201, a specific Layout. Layout-level mounting also keeps ReferenceSymbol architecturally consistent with `Dimension`, `Grid`, and other `DrawingElement` subclasses, which are all contained by Layout, not Sheet.
+> **Design note — graphical symbols and text.** `adsym:ReferenceSymbol` is the established class for graphical cross-drawing markers. `adsym:ReferenceExpression` now groups it with inline and standalone textual forms for source-reference queries. A graphical marker is still a `admeta:DrawingElement`; its accepted `adsym:referencesLayout` target remains Layout-level. *(Amended in [v0.6](#10-version-history) and [v0.10](#10-version-history).)*
+
+> **Design note — Layout-level mounting.** v0.1 had ReferenceSymbol link `Drawing → Drawing`. v0.2 links `Layout → Layout`: a marker like "2/ST-201" specifies view 2 on drawing ST-201, a specific Layout. Layout-level mounting also keeps ReferenceSymbol architecturally consistent with `Dimension`, `Grid`, and other `DrawingElement` subclasses, which are all contained by Layout, not Drawing.
 
 > **Design note — resolved identity and source evidence.** `ReferenceSymbol` still has no raw-text datatype property. Its accepted target can supply a display label, but that derived label does not replace the text actually printed on the source. Keep source text, localisation and extraction decisions in evidence; whether a direct raw-text term belongs on the symbol remains open in [#20](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/20). Separate source occurrences retain separate RDF identities even when they display the same number. *(Amended in [v0.6](#10-version-history).)*
 
-> **Design note — localisation.** Source occurrences need immutable PDF/page/text evidence. An independently accepted sheet resolution may be retained for an unlocalisable reconstructed block, but precise localisation remains required for a clickable link; no bounding box is fabricated. The shared `adiro_geometry` module supplies `BoundingBox` and `CoordinateFrame`; UC-03 geometry roles and output navigation regions are tracked in [#93](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/93). The semantic classes here do not invent a `LayoutRegion` or require a geometry by OWL cardinality. *(Amended in [v0.6](#10-version-history).)*
+> **Design note — localisation.** Source occurrences need immutable PDF/page/text evidence. An independently accepted drawing resolution may be retained for an unlocalisable reconstructed block, but precise localisation remains required for a clickable link; no bounding box is fabricated. The shared `adiro_geometry` module supplies `BoundingBox` and `CoordinateFrame`; UC-03 geometry roles and output navigation regions are tracked in [#93](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/93). The semantic classes here do not invent a `LayoutRegion` or require a geometry by OWL cardinality. *(Amended in [v0.6](#10-version-history).)*
 
 ### 2.2 Attributes — Datatype Properties
 
@@ -47,6 +49,8 @@
 | --------------- | ----------------- | ---------------------- | ------ | ------------- | -------------------------------------------------------------------------------------------------- |
 | `drawingIdentifier` | `DrawingSheet`    | `adiro_drawing_metadata` | REUSE  | `xsd:string`  | Owned by UC-01 v0.3.                                                                                |
 | `layoutIdentifier`  | `Layout`          | `adiro_drawing_metadata` | REUSE | `xsd:string` | The number assigned to a Layout in its title strip (e.g. the "2" in "SECTION 2 — SCALE 1:50"); interpreted in the context of its parent DrawingSheet. |
+
+*Action* is the LOT step for the term: NEW, introduced by this use case (it may since have been released); REUSE, an existing term this use case reuses.
 
 `layoutIdentifier` already exists in `adiro_drawing_metadata`; UC-03 reuses it to distinguish Layouts within a target DrawingSheet.
 
@@ -65,10 +69,12 @@ decisions remain in immutable source evidence; an accepted target edge is assert
 | `denotesDrawingSheet` | `DrawingIdentifierMention` | `DrawingSheet` | `adiro_drawing_symbology` | NEW | (top-level) |
 | `inlineReferencesLayout` | `InlineLayoutDrawingReference` | `Layout` | `adiro_drawing_symbology` | NEW | (top-level) |
 
+*Action* is the LOT step for the term: NEW, introduced by this use case (it may since have been released); REUSE, an existing term this use case reuses.
+
 > **Design note — inverse properties.** ADIRO declares **no** named inverse properties and no `owl:inverseOf` axioms. Only the forward direction of each pair is modelled: `hasReferenceSymbol` (Layout → ReferenceSymbol, ⊂ `admeta:contains`) and `referencesLayout` (ReferenceSymbol → Layout). Reverse navigation uses the SPARQL inverse path, e.g. `?sym ^adsym:hasReferenceSymbol ?layout`, or simply reads the forward triple in the other direction. Decided project-wide in [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21). *(Changed in [v0.3](#10-version-history).)*
 
 `adsym:referencesLayout` keeps its symbol-only domain; inline targets use `adsym:inlineReferencesLayout`.
-`adsym:denotesDrawingSheet` resolves a text occurrence's sheet identity without introducing the general
+`adsym:denotesDrawingSheet` resolves a text occurrence's drawing identity without introducing the general
 `referencesSheet` relation deferred in [#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38).
 See the [semantic design note](design-notes/uc03-semantic-references.md) for the model boundaries.
 
@@ -101,7 +107,7 @@ See the [semantic design note](design-notes/uc03-semantic-references.md) for the
 
 **FR 3 — Target Layout Association**
 
-> The ontology MUST represent the relationship between a Reference Symbol and the Layout it references, such that the target Layout (and, transitively, the target Sheet) can be identified from any given Reference Symbol.
+> The ontology MUST represent the relationship between a Reference Symbol and the Layout it references, such that the target Layout (and, transitively, the target Drawing) can be identified from any given Reference Symbol.
 
 - Source: UC-03
 - Derived terms: `adsym:referencesLayout` (NEW)
@@ -110,7 +116,7 @@ See the [semantic design note](design-notes/uc03-semantic-references.md) for the
 
 **FR 4 — Bidirectional Navigation**
 
-> The ontology MUST support navigation in both directions: from a source Layout/Sheet to all Layouts it references through its symbols, and from a referenced Layout/Sheet back to all source Layouts/Sheets that contain a symbol pointing to it.
+> The ontology MUST support navigation in both directions: from a source Layout/Drawing to all Layouts it references through its symbols, and from a referenced Layout/Drawing back to all source Layouts/Sheets that contain a symbol pointing to it.
 
 - Source: UC-03
 - Derived terms: none — reverse navigation uses SPARQL inverse paths rather than declared inverse properties ([#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21))
@@ -139,15 +145,15 @@ See the [semantic design note](design-notes/uc03-semantic-references.md) for the
 
 **FR 7 — Source Reference Occurrences** — MUST
 
-> The ontology MUST distinguish each evidenced sheet/layout-number text occurrence from its target identity,
+> The ontology MUST distinguish each evidenced drawing/layout-number text occurrence from its target identity,
 > group graphical, inline and standalone complete references for queries, and avoid creating a duplicate
-> wrapper for a standalone sheet-number reference.
+> wrapper for a standalone drawing-number reference.
 
-- Source: UC-03 reference extraction and cross-sheet linking ([#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95))
+- Source: UC-03 reference extraction and cross-drawing linking ([#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95))
 - Derived terms: `adsym:ReferenceExpression`, `DrawingIdentifierMention`, `LayoutIdentifierMention`,
   `InlineLayoutDrawingReference`, `StandaloneDrawingReference`
 - Export condition: a semantic Mention has source-text and immutable PDF/page evidence. An unlocalisable
-  reconstructed block may retain an independently accepted Sheet resolution with explicit source status
+  reconstructed block may retain an independently accepted Drawing resolution with explicit source status
   and no navigation link. Unresolved target candidates remain in extraction evidence; OWL subclassing
   does not itself verify these application-profile conditions.
 
@@ -155,7 +161,7 @@ See the [semantic design note](design-notes/uc03-semantic-references.md) for the
 
 **FR 8 — Accepted Textual Targets** — MUST
 
-> The ontology MUST relate a resolved sheet-number occurrence to its accepted DrawingSheet and an inline
+> The ontology MUST relate a resolved drawing-number occurrence to its accepted DrawingSheet and an inline
 > expression to its accepted Layout targets, while allowing unresolved members to have no target edge.
 
 - Source: UC-03 source-to-target traceability ([#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95))
@@ -163,7 +169,7 @@ See the [semantic design note](design-notes/uc03-semantic-references.md) for the
 - Detailed component-to-target pairing stays in structured evidence; the graph contains the supported
   target set. This does not add the graphical whole-sheet relation deferred in
   [#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38) or claim that a PDF hyperlink was emitted.
-- **Deferred: bare layout-identifier reference.** A layout identifier that is a complete reference by itself (for example a same-sheet "see detail 3") is a `LayoutIdentifierMention` but not yet a `ReferenceExpression`, so it has no class. A dedicated reference class for it, the layout counterpart of `StandaloneDrawingReference`, is deferred together with [#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38) and [#20](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/20).
+- **Deferred: bare layout-identifier reference.** A layout identifier that is a complete reference by itself (for example a same-drawing "see detail 3") is a `LayoutIdentifierMention` but not yet a `ReferenceExpression`, so it has no class. A dedicated reference class for it, the layout counterpart of `StandaloneDrawingReference`, is deferred together with [#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38) and [#20](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/20).
 
 ---
 
@@ -181,9 +187,9 @@ What reference symbols exist on a given source, and what (broadly) do they point
 
 | ID     | Competency Question                                                              |
 | ------ | -------------------------------------------------------------------------------- |
-| CQ 1.1 | What reference symbols appear on sheet "GA-001"?                                 |
-| CQ 1.2 | How many reference symbols appear on sheet "GA-001"?                             |
-| CQ 1.3 | What Detail Markers (i.e. symbols whose target Layout is a `Detail`) appear on sheet "GA-001"? |
+| CQ 1.1 | What reference symbols appear on drawing "GA-001"?                                 |
+| CQ 1.2 | How many reference symbols appear on drawing "GA-001"?                             |
+| CQ 1.3 | What Detail Markers (i.e. symbols whose target Layout is a `Detail`) appear on drawing "GA-001"? |
 | CQ 1.4 | What types of reference symbols are used across project "X"? (i.e. what `LayoutContentType`s do its symbols target?) |
 
 ### CQ Group 2 — Navigation (validates FR 3, FR 5)
@@ -193,38 +199,38 @@ Given a marker (or its composite label), where does it lead?
 | ID     | Competency Question                                                                                |
 | ------ | -------------------------------------------------------------------------------------------------- |
 | CQ 2.1 | Which Layout is referenced by the symbol whose composite label is "2/ST-201"?                      |
-| CQ 2.2 | Which drawings reference the Detail at "2/ST-201"? *(rephrased per @AhmedElnagar1: "Which drawings reference this detail sheet?")* |
+| CQ 2.2 | Which drawings reference the Detail at "2/ST-201"? *(rephrased per @AhmedElnagar1: "Which drawings reference this detail drawing?")* |
 
 ### CQ Group 3 — Network (validates FR 4)
 
-Bidirectional reachability around a given Sheet or Layout.
+Bidirectional reachability around a given Drawing or Layout.
 
 | ID     | Competency Question                                                                                                |
 | ------ | ------------------------------------------------------------------------------------------------------------------ |
-| CQ 3.1 | What Layouts are referenced by sheet "GA-001" through its reference symbols? (outgoing)                            |
-| CQ 3.2 | Which Layouts contain a reference symbol pointing to a Layout on sheet "ST-201"? (incoming)                        |
-| CQ 3.3 | What is the complete set of Sheets connected to sheet "GA-001" through reference symbols in either direction?      |
+| CQ 3.1 | What Layouts are referenced by drawing "GA-001" through its reference symbols? (outgoing)                            |
+| CQ 3.2 | Which Layouts contain a reference symbol pointing to a Layout on drawing "ST-201"? (incoming)                        |
+| CQ 3.3 | What is the complete set of Sheets connected to drawing "GA-001" through reference symbols in either direction?      |
 
 ### CQ Group 4 — Source reference occurrences (validates FR 7, FR 8)
 
 | ID | Competency Question |
 |---|---|
-| CQ 4.1 | Which distinct sheet-number occurrences are embedded in a symbol or inline reference, and which are standalone references? |
+| CQ 4.1 | Which distinct drawing-number occurrences are embedded in a symbol or inline reference, and which are standalone references? |
 | CQ 4.2 | For `1, 3, 5 & 7/S601`, which accepted target Layouts belong to S601? |
-| CQ 4.3 | Which accepted DrawingSheet does a given evidenced sheet-number occurrence denote, if any? |
+| CQ 4.3 | Which accepted DrawingSheet does a given evidenced drawing-number occurrence denote, if any? |
 
 ### CQ Group I — Integration / Multi-field Queries
 
 | ID     | Competency Question                                                                          | FRs exercised                       |
 | ------ | -------------------------------------------------------------------------------------------- | ----------------------------------- |
-| CQ-I 1 | What Section views in project "X" are referenced from sheet "GA-001"?                        | FR 3, UC-01/FR 2, UC-01/FR 6        |
-| CQ-I 2 | Which sheets in project "X" contain markers pointing at any Detail on sheet "ST-201"?         | FR 2, FR 3, UC-01/FR 2              |
+| CQ-I 1 | What Section views in project "X" are referenced from drawing "GA-001"?                        | FR 3, UC-01/FR 2, UC-01/FR 6        |
+| CQ-I 2 | Which drawings in project "X" contain markers pointing at any Detail on drawing "ST-201"?         | FR 2, FR 3, UC-01/FR 2              |
 
 ---
 
 ## 5. SPARQL Validation
 
-**CQ 3.3:** *What is the complete set of sheets connected to sheet "GA-001" through reference symbols in either direction?*
+**CQ 3.3:** *What is the complete set of drawings connected to drawing "GA-001" through reference symbols in either direction?*
 
 ```sparql
 PREFIX admeta: <https://w3id.org/adiro/adiro_drawing_metadata#>
@@ -255,7 +261,7 @@ SELECT DISTINCT ?connectedSheet WHERE {
 Notes:
 - The query uses the current `w3id.org` module namespaces and the existing `admeta:hasLayout` relationship.
 - Both directions are expressible using the defined forward properties; no named inverse property is required.
-- The query traverses Sheet → Layout → ReferenceSymbol → Layout → Sheet at both ends, demonstrating that Layout-level mounting (decision §2) does not obstruct sheet-level user queries — sheet-level results emerge from a single extra hop.
+- The query traverses Drawing → Layout → ReferenceSymbol → Layout → Drawing at both ends, demonstrating that Layout-level mounting (decision §2) does not obstruct drawing-level user queries — drawing-level results emerge from a single extra hop.
 
 **CQ 2.1 (composite-label resolution) example:**
 
@@ -272,7 +278,7 @@ SELECT ?sym ?targetLayout WHERE {
 }
 ```
 
-This demonstrates FR 5: parse the composite label into sheet and layout identifiers, then retrieve symbols
+This demonstrates FR 5: parse the composite label into drawing and layout identifiers, then retrieve symbols
 with an **accepted** edge to the resolved Layout. The query does not prove what text was printed inside any
 particular symbol; inspect that symbol's source evidence for a text comparison.
 
@@ -317,6 +323,8 @@ string; member-level pairings and unresolved decisions require the indexed evide
 | `adsym:denotesDrawingSheet` | `adiro_drawing_symbology` | NEW | CQ 4.2, CQ 4.3 | FR 8 |
 | `adsym:inlineReferencesLayout` | `adiro_drawing_symbology` | NEW | CQ 4.2 | FR 8 |
 
+*Action* is the LOT step for the term: NEW, introduced by this use case (it may since have been released); REUSE, an existing term this use case reuses.
+
 ---
 
 ## 7. Module Alignment Summary
@@ -357,7 +365,7 @@ admeta:contains (existing)
 ```
 
 `referencesLayout`, `inlineReferencesLayout` and `denotesDrawingSheet` remain top-level target relations, not
-containment. Because `contains` is the one composition relation (`hasLayout` and `hasReferenceSymbol` specialise it), everything on a layout, including a mention inside a reference symbol or an inline reference, is `?layout admeta:contains+ ?x`; with sub-property entailment the same holds through the specialised properties. `appearsOnLayout` is a source-membership relation; read from a `ReferenceSymbol` it states the same fact as `hasReferenceSymbol`, which stays the symbol-specific relation.
+containment. Because `contains` is the one composition relation (`hasLayout` and `hasReferenceSymbol` specialise it), everything on a layout, including a mention inside a reference symbol or an inline reference, is `?layout admeta:contains+ ?x`; with sub-property entailment the same holds through the specialised properties. The source Layout of any reference expression is read with the inverse path `^admeta:contains`; `hasReferenceSymbol` is its specialisation for a marker. *(Amended in [v0.13](#10-version-history).)*
 
 ---
 
@@ -367,18 +375,18 @@ These items were raised during UC-03 drafting. **UC03-1 and UC03-2 are resolved*
 
 | ID    | Issue                                                                                                                                                                                                                                       |
 | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| UC03-1 | **✅ RESOLVED (implemented).** Adopted `ReferenceSymbol` and removed the earlier `Callout` class (option b) — see `src/adiro_drawing_symbology.ttl`. *(Original question: name/relationship of the cross-sheet linking class vs `Callout`; scope was agreed, name was open.)* |
+| UC03-1 | **✅ RESOLVED (implemented).** Adopted `ReferenceSymbol` and removed the earlier `Callout` class (option b) — see `src/adiro_drawing_symbology.ttl`. *(Original question: name/relationship of the cross-drawing linking class vs `Callout`; scope was agreed, name was open.)* |
 | UC03-2 | **✅ RESOLVED (implemented).** `admeta:layoutIdentifier` is now declared in `adiro_drawing_metadata` (`src/`). *(Original: UC-03 introduced it provisionally, pending UC-01 formally adopting it as an identity field.)* |
 | UC03-3 | **→ Tracked as [#36](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/36) (deferred).** A GeoSPARQL WKT/CRS profile and source-Layout spatial containment queries remain optional. The shared `BoundingBox` / `CoordinateFrame` already exist in [PR #76](https://github.com/BuroHappoldMachineLearning/ADIRO/pull/76); UC-03 localisation and navigation geometry are separately tracked in [#93](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/93). A title/number strip is not a full Layout polygon, and spatial overlap alone does not establish accepted source membership. |
 | UC03-4 | **→ Tracked as [#37](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/37) (backlog; out of UC-03 core scope).** Match Lines and other reference symbol types. Industry usage extends beyond Detail/Section/Elevation markers (Match Lines for split-sheet continuation, Schedule references, Key Plan references, etc.). UC-03's current scope covers the three primary types; broader coverage may need additional modelling if a CQ requires it. |
-| UC03-5 | **→ Tracked as [#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38) (backlog).** A graphical marker targeting an entire DrawingSheet remains an open case; the existing `adsym:referencesLayout` is Layout-level and no general `referencesSheet` property is introduced here. For textual sources, `admeta:TextualNote.refersToDrawingId` remains available for a note's identifier string. The new `StandaloneDrawingReference` instead represents one evidenced sheet-number occurrence whose accepted sheet identity may be expressed by `denotesDrawingSheet`; it does not change the graphical-marker question. |
-| —     | **✅ RESOLVED — [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21).** Inverse-property convention (project-wide, not UC-03-specific). Decided: ADIRO declares **no** named inverse properties and no `owl:inverseOf` axioms; reverse navigation uses SPARQL inverse paths. `appearsOn` and `isReferencedBy` removed from `adiro_drawing_symbology`; `isRevisionOf` removed from `adiro_drawing_metadata`. *(Applied in [v0.3](#10-version-history).)* |
+| UC03-5 | **→ Tracked as [#38](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/38) (backlog).** A graphical marker targeting an entire DrawingSheet remains an open case; the existing `adsym:referencesLayout` is Layout-level and no general `referencesSheet` property is introduced here. For textual sources, `admeta:TextualNote.refersToDrawingId` remains available for a note's identifier string. `StandaloneDrawingReference` instead represents one evidenced drawing-number occurrence whose accepted drawing identity may be expressed by `denotesDrawingSheet`; it does not change the graphical-marker question. |
+| —     | **✅ RESOLVED — [#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21).** Inverse-property convention (project-wide, not UC-03-specific). Decided: ADIRO declares **no** named inverse properties and no `owl:inverseOf` axioms; reverse navigation uses SPARQL inverse paths. `appearsOn` and `isReferencedBy` removed from the symbols module (then `aec_common_symbols`); `isRevisionOf` removed from `adiro_drawing_metadata`. *(Applied in [v0.3](#10-version-history).)* |
 
 ---
 
 ## 9. Design Decisions — Reasoning Index
 
-For the full design-debate reasoning behind the v0.2 modelling choices, see the accompanying *UC-03 Design Debate* note. The key decisions, in summary:
+For the full design-debate reasoning behind the v0.2 modelling choices, see the design notes of this use case ([semantic references](design-notes/uc03-semantic-references.md), [three-layer model](design-notes/uc03-three-layer-model.md), [provenance profile](design-notes/uc03-provenance-profile.md)). The key decisions, in summary:
 
 1. **§1 — Ontology role:** The semantic terms hold accepted reference identities, composition and targets. Parsing, candidate decisions and original-text evidence remain in referenced extraction records. *(Amended in [v0.6](#10-version-history).)*
 2. **§2 — Layout-level mounting:** Both ends of a ReferenceSymbol link `Layout → Layout`, not `Sheet → Sheet`. Better precision; aligns with the existing DrawingElement architecture.
@@ -399,6 +407,9 @@ Corrections from v0.12, found in a consistency sweep of the documentation ([#306
 - **The version line** said the semantic extension was "implemented on this branch, pending review"; it is in the ontology, and the geometry and navigation cases stay deferred (§8).
 - **The module hierarchy of §7** no longer labels `adiro_provenance` and `adiro_geometry` "NEW"; each says what it holds, and `adiro_drawing_metadata` names its two imports.
 - **Every pull request named on the page is a link.**
+- **The title is "Reference Symbol Cross-Drawing Linking"** (it was "Cross-Sheet"), and the file is renamed with it; every link in the repository follows. In the prose, the requirements and the competency questions, "drawing" replaces "sheet" by the convention of `AGENTS.md` (the class `DrawingSheet` keeps its name). No question changes what it asks.
+- **Statements the ontology had overtaken**: §7 described `appearsOnLayout`, removed in v0.7; the source Layout of any reference expression is read with `^admeta:contains`. `ReferenceSymbol` is NEW in §2.1, as in §6 (the class was added for this use case). "The new `StandaloneDrawingReference`" is no longer new. `appearsOn` and `isReferencedBy` were removed from the symbols module when it was `aec_common_symbols`. The "UC-03 Design Debate" note §9 pointed at is the design notes of this use case, now linked.
+- **The *Action* column is explained** under each table: NEW is the LOT step "introduced by this use case", not a release status.
 
 ### v0.12 (previous)
 

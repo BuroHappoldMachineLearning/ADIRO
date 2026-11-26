@@ -2,7 +2,7 @@
 
 This page explains the UC-03 semantic extension tracked in
 [#95](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/95). It complements the
-[UC-03 specification](../UC-03-Reference%20Symbol%20Cross-Sheet%20Linking.md).
+[UC-03 specification](../UC-03-Reference%20Symbol%20Cross-Drawing%20Linking.md).
 The existing `adiro_drawing_symbology:ReferenceSymbol` and its Layout-to-Layout link remain in place, and every reference term is defined in the same module, `adiro_drawing_symbology` ([#277](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/277)); `DrawingElement`, `Layout` and `DrawingSheet` stay in `adiro_drawing_metadata`. The new terms
 describe source text occurrences and complete inline or standalone references that the original symbol-only
 model could not distinguish.
@@ -34,7 +34,7 @@ a sub-property of `contains`), and read from the expression's side with the inve
 declares no named inverse properties ([#21](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/21)). Likewise, `adsym:inlineReferencesLayout` is separate from the existing symbol-only
 `adsym:referencesLayout`, so using an inline reference cannot accidentally infer that it is a graphical
 symbol. Source membership is left unset when the evidence supports only a page location. *(Amended in
-[UC-03 v0.7](../UC-03-Reference%20Symbol%20Cross-Sheet%20Linking.md#10-version-history): `appearsOnLayout` was removed.)*
+[UC-03 v0.7](../UC-03-Reference%20Symbol%20Cross-Drawing%20Linking.md#10-version-history): `appearsOnLayout` was removed.)*
 
 ## Worked examples
 
@@ -104,7 +104,7 @@ not OWL geometry cardinality axioms. Geometry roles remain tracked in
   provenance. No navigation-link class or emission claim is added in this semantic change.
 
 The new terms address the UC-03 occurrence and multi-reference questions in the
-[specification](../UC-03-Reference%20Symbol%20Cross-Sheet%20Linking.md#4-competency-questions).
+[specification](../UC-03-Reference%20Symbol%20Cross-Drawing%20Linking.md#4-competency-questions).
 They are schema terms, not a deployed exporter, populated knowledge graph or successful PDF navigation run.
 
 ## Source admission follows the final branch

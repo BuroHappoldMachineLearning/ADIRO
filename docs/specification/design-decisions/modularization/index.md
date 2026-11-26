@@ -39,7 +39,7 @@ flowchart TD
 ```
 
 An arrow points from a module to a module it imports. The same hierarchy is drawn in [UC-01 §7](../../use-cases/UC-01/UC-01-Titleblock-Based%20Drawing%20Search.md#7-module-alignment-summary)
-and [UC-03 §7](../../use-cases/UC-03/UC-03-Reference%20Symbol%20Cross-Sheet%20Linking.md#7-module-alignment-summary).
+and [UC-03 §7](../../use-cases/UC-03/UC-03-Reference%20Symbol%20Cross-Drawing%20Linking.md#7-module-alignment-summary).
 
 ## Design decisions
 
