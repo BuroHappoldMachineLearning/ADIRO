@@ -144,7 +144,7 @@ A module's name is part of every term IRI it defines, so a rename is a new ontol
 
 ## Validation
 
-Every PR runs `scripts/validate_ontology.py` (via `validate-ontology.yml`), which checks TTL parsing, circular subclass hierarchies, an `owl:Ontology` declaration, **and per-module version consistency** ([RES-66](https://bhmlrnd.youtrack.cloud/issue/RES-66)): each module must carry exactly one `owl:versionInfo` and one `owl:versionIRI`, and the versionIRI must equal the unversioned ontology IRI + `/` + the versionInfo.
+Every PR that changes the ontology or what the validator reads runs `scripts/validate_ontology.py` (via `validate-ontology.yml`), which checks TTL parsing, circular subclass hierarchies, an `owl:Ontology` declaration, **and per-module version consistency** ([RES-66](https://bhmlrnd.youtrack.cloud/issue/RES-66)): each module must carry exactly one `owl:versionInfo` and one `owl:versionIRI`, and the versionIRI must equal the unversioned ontology IRI + `/` + the versionInfo.
 
 The same `validate-ontology.yml` run also runs `scripts/compat_diff.py` ([RES-67](https://bhmlrnd.youtrack.cloud/issue/RES-67), **warn** mode): it classifies each module's change against its last released snapshot (per the [compatibility-diff spec](compatibility-diff-algorithm-spec.md)) and flags when the **declared** version bump is smaller than the change requires. It's advisory for now; the entailment-based upgrade and `enforce` mode are Phase 2b (RES-78 / RES-81).
 

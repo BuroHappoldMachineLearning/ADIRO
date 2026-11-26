@@ -1,0 +1,46 @@
+name: Tests
+
+# The repository's tests on every pull request (#316). They cover the scripts, the workflows, the documentation and the
+# README as much as the ontology, so they run whatever a pull request changes. They used to be a step of
+# validate-ontology.yml, where a failing test read as an ontology failure.
+
+on:
+  pull_request:
+    branches:
+      - '**'  # Run on PRs to any branch
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    # Not on a merge commit the worklog bot pushed (#316): it ran this check on that exact tree before pushing, and
+    # pushes only if it passes. The Release PR's branch, also pushed by the bot, keeps the check.
+    # "Skipped" here still means "checked", and a re-run would be no more independent: the bot's verdict comes from a
+    # job that runs the pull request's code (worklog-conflicts.yml, `merge`), and so would this check, on the same tree
+    # (`push` refuses any other). What a re-run would add is a check of the bot's own plumbing, main's code, which
+    # tests/test_worklog_conflicts.py covers; the bot's run summary says what it verified for each pull request.
+    if: github.actor != 'adiro-bot[bot]' || github.head_ref == 'release/next'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # some tests read the history: a released changelog section is compared with its tag
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --python 3.12 --no-install-project
+
+      - name: Run the repository tests
+        # `tests/` used to run only on a push to main (generate-deploy-docs.yml), so a failing test could merge and
+        # break the deploy afterwards. Run them on the PR too; the command is the one the deploy workflow uses.
+        run: uv run --python 3.12 --no-project --with pytest --with pillow --with rdflib --with pyshacl --with pylode==3.2.3 python -m pytest tests -q
