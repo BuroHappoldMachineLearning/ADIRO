@@ -341,3 +341,30 @@ def test_the_cut_sets_dcterms_modified_to_its_day():
     out = pr._set_modified(text, "2026-12-01")
     assert 'dcterms:modified "2026-12-01"^^xsd:date' in out and 'dcterms:issued "2026-10-21"^^xsd:date' in out
     assert pr._set_modified("no date here", "2026-12-01") == "no date here", "a module without one is left alone"
+
+
+def _with_modified(repo, day):
+    """The fixture module with a `dcterms:modified` in its header, as the ADIRO modules have (#284)."""
+    ttl = repo / "src" / "aec_x.ttl"
+    text = ttl.read_text(encoding="utf-8")
+    text = ("@prefix dcterms: <http://purl.org/dc/terms/> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n"
+            + text.replace("    owl:versionIRI", f'    dcterms:modified "{day}"^^xsd:date ;\n    owl:versionIRI', 1))
+    ttl.write_text(text, encoding="utf-8", newline="")
+    return ttl
+
+
+def test_the_release_cut_sets_dcterms_modified_of_the_modules_it_releases(tmp_path):
+    """Review of #332: the helper alone was tested, so dropping its call from apply_plan would pass unnoticed."""
+    repo = make_repo(tmp_path, ":B a owl:Class .\n", ENTRY)
+    ttl = _with_modified(repo, "2026-01-01")
+    pr.apply_plan(repo, pr.plan(repo), "2026-10-09")
+    text = ttl.read_text(encoding="utf-8")
+    assert 'dcterms:modified "2026-10-09"^^xsd:date' in text and "2026-01-01" not in text
+
+
+def test_a_held_module_keeps_its_dcterms_modified(tmp_path):
+    repo = make_repo(tmp_path, ":B a owl:Class .\n", ENTRY)
+    ttl = _with_modified(repo, "2026-01-01")
+    set_overrides(repo, {"aec_x": "hold"})
+    pr.apply_plan(repo, pr.plan(repo), "2026-10-09")
+    assert 'dcterms:modified "2026-01-01"^^xsd:date' in ttl.read_text(encoding="utf-8")
