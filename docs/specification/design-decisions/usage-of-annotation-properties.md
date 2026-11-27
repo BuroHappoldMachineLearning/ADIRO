@@ -68,3 +68,14 @@ that replaces it, but a stub with no text at all is still reported ([#298](https
 The check is advisory while the existing backlog is cleared ([#87](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/87)); set `ENFORCE_DESCRIPTIONS=1`
 to promote it to a blocking error, and `LIST_UNDESCRIBED=1` to list every term it finds.
 
+
+## `rdfs:isDefinedBy` marks external terms only
+
+ADIRO puts `rdfs:isDefinedBy` on the stubs of external terms (PROV-O, GeoSPARQL and the others a module declares
+locally), where it says which vocabulary defines the term, and not on its own terms
+([#284](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/284)). Every ADIRO term is
+`https://w3id.org/adiro/<module>#<Name>`: the hash namespace already names the module that defines it, and dereferencing
+the term's IRI returns that module's file, so the property would repeat the IRI on every term. Catalogues such as Linked
+Open Vocabularies, which recommend it, assign a term to its vocabulary by its namespace. It becomes worth adding if a
+consumer needs it, for example a store that holds ADIRO with other vocabularies and asks which terms a module defines,
+or a catalogue that requires it; then it is one scripted annotation change.

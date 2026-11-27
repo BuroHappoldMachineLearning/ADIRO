@@ -198,6 +198,15 @@ def _bump_ttl(text, module, old, new):
     return text.replace(iri_old, iri_new).replace(f'owl:versionInfo "{old}"', f'owl:versionInfo "{new}"')
 
 
+MODIFIED_RE = re.compile(r'(dcterms:modified\s+")\d{4}-\d{2}-\d{2}("\^\^xsd:date)')
+
+
+def _set_modified(text, day):
+    """The module's `dcterms:modified` set to the day of the release cut, which catalogues read as the last change (#284).
+    A module that does not declare one is left as it is."""
+    return MODIFIED_RE.sub(lambda m: f"{m.group(1)}{day}{m.group(2)}", text, count=1)
+
+
 PRIOR_LINE_RE = re.compile(r"^[ \t]*owl:priorVersion[ \t]+<[^>\r\n]*>[ \t]*;[ \t]*\r?\n", re.M)
 VERSION_IRI_LINE_RE = re.compile(r"^([ \t]*)owl:versionIRI[ \t]+<[^>\r\n]*>[ \t]*;", re.M)
 
@@ -267,6 +276,7 @@ def apply_plan(root, entries, day):
         if e["declared"] != e["next"]:
             text = _bump_ttl(text, module, e["declared"], e["next"])
         text = _set_prior_versions(text, prior_version_iris(root, module, e["next"]))
+        text = _set_modified(text, day)
         if text != old:
             _write(ttl, text)
         cl = root / "changelogs" / f"{module}.md"
