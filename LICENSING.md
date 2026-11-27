@@ -17,8 +17,11 @@ ADIRO is published under two licences, one for its ontologies and the resources 
 
 **Anything not listed is GPL-3.0** ([`LICENSE`](LICENSE)).
 
-**Released versions keep the licence they were released under.** A snapshot under `versions/` is the file as released, and
-its `dcterms:license` says its licence: the releases before this change are GPL-3.0, the releases after it CC BY 4.0.
+**Earlier releases are also licensed CC BY 4.0** ([#333](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/333)). Every release of every ADIRO module that states GPL-3.0 in its `dcterms:license`, the
+`aec_*` modules included, is also licensed CC BY 4.0, from 2026-11-26, in addition to the GPL-3.0 it states. A user may
+use it under either licence. The release files are not edited, because a version's address keeps serving exactly what
+was released: a snapshot under `versions/` still says GPL-3.0, and this statement is the grant of CC BY 4.0 for it. The
+releases that state CC BY 4.0 in their `dcterms:license` need no grant.
 
 **Generated pages include third-party code.** The pyLODE pages (`docs/*.html`) carry pyLODE's own styling and scripts, which
 are under pyLODE's licence (BSD 3-Clause); the content generated from an ontology is the ontology's.
