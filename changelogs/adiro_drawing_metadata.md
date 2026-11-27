@@ -6,7 +6,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/).
 ## [Unreleased]
 
 ### Changed
-- **The module is licensed CC BY 4.0** ([#276](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/276)), not GPL-3.0: `dcterms:license` names <https://creativecommons.org/licenses/by/4.0/>. Reuse needs attribution only, so another ontology can import or extend its terms under its own licence. Earlier releases keep the licence they were released under. `LICENSING.md` says what in the repository is under which licence. No IRI, axiom or term changes.
+- **The module is licensed CC BY 4.0** ([#276](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/276)), not GPL-3.0: `dcterms:license` names <https://creativecommons.org/licenses/by/4.0/>. Reuse needs attribution only, so another ontology can import or extend its terms under its own licence. Every earlier release, which states GPL-3.0, is also licensed CC BY 4.0 ([#333](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/333)). `LICENSING.md` says what in the repository is under which licence. No IRI, axiom or term changes.
 
 ### Changed
 - **The module's introduction says "drawing", not "drawing sheet"** ([#324](https://github.com/BuroHappoldMachineLearning/ADIRO/issues/324)): the `rdfs:comment` of the ontology describes "the structure of a drawing". No IRI, axiom or term changes.
