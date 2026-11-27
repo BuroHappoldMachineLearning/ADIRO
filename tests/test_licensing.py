@@ -38,3 +38,12 @@ def test_the_citation_file_names_both_licences():
     text = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
     block = re.search(r"(?m)^license:\n((?:  - .*\n)+)", text)
     assert block and set(re.findall(r"- (\S+)", block.group(1))) == {"CC-BY-4.0", "GPL-3.0-only"}
+
+
+def test_the_grant_for_earlier_releases_is_stated():
+    """#333: every earlier release is also CC BY 4.0; its file is not edited, so the grant must be stated."""
+    licensing = (ROOT / "LICENSING.md").read_text(encoding="utf-8")
+    # by what a release states, not by a date: the releases of 2026-11-26 state GPL-3.0 too (review of #334)
+    assert "Every release of every ADIRO module that states GPL-3.0 in its `dcterms:license`" in licensing
+    assert "published before" not in licensing
+    assert "is also licensed CC BY 4.0" in licensing and "either" in licensing

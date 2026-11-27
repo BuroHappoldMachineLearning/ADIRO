@@ -28,6 +28,10 @@ from extract_changelog import section  # noqa: E402
 SEMVER_RE = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
 SITE = "https://burohappoldmachinelearning.github.io/ADIRO"
 W3ID = "https://w3id.org/adiro"
+# The licence line of every release (#276, #333): the ontology's licence, and the grant that covers every earlier release.
+LICENCE_NOTE = ("CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Every earlier release of every ADIRO module is also "
+                "licensed CC BY 4.0, in addition to the licence it states; see "
+                "https://github.com/BuroHappoldMachineLearning/ADIRO/blob/main/LICENSING.md")
 
 
 def _key(version):
@@ -89,6 +93,7 @@ def render(module, version, previous, changelog, changes, repo, previous_tagged=
         f"- Ontology (latest): {W3ID}/{module}",
         f"- This version ({version}): {W3ID}/{module}/{version}",
         *([f"- Renamed from `{previous_module}`: its releases keep their own IRIs, at {W3ID}/{previous_module}"] if previous_module else []),
+        f"- Licence: {LICENCE_NOTE}",
         "",
         changelog,
         "",

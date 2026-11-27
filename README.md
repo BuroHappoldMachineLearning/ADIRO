@@ -101,7 +101,7 @@ Each `.ttl` file in `src/` gets a corresponding `.html` reference page in `docs/
 
 ## Licence
 
-The ontologies, their documentation, the data checks and the example images are licensed [CC BY 4.0](LICENSES/CC-BY-4.0.txt); the code (scripts, `ttl2md`, tests, workflows) is licensed [GPL-3.0](LICENSE). [`LICENSING.md`](LICENSING.md) says which file is under which licence; a released version keeps the licence it was released under.
+The ontologies, their documentation, the data checks and the example images are licensed [CC BY 4.0](LICENSES/CC-BY-4.0.txt); the code (scripts, `ttl2md`, tests, workflows) is licensed [GPL-3.0](LICENSE). [`LICENSING.md`](LICENSING.md) says which file is under which licence; every earlier release of a module is also licensed CC BY 4.0, in addition to the GPL-3.0 it states.
 
 ## Contributing
 
