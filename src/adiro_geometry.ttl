@@ -21,7 +21,7 @@
     vann:preferredNamespacePrefix "adgeom" ;
     vann:preferredNamespaceUri "https://w3id.org/adiro/adiro_geometry#"^^xsd:anyURI ;
     dcterms:issued "2026-10-21"^^xsd:date ;
-    dcterms:modified "2026-11-26"^^xsd:date ;
+    dcterms:modified "2026-11-27"^^xsd:date ;
     dcterms:description "Foundational, domain-neutral module for geometry. It records where something sits on a drawing page as a bounding box, read against an explicit coordinate frame. Each box carries its own provenance and confidence. It reuses GeoSPARQL, is imported by the drawing modules, and is shared across use cases." ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     dcterms:creator "Buro Happold - Machine Learning R&D" ;
@@ -33,8 +33,9 @@
     owl:priorVersion <https://w3id.org/adiro/aec_geometry/2.0.0> ;
     owl:priorVersion <https://w3id.org/adiro/adiro_geometry/3.0.0> ;
     owl:priorVersion <https://w3id.org/adiro/adiro_geometry/3.1.0> ;
-    owl:versionIRI <https://w3id.org/adiro/adiro_geometry/3.1.1> ;
-    owl:versionInfo "3.1.1" .
+    owl:priorVersion <https://w3id.org/adiro/adiro_geometry/3.1.1> ;
+    owl:versionIRI <https://w3id.org/adiro/adiro_geometry/3.1.2> ;
+    owl:versionInfo "3.1.2" .
 
 #################################################################
 #    GeoSPARQL term reused for alignment

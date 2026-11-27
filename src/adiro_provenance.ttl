@@ -22,7 +22,7 @@
     vann:preferredNamespacePrefix "adprov" ;
     vann:preferredNamespaceUri "https://w3id.org/adiro/adiro_provenance#"^^xsd:anyURI ;
     dcterms:issued "2026-10-21"^^xsd:date ;
-    dcterms:modified "2026-11-26"^^xsd:date ;
+    dcterms:modified "2026-11-27"^^xsd:date ;
     dcterms:description "Foundational, domain-neutral module for provenance. It lets any value inferred from a drawing be recorded as an assertion that carries its own source, confidence, and how it was produced, aligned to W3C PROV-O. The drawing modules import it." ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     dcterms:creator "Buro Happold - Machine Learning R&D" ;
@@ -35,8 +35,9 @@
     owl:priorVersion <https://w3id.org/adiro/adiro_provenance/2.1.0> ;
     owl:priorVersion <https://w3id.org/adiro/adiro_provenance/2.2.0> ;
     owl:priorVersion <https://w3id.org/adiro/adiro_provenance/2.3.0> ;
-    owl:versionIRI <https://w3id.org/adiro/adiro_provenance/2.3.1> ;
-    owl:versionInfo "2.3.1" .
+    owl:priorVersion <https://w3id.org/adiro/adiro_provenance/2.3.1> ;
+    owl:versionIRI <https://w3id.org/adiro/adiro_provenance/2.3.2> ;
+    owl:versionInfo "2.3.2" .
 
 #################################################################
 #    PROV-O terms referenced for alignment

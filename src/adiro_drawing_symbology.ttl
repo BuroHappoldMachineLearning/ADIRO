@@ -16,7 +16,7 @@
     vann:preferredNamespacePrefix "adsym" ;
     vann:preferredNamespaceUri "https://w3id.org/adiro/adiro_drawing_symbology#"^^xsd:anyURI ;
     dcterms:issued "2026-11-26"^^xsd:date ;
-    dcterms:modified "2026-11-26"^^xsd:date ;
+    dcterms:modified "2026-11-27"^^xsd:date ;
     dcterms:description "The symbols and marks a drawing uses, shared by every discipline: reusable symbols and text that appear across disciplines, such as dimensions, grids, levels and references to another layout or drawing: the graphical reference symbol, the inline and standalone reference expressions, and the occurrences of drawing and layout identifiers they are made of. Every one is a kind of drawing element from the drawing-metadata module. The discipline modules build on them." ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
@@ -30,8 +30,9 @@
     owl:priorVersion <https://w3id.org/adiro/aec_common_symbols/4.0.1> ;
     owl:priorVersion <https://w3id.org/adiro/adiro_common_symbols/5.0.0> ;
     owl:priorVersion <https://w3id.org/adiro/adiro_common_symbols/5.0.1> ;
-    owl:versionIRI <https://w3id.org/adiro/adiro_drawing_symbology/6.0.0> ;
-    owl:versionInfo "6.0.0" ;
+    owl:priorVersion <https://w3id.org/adiro/adiro_drawing_symbology/6.0.0> ;
+    owl:versionIRI <https://w3id.org/adiro/adiro_drawing_symbology/6.0.1> ;
+    owl:versionInfo "6.0.1" ;
     owl:imports <https://w3id.org/adiro/adiro_drawing_metadata> .
 
 

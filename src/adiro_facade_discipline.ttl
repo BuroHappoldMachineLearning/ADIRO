@@ -20,7 +20,7 @@
     vann:preferredNamespacePrefix "adfacade" ;
     vann:preferredNamespaceUri "https://w3id.org/adiro/adiro_facade_discipline#"^^xsd:anyURI ;
     dcterms:issued "2026-11-26"^^xsd:date ;
-    dcterms:modified "2026-11-26"^^xsd:date ;
+    dcterms:modified "2026-11-27"^^xsd:date ;
     dcterms:description "Facade-engineering concepts and symbols, such as curtain-wall systems and glazing units. It is a discipline-specific module at the end of the dependency chain, building on the drawing-metadata and discipline-core modules." ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
@@ -34,8 +34,9 @@
     owl:priorVersion <https://w3id.org/adiro/aec_facade_domain/3.0.1> ;
     owl:priorVersion <https://w3id.org/adiro/adiro_facade_domain/4.0.0> ;
     owl:priorVersion <https://w3id.org/adiro/adiro_facade_domain/4.0.1> ;
-    owl:versionIRI <https://w3id.org/adiro/adiro_facade_discipline/5.0.0> ;
-    owl:versionInfo "5.0.0" ;
+    owl:priorVersion <https://w3id.org/adiro/adiro_facade_discipline/5.0.0> ;
+    owl:versionIRI <https://w3id.org/adiro/adiro_facade_discipline/5.0.1> ;
+    owl:versionInfo "5.0.1" ;
     owl:imports <https://w3id.org/adiro/adiro_drawing_metadata>,
                 <https://w3id.org/adiro/adiro_discipline_core> .
 

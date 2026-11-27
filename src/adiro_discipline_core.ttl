@@ -15,7 +15,7 @@
     vann:preferredNamespacePrefix "adcore" ;
     vann:preferredNamespaceUri "https://w3id.org/adiro/adiro_discipline_core#"^^xsd:anyURI ;
     dcterms:issued "2026-11-26"^^xsd:date ;
-    dcterms:modified "2026-11-26"^^xsd:date ;
+    dcterms:modified "2026-11-27"^^xsd:date ;
     dcterms:description "The vocabulary that several discipline modules share: materials, section shapes and properties, structural components and loads, and the discipline classes. It builds on the drawing-metadata module and holds the abstractions that more than one discipline reuses, so they are defined once." ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
@@ -29,8 +29,9 @@
     owl:priorVersion <https://w3id.org/adiro/aec_domain_common/3.0.1> ;
     owl:priorVersion <https://w3id.org/adiro/adiro_domain_common/4.0.0> ;
     owl:priorVersion <https://w3id.org/adiro/adiro_domain_common/4.0.1> ;
-    owl:versionIRI <https://w3id.org/adiro/adiro_discipline_core/5.0.0> ;
-    owl:versionInfo "5.0.0" ;
+    owl:priorVersion <https://w3id.org/adiro/adiro_discipline_core/5.0.0> ;
+    owl:versionIRI <https://w3id.org/adiro/adiro_discipline_core/5.0.1> ;
+    owl:versionInfo "5.0.1" ;
     owl:imports <https://w3id.org/adiro/adiro_drawing_metadata> .
 
 #################################################################
