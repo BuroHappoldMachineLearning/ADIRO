@@ -6,12 +6,12 @@ ADIRO's modules are versioned **independently** (per-module SemVer — see
 
 | Module | Version | Changelog |
 |---|---|---|
-| `adiro_provenance` | 2.3.1 | [changelogs/adiro_provenance.md](changelogs/adiro_provenance.md) |
-| `adiro_geometry` | 3.1.1 | [changelogs/adiro_geometry.md](changelogs/adiro_geometry.md) |
-| `adiro_drawing_metadata` | 8.0.0 | [changelogs/adiro_drawing_metadata.md](changelogs/adiro_drawing_metadata.md) |
-| `adiro_drawing_symbology` | 6.0.0 | [changelogs/adiro_drawing_symbology.md](changelogs/adiro_drawing_symbology.md) |
-| `adiro_discipline_core` | 5.0.0 | [changelogs/adiro_discipline_core.md](changelogs/adiro_discipline_core.md) |
-| `adiro_facade_discipline` | 5.0.0 | [changelogs/adiro_facade_discipline.md](changelogs/adiro_facade_discipline.md) |
+| `adiro_provenance` | 2.3.2 | [changelogs/adiro_provenance.md](changelogs/adiro_provenance.md) |
+| `adiro_geometry` | 3.1.2 | [changelogs/adiro_geometry.md](changelogs/adiro_geometry.md) |
+| `adiro_drawing_metadata` | 8.0.1 | [changelogs/adiro_drawing_metadata.md](changelogs/adiro_drawing_metadata.md) |
+| `adiro_drawing_symbology` | 6.0.1 | [changelogs/adiro_drawing_symbology.md](changelogs/adiro_drawing_symbology.md) |
+| `adiro_discipline_core` | 5.0.1 | [changelogs/adiro_discipline_core.md](changelogs/adiro_discipline_core.md) |
+| `adiro_facade_discipline` | 5.0.1 | [changelogs/adiro_facade_discipline.md](changelogs/adiro_facade_discipline.md) |
 
 The versions above are the latest released versions. Changes not yet released accumulate in each module's
 `[Unreleased]` changelog section until the next release cut.

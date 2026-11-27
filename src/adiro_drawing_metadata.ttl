@@ -24,7 +24,7 @@
     vann:preferredNamespacePrefix "admeta" ;
     vann:preferredNamespaceUri "https://w3id.org/adiro/adiro_drawing_metadata#"^^xsd:anyURI ;
     dcterms:issued "2026-10-21"^^xsd:date ;
-    dcterms:modified "2026-11-26"^^xsd:date ;
+    dcterms:modified "2026-11-27"^^xsd:date ;
     dcterms:description "The core drawing vocabulary. It describes the structure of a drawing: its layouts, title block, revisions, and the fields read from them. It imports the provenance module (which also holds the file, the page and the agents) and the geometry module (where a title block's region is located), and the discipline modules build on it." ;
     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
     dcterms:creator "Buro Happold — Machine Learning R&D" ;
@@ -42,8 +42,9 @@
     owl:priorVersion <https://w3id.org/adiro/adiro_drawing_metadata/7.0.0> ;
     owl:priorVersion <https://w3id.org/adiro/adiro_drawing_metadata/7.0.1> ;
     owl:priorVersion <https://w3id.org/adiro/adiro_drawing_metadata/7.1.0> ;
-    owl:versionIRI <https://w3id.org/adiro/adiro_drawing_metadata/8.0.0> ;
-    owl:versionInfo "8.0.0" .
+    owl:priorVersion <https://w3id.org/adiro/adiro_drawing_metadata/8.0.0> ;
+    owl:versionIRI <https://w3id.org/adiro/adiro_drawing_metadata/8.0.1> ;
+    owl:versionInfo "8.0.1" .
 
 
 #################################################################
